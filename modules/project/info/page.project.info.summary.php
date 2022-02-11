@@ -62,7 +62,7 @@ class ProjectInfoSummary extends Page {
 								'children' => [
 									'<a class="" href="'.url('project/'.$this->projectId.'/info.articles').'"><i class="icon -material">menu_book</i><span>ผลงานวิจัย</span></a>',
 									'<a class="" href="'.url('project/'.$this->projectId.'/info.evalform').'"><i class="icon -material">checklist</i><span>แบบประเมินโครงการ</span></a>',
-									'<a class="" href="'.url('project/'.$this->projectId.'/result').'"><i class="icon -material">assignment</i><span>สรุปผลการดำเนินโครงการ</span></a>',
+									'<a class="" href="'.url('project/'.$this->projectId.'/info.result').'"><i class="icon -material">assignment</i><span>สรุปผลการดำเนินโครงการ</span></a>',
 								], // children
 							]), // Nav
 						], // children

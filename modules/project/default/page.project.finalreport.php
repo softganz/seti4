@@ -180,7 +180,7 @@ class ProjectFinalreport extends Page {
 			$ret .= sg_text2html($abstract);
 		}
 
-		$ret.='<p class="notes -no-print" style="margin: 20px 0; padding: 10px; background: #ccc;">หมายเหตุ : รายละเอียดของบทสรุปคัดย่อการดำเนินงาน ให้ผู้รับผิดชอบโครงการเป็นผู้เขียนสรุปภาพรวมของโครงการใน <a href="'.url('project/'.$this->projectId.'/result').'">"ผลลัพธ์โครงการ"</a></p>';
+		$ret.='<p class="notes -no-print" style="margin: 20px 0; padding: 10px; background: #ccc;">หมายเหตุ : รายละเอียดของบทสรุปคัดย่อการดำเนินงาน ให้ผู้รับผิดชอบโครงการเป็นผู้เขียนสรุปภาพรวมของโครงการใน <a href="'.url('project/'.$this->projectId.'/info.result').'">"ผลลัพธ์โครงการ"</a></p>';
 		$ret.='</div>';
 
 

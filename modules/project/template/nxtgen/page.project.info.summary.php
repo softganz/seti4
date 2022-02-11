@@ -76,7 +76,7 @@ class ProjectInfoSummary extends Page {
 							new Ui([
 								'type' => 'menu',
 								'children' => [
-									'<a class="" href="'.url('project/'.$this->projectId.'/result').'"><i class="icon -material -gray">check_circle</i><span>1. รายงานสรุปผลการดำเนินงาน</span></a>',
+									'<a class="" href="'.url('project/'.$this->projectId.'/info.result').'"><i class="icon -material -gray">check_circle</i><span>1. รายงานสรุปผลการดำเนินงาน</span></a>',
 									'<a class="" href="'.url('project/'.$this->projectId.'/operate.m2').'"><i class="icon -material -gray">check_circle</i><span>2. รายงานสรุปการเงินโครงการ</span></a>',
 									'<a class="" href="'.url('project/'.$this->projectId.'/finalreport').'"><i class="icon -material -gray">check_circle</i><span>3. รายงานฉบับสมบูรณ์ (ปิดโครงการ)</span></a>',
 								], // children

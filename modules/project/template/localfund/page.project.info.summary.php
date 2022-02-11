@@ -26,7 +26,7 @@ function project_info_summary($self, $projectInfo) {
 	$ret .= R::View('project.statusbar', $projectInfo)->build();
 
 	$ui=new Ui(NULL, 'ui-menu');
-	$ui->add('<a class="" href="'.url('project/'.$tpid.'/result').'"><i class="icon -material">find_in_page</i><span>ผลการดำเนินโครงการ</span></a>');
+	$ui->add('<a class="" href="'.url('project/'.$tpid.'/info.result').'"><i class="icon -material">find_in_page</i><span>ผลการดำเนินโครงการ</span></a>');
 	$ui->add('<a class="" href="'.url('project/'.$tpid.'/eval.valuation').'"><i class="icon -material">find_in_page</i><span>ประเมินคุณค่า</span></a>');
 	$ui->add('<a class="" href="'.url('project/'.$tpid.'/operate').'"><i class="icon -material">find_in_page</i><span>รายงานการเงิน</span></a>');
 	$ui->add('<a class="" href="'.url('project/'.$tpid.'/finalreport').'"><i class="icon -material">find_in_page</i><span>รายงานฉบับสมบูรณ์</span></a>');

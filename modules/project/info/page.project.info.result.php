@@ -13,7 +13,7 @@
 
 import('widget:project.info.appbar.php');
 
-class ProjectResult extends Page {
+class ProjectInfoResult extends Page {
 	var $projectId;
 	var $action;
 	var $projectInfo;
@@ -281,9 +281,9 @@ class ProjectResult extends Page {
 		if ($isViewOnly) {
 			// Do nothing
 		} else if ($isEdit) {
-			$ret .= '<div class="btn-floating -right-bottom"><a class="sg-action btn -primary -circle48" href="'.url('project/'.$this->projectId.'/result',array('debug'=>post('debug'))).'" data-rel="#main"><i class="icon -save -white"></i></a></div>';
+			$ret .= '<div class="btn-floating -right-bottom"><a class="sg-action btn -primary -circle48" href="'.url('project/'.$this->projectId.'/info.result',array('debug'=>post('debug'))).'" data-rel="#main"><i class="icon -save -white"></i></a></div>';
 		} else if ($isEditable) {
-			$ret.='<div class="btn-floating -right-bottom"><a class="sg-action btn -floating -circle48" href="'.url('project/'.$this->projectId.'/result/edit',array('debug'=>post('debug'))).'" data-rel="#main"><i class="icon -edit -white"></i></a></div>';
+			$ret.='<div class="btn-floating -right-bottom"><a class="sg-action btn -floating -circle48" href="'.url('project/'.$this->projectId.'/info.result/edit',array('debug'=>post('debug'))).'" data-rel="#main"><i class="icon -edit -white"></i></a></div>';
 		}
 
 		$ret.='</div><!-- project-result -->';
