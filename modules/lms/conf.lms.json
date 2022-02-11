@@ -1,9 +1,0 @@
-{
-	"title": "LMS Configuration",
-	"online": {},
-	"test" : "Test Config",
-	"Arr": [
-		{"a": "Text"},
-		{"a": "Again"}
-	]
-}
