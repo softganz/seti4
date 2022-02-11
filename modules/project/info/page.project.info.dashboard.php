@@ -35,7 +35,7 @@ class ProjectInfoDashboard extends Page {
 		$dashboardUi = new Ui(NULL, '-project-dashboard');
 		$dashboardUi->addConfig('nav', '{class: "nav -app-menu"}');
 
-		$dashboardUi->header('<h3>ติดตาม</h3>');
+		$dashboardUi->header('<h3>ข้อมูลโครงการ</h3>');
 
 		if ($isAdmin) {
 			$statusTextList = [
