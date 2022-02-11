@@ -1,15 +1,15 @@
 /modules/flood
-modules/garage
-modules/green
-modules/ibuy
-modules/imed
-modules/lms
-modules/project
-modules/publicmon
-modules/saveup
-modules/school
-modules/sensor
-modules/set
-modules/test
+/modules/garage
+/modules/green
+/modules/ibuy
+/modules/imed
+/modules/lms
+/modules/project
+/modules/publicmon
+/modules/saveup
+/modules/school
+/modules/sensor
+/modules/set
+/modules/test
 
 *.zip
