@@ -1,3 +1,4 @@
+# Ignore all module, except admin,api,calendar,code,docs,forum,paper
 /modules/*
 !/modules/admin
 !/modules/api
