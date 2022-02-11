@@ -298,8 +298,5 @@ $cfg['web.msg.createnewusertext']='Verifiable contact information is required fo
 $cfg['theme.backandwhite']=false;
 $cfg['theme.stylesheet.para']=NULL;
 
-//$cfg['gmapkey']='AIzaSyAREDmqrlBP0Y0m342f4PIv9H0KwaJjcgw';
-$cfg['gmapkey'] = 'AIzaSyCN2FqAkvkxWZdSp3e25DD8miVbfXuyROg';
-
 $cfg['project.options'] = '{"budget": {"show": "public"}}';
 ?>
