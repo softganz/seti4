@@ -1,0 +1,48 @@
+{
+"qtForm" : "1t1u.psi",
+"options" : {"groupContainer": {"name": "body-group","class": "body-group"}},
+"title" : {
+	"label": "การประเมินภาพรวมตําบล"
+},
+"submitButton": {
+	"label": "<i class='icon -material'>done_all</i><span>บันทึก</span>", "className": "submit-btn",
+	"container": {"class": "-sg-text-right"}
+},
+"formAttr" : {
+	"data-calculate-total" : ""
+},
+"vars": {
+	"checkIcon": "<i class='icon -material'>check_circle</i>"
+},
+"body": [
+	{
+		"name": "value",
+		"varName": "value",
+		"type": "hidden"
+	},
+	{
+		"name": "data",
+		"tag": "input",
+		"type": "checkbox",
+		"multiple": true,
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "01", "label": "$checkIcon<b>01</b><span> โจทย์การพัฒนาเพื่อแก้ไขปัญหาความยากจนตาม 16 เป้าหมาย</span>"},
+			{"value" : "02", "label": "$checkIcon<b>02</b><span> โครงการพัฒนาตำบลแบบกำหนดประชากรเป้าหมาย</span>"},
+			{"value" : "03", "label": "$checkIcon<b>03</b><span> ผู้ที่เป็นผู้ปฏิบัติการหลัก (Key actors) และ ผู้ขับเคลื่อนปฏิบัติการในพื้นที่</span>"},
+			{"value" : "04", "label": "$checkIcon<b>04</b><span> เทคโนโลยีและเครื่องมือที่ใช้ได้ผลดี</span>"},
+			{"value" : "05", "label": "$checkIcon<b>05</b><span> นวัตกรรมการแก้ปัญหา (เชิงระบบ เชิงกระบวนการ เชิงเทคนิค)</span>"},
+			{"value" : "06", "label": "$checkIcon<b>06</b><span> การมีส่วนร่วมของประชากรกลุ่มเป้าหมายและ 4 องค์กรหลัก</span>"},
+			{"value" : "07", "label": "$checkIcon<b>07</b> ผลการมีส่วนร่วมในการแก้ปัญหาของกลุ่มประชากรเป้าหมาย</span>"},
+			{"value" : "08", "label": "$checkIcon<b>08</b><span> เรื่องเด่น (กิจกรรม บริการ ผลิตภัณฑ์ ผลผลิต)</span>"},
+			{"value" : "09", "label": "$checkIcon<b>09</b><span> คนเด่น (Champions)</span>"},
+			{"value" : "10", "label": "$checkIcon<b>10</b><span> ข้อมูล (การสำรวจการเฝ้าระวัง COVID-19 และ Community Data)</span>"},
+			{"value" : "11", "label": "$checkIcon<b>11</b><span> การส่งเสริมการสร้างธุรกิจใหม่ (Start-up/Social Enterprise)</span>"},
+			{"value" : "12", "label": "$checkIcon<b>12</b><span> รูปแบบการแก้ปัญหาความยากจนในระดับตำบลจากการสรุปบทเรียนและประสบการณ์ในโครงการ</span>"},
+			{"value" : "13", "label": "$checkIcon<b>13</b><span> รูปแบบการบริหารจัดการทรัพยากรบุคคลและองค์กรภายในตำบลเพื่อแก้ปัญหาความยากจน (Resource Mobilization)</span>"},
+			{"value" : "14", "label": "$checkIcon<b>14</b><span> แหล่งเรียนรู้ และหลักสูตรการเรียนรู้ของชุมชนที่มาจากเรื่องเด่น คนเด่น จนได้รับการยอมรับเป็นศูนย์เรียนรู้ด้านการแก้ปัญหาความยากจน</span>"}
+		]
+	}
+]
+}

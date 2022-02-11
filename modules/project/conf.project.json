@@ -1,0 +1,326 @@
+{
+	"site" : "n/a",
+	"docs": {
+		"ไฟล์ข้อเสนอโครงการ": "ไฟล์ข้อเสนอโครงการ",
+		"ไฟล์กรอบแนวคิด": "ไฟล์กรอบแนวคิด",
+		"ไฟล์โครงการฉบับสมบูรณ์": "ไฟล์โครงการฉบับสมบูรณ์",
+		"ไฟล์ข้อตกลงดำเนินงาน" :  "ไฟล์ข้อตกลงดำเนินงาน (TOR)",
+		"ไฟล์รายงานการเงินโครงการประจำงวด 1" :  "ไฟล์รายงานการเงินโครงการประจำงวด 1",
+		"ไฟล์รายงานการเงินโครงการประจำงวด 2" :  "ไฟล์รายงานการเงินโครงการประจำงวด 2",
+		"ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 1" :  "ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 1",
+		"ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 2" :  "ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 2",
+		"ไฟล์รายงานปิดโครงการ-ฉบับสมบูรณ์" :  "ไฟล์รายงานปิดโครงการ-ฉบับสมบูรณ์",
+		"ไฟล์เอกสารประเมิน" :  "ไฟล์เอกสารประเมิน",
+		"ไฟล์เอกสาร" :  "ไฟล์เอกสาร"
+	},
+	"follow": {
+		"ownerEditTitle": true,
+		"showAppBarNavigator": true,
+		"showAppBarMainNavigator": true,
+		"showLikeStatus": true,
+		"showProceedStatus": true,
+		"showParentInTitle": false,
+		"homeUrl": "org",
+		"navigator": {
+			"detail": {
+				"icon": "find_in_page",
+				"label": "รายละเอียด",
+				"title": "รายละเอียดโครงการ",
+				"url": "project/{id}"
+			},
+			"calendar": {
+				"icon": "event",
+				"label": "ปฏิทิน",
+				"title": "ปฏิทินกิจกรรมของโครงการ",
+				"url": "project/{id}/info.calendar"
+			},
+			"action": {
+				"icon": "assignment",
+				"label": "กิจกรรม",
+				"title": "บันทึกการทำกิจกรรม",
+				"url": "project/{id}/info.action"
+			},
+			"evalform": {
+				"icon": "assessment",
+				"label": "แบบประเมิน",
+				"title": "แบบประเมิน",
+				"url": "project/{id}/info.evalform"
+			},
+			"summary": {
+				"icon": "assessment",
+				"label": "สรุปโครงการ",
+				"title": "สรุปโครงการ",
+				"url": "project/{id}/info.summary"
+			},
+			"share": {
+				"icon": "share",
+				"label": "แบ่งปัน",
+				"title": "แบ่งปันการใช้งาน",
+				"url": "project/{id}/info.share",
+				"attribute": {"class": "sg-action", "data-rel": "box", "data-width": "640", "data-class-name": "-transparent", "data-height": "80%"}
+			}
+		},
+		"navigatorUse": "detail,calendar,action,evalform,summary,share",
+
+		"info": {
+			"detail": {
+				"title": "รายละเอียดโครงการ",
+				"page": "project.info.detail"
+			},
+			"period": {
+				"title": "งวดสำหรับการทำรายงาน",
+				"page": "project.info.period"
+			},
+			"area": {
+				"title" : "พื้นที่เป้าหมาย",
+				"page": "project.info.area"
+			},
+			"issue": {
+				"title": "ประเด็นที่เกี่ยวข้อง",
+				"page": "project.info.issue"
+			},
+			"problem": {
+				"title": "สถานการณ์",
+				"page": "project.info.problem"
+			},
+			"idea": {
+				"title": "กรอบแนวคิดและยุทธศาสตร์หลัก",
+				"page": "project.info.idea"
+			},
+			"objective": {
+				"title": "วัตถุประสงค์/เป้าหมาย",
+				"page": "project.info.objective"
+			},
+			"target": {
+				"title": "กลุ่มเป้าหมาย",
+				"page": "project.info.target"
+			},
+			"plan": {
+				"title": "การดำเนินงาน/กิจกรรม",
+				"page": "project.info.plan"
+			},
+			"output": {
+				"title": "ผลที่คาดว่าจะได้รับ",
+				"page": "project.info.output"
+			},
+			"child": {
+				"title": "โครงการย่อย",
+				"page": "project.info.child"
+			},
+			"docs": {
+				"title": "เอกสารประกอบโครงการ",
+				"page": "project.info.docs"
+			}
+		},
+		"infoUse": "detail,period,issue,problem,idea,objective,target,plan,output,child,docs",
+
+		"docsUse": "ไฟล์ข้อเสนอโครงการ,ไฟล์กรอบแนวคิด,ไฟล์โครงการฉบับสมบูรณ์,ไฟล์ข้อตกลงดำเนินงาน,ไฟล์รายงานการเงินโครงการประจำงวด 1,ไฟล์รายงานการเงินโครงการประจำงวด 2,ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 1,ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 2,ไฟล์รายงานปิดโครงการ-ฉบับสมบูรณ์,ไฟล์เอกสารประเมิน,ไฟล์เอกสาร"
+	},
+	"set": {
+		"ownerEditTitle": true,
+		"showAppBarNavigator": true,
+		"showAppBarMainNavigator": true,
+		"showLikeStatus": true,
+		"showProceedStatus": true,
+		"showParentInTitle": false,
+		"homeUrl": "org",
+		"navigator": {
+			"detail": {
+				"icon": "find_in_page",
+				"label": "รายละเอียด",
+				"title": "รายละเอียดโครงการ",
+				"url": "project/set/{id}"
+			},
+			"action": {
+				"icon": "assignment",
+				"label": "กิจกรรม",
+				"title": "บันทึกการทำกิจกรรม",
+				"url": "project/set/{id}/info.action"
+			},
+			"follow": {
+				"icon": "view_list",
+				"label": "โครงการย่อย",
+				"title": "โครงการย่อย",
+				"url": "project/set/{id}/info.follow"
+			},
+			"summary": {
+				"icon": "assessment",
+				"label": "สรุปโครงการ",
+				"title": "สรุปโครงการ",
+				"url": "project/set/{id}/info.summary"
+			},
+			"share": {
+				"icon": "share",
+				"label": "แบ่งปัน",
+				"title": "แบ่งปันการใช้งาน",
+				"url": "project/{id}/info.share",
+				"attribute": {"class": "sg-action", "data-rel": "box", "data-width": "640", "data-class-name": "-transparent"}
+			}
+		},
+		"navigatorUse": "detail,action,follow,summary,share",
+
+		"info": {
+			"detail": {
+				"title": "รายละเอียดชุดโครงการ",
+				"page": "project.set.info.detail"
+			},
+			"period": {
+				"title": "งวดสำหรับการทำรายงาน",
+				"page": "project.set.info.period"
+			},
+			"problem": {
+				"title": "สถานการณ์",
+				"page": "project.set.info.problem"
+			},
+			"objective": {
+				"title": "วัตถุประสงค์/เป้าหมาย",
+				"page": "project.set.info.objective"
+			},
+			"plan": {
+				"title": "การดำเนินงาน/กิจกรรม",
+				"page": "project.set.info.plan"
+			},
+			"proposal": {
+				"title": "ข้อเสนอโครงการ",
+				"page": "project.set.info.proposal"
+			},
+			"follow": {
+				"title": "โครงการย่อย",
+				"page": "project.set.info.follow"
+			},
+			"docs": {
+				"title": "เอกสารประกอบโครงการ",
+				"page": "project.set.info.docs"
+			}
+		},
+		"infoUse": "detail,period,problem,objective,plan,docs",
+
+		"docsUse": "ไฟล์ข้อเสนอโครงการ,ไฟล์กรอบแนวคิด,ไฟล์โครงการฉบับสมบูรณ์,ไฟล์ข้อตกลงดำเนินงาน,ไฟล์รายงานการเงินโครงการประจำงวด 1,ไฟล์รายงานการเงินโครงการประจำงวด 2,ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 1,ไฟล์รายงานความก้าวหน้าโครงการประจำงวด 2,ไฟล์รายงานปิดโครงการ-ฉบับสมบูรณ์,ไฟล์เอกสารประเมิน,ไฟล์เอกสาร"
+	},
+	"proposal": {
+		"showAppBarNavigator": true,
+		"showAppBarMainNavigator": true,
+		"showLikeStatus": true,
+		"showProceedStatus": true,
+		"showParentInTitle": false,
+		"navigator": {
+			"detail": {
+				"icon": "description",
+				"label": "รายละเอียด",
+				"title": "รายละเอียดโครงการ",
+				"url": ""
+			},
+			"share": {
+				"icon": "share",
+				"label": "แบ่งปัน",
+				"title": "แบ่งปันการใช้งาน",
+				"access": "_IS_SIGNED",
+				"url": "info.share",
+				"attribute": {"class": "sg-action", "data-rel": "box", "data-width": "640", "data-class-name": "-transparent"}
+			}
+		},
+		"info": {
+			"title": {
+				"title": "ชื่อโครงการ",
+				"page": "project.proposal.info.title"
+			},
+			"area": {
+				"title": "พื้นที่ดำเนินงาน",
+				"page": "project.proposal.info.area"
+			},
+			"issue": {
+				"title": "ประเด็นที่เกี่ยวข้อง",
+				"page": "project.proposal.info.issue"
+			},
+			"objective": {
+				"title": "วัตถุประสงค์",
+				"page": "project.proposal.info.objective"
+			},
+			"target": {
+				"title": "กลุ่มเป้าหมาย",
+				"page": "project.proposal.info.target"
+			},
+			"date": {
+				"title": "ระยะเวลา",
+				"page": "project.proposal.info.date"
+			},
+			"plan": {
+				"title": "วิธีดำเนินงาน",
+				"page": "project.proposal.info.plan"
+			},
+			"budget": {
+				"title": "งบประมาณ",
+				"page": "project.proposal.info.budget"
+			},
+			"docs": {
+				"title": "เอกสารประกอบโครงการ",
+				"page": "project.proposal.info.docs"
+			}
+		},
+		"infoUse": "title,area,issue,objective,target,date,plan,budget,docs",
+		"navigatorUse": "detail,share",
+		"docsUse": "ไฟล์ข้อเสนอโครงการ,ไฟล์กรอบแนวคิด,ไฟล์เอกสาร"
+	},
+	"my": {
+		"showInfoNumber": false,
+		"navigatorUse": "home,action,follow",
+		"infoUse": "proposal,follow",
+		"trailing": {
+			"addFollowButton" : true
+		},
+		"navigator": {
+			"home": {
+				"icon": "home",
+				"label": "หน้าหลัก",
+				"title": "หน้าหลัก",
+				"url": "project/my"
+			},
+			"action": {
+				"icon": "assignment",
+				"label": "กิจกรรม",
+				"title": "กิจกรรม",
+				"url": "project/my/action"
+			},
+			"proposal": {
+				"icon": "nature_people",
+				"label": "ข้อเสนอ",
+				"title": "พัฒนาข้อเสนอโครงการ",
+				"url": "project/my/proposal"
+			},
+			"planning": {
+				"icon": "table_chart",
+				"label": "แผนงาน",
+				"title": "แผนงาน",
+				"url": "project/my/planning"
+			},
+			"set": {
+				"icon": "account_tree",
+				"label": "ชุดโครงการ",
+				"title": "ชุดโครงการ",
+				"url": "project/my/set"
+			},
+			"follow": {
+				"icon": "directions_run",
+				"label": "โครงการ",
+				"title": "ติดตามโครงการ",
+				"url": "project/my/follow"
+			}
+		},
+		"info": {
+			"proposal": {
+				"title": "ข้อเสนอโครงการ",
+				"page": "project.my.info.proposal"
+			},
+			"follow": {
+				"title": "ติดตามโครงการ",
+				"page": "project.my.info.follow"
+			}
+		}
+	},
+	"list" : {
+		"filter" : "changwat,year,set",
+		"showBar" : true
+	},
+	"items" : [1,2,3,4],
+	"target" : false
+}

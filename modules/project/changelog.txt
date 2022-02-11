@@ -1,0 +1,93 @@
+To do
+
+- พัฒนาโครงการ เพิ่ม ลักษณะโครงการ,ส่งไฟล์แนบ,ให้คะแนะตัวชี้วัด 9 ข้อ,ทำลิ้งไปยังโครงเก่า
+
+- โครงการล่าช้า คิดจากการส่งรายงานงวดช้า,รายงานปิดโครงการ(ส.3) ช้า
+- กระบวนการส่งรายงานและล็อคการแก้ไข
+- กิจกรรมหลัก-กิจกรรมย่อย
+- รายงาน ง.2
+
+Bug report
+
+Change log
+
+Version 0.30.01a
+Update on Sep 7, 2013
+
+- ผลการจัดกิจกรรมเชิงปริมาณ จำนวนผู้เข้าร่วม
+-  รายงานการติดตาม - (2.2) รายงานความก้าวหน้าของโครงการ การเพิ่มกิจกรรมให้คลิกจากปุ่ม "เพิ่มกิจกรรมสำหรับรายงานความก้าวหน้าของการดำเนินงานโครงการ" แล้วติ๊กเลือก แล้วคลิก "เพิ่มกิจกรรมย่อย"
+- รายงาน ง.2 เพิ่มรายรับอื่น ๆ และ ลบกิจกรรมหลัก
+
+Version 0.22.11
+Update on Jun 25, 2013
+
+- Change process lock/unlock money 1 report to use field project_tr.flag
+- Disable activity expenditure edit when money 1 report was locked
+- New activity report date must after last money 1 end date
+- รายงานติดตามพี่เลี้ยง part 2.2 เปลี่ยน field detail1,detail2,detail3 ไปเป็น text1,text,2,text3 ย้าย text1,text2 ไปเป็น text 4,text5
+
+Version 0.22.10
+Update on Jun 20, 2013
+
+- Fixed bug : Prototype trim of string was define in jQuery 1.8.1
+- Fixed bug : inline edit not save poject owner
+- Inline edit latitude and longtitude
+- Report m2
+- Change way to create report to show button to create new period report on m1,s1,s2
+- Rewrite edit of project info to use new inline edit code
+
+Version 0.22.9
+Updated on 17 May, 2013
+
+- ส่งไฟล์รายงานประกอบบันทึกกิจกรรม
+- Use colorbox.js for popup photo view
+- Fixed bug : ข้อเสนอแนะต่อ สสส. / ข้อเสนอแนะต่อพื้นที่ แสดงสลับกัน
+
+Version 0.22.8
+Updated on 3 May, 2013
+
+- New page project/trainer - list of trainer and number of they projects.
+- List project of trainer with all year.
+- Only project status is open can edit, other cannot edit.
+- Change form - แบบประเมิน (พี่เลี้ยง) จากประเมินหัวข้อหลัก เป็นประเมินหัวข้อย่อย
+
+Version 0.22.7
+Updated on 6 Apr, 2013
+
+- รายงาน ง.1 เปลี่ยนการบันทึก รวมรายจ่าย (2) จากการบันทึกในฟิลด์ num2 (อ้างอิงด้วยตัวแปร irs->num2) เป็นการรวมค่าจากฟิลด์ activity->num7 ในตัวแปร $act_money_total แทน และยกเลิกการแก้ไข
+- รายงาน ง.1 ไม่แสดงรายการกิจกรรมที่งบประมาณรวมเป็นศูนย์
+- ปรับ CSS ให้พิมพ์เต็มกระดาษ (ไม่ล้นออกด้านขวา)
+- Fixed bug
+
+
+Version 0.22.6
+Updated on 4 Apr, 2013
+
+- Fixed bug : แบบฟอร์มติดตามของพี่เลี้ยง section 2.2 ป้อนงบประมาณที่มีเครื่องหมาย , แล้วค่าที่บันทึกผิดพลาด
+
+Version 0.22.5
+Updated on Mar 12, 2013
+
+- ยืนยันเมื่อมีการลบรายการย่อยของแบบฟอร์มบันทึกการติตามของพี่เลี้ยง
+
+Version 0.22.4
+Updated on Mar 10, 2013
+
+- Fixed bug : วัตถุประสงค์(ย่อย)ของกิจกรรมกลายเป็นข้อความเดียวกับกิจกรรมที่ปฎิบัติจริง
+
+Version 0.22.3
+Updated on Mar 7, 2013
+
+- เพิ่มปุ่มลิงก์ (1 บันทึก) ในรายงานผู้รับผิดชอบ,รายงานพี่เลี้ยง ให้สามารถคลิกเพื่อเลื่อนลงมาดูรายละเอียดของบันทึกิจกรรมที่อ้างอิงกับกิจกรรมนั้นได้เลย
+- พี่เลี้ยงสามารถแก้ไขรายละเอียดของปฎิทินโครงการได้
+
+Version 0.22.2
+Updated on Mar 4, 2013
+
+- Fixed bug : รายงานติดตามพี่เลี้ยง บางช่องป้อนข้อมูลแล้วไม่สามารถบันทึกได้
+
+Version 0.22.1
+Updated on Mar 2, 2013
+
+- Fixed bug : แก้ไขรายงานกิจกรรมพี่เลี้ยงแล้วรายงานกิจกรรมถูกย้ายไปเป็นรายงานกิจกรรมผู้รับผิดชอบ
+- admin และ พี่เลี้ยงสามารถย้ายรายงานกิจกรรมจากรายงานผู้รับผิดชอบไปเป็นรายงานพี่เลี้ยง หรือจากรายงานพี่เลี้ยงไปเป็นรายงานผู้รับผิดชอบได้

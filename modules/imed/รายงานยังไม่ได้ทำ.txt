@@ -1,0 +1,9 @@
+จำนวนคนพิการ อ.หาดใหญ่ 3600 คน
+จำนวนคนพิการ ต.หาดใหญ่ 1178 คน
+
+รายชื่อคนพิการซ้ำซ้อน
+
+SELECT d.`pid`, CONCAT(p.name,' ',p.lname), COUNT(*) amt, group_concat(defect), p.changwat
+FROM `sgz_db_disabled_defect` d
+LEFT JOIN `sgz_db_person` p ON p.aid=d.pid GROUP BY d.`pid` HAVING amt>1
+ORDER BY p.changwat ASC

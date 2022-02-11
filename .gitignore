@@ -1,9 +1,9 @@
 # Ignore all module, except admin,api,calendar,code,docs,forum,paper
-/modules/*
-!/modules/admin
-!/modules/api
-!/modules/calendar
-!/modules/code
-!/modules/docs
-!/modules/forum
-!/modules/paper
+#/modules/*
+#!/modules/admin
+#!/modules/api
+#!/modules/calendar
+#!/modules/code
+#!/modules/docs
+#!/modules/forum
+#!/modules/paper

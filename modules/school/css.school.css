@@ -1,0 +1,21 @@
+.ui-card {margin:0; padding:0; list-style-type: none;}
+
+.school-main-menu {margin:0;padding:0;list-style-type:none;}
+.school-main-menu .ui-item {height:200px; margin:0 32px 48px 0; position: relative;}
+.school-main-menu .btn {display:block; width:300px; height:200px; text-align:center; font-size:1.6em; padding:0; border:none; margin:0 auto;}
+.school-main-menu .btn span {display:block; padding:8px 0; position: absolute; bottom:0; left:0; width:100%;}
+.school-main-menu .btn img {width:100%; height:160px; border-radius: 4px 4px 0 0;}
+.school-main-menu.-info .ui-item {width:45%; float:left;}
+
+.school-card {text-align:center;}
+.school-card .ui-item {width: 50%; float:left; position: relative; margin-bottom: 32px;}
+.school-card .card-img {display:block;margin:0 auto;}
+.school-card .card-title {padding:8px 0;display:block; height:0.8em; overflow: hidden;}
+.school-card .card-detail {height: 1.4em; overflow: hidden;}
+.school-card .ui-item.-addnew {padding:64px 0;}
+.school-card .ui-item.-addnew>a {padding:32px;font-size:1.4em;}
+.school-card .card-hots {width:48px;height:48px;color:#fff;background:red;font-weight:bold;line-height:48px;text-align: center;border-radius: 50%; margin:0 auto;}
+
+.sidebar h2 {background-color: #ddd; padding:8px; color:#333;}
+.sidebar .school-main-menu {margin:0;}
+.sidebar .school-main-menu .ui-item {width:100%;}
