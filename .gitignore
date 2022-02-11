@@ -1,6 +1,7 @@
 /modules/*
 !/modules/admin
 !/modules/api
+!/modules/calendar
 !/modules/code
 !/modules/docs
 !/modules/forum
