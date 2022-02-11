@@ -1,0 +1,39 @@
+{
+"qtForm" : "1t1u.rsi",
+"options" : {"groupContainer": {"name": "body-group","class": "body-group"}},
+"title" : {
+	"label": "Regional System Integrator"
+},
+"submitButton": {
+	"label": "<i class='icon -material'>done_all</i><span>บันทึก</span>", "className": "submit-btn",
+	"container": {"class": "-sg-text-right"}
+},
+"formAttr" : {
+	"data-calculate-total" : ""
+},
+"vars": {
+	"checkIcon": "<i class='icon -material'>check_circle</i>"
+},
+"body": [
+	{
+		"name": "value",
+		"varName": "value",
+		"type": "hidden"
+	},
+	{
+		"name": "kpi",
+		"x-label": "Regional System Integrator",
+		"tag": "input",
+		"type": "checkbox",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "01", "label": "$checkIcon<b>01</b><span> ประมวลตัวชี้วัดระดับตำบลและระดับมหาวิทยาลัยให้อยู่ในสถานะที่แสดงความครอบคลุม ประชากรเป้าหมาย และสอดรับกับ ๑๖ เป้าหมาย</span>"},
+			{"value" : "02", "label": "$checkIcon<b>02</b><span> วิเคราะห์และสังเคราะห์ความรู้จากปฏิบัติการในพื้นที่กับความสอดคล้องของกลุ่มสาขาวิชาเพื่อ จัดทำเป็นข้อเสนอในการปฏิรูปการศึกษาในระดับอุดมศึกษา</span>"},
+			{"value" : "03", "label": "$checkIcon<b>03</b><span> สังเคราะห์นวัตกรรมของพื้นท่ีเพื่อยกระดับเศรษฐกิจและสังคมของประเทศ</span>"},
+			{"value" : "04", "label": "$checkIcon<b>04</b><span> การถ่ายทอดเทคโนโลยีของกลุ่มนวัตกรรมในกลุ่มตำบล</span>"},
+			{"value" : "05", "label": "$checkIcon<b>05</b><span> สังเคราะห์ข้อมูล การสำรวจการเฝ้าระวังและป้องกันโรคติดเชื้อไวรัสโคโรน่า 2019 ข้อมูลการยกระดับเศรษฐกิจและสังคม เพื่อจัดทำข้อเสนอเชิงนโยบายต่อคณะกรรมการยุทธศาสตร์ชาติ คณะกรรมการปฏิรูปประเทศ และหน่วยงานกลางที่รับผิดชอบนโยบายแห่งรัฐ</span>"}
+		]
+	}
+]
+}

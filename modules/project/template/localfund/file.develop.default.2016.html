@@ -1,0 +1,1381 @@
+<!-- <div class="form-info"><p align="center" style="margin:0;padding:5px; border-bottom:1px #666 solid;">สำหรับเจ้าหน้าที่ สปสช.</p><p style="padding:0 5px;">รหัสโครงการ : {$prid}</p><p style="padding:0 5px;">วันที่ :  <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>/<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>/<u>25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></p></div> -->
+
+<div id="owner">
+<h2>แบบเสนอโครงการกองทุนตำบล</h2>
+
+<h3>1. ชื่อโครงการ</h3>
+<em class="noprint">ควรสั้น กระชับ เข้าใจง่าย และสื่อสาระของสิ่งที่จะทำอย่างชัดเจน ควรจะระบุชื่อชุมชนในชื่อโครงการเพื่อความสะดวกในการค้นหา</em>
+<div class="box">
+<p><label class="hots">ชื่อโครงการ</label><span class="{$datainput} w-10" onclick="" data-group="topic" data-fld="title" data-test="HELLO"></span></p>
+</div>
+
+
+
+
+
+<a name="ownername" id="ownername"></a>
+<h3>3. ผู้รับผิดชอบโครงการ</h3>
+<em>
+** ผู้รับผิดชอบโครงการ หมายถึงผู้ดำเนินการหลักของโครงการ อาจเป็นหรือไม่เป็นหัวหน้าองค์กรก็ได้
+</em>
+
+<h6>คุณสมบัติการเสนอโครงการ</h6>
+<em>
+<ol>
+<li><strong>ผู้รับผิดชอบโครงการและผู้ร่วมรับผิดชอบโครงการอย่างน้อย 3-5 คน ประกอบด้วยผู้ใหญ่บ้านหรือประธานชุมชน สมาชิก อบต. เจ้าหน้าที่สาธารณสุข  ข้าราชการที่อยู่ในชุมชน หรือตัวแทนกลุ่มต่าง ๆ</strong> ในชุมชนที่มีอยู่เดิม เช่น กลุ่มออมทรัพย์ ชมรมผู้สูงอายุ หรือกลุ่มอื่นๆ เป็นองค์ประกอบหลักในการดำเนินโครงการ</li>
+<li>ต้องมีภูมิลำเนาอยู่ในหมู่บ้าน หรือตำบลนั้นๆ  มีความตั้งใจ/ความมุ่งมั่นอดทนในการพัฒนาโครงการ  มีศักยภาพที่จะบริหารจัดการโครงการให้สำเร็จได้ และมีโครงสร้างการบริหารจัดการโครงการที่ชัดเจน</li>
+</ol>
+</em>
+
+<div class="box">
+<h4>1. ชื่อ-นามสกุลผู้รับผิดชอบโครงการ</h4>
+
+<p>คำนำหน้าชื่อ <span class="{$datainput} w-1" onclick="" data-fld="owner-prename"></span>
+ชื่อ <span class="{$datainput} w-3" onclick="" data-fld="owner-name"></span>
+นามสกุล <span class="{$datainput} w-3" onclick="" data-fld="owner-lastname"></span></p>
+<p>ตำแหน่งในชุมชน <span onclick="" data-fld="owner-position" class="{$datainput}" onclick="" data-type="select" data-data='{
+"กำนัน":"กำนัน",
+"ผู้ใหญ่บ้าน":"ผู้ใหญ่บ้าน",
+"ประธานชุมชน":"ประธานชุมชน",
+"กรรมการหมู่บ้าน/ชุมชน":"กรรมการหมู่บ้าน/ชุมชน",
+"อสม.":"อสม.",
+"สมาชิก อบต.":"สมาชิก อบต.",
+"สมาชิกเทศบาล":"สมาชิกเทศบาล",
+"เจ้าหน้าที่สาธารณสุข":"เจ้าหน้าที่สาธารณสุข",
+"สภาองค์กรชุมชน":"สภาองค์กรชุมชน",
+"อื่น ๆ":"อืน ๆ",
+}'></span> อื่น ๆ (โปรดระบุ) <span class="{$datainput} w-3" onclick="" data-fld="owner-position-other"></span></p>
+
+<p>เลขที่ประจำตัวประชาชน 13 หลัก&nbsp;&nbsp;&nbsp; <span class="{$datainput} w-3" onclick="" data-fld="owner-cid"></span></p>
+
+<h5>ที่อยู่ตามบัตรประชาชน</h5>
+<p>
+บ้านเลขที่ <span class="{$datainput} w-1" onclick="" data-fld="owner-address"></span>
+หมู่ที่ <span class="{$datainput} w-1" onclick="" data-fld="owner-moo"></span>
+ตรอก/ซอย <span class="{$datainput} w-2" onclick="" data-fld="owner-soi"></span>
+ถนน <span class="{$datainput} w-2" onclick="" data-fld="owner-road"></span>
+ตำบล/แขวง <span class="{$datainput} w-2" onclick="" data-fld="owner-tambon"></span>
+อำเภอ/เขต <span class="{$datainput} w-2" onclick="" data-fld="owner-ampur"></span>
+จังหวัด <span class="{$datainput} w-2" onclick="" data-fld="owner-changwat"></span>
+รหัสไปรษณีย์ <span class="{$datainput} w-1" onclick="" data-fld="owner-zip"></span>
+</p>
+
+<p>
+เบอร์โทรศัพท์ที่ติดต่อได้สะดวก <span class="{$datainput} w-1" onclick="" data-fld="owner-phone"></span>
+เบอร์มือถือ <span class="{$datainput} w-1" onclick="" data-fld="owner-mobile"></span>
+โทรสาร <span class="{$datainput} w-1" onclick="" data-fld="owner-fax"></span>
+อีเมล์ <span class="{$datainput} w-2" onclick="" data-fld="owner-email"></span>
+</p>
+</div>
+
+<a name="teamname" id="teamname"></a>
+<h3>4. รายชื่อผู้ร่วมทำโครงการ/คณะทำงาน (อย่างน้อย 3-5 คน)</h3>
+
+<div class="box">
+<h4>รายชื่อผู้ร่วมรับผิดชอบโครงการ คนที่ 1</h4>
+
+<p>
+คำนำหน้าชื่อ <span class="{$datainput} w-1" onclick="" data-fld="coowner-1-prename"></span>
+ชื่อ <span class="{$datainput} w-3" onclick="" data-fld="coowner-1-name"></span>
+นามสกุล <span class="{$datainput} w-3" onclick="" data-fld="coowner-1-lastname"></span>
+</p>
+<p>ตำแหน่งในชุมชน <span class="{$datainput}" onclick="" data-fld="coowner-1-position" data-type="select" data-data='{
+"กำนัน":"กำนัน",
+"ผู้ใหญ่บ้าน":"ผู้ใหญ่บ้าน",
+"ประธานชุมชน":"ประธานชุมชน",
+"กรรมการหมู่บ้าน/ชุมชน":"กรรมการหมู่บ้าน/ชุมชน",
+"อสม.":"อสม.",
+"สมาชิก อบต.":"สมาชิก อบต.",
+"สมาชิกเทศบาล":"สมาชิกเทศบาล",
+"เจ้าหน้าที่สาธารณสุข":"เจ้าหน้าที่สาธารณสุข",
+"สภาองค์กรชุมชน":"สภาองค์กรชุมชน",
+"อื่น ๆ":"อืน ๆ",
+}'></span> อื่น ๆ (โปรดระบุ) <span class="{$datainput} w-3" onclick="" data-fld="coowner-1-position-other"></span></p>
+<p>เลขที่ประจำตัวประชาชน 13 หลัก&nbsp;&nbsp;&nbsp; <span class="{$datainput} w-3" onclick="" data-fld="coowner-1-cid"></span></p>
+
+<h5>ที่อยู่ตามบัตรประชาชน</h5>
+<p>
+บ้านเลขที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-1-address"></span>
+หมู่ที่ <span class="{$datainput} w-1" data-fld="coowner-1-moo"></span>
+ตรอก/ซอย <span class="{$datainput} w-2" onclick="" data-fld="coowner-1-soi"></span>
+ถนน <span class="{$datainput} w-2" onclick="" data-fld="coowner-1-road"></span>
+ตำบล/แขวง <span class="{$datainput} w-2" onclick="" data-fld="coowner-1-tambon"></span>
+อำเภอ/เขต <span class="{$datainput} w-2" onclick="" data-fld="coowner-1-ampur"></span>
+จังหวัด <span class="{$datainput} w-2" onclick="" data-fld="coowner-1-changwat"></span>
+รหัสไปรษณีย์ <span class="{$datainput} w-1" onclick="" data-fld="coowner-1-zip"></span>
+</p>
+
+<p>
+เบอร์โทรศัพท์ที่ติดต่อได้สะดวก <span class="{$datainput} w-1" onclick="" data-fld="coowner-1-phone"></span>
+เบอร์มือถือ <span class="{$datainput} w-1" onclick="" data-fld="coowner-1-mobile"></span>
+โทรสาร <span class="{$datainput} w-1" onclick="" data-fld="coowner-1-fax"></span>
+อีเมล์ <span class="{$datainput} w-2" onclick="" data-fld="coowner-1-email"></span>
+</p>
+
+<p>บทบาทหน้าที่/ความรับผิดชอบในโครงการนี้
+<span onclick="" data-fld="coowner-1-role" class="{$datainput}" onclick="" data-type="select" data-data='{"การเงิน":"การเงิน","สื่อประชาสัมพันธ์":"สื่อประชาสัมพันธ์","ข้อมูลวิชาการ":"ข้อมูลวิชาการ","ประสานงาน":"ประสานงาน","กิจกรรม":"กิจกรรม","ไอที":"ไอที","อื่น ๆ":"อื่น ๆ"}'></span></p>
+</div>
+
+<div class="box">
+<h4>รายชื่อผู้ร่วมรับผิดชอบโครงการ คนที่ 2</h4>
+
+<p>
+คำนำหน้าชื่อ <span class="{$datainput} w-1" onclick="" data-fld="coowner-2-prename"></span>
+ชื่อ <span class="{$datainput} w-3" onclick="" data-fld="coowner-2-name"></span>
+นามสกุล <span class="{$datainput} w-3" onclick="" data-fld="coowner-2-lastname"></span>
+</p>
+
+<p>ตำแหน่งในชุมชน <span onclick="" data-fld="coowner-2-position" class="{$datainput}" onclick="" data-type="select" data-data='{
+"กำนัน":"กำนัน",
+"ผู้ใหญ่บ้าน":"ผู้ใหญ่บ้าน",
+"ประธานชุมชน":"ประธานชุมชน",
+"กรรมการหมู่บ้าน/ชุมชน":"กรรมการหมู่บ้าน/ชุมชน",
+"อสม.":"อสม.",
+"สมาชิก อบต.":"สมาชิก อบต.",
+"สมาชิกเทศบาล":"สมาชิกเทศบาล",
+"เจ้าหน้าที่สาธารณสุข":"เจ้าหน้าที่สาธารณสุข",
+"สภาองค์กรชุมชน":"สภาองค์กรชุมชน",
+"อื่น ๆ":"อืน ๆ",
+}'></span> อื่น ๆ (โปรดระบุ) <span class="{$datainput} w-3" onclick="" data-fld="coowner-2-position-other"></span></p>
+
+<p>เลขที่ประจำตัวประชาชน 13 หลัก&nbsp;&nbsp;&nbsp; <span class="{$datainput} w-3" onclick="" data-fld="coowner-2-cid"></span></p>
+
+<h5>ที่อยู่ตามบัตรประชาชน</h5>
+<p>
+บ้านเลขที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-2-address"></span>
+หมู่ที่ <span class="{$datainput} w-1" data-fld="coowner-2-moo"></span>
+ตรอก/ซอย <span class="{$datainput} w-2" onclick="" data-fld="coowner-2-soi"></span>
+ถนน <span class="{$datainput} w-2" onclick="" data-fld="coowner-2-road"></span>
+ตำบล/แขวง <span class="{$datainput} w-2" onclick="" data-fld="coowner-2-tambon"></span>
+อำเภอ/เขต <span class="{$datainput} w-2" onclick="" data-fld="coowner-2-ampur"></span>
+จังหวัด <span class="{$datainput} w-2" onclick="" data-fld="coowner-2-changwat"></span>
+รหัสไปรษณีย์ <span class="{$datainput} w-1" onclick="" data-fld="coowner-2-zip"></span>
+</p>
+
+<p>
+เบอร์โทรศัพท์ที่ติดต่อได้สะดวก <span class="{$datainput} w-1" onclick="" data-fld="coowner-2-phone"></span>
+เบอร์มือถือ <span class="{$datainput} w-1" onclick="" data-fld="coowner-2-mobile"></span>
+โทรสาร <span class="{$datainput} w-1" onclick="" data-fld="coowner-2-fax"></span>
+อีเมล์ <span class="{$datainput} w-2" onclick="" data-fld="coowner-2-email"></span>
+</p>
+
+<p>บทบาทหน้าที่/ความรับผิดชอบในโครงการนี้
+<span onclick="" data-fld="coowner-2-role" class="{$datainput}" onclick="" data-type="select" data-data='{"การเงิน":"การเงิน","สื่อประชาสัมพันธ์":"สื่อประชาสัมพันธ์","ข้อมูลวิชาการ":"ข้อมูลวิชาการ","ประสานงาน":"ประสานงาน","กิจกรรม":"กิจกรรม","ไอที":"ไอที","อื่น ๆ":"อื่น ๆ"}'></span></p>
+</div>
+
+<div class="box">
+<h4>รายชื่อผู้ร่วมรับผิดชอบโครงการ คนที่ 3</h4>
+
+<p>
+คำนำหน้าชื่อ <span class="{$datainput} w-1" onclick="" data-fld="coowner-3-prename"></span>
+ชื่อ <span class="{$datainput} w-3" onclick="" data-fld="coowner-3-name"></span>
+นามสกุล <span class="{$datainput} w-3" onclick="" data-fld="coowner-3-lastname"></span>
+</p>
+
+<p>ตำแหน่งในชุมชน <span onclick="" data-fld="coowner-3-position" class="{$datainput}" onclick="" data-type="select" data-data='{
+"กำนัน":"กำนัน",
+"ผู้ใหญ่บ้าน":"ผู้ใหญ่บ้าน",
+"ประธานชุมชน":"ประธานชุมชน",
+"กรรมการหมู่บ้าน/ชุมชน":"กรรมการหมู่บ้าน/ชุมชน",
+"อสม.":"อสม.",
+"สมาชิก อบต.":"สมาชิก อบต.",
+"สมาชิกเทศบาล":"สมาชิกเทศบาล",
+"เจ้าหน้าที่สาธารณสุข":"เจ้าหน้าที่สาธารณสุข",
+"สภาองค์กรชุมชน":"สภาองค์กรชุมชน",
+"อื่น ๆ":"อืน ๆ",
+}'></span> อื่น ๆ (โปรดระบุ) <span class="{$datainput} w-3" onclick="" data-fld="coowner-3-position-other"></span></p>
+
+<p>เลขที่ประจำตัวประชาชน 13 หลัก&nbsp;&nbsp;&nbsp; <span class="{$datainput} w-3" onclick="" data-fld="coowner-3-cid"></span></p>
+
+<h5>ที่อยู่ตามบัตรประชาชน</h5>
+<p>
+บ้านเลขที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-3-address"></span>
+หมู่ที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-3-moo"></span>
+ตรอก/ซอย <span class="{$datainput} w-2" onclick="" data-fld="coowner-3-soi"></span>
+ถนน <span class="{$datainput} w-2" onclick="" data-fld="coowner-3-road"></span>
+ตำบล/แขวง <span class="{$datainput} w-2" onclick="" data-fld="coowner-3-tambon"></span>
+อำเภอ/เขต <span class="{$datainput} w-2" onclick="" data-fld="coowner-3-ampur"></span>
+จังหวัด <span class="{$datainput} w-2" onclick="" data-fld="coowner-3-changwat"></span>
+รหัสไปรษณีย์ <span class="{$datainput} w-1" onclick="" data-fld="coowner-3-zip"></span>
+</p>
+
+<p>
+เบอร์โทรศัพท์ที่ติดต่อได้สะดวก <span class="{$datainput} w-1" onclick="" data-fld="coowner-3-phone"></span>
+เบอร์มือถือ <span class="{$datainput} w-1" onclick="" data-fld="coowner-3-mobile"></span>
+โทรสาร <span class="{$datainput} w-1" onclick="" data-fld="coowner-3-fax"></span>
+อีเมล์ <span class="{$datainput} w-2" onclick="" data-fld="coowner-3-email"></span>
+</p>
+<p>บทบาทหน้าที่/ความรับผิดชอบในโครงการนี้
+<span onclick="" data-fld="coowner-3-role" class="{$datainput}" onclick="" data-type="select" data-data='{"การเงิน":"การเงิน","สื่อประชาสัมพันธ์":"สื่อประชาสัมพันธ์","ข้อมูลวิชาการ":"ข้อมูลวิชาการ","ประสานงาน":"ประสานงาน","กิจกรรม":"กิจกรรม","ไอที":"ไอที","อื่น ๆ":"อื่น ๆ"}'></span></p>
+</div>
+
+<div class="box">
+<h4>รายชื่อผู้ร่วมรับผิดชอบโครงการ คนที่ 4</h4>
+
+<p>
+คำนำหน้าชื่อ <span class="{$datainput} w-1" onclick="" data-fld="coowner-4-prename"></span>
+ชื่อ <span class="{$datainput} w-3" onclick="" data-fld="coowner-4-name"></span>
+นามสกุล <span class="{$datainput} w-3" onclick="" data-fld="coowner-4-lastname"></span>
+</p>
+
+<p>ตำแหน่งในชุมชน <span onclick="" data-fld="coowner-4-position" class="{$datainput}" onclick="" data-type="select" data-data='{
+"กำนัน":"กำนัน",
+"ผู้ใหญ่บ้าน":"ผู้ใหญ่บ้าน",
+"ประธานชุมชน":"ประธานชุมชน",
+"กรรมการหมู่บ้าน/ชุมชน":"กรรมการหมู่บ้าน/ชุมชน",
+"อสม.":"อสม.",
+"สมาชิก อบต.":"สมาชิก อบต.",
+"สมาชิกเทศบาล":"สมาชิกเทศบาล",
+"เจ้าหน้าที่สาธารณสุข":"เจ้าหน้าที่สาธารณสุข",
+"สภาองค์กรชุมชน":"สภาองค์กรชุมชน",
+"อื่น ๆ":"อืน ๆ",
+}'></span> อื่น ๆ (โปรดระบุ) <span class="{$datainput} w-3" onclick="" data-fld="coowner-4-position-other"></span></p>
+
+<p>เลขที่ประจำตัวประชาชน 13 หลัก&nbsp;&nbsp;&nbsp; <span class="{$datainput} w-3" onclick="" data-fld="coowner-4-cid"></span></p>
+
+<h5>ที่อยู่ตามบัตรประชาชน</h5>
+<p>
+บ้านเลขที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-4-address"></span>
+หมู่ที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-4-moo"></span>
+ตรอก/ซอย <span class="{$datainput} w-2" onclick="" data-fld="coowner-4-soi"></span>
+ถนน <span class="{$datainput} w-2" onclick="" data-fld="coowner-4-road"></span>
+ตำบล/แขวง <span class="{$datainput} w-2" onclick="" data-fld="coowner-4-tambon"></span>
+อำเภอ/เขต <span class="{$datainput} w-2" onclick="" data-fld="coowner-4-ampur"></span>
+จังหวัด <span class="{$datainput} w-2" onclick="" data-fld="coowner-4-changwat"></span>
+รหัสไปรษณีย์ <span class="{$datainput} w-1" onclick="" data-fld="coowner-4-zip"></span>
+</p>
+
+<p>
+เบอร์โทรศัพท์ที่ติดต่อได้สะดวก <span class="{$datainput} w-1" onclick="" data-fld="coowner-4-phone"></span>
+เบอร์มือถือ <span class="{$datainput} w-1" onclick="" data-fld="coowner-4-mobile"></span>
+โทรสาร <span class="{$datainput} w-1" onclick="" data-fld="coowner-4-fax"></span>
+อีเมล์ <span class="{$datainput} w-2" onclick="" data-fld="coowner-4-email"></span>
+</p>
+
+<p>บทบาทหน้าที่/ความรับผิดชอบในโครงการนี้
+<span onclick="" data-fld="coowner-4-role" class="{$datainput}" onclick="" data-type="select" data-data='{"การเงิน":"การเงิน","สื่อประชาสัมพันธ์":"สื่อประชาสัมพันธ์","ข้อมูลวิชาการ":"ข้อมูลวิชาการ","ประสานงาน":"ประสานงาน","กิจกรรม":"กิจกรรม","ไอที":"ไอที","อื่น ๆ":"อื่น ๆ"}'></span></p>
+</div>
+
+<div class="box">
+<h4>รายชื่อผู้ร่วมรับผิดชอบโครงการ คนที่ 5</h4>
+
+<p>
+คำนำหน้าชื่อ <span class="{$datainput} w-1" onclick="" data-fld="coowner-5-prename"></span>
+ชื่อ <span class="{$datainput} w-3" onclick="" data-fld="coowner-5-name"></span>
+นามสกุล <span class="{$datainput} w-3" onclick="" data-fld="coowner-5-lastname"></span>
+</p>
+
+<p>ตำแหน่งในชุมชน <span onclick="" data-fld="coowner-5-position" class="{$datainput}" onclick="" data-type="select" data-data='{
+"กำนัน":"กำนัน",
+"ผู้ใหญ่บ้าน":"ผู้ใหญ่บ้าน",
+"ประธานชุมชน":"ประธานชุมชน",
+"กรรมการหมู่บ้าน/ชุมชน":"กรรมการหมู่บ้าน/ชุมชน",
+"อสม.":"อสม.",
+"สมาชิก อบต.":"สมาชิก อบต.",
+"สมาชิกเทศบาล":"สมาชิกเทศบาล",
+"เจ้าหน้าที่สาธารณสุข":"เจ้าหน้าที่สาธารณสุข",
+"สภาองค์กรชุมชน":"สภาองค์กรชุมชน",
+"อื่น ๆ":"อืน ๆ",
+}'></span> อื่น ๆ (โปรดระบุ) <span class="{$datainput} w-3" onclick="" data-fld="coowner-5-position-other"></span></p>
+
+
+<p>เลขที่ประจำตัวประชาชน 13 หลัก&nbsp;&nbsp;&nbsp; <span class="{$datainput} w-3" onclick="" data-fld="coowner-5-cid"></span></p>
+
+<h5>ที่อยู่ตามบัตรประชาชน</h5>
+<p>
+บ้านเลขที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-5-address"></span>
+หมู่ที่ <span class="{$datainput} w-1" onclick="" data-fld="coowner-5-moo"></span>
+ตรอก/ซอย <span class="{$datainput} w-2" onclick="" data-fld="coowner-5-soi"></span>
+ถนน <span class="{$datainput} w-2" onclick="" data-fld="coowner-5-road"></span>
+ตำบล/แขวง <span class="{$datainput} w-2" onclick="" data-fld="coowner-5-tambon"></span>
+อำเภอ/เขต <span class="{$datainput} w-2" onclick="" data-fld="coowner-5-ampur"></span>
+จังหวัด <span class="{$datainput} w-2" onclick="" data-fld="coowner-5-changwat"></span>
+รหัสไปรษณีย์ <span class="{$datainput} w-1" onclick="" data-fld="coowner-5-zip"></span>
+</p>
+
+<p>
+เบอร์โทรศัพท์ที่ติดต่อได้สะดวก <span class="{$datainput} w-1" onclick="" data-fld="coowner-5-phone"></span>
+เบอร์มือถือ <span class="{$datainput} w-1" onclick="" data-fld="coowner-5-mobile"></span>
+โทรสาร <span class="{$datainput} w-1" onclick="" data-fld="coowner-5-fax"></span>
+อีเมล์ <span class="{$datainput} w-2" onclick="" data-fld="coowner-5-email"></span>
+</p>
+
+<p>บทบาทหน้าที่/ความรับผิดชอบในโครงการนี้
+<span onclick="" data-fld="coowner-5-role" class="{$datainput}" onclick="" data-type="select" data-data='{"การเงิน":"การเงิน","สื่อประชาสัมพันธ์":"สื่อประชาสัมพันธ์","ข้อมูลวิชาการ":"ข้อมูลวิชาการ","ประสานงาน":"ประสานงาน","กิจกรรม":"กิจกรรม","ไอที":"ไอที","อื่น ๆ":"อื่น ๆ"}'></span></p>
+</div>
+
+<a name="leadername" id="leadername"></a>
+<h3>5. รายชื่อแกนนำในชุมขน</h3>
+<div class="box">
+<p><em>ระบุรายชื่อแกนนำในชุมชน <u>ให้ระบุเพิ่มอีก 3- 5 คน</u> พร้อมประสบการณ์ในการทำงานที่จะมาช่วยหนุนเสริมการดำเนินงานของโครงการ( เช่น ปราชญ์ชาวบ้านสมาชิกองค์การบริหารตำบล ครู ผู้นำศาสนา กลุ่มออมทรัพย์ กลุ่มสหกรณ์ กลุ่มสวัสดิการ ผู้สูงอายุ เจ้าหน้าที่สาธารณสุข อสม. เป็นต้น)</em></p>
+<p><span class="{$datainput} w-10" onclick="" data-fld="name-mainstay" data-type="textarea">
+</span></p>
+</div>
+</div><!--tab : owner -->
+
+
+
+
+
+<div id="detail">
+<br /><h3>6. ระยะเวลาดำเนินงาน</h3>
+<p>วันเริ่มต้น <strong><span class="{$datainput} w-2" onclick="" data-group="dev" data-fld="date_from" data-type="datepicker" data-ret="date:ว ดดด ปปปป"></span></strong> กำหนดเสร็จ <strong><span class="{$datainput} w-2" onclick="" data-group="dev" data-fld="date_end" data-type="datepicker" data-ret="date:ว ดดด ปปปป"></span></strong></p>
+
+
+
+<!-- view::inlineedit(array('group'=>'tr:info:mainact','fld'=>'date1','tr'=>$mainact->trid, 'value'=>$mainact->fromdate,'ret'=>'date:ว ดดด ปปปป'),$mainact->fromdate,$isEdit,'datepicker') -->
+
+
+<h3>7. รายละเอียดของโครงการ</h3>
+
+<div style="padding:0 20px; background: #eee; border:1px #ccc solid;">
+<em><h5>คำแนะนำ</h5>
+<ul><li>กรุณาให้รายละเอียดในหัวข้อที่กำหนดไว้ให้เพียงพอต่อการพิจารณา เพื่อคณะกรรมการผู้ทรงคุณวุฒิ จะใช้เป็นข้อมูลสำคัญในการพิจารณาอนุมัติการสนับสนุนโครงการ</li>
+<li>ความกระจ่างชัดของเอกสารที่อ่านแล้วเข้าใจถึงจุดมุ่งหมาย วิธีการดำเนินการ ลักษณะการทำงานร่วมกันกับคนหลากหลาย การใช้เงินและทรัพยากรที่มีในชุมชนมาทำให้กิจกรรมบรรลุเป้าหมาย คนที่ร่วมคิดร่วมทำแต่ละคนมีบทบาทอย่างไร ฯลฯ มีผลต่อการพิจารณาอนุมัติโครงการ</li></ul></em>
+</div>
+
+<div class="box">
+<p class="L1"><strong>2. ท่านมีขั้นตอนการพัฒนาหรือเขียนโครงการนี้อย่างไร</strong> (เช่น การประชุมกลุ่มหรือการทำประชาคมหมู่บ้านเพื่อการตัดสินใจร่วมกันในการทำโครงการ)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="project-develop" data-type="textarea"></span></p>
+</div>
+
+<div class="box">
+<p class="L1"><strong>3. โปรดวิเคราะห์และอธิบายทุนที่มีอยู่ในชุมชน ที่จะเป็นปัจจัยเอื้อต่อการดำเนินโครงการ (ทุนของชุมชน ได้แก่ คน ทรัพยากรธรรมชาติ วัฒนธรรม วิถีชีวิต ภูมิปัญญาและเศรษฐกิจชุมชน)</strong></p>
+
+<a name="link-3-1" id="link-3-1"></a>
+<p class="L2">3.1 ในชุมชนของท่านมีใครที่เป็นปราชญ์ชาวบ้าน เป็นผู้นำ และแกนนำ ด้านใดบ้างที่ได้รับการยอมรับจากชุมชน (เช่น ผู้นำศาสนา กำนัน ผู้ใหญ่บ้าน หมอพื้นบ้าน ครู เป็นต้น)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="commune-leader" data-type="textarea"></span></p>
+
+<a name="link-3-2" id="link-3-2"></a>
+<p class="L2">3.2 ในชุมชนของท่านมีกลุ่ม องค์กร หน่วยงานและเครือข่ายใดบ้าง ที่มีความเข้มแข็งเป็นกำลังหลักในงานพัฒนาชุมชน (เช่น เทศบาล, อบต., รพ.สต., โรงเรียน, อสม., กลุ่มแม่บ้าน, กลุ่มผู้สูงอายุ, กลุ่มอาชีพ เป็นต้น)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="commune-org" data-type="textarea"></span></p>
+
+<a name="link-3-3" id="link-3-3"></a>
+<p class="L2">3.3 ในชุมชนของท่านมีวิถีชีวิตหรือประเพณี วัฒนธรรมใดบ้างที่เป็นจุดเด่น สามารถนำมาใช้เป็นแนวทางในการพัฒนาชุมชน (เช่น ศาสนา ประเพณีพื้นบ้าน การบริโภค อาชีพ กีฬาและการละเล่น เป็นต้น)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="commune-tradition" data-type="textarea"></span></p>
+
+<a name="link-3-4" id="link-3-4"></a>
+<p class="L2">3.4 ในชุมชนของท่านมีสิ่งใดที่ถือว่าเป็นภูมิปัญญา เป็นความรู้ เป็นนวัตกรรม ที่จะนำมาใช้ในการพัฒนาชุมชน (เช่น แพทย์แผนไทย เกษตรวิถีธรรมวิถีไท ตำรับอาหาร สิ่งประดิษฐ์และกรรมวิธีในการประกอบอาชีพ เป็นต้น)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="commune-knowledge" data-type="textarea"></span></p>
+
+<a name="link-3-5" id="link-3-5"></a>
+<p class="L2">3.5 ในชุมชนของท่านมีศูนย์เรียนรู้ หรือกระบวนการเรียนรู้ หรือการจัดการความรู้ ในชุมชนอย่างไร (เช่น ศูนย์เรียนรู้เศรษฐกิจพอเพียง หลักสูตรท้องถิ่น เวทีชาวบ้าน การวิจัยชุมชนท้องถิ่น เป็นต้น)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="commune-learningcenter" data-type="textarea"></span></p>
+
+<a name="link-3-6"id="link-3-6"></a>
+<p class="L2">3.6 ในชุมชนของท่านมีการทำงานร่วมกัน หรือกระบวนการมีส่วนร่วมของชุมชนอย่างไร (เช่น สภาชุมชน สภากาแฟ การลงแขก เวทีชุมชน เวทีชาวบ้าน การทำงานเป็นกลุ่ม เครือข่าย เป็นต้น)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="commune-participation" data-type="textarea"></span></p>
+
+<a name="link-3-7" id="link-3-7"></a>
+<p class="L2">3.7 ในชุมชนของท่านมีเครือข่ายเศรษฐกิจชุมชนใดบ้าง ที่มีความเข้มแข็งและสามารถเข้าร่วมในการพัฒนาชุมชน (เช่น กองทุนออมทรัพย์ สหกรณ์ กองทุนสวัสดิการ กองทุนหมู่บ้านและชุมชนเมือง กองทุนสุขภาพตำบล เป็นต้น)</p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="commune-cconomic" data-type="textarea"></span></p>
+</div>
+
+<a name="link-4-1" id="link-4-1"></a>
+<div class="box">
+<p class="L1"><strong>4. สภาพปัญหาของชุมชนที่ต้องดำเนินการแก้ไข หรือพัฒนาอย่างต่อเนื่องเพื่อให้บรรลุเป้าหมาย</strong></p>
+
+<p class="L2"><strong>4.1 ให้ระบุปัญหาในชุมชนและจัดลำดับความสำคัญจากปัญหาที่สำคัญมากไปน้อย และให้รายละเอียดแต่ละปัญหาในตารางต่อไปนี้</strong></p>
+
+<table cellpadding="7" cellspacing="0" width="100%" id="problem" class="item -problem">
+<colgroup>
+<col width="0.5%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="19%">
+<col width="0.5%">
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th>ปัญหาในชุมชน</th>
+<th>ขนาดของปัญหา<br />(เป็นปัญหามากหรือน้อยเท่าใด)</th>
+<th>ความรุนแรง<br />และผลกระทบของปัญหา</th>
+<th>ความตระหนัก<br />ในการแก้ปัญหาของชุมชน</th>
+<th>ความง่าย<br />ในการแก้ปัญหานี้ของชุมชน</th>
+<th>รวม</th>
+</tr>
+</thead>
+<tbody>
+<tr class="{$commune-problem-1-class}">
+<td rowspan="2"><p>1.</p></td>
+<td><p class="full"><span class="{$datainput} w-8" onclick="" data-fld="commune-problem-1-title" data-type="textarea"></span><a data-remove="{$removeOnNoEdit}" class="sg-box {$isedit} noprint" href="{$historyurl}?tpid={$tpid}&k=bigdata,,,commune-problem-1-title,0">?</a></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-1-size" data-type="textarea"></span><a data-remove="{$removeOnNoEdit}" class="sg-box noprint" href="{$historyurl}?tpid={$tpid}&k=bigdata,,,commune-problem-1-size,0">?</a></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-1-violence" data-type="textarea"></span><a data-remove="{$removeOnNoEdit}" class="sg-box noprint" href="{$historyurl}?tpid={$tpid}&k=bigdata,,,commune-problem-1-violence,0">?</a></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-1-awareness" data-type="textarea"></span><a data-remove="{$removeOnNoEdit}" class="sg-box noprint" href="{$historyurl}?tpid={$tpid}&k=bigdata,,,commune-problem-1-awareness,0">?</a></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-1-difficulty" data-type="textarea"></span><a data-remove="{$removeOnNoEdit}" class="sg-box noprint" href="{$historyurl}?tpid={$tpid}&k=bigdata,,,commune-problem-1-difficulty,0">?</a></p></td>
+<td></td>
+</tr>
+<tr>
+<td>ระดับคะแนน</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-size-weight" data-fld="commune-problem-1-size-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-size-weight" data-fld="commune-problem-1-size-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-size-weight" data-fld="commune-problem-1-size-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-size-weight" data-fld="commune-problem-1-size-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-size-weight" data-fld="commune-problem-1-size-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-violence-weight" data-fld="commune-problem-1-violence-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-violence-weight" data-fld="commune-problem-1-violence-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-violence-weight" data-fld="commune-problem-1-violence-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-violence-weight" data-fld="commune-problem-1-violence-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-violence-weight" data-fld="commune-problem-1-violence-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-awareness-weight" data-fld="commune-problem-1-awareness-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-awareness-weight" data-fld="commune-problem-1-awareness-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-awareness-weight" data-fld="commune-problem-1-awareness-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-awareness-weight" data-fld="commune-problem-1-awareness-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-awareness-weight" data-fld="commune-problem-1-awareness-weight" value="1" /> 1</abbr>
+<!-- <abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-awareness-weight" data-fld="commune-problem-1-awareness-weight" data-group="bigdata:project.develop:commune-problem-1-awareness-weight" data-removeempty="yes" value="" /> X</abbr>-->
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-difficulty-weight" data-fld="commune-problem-1-difficulty-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-difficulty-weight" data-fld="commune-problem-1-difficulty-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-difficulty-weight" data-fld="commune-problem-1-difficulty-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-difficulty-weight" data-fld="commune-problem-1-difficulty-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-1-difficulty-weight" data-fld="commune-problem-1-difficulty-weight" value="1" /> 1</abbr>
+</td>
+<td><p><span class="noinput-{$datainput}" onclick="" data-fld="commune-problem-1-weight"></span></p></td>
+</tr>
+<tr class="{$commune-problem-2-class}">
+<td rowspan="2"><p>2.</p></td>
+<td><p><span class="{$datainput} w-8" onclick="" data-fld="commune-problem-2-title" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-2-size" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-2-violence" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-2-awareness" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-2-difficulty" data-type="textarea"></span></p></td>
+<td></td>
+</tr>
+<tr>
+<td>ระดับคะแนน</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-size-weight" data-fld="commune-problem-2-size-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-size-weight" data-fld="commune-problem-2-size-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-size-weight" data-fld="commune-problem-2-size-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-size-weight" data-fld="commune-problem-2-size-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-size-weight" data-fld="commune-problem-2-size-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-violence-weight" data-fld="commune-problem-2-violence-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-violence-weight" data-fld="commune-problem-2-violence-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-violence-weight" data-fld="commune-problem-2-violence-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-violence-weight" data-fld="commune-problem-2-violence-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-violence-weight" data-fld="commune-problem-2-violence-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-awareness-weight" data-fld="commune-problem-2-awareness-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-awareness-weight" data-fld="commune-problem-2-awareness-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-awareness-weight" data-fld="commune-problem-2-awareness-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-awareness-weight" data-fld="commune-problem-2-awareness-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-awareness-weight" data-fld="commune-problem-2-awareness-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-difficulty-weight" data-fld="commune-problem-2-difficulty-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-difficulty-weight" data-fld="commune-problem-2-difficulty-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-difficulty-weight" data-fld="commune-problem-2-difficulty-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-difficulty-weight" data-fld="commune-problem-2-difficulty-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-2-difficulty-weight" data-fld="commune-problem-2-difficulty-weight" value="1" /> 1</abbr>
+<td><p><span class="noinput-{$datainput}" onclick="" data-fld="commune-problem-2-weight"></span></p></td>
+</td>
+</tr>
+<tr class="{$commune-problem-3-class}">
+<td rowspan="2"><p>3.</p></td>
+<td><p><span class="{$datainput} w-8" onclick="" data-fld="commune-problem-3-title" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-3-size" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-3-violence" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-3-awareness" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-3-difficulty" data-type="textarea"></span></p></td>
+<td></td>
+</tr>
+<tr>
+<td>ระดับคะแนน</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-size-weight" data-fld="commune-problem-3-size-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-size-weight" data-fld="commune-problem-3-size-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-size-weight" data-fld="commune-problem-3-size-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-size-weight" data-fld="commune-problem-3-size-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-size-weight" data-fld="commune-problem-3-size-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-violence-weight" data-fld="commune-problem-3-violence-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-violence-weight" data-fld="commune-problem-3-violence-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-violence-weight" data-fld="commune-problem-3-violence-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-violence-weight" data-fld="commune-problem-3-violence-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-violence-weight" data-fld="commune-problem-3-violence-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-awareness-weight" data-fld="commune-problem-3-awareness-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-awareness-weight" data-fld="commune-problem-3-awareness-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-awareness-weight" data-fld="commune-problem-3-awareness-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-awareness-weight" data-fld="commune-problem-3-awareness-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-awareness-weight" data-fld="commune-problem-3-awareness-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-difficulty-weight" data-fld="commune-problem-3-difficulty-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-difficulty-weight" data-fld="commune-problem-3-difficulty-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-difficulty-weight" data-fld="commune-problem-3-difficulty-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-difficulty-weight" data-fld="commune-problem-3-difficulty-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-3-difficulty-weight" data-fld="commune-problem-3-difficulty-weight" value="1" /> 1</abbr>
+<td><p><span class="noinput-{$datainput}" onclick="" data-fld="commune-problem-3-weight"></span></p></td>
+</td>
+</tr>
+<tr class="{$commune-problem-4-class}">
+<td rowspan="2"><p>4.</p></td>
+<td><p><span class="{$datainput} w-8" onclick="" data-fld="commune-problem-4-title" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-4-size" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-4-violence" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-4-awareness" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-4-difficulty" data-type="textarea"></span></p></td>
+<td></td>
+</tr>
+<tr>
+<td>ระดับคะแนน</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-size-weight" data-fld="commune-problem-4-size-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-size-weight" data-fld="commune-problem-4-size-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-size-weight" data-fld="commune-problem-4-size-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-size-weight" data-fld="commune-problem-4-size-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-size-weight" data-fld="commune-problem-4-size-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-violence-weight" data-fld="commune-problem-4-violence-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-violence-weight" data-fld="commune-problem-4-violence-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-violence-weight" data-fld="commune-problem-4-violence-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-violence-weight" data-fld="commune-problem-4-violence-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-violence-weight" data-fld="commune-problem-4-violence-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-awareness-weight" data-fld="commune-problem-4-awareness-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-awareness-weight" data-fld="commune-problem-4-awareness-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-awareness-weight" data-fld="commune-problem-4-awareness-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-awareness-weight" data-fld="commune-problem-4-awareness-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-awareness-weight" data-fld="commune-problem-4-awareness-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-difficulty-weight" data-fld="commune-problem-4-difficulty-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-difficulty-weight" data-fld="commune-problem-4-difficulty-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-difficulty-weight" data-fld="commune-problem-4-difficulty-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-difficulty-weight" data-fld="commune-problem-4-difficulty-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-4-difficulty-weight" data-fld="commune-problem-4-difficulty-weight" value="1" /> 1</abbr>
+</td>
+<td><p><span class="noinput-{$datainput}" onclick="" data-fld="commune-problem-4-weight"></span></p></td>
+</tr>
+<tr class="{$commune-problem-5-class}">
+<td rowspan="2"><p>5.</p></td>
+<td><p><span class="{$datainput} w-8" onclick="" data-fld="commune-problem-5-title" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-5-size" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-5-violence" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-5-awareness" data-type="textarea"></span></p></td>
+<td><p><span class="{$datainput} w-10" onclick="" data-fld="commune-problem-5-difficulty" data-type="textarea"></span></p></td>
+<td></td>
+</tr>
+<tr>
+<td>ระดับคะแนน</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-size-weight" data-fld="commune-problem-5-size-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-size-weight" data-fld="commune-problem-5-size-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-size-weight" data-fld="commune-problem-5-size-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-size-weight" data-fld="commune-problem-5-size-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-size-weight" data-fld="commune-problem-5-size-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-violence-weight" data-fld="commune-problem-5-violence-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-violence-weight" data-fld="commune-problem-5-violence-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-violence-weight" data-fld="commune-problem-5-violence-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-violence-weight" data-fld="commune-problem-5-violence-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-violence-weight" data-fld="commune-problem-5-violence-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-awareness-weight" data-fld="commune-problem-5-awareness-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-awareness-weight" data-fld="commune-problem-5-awareness-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-awareness-weight" data-fld="commune-problem-5-awareness-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-awareness-weight" data-fld="commune-problem-5-awareness-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-awareness-weight" data-fld="commune-problem-5-awareness-weight" value="1" /> 1</abbr>
+</td>
+<td>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-difficulty-weight" data-fld="commune-problem-5-difficulty-weight" value="5" /> 5</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-difficulty-weight" data-fld="commune-problem-5-difficulty-weight" value="4" /> 4</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-difficulty-weight" data-fld="commune-problem-5-difficulty-weight" value="3" /> 3</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-difficulty-weight" data-fld="commune-problem-5-difficulty-weight" value="2" /> 2</abbr>
+<abbr class="problemweight"><input type="radio" data-type="radio" class="{$datainput}" name="commune-problem-5-difficulty-weight" data-fld="commune-problem-5-difficulty-weight" value="1" /> 1</abbr>
+</td>
+<td><p><span class="noinput-{$datainput}" onclick="" data-fld="commune-problem-5-weight"></span></p></td>
+</tr>
+</tbody></table>
+
+<p class="L2"><strong>ให้อธิบายเหตุผลสำคัญว่าทำไมชุมชนจึงเลือกปัญหาใดปัญหาหนึ่ง (หรืออาจจะมากกว่าหนึ่งปัญหา) ในตารางข้างต้นมาเพื่อดำเนินโครงการนี้ (กรณีที่เป็นโครงการต่อเนื่อง ให้ระบุผลการประเมินการดำเนินงานที่ผ่านมา และเชื่อมโยงมาสู่โครงการที่เสนอใหม่อย่างไร)</strong></p>
+<p class="L2"><span class="{$datainput} w-10" onclick="" data-fld="project-problem" data-type="textarea"></span></p>
+
+<a name="link-4-3" id="link-4-3"></a>
+<p class="L2"><strong>4.3 ปัจจัยอะไรที่เป็นสาเหตุของปัญหาและปัจจัยอะไรที่เอื้อต่อการแก้ปัญหาที่ระบุในโครงการ</strong></p>
+
+<p class="L3">4.3.1 ปัจจัยที่เกี่ยวข้องกับคน (เช่น ความรู้ ความตระหนัก พฤติกรรม ความเชื่อ จิตวิญญาณ)</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="factor-human" data-type="textarea"></span></p>
+
+<p class="L3">4.3.2 ปัจจัยที่เกี่ยวข้องกับสภาพแวดล้อม (เช่น วิถีชีวิต วัฒนธรรม ศาสนา การศึกษา เศรษฐกิจ การเมือง นโยบาย เทคโนโลยี สิ่งแวดล้อม)</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="factor-environment" data-type="textarea"></span></p>
+
+<p class="L3">4.3.3 ปัจจัยที่เกี่ยวข้องกับกลไก (เช่น ระบบสาธารณสุข กลไกของกลุ่ม และเครือข่ายในชุมชน กลไกท้องถิ่น กลไกของหน่วยราชการในชุมชน กลไกสื่อสารสาธารณะ)</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="factor-mechanism" data-type="textarea"></span></p>
+
+<a name="link-4-4" id="link-4-4"></a>
+<p class="L2"><strong>4.4 ท่านจะใช้แนวทางสำคัญ วิธีการสำคัญ หรือกลวิธีดำเนินงานที่สำคัญอะไร อย่างไร เพื่อการแก้ไขปัญหาดังกล่าว</strong></p>
+
+<p class="L3">4.4.1 กลวิธีที่เกี่ยวข้องกับคน กลุ่มคน</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="strategies-human" data-type="textarea"></span></p>
+
+<p class="L3">4.4.2 กลวิธีที่เกี่ยวข้องกับการปรับสภาพแวดล้อม</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="strategies-environment" data-type="textarea"></span></p>
+
+<p class="L3">4.4.3 กลวิธีที่เกี่ยวข้องกับการสร้างและปรับปรุงกลไก</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="strategies-mechanism" data-type="textarea"></span></p>
+
+<p class="L2"><strong>4.5 ผลจากการดำเนินโครงการท่านคาดว่าจะเกิดการเปลี่ยนแปลงปัจจัยต่อไปนี้อย่างไร</strong></p>
+
+<p class="L3">	4.5.1 การเปลี่ยนของคนและกลุ่มคนในชุมชน</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="conversion-human" data-type="textarea"></span></p>
+
+<p class="L3">4.5.2 การเปลี่ยนแปลงสภาพแวดล้อมในชุมชนที่เอื้อต่อชุมชนน่าอยู่</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="conversion-environment" data-type="textarea"></span></p>
+
+<p class="L3">4.5.3 การเปลี่ยนแปลงของกลไกในชุมชน</p>
+<p class="L3"><span class="{$datainput} w-10" onclick="" data-fld="conversion-mechanism" data-type="textarea"></span></p>
+</div>
+
+
+<h3>8. วัตถุประสงค์และตัวชี้วัด การดำเนินงาน</h3>
+<div class="box">
+<em>
+<ul>
+<li>บอกจุดมุ่งหมายในการดำเนินงานโครงการ และสิ่งที่ต้องการให้เกิดผลจากการดำเนินงานโครงการ  วัตถุประสงค์นี้จะต้อง <strong>เฉพาะเจาะจง วัดได้จริง แสดงโอกาสที่จะเกิดผลสำเร็จ สอดคล้องกับหลักการและเหตุผล ในระยะเวลาที่กำหนด</strong></li>
+<li><strong>ตัวชี้วัด</strong> ให้ระบุความชัดเจนว่า เมื่อดำเนินการตามโครงการเสร็จแล้ว จะเกิดการเปลี่ยนแปลงหรือบรรลุผลสำเร็จอะไรบ้างและมากน้อยเพียงใด  และควรแสดงให้เห็นถึงการเปลี่ยนแปลงเป็นรูปธรรมวัดผลได้ และระบุตัวชี้วัดความสำเร็จของโครงการทั้งในระดับผลผลิตและผลลัพธ์ที่สอดคล้องกับวัตถุประสงค์</li>
+</ul>
+</em>
+
+<div class="widget " id="project-develop-objective" widget-request="project/develop/objective/{$tpid}"></div>
+
+<hr class="pagebreak">
+</div>
+
+<a name="link-9" id="link-9"></a>
+<a name="plan"></a>
+<div class="x-landscape">
+<h3>9. แผนการดำเนินงาน</h3>
+<div class="box">
+<em><ul><li><strong>กิจกรรม</strong> แสดงขั้นตอนการทำกิจกรรมและกระบวนการดำเนินงาน เขียนให้ละเอียดว่าจะทำอะไร อย่างไร จึงจะสำเร็จตามวัตถุประสงค์หรือเป้าหมายที่วางไว้ เขียนให้เห็นลำดับเป็นขั้นเป็นตอน</li><li><strong>งบประมาณ</strong> ในแต่ละกิจกรรม ขอให้จำแนกรายการค่าใช้จ่ายต่างๆ โดยละเอียด</li></ul></em>
+
+<div class="widget " id="project-develop-plan" widget-request="project/develop/plan/{$tpid}"></div>
+
+<h4>งบประมาณโครงการ</h4>
+<p>จำนวนงบประมาณที่ต้องการสนับสนุนจาก กองทุนตำบล จำนวน <span class="{$datainput} numeric w-2" onclick="" data-group="dev" data-fld="budget" data-ret="numeric"></span> บาท <em>(ไม่เกิน ???,??? บาท)</em></p>
+<p>งบประมาณสมทบจาก <span class="{$datainput} w-2" onclick="" data-type="select" data-fld="project-budget-orgname" data-data='{"":"", "องค์กรปกครองส่วนท้องถิ่น":"องค์กรปกครองส่วนท้องถิ่น","หน่วยราชการ":"หน่วยราชการ","แหล่งทุนอื่น":"แหล่งทุนอื่น"}'></span> จำนวน <span class="{$datainput} numeric w-2" onclick="" data-fld="project-budget-org" data-ret="numeric"></span> บาท</p>
+<!-- <p>แหล่งทุนอื่น ๆ <span class="{$datainput} w-2" data-fld="project-budget-other"></span> บาท</p> -->
+<p><strong>งบประมาณรวม</strong> จำนวน <span class="{$datainput} numeric w-2" onclick="" data-fld="project-budget-all" data-ret="numeric"></span> บาท</p>
+
+</div><!-- box -->
+</div><!-- x-landscape -->
+
+<hr class="pagebreak" />
+
+
+<h3>10. การติดตาม/การประเมินผล</h3>
+<div class="box">
+<em><strong>ใช้กระบวนการสภาผู้นำ/สภาชุมชน</strong> ที่มีการประชุมหมู่บ้านอย่างสม่ำเสมอ อย่างน้อยเดือนละครั้ง และกำหนดให้มีวาระการติดตามประเมินผลโครงการ การจัดทำแผนชุมชน  เป็นต้น  พร้อมทั้งจัดทีม เพื่อทำหน้าที่ติดตามและประเมินผลเป็นระยะว่าแต่ละโครงการ  แต่ละกิจกรรม เป็นตามแผนหรือไม่  มีปัญหาอุปสรรค  และต้องปรับปรุงการดำเนินงานอะไร  อย่างไรบ้าง  สุดท้ายทำเสร็จแล้วจะได้คุณค่าอะไรบ้าง ทั้งนี้ การติดตามประเมินผล ควรระบุการกำกับติดตามกิจกรรมต่างๆ ของโครงการที่ชัดเจน ได้แก่  วิธีการติดตามประเมินผล   เครื่องมือในการติดตาม  ผู้มีบทบาทในการติดตาม  ระยะเวลาในการติดตาม เป็นต้น</em>
+<p><span class="{$datainput} w-10" onclick="" data-fld="project-evaluation" data-type="textarea"></span></p>
+</div>
+
+<h3>11. แนวทางการพัฒนาเพื่อให้เกิดความต่อเนื่องยั่งยืน และการขยายผล</h3>
+<div class="box">
+<em>แสดงให้ชัดเจนในเรื่องคาดหวังผลของโครงการว่าจะเกิดอะไรขึ้น และจะนำไปทำอะไร อย่างไร ให้เกิดความต่อเนื่องและยั่งยืนในชุมชน/ท้องถิ่น และใครจะเป็นผู้รับผิดชอบในการดำเนินการต่อไป ชุมชนจะทำเองต่อ หรือใช้แหล่งทุนใดในชุมชน  ตลอดจนจะมีวิธีการขยายผลจากการดำเนินโครงการนี้อย่างไร และชุมชน หรือผู้อื่นจะใช้ประโยชน์จากผลของโครงการอย่างไร</em>
+<p><span class="{$datainput} w-10" onclick="" data-fld="project-continuously" data-type="textarea"></span></p>
+</div>
+
+
+<p style="margin-top:10em;">ลงชื่อ ........................................................ ผู้เสนอแผนงาน/โครงการ/กิจกรรม<br /><br />
+( <span class="{$datainput} w-3" onclick="" data-fld="presenter-name"></span> )<br />
+ตำแหน่ง <span class="{$datainput} w-3" onclick="" data-fld="presenter-position"></span><br />
+วันที่-เดือน-พ.ศ. <span class="{$datainput} w-3" onclick="" data-fld="presenter-date"></span></p>
+
+</div><!--tab : detail -->
+
+
+
+
+
+
+
+<hr class="pagebreak">
+
+<a name="doc"></a>
+<div class="widget request" widget-request="project/develop/doc/{$tpid}"></div>
+
+<hr class="pagebreak">
+
+
+
+
+
+
+
+
+
+<div id="comment">
+<h2>ภาคผนวกที่ 3 ความเห็น</h2>
+
+<h2>7. สรุปแผนงาน/โครงการ/กิจกรรม</h2>
+
+<div class="box">
+
+<h3>7.1	หน่วยงาน/องค์กร/กลุ่มคน ที่รับผิดชอบโครงการ (ตามประกาศคณะกรรมการหลักประกันฯ พ.ศ. 2557 ข้อ 7)</h3>
+<p><label class="hots">ชื่อหน่วยงาน/องค์กร/กลุ่มคน</label><span class="{$datainput} w-10" onclick="" data-fld="project-commune"></span></p>
+
+<p>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="ownergroup" data-group="dev" data-group="dev" data-fld="ownergroup" value="1" /> 7.1.1 หน่วยบริการหรือสถานบริการสาธารณสุข เช่น รพ.สต.<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="ownergroup" data-group="dev" data-fld="ownergroup" value="2" /> 7.1.2 หน่วยงานสาธารณสุขอื่นของ อปท. เช่น กองสาธารณสุขของเทศบาล<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="ownergroup" data-group="dev" data-fld="ownergroup" value="3" /> 7.1.3 หน่วยงานสาธารณสุขอื่นของรัฐ เช่น สสอ.<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="ownergroup" data-group="dev" data-fld="ownergroup" value="4" /> 7.1.4 หน่วยงานอื่นๆ ที่ไม่ใช่หน่วยงานสาธารณสุข เช่น โรงเรียน<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="ownergroup" data-group="dev" data-fld="ownergroup" value="5" /> 7.1.5 กลุ่มหรือองค์กรประชาชน<br /></abbr>
+</p>
+
+
+<h3>7.2 ประเภทการสนับสนุน (ตามประกาศคณะกรรมการหลักประกันฯ พ.ศ. 2557 ข้อ 7)</h3>
+<p>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="category" data-group="dev" data-group="dev" data-fld="category" value="1" /> 7.2.1 สนับสนุนการจัดบริการสาธารณสุขของ หน่วยบริการ/สถานบริการ/หน่วยงานสาธารณสุข [ข้อ 7(1)]<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="category" data-group="dev" data-fld="category" value="2" /> 7.2.2 สนับสนุนกิจกรรมสร้างเสริมสุขภาพ การป้องกันโรคของกลุ่มหรือองค์กรประชาชน/หน่วยงานอื่น [ข้อ 7(2)]<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="category" data-group="dev" data-fld="category" value="3" /> 7.2.3 สนับสนุนการจัดกิจกรรมของ ศูนย์เด็กเล็ก/ผู้สูงอายุ/คนพิการ [ข้อ 7(3)]<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="category" data-group="dev" data-fld="category" value="4" /> 7.2.4 สนับสนุนการบริหารหรือพัฒนากองทุนฯ [ข้อ 7(4)]<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="category" data-group="dev" data-fld="category" value="5" /> 7.2.5 สนับสนุนกรณีเกิดโรคระบาดหรือภัยพิบัติ [ข้อ 7(5)]<br /></abbr>
+</p>
+
+<h3>7.3	กลุ่มเป้าหมายหลัก (ตามแนบท้ายประกาศคณะอนุกรรมการส่งเสริมสุขภาพและป้องกันโรคฯ พ.ศ. 2557)</h3>
+<p>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="1" /> 7.3.1 กลุ่มหญิงตั้งครรภ์และหญิงหลังคลอด<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="2" /> 7.3.2 กลุ่มเด็กเล็กและเด็กก่อนวัยเรียน<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="3" /> 7.3.3 กลุ่มเด็กวัยเรียนและเยาวชน<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="4" /> 7.3.4 กลุ่มวัยทำงาน<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="5" /> 7.3.5 กลุ่มผู้สูงอายุ<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="6" /> 7.3.6 กลุ่มผู้ป่วยโรคเรื้อรัง<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="7" /> 7.3.7 กลุ่มคนพิการและทุพพลภาพ<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="8" /> 7.3.8 กลุ่มประชาชนทั่วไปที่มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="radio" data-type="radio" class="{$datainput}" name="targetgroup" data-group="dev" data-fld="targetgroup" value="9" /> 7.3.9 สำหรับการบริหารหรือพัฒนากองทุนฯ [ข้อ 7(4)]<br /></abbr>
+จำนวนกลุ่มเป้าหมายที่คาดว่าจะได้รับผลประโยชน์ <span class="{$datainput} numeric w-2" onclick="" data-fld="target-main-total"></span> คน
+</p>
+
+<h3>7.4	กิจกรรมหลักตามกลุ่มเป้าหมายหลัก</h3>
+
+<div id="act-target-1">
+<h4>7.4.1 กลุ่มหญิงตั้งครรภ์และหญิงหลังคลอด</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-1" data-group="bigdata:project.develop:act-target-1-1" data-fld="act-target-1-1" value="1" data-removeempty="yes" /> 7.4.1.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-2" data-group="bigdata:project.develop:act-target-1-2" data-fld="act-target-1-2" value="1" data-removeempty="yes" /> 7.4.1.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-3" data-group="bigdata:project.develop:act-target-1-3" data-fld="act-target-1-3" value="1" data-removeempty="yes" /> 7.4.1.3 การเยี่ยมติดตามดูแลสุขภาพก่อนคลอดและหลังคลอด<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-4" data-group="bigdata:project.develop:act-target-1-4" data-fld="act-target-1-4" value="1" data-removeempty="yes" /> 7.4.1.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-5" data-group="bigdata:project.develop:act-target-1-5" data-fld="act-target-1-5" value="1" data-removeempty="yes" /> 7.4.1.5 การส่งเสริมการเลี้ยงลูกด้วยนมแม่<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-6" data-group="bigdata:project.develop:act-target-1-6" data-fld="act-target-1-6" value="1" data-removeempty="yes" /> 7.4.1.6 การคัดกรองและดูแลรักษามะเร็งปากมดลูกและมะเร็งเต้านม<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-7" data-group="bigdata:project.develop:act-target-1-7" data-fld="act-target-1-7" value="1" data-removeempty="yes" /> 7.4.1.7 การส่งสริมสุขภาพช่องปาก<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-1-8" data-group="bigdata:project.develop:act-target-1-8" data-fld="act-target-1-8" value="1" data-removeempty="yes" /> 7.4.1.8 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-1" data-fld="act-target-other-1" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+
+<div id="act-target-2">
+<h4>7.4.2 กลุ่มเด็กเล็กและเด็กก่อนวัยเรียน</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-1" data-group="bigdata:project.develop:act-target-2-1" data-fld="act-target-2-1" value="1" data-removeempty="yes" /> 7.4.2.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-2" data-group="bigdata:project.develop:act-target-2-2" data-fld="act-target-2-2" value="1" data-removeempty="yes" /> 7.4.2.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-3" data-group="bigdata:project.develop:act-target-2-3" data-fld="act-target-2-3" value="1" data-removeempty="yes" /> 7.4.2.3 การเยี่ยมติดตามดูแลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-4" data-group="bigdata:project.develop:act-target-2-4" data-fld="act-target-2-4" value="1" data-removeempty="yes" /> 7.4.2.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-5" data-group="bigdata:project.develop:act-target-2-5" data-fld="act-target-2-5" value="1" data-removeempty="yes" /> 7.4.2.5 การส่งเสริมพัฒนาการตามวัย/กระบวนการเรียนรู้/ความฉลาดทางปัญญาและอารมณ์<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-6" data-group="bigdata:project.develop:act-target-2-6" data-fld="act-target-2-6" value="1" data-removeempty="yes" /> 7.4.2.6 การส่งเสริมการได้รับวัคซีนป้องกันโรคตามวัย<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-7" data-group="bigdata:project.develop:act-target-2-7" data-fld="act-target-2-7" value="1" data-removeempty="yes" /> 7.4.2.7 การส่งเสริมสุขภาพช่องปาก<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-2-8" data-group="bigdata:project.develop:act-target-2-8" data-fld="act-target-2-8" value="1" data-removeempty="yes" /> 7.4.2.8 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-2" data-fld="act-target-other-2" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+<div id="act-target-3">
+<h4>7.4.3 กลุ่มเด็กวัยเรียนและเยาวชน</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-1" data-group="bigdata:project.develop:act-target-3-1" data-fld="act-target-3-1" value="1" data-removeempty="yes" /> 7.4.3.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-2" data-group="bigdata:project.develop:act-target-3-2" data-fld="act-target-3-2" value="1" data-removeempty="yes" /> 7.4.3.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-3" data-group="bigdata:project.develop:act-target-3-3" data-fld="act-target-3-3" value="1" data-removeempty="yes" /> 7.4.3.3 การเยี่ยมติดตามดูแลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-4" data-group="bigdata:project.develop:act-target-3-4" data-fld="act-target-3-4" value="1" data-removeempty="yes" /> 7.4.3.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-5" data-group="bigdata:project.develop:act-target-3-5" data-fld="act-target-3-5" value="1" data-removeempty="yes" /> 7.4.3.5 การส่งสริมพัฒนาการตามวัย/กระบวนการเรียนรู้/ความฉลาดทางปัญญาและอารมณ์<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-6" data-group="bigdata:project.develop:act-target-3-6" data-fld="act-target-3-6" value="1" data-removeempty="yes" /> 7.4.3.6 การส่งเสริมการได้รับวัคซีนป้องกันโรคตามวัย<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-7" data-group="bigdata:project.develop:act-target-3-7" data-fld="act-target-3-7" value="1" data-removeempty="yes" /> 7.4.3.7 การป้องกันและลดปัญหาด้านเพศสัมพันธ์/การตั้งครรภ์ไม่พร้อม<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-8" data-group="bigdata:project.develop:act-target-3-8" data-fld="act-target-3-8" value="1" data-removeempty="yes" /> 7.4.3.8 การป้องกันและลดปัญหาด้านสารเสพติด/ยาสูบ/เครื่องดื่มแอลกอฮอร์<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-3-9" data-group="bigdata:project.develop:act-target-3-9" data-fld="act-target-3-9" value="1" data-removeempty="yes" /> 7.4.3.9 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-3" data-fld="act-target-other-3" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+
+<div id="act-target-4">
+<h4>7.4.4 กลุ่มวัยทำงาน</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-1" data-group="bigdata:project.develop:act-target-4-1" data-fld="act-target-4-1" value="1" data-removeempty="yes" /> 7.4.4.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-2" data-group="bigdata:project.develop:act-target-4-2" data-fld="act-target-4-2" value="1" data-removeempty="yes" /> 7.4.4.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-3" data-group="bigdata:project.develop:act-target-4-3" data-fld="act-target-4-3" value="1" data-removeempty="yes" /> 7.4.4.3 การเยี่ยมติดตามดูแลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-4" data-group="bigdata:project.develop:act-target-4-4" data-fld="act-target-4-4" value="1" data-removeempty="yes" /> 7.4.4.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-5" data-group="bigdata:project.develop:act-target-4-5" data-fld="act-target-4-5" value="1" data-removeempty="yes" /> 7.4.4.5 การส่งเสริมพฤติกรรมสุขภาพในกลุ่มวัยทำงานและการปรับเปลี่ยนสิ่งแวดล้อมในการทำงาน<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-6" data-group="bigdata:project.develop:act-target-4-6" data-fld="act-target-4-6" value="1" data-removeempty="yes" /> 7.4.4.6 การส่งเสริมการดูแลสุขภาพจิตแก่กลุ่มวัยทำงาน<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-7" data-group="bigdata:project.develop:act-target-4-7" data-fld="act-target-4-7" value="1" data-removeempty="yes" /> 7.4.4.7 การป้องกันและลดปัญหาด้านเพศสัมพันธ์/การตั้งครรภ์ไม่พร้อม<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-8" data-group="bigdata:project.develop:act-target-4-8" data-fld="act-target-4-8" value="1" data-removeempty="yes" /> 7.4.4.8 การป้องกันและลดปัญหาด้านสารเสพติด/ยาสูบ/เครื่องดื่มแอลกอฮอร์<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-4-9" data-group="bigdata:project.develop:act-target-4-9" data-fld="act-target-4-9" value="1" data-removeempty="yes" /> 7.4.4.9 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-4" data-fld="act-target-other-4" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+
+<div id="act-target-5">
+<h4>7.4.5 กลุ่มผู้สูงอายุ</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-1" data-group="bigdata:project.develop:act-target-5-1" data-fld="act-target-5-1" value="1" data-removeempty="yes" /> 7.4.5.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-2" data-group="bigdata:project.develop:act-target-5-2" data-fld="act-target-5-2" value="1" data-removeempty="yes" /> 7.4.5.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-3" data-group="bigdata:project.develop:act-target-5-3" data-fld="act-target-5-3" value="1" data-removeempty="yes" /> 7.4.5.3 การเยี่ยมติดตามดูแลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-4" data-group="bigdata:project.develop:act-target-5-4" data-fld="act-target-5-4" value="1" data-removeempty="yes" /> 7.4.5.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-5" data-group="bigdata:project.develop:act-target-5-5" data-fld="act-target-5-5" value="1" data-removeempty="yes" /> 7.4.5.5 การส่งเสริมพัฒนาทักษะทางกายและใจ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-6" data-group="bigdata:project.develop:act-target-5-6" data-fld="act-target-5-6" value="1" data-removeempty="yes" /> 7.4.5.6 การคัดกรองและดูแลผู้มีภาวะซึมเศร้า<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-7" data-group="bigdata:project.develop:act-target-5-7" data-fld="act-target-5-7" value="1" data-removeempty="yes" /> 7.4.5.7 การคัดกรองและดูแลผู้มีภาวะข้อเข่าเสื่อม<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-5-8" data-group="bigdata:project.develop:act-target-5-8" data-fld="act-target-5-8" value="1" data-removeempty="yes" /> 7.4.5.8 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-5" data-fld="act-target-other-5" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+
+<div id="act-target-6">
+<h4>7.4.6 กลุ่มผู้ป่วยโรคเรื้อรัง</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-1" data-group="bigdata:project.develop:act-target-6-1" data-fld="act-target-6-1" value="1" data-removeempty="yes" /> 7.4.6.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-2" data-group="bigdata:project.develop:act-target-6-2" data-fld="act-target-6-2" value="1" data-removeempty="yes" /> 7.4.6.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-3" data-group="bigdata:project.develop:act-target-6-3" data-fld="act-target-6-3" value="1" data-removeempty="yes" /> 7.4.6.3 การเยี่ยมติดตามดูแลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-4" data-group="bigdata:project.develop:act-target-6-4" data-fld="act-target-6-4" value="1" data-removeempty="yes" /> 7.4.6.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-5" data-group="bigdata:project.develop:act-target-6-5" data-fld="act-target-6-5" value="1" data-removeempty="yes" /> 7.4.6.5 การคัดกรองและดูแลผู้ป่วยโรคเบาหวานและความดันโลหิตสูง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-6" data-group="bigdata:project.develop:act-target-6-6" data-fld="act-target-6-6" value="1" data-removeempty="yes" /> 7.4.6.6 การคัดกรองและดูแลผู้ป่วยโรคหัวใจ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-7" data-group="bigdata:project.develop:act-target-6-7" data-fld="act-target-6-7" value="1" data-removeempty="yes" /> 7.4.6.7 การคัดกรองและดูแลผู้ป่วยโรคหลอดเลือดสมอง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-8" data-group="bigdata:project.develop:act-target-6-8" data-fld="act-target-6-8" value="1" data-removeempty="yes" /> 7.4.6.8 การคัดกรองและดูแลผู้ป่วยโรคมะเร็ง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-6-9" data-group="bigdata:project.develop:act-target-6-9" data-fld="act-target-6-9" value="1" data-removeempty="yes" /> 7.4.6.9 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-6" data-fld="act-target-other-6" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+
+<div id="act-target-7">
+<h4>7.4.7 กลุ่มคนพิการและทุพพลภาพ</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-1" data-group="bigdata:project.develop:act-target-7-1" data-fld="act-target-7-1" value="1" data-removeempty="yes" /> 7.4.7.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-2" data-group="bigdata:project.develop:act-target-7-2" data-fld="act-target-7-2" value="1" data-removeempty="yes" /> 7.4.7.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-3" data-group="bigdata:project.develop:act-target-7-3" data-fld="act-target-7-3" value="1" data-removeempty="yes" /> 7.4.7.3 การเยี่ยมติดตามดูแลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-4" data-group="bigdata:project.develop:act-target-7-4" data-fld="act-target-7-4" value="1" data-removeempty="yes" /> 7.4.7.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-5" data-group="bigdata:project.develop:act-target-7-5" data-fld="act-target-7-5" value="1" data-removeempty="yes" /> 7.4.7.5 การส่งเสริมพัฒนาทักษะทางกายและใจ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-6" data-group="bigdata:project.develop:act-target-7-6" data-fld="act-target-7-6" value="1" data-removeempty="yes" /> 7.4.7.6 การคัดกรองและดูแลผู้มีภาวะซึมเศร้า<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-7" data-group="bigdata:project.develop:act-target-7-7" data-fld="act-target-7-7" value="1" data-removeempty="yes" /> 7.4.7.7 การคัดกรองและดูแลผู้มีภาวะข้อเข่าเสื่อม<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-7-8" data-group="bigdata:project.develop:act-target-7-8" data-fld="act-target-7-8" value="1" data-removeempty="yes" /> 7.4.7.8 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-7" data-fld="act-target-other-7" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+
+<div id="act-target-8">
+<h4>7.4.8 กลุ่มประชาชนทั่วไปที่มีภาวะเสี่ยง</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-8-1" data-group="bigdata:project.develop:act-target-8-1" data-fld="act-target-8-1" value="1" data-removeempty="yes" /> 7.4.8.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-8-2" data-group="bigdata:project.develop:act-target-8-2" data-fld="act-target-8-2" value="1" data-removeempty="yes" /> 7.4.8.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-8-3" data-group="bigdata:project.develop:act-target-8-3" data-fld="act-target-8-3" value="1" data-removeempty="yes" /> 7.4.8.3 การเยี่ยมติดตามดูแลสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-8-4" data-group="bigdata:project.develop:act-target-8-4" data-fld="act-target-8-4" value="1" data-removeempty="yes" /> 7.4.8.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-8-5" data-group="bigdata:project.develop:act-target-8-5" data-fld="act-target-8-5" value="1" data-removeempty="yes" /> 7.4.8.5 การส่งเสริมการปรับเปลี่ยนพฤติกรรมและสิ่งแวดล้อมที่มีผลกระทบต่อสุขภาพ<br /></abbr>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-8-6" data-group="bigdata:project.develop:act-target-8-6" data-fld="act-target-8-6" value="1" data-removeempty="yes" /> 7.4.8.6 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-8" data-fld="act-target-other-8" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+
+
+<div id="act-target-9">
+<h4>7.4.9  สำหรับการบริหารหรือพัฒนากองทุนฯ [ข้อ 7(4)]</h4>
+<abbr class="checkbox"><input type="checkbox" data-type="checkbox" class="{$datainput}" name="act-target-9-1" data-group="bigdata:project.develop:act-target-9-1" data-fld="act-target-9-1" value="1" data-removeempty="yes" /> 7.4.9.1 อื่นๆ (ระบุ) <span class="{$datainput} w-9" onclick="" data-group="bigdata:project.develop:act-target-other-9" data-fld="act-target-other-9" data-removeempty="yes"></span><br /></abbr>
+</div>
+
+<!--
+
+	  7.4.1.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.1.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.1.3 การเยี่ยมติดตามดูแลสุขภาพก่อนคลอดและหลังคลอด
+	  7.4.1.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.1.5 การส่งเสริมการเลี้ยงลูกด้วยนมแม่
+	  7.4.1.6 การคัดกรองและดูแลรักษามะเร็งปากมดลูกและมะเร็งเต้านม
+	  7.4.1.7 การส่งสริมสุขภาพช่องปาก
+	  7.4.1.8 อื่นๆ (ระบุ) .................................................................................................................
+
+
+	  7.4.2  กลุ่มเด็กเล็กและเด็กก่อนวัยเรียน
+	  7.4.2.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.2.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.2.3 การเยี่ยมติดตามดูแลสุขภาพ
+	  7.4.2.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.2.5 การส่งเสริมพัฒนาการตามวัย/กระบวนการเรียนรู้/ความฉลาดทางปัญญาและอารมณ์
+	  7.4.2.6 การส่งเสริมการได้รับวัคซีนป้องกันโรคตามวัย
+	  7.4.2.7 การส่งเสริมสุขภาพช่องปาก
+	  7.4.2.8 อื่นๆ (ระบุ) .................................................................................................................
+
+	  7.4.3  กลุ่มเด็กวัยเรียนและเยาวชน
+	  7.4.3.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.3.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.3.3 การเยี่ยมติดตามดูแลสุขภาพ
+	  7.4.3.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.3.5 การส่งสริมพัฒนาการตามวัย/กระบวนการเรียนรู้/ความฉลาดทางปัญญาและอารมณ์
+	  7.4.3.6 การส่งเสริมการได้รับวัคซีนป้องกันโรคตามวัย
+	  7.4.3.7 การป้องกันและลดปัญหาด้านเพศสัมพันธ์/การตั้งครรภ์ไม่พร้อม
+	  7.4.3.8 การป้องกันและลดปัญหาด้านสารเสพติด/ยาสูบ/เครื่องดื่มแอลกอฮอร์
+	  7.4.3.9 อื่นๆ (ระบุ) .................................................................................................................
+
+	  7.4.4  กลุ่มวัยทำงาน
+	  7.4.4.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.4.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.4.3 การเยี่ยมติดตามดูแลสุขภาพ
+	  7.4.4.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.4.5 การส่งเสริมพฤติกรรมสุขภาพในกลุ่มวัยทำงานและการปรับเปลี่ยนสิ่งแวดล้อมในการทำงาน
+	  7.4.4.6 การส่งเสริมการดูแลสุขภาพจิตแก่กลุ่มวัยทำงาน
+	  7.4.4.7 การป้องกันและลดปัญหาด้านเพศสัมพันธ์/การตั้งครรภ์ไม่พร้อม
+	  7.4.4.8 การป้องกันและลดปัญหาด้านสารเสพติด/ยาสูบ/เครื่องดื่มแอลกอฮอร์
+	  7.4.4.9 อื่นๆ (ระบุ) .................................................................................................................
+
+	  7.4.5.1 กลุ่มผู้สูงอายุ
+	  7.4.5.1.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.5.1.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.5.1.3 การเยี่ยมติดตามดูแลสุขภาพ
+	  7.4.5.1.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.5.1.5 การส่งเสริมพัฒนาทักษะทางกายและใจ
+	  7.4.5.1.6 การคัดกรองและดูแลผู้มีภาวะซึมเศร้า
+	  7.4.5.1.7 การคัดกรองและดูแลผู้มีภาวะข้อเข่าเสื่อม
+	  7.4.5.1.8 อื่นๆ (ระบุ) .................................................................................................................
+
+	  7.4.6 กลุ่มผู้ป่วยโรคเรื้อรัง
+	  7.4.6.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.6.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.6.3 การเยี่ยมติดตามดูแลสุขภาพ
+	  7.4.6.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.6.5 การคัดกรองและดูแลผู้ป่วยโรคเบาหวานและความดันโลหิตสูง
+	  7.4.6.6 การคัดกรองและดูแลผู้ป่วยโรคหัวใจ
+	  7.4.6.7 การคัดกรองและดูแลผู้ป่วยโรคหลอดเลือดสมอง
+	  7.4.6.8 การคัดกรองและดูแลผู้ป่วยโรคมะเร็ง
+	  7.4.6.9 อื่นๆ (ระบุ) .................................................................................................................
+
+	  7.4.7  กลุ่มคนพิการและทุพพลภาพ
+	  7.4.7.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.7.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.7.3 การเยี่ยมติดตามดูแลสุขภาพ
+	  7.4.7.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.7.5 การส่งเสริมพัฒนาทักษะทางกายและใจ
+	  7.4.7.6 การคัดกรองและดูแลผู้มีภาวะซึมเศร้า
+	  7.4.7.7 การคัดกรองและดูแลผู้มีภาวะข้อเข่าเสื่อม
+	  7.4.7.8 อื่นๆ (ระบุ) .................................................................................................................
+
+	  7.4.8  กลุ่มประชาชนทั่วไปที่มีภาวะเสี่ยง
+	  7.4.8.1 การสำรวจข้อมูลสุขภาพ การจัดทำทะเบียนและฐานข้อมูลสุขภาพ
+	  7.4.8.2 การตรวจคัดกรอง ประเมินภาวะสุขภาพ และการค้นหาผู้มีภาวะเสี่ยง
+	  7.4.8.3 การเยี่ยมติดตามดูแลสุขภาพ
+	  7.4.8.4 การรณรงค์/ประชาสัมพันธ์/ฝึกอบรม/ให้ความรู้
+	  7.4.8.5 การส่งเสริมการปรับเปลี่ยนพฤติกรรมและสิ่งแวดล้อมที่มีผลกระทบต่อสุขภาพ
+	  7.4.8.6 อื่นๆ (ระบุ) .................................................................................................................
+
+	  7.4.9  สำหรับการบริหารหรือพัฒนากองทุนฯ [ข้อ 7(4)]
+	  7.4.9.1 อื่นๆ (ระบุ) .................................................................................................................
+-->
+</div>
+
+<h2>8. ความเห็นของคณะกรรมการกองทุนสุขภาพตำบล</h2>
+<div class="box">
+<h4>ตัวชี้วัดการประเมิน</h4>
+<h5>1. การมีส่วนร่วม</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-1" data-fld="rating-indicator-1" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-1" data-fld="rating-indicator-1" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-1" data-fld="rating-indicator-1" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-1" data-fld="rating-indicator-1" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-1" data-fld="rating-indicator-1" value="1" /> 1
+</p>
+<h5>2. ผู้นำ/แกนชุมชน</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-2" data-fld="rating-indicator-2" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-2" data-fld="rating-indicator-2" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-2" data-fld="rating-indicator-2" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-2" data-fld="rating-indicator-2" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-2" data-fld="rating-indicator-2" value="1" /> 1
+</p>
+<h4>การพัฒนาโครงการ</h4>
+<h5>มีผู้รับผิดชอบโครงการ และแกนนำในชุมชน</h5>
+<ul>
+<li><a href="#ownername">ผู้รับผิดชอบโครงการ</a></li>
+<li><a href="#teamname">รายชื่อผู้เข้าร่วมทำโครงการ/คณะทำงาน</a></li>
+<li><a href="#leadername">รายชื่อแกนนำในชุมชน พร้อมประสบการณ์ในการทำงาน</a></li>
+</ul>
+<h4>การติดตามประเมินผล</h4>
+<ul>
+<li>เกิดกลไกขับเคลื่อนในพื้นที่ เช่น สภาผู้นำ/กลุ่ม/เครือข่าย</li>
+</ul>
+<h4>ข้อเสนอแนะเพิ่มเติม</h4>
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-1"></div>
+</div>
+
+<div class="box">
+<h4>ตัวชี้วัดการประเมิน</h4>
+<h5>3. โครงสร้างองค์กร</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-3" data-fld="rating-indicator-3" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-3" data-fld="rating-indicator-3" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-3" data-fld="rating-indicator-3" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-3" data-fld="rating-indicator-3" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-3" data-fld="rating-indicator-3" value="1" /> 1
+</p>
+<h4>การพัฒนาโครงการ</h4>
+<h5>โครงสร้างชุมชน ทุนของชุมชน</h5>
+<ul>
+<li><a href="#ownername">ผู้รับผิดชอบโครงการ</a></li>
+<li><a href="#teamname">รายชื่อผู้เข้าร่วมทำโครงการ/คณะทำงาน</a></li>
+</ul>
+<h5>การวิเคราะห์และอธิบายทุนที่มีอยู่ในชุมชน</h5>
+<ul>
+<li><a href="#link-3-1">ผู้นำและแกนนำ</a></li>
+<li><a href="#link-3-2">กลุ่ม องค์กร หน่วยงานและเครือข่าย</a></li>
+<li><a href="#link-3-3">วิถีชีวิต ประเพณี วัฒนธรรม</a></li>
+<li><a href="#link-3-4">ภูมิปัญญา</a></li>
+<li><a href="#link-3-5">ศูนย์เรียนรู้</a></li>
+<li><a href="#link-3-6">กระบวนการมีส่วนร่วมของชุมชน</a></li>
+<li><a href="#link-3-7">เครือข่ายเศรษฐกิจชุมชน</a></li>
+</ul>
+<h4>การติดตามประเมินผล</h4>
+<ul><li>เกิดกลไกขับเคลื่อนในพื้นที่ เป็นส่วนสำคัญในโครงสร้างชุมชน เช่น กรรมการหมู่บ้าน กรรมการชุมชน เป็นต้น</li></ul>
+<h4>ข้อเสนอแนะเพิ่มเติม</h4>
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-3"></div>
+</div>
+
+<div class="box">
+<h4>ตัวชี้วัดการประเมิน</h4>
+<h5>4. การประเมินปัญหา</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-4" data-fld="rating-indicator-4" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-4" data-fld="rating-indicator-4" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-4" data-fld="rating-indicator-4" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-4" data-fld="rating-indicator-4" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-4" data-fld="rating-indicator-4" value="1" /> 1
+</p>
+<h5>5. การถามว่าทำไม</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-5" data-fld="rating-indicator-5" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-5" data-fld="rating-indicator-5" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-5" data-fld="rating-indicator-5" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-5" data-fld="rating-indicator-5" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-5" data-fld="rating-indicator-5" value="1" /> 1
+</p>
+<h4>การพัฒนาโครงการ</h4>
+<h5>การวิเคราะห์สภาพปัญหาในชุมชน/เลือกปัญหา</h5>
+<ul>
+<li><a href="#link-4-1">ปัญหาในชุมชนและจัดลำดับความสำคัญ</a></li>
+</ul>
+<h5>การวิเคราะห์ปัจจัยที่มีผลต่อการจัดการปัญหา (คน สภาพแวดล้อมกลไก)</h5>
+<ul>
+<li><a href="#link-4-3">ปัจจัยสาเหตุและปัจจัยเอื้อต่อการแก้ปัญหา</a></li>
+</ul>
+<h5>การวิเคราะห์และจัดทำแนวทางการจัดการปัญหา</h5>
+<ul>
+<li><a href="#link-4-4">แนวทางสำคัญ วิธีการสำคัญเพื่อแก้ไขปัญหา</a></li>
+</ul>
+
+<h4>การติดตามประเมินผล</h4>
+<ul><li>มีฐานข้อมูลชุมชน (ปัญหาของชุมชน , ปัญหาเฉพาะประเด็น)</li></ul>
+<h4>ข้อเสนอแนะเพิ่มเติม</h4>
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-4"></div>
+</div>
+
+<div class="box">
+<h4>ตัวชี้วัดการประเมิน</h4>
+<h5>6. การระดมทรัพยากร</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-6" data-fld="rating-indicator-6" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-6" data-fld="rating-indicator-6" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-6" data-fld="rating-indicator-6" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-6" data-fld="rating-indicator-6" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-6" data-fld="rating-indicator-6" value="1" /> 1
+</p>
+<h5>7. การเชื่อมโยงภายนอก</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-7" data-fld="rating-indicator-7" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-7" data-fld="rating-indicator-7" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-7" data-fld="rating-indicator-7" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-7" data-fld="rating-indicator-7" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-7" data-fld="rating-indicator-7" value="1" /> 1
+</p>
+<h4>การพัฒนาโครงการ</h4>
+<h5>แผนการดำเนินการมีภาคีร่วมสนับสนุน อะไร อย่างไร งบประมาณที่ร่วมสนับสนุน</h5>
+<ul><li><a href="#link-9">แผนการดำเนินงาน ภาคีร่วมสนับสนุน</a></li></ul>
+<h4>การติดตามประเมินผล</h4>
+<ul><li>การระดมทรัพยากรและการเชื่อมโยงภายนอก มีการบรรจุอยู่ใน แผนชุมชน แผน อบต./เทศบาล แผนของหน่วยงาน</li></ul>
+<h4>ข้อเสนอแนะเพิ่มเติม</h4>
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-6"></div>
+</div>
+
+<div class="box">
+<h4>ตัวชี้วัดการประเมิน</h4>
+<h5>8. บทบาทตัวแทน</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-8" data-fld="rating-indicator-8" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-8" data-fld="rating-indicator-8" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-8" data-fld="rating-indicator-8" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-8" data-fld="rating-indicator-8" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-8" data-fld="rating-indicator-8" value="1" /> 1
+</p>
+<h5>ตัวแทนภายใน</h5>
+<ul>
+<li>ผู้รับผิดชอบโครงการเป็นตัวแทนชุมชน มีกระบวนการชี้แจง ประชุมชุมชนก่อนเริ่มโครงการ</li>
+<li>มีกระบวนการติดตามประเมินผลโครงการโดยชุมชน</li>
+<li>มีการประเมินผลระหว่างโครงการ</li>
+<li>มีการประเมินผลหลังการทำโครงการ</li>
+</ul>
+<h5>ตัวแทนภายนอก</h5>
+<ul>
+<li>มีระบบพี่เลี้ยง หนุนเสริม เชื่อมประสานกับหน่วยงานภาคีที่เกี่ยวข้องทั้งภายใน และภายนอกชุมชน</li>
+</ul>
+<h4>การพัฒนาโครงการ</h4>
+<h5>ตัวแทนภายใน และตัวแทนภายนอก</h5>
+<ul>
+<li><a href="#link-9">แผนการดำเนินงาน กิจกรรม</a></li>
+</ul>
+<h4>การติดตามประเมินผล</h4>
+<ul>
+<li>ผู้รับผิดชอบโครงการเข้าไปมีส่วนร่วมในกลุ่ม / เครือข่าย หรือ หน่วยงานทั้งภายในและภายนอกชุมชน</li>
+<li>ผู้รับผิดชอบโครงการยกระดับเป็นพี่เลี้ยง</li>
+</ul>
+<h4>ข้อเสนอแนะเพิ่มเติม</h4>
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-8"></div>
+</div>
+
+<div class="box">
+<h4>ตัวชี้วัดการประเมิน</h4>
+<h5>9. การบริหารจัดการ</h5>
+<p align="right">คะแนน
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-9" data-fld="rating-indicator-9" value="5" /> 5
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-9" data-fld="rating-indicator-9" value="4" /> 4
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-9" data-fld="rating-indicator-9" value="3" /> 3
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-9" data-fld="rating-indicator-9" value="2" /> 2
+<input type="radio" data-type="radio" class="{$datainput}" name="rating-indicator-9" data-fld="rating-indicator-9" value="1" /> 1
+</p>
+<h4>การพัฒนาโครงการ</h4>
+<ul>
+<li>การใช้ระบบพัฒนาโครงการบนเว็บไซต์</li>
+</ul>
+<h4>การติดตามประเมินผล</h4>
+<ul>
+<li>การใช้ระบบติดตามประเมินผลบนเว็บไซต์ (รายงาน, การเงิน)</li>
+</ul>
+<h4>ข้อเสนอแนะเพิ่มเติม</h4>
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-9"></div>
+</div>
+
+<div class="box project-develop-ratingindicator">
+<h4>คะแนนตัวชี้วัดการประเมิน</h4>
+<p style="font-size:1.2em;font-weight:bold;">คะแนนตัวชี้วัด = {$ratingIndicator}/45 = {$ratingPercent}%</p>
+<p><em>กรุณาคลิกรีเฟรชเพื่อคำนวนคะแนนตัวชี้วัดใหม่</em></p>
+</div>
+
+<h3>2. สรุปภาพรวมข้อเสนอโครงการ</h3>
+<div class="box">
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-summary"></div>
+</div>
+
+<h3>3. ความเห็นภาพรวมของผู้ทรงคุณวุฒิ</h3>
+<div class="box">
+<div class="widget request" widget-request="project/develop/comment/{$tpid}/comment-commentator"></div>
+</div>
+
+
+<div class="x-widget request" widget-request="project/develop/comment/{$tpid}"></div>
+
+<div class="" data-x-load="project/develop/comment/{$tpid}"></div>
+
+</div><!--tab : comment -->
+
+<a class="button--expand noprint" href="#">&gt;</a>
+
+<style type="text/css">
+/*
+table {border-left: 2px gray solid; border-top: 2px gray solid;}
+table th {border-right: 2px gray solid; border-bottom: 2px gray solid; vertical-align: middle;}
+table td {border-right: 2px gray solid; border-bottom: 2px gray solid; vertical-align: top;}
+*/
+.button--expand {position: fixed; top:0; right:270px; display: block;width: 40px;height: 39px;background: #000; color:#fff;opacity:.5;font-size: 40px;line-height: 32px;text-align: center;z-index: 9999;}
+
+.box {margin:16px 0; padding: 4px 8px; box-shadow: 2px 2px 2px #aaa; border-top:1px #ddd solid;border-left:1px #ddd solid;}
+.numeric, .inline-edit-field.numeric input {text-align: center;}
+p.L1 {margin-left: 1em; margin-bottom:10px;}
+p.L2 {margin-left: 2em;margin-bottom:10px;}
+p.L3 {margin-left: 3em;margin-bottom:10px;}
+hr.pagebreak {height:1px; background: transparent; border:none; display: none;}
+label.hots {font-weight: bold; display: block;}
+span.explan {color:#666;}
+
+.module-project .__develop .__view {position: relative;}
+.module-project .__develop .__view .sg-tabs>div {padding-top:8px; border:1px #ccc solid; border-top:none;padding:0 16px;}
+.module-project .__develop .__view h2 {margin-top:0;padding:4px 0;}
+.module-project .__develop .__view h3 {margin:0px 0 5px 0; padding: 4px; background:#ddd; border:1px #ccc solid;}
+.module-project .__develop .__view h4 {margin: 30px 0 10px 0;}
+.module-project .__develop .__view h5 {font-family: Tahoma; font-weight: bold; font-size: 1em; color: #333; text-align: left;}
+#objective-indicators td:first-child {text-align: center;}
+#objective-indicators td {padding:0;}
+#objective-indicators p {margin:0;}
+
+.module-project .__develop .__view em {color:green; font-style: normal;}
+.item.-problem>tbody>tr>td {vertical-align: top;}
+.item.-problem>tbody>tr>td:nth-child(n+2) {text-align: center;}
+
+.problemweight {display: inline-block; margin: 0 2px;}
+.problemweight>input {display: block;}
+
+.module-project .__develop .__view .box>h4 {margin-top:0;padding:4px 0;}
+.module-project .__develop .__view .sg-tabs>div#owner {}
+
+span[data-type="textarea"] {border-top:1px #eaeaea solid;border-left:1px #eee solid;border-right:1px #eaeaea solid;}
+.module-project .__develop .__view .form-info {position:relative;width:200px;margin-bottom:20px;padding:10px;display:block;right:0px;border:2px #000 solid; top:10px;}
+
+table.project-mainact-items {margin:20px 0;}
+.project-mainact-items>tbody>tr>td:nth-child(1) {width:10em;}
+.project-mainact-items>tbody>tr>td:nth-child(2) {width:auto;}
+.project-mainact-items>tbody>tr>td:nth-child(3) {width:20em;}
+.project-mainact-items>tbody>tr>td:nth-child(4) {width:12px;text-align: center;}
+
+
+.button--addtoobj {width: 100%;display: block;padding: 2px 0;margin: 0 0 40px 0; text-align: center;}
+
+.project-report-item {background: #fff; border:1px #ddd solid; box-shadow: none;}
+
+@media (min-width:48em) { /* 768/16 = 48 iPad */
+	body#project {margin-right:320px;}
+	.box {margin-right:3px;}
+	#comment {padding:0 10px; position: fixed; top:0px; right:0; bottom:0; width:300px; right:0; background: #fff; height:100%; overflow: auto; z-index:1;}
+	#comment h2 {padding:8px 0;font-size:1.6em;background: #058DC7; color:#fff;}
+	#comment h3 {font-size:1.4em;}
+	#comment .box {background: #f0f0f0;}
+	#comment button {margin:0 0 20px 10px; padding: 4px 10px;}
+	#comment .form-item {text-align: right;}
+	.sg-dropbox>div {right:10px;}
+}
+
+
+{$css-print}
+	body {margin: 0 0 0 5mm; font: 14pt/14pt "AngsanaUPC", "Angsana New", "TH Sarabun New", Tahoma, Arial, Verdana, sans-serif; color: #000}
+	h1 {display:none;}
+	h2 {text-align: center;}
+	h5 {font-size: 1em; margin:1em 0 0 0; }
+	h6 {font-size: 1em; margin:1em 0 0 0; }
+	p {margin:0; padding:0;}
+	.noprint {display: none;}
+	hr.pagebreak {display: block;}
+	.box {margin:0; padding:0; box-shadow: none; border:none;}
+	.module-project .__develop .__view .sg-tabs>div {padding:0; border:none;padding:0;}
+
+	.module-project .__develop .__view h2,
+	.module-project .__develop .__view h3,
+	.module-project .__develop .__view h4,
+	.module-project .__develop .__view h5,
+	.module-project .__develop .__view h6 {
+		margin: 5px 5px 0 0;
+		padding: 0;
+		font: 14pt/14pt "AngsanaUPC","Angsana New","TH Sarabun New", Tahoma, Arial, Verdana, sans-serif;
+		border:none;
+		background: #fff;
+		color: #000;
+		font-weight: bold;
+	}
+	.module-project .__develop .__view em {color: #666;}
+	.module-project .__develop .__view table.item table.item {border-left:none; margin-bottom:10px;}
+	.module-project .__develop .__view table.item table.item>thead>tr>th:nth-child(5) {border-right:none;}
+	.module-project .__develop .__view table.item table.item>tbody>tr>td:nth-child(5) {border-right:none;}
+	.module-project .__develop .__view table.item table.item>tfoot>tr>td:nth-child(5) {border-right:none;}
+	.module-project .__develop .__view table.project-develop-exp>thead>tr>th:nth-child(5) {border-right:none;}
+	.module-project .__develop .__view table.project-develop-exp>tbody>tr>td:nth-child(5) {border-right:none;}
+	.module-project .__develop .__view table.project-develop-exp>tfoot>tr>td:nth-child(5) {border-right:none;}
+
+	.inline-edit-field {color:#000; display:inline-block; min-width:auto; min-height: auto; border-bottom: none; vertical-align: top;}
+	.inline-edit-field.w-1 {min-width:auto;}
+	.inline-edit-field.w-2 {min-width:auto;}
+	.inline-edit-field.w-3 {min-width:auto;}
+	.inline-edit-field.w-4 {min-width:auto;}
+	.inline-edit-field.w-5 {min-width:auto;}
+	.inline-edit-field.w-6 {min-width:auto;}
+	.inline-edit-field.w-7 {min-width:auto;}
+	.inline-edit-field.w-8 {min-width:auto;}
+	.inline-edit-field.w-9 {min-width:auto;}
+	.inline-edit-field.w-10 {min-width:auto;}
+	.module-project .__develop .__view.inline-edit .inline-edit-field {color:#000;}
+
+
+	.module-project .__develop .__view>.form-info {position:relative;width:200px;padding:10px;display:block;right:10px;border:2px #000 solid; top:0px;}
+	table {margin: 20px 0; font-size: 14pt;}
+	table p, #objective-indicators p {margin:0; padding: 0;}
+	p.L1 {margin-left: 1cm; margin-bottom:10px;}
+	p.L2 {margin-left: 2cm;margin-bottom:10px;}
+	p.L3 {margin-left: 3cm;margin-bottom:10px;}
+	input[type="checkbox"] {margin:0; padding:0; display:inline-block; vertical-align: middle;}
+	span[data-type="textarea"] {border:none;}
+
+	.project-mainact-items>tbody>tr>td:nth-child(1) {width:5em;}
+	.project-mainact-items>tbody>tr>td:nth-child(2) {width:auto;}
+	.project-mainact-items>tbody>tr>td:nth-child(3) {width:10em;}
+
+	.project-mainact-items>thead>tr>th:nth-child(4) {display: none;}
+	.project-mainact-items>tbody>tr>td:nth-child(4) {display: none;}
+	.project-mainact-items>tfoot>tr>td:nth-child(4) {display: none;}
+
+	table.item {border:none;}
+	table.item tr td {border:none}
+	table.item thead tr th {border:none;}
+
+	table.project-develop-exp {border: none;}
+	table.project-develop-exp>tbody>tr>td {border:none;}
+	.project-develop-exp>thead>tr>th:nth-child(6) {display: none;}
+	.project-develop-exp>tbody>tr>td:nth-child(6) {display: none;}
+	.project-develop-exp>tfoot>tr>td:nth-child(6) {display: none;}
+
+	@page port { size: portrait; }
+	.portrait { page: port; }
+
+	@page land { size: landscape; }
+	body {margin:0;padding:0;}
+	.landscape { page: land; }
+
+	.landscape {
+		width: 100%;
+		height: 100%;
+		font-size:12pt;
+		-webkit-transform: rotate(-90deg);
+		-moz-transform:rotate(-90deg);
+		filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	}
+
+	@media (min-width:48em) { /* 768/16 = 48 iPad */
+		body#project {margin-right:0;}
+		#comment {padding:0; position: relative; top:0px; right:0; bottom:0; width:auto; right:0; background: #fff; height:auto; overflow: auto; z-index:1;}
+	}
+{$css-print-end}
+
+
+</style>
+
+<script type="text/javascript">
+var actTargetCheck=$('input[name=targetgroup]:checked').val();
+$("#act-target-1").hide();
+$("#act-target-2").hide();
+$("#act-target-3").hide();
+$("#act-target-4").hide();
+$("#act-target-5").hide();
+$("#act-target-6").hide();
+$("#act-target-7").hide();
+$("#act-target-8").hide();
+$("#act-target-9").hide();
+$("#act-target-"+actTargetCheck).show();
+
+$("input[name='targetgroup']").change(function() {
+	var $this=$(this);
+	var id=$this.val();
+	$("#act-target-1").hide();
+	$("#act-target-2").hide();
+	$("#act-target-3").hide();
+	$("#act-target-4").hide();
+	$("#act-target-5").hide();
+	$("#act-target-6").hide();
+	$("#act-target-7").hide();
+	$("#act-target-8").hide();
+	$("#act-target-9").hide();
+	$("#act-target-"+id).show();
+
+	//alert("Change "+$this.val());
+});
+</script>

@@ -1,0 +1,86 @@
+{
+"qtForm" : "DST",
+"options" : {},
+"title" : {
+	"label": "แบบคัดกรองภาวะสมองเสื่อมในผู้สูงอายุไทย - Dementia Screening Test (DST)"
+},
+"submitButton": {
+	"label": "<i class='icon -material'>done_all</i><span>บันทึก</span>", "className": "submit-btn",
+	"container": {"class": "-sg-text-right"}
+},
+"vars": {
+	"checkIcon": "<i class='icon -material'>check_circle</i>",
+	"checkBox": "<i class='icon -material'>check_box</i>"
+},
+"body": [
+	{
+		"name": "value",
+		"varName": "value",
+		"type": "hidden"
+	},
+	{"label": "<div><b>คำชี้แจง</b><ul><li>แบบคัดกรองภาวะสมองเสื่อมในผู้สูงอายุไทย (DST) ประกอบด้วยการทดสอบ 4 ขั้นตอน ซึ่งต้องทำการทดสอบผู้สูงอายุที่สามารถสื่อสารด้วยภาษาไทยได้</li><li>โดยผู้ทดสอบได้แก่ บุคลากรด้านสาธารณสุข อาสาสมัครสาธารณสุข หรือบุคคลทั่วไปที่ผ่านการฝึกอบรม</li></ul></div>"},
+	{
+		"name": "Read",
+		"label": "1. ให้ผู้ทดสอบอ่านคำในชุดคำที่กำหนด ทั้ง 3 คำ อย่างช้าๆ ห่างกันคำละ 1 วินาที ด้วยระดับเสียงดังพอที่ผู้ถูกทดสอบจะสามารถได้ยินอย่างชัดเจน จนกระทั่งผู้ถูกทดสอบสามารถทวนคำได้ถูกต้องครบถ้วน (ไม่คิดคะแนน)<br /><b>- ต้นไม้<br />- รถไฟ<br />- มือ</b>",
+		"type": "select",
+		"data" : "1..60",
+		"pretext": "จำนวนครั้งที่ผู้ถูกทดสอบอ่านชุดคำ",
+		"posttext": "ครั้ง"
+	},
+	{
+		"name": "Calculate",
+		"label": "2. ให้คำนวณ 100-7 (สำหรับการศึกษาสูงกว่า ป.6) หรือ 20-3 (สำหรับการศึกษาระดับชั้น ป.6 หรือต่ำกว่า) ไปเรื่อยๆ 3 ครั้ง (ให้ 1 คะแนน ในแต่ละครั้งที่ตอบถูก ใช้เวลาลาคิดในแต่ละช่วงคำตอบไม่เกิน 1 นาที หลังจากจบคำถาม)",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkIcon<span>ตอบถูก 1 ครั้ง (1 คะแนน)</span>"},
+			{"value" : "2", "label": "$checkIcon<span>ตอบถูก 2 ครั้ง (2 คะแนน)</span>"},
+			{"value" : "3", "label": "$checkIcon<span>ตอบถูก 3 ครั้ง (3 คะแนน)</span>"}
+		]
+	},
+	{
+		"name": "Clock",
+		"label": "3. ให้ผู้ถูกทดสอบวาดรูปหน้าปัดนาฬิกาให้มีเข็มนาฬิกาและตัวเลขครบถ้วน บอกเวลา 11.10 น. (ให้ 2 คะแนน เมื่อวาดเข็มนาฬิกา ใส่ตัวเลขและตำแหน่งบนนาฬิกา ระบุเวลาได้ถูกต้องครบถ้วนเท่านั้น)",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "2", "label": "$checkIcon<span>ทำได้ถูกต้องครบถ้วน (2 คะแนน)</span>"},
+			{"value" : "0", "label": "$checkIcon<span>ไม่สามารถทำได้ถูกต้องครบถ้วน (0 คะแนน)</span>"}
+		]
+	},
+	{"label": "<div class=\"form-item\"><label>4. ถามผู้ถูกทดสอบถึงคำ 3 คำ ในชุดคำที่กล่าวไปข้างต้น (ให้ 1 คะแนนต่อหนึ่งคำ)</label></div>"},
+	{
+		"name": "RepeatReadTree",
+		"tag": "input",
+		"type": "checkbox",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkBox<span>ต้นไม้</span>"}
+		]
+	},
+	{
+		"name": "RepeatReadTrain",
+		"type": "checkbox",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkBox<span>รถไฟ</span>"}
+		]
+	},
+	{
+		"name": "RepeatReadHand",
+		"type": "checkbox",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkBox<span>มือ</span>"}
+		]
+	},
+	{"label": "<div class=\"form-item\"><b>สรุปผลการพิจารณา</b> คะแนนรวม <b><span id=\"total\">?</span>/8</b> คะแนน<br />ผลคะแนนรวม >= 5 คะแนน ปกติ (Nagative)<br />ผลคะแนนรวม < 5 คะแนน อาจมีปัญหาการทำงานของสมอง (Positive)</div>"}
+]
+}

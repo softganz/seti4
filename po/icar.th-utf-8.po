@@ -1,0 +1,42 @@
+<?php
+/**
+ * icar.th-utf8
+ *
+ * @package none
+ * @version 0.01
+ * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+ * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
+ * @created 2018-09-05
+ * @modify 2018-09-05
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ */
+$dict['th']['Car Buying information']	= 'ข้อมูลการซื้อรถ';
+$dict['th']['buy date']					= 'วันที่ซื้อ';
+$dict['th']['License Plate']		= 'ทะเบียนรถ';
+$dict['th']['car type']					= 'ประเภท';
+$dict['th']['select type']			= 'เลือกประเภท';
+$dict['th']['Brand']						= 'ยี่ห้อ';
+$dict['th']['Select Brand']			= 'เลือกยี่ห้อ';
+$dict['th']['Add new brand']		= 'เพิ่มชื่อยี่ห้อใหม่';
+$dict['th']['Model']						= 'แบบ/รุ่น';
+$dict['th']['Partnership']			= 'ผู้ร่วมทุน';
+$dict['th']['No Partnership']		= 'ไม่มีผู้ร่วมทุน';
+$dict['th']['Add new partner']	= 'เพิ่มชื่อผู้ร่วมทุนรายใหม่';
+$dict['th']['Buy New Car']			= 'บันทึกการซื้อรถ';
+$dict['th']['Car Information']	= 'รายละเอียดรถ';
+$dict['th']['Ref. no.']					= 'เลขอ้างอิง';
+$dict['th']['Buy Date']					= 'วันที่ซื้อ';
+$dict['th']['Shop']							= 'ร้านค้า';
+$dict['th']['Color']						= 'สี';
+$dict['th']['Machine number']		= 'เลขเครื่อง';
+$dict['th']['Chassis number']		= 'เลขตัวถัง';
+$dict['th']['Transaction']			= 'ลงบันทึกรายการ';
+$dict['th']['Send Car Photo']		= 'ส่งภาพรถ';
+$dict['th']['License expire']		= 'วันต่อทะเบียน';
+$dict['th']['Insurance expire']	= 'วันต่อประกัน';
+$dict['th']['Car location']	= 'ลานจอดรถ';
+?>

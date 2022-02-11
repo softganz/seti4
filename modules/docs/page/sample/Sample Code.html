@@ -1,0 +1,25 @@
+<code>
+<div class="profile-photo"><img src="'.model::user_photo(i()->username).'" width="100%" height="100%" /></div>
+</code>
+
+Form Group
+
+<code>
+<div id="form-item-edit-repairname" class="form-item -edit-repairname -group" style="padding: 8px 0;">
+<span class="form-group">
+<input id="edit-repairname" class="form-text sg-autocomplete -fill ui-autocomplete-input" type="text" data-query="/busi/abcg.com/garage/api/repaircode" data-altfld="edit-repairid" data-callback="submit" value="" placeholder="ค้นรายการสั่งซ่อม/อะไหล่" autocomplete="off">
+<div class="input-append"><span><a class="-sg-16"><i class="icon -material -gray -sg-16">clear</i></a></span></div></span>
+</div>
+
+'<div class="form-item -group"><span class="form-group"><select class="form-select" name="damagecode">'.$damagecodeOptions.'</select>'
+. '<div class="input-append"><span><button class=""><i class="icon -material">add_circle_outline</i></button></span></div>'
+. '</span></div>'
+</code>
+
+Loading Animation
+<code>
+<div class="loader -rotate" style="width: 64px; height: 64px; margin: 16px auto; display: block;"></div>
+</code>
+
+CheckBox with Icon
+<code><label><input type="checkbox" class="-hidden" /><i class="icon -material -gray">check_circle</i></label></code>

@@ -1,0 +1,81 @@
+{
+	"editShortName" : true,
+	"useBoard": true,
+
+	"navigator": {
+		"my": {
+			"icon": "person",
+			"label": "จัดการองค์กร",
+			"title": "จัดการองค์กร",
+			"url": "my"
+		},
+		"view": {
+			"icon": "account_balance",
+			"label": "ข้อมูลองค์กร",
+			"title": "ข้อมูลองค์กร",
+			"url": "info.view"
+		},
+		"planning": {
+			"icon": "device_hub",
+			"label": "แผนงาน",
+			"title": "แผนงาน",
+			"url": "info.planning"
+		},
+		"follow": {
+			"icon": "directions_run",
+			"label": "โครงการ",
+			"title": "โครงการ",
+			"url": "info.follow"
+		},
+		"meeting": {
+			"icon": "assessment",
+			"label": "กิจกรรม",
+			"title": "กิจกรรม",
+			"url": "meeting"
+		},
+		"docs": {
+			"icon": "snippet_folder",
+			"label": "หนังสือเข้า/ออก",
+			"title": "หนังสือเข้า/ออก",
+			"url": "docs.o"
+		},
+		"mapping": {
+			"icon": "people",
+			"label": "Mapping",
+			"title": "Mapping",
+			"url": "mapping"
+		},
+		"member": {
+			"icon": "groups",
+			"label": "สมาชิก",
+			"title": "สมาชิก",
+			"url": "member"
+		},
+		"report": {
+			"icon": "assessment",
+			"label": "รายงาน",
+			"title": "รายงาน",
+			"url": "report"
+		}
+	},
+	"navigatorUse": "view,follow,meeting,member,report",
+
+	"info": {
+		"project": {
+			"title": "โครงการ/กิจกรรม",
+			"icon": "directions_run",
+			"page": "org.info.project"
+		},
+		"detail": {
+			"title": "รายละเอียดองค์กร",
+			"icon": "info",
+			"page": "org.info.detail"
+		},
+		"officer": {
+			"title": "เจ้าหน้าที่องค์กร",
+			"icon": "group",
+			"page": "org.info.officer"
+		}
+	},
+	"infoUse": "project,detail,officer"
+}

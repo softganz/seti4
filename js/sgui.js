@@ -1,0 +1,3060 @@
+'use strict'
+
+let sgUiVersion = '4.00.01'
+let debugSG = false
+let defaultRelTarget = "#main"
+
+console.log('SG-UI Version ' + sgUiVersion + ' loaded');
+
+
+let isAndroidWebViewReady = typeof Android == 'object'
+let isFlutterInAppWebViewReady = false;
+window.addEventListener("flutterInAppWebViewPlatformReady", function(event) {
+	isFlutterInAppWebViewReady = true;
+});
+
+/*
+* sgFindTargetElement :: Find target element
+* @param String target
+* @param jQuery Object $this
+* @return jQuery element
+*/
+function sgFindTargetElement(target, $this) {
+	var $ele
+	if (target == 'this') $ele = $this
+	else if (target == 'parent') $ele = $this.parent()
+	else if (target.match(/^parent /i)) $ele = $this.closest(target.substring(7))
+	else if (target == 'before') $ele = $this.before()
+	else if (target == 'after') $ele = $this.after()
+	else if (target == 'prev') $ele = $this.prev()
+	else if (target == 'next') $ele = $this.next()
+	else if (target == 'box') $ele = $('#cboxLoadedContent>.box-page').last()
+	else $ele = $(target)
+	return $ele
+}
+
+
+/*
+* sgShowBox :: SoftGanz Show Box
+* @param String html
+* @param jQuery Object $this
+* @param Object options
+*/
+function sgShowBox(html, $this, options, e) {
+	var defaults = {
+		fixed: true,
+		opacity: 0.5,
+		width: "95%",
+		maxHeight: "95%",
+		maxWidth: "95%",
+		className: 'colorbox'+($this.data('width') == 'full' ? ' -full' : ''),
+		//iframe: false,
+		onComplete: function() {}
+	}
+
+	var $boxElement = $('#cboxLoadedContent')
+	var linkUrl
+	var thisIsJ = false
+	var currentX = window.scrollX
+	var currentY = window.scrollY
+
+	options = $.extend(defaults, options)
+	if ($this instanceof jQuery) {
+		thisIsJ = true
+		linkUrl = $this.attr('href') ? $this.attr('href') : $this.attr('action')
+		if ($this.data('className')) $this.data('className', options.className+' '+$this.data('className'))
+		options = $.extend(options, $this.data(), $this.data('box'));
+	}
+	if ("boxwidth" in options) options.width = options.boxwidth
+	if ("boxheight" in options) options.height = options.boxheight
+
+	// Clear all box content
+	if (options.clearBoxContent) {
+		sgBoxPage = 0
+		$boxElement.empty()
+	}
+
+	options.onClosed = function() {
+		sgBoxPage = 0
+		window.onscroll=function(){};
+		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
+	}
+
+	// lock scroll position, but retain settings for later
+	window.onscroll = function(){window.scrollTo(currentX, currentY);};
+
+	if (thisIsJ && $this.data('rel') === 'img') {
+		sgBoxPage = 0
+		var group = $this.data("group")
+		options.open = true
+
+		$('.sg-action[data-group="'+group+'"]').each(function(i){
+			var $elem = $(this)
+			$elem.colorbox(options)
+		})
+		$this.colorbox(options)
+		e.stopPropagation()
+	} else if ($boxElement.length) {
+		if (debugSG) console.log('Show Link In Current Box')
+		if (debugSG) console.log('Link Url =',linkUrl)
+		$boxElement.find('.box-page').hide()
+		sgBoxPage++
+		var pageHtml = '<div class="box-page" data-page="'+sgBoxPage+'" data-url="'+linkUrl+'">'+html+'</div>'
+		$boxElement.append(pageHtml)
+	}	else {
+		sgBoxPage++
+		options.html = '<div class="box-page" data-page="'+sgBoxPage+'" data-url="'+linkUrl+'">'+html+'</div>'
+
+		$.colorbox(options)
+	}
+}
+
+
+//action->replace:dom:url
+//->replace:dom [tag|id|class]
+// Using data-done="[action[->doneAction]:target"
+
+/*
+* sgUpdateData :: SoftGanz Update data to DOM
+* @param String html
+* @param String relTarget
+* @param jQuery Object $this
+* @param Object options
+*
+* Using data-rel="target[:id|class|<tag>]"
+* Using data-rel="[action[->doneAction]:target"
+*/
+function sgUpdateData(html, relTarget, $this, options = {}) {
+	if (relTarget == undefined) return
+
+	var relExplode = relTarget.split(':')
+	var relType = relExplode[0]
+	var $ele
+
+	if (relExplode.length > 1 )
+		relTarget = relExplode[1]
+
+	if (debugSG)console.log('Type = ' + relType + ' Target = ' + relTarget)
+	//console.log('$this',$this)
+
+	if (relType == 'none') {
+		// Do Nothing
+	} else if (relType == 'console') {
+		console.log(html)
+	} else if (relType == 'notify') {
+		notify(relTarget != 'notify' ? relTarget : html, 20000)
+	} else if (relType == 'box') {
+		sgShowBox(html, $this, {clearBoxContent: relTarget == 'clear'})
+		if (isAndroidWebViewReady) Android.reloadWebView('No')
+	} else if (relType == 'close') {
+		$.colorbox.close()
+	} else if (relType == 'reload') {
+		window.location=document.URL;
+	} else if (relType == 'this') {
+		$this.html(html);
+	} else if (relType == 'parent') {
+		$ele = relTarget == 'parent' ? $this.parent() : $this.closest(relTarget);
+		$ele.html(html);
+	} else if (relType == 'replace') {
+		$ele = relTarget == 'replace' ? $this : ($this.closest(relTarget).length ? $this.closest(relTarget): $(relTarget));
+		$ele.replaceWith(html);
+	} else if (relType == 'after') {
+		$ele = relTarget == 'after' ? $this : $(relTarget);
+		$ele.after(html);
+	} else if (relType == 'append') {
+		$ele = relTarget == 'append' ? $this : $(relTarget);
+		$ele.append(html)
+	} else if (relType == 'refresh') {
+		$ele = relTarget=='refresh' ? $('#main') : $(relTarget);
+		var refreshUrl = $ele.data('url') ? $ele.data('url') : document.URL
+		if (refreshUrl) {
+			$.post(refreshUrl,function(html){
+				$ele.html(html);
+			});
+		}
+	} else {
+		$(relTarget).html(html);
+	}
+}
+
+
+/*
+* sgActionDone :: SoftGanz Update data to DOM
+* @param String doneData
+* @param jQuery Object $this
+* @param Object options
+*
+* Using data-done="action[->doneAction][:target[ targetDom]:url] [| ...]"
+* action => notify, javascript, back, close, moveto, remove, reload, load
+* doneAction (action = load) => replace, before, after, append, prepend, prev, next
+* target => this, #id, .class, tag, parent, before, after, prev, next
+* targetDom => #id, .class, tag
+* Eg
+* data-done="load->replace:#id:/project/view"
+* data-done="remove:parent li.ui-action"
+*/
+function sgActionDone(doneData, $this, data, options = {}) {
+	if (doneData === undefined) return
+	doneData.split('|').map(function(doneItem) {
+		var doneExplode = doneItem.trim().split(':')
+		var doneType = doneExplode[0].split('->')[0]
+		var doneAction = doneExplode[0].split('->')[1]
+		var doneTarget = doneExplode.length > 1 ? doneExplode[1].trim() : ''
+
+		if (doneTarget == '') doneTarget = '#main';
+
+		//console.log(doneItem, doneExplode)
+		//console.log('doneType = ',doneType, 'doneAction = ',doneAction)
+		//console.log('doneTarget = ',doneTarget)
+
+		switch (doneType) {
+
+			case 'notify':
+				notify(doneExplode[1], 20000)
+				break;
+
+			case 'javascript':
+				eval(doneTarget)
+				break;
+
+			case 'function':
+				let fn = '(function'+doneTarget+')($this,data)'
+				eval(fn)
+				break;
+
+			case 'callback':
+				var callback = doneTarget.trim()
+				if (doneTarget && typeof window[doneTarget] === 'function') {
+					window[doneTarget]($this,data)
+				}
+				break;
+
+			case 'back':
+				var $boxElement = $('#cboxLoadedContent')
+				if ($boxElement.length) {
+					var $boxPage = $('.box-page')
+					if ($boxPage.length <= 1) {
+						$.colorbox.close()
+						if (isAndroidWebViewReady) Android.reloadWebView('Yes')
+					} else {
+						// Remove last box page
+						$boxElement.children('.box-page').last().remove()
+						// Show last box after remove
+						$boxElement.children('.box-page').last().show()
+					}
+				}
+				break;
+
+			case 'close':
+				var $boxElement = $('#cboxLoadedContent')
+				if ($boxElement.length) {
+					$.colorbox.close()
+				} else if (isFlutterInAppWebViewReady) {
+					window.flutter_inappwebview.callHandler("closeWebView");
+					return
+				} else if (isAndroidWebViewReady) {
+					Android.closeWebView()
+					return false
+				}
+				break
+
+			case 'moveto':
+				if (doneExplode[1].substr(0,1) === '#') {
+					if ($(doneExplode[1]).length) {
+						// Scroll to element id
+						$('html,body').animate({ scrollTop: $(doneExplode[1]).offset().top - 64 }, 'slow');
+					}
+				} else {
+					var moveto = doneExplode[1].split(',');
+					window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]))
+				}
+				break
+
+			case 'remove':
+				var $ele = sgFindTargetElement(doneTarget, $this)
+				$ele.remove()
+				break
+
+			case 'reload':
+				var refreshUrl = doneExplode.length > 1 ? doneExplode[1] : document.URL
+				window.location = refreshUrl
+				break
+
+			case 'load':
+				// console.log('DONE TARGET = ' + doneTarget)
+				var $ele = sgFindTargetElement(doneTarget, $this)
+				var loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($ele.data('url') ? $ele.data('url') : document.URL)
+				if (loadUrl && ($ele.length || doneTarget == 'none')) {
+					// console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
+					$.post(loadUrl,function(html){
+						switch (doneAction) {
+							case 'replace' : $ele.replaceWith(html); break;
+							case 'before' : $ele.before(html); break;
+							case 'after' : $ele.after(html); break;
+							case 'append' : $ele.append(html); break;
+							case 'prepend': $ele.prepend(html); break;
+							case 'prev' : $ele.prev().html(html); break;
+							case 'next' : $ele.next().html(html); break;
+							case 'clear' :
+								if (doneTarget == 'box') {
+									//console.log("CLEAR BOX WITH CLEAR");
+									sgShowBox(html, $this, {clearBoxContent: true});
+								}
+								break;
+							default: $ele.html(html); break;
+						}
+						if (doneTarget == 'box' && $this.data('boxResize')) {
+							$.fn.colorbox.resize({})
+						}
+					})
+					.fail(function() {console.log('Refresh url fail')})
+				}
+				break
+
+		}
+
+	})
+}
+
+
+/*
+* sgWebViewDomProcess :: SoftGanz Update data to DOM in Mobile Application WebView
+* @param String id
+*
+* Using {processDomOnResume: "#id" | ".class"} in onWebViewComplete
+*/
+function sgWebViewDomProcess(id) {
+	var $this = $(id)
+	//console.log("PROCESS DOM ",id,$this.data("webviewResume"))
+	sgActionDone($this.data("webviewResume"), $this)
+}
+
+
+
+
+
+/*
+* jQuery Extension :: Open Moblie Application Webview
+* Created : 2021-08-08
+*	written by Panumas Nontapan
+*
+*	Copyright (c) 2009 Softganz Group (https://softganz.com)
+*	Dual licensed under the MIT (MIT-LICENSE.txt)
+*	and GPL (GPL-LICENSE.txt) licenses.
+*
+*	Built for jQuery library (http://jquery.com)
+*
+*	markup example for $("#action").openWebview(event,{options}).chain();
+*
+* <a href="link" data-webview="title">text</a>
+*/
+(function($) { // data-webview
+	var version = '0.01'
+	var actionComplete = false
+
+	$.fn.openWebview = function(event, options = {}) {
+		var $this = $(this)
+		var linkData = $this.data()
+		var location = $this.attr('href')
+		var openType = $this.data('webview')
+
+		self.doAction = function() {
+			if (!(isAndroidWebViewReady || isFlutterInAppWebViewReady)) return false
+
+			var webviewData = JSON.stringify(linkData)
+
+			if (openType == 'browser') {
+				if (isFlutterInAppWebViewReady) {
+				} else if (isAndroidWebViewReady) {
+					Android.openBrowser(location, webviewData)
+				}
+			} else if (openType == 'googlemap') {
+				if (isFlutterInAppWebViewReady) {
+				} else if (isAndroidWebViewReady) {
+					Android.openGoogleMap(location, webviewData)
+				}
+			} else if (openType == 'server') {
+				if (debugSG) console.log('Change to Server to '+linkData.server)
+				if (isFlutterInAppWebViewReady) {
+				} else if (isAndroidWebViewReady) {
+					Android.useServer(linkData.server)
+				}
+			} else if (openType) {
+				var pattern = /^((http|https|ftp):\/\/)/
+				linkData.webviewTitle = linkData.webview
+				webviewData = JSON.stringify(linkData)
+				location = pattern.test(location) ? location : document.location.origin + location
+				if (isFlutterInAppWebViewReady) {
+					const args = [location,linkData.webviewTitle,linkData];
+					let r = window.flutter_inappwebview.callHandler("showWebView", ...args);
+				} else if (isAndroidWebViewReady) {
+					Android.showWebView(location, webviewData)
+				}
+			} else {
+				return false
+			}
+		}
+
+		// RETURN function that can call from outside
+		$this.actionComplete = self.doAction() === false ? false : true
+
+		$this.version = function() {
+			console.log('$.sgAction version is '+version)
+			return $this
+		}
+		return $this
+	}
+
+	$(document).on('click', '[data-webview]', function(event) {
+		var actionComplete = $(this).openWebview(event,{}).actionComplete
+		if (debugSG) console.log('Mobile App WebView '+version+' result is ', actionComplete)
+		if (actionComplete) {
+			event.stopImmediatePropagation()
+			return false
+		} else {
+			return true
+		}
+	});
+})(jQuery);
+
+
+
+
+
+
+/*
+* jQuery Extension :: sg-action
+* Created : 2019-09-17
+*	written by Panumas Nontapan
+*
+*	Copyright (c) 2009 Softganz Group (https://softganz.com)
+*	Dual licensed under the MIT (MIT-LICENSE.txt)
+*	and GPL (GPL-LICENSE.txt) licenses.
+*
+*	Built for jQuery library (http://jquery.com)
+*
+*	markup example for $("#action").sgAction(event,{options}).chain();
+*
+* <a class="sg-action" data-rel="target" data-done="action[->targetAction]:target:url | ..."></a>
+*/
+(function($) {	// sg-action
+	var version = '1.01'
+	var sgActionType = 'click'
+	var actionResult
+	var debug
+
+	$.fn.sgAction = function(event, options = {}) {
+		var $this = $(this)
+		var linkData = $this.data()
+		var dataOptions = linkData.options
+		var url = $this.attr('href')
+		var relTarget = linkData.rel
+		var retUrl = linkData.ret
+		var para = {}
+		var $boxElement = $('#cboxLoadedContent')
+		var confirm = linkData.confirm == undefined || linkData.confirmed
+		var callback = linkData.callback
+		var relAction
+		var doneResult
+
+		if (url == 'javascript:void(0)') url = linkData.url
+
+		console.log('$.sgAction version ' + version + ' start')
+
+		if (relTarget) {
+			relAction = relTarget.split('->')[1]
+			relTarget = relTarget.split('->')[0]
+		}
+
+		var defaults = {
+			result: 'html',
+			container : $(this),
+			loadurl: linkData.loadurl,
+			silent: false,
+			callback : false,
+		}
+
+		var settings = $.extend({}, $.fn.sgAction.defaults, defaults, dataOptions, options)
+		// console.log(dataOptions)
+		// console.log(settings)
+
+		self.doAction = function() {
+			//console.log("Do Action Start Something")
+			//console.log('$THIS is ',$this)
+			console.log('relTarget = '+relTarget+' Action = '+relAction)
+
+			if (!confirm) {
+				return
+			} else if (linkData.confirmed) {
+				$this.removeData('confirmed')
+				para.confirm = 'yes'
+			}
+
+			if (relTarget == 'box' && relAction == 'clear') {
+				sgBoxPage = 0
+				$boxElement.empty()
+			}
+
+			// Process before action
+			if (linkData.before) {
+				sgActionDone(linkData.before, $this)
+			}
+
+			// Replace data-rel="close" with data-rel="none" data-done="close"
+			// Replace data-rel="back" with data-rel="none" data-done="back"
+			if (relTarget == 'close') {
+				if ($this.closest('.sg-dropbox.box').length != 0) {
+					$('.sg-dropbox.box').children('div').hide()
+					$('.sg-dropbox.box.active').removeClass('active')
+					return
+				} else if ($('#cboxLoadedContent').length) {
+					$.colorbox.close()
+					//if (isAndroidWebViewReady) Android.reloadWebView('Yes')
+					return
+				} else if (isFlutterInAppWebViewReady) {
+					window.flutter_inappwebview.callHandler("closeWebView");
+					return
+				} else if (isAndroidWebViewReady) {
+					Android.closeWebView()
+					return
+				} else {
+					// If no active box do after
+					relTarget = undefined
+				}
+			} else if (relTarget == 'back' && $boxElement.length) {
+				var $boxPage = $('.box-page')
+				if ($boxPage.length <= 1) {
+					$.colorbox.close()
+					//if (isAndroidWebViewReady) Android.reloadWebView('Yes')
+					if (isAndroidWebViewReady) {
+						console.log("ANDROID Back");
+					}
+				} else {
+					// Remove last box page
+					$boxElement.children('.box-page').last().remove()
+					// Show last box after remove
+					$boxElement.children('.box-page').last().show()
+				}
+				return
+			} else if (relTarget == 'img') {
+				sgShowBox(null, $this, null, event)
+				return
+			}
+
+			// if (isAndroidWebViewReady || isFlutterInAppWebViewReady) {
+			// 	var androidData
+
+			// 	if (linkData.webview && linkData.webviewTitle == undefined) {
+			// 		linkData.webviewTitle = linkData.webview
+			// 		linkData.android = 'webview'
+			// 		delete linkData.webview
+			// 	}
+
+			// 	androidData = JSON.stringify(linkData)
+
+			// 	//console.log('data = '+JSON.stringify(linkData.data))
+
+			// 	if (linkData.android == 'browser') {
+			// 		var location = $this.attr('href')
+			// 		if (isFlutterInAppWebViewReady) {
+			// 		} else if (isAndroidWebViewReady) {
+			// 			Android.openBrowser(location, androidData)
+			// 		}
+			// 		return
+			// 	} else if (linkData.android == 'googlemap') {
+			// 		var location = $this.attr('href')
+			// 		if (isFlutterInAppWebViewReady) {
+			// 		} else if (isAndroidWebViewReady) {
+			// 			Android.openGoogleMap(location, androidData)
+			// 		}
+			// 		return
+			// 	} else if (linkData.android == 'server') {
+			// 		if (debugSG) console.log('Change to Server to '+linkData.server)
+			// 		if (isFlutterInAppWebViewReady) {
+			// 		} else if (isAndroidWebViewReady) {
+			// 			Android.useServer(linkData.server)
+			// 		}
+			// 		return
+			// 	} else if (linkData.android == 'webview' || linkData.webview) {
+			// 		var pattern = /^((http|https|ftp):\/\/)/
+			// 		var location = pattern.test(url) ? url :document.location.origin + url
+			// 		if (isFlutterInAppWebViewReady) {
+			// 			const args = [location,linkData.webviewTitle,linkData];
+			// 			let r = window.flutter_inappwebview.callHandler("showWebView", ...args);
+			// 			console.log(r)
+			// 		} else if (isAndroidWebViewReady) {
+			// 			Android.showWebView(location, androidData)
+			// 		}
+			// 		return
+			// 	}
+			// }
+
+			if (relTarget == undefined && retUrl == undefined) {
+				var hasPara = JSON.stringify(para) != '{}'
+				var hrefUrl = $this.attr('href')
+				hrefUrl = hrefUrl + (hasPara ? (hrefUrl.indexOf('?') == -1 ? '?' : '&') + $.param(para) : '')
+				window.location = hrefUrl
+				return true
+			} else if (url && url.substr(0,1) == '#') {
+				console.log("LOAD FROM DOM "+url)
+				var html = null
+				if ($(url).length) html = $(url).get(0).innerHTML
+				sgUpdateData(html, relTarget, $this)
+				sgActionDone(linkData.done, $this, doneResult)
+				return
+			}
+
+
+			if (debugSG) console.log("Load from url "+url)
+			if (!settings.silent) notify(settings.indicator);
+
+			$.post(url, para, function(html) {
+				doneResult = html
+				notify()
+				if (!settings.silent) console.log("Load completed.")
+
+				if (retUrl) {
+					if (debugSG) console.log("Return URL "+retUrl)
+					$.post(retUrl, function(html) {
+						sgUpdateData(html, relTarget, $this)
+						notify()
+					})
+				} else {
+					sgUpdateData(html, relTarget, $this)
+				}
+
+				// REMOVE element after done
+				if (linkData.removeparent) {
+					var removeTag = linkData.removeparent
+					var $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag)
+					$removeElement.remove()
+				}
+
+				//console.log('POST DONE')
+
+				// Process CALLBACK function
+				if (settings.callback) settings.callback($this,html)
+
+				if (callback && typeof window[callback] === 'function') {
+					window[callback]($this,html)
+				} else if (callback) {
+					window.location = callback
+				}
+			}).fail(function(response) {
+				// console.log(response)
+				// let errorMsg = 'ERROR : ' + (response.responseText.charAt(0) != '<' ? response.responseText : '') + '<br />( '+response.status + ' : ' + response.statusText + ' )';
+				let errorMsg = 'ERROR : ' + response.responseText + '<br />( '+response.status + ' : ' + response.statusText + ' )';
+				notify(errorMsg)
+			})
+			.done(function() {
+				sgActionDone(linkData.done, $this, doneResult)
+			})
+			return
+		}
+
+
+		self.test = function () {console.log('THIS IS A TEST')}
+
+		$this.actionResult = self.doAction() === false ? false : true
+
+		// RETURN function that can call from outside
+		$this.version = function() {
+			console.log('$.sgAction version is '+version)
+			return $this
+		}
+
+		return $this
+
+		return {
+			ok : $this.actionResult,
+
+			// GET VERSION
+			version: function() {
+				console.log('$.sgAction version is '+version)
+				return $this
+			},
+
+			// SAVE DATA IN FORM TO TARGET
+			update: function($this, value, callback) {
+				//self.something($this, value, callback)
+			},
+
+			test: function() {return 'Test'},
+		}
+	}
+
+	$.fn.sgForm = function() {
+
+		return this
+	}
+
+	/* Publicly accessible defaults. */
+	$.fn.sgAction.defaults = {
+		indicator: 'LOADING',
+		tooltip: 'คลิกเพื่อแก้ไข',
+		cssclass: 'inlineedit',
+		width: 'none',
+		height: 'none',
+		cancelcssclass: 'btn -link -cancel',
+		submitcssclass: 'btn -primary',
+		showButtonPanel: true,
+		event: 'edit',
+		inputcssclass: '',
+	}
+
+	$(document).on(sgActionType, '.sg-action', function(event) {
+		var result = $(this).sgAction(event,{aTestOpt: "This is test option"})
+		//console.log('RESULT ', result)
+		return !result.actionResult
+	});
+
+})(jQuery);
+
+
+/*
+$(document).ready(function(){
+	var $sgAction = $("#ticket-2")
+	.sgAction(null, {
+		aTestOpt: 'Test Option in query',
+		callback: function($this, data) {console.log('project-pin CALLBACK PROCESS'+data)}
+	})
+	//.getVersion()
+	//.attr("class")
+	console.log('ACTION ', $sgAction);
+	console.log('HIDE ',$sgAction.hide())
+	console.log('ATTRIBUTE ID ',$sgAction.attr('id','aaa').show())
+	console.log('GET VERSION = ',$sgAction.version().show())
+});
+*/
+
+
+
+
+
+/*
+* sg-form :: Softganz form
+* written by Panumas Nontapan
+* https://softganz.com
+* Using <form class="sg-form"></form>
+*/
+$(document).on('submit', 'form.sg-form', function(e) {
+	var $this = $(this)
+	var relTarget = $this.data('rel')
+	var retUrl = $this.data('ret')
+	var onComplete = $this.data('complete')
+	var checkValid = $this.data('checkvalid')
+	var silent = $this.data('silent')
+	var errorField = ''
+	var errorMsg = ''
+	var doneResult
+
+	console.log('sg-form :: Submit');
+	// console.log('rel', relTarget)
+	// Check field valid
+	if (checkValid) {
+		console.log('Form Check input valid start.');
+		$this.find('.require, .-require').each(function(i) {
+			var $inputTag = $(this);
+			//console.log('Form check valid input tag '+$inputTag.prop("tagName")+' type '+$inputTag.attr('type')+' id='+$inputTag.attr('id'))
+			if (($inputTag.attr('type') == 'text' || $inputTag.attr('type') == 'password' || $inputTag.attr('type') == 'hidden' || $inputTag.prop("tagName") == 'TEXTAREA') && $inputTag.val().trim() == "") {
+				errorField = $inputTag;
+				errorMsg = 'กรุณาป้อนข้อมูลในช่อง " '+$('label[for='+errorField.attr('id')).text()+' "';
+				$inputTag.focus();
+			} else if ($inputTag.prop("tagName") == 'SELECT' && ($inputTag.val() == 0 || $inputTag.val() == -1 || $inputTag.val() == '')) {
+				errorField = $inputTag;
+				errorMsg='กรุณาเลือกข้อมูลในช่อง " '+$('label[for='+errorField.attr('id')).text()+' "';
+			} else if (($inputTag.attr('type') == 'radio' || $inputTag.attr('type') == 'checkbox')
+					&& !$("input[name=\'"+$inputTag.attr('name')+"\']:checked").val()) {
+				errorField = $inputTag;
+				errorMsg = errorField.closest('div').children('label').first().text();
+			}
+			//console.log($inputTag.attr('name'))
+			//console.log($("input[name=\'"+$inputTag.attr('name')+"\']*:checked").val())
+			if (errorField) {
+				//console.log('Invalid input '+errorField.attr('id'))
+				var invalidId = errorField.attr('id')
+				//console.log('invalidId = ',invalidId)
+				//$('#'+invalidId).focus();
+				//console.log($('#'+invalidId).isOnScreen() ? 'VISIBLE' : 'INVISIBLE')
+				if (! $('#'+invalidId).isOnScreen()) {
+					$('html,body').animate({scrollTop: errorField.offset().top - 100}, 'slow');
+				}
+				notify(errorMsg);
+				return false;
+			}
+		});
+		if (errorField) return false;
+	}
+
+
+	if (relTarget == undefined) return true;
+
+	if (!silent) notify('PROCESSING');
+
+	if (debugSG) console.log('Send form to ' + $this.attr('action'));
+	if (debugSG) console.log('Result to ' + relTarget);
+
+	if ($this.hasClass('-upload')) {
+		if (debugSG) console.log('SOFTGANZ UPLAOD FILE')
+		$this.ajaxSubmit({
+			success: function(html) {
+				if (debugSG) console.log('SG-FORM.-UPLOAD ajaxSubmit upload file complete.');
+				if (onComplete == 'remove') {
+					$this.remove()
+				} else if (onComplete == 'close' || onComplete == 'closebox') {
+					if ($(e.rel).closest('.sg-dropbox.box').length!=0) {
+						$('.sg-dropbox.box').children('div').hide()
+						$('.sg-dropbox.box.active').removeClass('active')
+						//alert($(e.rel).closest('.sg-dropbox.box').attr('class'))
+					} else {
+						$.colorbox.close()
+					}
+				}
+
+				if (retUrl) {
+					//console.log("Return URL "+retUrl)
+					$.post(retUrl, function(html) {
+						sgUpdateData(html, relTarget,$this)
+						notify()
+						sgActionDone($this.data('done'), $this, html);
+					})
+				} else {
+					sgUpdateData(html, relTarget,$this)
+					sgActionDone($this.data('done'), $this, html);
+				}
+				if (relTarget != 'notify') notify()
+				$this.replaceWith($this.clone(true))
+			},
+			error: function(data) {
+				//console.log('ERROR AJAX SUBMIT')
+				//console.log(data)
+				notify(data.statusText)
+				if (debugSG) console.log(data)
+				sgUpdateData(data.responseText, relTarget,$this)
+			}
+		})
+
+	} else {
+		// Start post form
+		// console.log('FORM DATA ',$this.serialize())
+		$.post(
+			$this.attr('action'),
+			$this.serialize(),
+			function(html) {
+				// console.log(html)
+				doneResult = html
+				if (debugSG) console.log('Form submit completed and send output to '+relTarget);
+				if (onComplete == 'remove') {
+					$this.remove()
+				} else if (onComplete == 'close' || onComplete == 'closebox') {
+					if ($(e.rel).closest('.sg-dropbox.box').length!=0) {
+						$('.sg-dropbox.box').children('div').hide()
+						$('.sg-dropbox.box.active').removeClass('active')
+						//alert($(e.rel).closest('.sg-dropbox.box').attr('class'))
+					} else {
+						$.colorbox.close()
+					}
+				}
+
+				if (retUrl) {
+					if (debugSG) console.log("Return URL "+retUrl)
+					$.post(retUrl, function(html) {
+						sgUpdateData(html, relTarget, $this)
+						notify()
+					})
+				} else {
+					sgUpdateData(html, relTarget, $this)
+
+					if ($this.data('moveto')) {
+						var moveto = $this.data('moveto').split(',');
+						window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]));
+					}
+				}
+
+				if (relTarget.substring(0,6) != 'notify') notify()
+
+				// Process callback function
+				var callback = $this.data('callback');
+				if (callback && typeof window[callback] === 'function') {
+					window[callback]($this,html);
+				} else if (callback) {
+					window.location=callback;
+				}
+			}, $this.data('dataType') == undefined ? null : $this.data('dataType')
+		).fail(function(response) {
+			// console.log(response)
+			let errorMsg = 'ERROR : ' + response.responseText + '<br />( '+response.status + ' : ' + response.statusText + ' )';
+			// let errorMsg = 'ERROR : ' + (response.responseText.charAt(0) != '<' ? response.responseText : '') + '<br />( '+response.status+' : '+response.statusText+' )';
+			notify(errorMsg)
+			if (debugSG) console.log(response)
+			return true
+		}).done(function() {
+			sgActionDone($this.data('done'), $this, doneResult);
+		})
+	}
+	return false
+})
+.on('keydown', 'form.sg-form input:text', function(event) {
+	var $input = $(this).closest('form').find("input:text")
+	var inputCount = $input.length
+	if(event.keyCode == 13) {
+		event.preventDefault()
+		var nextIndex = $input.index(this) + 1
+		if(nextIndex < inputCount)
+			$input[nextIndex].focus()
+		return false
+	}
+});
+
+
+
+
+
+/*
+* jQuery Extension :: sg-inline-edit
+* Softganz inline edit field
+* Written by Panumas Nontapan
+* https://softganz.com
+* Using <div class="sg-inline-edit"><span class="inline-edit-field" data-type="text"></span></div>
+* DOWNLOAD : https://github.com/NicolasCARPi/jquery_jeditable
+*/
+(function($) { // sg-inline-edit
+	var version = '1.01'
+	var sgInlineEditAction = 'click'
+	var updatePending = 0
+	var updateQueue = 0
+	var database;
+	var ref
+	var debug
+
+	$.fn.sgInlineEdit = function(target, options = {}) {
+		// default configuration properties
+		if (typeof $.fn.editable === 'undefined') {
+			console.log('ERROR :: $.editable is not load')
+			return
+		}
+
+		if ('disable' === target) {
+			//$(this).data('disabled.editable', true);
+			return;
+		}
+		if ('enable' === target) {
+			//$(this).data('disabled.editable', false);
+			return;
+		}
+		if ('destroy' === target) {
+			//$(this)
+			//.unbind($(this).data('event.editable'))
+			//.removeData('disabled.editable')
+			//.removeData('event.editable');
+			return;
+		}
+
+
+		let $this = $(this)
+		let $parent = $this.closest('.sg-inline-edit')
+		let postUrl = $parent.data('updateUrl');
+		let inputType = $this.data('type');
+		let callback = $this.data('callback');
+		// console.log($parent.data('updateUrl'))
+		// console.log($parent.data());
+
+		debug = $parent.data('debug') ? true : false
+
+		if (inputType == 'money' || inputType == 'numeric' || inputType == 'text-block') {
+			inputType = 'text'
+		} else if (inputType == 'radio' || inputType == 'checkbox') {
+			//console.log('RADIO or CHECKBOX Click:',$this)
+			var value = $this.is(':checked') ? $this.val() : ''
+			//self.save($this, value, callback)
+			//return
+		} else if (inputType == 'link') {
+			return
+		} else if (inputType == '' || inputType == undefined) {
+			inputType = 'text'
+			$this.data('type','text')
+		}
+
+		let defaults = {
+			type: inputType,
+			result: 'json',
+			container : $(this),
+			/*
+			onblur : function(value) {
+					$(this).closest('.inline-edit-field').removeClass('-active');
+					notify(value)
+					$(this).closest('form').submit();
+				},
+				*/
+			// onblur: function() {'submit'},
+			onblur: $this.data('onblur') ? $this.data('onblur') : 'submit',
+			data: function(value, settings) {
+					if ($this.data('data'))
+						return $this.data('data');
+					else if ($this.data('value') != undefined)
+						return $this.data('value');
+					else if (value == '...')
+						return '';
+					return value;
+				},
+			loadurl: $this.data('loadurl'),
+			/*loaddata : function(value, settings) {
+					console.log($this.data('loaddata'))
+					if ($this.data('loaddata')) {
+					}
+					return {foo: 'bar'};
+				},
+				*/
+				/*
+			callback: function(result, settings, submitdata) {
+					console.log('CALLBACK')
+					console.log(result)
+					console.log(settings)
+					console.log(submitdata)
+					//$this.html('<span>'+result+'</soan>')
+				},
+				*/
+			before : function() {
+					//var height = $this.height()
+					//console.log('BEFORE EDIT '+$this.attr('class')+' height = '+$this.height())
+					//$this.height('500px')
+					//$this.find('.form-textarea').height($this.prop('scrollHeight')+'px');
+					//$this.find('.form-textarea').height('100%')
+
+					var options = $this.data('options')
+					var callbackFunction = options != undefined && options.hasOwnProperty('onBefore') ? options.onBefore : null
+					//console.log("BEFORE CALLBACK ",callbackFunction)
+					if (callbackFunction && typeof window[callbackFunction] === 'function') {
+						window[callbackFunction]($this,$parent);
+					}
+				},
+			cancel		: $(this).data('button')=='yes' ? '<button class="btn -link -cancel"><i class="icon -cancel -gray"></i><span>ยกเลิก</span></button>':null,
+			submit		: $(this).data('button')=='yes' ? '<button class="btn -primary"><i class="icon -save -white"></i><span>บันทึก</span></button>':null,
+			placeholder: $(this).data('placeholder') ? $(this).data('placeholder') : '...',
+		}
+
+		var dataOptions = $this.data('options')
+		var settings = $.extend({}, $.fn.sgInlineEdit.defaults, defaults, options, dataOptions)
+
+		//console.log('dataOptions',dataOptions)
+		//console.log($this.data('options'))
+		//console.log('SG-INLINE-EDIT SETTING:',settings)
+
+		if ($this.data('type') == 'textarea') settings.inputcssclass = 'form-textarea'
+		else if ($this.data('type') == 'text') settings.inputcssclass = 'form-text'
+		else if ($this.data('type') == 'numeric') settings.inputcssclass = 'form-text -numeric'
+		else if ($this.data('type') == 'money') settings.inputcssclass = 'form-text -money'
+		else if ($this.data('type') == 'email') settings.inputcssclass = 'form-text -email'
+		else if ($this.data('type') == 'url') settings.inputcssclass = 'form-text -url'
+		else if ($this.data('type') == 'autocomplete') settings.inputcssclass = 'form-text -autocomplete'
+		else if ($this.data('type') == 'select') settings.inputcssclass = 'form-select'
+
+		$this.editable(function(value, settings) {
+			if (_validValue($this, value)) {
+				self.save($this, value, callback)
+				return value
+			} else {
+				notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
+				return $this.data('value')
+			}
+		} ,
+		settings
+		).trigger('edit')
+
+		// $this.editable(function(value, settings) {
+		// 	self.save($this, value, callback)
+		// 	return value
+		// } ,
+		// settings
+		// ).trigger('edit')
+
+
+		self._validValue = function($this, newValue) {
+			if ($this.data('ret') != 'numeric') return true
+
+			newValue = newValue.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(newValue)
+			// console.log('minValue = ',$this.data("minValue"),' newValue = ',newValue,' IS ',newValue*1 < $this.data('minValue')*1)
+			if ($this.data('minValue') != undefined && newValue*1 < $this.data('minValue')*1) {
+				// console.log('less than minValue')
+				return false
+			} else if ($this.data('maxValue') != undefined && newValue*1 > $this.data('maxValue')*1) {
+				// console.log('more than maxValue')
+				// console.log('Reverse value to ',$this.data('value'))
+				// console.log($this.html())
+				// console.log($this)
+				//$this.html($('<span />').html($this.data('value')))
+				return false
+			} else {
+				// console.log('not check or valid')
+				return true
+			}
+		}
+
+		self.save = function($this, value, callback) {
+			//console.log('Update Value = '+value)
+		// console.log($parent.data('updateUrl'))
+		// console.log('postUrl = ', postUrl)
+		// console.log($parent.data());
+
+			if (postUrl === undefined) {
+				console.log('POSTURL UNDEFINED')
+				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด')
+				return
+			}
+			// console.log("POST")
+
+			// if (!_validValue($this, value)) {
+			// 	notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
+			// 	return
+			// }
+
+			var para = $.extend({},$parent.data(), $this.data())
+
+			delete para['options']
+			delete para['data']
+			delete para['event.editable']
+			delete para['uiAutocomplete']
+			para.action = 'save';
+			para.value = value.replace(/\"/g, "\"");
+			if (settings.var) para[settings.var] = para.value
+			$this.data('value', para.value);
+
+			//if (settings.blank === null && para.value === "") para.value = null
+			//console.log(settings.blank)
+
+			//console.log('UPDATE PARA:', para)
+
+			updatePending++
+			updateQueue++
+
+			notify('กำลังบันทึก กรุณารอสักครู่....' + (debug ? '<br />Updating : pending = '+updatePending+' To = '+postUrl+'<br />' : ''))
+
+			// Lock all inline-edit-field until post complete
+			$parent.find('.inline-edit-field').addClass('-disabled')
+
+			// console.log(postUrl)
+			//console.log('length='+$('[data-group="'+para.group+'"]').length)
+			//console.log(para)
+
+			$.post(postUrl,para, function(data) {
+				updatePending--
+				$parent.find('.inline-edit-field').removeClass('-disabled')
+
+				if (typeof data == 'string') {
+					var tempData = data
+					data = {}
+					data.value = para.value
+					if (debug) data.msg = tempData
+				}
+
+				//if (data == '' || data == '<p>&nbsp;</p>')
+				//	data = '...';
+
+				//console.log('RETURN DATA:', data)
+
+				if (para.ret == 'refresh') {
+					window.location = window.location
+				} else if ($this.data('type') == 'autocomplete') {
+					$this.data('value',para.value)
+					$this.html('<span>'+data.value+'</span>');
+				} else if ($this.data('type') == 'radio') {
+				} else if ($this.data('type') == 'checkbox') {
+				} else if ($this.data('type') == 'select') {
+					var selectValue
+					if ($this.data('data')) {
+						selectValue = $this.data('data')[data.value]
+					} else {
+						selectValue = data.value
+					}
+					$this.html('<span>'+selectValue+'</span>')
+				} else {
+					// console.log('VALUE = ',data.value)
+					$this.html('<span>'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
+				}
+
+
+				var replaceTrMsg = '';
+				//console.log('para.tr='+para.tr+' data.tr='+data.tr)
+				if (para.tr != data.tr) {
+					if (data.tr == 0)
+						data.tr = '';
+					//console.log(para.group+' : '+para.tr+' : '+data.tr)
+					$('[data-group="'+para.group+'"]').data('tr', data.tr)
+					replaceTrMsg = 'Replace tr of group '+para.group+' with '+data.tr
+					//console.log(replaceTrMsg);
+				}
+
+				notify(
+					(data.error ? data.error : (data.msg ? data.msg : ''))
+					+ (debug && data.debug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br />PARAMETER : group = '+para.group+', FIELD = '+para.fld+', TRAN = '+para.tr+', VALUE = '+data.value+'<br />DEBUG : '+data.debug+'<br />Return : TRAN = '+data.tr+'<br />'+replaceTrMsg+'</div>' : ''),
+					debug ? 300000 : 5000);
+
+				// Process Done Action
+				if (settings.done) sgActionDone(settings.done, $this, data);
+
+				/*
+				if (settings.rel) {
+					if (settings.ret) {
+						//console.log("Return URL "+settings.ret)
+						$.post(settings.ret, function(html) {
+							sgUpdateData(html, settings.rel, $this)
+						})
+					} else {
+						sgUpdateData(data.value, settings.rel, $this)
+					}
+				}
+				*/
+
+				// Process callback function
+				var callbackFunction =  settings.callback ? settings.callback : $this.data('callback')
+
+				if (debugSG) console.log("CALLBACK ON COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
+				if (callbackFunction) {
+					if (typeof window[callbackFunction] === 'function') {
+						window[callbackFunction]($this,data,$parent);
+					} else if (settings.callbackType == 'silent') {
+						$.get(callbackFunction, function() {})
+					} else {
+						window.location = callbackFunction;
+					}
+				}
+			}, settings.result)
+			.fail(function(data) {
+				notify('ERROR ON POSTING. Please Contact Admin.');
+				// console.log(data)
+			}).done(function(data) {
+				// console.log($this.data('done'),$this,data)
+				sgActionDone($this.data('done'), $this, data)
+				console.log('$.sgInlineEdit DONE!!!')
+			});
+
+
+			/*
+			if (firebaseConfig) {
+				//console.log(para);
+				var data = {}
+				data.tags = 'Project Transaction Update';
+				if (typeof para.id != 'undefined')
+					data.tpid = para.id;
+				if (typeof para.group != 'undefined')
+					data.group = para.group;
+				if (typeof para.fld != 'undefined')
+					data.field = para.fld;
+				if (typeof para.tr != 'undefined')
+					data.tr = para.tr;
+				data.value = para.value;
+				data.url = window.location.href;
+				data.time = firebase.database.ServerValue.TIMESTAMP;
+				//console.log(data)
+				//ref = database.ref('/update/aa/');
+				ref.push(data, function(error){
+					if (error) {
+						console.log('Data could not be saved.' + error);
+					} else {
+						console.log('Data saved successfully.');
+					}
+				});
+				//ref.off();
+				//console.log(ref);
+			}
+			*/
+		}
+
+		// SAVE value immediately when radio or checkbox click
+		if (inputType == 'radio' || inputType == 'checkbox') {
+			self.save($this, value, callback)
+		}
+
+		// RETURN that can call from outside
+		return {
+			// GET VERSION
+			getVersion: function() {
+				return version
+			},
+
+			// SAVE DATA IN FORM TO TARGET
+			update: function($this, value, callback) {
+				self.save($this, value, callback)
+			}
+		}
+	}
+
+	/* Publicly accessible defaults. */
+	$.fn.sgInlineEdit.defaults = {
+		indicator		: '<div class="loader -rotate"></div>',
+		tooltip 			: 'คลิกเพื่อแก้ไข',
+		cssclass			: 'inlineedit',
+		width				: 'none',
+		height 			: 'none',
+		var				: null,
+		cancelcssclass	: 'btn -link -cancel',
+		submitcssclass	: 'btn -primary',
+		showButtonPanel: true,
+		indicator 		: 'SAVING',
+		event 			: 'edit',
+		inputcssclass	: '',
+		autocomplete 	: {},
+		datepicker 		: {},
+	}
+
+
+	$(document).on(sgInlineEditAction, '.sg-inline-edit .inline-edit-field:not(.-readonly)', function() {
+		console.log('$.sgInlineEdit version ' + version + ' start')
+		$(this).sgInlineEdit()
+	})
+
+	$(document).on('keydown', ".sg-inline-edit .inline-edit-field", function(evt) {
+		// TAB Key
+		if(evt.keyCode == 9) {
+			var $this = $(this);
+			var $allBox = $this.closest(".sg-inline-edit");
+			var nextBox = '';
+			var currentBoxIndex = $(".inline-edit-field").index(this);
+			if (currentBoxIndex == ($(".inline-edit-field").length-1)) {
+				nextBox = $(".inline-edit-field:first");
+			} else {
+				nextBox = $(".inline-edit-field").eq(currentBoxIndex+1);
+			}
+			$(this).find("input").blur();
+			$(nextBox).trigger('click')
+			//		notify('Index='+currentBoxIndex+$this' Length='+$allBox.children(".inline-edit-field").length+' Next='+nextBox.data('fld'))
+			return false;
+		};
+	});
+
+	// Add editable plugin
+	// Move into sgInlineEdit after fixed all other inline-edit to sg-inline-edit
+	$(document).ready(function() {
+
+		if (typeof $.fn.editable === 'undefined') return
+
+		$.editable.addInputType('checkbox', {
+		});
+
+		$.editable.addInputType('radio', {
+		});
+
+		//Add input type autocomplete to jEditable
+		$.editable.addInputType('autocomplete', {
+			element : $.editable.types.text.element,
+			plugin : function(settings, original) {
+				$(original).attr( 'autocomplete','off' );
+				var defaults = {
+					target: '',
+					source: function(request, response) {
+						var queryUrl = settings.autocomplete.query
+						var para = {}
+						para.q = request.term
+						$.get(queryUrl,para, function(data){
+							response($.map(data, function(item){
+								// RETURN all of data field
+								return item
+							}))
+						}, 'json');
+					},
+					minLength: 2,
+					dataType: 'json',
+					cache: false,
+					// On move up/down by keyboard or mouse over
+					focus: function(event,ui) {
+						event.preventDefault();
+						//console.log('FOCUS '+ui.item.label)
+						//settings.container.find('input').val(ui.item.label);
+					},
+					select: function(event, ui) {
+						//console.log('ui.item',ui.item)
+						this.value = ui.item.label;
+						//settings.container.data('value',ui.item.value)
+						var targetValue = settings.autocomplete.target
+						console.log('targetValue',targetValue)
+						if (targetValue) {
+							if (typeof targetValue == 'string') {
+								targetValue = JSON.parse('{"'+targetValue+'": "value"}')
+							}
+							//console.log("HAVE TARGET", targetValue)
+							for (var key in targetValue) {
+								//$('#'+x).val(ui.item[selectValue[x]]);
+								var dataValue = ui.item[targetValue[key]]
+								console.log('key = ' + key + ' , value = item.ui.'+ dataValue)
+								if (key.substring(0,1) == '#' || key.substring(0,1) == '.') {
+									$(key).val(ui.item.value)
+								} else {
+									$(original).data(key, dataValue)
+									console.log('data of key '+ key +' = '+$(original).data(key))
+								}
+							}
+						}
+
+						/*
+						if (target && target.substring(0,1) == '#') {
+							if ($form.find(target).length) {
+								$form.find(target).val(ui.item.value)
+							} else {
+								$(target).val(ui.item.value)
+							}
+
+						} else if (target) {
+						}
+						*/
+
+						/*
+						if ($this.data('select')!=undefined) {
+							var selectValue=$this.data('select');
+							if (typeof selectValue == 'object') {
+								console.log(selectValue)
+								var x;
+								for (x in selectValue) {
+									$('#'+x).val(ui.item[selectValue[x]]);
+									console.log(x+" "+selectValue[x])
+								}
+							} else if (typeof selectValue == 'string') {
+								$this.val(ui.item[selectValue]);
+							}
+						} else {
+							$this.val(ui.item.label);
+						}
+						*/
+						//if (settings.container.data('ret') == 'address') {
+						//	settings.container.data('areacode',ui.item.value)
+						//}
+						$(this).submit()
+					}
+				}
+
+				settings.autocomplete = $.extend({}, defaults,settings.autocomplete)
+
+				//console.log('SG-INLINE-EDIT:AUTOCOMPLETE settings:',settings)
+
+
+				$('input', this).autocomplete(
+					settings.autocomplete,
+				)
+				.autocomplete( 'instance' )._renderItem = function( ul, item ) {
+					if (item.value=='...') {
+						return $('<li class="ui-state-disabled -more"></li>')
+						.append(item.label)
+						.appendTo( ul );
+					} else {
+						return $( '<li></li>' )
+						.append( '<a><span>'+item.label+'</span>'+(item.desc!=undefined ? '<p>'+item.desc+'</p>' : '')+'</a>' )
+						.appendTo( ul )
+					}
+				}
+			}
+		})
+
+
+		$.editable.addInputType('datepicker-old', {
+			element : function(settings, original) {
+				var input = $('<input class="form-text -datepicker" />');
+				input.attr( 'autocomplete','off' );
+				if (settings.datepicker) {
+					input.datepicker(settings.datepicker);
+				} else {
+					input.datepicker();
+				}
+
+				// get the date in the correct format
+				if (settings.datepicker.format) {
+					input.datepicker('option', 'dateFormat', settings.datepicker.format);
+				}
+
+				$(this).append(input);
+				return(input);
+			},
+
+			submit: function (settings, original) {
+				var dateRaw = $('input', this).datepicker('getDate');
+				var dateFormatted;
+
+				if (settings.datepicker.format) {
+					dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
+				} else {
+					dateFormatted = dateRaw;
+				}
+				$('input', this).val(dateFormatted);
+				},
+
+				plugin : function(settings, original) {
+				// prevent disappearing of calendar
+				settings.onblur = 'submit';
+			}
+		})
+
+		$.editable.addInputType('datepicker', {
+			element : function(settings, original) {
+				var input = $('<input class="form-text -datepicker" />')
+				input.attr( 'autocomplete','off' )
+
+				var defaults = {
+						format: 'dd/mm/yy',
+						monthNames: thaiMonthName,
+						beforeShow: function( el ){
+							// set the current value before showing the widget
+							//$(this).data('previous', $(el).val() );
+							console.log('INLINE DATE BEFORE SHOW')
+							$(".ui-datepicker:visible").css({top:"+=5"});
+						},
+						open: function() {
+							console.log('INLINE DATEOPEN')
+							$(".ui-datepicker:visible").css({top:"+=5"});
+						},
+						onSelect: function() {
+								// clicking specific day in the calendar should
+								// submit the form and close the input field
+								$(this).submit();
+							},
+					}
+				settings.datepicker = $.extend({},defaults)
+
+				input.datepicker(settings.datepicker);
+
+				// get the date in the correct format
+				if (settings.datepicker.format) {
+					input.datepicker('option', 'dateFormat', settings.datepicker.format);
+				}
+
+				$(this).append(input);
+				return(input);
+			},
+
+			submit: function (settings, original) {
+					var dateRaw = $('input', this).datepicker('getDate');
+					var dateFormatted;
+
+					if (settings.datepicker.format) {
+						dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
+					} else {
+						dateFormatted = dateRaw;
+					}
+					$('input', this).val(dateFormatted);
+					$('input', this).datepicker('hide');
+				},
+
+				plugin : function(settings, original) {
+				// prevent disappearing of calendar
+				//settings.onblur = 'submit';
+				settings.onblur = 'nothing'
+			}
+		})
+
+		/*
+		$.editable.addInputType( 'datepicker', {
+			// create input element
+			element: function( settings, original ) {
+				var form = $( this ),
+				input = $( '<input class="form-text" />' );
+				input.attr( 'autocomplete','off' );
+				form.append( input );
+				return input;
+			},
+
+			attach jquery.ui.datepicker to the input element
+			plugin: function( settings, original ) {
+				var form = this,
+				input = form.find( 'input' );
+
+				// Don't cancel inline editing onblur to allow clicking datepicker
+				settings.onblur = 'nothing';
+
+				input.datepicker( {
+					dateFormat: settings.dateFormat,
+					monthNames: settings.monthNames,
+					showButtonPanel: settings.showButtonPanel,
+					changeMonth: settings.changeMonth,
+					changeYear: settings.changeYear,
+					altFormat: settings.altFormat,
+					altField: settings.altField,
+
+					onSelect: function() {
+						// clicking specific day in the calendar should
+						// submit the form and close the input field
+						form.submit();
+						console.log('SELECT')
+					},
+
+					onClose: function() {
+							setTimeout( function() {
+								if ( !input.is( ':focus' ) ) {
+									// input has NO focus after 150ms which means
+									// calendar was closed due to click outside of it
+									// so let's close the input field without saving
+									original.reset( form );
+								} else {
+									// input still HAS focus after 150ms which means
+									// calendar was closed due to Enter in the input field
+									// so lets submit the form and close the input field
+									form.submit();
+								}
+								// the delay is necessary; calendar must be already
+								// closed for the above :focus checking to work properly;
+								// without a delay the form is submitted in all scenarios, which is wrong
+							}, 150 );
+						}
+				} )
+			}
+		})
+		*/
+
+		/*
+		if (firebaseConfig) {
+			database = firebase.database();
+			ref = database.ref('/update/');
+		}
+		*/
+	});
+
+})(jQuery);
+
+/*
+* jQuery Extension :: sg-expand
+* Softganz expand DOM below parent
+* Written by Panumas Nontapan
+* https://softganz.com
+* Using <header><h3>Text</h3><a class="sg-expand"><icon class="icon -material">expand_less</i></a></header>
+*/
+(function($) {	// sg-expand
+	$(document).on("click",".sg-expand",function() {
+		let $this = $(this)
+		let $icon = $(this).children()
+		if ($this.data('rel')) {
+			$($this.data('rel')).toggle()
+		} else {
+			let $parent = $(this).closest('.widget-listtile')
+			$parent.next().toggle()
+			// $parent.nextAll().toggle()
+		}
+
+		if ($icon.text() == 'expand_less') {
+			$icon.text('expand_more')
+		} else if ($icon.text() == 'expand_more') {
+			$icon.text('expand_less')
+		}
+	})
+})(jQuery);
+
+
+
+
+
+/*
+* jQuery Extension :: sg-drawreport
+* Created : 2020-05-25
+*	written by Panumas Nontapan
+*
+*	Copyright (c) 2009 Softganz Group (https://softganz.com)
+*	Dual licensed under the MIT (MIT-LICENSE.txt)
+*	and GPL (GPL-LICENSE.txt) licenses.
+*
+*	Built for jQuery library (http://jquery.com)
+*
+*	markup example for $("#.btn.-primary.-submit").sgDrawReport(event,{options}).chain();
+*
+* <div class="sg-drawreport"></div>
+*/
+(function($) {	// sg-drawreport
+	'use strict';
+
+	let version = '0.10'
+	let sgActionType = 'click'
+	let debug
+	let toolbarIndex = 0
+
+	$.fn.sgDrawReport = function(event, options = {}) {
+		let $this = $(this)
+		let $form = $this.closest('form')
+		let $container = $this.closest('.sg-drawreport')
+		let queryUrl = $container.data('query')
+
+		let callback = $container.data("callback");
+
+		let dataOptions = $container.data('options')
+
+
+		console.log('$.sgDrawReport version ' + version + ' init')
+
+		let defaults = {
+			dataType: 'json',
+			container : $(this),
+			callback : false,
+		}
+
+		let settings = $.extend({}, $.fn.sgDrawReport.defaults, defaults, dataOptions, options)
+		//console.log(dataOptions)
+		//console.log(settings)
+
+		self.startDrawReport = function(data) {
+			console.log('$.sgDrawReport ' + version + ' start draw report')
+			var isDebug = $container.find('input[name="debug"]:checked').length > 0 && data.process != undefined
+
+			if (settings.dataType == 'html') {
+				let $detailElement = $($container.data('showHtml'))
+				$detailElement.html(data)
+				return
+			}
+
+			let $debugOutput = $container.find('#report-output-debug').empty()
+
+			if (data.debug && data.process) {
+				data.process.forEach(function(item) {
+					$debugOutput.append($('<div></div>').html(item))
+				})
+			}
+
+			/*
+			if (data.summary.length == 0) {
+				notify('ไม่มีข้อมูล',5000)
+				return
+			}
+			*/
+
+			if ($container.data('showChart')) showChart(data)
+
+			if ($container.data('showSummary')) showSummary(data)
+
+			if ($container.data('showItems')) showItems(data)
+
+			if ($container.data('showHtml')) showHtml(data)
+		}
+
+		self.showChart = function(data) {
+			let $chartElement = $($container.data('showChart'))
+			let chartType = $container.find('#graphtype').val()
+			let graphData = [['รายการ','จำนวน']]
+
+			if (data.summary == undefined || $chartElement.length == 0) return
+
+			data.summary.forEach(function(item, index) {
+				graphData.push([item.label, item.project])
+			})
+
+			var dataForGraph = google.visualization.arrayToDataTable(graphData)
+
+			var options = {
+				title: data.title,
+				hAxis: {title: "H Axis", titleTextStyle: {color: "black"}},
+				vAxis: {title: "Y Axis", minValue: 0},
+				isStacked: false
+			}
+
+			var chart
+
+			if (chartType == 'Bar') {
+				chart = new google.visualization.BarChart(document.getElementById("report-output-chart"))
+			} else if (chartType == 'Col') {
+				chart = new google.visualization.ColumnChart(document.getElementById("report-output-chart"))
+			} else if (chartType == 'Line') {
+				chart = new google.visualization.LineChart(document.getElementById("report-output-chart"))
+			} else {
+				chart = new google.visualization.PieChart(document.getElementById("report-output-chart"))
+			}
+
+			chart.draw(dataForGraph, options);
+		}
+
+		self.showSummary = function(data) {
+			var $tableElement = $($container.data('showSummary'))
+			$tableElement.empty()
+
+			if (data.summary == undefined || $tableElement.length == 0) return
+
+			var table = $('<table></table>').addClass('item')
+			var thead = $('<thead></thead>')
+
+			Object.keys(data.summaryFields).forEach( function(key) {
+				//console.log(key,data.summaryFields[key])
+				thead.append($('<th></th>').text(data.summaryFields[key]))
+			});
+
+			table.append(thead)
+
+			data.summary.forEach(function(item, index) {
+				var row = $('<tr></tr>').addClass('row')
+				Object.keys(data.summaryFields).forEach( function(key) {
+					let itemValue = item[key]
+					if (typeof itemValue === 'number' && parseInt(itemValue) != itemValue) {
+						//console.log('CONVERT ', itemValue)
+						itemValue = thousandsSeparators(itemValue)
+					}
+					row.append($('<td></td>').addClass('col '+(key == 'label' ? '' : '-center')).text(itemValue))
+				});
+
+				table.append(row)
+
+			})
+
+			if (data.total) {
+				var tfoot = $('<tfoot></tfoot').append($('<tr></tr>'))
+
+				Object.keys(data.summaryFields).forEach( function(key) {
+					if (key == 'label') {
+						tfoot.append('<td>รวมทั้งสิ้น</td>')
+					} else if (data.summaryFields[key] == '%') {
+						tfoot.append($('<td></td>').addClass('col -center').text('100%'))
+					} else {
+						tfoot.append($('<td></td>').addClass('col -center').text(data.total[key]))
+					}
+				});
+
+				table.append(tfoot)
+			}
+
+			$tableElement.append(table)
+		}
+
+		self.showItems = function(data) {
+			let $detailElement = $($container.data('showItems'))
+			let isShowDetail = false
+
+			$detailElement.empty()
+
+			if (data.items == undefined || $detailElement.length == 0) return
+
+			isShowDetail = data.items.length > 0
+
+			if (!isShowDetail) return
+
+			var exportBtn = $('<a/>')
+			exportBtn
+				.addClass('btn')
+				.html('<i class="icon -material">cloud_download</i><span>EXPORT</span>')
+				.attr('href', 'javascript:void(0)')
+				.attr('onClick', 'export2excel("trans")')
+			$detailElement.append($('<nav></nav>').addClass('nav -page -table-export -sg-text-right').append(exportBtn))
+
+			var table = $('<table></table>').addClass('item').attr('id','detail-list')
+			var thead = $('<thead></thead>')
+				.append($('<tr></tr>'));
+			Object.keys(data.itemsFields).forEach( function(key) {
+				thead.append($('<th></th>').text(data.itemsFields[key]))
+			});
+			table.append(thead)
+			var tbody = $('<tbody></tbody>')
+
+
+			data.items.forEach(function(item, index) {
+				let row = $('<tr></tr>').addClass('row')
+				let detailLink = $('<a/>')
+				let linkField
+
+				if (typeof item.config.link === 'object') {
+					linkField = item.config.link.field
+					detailLink
+						.attr('href', item.config.link.href)
+						.text(item[item.config.link.field])
+						.addClass('sg-action')
+						.attr('target', '_blank')
+						.data('rel', 'box')
+						.data('width', 640)
+						.data('webview', item.fullname)
+				}
+
+				Object.keys(data.itemsFields).forEach( function(key) {
+					row.append($('<td></td>').html(key == linkField ? detailLink : item[key]))
+				});
+
+				tbody.append(row)
+			})
+
+			table.append(tbody)
+
+			$detailElement.append(table)
+		}
+
+		self.showHtml = function(data) {
+			let $htmlElement = $($container.data('showHtml'))
+
+			$htmlElement.empty()
+
+			if (data.html == undefined) return
+			$htmlElement.html(data.html)
+		}
+
+
+		// RETURN function that can call from outside
+		$this.doAction = function() {
+			if ($this.hasClass('-submit-group')) {
+				$this.closest('ul').children().removeClass("-active")
+				$this.closest('li').addClass("-active")
+				$("#reporttype").val($this.attr("href").slice(1))
+			} else if ($this.hasClass('-graph')) {
+				$("#graphtype").val($this.val())
+			}
+
+			notify('LOADING')
+			$.post(
+				queryUrl,
+				$form.serialize(),
+				function(data) {
+					notify()
+					//console.log(data)
+					//console.log('GET DATA')
+				},
+				settings.dataType
+			).fail(function(data) {
+				notify('ERROR ON POSTING')
+			}).done(function(data) {
+				if (debugSG && data.debug) console.log('DONE WITH data = ',data)
+				//if (debugSG) console.log('DONE WITH data = ',data)
+				// Process callback function
+				//console.log("CALLBACK = ", callback)
+				if (callback && typeof window[callback] === 'function') {
+					window[callback]($this,data);
+				} else {
+					startDrawReport(data)
+				}
+			})
+
+			if (event != undefined) {
+				var $eventTarget = $(event.target)
+				//console.log($eventTarget)
+				//console.log($eventTarget.attr('type'))
+
+				if ($eventTarget.attr('type') != 'checkbox') {
+					event.preventDefault()
+				}
+			}
+			return $this
+		}
+
+		$this.showChart = function(data) {
+			showChart(data)
+			return $this
+		}
+
+		$this.showSummary = function(data) {
+			showSummary(data)
+			return $this
+		}
+
+		$this.showItems = function(data) {
+			showItems(data)
+			return $this
+		}
+
+		$this.showHtml = function(data) {
+			showHtml(data)
+			return $this
+		}
+
+		$this.version = function() {
+			console.log('$.sgDrawReport version is '+version)
+			return $this
+		}
+
+		$this.makeFilterBtn = function() {
+			//console.log('MAKE FILTER BTN')
+			let $filterBar = $container.find('#toolbar-report-filter>.-item')
+
+			$filterBar.empty()
+			$('.sg-drawreport .-filter-checkbox:checked').each(function(i) {
+				$filterBar
+					.append('<span class="" data-src="'+$(this).attr('id')+'">'+$(this).closest('label').text()+'<a class="x-submit"><i class="icon -material -sg-16">close</i></a></span>')
+			})
+		}
+
+		return $this
+	}
+
+	/* Publicly accessible defaults. */
+	$.fn.sgDrawReport.defaults = {
+		indicator			: 'LOADING',
+	}
+
+	$(document).on('click', '.sg-drawreport>form>.toolbar.-report>.-filter>.-select>.-item a', function() {
+		var srcId = $(this).closest('span').data('src')
+		$('#'+srcId).prop("checked", false)
+		let $srcAmt = $('#'+srcId).closest('li').find('.-amt')
+		$srcAmt.html($srcAmt.text() - 1)
+		//console.log('CLICK')
+		var result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
+		$(this).parent().remove()
+	});
+
+	$(document).on(sgActionType, '.sg-drawreport .-submit', function(event) {
+		var result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
+		//console.log('SUBMIT')
+		return result
+	});
+
+	$(document).on('change', '.sg-drawreport .-filter-checkbox', function() {
+		let checkCount = 0
+		$(this).closest('.-checkbox').find('.-filter-checkbox:checked').each(function(i) {
+			checkCount++
+		})
+		$(this).closest('li').find('.-check-count>.-amt').html(checkCount).parent().removeClass('-hidden').addClass(checkCount > 0 ? '' : '-hidden')
+		$(this).sgDrawReport().makeFilterBtn()
+	});
+
+	$(document).on('click','.sg-drawreport .group-nav', function() {
+		let $this = $(this)
+		let isLeftNav = $this.hasClass('-left')
+		let $groupBar = $this.closest('.-group')
+		let containerWidth = $groupBar.width() - 30*2
+		let itemWidth = $groupBar.find('ul>li').width()
+		let itemInToolbar = Math.floor(containerWidth/itemWidth)
+		let maxToolbarIndex = Math.ceil($groupBar.find('ul').width()/containerWidth)
+		isLeftNav ? (toolbarIndex > 0 ? toolbarIndex-- : 0) : (toolbarIndex < maxToolbarIndex-1 ? toolbarIndex++ : maxToolbarIndex-1)
+		let scrollWidth = toolbarIndex*itemWidth*itemInToolbar + (itemInToolbar*toolbarIndex+1) - 1
+		$groupBar.find('ul').animate({"left": -scrollWidth+"px"}, "fast")
+		//console.log('toolbarIndex = ',toolbarIndex)
+		//console.log('CONTAINER WIDTH ',containerWidth)
+		//console.log('itemWidth ',itemWidth)
+		//console.log('itemInToolbar ',itemInToolbar)
+	});
+})(jQuery);
+
+
+
+
+
+/*
+* sg-tabs :: Softganz tabs
+* written by Panumas Nontapan
+* https://softganz.com
+* Using <div class="sg-tabs"><ul class="tabs">tab click</ul><div>tab container</div></div>
+*/
+$(document).on('click', '.sg-tabs>.ui-tab>.ui-item>a, .sg-tabs>ul.tabs>li>a, .sg-tabs>ul>li>a', function(e) {
+	var $this = $(this)
+	var $parent = $this.closest('.sg-tabs')
+	var href = $this.attr('href')
+	$this.closest('ul').children('li').removeClass('-active')
+	$this.closest('li').addClass('-active')
+
+	sgTabIdActive = $this.attr("id")
+	//console.log("Tab Active = ",sgTabIdActive)
+
+	if ($this.attr('target') != undefined) return true;
+	if (href == undefined || href == 'javascript:void(0)') {
+		// do nothing
+	} else if (href.left(1) == '#') {
+		$parent.children('div').hide()
+		$parent.children($this.attr('href')).show()
+	} else if (!$this.hasClass('sg-action')) {
+		notify('LOADING')
+		console.log('LOAD TAB')
+		//window.history.pushState({},$this.text(),href)
+		//TODO: FIXED bug on class sg-action will double request
+		$.post(href,function(html) {
+			$parent.children('div').html(html)
+			notify()
+		})
+	}
+
+	// Process CALLBACK function
+	var callback = $this.data("callback")
+	if (callback && typeof window[callback] === 'function') {
+		window[callback]($this,html)
+	} else if (callback) {
+		window.location = callback
+	}
+
+	return false
+});
+
+
+
+
+
+/*
+* sg-dropbox :: Softganz dropbox
+* written by Panumas Nontapan
+* https://softganz.com
+* Using sg_dropbox()
+*/
+$(document).on('click', '.sg-dropbox>a', function() {
+	var $parent=$(this).parent()
+	var $wrapper=$(this).next()
+	var $target=$parent.find('.sg-dropbox--content')
+
+	$('.sg-dropbox.click').not($(this).parent()).each(function() {
+		$(this).children('div').hide()
+	});
+	if ($parent.data('type')=='box') {
+		$parent.css('display',"block").addClass('active')
+		if ($parent.data('url')!=undefined) {
+			$target.html('LOADING')
+			$wrapper.show()
+			$.get($parent.data('url'),function(html) {
+				$target.html(html)
+			});
+		} else $wrapper.show()
+
+	} else if ($parent.data('type')=='click') {
+		$wrapper.show()
+	} else {
+		$wrapper.toggle()
+	}
+	var offset=$(this).offset()
+	var width=$wrapper.width()
+	var docwidth=$(document).width()
+	var right=0
+	if (offset.left+width>docwidth) {
+		var right=docwidth-offset.left-$(this).width()-8;//offset.left
+		$wrapper.css({'rightside':right+"px"})
+	}
+	//notify("left: " + offset.left + ", top: " + offset.top+", width="+width+", document width="+docwidth+", right="+right)
+ 	return false
+})
+.on('click','body', function(e) {
+	var $this = $(e.target)
+	//console.log($this.closest('.sg-dropbox'))
+	if ($this.closest('.sg-dropbox').length == 0) {
+		$('.sg-dropbox.click').children('div').hide()
+	}
+	//notify(e.target.className)
+	if ($(e.target).closest('.sg-dropbox.box').length===0) {
+		$('.sg-dropbox.box').children('div').hide()
+		$('.sg-dropbox.box.active').removeClass('active')
+	}
+});
+
+
+
+
+$(document).on('focus', '.sg-datepicker', function(e) {
+	console.log('SG-DATEPICKER Start')
+	$(this).attr('autocomplete','off')
+	let defaults = {
+		clickInput: true,
+		dateFormat: "dd/mm/yy",
+		altFormat: "yy-mm-dd",
+		altField: "AAAA",
+		disabled: false,
+		monthNames: thaiMonthName,
+		beforeShow: function( e ){
+			// console.log('SG-DATEPICKER Befor show')
+			//$(e).css('top','200px')
+			//console.log('ele.top',$(e).css('top'))
+			// set the current value before showing the widget
+			//$('.ui-datepicker').css({'position':'relative','z-index':999999,'top':'300px'})
+			$(this).data('previous', $(e).val() );
+			$(".ui-datepicker:visible").css({top:"+=5"});
+		},
+		open: function() {
+			// console.log('SG-DATEPICKER Open')
+			//$(".ui-datepicker:visible").css({top:"+=5"});
+		},
+		onSelect: function(dateText,inst) {
+			if( $(this).data('previous') != dateText ) {
+				if ($(this).data('diff')) {
+					// Calculate for date diff into other field
+					let $toDate = $('#'+$(this).data('diff'));
+					// console.log('Calculate date diff to '+$toDate.attr('id'));
+
+					let $fromDate = $(this);
+					//let $toDate=$(this).closest('form').find('.sg-checkdateto');
+					if ($toDate.val() == '') {
+						$toDate.val($fromDate.val());
+					} else {
+						let diff_date = 0;
+						let days = 24*60*60*1000;
+						let prevDateText = $(this).data('previous') ? $(this).data('previous') : dateText;
+						let prevDateArray = prevDateText.split("/");
+						let fromDateArray = $(this).val().split("/");
+						let toDateArray = $toDate.val().split("/");
+
+						let prevDate = new Date(prevDateArray[2],prevDateArray[1] - 1,prevDateArray[0]);
+						let toDate = new Date(toDateArray[2],toDateArray[1] - 1,toDateArray[0]);
+
+						let fromDate = new Date(fromDateArray[2],fromDateArray[1] - 1,fromDateArray[0]);
+
+						diff_date = Math.round((toDate - prevDate) / days);
+
+						let newToDate = new Date(fromDate);
+
+						newToDate.setDate(fromDate.getDate() + diff_date);
+
+						let dd = newToDate.getDate();
+						let mm = newToDate.getMonth() + 1;
+						let yy = newToDate.getFullYear();
+
+						let pad = '00'
+						// Fill 0 before date with length 2 => (pad + dd).slice(-pad.length)
+						let newToDateFormatted = (pad + dd).slice(-pad.length) + '/' + (pad + mm).slice(-pad.length) + '/' + yy;
+						// console.log(newToDateFormatted)
+						// console.log($toDate.data('maxDate'))
+						$toDate.val(newToDateFormatted);
+					}
+				}
+				$(this).trigger('dateupdated');
+			}
+			// Process call back
+			let callback = $(this).data('callback');
+			if (callback) {
+				if (callback == 'submit') {
+					$(this).closest('form').submit()
+				} else if (typeof window[callback] === 'function') {
+					 window[callback](dateText,$(this));
+				} else {
+					let url = callback+'/'
+					window.location = url;
+				}
+			}
+		},
+	}
+	let options = $.extend(defaults, $(this).data());
+
+	$(this).datepicker(options)
+});
+
+
+
+
+
+/*
+* sg-address :: Softganz address
+* written by Panumas Nontapan
+* https://softganz.com
+* Using <input class="sg-address" type="text" />
+*/
+$(document).on('focus', '.sg-address', function(e) {
+	var $this=$(this)
+	$this
+	.autocomplete({
+		source: function(request, response){
+			console.log('Search address of ' + request.term)
+			$.get(url+"api/address?q="+encodeURIComponent(request.term), function(data){
+				response(data)
+			}, "json");
+		},
+		minLength: 6,
+		dataType: "json",
+		cache: false,
+		select: function(event, ui) {
+			this.value = ui.item.label;
+			// Do something with id
+			console.log('Return Address : '+ui.item.value)
+			if ($this.data('altfld')) $("#"+$this.data('altfld')).val(ui.item.value);
+
+			// Process call back
+			var callback = $this.data('callback');
+			if (callback) {
+				if (callback == 'submit') {
+					//$this.closest('form').triger('submit');
+					$(this).closest("form").trigger("submit");
+				} else if (typeof window[callback] === 'function') {
+					 window[callback]($this, ui);
+				} else {
+					var url = callback + '/' + ui.item.value
+					window.location = url;
+				}
+			}
+
+			return false;
+		}
+	})
+	.autocomplete( "instance" )._renderItem = function( ul, item ) {
+		if (item.value=='...') {
+			return $('<li class="ui-state-disabled -more"></li>')
+			.append(item.label)
+			.appendTo( ul );
+		} else {
+			return $( "<li></li>" )
+			.append( "<a><span>"+item.label+"</span>"+(item.desc!=undefined ? "<p>"+item.desc+"</p>" : "")+"</a>" )
+			.appendTo( ul )
+		}
+	}
+});
+
+
+
+/*
+* sg-autocomplete :: Display autocomplete box
+* written by Panumas Nontapan
+* https://softganz.com
+* Using <form><input class="sg-autocomplete" type="text" /></form>
+* data-aldfld = "id"
+*	data-select = string
+*	data-select = {"id":"result field key"[, "id":"result field key"]}
+*/
+$(document).on('focus', '.sg-autocomplete', function(e) {
+	var $this = $(this)
+	var $form = $this.closest('form')
+	var minLength=1
+	if ($this.data('minlength')) minLength=$this.data('minlength')
+	$this
+	.autocomplete({
+		minLength: minLength,
+		dataType: "json",
+		cache: false,
+		source: function(request, response){
+			var para={}
+			para.n=$this.data('item');
+			para.q=$this.val();
+			//console.log("Query "+$this.data('query'))
+			notify("กำลังค้นหา");
+			$.get($this.data('query'),para, function(data){
+				notify();
+				response(data);
+				var renderComplete = $this.data('renderComplete')
+				if (renderComplete && typeof window[renderComplete] === 'function') {
+					return window[renderComplete]($this);
+				}
+			}, "json");
+		},
+		open: function() {
+			$(".ui-autocomplete:visible").css({top:"+=5"});
+			if ($this.data('class')) {
+				$this.autocomplete("widget").addClass($this.data('class'));
+			}
+			if ($this.data('width')) {
+				$this.autocomplete("widget").css({"width":$this.data('width')});
+			}
+		},
+		focus: function(event, ui) {
+			return false
+		},
+		select: function(event, ui) {
+			// Return in ui.item.value , ui.item.label
+			// Do something with id
+			console.log('Select ' + ui.item.value);
+			if ($this.data('altfld')) {
+				var altElement = "#"+$this.data('altfld')
+				if ($form.find(altElement).length) {
+					$form.find(altElement).val(ui.item.value)
+				} else {
+					$(altElement).val(ui.item.value)
+				}
+			}
+
+			// data-select = string
+			// data-select = {"id-1":"result field key 1", "id-2":"result field key 2"}
+			if ($this.data('select')!=undefined) {
+				var selectValue=$this.data('select');
+				if (typeof selectValue == 'object') {
+					//console.log(selectValue)
+					var x;
+					for (x in selectValue) {
+						$('#'+x).val(ui.item[selectValue[x]]);
+						//console.log(x+" "+selectValue[x])
+					}
+				} else if (typeof selectValue == 'string') {
+					$this.val(ui.item[selectValue]);
+				}
+			} else {
+				$this.val(ui.item.label);
+			}
+
+
+			// Process call back
+			var callback = $this.data('callback');
+			if (callback) {
+				if (callback == 'submit') {
+					//$this.closest('form').triger('submit');
+					$(this).closest("form").trigger("submit");
+				} else if (typeof window[callback] === 'function') {
+					 window[callback]($this, ui);
+				} else {
+					var url = callback + '/' + ui.item.value
+					window.location = url;
+				}
+			}
+
+			return false;
+		},
+		response: function(event, ui) {
+			//console.log('RESPONSE')
+			//console.log('EVENT', event)
+			var renderStart = $this.data('renderStart')
+			if (renderStart && typeof window[renderStart] === 'function') {
+				window[renderStart]($this, ui);
+			}
+		},
+	})
+	.autocomplete('instance')._renderItem = function( ul, item ) {
+		var renderItem = $this.data('renderItem')
+		if (renderItem && typeof window[renderItem] === 'function') {
+			return window[renderItem]($this, ul, item);
+		} else {
+			if (item.value=='...') {
+				return $('<li class="ui-state-disabled -more"></li>')
+				.append(item.label)
+				.appendTo( ul );
+			} else {
+				return $( "<li></li>" )
+				.append( "<a><span>"+(item.altLabel != undefined ? item.altLabel : item.label)+"</span>"+(item.desc != undefined ? "<p>"+item.desc+"</p>" : "")+"</a>" )
+				.appendTo( ul )
+			}
+		}
+	}
+});
+
+
+
+
+/*
+* Softganz inline upload file
+* written by Panumas Nontapan
+* https://softganz.com
+* Using <form class="sg-upload"><input class="inline-uplaod" type="file" /></form>
+*/
+$(document).on('change', "form.sg-upload .inline-upload", function() {
+	var $this = $(this)
+	var $form = $this.closest("form")
+	var target = $form.data('rel')
+	var targetClass = ' class="' + ($form.data('class') != undefined ? $form.data('class') : 'ui-item -hover-parent') + '"'
+
+	if (isAndroidWebViewReady) Android.showToast('กำลังอัพโหลดไฟล์')
+
+	console.log('sg-upload :: Inline upload file start and show result in '+target)
+	//notify("<p style=\"background-color:#fff;padding:16px;\"><img src=\"/library/img/loading.gif\" alt=\"Uploading\"/> กำลังอัพโหลดไฟล์ กรุณารอสักครู่<br />"+$this.val()+"<br /><img src=\""+$this.val()+"\" /></p>")
+	if ($form.data('before')) {
+		var tagName = $form.data('before')
+		var insertElement = '<'+tagName+targetClass+'><div class="loader -rotate -center"></div></'+tagName+'>'
+		var $targetElement = $this.closest(tagName).before(insertElement)
+		console.log($targetElement)
+	} else {
+		notify('<div class="loader -rotate"></div> กำลังอัพโหลดไฟล์ กรุณารอสักครู่')
+	}
+	$form.ajaxForm({
+		success: function(data) {
+			console.log('Inline upload file complete.');
+			if (isAndroidWebViewReady) Android.showToast('อัพโหลดไฟล์เรียบร้อบ')
+			if (target) {
+				if ($form.data('append')) {
+					var insertElement = '<'+$form.data('append')+targetClass+'>'+data+'</'+$form.data('append')+'>';
+					$(target).append(insertElement);
+				} else if ($form.data('prepend')) {
+					var insertElement = '<'+$form.data('prepend')+targetClass+'>'+data+'</'+$form.data('prepend')+'>';
+					$(target).prepend(insertElement);
+					//console.log(insertElement)
+				} else if ($form.data('before')) {
+					//var tagName = $form.data('before')
+					//var insertElement = '<'+tagName+targetClass+'>'+data+'</'+tagName+'>';
+					//console.log('Before ',$form.data('before'));
+					//console.log('Value ',insertElement)
+					//$this.closest($form.data('before')).before(insertElement);
+					$targetElement.prev().html(data)
+				} else if ($form.data('after')) {
+					var insertElement = '<'+$form.data('after')+targetClass+'>'+data+'</'+$form.data('after')+'>';
+					//console.log($form.data('after'));
+					//console.log(insertElement)
+					$this.closest($form.data('after')).after(insertElement);
+				} else {
+					sgUpdateData(data, target, $this)
+					//$(target).html(data);
+				}
+			}
+
+			notify("ดำเนินการเสร็จแล้ว.",5000)
+			$this.val("")
+			$this.replaceWith($this.clone(true))
+			if ($form.data('done') == 'close') {
+				$.colorbox.close()
+			}
+		}
+	}).submit()
+});
+
+
+
+
+
+/*
+* sg-chart :: Display Google chart
+* Written by Panumas Nontapan
+* https://softganz.com
+* Using <div class="sg-chart" data-chart-type="bar" data-options='{}'><h3>Chart Title</h3><table><tbody><tr><td>..</td><td>..</td></tr>...</tbody></table></div>
+*/
+function drawChart(chartDom) {
+	var $container = $(chartDom);
+	var chartId = $container.attr("id");
+	var chartTitle = $container.find("h3").text();
+	var chartType = $container.data("chartType");
+	var $chartTable = $(chartDom).find("table");
+	var chartData = [];
+	var chartColumn = [];
+	var options = {};
+	var chartDataObj = {}
+
+	if (chartType == undefined) chartType="col"
+
+	console.log('::SG-CHART ' + chartType + ' of ' + chartId)
+	// console.log('Chart Title : '+chartTitle+' Chart Type : '+chartType)
+
+	var defaults = {
+		pointSize: 4,
+		allowHtml: true,
+		pieHole: 0.4,
+		vAxis: {
+			viewWindowMode: "explicit",
+		},
+		hAxis: {
+			textStyle: {
+				fontSize:10,
+			}
+		},
+		annotations: {
+			textStyle: {
+				fontSize:9,
+			},
+		},
+	};
+
+	if ($container.data("series")==2) {
+		defaults.series={
+			0:{targetAxisIndex:0},
+			1:{targetAxisIndex:1},
+		}
+	}
+	var options = $.extend(defaults, $container.data('options'));
+	//console.log(defaults);
+	// console.log('data-options', $container.data('options'))
+
+	if ($container.data('value')) {
+
+	} else {
+		$.each($chartTable.find('tbody>tr'),function(i,eachRow){
+			var $row = $(this)
+			// console.log($row.text())
+			var rowData = []
+			$.each($row.find('td'),function(j,eachCol){
+				var $col = $(this)
+				var colKey = $col.attr('class').split(':')
+				var colValue
+				if (i == 0) {
+					chartColumn.push([colKey[0],colKey[1],colKey[2]==undefined?'':colKey[2]])
+				}
+				if (colKey[0]=="string") {
+					colValue = $col.text()
+				} else {
+					colValue = Number($col.text().replace(/[^\d\.]/g,''))
+				}
+				//console.log($col.attr('class')+$col.text())
+				rowData.push(colValue)
+				if (chartType == 'guage') {
+					chartDataObj[$col.attr('class')] = colValue
+				}
+			})
+			chartData.push(rowData)
+			// console.log(rowData)
+		})
+		// console.log(chartDataObj)
+		// console.log('Chart Column : ', chartColumn)
+		// console.log('Chart Data', chartData)
+	}
+
+
+	google.charts.load("current", {"packages":["corechart","line", "gauge"]});
+	// google.charts.load('current', {'packages':['line', 'corechart']});
+	// google.charts.load("current", {"packages":["corechart"]});
+	google.charts.setOnLoadCallback(drawChart);
+
+	function drawChart() {
+		if (chartTitle) options.title = chartTitle;
+		// console.log('Options',options);
+		// Add chart column
+		let data = null;
+		if ($container.data('value')) {
+			data = google.visualization.arrayToDataTable($container.data('value'))
+		} else {
+			if (chartType == "guage") {
+				let guageData = []
+				guageData.push(['Label', 'Value'])
+				// guageData.push(['งบประมาณ', 15080])
+				$.each(chartData, function(i) {
+					// console.log(chartData[i])
+					guageData.push([chartData[i][0],chartData[i][1]])
+					if (chartData[i][2]) options.max = chartData[i][2]
+						// options.redFrom = 0
+						// options.redTo = 10000000
+						// options.yellowFrom = 10000001
+						// options.yellowTo = 15000000
+						// options.greenFrom = 15000001
+						// options.greenTo = 20000000
+						if ("redFrom" in chartDataObj) options.redFrom = chartDataObj.redFrom
+						if ("redTo" in chartDataObj) options.redTo = chartDataObj.redTo
+						if ("yellowFrom" in chartDataObj) options.yellowFrom = chartDataObj.yellowFrom
+						if ("yellowTo" in chartDataObj) options.yellowTo = chartDataObj.yellowTo
+						if ("greenFrom" in chartDataObj) options.greenFrom = chartDataObj.greenFrom
+						if ("greenTo" in chartDataObj) options.greenTo = chartDataObj.greenTo
+						if ("string:redColor" in chartDataObj) options.redColor = chartDataObj["string:redColor"]
+				})
+				data = google.visualization.arrayToDataTable(guageData)
+				// data.addColumn('งบประมาณ', 15080)
+					// console.log(chartColumn[i])
+					// 	data.addColumn(chartColumn[i][1],chartColumn[i][2])
+
+			} else {
+				data = new google.visualization.DataTable();
+				$.each(chartColumn, function(i) {
+					if (chartColumn[i][2] == 'role') {
+						data.addColumn({type: chartColumn[i][0], role: 'annotation'})
+					} else {
+						data.addColumn(chartColumn[i][0],chartColumn[i][1])
+					}
+				})
+				data.addRows(chartData);
+			}
+			// console.log(data)
+			// console.log('Options : ',options)
+			// Add chart rows
+
+			// var data = google.visualization.arrayToDataTable([
+			// 	['Label', 'Value'],
+			// 	['งบประมาณ', 15080],
+			// 	['รายจ่าย', 12000],
+			// ]);
+		}
+
+		var chartContainer=document.getElementById(chartId)
+		var chart
+		if (chartType=="line") {
+			// chart = new google.visualization.LineChart(chartContainer);
+			chart = new google.charts.Line(chartContainer)
+		} else if (chartType=="bar") {
+			chart = new google.visualization.BarChart(chartContainer);
+		} else if (chartType=="col") {
+			chart = new google.visualization.ColumnChart(chartContainer);
+		} else if (chartType=="pie") {
+			chart = new google.visualization.PieChart(chartContainer);
+		} else if (chartType=="combo") {
+			chart = new google.visualization.ComboChart(chartContainer);
+		} else if (chartType=="guage") {
+			chart = new google.visualization.Gauge(chartContainer);
+		}
+
+		if ($container.data('callback')) {
+			let callback = $container.data('callback')
+			// google.visualization.events.addListener(chart, "ready", window[callbackFunction](chart));
+			if (callback && typeof window[callback] === 'function') {
+				let callbackFunction = window[callback]
+				google.visualization.events.addListener(chart, "ready", callbackFunction);
+			}
+			// window[doneTarget]()
+		}
+
+		if ($container.data("image")) {
+			google.visualization.events.addListener(chart, 'ready', function () {
+				var imgUri = chart.getImageURI();
+				// do something with the image URI, like:
+				document.getElementById($container.data("image")).src = imgUri;
+			});
+		}
+		chart.draw(data, options);
+	}
+}
+
+$(document).ready(function() {
+	$('.sg-chart').each(function(index) {
+		drawChart(this)
+	});
+});
+
+
+
+// Province change
+$(document).on('change','.sg-changwat',function() {
+	var $this=$(this)
+	var $form=$this.closest('form');
+	var $changwat=$form.find('.sg-changwat');
+	var $ampur=$form.find('.sg-ampur');
+	var $tambon=$form.find('.sg-tambon');
+	var $village=$form.find('.sg-village');
+	var altField = $this.data('altfld')
+
+	console.log('Get Ampur of ' + $this.val())
+	if ($this.val()=='') {
+		$ampur.val("").hide();
+	} else {
+		$ampur.val("");
+	}
+	$tambon.val("").hide();
+	if ($village.length) $village.val("").hide()
+	if ($ampur.length) $ampur[0].options.length = 1;
+	if ($tambon.length) $tambon[0].options.length = 1;
+	if ($village.length) $village[0].options.length = 1;
+
+	if (altField) {
+		$form.find(altField).val($this.val())
+	}
+
+	$.get(url+'api/ampur',{q:$this.val()}, function(data) {
+		if (data.length) $ampur.show(); else $ampur.hide()
+		for (var i = 0; i < data.length; i++) {
+			$ampur.append(
+				$("<option></option>")
+				.text(data[i].label)
+				.val(data[i].ampur)
+			);
+		};
+	},'json')
+	if ($this.data('change') == 'submit') $form.submit();
+	//$this.closest('form').submit()
+});
+
+// Ampur change
+$(document).on('change','.sg-ampur', function() {
+	var $this = $(this);
+	var $form = $this.closest('form');
+	var $changwat = $form.find('.sg-changwat');
+	var $ampur = $form.find('.sg-ampur');
+	var $tambon = $form.find('.sg-tambon');
+	var $village = $form.find('.sg-village');
+	var altField = $this.data('altfld')
+
+	console.log('Get Tambon of ' + $this.val())
+
+	if ($this.val()=='') {
+		$tambon.val("").hide();
+	} else {
+		$tambon.val("");
+	}
+	$village.val("").hide()
+	if ($tambon.length) $tambon[0].options.length = 1;
+	if ($village.length) $village[0].options.length = 1;
+
+	if (altField) {
+		$form.find(altField).val($changwat.val()+$this.val())
+	}
+
+	$.get(url+'api/tambon',{q:$changwat.val()+$ampur.val()}, function(data) {
+		if (data.length) $tambon.show(); else $tambon.hide()
+		for (var i = 0; i < data.length; i++) {
+			$tambon.append(
+				$("<option></option>")
+				.text(data[i].label)
+				.val(data[i].tambon)
+			);
+		};
+	},'json')
+	if ($this.data('change') == 'submit') $form.submit();
+});
+
+// Tambon change
+$(document).on('change','.sg-tambon', function() {
+	let $this = $(this)
+	let $form = $this.closest('form');
+	let $changwat = $form.find('.sg-changwat');
+	let $ampur = $form.find('.sg-ampur');
+	let $tambon = $form.find('.sg-tambon');
+	let $village = $form.find('.sg-village');
+	let altField = $this.data('altfld')
+
+	if (altField) {
+		console.log('tambon altfld = ' + altField)
+		$form.find(altField).val($changwat.val()+$ampur.val()+$this.val())
+	}
+	if (!$village.length) return;
+
+	console.log('Get Village of ' + $this.val())
+	if ($this.val()=='') {
+		$village.val("").hide();
+	} else {
+		$village.val("").show()
+	}
+	if ($village.length) $village[0].options.length = 1;
+	$.get(url+'api/village',{q:$changwat.val()+$ampur.val()+$tambon.val()}, function(data) {
+		for (let i = 0; i < data.length; i++) {
+			$village.append(
+				$("<option></option>")
+				.text(data[i].label)
+				.val(data[i].village)
+			);
+		};
+	},'json')
+	if ($this.data('change') == 'submit') $form.submit();
+});
+
+// Village cgange
+$(document).on('change','.sg-village', function() {
+	var $this=$(this)
+	var $form=$this.closest('form');
+	var $changwat=$form.find('.sg-changwat');
+	var $ampur=$form.find('.sg-ampur');
+	var $tambon=$form.find('.sg-tambon');
+	var $village=$form.find('.sg-village');
+
+	if ($changwat.data('altfld')) $($changwat.data('altfld')).val($changwat.val()+$ampur.val()+$tambon.val()+$this.val());
+
+	if ($this.data('change') == 'submit') $form.submit();
+});
+
+
+
+
+
+
+var sgDrawMap = function(thisMap, options = {}) {
+	var defaults = {
+		gisDigit: 14,
+		zoom: 9,
+		center: [],
+		drag: "pin",
+		dropPin: false,
+		dropPinText: null,
+		updateUrl: null,
+		updatePara: null,
+		updateIcon: null,
+		mapCanvas: "#map-canvas",
+		height: '100%',
+		pin: [],
+		markers: [],
+		debug: false,
+		callback : false,
+	}
+
+	var settings = $.extend({}, defaults, options)
+	if (settings.debug) console.log(settings)
+
+	var currentMarker
+	var currentMarkerText
+	var $currentMarkerDom = $("#current-location .value")
+	var updateUrl = settings.updateUrl
+	var is_point = settings.pin.lat ? true : false
+	var currentInfoText = ""
+	var dragText = (settings.drag == "map" ? "เลื่อนแผนที่" : "ลากหมุด") + "เพื่อเปลี่ยนตำแหน่ง"
+	var dragNotifyTime = 20000
+	var zoomChange = false
+
+	// console.log('settings', settings)
+
+	$(".box-page").css({width: "100%", height: "100%", minWidth: "100%", minHeight: "100%"})
+	$(".page.-map").css({height: settings.height, minWidth: "100%", minHeight: settings.height})
+	$(settings.mapCanvas).css({width: "100%", height: "100%", minWidth: "100%", minHeight: "100%"})
+
+	if (settings.dropPin) {
+		if (is_point) notify(dragText, dragNotifyTime)
+		else if (!is_point) notify("คลิกบนแผนที่ตรงตำแหน่งที่ต้องการวางหมุด",20000)
+	} else {
+		is_point = true
+	}
+
+	var $map = new GMaps({
+		div: settings.mapCanvas,
+		zoom: settings.zoom,
+		scrollwheel: true,
+		lat: settings.center.lat,
+		lng: settings.center.lng,
+		//disableDefaultUI: true,
+		//scrollwheel: false,
+		//disableDoubleClickZoom: false,
+
+		click: function(event) {
+			if (is_point) return
+
+			notify(dragText, dragNotifyTime)
+			currentMarkerText = event.latLng.lat().toFixed(settings.gisDigit)+','+event.latLng.lng().toFixed(settings.gisDigit)
+			// console.log(currentMarkerText)
+			currentMarker = createMarker({lat: event.latLng.lat(), lng: event.latLng.lng()})
+			is_point = true
+			var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+			infoWindow.open($map, currentMarker)
+			$currentMarkerDom.text(currentMarkerText)
+		}
+	});
+
+	/*
+		var myMap = document.getElementById(settings.mapCanvas);
+
+		function zoomIn() {
+			var lat
+			var lng
+			console.log('ZOOM Change '+$map.getZoom())
+			zoomChange = true
+			//$map.zoom = 10
+			if (currentMarker) {
+				lat = currentMarker.getPosition().lat()
+				lng = currentMarker.getPosition().lng()
+				console.log(lat+','+lng)
+				//$map.setCenter(lat, lng)
+				//currentMarker.setPosition($map.getCenter())
+				//updateLocationValue($map.getCenter().lat(), $map.getCenter().lng())
+			}
+			$map.setZoom($map.getZoom() + 1);
+			if (currentMarker) {
+				$map.setCenter(lat, lng)
+				//currentMarker.setPosition($map.getCenter())
+				//updateLocationValue($map.getCenter().lat(), $map.getCenter().lng())
+			}
+		}
+		myMap.addEventListener('dblclick', zoomIn, true);
+		$map.addListener("x-zoom_changed", () => {
+			console.log($map.getCenter().toUrlValue())
+			if (currentMarker) {
+				var lat = currentMarker.getPosition().lat();
+				var lng = currentMarker.getPosition().lng()
+				$map.setCenter(lat, lng)
+				//currentMarker.setPosition($map.getCenter())
+				//updateLocationValue($map.getCenter().lat(), $map.getCenter().lng())
+			}
+		})
+	*/
+
+	if (settings.drag == "map") {
+		$map.addListener("center_changed", () => {
+			// console.log('CENTER CHANGE '+$map.getCenter().toUrlValue())
+			/*
+			if (zoomChange) {
+				zoomChange = false
+				if (currentMarker) {
+					$map.setCenter(currentMarker.getPosition().lat(), currentMarker.getPosition().lng())
+				}
+				return
+			}
+			*/
+			if (currentMarker) {
+				currentMarker.setPosition($map.getCenter())
+				updateLocationValue($map.getCenter().lat(), $map.getCenter().lng())
+			}
+		})
+	}
+
+
+
+	function clearMap() {
+		is_point = false
+		locationUpdate("")
+		currentMarker.setMap(null);
+	}
+
+	var locationUpdate = function(latLng) {
+		if (updateUrl == undefined) return false
+
+		var para = settings.updatePara == undefined ? {} : settings.updatePara
+		para.location = latLng
+		if (settings.debug) console.log("SAVE Location "+updateUrl,para)
+		$.post(updateUrl, para, function(data) {
+			var googleMapUrl = "https://www.google.com/maps/place/"+latLng
+			var googleNavUrl = "geo:?q="+latLng
+
+			$("#googlemap").attr("href", googleMapUrl).removeClass("-hidden")
+			$("#googlenav").attr("href", googleNavUrl).removeClass("-hidden")
+
+			var mapIcon = latLng != "" ? "where_to_vote" : "room"
+			var mapActive = latLng != "" ? "-active" : ""
+			if (settings.updateIcon) {
+				$(settings.updateIcon)
+					//.text(mapIcon)
+					.removeClass("-active")
+					.addClass(mapActive)
+			}
+			notify("บันทึกเรียบร้อย"+data, 3000)
+			//console.log(data)
+		});
+	}
+
+	var editLocation = function(latLng) {
+		if (updateUrl == undefined) return false
+		console.log("EDIT", latLng)
+	}
+
+	function updateLocationValue(lat,lng) {
+		var $currentLocation = $("#current-location")
+		//console.log(currentMarker.position.toUrlValue())
+		$currentLocation.find(".value").text(lat.toFixed(settings.gisDigit)+","+lng.toFixed(settings.gisDigit))
+		$currentLocation.find(".show").text(lat.toFixed(4)+","+lng.toFixed(4))
+	}
+
+	function createMarker(marker) {
+		currentMarkerText = marker.lat.toFixed(settings.gisDigit)+','+marker.lng.toFixed(settings.gisDigit)
+		var saveNavText = '<nav class="nav -sg-flex">'
+			+ '<a class="sg-action btn -link -cancel" href="#current-location" data-rel="none" data-title="ลบหมุด" data-confirm="ลบหมุด กรุณายืนยัน?" data-done="javascript:'+thisMap+'.clearMap()"><i class="icon -material">cancel</i><span>ลบหมุด</span></a>'
+			+ '<a class="btn -primary" onClick=\''+thisMap+'.locationUpdate($("#current-location>.value").text());return false;\'><i class="icon -material">done</i><span>บันทึกตำแหน่ง</span></a>'
+			+ '</nav>';
+		var pinText = ''
+		//console.log(marker.currentLocation)
+		if (marker.currentLocation && settings.locationText != undefined) {
+			//console.log("SET TO locationText")
+			pinText = settings.locationText
+		} else if (settings.pin && settings.pin.content != undefined) {
+			pinText = settings.pin.content
+		}
+		currentInfoText = '<div class="map-info">'
+			+ pinText
+			+ (settings.updateUrl ? saveNavText : '')
+			+ '<div id="current-location" class="current-location">พิกัด <span class="value -hidden">'+currentMarkerText+'</span><span class="show">'+marker.lat.toFixed(4)+','+marker.lng.toFixed(4)+'</span><!-- TODO:: <a class="btn -link" style="padding: 2px 4px 2px 8px; margin-left: 8px;" onClick=\''+thisMap+'.editLocation($("#current-location>.value").text());return false;\'><i class="icon -material -sg-16">edit</i><span>แก้ไข</span></a> --></div>'
+			+ '</div>'
+
+		/*
+			if (settings.dropPin) {
+				if (settings.dropPinText) {
+					currentInfoText = '<div class="map-info">'
+					+ settings.dropPinText
+					+ '<div id="current-location" class="current-location">พิกัด <span class="value -hidden">'+currentMarkerText+'</span><span class="show">'+marker.lat.toFixed(4)+','+marker.lng.toFixed(4)+'</span></div>'
+					+ '</div>'
+
+				} else {
+					currentInfoText = '<div class="map-info"><h2>'+settings.pin.title+'</h2>'
+						+ '<nav class="nav -sg-flex">'
+						+ '<a class="btn -primary" onClick=\''+thisMap+'.locationUpdate($("#current-location>.value").text());return false;\'><i class="icon -material">done</i><span>บันทึกตำแหน่ง</span></a>'
+						+ '<a class="sg-action btn -link -cancel" href="#current-location" data-rel="none" data-title="ลบหมุด" data-confirm="ลบหมุด กรุณายืนยัน?" data-done="javascript:'+thisMap+'.clearMap()"><i class="icon -material">cancel</i><span>ลบหมุด</span></a>'
+						+ '</nav>'
+						+ '<div id="current-location" class="current-location">พิกัด <span class="value -hidden">'+currentMarkerText+'</span><span class="show">'+marker.lat.toFixed(4)+','+marker.lng.toFixed(4)+'</span></div>'
+						+ '<p class="-hidden">ลากหมุดเพื่อเปลี่ยนตำแหน่ง</p>'
+						+ '</div>'
+				}
+			} else {
+				currentInfoText = '<div class="map-info"><h2>ตำแหน่งปัจจุบัน</h2>'
+					+ '<div id="current-location" class="current-location">พิกัด <span class="value -hidden">'+currentMarkerText+'</span><span class="show">'+marker.lat.toFixed(4)+','+marker.lng.toFixed(4)+'</span></div>'
+					+ '</div>'
+			}
+		*/
+
+		return $map.addMarker({
+			lat: marker.lat,
+			lng: marker.lng,
+			draggable: settings.drag == 'map' ? false : true,
+			// infoWindow: {title: settings.pin.title, content: currentInfoText},
+			dragend: function(event) {
+				updateLocationValue(event.latLng.lat(), event.latLng.lng())
+			}
+		})
+	}
+
+	if (settings.pin.lat && settings.pin.lng) {
+		currentMarker = createMarker(settings.pin)
+		var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+		infoWindow.open($map, currentMarker)
+	}
+
+	if (settings.markers) {
+		$.each( settings.markers, function(i, item) {
+			if (item.lat && item.lng) {
+				$map.addMarker({
+					lat: item.lat,
+					lng: item.lng,
+					draggable: item.draggable == undefined ? false : item.draggable,
+					icon: item.icon == undefined ? 'https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|CCCCCC|FFFFFF' : item.icon,
+					infoWindow: {content: (item.content == undefined ? '' : item.content)},
+				})
+			}
+		});
+	}
+
+	$("#getgis").click(function() {
+		notify("กำลังหาตำแหน่งปัจจุบัน");
+		// Try HTML5 geolocation.
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function(position) {
+				notify()
+				$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
+				if (currentMarker == undefined) {
+					currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
+					var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+					infoWindow.open($map, currentMarker)
+					is_point = true
+				}
+				currentMarker.setPosition($map.getCenter())
+				updateLocationValue(position.coords.latitude, position.coords.longitude)
+			}, function() {
+				notify("Error: The Geolocation service failed.", 5000);
+			});
+		} else {
+			// Browser doesnt support Geolocation
+			notify("Error: Browser doesnt support Geolocation.", 5000);
+		}
+		return false;
+	});
+
+	function getCurrentMarker() {return currentMarkerText}
+
+	return {
+		clearMap: clearMap,
+		locationUpdate: locationUpdate,
+		editLocation: editLocation,
+		currentMarker: getCurrentMarker,
+		settings: settings,
+	}
+}

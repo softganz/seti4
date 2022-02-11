@@ -1,0 +1,23 @@
+{
+"qtForm" : "ADR",
+"options" : {},
+"title" : {
+	"label": "แบบบันทึกอาการไม่พึงประสงค์จากการใช้ยา (Adverse Drug Reaction: ADR)"
+},
+"submitButton": {
+	"label": "<i class='icon -material'>done_all</i><span>บันทึก</span>", "className": "submit-btn",
+	"container": {"class": "-sg-text-right"}
+},
+"vars": {
+	"checkIcon": "<i class='icon -material'>check_circle</i>",
+	"checkBox": "<i class='icon -material'>check_box</i>"
+},
+"body": [
+	{
+		"name": "value",
+		"varName": "value",
+		"type": "hidden"
+	},
+
+]
+}

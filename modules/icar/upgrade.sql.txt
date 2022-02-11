@@ -1,0 +1,7 @@
+Upgrade to Version 0.20
+
+INSERT INTO `sgz_icarcost` (tpid, uid, itemdate, costcode, amt, created) SELECT tpid, 3, saledate, 37, comfinance, UNIX_TIMESTAMP() FROM sgz_icar WHERE comfinance>0 ;
+
+INSERT INTO `sgz_icarcost` (tpid, uid, itemdate, costcode, amt, created) SELECT tpid, 3, saledate, 38, rcvtransfer, UNIX_TIMESTAMP() FROM sgz_icar WHERE rcvtransfer>0;
+
+INSERT INTO `sgz_icarcost` (tpid, uid, itemdate, costcode, amt, created) SELECT tpid, 3, saledate, 41, paytransfer, UNIX_TIMESTAMP() FROM sgz_icar WHERE paytransfer>0;

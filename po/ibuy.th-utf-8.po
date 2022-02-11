@@ -1,0 +1,27 @@
+<?php
+/**
+ * lang.th-utf8
+ *
+ * @package none
+ * @version 0.01
+ * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+ * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
+ * @created 2009-07-20
+ * @modify 2009-07-20
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ */
+$dict['th']['add to my cart']='หยิบใส่ตะกร้า';
+$dict['th']['Balance']='จำนวนคงเหลือ';
+$dict['th']['Details']='รายละเอียด';
+$dict['th']['franchise price']='ราคาเฟรนส์ไชน์';
+$dict['th']['list price']='ราคาหน้าร้าน';
+$dict['th']['Price']='ราคาขาย';
+$dict['th']['proceed to checkout']='ดำเนินการสั่งซื้อ';
+$dict['th']['Quantity']='จำนวน';
+$dict['th']['resaler price']='ราคาตัวแทนจำหน่าย';
+$dict['th']['view my cart']='ดูของในตะกร้า';
+?>

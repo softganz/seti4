@@ -1,0 +1,118 @@
+<?php
+/**
+ * lang.th-tis-620
+ *
+ * @package none
+ * @version 0.02
+ * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+ * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
+ * @created 2009-07-20
+ * @modify 2009-11-20
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ */
+$dict['th']['access denied']='สิทธิ์ในการเข้าถึงถูกปฎิเสธ';
+$dict['th']['add new calendar item by click on date you want to add.']='เพิ่มหัวข้อใหม่ในปฎิทินโดยคลิกบนวันที่ที่ต้องการ';
+$dict['th']['add new comment']='เขียนความคิดเห็น';
+$dict['th']['anti-spam word']='ต่อต้านสแปม';
+$dict['th']['anytime you want']='ทุกเวลาที่ต้องการ';
+$dict['th']['back to topic']='กลับสู่หัวข้อ';
+$dict['th']['cancel']='ยกเลิก';
+$dict['th']['change password']='เปลี่ยนรหัสผ่าน';
+$dict['th']['change photo']='เปลี่ยนภาพถ่าย';
+$dict['th']['change your profile details']='เปลี่ยนรายละเอียดส่วนตัว';
+$dict['th']['comment']='ความคิดเห็น';
+$dict['th']['confirm']='ยืนยัน';
+$dict['th']['confirm to be member of']='ยืนยันการสมัครเป็นสมาชิก';
+$dict['th']['create new account']='สมัครสมาชิก';
+$dict['th']['create new topic']='สร้างหัวข้อใหม่';
+$dict['th']['day']='วัน';
+$dict['th']['display profile']='แสดงประวัติโดยย่อ';
+$dict['th']['documents']='เอกสารประกอบ';
+$dict['th']['document description']='รายละเอียดเอกสาร';
+$dict['th']['document title']='ชื่อเรื่องเอกสาร';
+$dict['th']['download']='ดาวน์โหลด';
+$dict['th']['edit my profile']='แก้ไขข้อมูลส่วนตัว';
+$dict['th']['edit porfile']='แก้ไขประวัติโดยย่อ';
+$dict['th']['e-mail']='อีเมล์';
+$dict['th']['femail']='หญิง';
+$dict['th']['first']='แรก';
+$dict['th']['forever']='ตลอดกาล';
+$dict['th']['forum']='ฟอรั่ม';
+$dict['th']['input format']='รูปแบบข้อมูล';
+$dict['th']['home']='หน้าหลัก';
+$dict['th']['homepage']='โฮมเพจ';
+$dict['th']['hour']='ชั่วโมง';
+$dict['th']['lastest']='ล่าสุด';
+$dict['th']['last reply date']='ตอบล่าสุด';
+$dict['th']['mail']='ชาย';
+$dict['th']['member']='สมาชิก';
+$dict['th']['modify']='เปลี่ยนแปลง';
+$dict['th']['month']='เดือน';
+$dict['th']['my documents']='บทความทั้งหมดของฉัน';
+$dict['th']['name - surname']='ชื่อ - นามสกุล';
+$dict['th']['next']='ถัดไป';
+$dict['th']['on top']='ไว้บน';
+$dict['th']['option']='ตัวเลือก';
+$dict['th']['options']='ตัวเลือก';
+$dict['th']['or']='หรือ';
+$dict['th']['password']='รหัสผ่าน';
+$dict['th']['phone']='โทรศัพท์';
+$dict['th']['photo description']='คำอธิบายภาพ';
+$dict['th']['photo name']='ชื่อภาพ';
+$dict['th']['poster']='ผู้ส่ง';
+$dict['th']['photo']='ภาพประกอบ';
+$dict['th']['post new topic']='สร้างหัวข้อใหม่';
+$dict['th']['post comment']='บันทึกความคิดเห็น';
+$dict['th']['post new comment']='แสดงความคิดเห็น';
+$dict['th']['post new forum topic']='เริ่มหัวข้อใหม่';
+$dict['th']['preview']='ดูผลก่อน';
+$dict['th']['profile']='ประวัติโดยย่อ';
+$dict['th']['read more']='อ่านเพิ่มเติม';
+$dict['th']['register']='ลงทะเบียน';
+$dict['th']['remove']='ลบทิ้ง';
+$dict['th']['replies']='ตอบ';
+$dict['th']['request new password']='ลืมรหัสผ่าน';
+$dict['th']['register']='ลงทะเบียน';
+$dict['th']['save']='บันทึก';
+$dict['th']['save as draft']='บันทึกร่าง';
+$dict['th']['search']='ค้นหา';
+$dict['th']['select file to upload']='เลือกไฟล์เพื่อส่งขึ้นเว็บ';
+$dict['th']['sender']='ผู้ส่ง';
+$dict['th']['sex']='เพศ';
+$dict['th']['show comment']='แสดงความคิดเห็น';
+$dict['th']['sign in']='เข้าสู่ระบบ';
+$dict['th']['sign out']='ออกจากระบบ';
+$dict['th']['story']='เรื่องราว';
+$dict['th']['subject']='หัวข้อ';
+$dict['th']['submitted by']='โดย';
+$dict['th']['submit new topic in']='เพิ่มหัวข้อใหม่ใน';
+$dict['th']['title']='หัวข้อ';
+$dict['th']['today']='วันนี้';
+$dict['th']['today calendar']='ปฏิทินวันนี้';
+$dict['th']['upload photo']='ส่งภาพ';
+$dict['th']['upload document']='ส่งเอกสาร';
+$dict['th']['views']='อ่าน';
+$dict['th']['website']='เว็บไซท์';
+$dict['th']['week']='สัปดาห์';
+$dict['th']['your are member']='คุณเป็นสมาชิก';
+$dict['th']['you can']='คุณสามารถ';
+$dict['th']['your name']='ชื่อของคุณ';
+$dict['th']['username']='ชื่อสมาชิก';
+
+$dict['th']['january']='มกราคม';
+$dict['th']['february']='กุมภาพันธ์';
+$dict['th']['march']='มีนาคม';
+$dict['th']['april']='เมษายน';
+$dict['th']['may']='พฤษภาคม';
+$dict['th']['june']='มิถุนายน';
+$dict['th']['july']='กรกฎาคม';
+$dict['th']['august']='สิงหาคม';
+$dict['th']['september']='กันยายน';
+$dict['th']['october']='ตุลาคม';
+$dict['th']['november']='พฤศจิกายน';
+$dict['th']['december']='ธันวาคม';
+?>

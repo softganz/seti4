@@ -1,0 +1,26 @@
+<?php
+/**
+ * imed.th-utf8
+ *
+ * @package none
+ * @version 0.01
+ * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+ * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
+ * @created 2019-02-25
+ * @modify 2019-02-25
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ */
+$dict['th']['ADD PATIENT'] = 'เพิ่มผู้ป่วย';
+$dict['th']['Barthel ADL Index'] = 'ดัชนีบาร์เธล';
+$dict['th']['Care Plan'] = 'แผนการดูแล';
+$dict['th']['Create Care Plan'] = 'สร้างแผนการดูแล';
+$dict['th']['Diastolic Blood Pressure'] = 'ความดันตัวล่าง';
+$dict['th']['Fasting Blood Sugar'] = 'น้ำตาลในเลือด';
+$dict['th']['Home Visit'] = 'เยี่ยมบ้าน';
+$dict['th']['Systolic Blood Pressure'] = 'ความดันตัวบน';
+$dict['th']['Vital Signs'] = 'สัญญาณชีพ';
+?>

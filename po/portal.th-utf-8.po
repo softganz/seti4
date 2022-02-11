@@ -1,0 +1,19 @@
+<?php
+/**
+ * lang.th-utf8
+ *
+ * @package portal
+ * @version 0.01
+ * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+ * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
+ * @created 2010-05-10
+ * @modify 2010-05-10
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ */
+$dict['th']['add new site']='เพิ่มเว็บไซท์ใหม่';
+$dict['th']['search a web']='ค้นหาเว็บไซท์';
+?>

@@ -1,0 +1,8 @@
+msgid "Create new topic"
+msgstr "สร้างหัวข้อใหม่"
+
+msgid "Peview comment"
+msgstr "ตรวจดูความคิดเห็น"
+
+msgid "Post comment"
+msgstr "บันทึกความคิดเห็น"

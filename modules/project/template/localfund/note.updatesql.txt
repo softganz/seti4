@@ -1,0 +1,7 @@
+UPDATE `sgz_project_fund` a, sgz_co_district b
+SET a.ampur=SUBSTR(b.distid,3,2)
+WHERE LEFT(b.distid,2)=a.changwat AND a.nameampur=b.distname;
+
+UPDATE `sgz_project_fund` a, sgz_co_subdistrict b
+SET a.tambon=SUBSTR(b.subdistid,5,2)
+WHERE LEFT(b.subdistid,4)=CONCAT(a.changwat,a.ampur) AND a.nametambon=b.subdistname;

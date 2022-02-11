@@ -1,0 +1,50 @@
+{
+"qtForm" : "target",
+"options" : {"groupContainer": {"name": "body-group","class": "body-group"}},
+"title" : {
+	"label": "การพัฒนาเพื่อแก้ไขปัญหาความยากจนภายใต้ Community Data 16 เป้าหมาย"
+},
+"submitButton": {
+	"label": "<i class='icon -material'>done_all</i><span>บันทึก</span>", "className": "submit-btn",
+	"container": {"class": "-sg-text-right"}
+},
+"formAttr" : {
+	"data-calculate-total" : ""
+},
+"vars": {
+	"checkIcon": "<i class='icon -material'>check_circle</i>"
+},
+"body": [
+	{
+		"name": "value",
+		"varName": "value",
+		"type": "hidden"
+	},
+	{
+		"name": "kpi",
+		"x-label": "การพัฒนาเพื่อแก้ไขปัญหาความยากจนภายใต้ Community Data 16 เป้าหมาย",
+		"tag": "input",
+		"type": "checkbox",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "01", "label": "$checkIcon<b>01</b><span> พัฒนาชุมชนให้มีสมรรถนะในการจัดการสูง</span>"},
+			{"value" : "02", "label": "$checkIcon<b>02</b><span> ให้เกิดการจัดการทรัพยากรอย่างเป็นระบบ</span>"},
+			{"value" : "03", "label": "$checkIcon<b>03</b><span> ช่วยให้สามารถวิเคราะห์วิสาหกิจชุมชนและสถาบัน การเงินชุมชน</span>"},
+			{"value" : "04", "label": "$checkIcon<b>04</b><span> ช่วยในการสร้างสัมมาชีพในพี้นที่</span>"},
+			{"value" : "05", "label": "$checkIcon<b>05</b><span> ส่งเสริมเกษตรพอเพียงและอาหารปลอดภัย</span>"},
+			{"value" : "06", "label": "$checkIcon<b>06</b><span> ช่วยให้มีแหล่งน้ำประจำครอบครัว</span>"},
+			{"value" : "07", "label": "$checkIcon<b>07</b><span> ช่วยจัดการวิสาหกิจชุมชน</span>"},
+			{"value" : "08", "label": "$checkIcon<b>08</b><span> ฝึกอบรมทักษะอาชีพ</span>"},
+			{"value" : "09", "label": "$checkIcon<b>09</b><span> มีการจัดการโครงสร้างพื้นฐาน กายภาพ ส่ิงแวดล้อม พลังงาน</span>"},
+			{"value" : "10", "label": "$checkIcon<b>10</b><span> ส่งเสริมความปลอดภัยในพื้นที่</span>"},
+			{"value" : "11", "label": "$checkIcon<b>11</b><span> พัฒนาคุณภาพกลุ่มเปราะบาง</span>"},
+			{"value" : "12", "label": "$checkIcon<b>12</b><span> พัฒนาระบบสุขภาพคนในพื้นท่ี</span>"},
+			{"value" : "13", "label": "$checkIcon<b>13</b><span> ส่งเสริมศูนย์เรียนรู้ตำบล</span>"},
+			{"value" : "14", "label": "$checkIcon<b>14</b><span> ส่งเสริมระบบยุติธรรมในชุมชน</span>"},
+			{"value" : "15", "label": "$checkIcon<b>15</b><span> ส่งเสริมระบบการสื่อสารชุมชน</span>"},
+			{"value" : "16", "label": "$checkIcon<b>16</b><span> ส่งเสริมตำบลทำความดี</span>"}
+		]
+	}
+]
+}

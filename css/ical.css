@@ -1,0 +1,148 @@
+#ical_wrapper {
+	width: 100%;
+	position: relative;
+	float: none;
+	background-color: #ffffff;
+	display: table;
+}
+#ical_wrapper .ical_header {
+	width:300px;
+	position: relative;
+	float: left;
+	margin: 0;
+	padding: 0;
+	background: #ffffff;
+	color: #FFFFFF;
+	font-size:16pt;
+	color:green;
+}
+#ical_wrapper .ical_category {
+	width:400px;
+	position: relative;
+	bottom: 0;
+	right: 0;
+	
+	float: left;
+	margin: 0;
+	padding: 0;
+	text-align:right;
+}
+#ical_wrapper .ical_category select {
+	font-size:10pt;
+}
+
+#ical-prevmonth {
+	width:16px;
+	height:16px;
+	background:url(../img/go-previous.png) left top no-repeat;
+	display:inline-block;
+	text-indent:-999em;
+}
+#ical-nextmonth {
+	width:16px;
+	height:16px;
+	margin-left:20px;
+	margin-right:20px;
+	background:url(../img/go-next.png) left top no-repeat;
+	display:inline-block;
+	text-indent:-999em;
+}
+#ical-main-grid {
+	border:1px #ccddee solid;
+	border-left:none;
+	border-top:none;
+}
+#content-ical {
+	background-color:#ffffff;
+	font-size:9pt;
+}
+#content-ical .dayname {
+	padding:1px;
+	background-color:#c3d9ff;
+	font-weight:bold;
+}
+#content-ical .daynum {
+	text-align:right;
+	background-color:#E8EEF7;
+	color:#6a6a6a;
+}
+#content-ical .have_item {
+	font-weight: bold;
+}
+#content-ical .daybox, #content-ical .currentdaybox {
+	padding:0px;
+	border:1px #C3D9FF solid;
+	border-right:none;
+	border-bottom:none;
+}
+#content-ical .currentdaybox {
+	background-color:#FFFFCC;
+}
+#content-ical .month_event{
+	margin:0 0 1px 0;
+	padding:0 2px;
+	z-index:5;
+	cursor:pointer;
+	color: rgb(41, 82, 163);
+	unselectable:on;
+	-moz-user-select:none;
+	background-color:#668CD9;
+	-moz-border-radius:3px;
+}
+/* for fix height && hidden */
+/*
+#content-ical .month_event{
+	height:17px;
+	overflow:hidden;
+	white-space:wrap;
+}
+*/
+.month_event-next {text-indent:-9999em;}
+#content-ical .month_event em.time{font:bold 90% Tahoma;}
+#content-ical .month_event .event-title{padding-right:2px}
+#content-ical a {color:#fff;}
+#content-ical a:hover { color:#fff;}
+#content-ical a.private { color:gray;}
+
+#tiny_ical {
+	margin:0 auto;
+	font-size: 10pt;
+}
+#tiny_ical .body {
+	width:100%;
+	border:1px #fff solid;
+	margin:0 1px;
+}
+#tiny_ical .body caption {
+	padding:2px;
+	font-weight:bold;
+	text-align:center;
+	color:#fff;
+	margin:0 auto;
+	background-color:#1e57c5;
+}
+#tiny_ical .body caption a {color:#fff;}
+#tiny_ical .body th {
+	color:#fff;
+	background-color:#00aeef;
+}
+#tiny_ical .body td {
+	text-align:center;
+	background-color:#c7eafb;
+}
+#tiny_ical .body td.today {
+	color:#ff6600;
+	background-color:#FFE400;
+	text-decoration:blink;
+	font-weight:bold;
+}
+#tiny_ical .body td.have_item {
+	font-weight:bold;
+}
+#tiny_ical .body td.not_in_month {
+	color:#ccc;
+}
+#tiny_ical #tiny_ical_detail {
+	text-align:left;
+	background-color:#fff;
+}

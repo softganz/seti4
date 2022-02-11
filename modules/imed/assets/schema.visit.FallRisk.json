@@ -1,0 +1,124 @@
+{
+"qtForm" : "FallRisk",
+"options" : {},
+"title" : {
+	"label": "ประเมินความเสี่ยงต่อการหกล้ม"
+},
+"submitButton": {
+	"label": "<i class='icon -material'>done_all</i><span>บันทึก</span>", "className": "submit-btn",
+	"container": {"class": "-sg-text-right"}
+},
+"vars": {
+	"checkIcon": "<i class='icon -material'>check_circle</i>"
+},
+"body": [
+	{"label": "<h3>ปัจจัย</h3>"},
+	{
+		"name": "value",
+		"varName": "value",
+		"type": "hidden"
+	},
+	{
+		"name": "Sex",
+		"label": "1. เพศ",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkIcon<span>หญิง (1 คะแนน)</span>"},
+			{"value" : "0", "label": "$checkIcon<span>ชาย (0 คะแนน)</span>"}
+		]
+	},
+	{
+		"name": "Vision",
+		"label": "2. การมองเห็นบกพร่อง (ผลการตรวจ Snellen Chart)",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkIcon<span>อ่านตัวเลขที่ระยะ 6/12 เมตร ได้น้อยกว่าหรือเท่ากับครึ่ง (1 คะแนน)</span>"},
+			{"value" : "0", "label": "$checkIcon<span>อ่านตัวเลขที่ระยะ 6/12 เมตร ได้มากกว่าครึ่ง (0 คะแนน)</span>"}
+		]
+	},
+	{
+		"name": "Balance",
+		"label": "3. การทรงตัวบกพร่อง",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "2", "label": "$checkIcon<span>ยืนต่อเท้าเป็นเส้นตรงไม่ได้ หรือยืนได้ไม่ถึง 10 วินาที (2 คะแนน)</span>"},
+			{"value" : "0", "label": "$checkIcon<span>ยืนต่อเท้าเป็นเส้นตรงได้นานกว่าหรือเท่ากับ 10 วินาที (0 คะแนน)</span>"}
+		]
+	},
+	{
+		"name": "Drug",
+		"label": "4. การใช้ยา",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkIcon<span>กินยาต่อไปนี้ตั้งแต่ 1 ชนิดขึ้นไป ได้แก่ ยานอนหลับ ยากล่อมประสาท ยาลดความดันโลหิต ยาขับปัสสาวะ หรือกินยาอื่น ๆ ชนิดใดก็ได้ ตั้งแต่ 4 ชนิดขึ้นไป (ไม่รวมวิตามิน) (1 คะแนน)</span>"},
+			{"value" : "0", "label": "$checkIcon<span>ไม่ได้กินยาต่อไปนี้ ได้แก่ ยานอนหลับ ยากล่อมประสาท ยาลดความดันโลหิต ยาขับปัสสาวะ หรือกินยาชนิดใดก็ได้ แต่น้อยกว่า 4 ชนิด (0 คะแนน)</span>"}
+		]
+	},
+	{
+		"name": "Fall",
+		"label": "5. ประวัติการหกล้ม",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "5", "label": "$checkIcon<span>มีประวัติหกล้มตั้งแต่ 2 ครั้งขึ้นไปในรอบ 6 เดือนที่ผ่านมา (5 คะแนน)</span>"},
+			{"value" : "0", "label": "$checkIcon<span>ไม่มี (0 คะแนน)</span>"}
+		]
+	},
+	{
+		"name": "House",
+		"label": "6. สภาพบ้าน ที่อยู่อาศัย",
+		"tag": "input",
+		"type": "radio",
+		"config": {"capsule": {"tag": "abbr", "class": "checkbox -block"}},
+		"attr": {"data-sum": "#edit-value"},
+		"data" : [
+			{"value" : "1", "label": "$checkIcon<span>อยู่บ้านยกพื้นสูงตั้งแต่ 1.5 เมตรขึ้นไป หรือบ้าน 2 ชั้น ต้องขึ้นลงโดยใช้บันได (1 คะแนน)</span>"},
+			{"value" : "0", "label": "$checkIcon<span>ไม่ได้อยู่บ้านลักษณะดังกล่าว (0 คะแนน)</span>"}
+		]
+	},
+	{"label": "<div><b>หมายเหตุ</b> รวม <span id=\"total\">?</span> คะแนน คะแนนตั้งแต่ 4 คะแนนขึ้นไป หมายถึง มีความเสี่ยงต่อการหกล้ม</div>"},
+	{"label" : "<h3>ทดสอบการทรงตัว (Time Up and Go Test)</h3>"},
+	{
+		"name": "timeUp1",
+		"label": "ครั้งที่ 1 ได้เวลา (วินาที)",
+		"tag": "select",
+		"data": "null => == เลือก ==,1..60"
+	},
+	{
+		"name": "timeUp2",
+		"label": "ครั้งที่ 2 ได้เวลา (วินาที):",
+		"tag": "select",
+		"data": "null => == เลือก ==,1..60"
+	},
+	{
+		"name": "timeUp3",
+		"label": "ครั้งที่ 3 ได้เวลา (วินาที):",
+		"tag": "select",
+		"data": "null => == เลือก ==,1..60"
+	},
+	{
+		"name": "timeUp4",
+		"label": "ครั้งที่ 4 ได้เวลา (วินาที):",
+		"tag": "select",
+		"data": "null => == เลือก ==,1..60"
+	},
+	{
+		"name": "timeUp1",
+		"label": "ค่าเฉลี่ยเวลา ?? วินาที"
+	}
+]
+}
