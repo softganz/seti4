@@ -26,24 +26,24 @@ Class  :: Poison
 
 class Poison {
 
-function generate_key($length,$numeric=false){
+public static function generate_key($length,$numeric=false){
 	$extrakey="";
 	for($j=0;$j<$length;$j++){
 		while(true){
 			mt_srand((double)microtime()*1000000);
 			$zufall = $numeric ? mt_rand(48,57) : mt_rand(48,122);
-			if(($zufall>=48 && $zufall<=57) || 
-			   ($zufall>=65 && $zufall<=90) || 
+			if(($zufall>=48 && $zufall<=57) ||
+			   ($zufall>=65 && $zufall<=90) ||
 			   ($zufall>=97 && $zufall<=122)){
 				$extrakey.=chr($zufall);
 				break;
 			}
 		}
 	}
-	return $extrakey; 
+	return $extrakey;
 }
 
-function generate_daykey(){
+public static function generate_daykey(){
 	$sql_cmd ='SELECT id FROM %block_daykey% WHERE generate_on>(NOW()-'._SGZ_BLOCK_TIME.');';
 	$remain_key = mydb::select($sql_cmd);
 	// if no table then generate and query again
@@ -61,7 +61,7 @@ function generate_daykey(){
 	}
 }
 
-function get_daykey($index,$generate=false){
+public static function get_daykey($index,$generate=false){
 	$sql_cmd='SELECT key'.$index.' `daykey` FROM %block_daykey% WHERE generate_on>(NOW()-'._SGZ_BLOCK_TIME.') ORDER BY id DESC LIMIT 1';
 	$daykey=mydb::select($sql_cmd)->daykey;
 	if (0||empty($daykey)) {
@@ -71,13 +71,13 @@ function get_daykey($index,$generate=false){
 	return $daykey;
 }
 
-function exist_daykey($index,$key){
+public static function exist_daykey($index,$key){
 	$day_key=mydb::select("SELECT id FROM %block_daykey% WHERE key$index='$key';");
 	$exist=$day_key->_num_rows?true:false;
 	return $exist;
 }
 
-function createtable() {
+public static function createtable() {
 	if ( !db_table_exists('%block_log%') ) {
 		$sql_cmd = "CREATE TABLE `%block_log% ( ";
 		$sql_cmd .= "`id` INT UNSIGNED NOT NULL AUTO_INCREMENT , ";
@@ -89,7 +89,7 @@ function createtable() {
 		$sql_cmd .= ") ENGINE = MYISAM";
 		mydb::query($sql_cmd);
 	}
-	
+
 	if ( !db_table_exists('%block_daykey%') ) {
 		$sql_cmd = "create table %block_daykey% ( ";
 		$sql_cmd .= "  `id` int(10) unsigned NOT NULL auto_increment, ";
@@ -105,7 +105,7 @@ function createtable() {
 	}
 }
 
-function log($module,$keyword,$message) {
+public static function log($module,$keyword,$message) {
 		Poison::createtable();
 		$keyword = addslashes($keyword);
 		$message = addslashes($message);

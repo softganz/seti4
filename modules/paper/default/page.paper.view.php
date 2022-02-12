@@ -8,8 +8,6 @@
 * @return String
 */
 
-$debug = true;
-
 function paper_view($self, $tpid = NULL, $action = NULL) {
 	$para = para(func_get_args(),2);
 	event_tricker('paper.view.init',$self,$topicInfo,$para);
@@ -20,7 +18,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 
 	$isAdminPaper = user_access('administer contents,administer papers');
 	$isEditPaper = user_access('administer contents,administer papers','edit own paper',$topicInfo->uid);
-// debugMsg($self,'$self');
+	// debugMsg($self,'$self');
 
 	// $self = (Object) [
 	// 	'theme' => $topicInfo->property->option,
@@ -31,8 +29,8 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 	if ($topicInfo->property->option->secondary === false) cfg('web.secondary',false);
 	if ($topicInfo->property->option->fullpage === true) cfg('web.fullpage',true);
 	event_tricker('paper.view.load',$self,$topicInfo,$para);
-// debugMsg($self,'$self');
-// debugMsg($topicInfo,'$topicInfo');
+	// debugMsg($self,'$self');
+	// debugMsg($topicInfo,'$topicInfo');
 
 
 	// Trick method __view_load of content type
@@ -323,10 +321,9 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 
 	return $ret;
 }
-?>
 
 
-<?php
+
 /**
 * Module :: Description
 * Created 2021-10-14

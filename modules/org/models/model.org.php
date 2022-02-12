@@ -212,8 +212,13 @@ class OrgModel {
 
 
 			if(mydb::table_exists('%org_subject%')) {
-				$stmt = 'SELECT `subject`,`name` FROM %org_subject% s LEFT JOIN %tag% t ON t.`taggroup`="subject" AND t.`catid`=s.`subject` WHERE `orgid` = :orgid';
-				foreach(mydb::select($stmt,':orgid',$result->orgId)->items as $item) $result->subject[$item->subject] = $item->name;
+				$stmt = 'SELECT s.`subject`, t.`name`
+					FROM %org_subject% s
+						LEFT JOIN %tag% t ON t.`taggroup` = "subject" AND t.`catid` = s.`subject`
+					WHERE s.`orgid` = :orgid';
+				foreach(mydb::select($stmt, [':orgid' => $result->orgId])->items as $item) {
+					$result->subject[$item->subject] = $item->name;
+				}
 			}
 		} else {
 			$result = $dbs->items;

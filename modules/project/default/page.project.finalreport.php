@@ -422,7 +422,7 @@ class ProjectFinalreport extends Page {
 		$ret.='<section class="section-2 -forprint">';
 		$ret.='<h3 class="header -section">ส่วนที่ 2 ประเมินความพึงพอใจต่อความสำเร็จและปัญหาอุปสรรคในการดำเนินโครงการในภาพรวม</h3>';
 
-		$ret .= R::PageWidget('project.result', [$this->projectInfo, 'view'])->build();
+		$ret .= R::PageWidget('project.info.result', [$this->projectInfo, 'view'])->build();
 
 
 		$ret.='<a name="section9"></a>';

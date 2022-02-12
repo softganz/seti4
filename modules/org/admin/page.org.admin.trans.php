@@ -6,6 +6,8 @@
 * @return String
 */
 
+import('model:org.php');
+
 class OrgAdminTrans extends Page {
 	var $orgId;
 
@@ -14,11 +16,13 @@ class OrgAdminTrans extends Page {
 	}
 
 	function build() {
+		if (!$this->orgId) return new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'กรุณาระบุองค์กร']);
+
+		$orgInfo = OrgModel::get($this->orgId);
+
 		head('<style type="text/css">
 			h4 {color: red; background-color: #ddd; padding: 8px;}
 		</style>');
-
-		$orgInfo = mydb::select('SELECT * FROM %db_org% WHERE `orgid` = :orgId LIMIT 1', ':orgId', $this->orgId);
 
 		return new Scaffold([
 			'appBar' => new AppBar([
@@ -59,54 +63,105 @@ class OrgAdminTrans extends Page {
 	function _orgTrans() {
 		return new Container([
 			'children' => [
-				'<h4>db_org</h4>',
+				new ListTile([
+					'title' => 'db_org',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %db_org% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_board</h4>',
+
+				new ListTile([
+					'title' => 'org_board',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_board% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_docs</h4>',
+
+				new ListTile([
+					'title' => 'org_docs',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_docs% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_doings</h4>',
+
+				new ListTile([
+					'title' => 'org_doings',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_doings% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_dopaid</h4>',
+
+				new ListTile([
+					'title' => 'org_dopaid',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_dopaid% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_dopaidtr</h4>',
+
+				new ListTile([
+					'title' => 'org_dopaidtr',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_dopaidtr% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_dos</h4>',
+
+				new ListTile([
+					'title' => 'org_dos',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_dos% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_mjoin</h4>',
+
+				new ListTile([
+					'title' => 'org_mjoin',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_mjoin% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_morg</h4>',
+
+				new ListTile([
+					'title' => 'org_morg',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_morg% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_officer</h4>',
+
+				new ListTile([
+					'title' => 'org_officer',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_officer% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_ojoin</h4>',
+
+				new ListTile([
+					'title' => 'org_ojoin',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_ojoin% WHERE `orgid` = :orgId OR `jorgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>org_subject</h4>',
+
+				new ListTile([
+					'title' => 'org_subject',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %org_subject% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
 
-				'<h4>topic</h4>',
+				new ListTile([
+					'title' => 'topic',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
 				mydb::printtable(mydb::select('SELECT * FROM %topic% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>project_fund</h4>',
-				mydb::printtable(mydb::select('SELECT * FROM %project_fund% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>project_gl</h4>',
-				mydb::printtable(mydb::select('SELECT * FROM %project_gl% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>project_tr</h4>',
-				mydb::printtable(mydb::select('SELECT * FROM %project_tr% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				'<h4>qtmast</h4>',
-				mydb::printtable(mydb::select('SELECT * FROM %qtmast% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				// '<h4>table</h4>',
-				// mydb::printtable(mydb::select('SELECT * FROM %table% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				// '<h4>table</h4>',
-				// mydb::printtable(mydb::select('SELECT * FROM %table% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				// '<h4>table</h4>',
-				// mydb::printtable(mydb::select('SELECT * FROM %table% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				// '<h4>table</h4>',
-				// mydb::printtable(mydb::select('SELECT * FROM %table% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				// '<h4>table</h4>',
-				// mydb::printtable(mydb::select('SELECT * FROM %table% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
-				// '<h4>table</h4>',
-				// mydb::printtable(mydb::select('SELECT * FROM %table% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
 
+				new ListTile([
+					'title' => 'project_fund',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
+				mydb::printtable(mydb::select('SELECT * FROM %project_fund% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
+
+				new ListTile([
+					'title' => 'project_gl',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
+				mydb::printtable(mydb::select('SELECT * FROM %project_gl% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
+				new ListTile([
+					'title' => 'project_tr',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
+				mydb::printtable(mydb::select('SELECT * FROM %project_tr% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
+				new ListTile([
+					'title' => 'qtmast',
+					'leading' => '<i class="icon -material">stars</i>',
+				]),
+				mydb::printtable(mydb::select('SELECT * FROM %qtmast% WHERE `orgid` = :orgId', ':orgId', $this->orgId)),
 			],
 		]);
 	}
