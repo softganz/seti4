@@ -29,7 +29,7 @@ class ProjectInfoAction extends Page {
 	}
 
 	function build() {
-		if (!$this->projectId) return message('error', 'ไม่มีข้อมูลโครงการที่ระบุ');
+		if (!$this->projectId) return new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'ไม่มีข้อมูลโครงการที่ระบุ']);
 
 		return new Scaffold([
 			'appBar' => new ProjectInfoAppBarWidget($this->projectInfo),

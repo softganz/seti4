@@ -4,7 +4,7 @@
 * Created 2021-06-28
 * Modify  2021-09-28
 *
-* @param Int $planId
+* @param Int $projectId
 * @param String $action
 * @param Int $tranId
 * @return String
@@ -16,27 +16,27 @@ $debug = true;
 
 import('model:project.planning.php');
 
-class ProjectPlanningApi extends Page {
+class ProjectPlanningInfoApi extends Page {
 	var $projectId;
-	var $planInfo;
 	var $action;
 	var $tranId;
+	var $planningInfo;
 
-	function __construct($planId = NULL, $action = NULL, $tranId = NULL) {
-		$this->projectId = $planId;
+	function __construct($projectId = NULL, $action = NULL, $tranId = NULL) {
+		$this->planningInfo = ProjectPlanningModel::get($projectId, '{initTemplate: true}');
+		$this->projectId = $projectId;
 		$this->action = $action;
 		$this->tranId = $tranId;
 	}
 
 	function build() {
-		$planningInfo = PlanningModel::get($this->projectId, '{initTemplate: true}');
-		$this->projectId = $projectId = $planningInfo->projectId;
+		$projectId = $this->projectId;
 		$tranId = $this->tranId;
 
-		$isEdit = $this->planInfo->RIGHT & _IS_EDITABLE;
+		$isEdit = $this->planningInfo->RIGHT & _IS_EDITABLE;
 
-		if (!$projectId) return message('error', 'PROCESS ERROR');
-		else if (!$isEdit) return message('error', 'ACCESS DENIED');
+		if (!$projectId) return new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'PROCESS ERROR']);
+		else if (!$isEdit) return new ErrorMessage(['code' => _HTTP_ERROR_UNAUTHORIZED, 'text' => 'ACCESS DENIED']);
 
 		$ret = '';
 
@@ -45,7 +45,7 @@ class ProjectPlanningApi extends Page {
 			case 'delete':
 				if ($isEdit) {
 					if ($projectId AND SG\confirm()) {
-						import('model:project.php')
+						import('model:project.php');
 						// Delete on no child project
 						$stmt='SELECT * FROM %project% WHERE `projectset`=:projectset LIMIT 1';
 						$childProject=mydb::select($stmt,':projectset',$projectId);
@@ -64,16 +64,21 @@ class ProjectPlanningApi extends Page {
 
 			case 'addtr':
 				if ($isEdit && $tranId) {
-					$data->tpid = $projectId;
-					$data->refid = NULL;
-					$data->formid = 'info';
-					$data->part = $tranId;
-					$data->uid = i()->uid;
-					$data->created = date('U');
-					$stmt = 'INSERT INTO %project_tr% (`tpid`,`refid`,`formid`,`part`,`uid`,`created`) VALUES (:tpid,:refid,:formid,:part,:uid,:created)';
-					mydb::query($stmt,$data);
-					//$ret.=mydb()->_query;
-					// $ret .= R::Page('project.planning.view',NULL,$projectId);
+					$data = (Object) [
+						'tpid' => $tpid,
+						'refid' => NULL,
+						'formid' => 'info',
+						'part' => $tranId,
+						'uid' => i()->uid,
+						'created' => date('U'),
+					];
+					mydb::query(
+						'INSERT INTO %project_tr%
+						(`tpid`,`refid`,`formid`,`part`,`uid`,`created`)
+						VALUES
+						(:tpid,:refid,:formid,:part,:uid,:created)',
+						$data
+					);
 				}
 				break;
 

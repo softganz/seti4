@@ -1,6 +1,6 @@
 <?php
 /**
-* Project :: Planning View nformation
+* Project :: Planning View information
 * Created 2021-07-28
 * Modify  2021-12-19
 *
@@ -9,8 +9,6 @@
 *
 * @usage project/planning/{id}[/{action}]
 */
-
-$debug = true;
 
 import('package:project/fund/widgets/widget.fund.nav');
 import('widget:project.like.status.php');
@@ -137,7 +135,7 @@ class ProjectPlanningInfoView extends Page {
 				$this->isEdit
 			);
 			if ($this->isEdit) {
-				$row[] = $rs->trid ? '<nav class="nav -icons -hover"><a class="btn -link sg-action" href="'.url('project/planning/'.$projectId.'/info/removetr/'.$rs->trid).'" data-rel="#main" data-ret="'.url('project/planning/'.$projectId).'" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?" title="ลบรายการ"><i class="icon -cancel -gray"></i></a></nav>':'';
+				$row[] = $rs->trid ? '<nav class="nav -icons -hover"><a class="sg-action btn -link" href="'.url('project/planning/'.$projectId.'/info/removetr/'.$rs->trid).'" data-rel="none" data-done="load:#main:'.url('project/planning/'.$projectId).'" data-title="ลบสถานการณ์" data-confirm="ต้องการลบสถานการณ์และวัตถุประสงค์รายการนี้ กรุณายืนยัน?"><i class="icon -material -gray">cancel</i></a></nav>':'';
 			}
 
 			$row['config'] = array('class' => $rs->trid ? '' : '-no-print');

@@ -163,10 +163,10 @@ class ProjectPlanningAmpurAdd extends Page {
 							'require' => true,
 							'options' => [
 								'' => '== เลือกปี พ.ศ. ==',
-								date(Y)-2 => 'พ.ศ.'.(date(Y)-2+543),
-								date(Y)-1 => 'พ.ศ.'.(date(Y)-1+543),
-								date(Y) => 'พ.ศ.'.(date(Y)+543),
-								date(Y)+1 => 'พ.ศ.'.(date(Y)+1+543),
+								date('Y')-2 => 'พ.ศ.'.(date('Y')-2+543),
+								date('Y')-1 => 'พ.ศ.'.(date('Y')-1+543),
+								date('Y') => 'พ.ศ.'.(date('Y')+543),
+								date('Y')+1 => 'พ.ศ.'.(date('Y')+1+543),
 							],
 						],
 						'go' => [

@@ -15,9 +15,11 @@ $debug = true;
 import('widget:project.like.status.php');
 
 class ProjectPlanningAmpurView extends Page {
+	var $projectId;
 	var $planningInfo;
 
 	function __construct($planningInfo) {
+		$this->projectId = $planningInfo->projectId;
 		$this->planningInfo = $planningInfo;
 	}
 
@@ -261,7 +263,7 @@ class ProjectPlanningAmpurView extends Page {
 					$isEditable
 				)
 			);
-			if ($isEditable) $row[] = '<span class=" hover-icon -tr"><a class="sg-action" href="'.url('project/planning/'.$projectId.'/info/removetr/'.$rs->trid).'" data-rel="none" data-removeparent="tr" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -cancel -gray"></i></a>';
+			if ($isEditable) $row[] = '<span class=" hover-icon -tr"><a class="sg-action" href="'.url('project/planning/'.$projectId.'/info/removetr/'.$rs->trid).'" data-rel="none" data-done="remove:parent tr" data-title="ลบสถานการ" data-confirm="ต้องการลบสถานการณ์และวัตถุประสงค์รายการนี้ กรุณายืนยัน?"><i class="icon -cancel -gray"></i></a>';
 
 			$tables->rows[] = $row;
 		}
@@ -670,11 +672,14 @@ class ProjectPlanningAmpurView extends Page {
 			'appBar' => new AppBar([
 				'title' => $planningInfo->title,
 				'navigator' => [
-					'info' => new Ui([
-						'children' => [
-							['text' => '<a href="'.url('project/planning/ampur').'"><i class="icon -material">fact_check</i><span>แผนอำเภอ</span></a>'],
-						], // children
-					]),
+					'<a href="'.url('project/planning/ampur').'"><i class="icon -material">fact_check</i><span>แผนอำเภอ</span></a>',
+					'<a href="'.url('project/planning/'.$this->projectId).'"><i class="icon -material">find_in_page</i><span>รายละเอียด</span></a>',
+					'<a class="sg-action" href="'.url('project/'.$this->projectId.'/info.share').'" data-rel="box" data-width="640" data-class-name = "-transparent"><i class="icon -material">share</i><span>แบ่งปัน</span></a>',
+					// 'info' => new Ui([
+					// 	'children' => [
+					// 		['text' => '<a href="'.url('project/planning/ampur').'"><i class="icon -material">fact_check</i><span>แผนอำเภอ</span></a>'],
+					// 	], // children
+					// ]),
 				], // navigator
 			]), // AppBar
 			'children' => [

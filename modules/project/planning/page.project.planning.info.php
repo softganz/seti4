@@ -55,16 +55,21 @@ class ProjectPlanningInfo extends Page {
 
 			case 'addtr':
 				if ($isEdit && $tranId) {
-					$data->tpid = $tpid;
-					$data->refid = NULL;
-					$data->formid = 'info';
-					$data->part = $tranId;
-					$data->uid = i()->uid;
-					$data->created = date('U');
-					$stmt = 'INSERT INTO %project_tr% (`tpid`,`refid`,`formid`,`part`,`uid`,`created`) VALUES (:tpid,:refid,:formid,:part,:uid,:created)';
-					mydb::query($stmt,$data);
-					//$ret.=mydb()->_query;
-					// $ret .= R::Page('project.planning.view',NULL,$tpid);
+					$data = (Object) [
+						'tpid' => $tpid,
+						'refid' => NULL,
+						'formid' => 'info',
+						'part' => $tranId,
+						'uid' => i()->uid,
+						'created' => date('U'),
+					];
+					mydb::query(
+						'INSERT INTO %project_tr%
+						(`tpid`,`refid`,`formid`,`part`,`uid`,`created`)
+						VALUES
+						(:tpid,:refid,:formid,:part,:uid,:created)',
+						$data
+					);
 				}
 				break;
 
