@@ -3,11 +3,11 @@
  * Project class for project management
  *
  * @package project
- * @version 4.4.00
+ * @version 4.4.01
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * @created 2010-05-25
- * @modify  2021-10-10
+ * @modify  2022-02-13
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * ============================================
  */
 
-cfg('project.version','4.4.00');
+cfg('project.version','4.4.01');
 cfg('project.release','2022-02-13');
 
 menu('project/get','Get project from query','project.get','__controller',2,true,'static');
