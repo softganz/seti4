@@ -16,14 +16,14 @@
  */
 
 cfg('project.version','4.4.00');
-cfg('project.release','2021-10-10');
+cfg('project.release','2022-02-13');
 
 menu('project/get','Get project from query','project.get','__controller',2,true,'static');
 menu('project/proposal','Access Project Proposal','project','__controller',1,'access project proposals','dynamic');
 
 menu('project','Project Homepage','project','__controller',1,'access projects,access own projects','static');
 
-$dict['th']['post new comment']=cfg('project.msg.postnewcomment');
+$dict['th']['post new comment'] = cfg('project.msg.postnewcomment');
 tr($dict);
 
 cfg('project.permission', 'administer projects,access projects,access projects qt,access projects person,access own projects,access full expense,access activity expense,create project content,create project org,create project other, edit own project content,comment project,comment own project,create project planning,create project set,create project proposal,create project form,access project proposals');
