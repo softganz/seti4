@@ -151,6 +151,9 @@ div.photo {margin:10px 0;clear:both;}
 	div.photo-multiple img.photo-tall {height:160px;}
 
 
+.page.-page {margin: 0 auto; padding: 0;}
+.page.-header {z-index:1000; margin: 0 auto; padding: 0;}
+
 .page.-sidebar {}
 	.page.-sidebar .header {background-color: #b5b5b5; text-align: center;}
 	.page.-sidebar .header>h3 {height: auto; line-height: 1.8em; padding: 0; color: #333;}

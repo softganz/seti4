@@ -134,10 +134,8 @@ class ImedCareRegistTaker extends Page {
 
 	function _save($data) {
 		if (!i()->ok) {
-			if (empty($data->username))
-				return message(['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'กรุณาระบุชื่อสมาชิก (Username)']);
-			else if (UserModel::get(['username' => $data->username]))
-				return message(['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'Username : '.$data->username.' มีผู้อื่นใช้งานไปแล้ว กรุณาใช้ชื่อใหม่']);
+			if (!(($checkUsernameResult = UserModel::validUsername($data->username)) === true))
+				return message(['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => $checkUsernameResult]);
 			else if (empty($data->password))
 				return message(['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'กรุณาระบุรหัสผ่าน (Password)']);
 			else if ($data->rePassword && $data->password != $data->rePassword)

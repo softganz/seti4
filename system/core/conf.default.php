@@ -97,7 +97,7 @@ $cfg['member.username.maxlength'] = 20; // Max length of username
 //$cfg['member.username.format']='/^[a-z][a-z0-9_\-\.]+\z/';
 //$cfg['member.username.format_text']='<ul><li><strong>ชื่อสมาชิก (username)</strong> เป็นชื่อสำหรับใช้ในการ <strong>sign in</strong> เข้าสู่ระบบสมาชิก</li><li>ขนาดความยาว <strong>4-20</strong> ตัวอักษร</li><li>ชื่อสมาชิกต้องเป็นตัวอักษร ภาษาอังกฤษตัวเล็ก (a-z) , ตัวเลข (0-9) , สัญลักษณ์ ( . - _ ) และ ขึ้นต้นด้วยตัวอักษร ( a-z ) เท่านั้น</li><li>ห้ามมีการเว้นวรรคอย่างเด็ดขาด</li></ul>';
 
-$cfg['member.username.format']='/[a-z0-9_\-\.]+\z/';
+$cfg['member.username.format']='/^[a-z0-9\_\-\.]+\z/';
 $cfg['member.username.format_text']='<ul><li><strong>ชื่อสมาชิก (username)</strong> เป็นชื่อสำหรับใช้ในการ <strong>sign in</strong> เข้าสู่ระบบสมาชิก</li><li>ขนาดความยาว <strong>4-20</strong> ตัวอักษร</li><li>ชื่อสมาชิกต้องเป็นตัวอักษร ภาษาอังกฤษตัวเล็ก (a-z) , ตัวเลข (0-9) , สัญลักษณ์ ( . - _ ) เท่านั้น</li><li>ห้ามมีการเว้นวรรคอย่างเด็ดขาด</li></ul>';
 
 $cfg['member.username.name_text']='<strong>ชื่อสำหรับแสดง ( Name )</strong> เป็นชื่อที่จะนำไปแสดงในหน้าเว็บไซท์ เมื่อท่านส่งหัวข้อหรือแสดงความคิดเห็น (ท่านสามารถใช้ชื่อย่อ หรือชื่อเล่น หรือสมญานามอื่นๆ ได้)';

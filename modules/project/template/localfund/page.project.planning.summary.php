@@ -15,16 +15,16 @@ class ProjectPlanningSummary extends Page {
 	function build() {
 		// R::View('project.toolbar',$self,'ภาพรวมแผนงานกองทุน','planning');
 
-		$selectArea = Array();
-		$selectProvince = Array();
-		$selectSector = Array();
-		$selectYear = Array();
+		$selectArea = [];
+		$selectProvince = [];
+		$selectSector = [];
+		$selectYear = [];
 
 		foreach (mydb::select('SELECT a.`areaid`, a.`areaname`, GROUP_CONCAT(DISTINCT f.`changwat`) `provIdList` FROM %project_area% a LEFT JOIN %project_fund% f USING(`areaid`) GROUP BY `areaid` ORDER BY areaid+0')->items as $item) {
-			$selectArea[$item->areaid] = Array(
+			$selectArea[$item->areaid] = [
 				'label' => 'เขต '.$item->areaid.' '.$item->areaname,
-				'attr' => Array('data-prov' => $item->provIdList),
-			);
+				'attr' => ['data-prov' => $item->provIdList],
+			];
 		}
 
 		$stmt = 'SELECT
@@ -47,16 +47,16 @@ class ProjectPlanningSummary extends Page {
 			-- {group: "changwat"}';
 
 		foreach (mydb::select($stmt)->items as $changwatKey => $changwatItem) {
-			$selectProvince[$changwatKey] = Array(
+			$selectProvince[$changwatKey] = [
 				'label' => reset($changwatItem)->name,
-				'attr' => Array('data-area' => reset($changwatItem)->areaid),
-			);
+				'attr' => ['data-area' => reset($changwatItem)->areaid],
+			];
 			foreach ($changwatItem as $key => $item) {
-				$selectProvince[$changwatKey]['items'][$item->ampurId] = Array(
+				$selectProvince[$changwatKey]['items'][$item->ampurId] = [
 					'label' => $item->ampurName,
 					'filter' => 'for_ampur',
-					'attr' => Array('data-area' => $item->areaid, 'data-changwat' => $changwatKey),
-				);
+					'attr' => ['data-area' => $item->areaid, 'data-changwat' => $changwatKey],
+				];
 			}
 		}
 		//debugMsg($selectProvince,'$selectProvince');
@@ -81,18 +81,75 @@ class ProjectPlanningSummary extends Page {
 
 		$toolbar->addId('projet-planning-summary');
 
-		$toolbar->Filter('year', Array('text' => 'ปี พ.ศ.', 'filter' => 'for_year', 'select' => $selectYear));
-		$toolbar->Filter('area', Array('text' => 'เขต', 'filter' => 'for_area', 'select' => $selectArea));
-		$toolbar->Filter('changwat', Array('text' => 'จังหวัด', 'filter' => 'for_changwat', 'select' => $selectProvince));
-		$toolbar->Filter('sector', Array('text' => 'องค์กร', 'filter' => 'for_sector', 'select' => $selectSector));
+		$toolbar->Filter('year', ['text' => 'ปี พ.ศ.', 'filter' => 'for_year', 'select' => $selectYear]);
+		$toolbar->Filter('area', ['text' => 'เขต', 'filter' => 'for_area', 'select' => $selectArea]);
+		$toolbar->Filter('changwat', ['text' => 'จังหวัด', 'filter' => 'for_changwat', 'select' => $selectProvince]);
+		$toolbar->Filter('sector', ['text' => 'องค์กร', 'filter' => 'for_sector', 'select' => $selectSector]);
 
 		$toolbar->Output('html', '<div class="loader -rotate" style="width: 128px; height: 128px; margin: 64px auto; display: block;"></div>');
 
-		$ret .= $toolbar->build();
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'แผนงานกองทุน',
+				'navigator' => [
+					R::View('project.nav.planning'),
+				], // navigator
+			]), // AppBar
+			'children' => [
+				$toolbar,
 
+				// Show Last 50 Plans
+				new Card([
+					'id' => 'project-planning-last',
+					'children' => [
+						new ListTile([
+							'title' => 'Last 50 Plannings',
+							'leading' => '<i class="icon -material">view_list</i>',
+						]),
+						new Table([
+							'thead' => [
+								'แผนงาน',
+								'tran -center -nowrap'.($orderKey == 'tran' ? ' -sort' : '') => '<i class="icon -material">assessment</i>',
+								'rate -center -nowrap' => '<i class="icon -material">star</i>',
+								'center -chanhwat' => 'จังหวัด',
+								'date' => 'วันที่สร้างแผนงาน'
+							],
+							'children' => array_map(
+								function($rs) {
+									return [
+										'<a href="' . url('project/planning/' . $rs->tpid) . '">' . $rs->title . '</a>',
+										$rs->totalTran ? '<i class="icon -material -sg-level -level-'.(round($rs->totalTran/10) + 1).'" title="จำนวน '.$rs->totalTran.' รายการ">check_circle_outline</i>' : '',
+										'<i class="icon -material rating-star '.($rs->rating != '' ? '-rate-'.round($rs->rating) : '').'">star</i>',
+										$rs->provname,
+										$rs->created
+									];
+								},
+								$this->_lastPlanningModel()
+							),
+						]), // Table
+					], // children
+				]), // Card
+				$this->_script(),
+			],
+		]);
+	}
 
+	function _lastPlanningModel() {
+		return mydb::select(
+			'SELECT
+			  t.`tpid`,t.`orgid`,t.`title`,t.`changwat`,cop.`provname`,t.`created`
+			, t.`rating`
+			, (SELECT COUNT(*) FROM %project_tr% WHERE `tpid` = t.`tpid` AND (`formid` = "info" AND `part` IN ("problem", "basic", "guideline", "project")) ) `totalTran`
+			FROM %project% p
+				LEFT JOIN %topic% t USING(`tpid`)
+				LEFT JOIN %co_province% cop ON cop.`provid`=t.`changwat`
+			WHERE p.`prtype` = "แผนงาน"
+			ORDER BY t.`tpid` DESC
+			LIMIT 50'
+		)->items;
+	}
 
-
+	function _script() {
 		head('<script type="text/javascript">
 			$(document).ready(function() {
 				var $sgDrawReport = $("#projet-planning-summary>form .btn.-primary.-submit").sgDrawReport().doAction(null,\'{dataType: "html"}\')
@@ -100,7 +157,13 @@ class ProjectPlanningSummary extends Page {
 			</script>'
 		);
 
-		$ret .= '<script type="text/javascript">
+		return '<style type="text/css">
+		#detail-list>tbody>tr>td:nth-child(n+2) {text-align: center;}
+		.nav.-table-export {display: none;}
+		.-checkbox>abbr>span {display: none; padding-left: 16px;"}
+		</style>
+
+		<script type="text/javascript">
 			var allProvince = $.map($(".-checkbox-for_changwat") ,function(option) {
 				return {"id": option.value, "area": $(option).data("area"), "name" : $(option).html()};
 			});
@@ -140,68 +203,6 @@ class ProjectPlanningSummary extends Page {
 				$(this).sgDrawReport().makeFilterBtn()
 			});
 		</script>';
-
-
-
-
-		// Show Last 50 Plans
-		$ret .= '<div id="project-planning-last">';
-		$ret .= '<h3>Last 50 Plans</h3>';
-
-		mydb::where('p.`prtype` = "แผนงาน"');
-		$stmt = 'SELECT
-			  t.`tpid`,t.`orgid`,t.`title`,t.`changwat`,cop.`provname`,t.`created`
-			, t.`rating`
-			, (SELECT COUNT(*) FROM %project_tr% WHERE `tpid` = t.`tpid` AND (`formid` = "info" AND `part` IN ("problem", "basic", "guideline", "project")) ) `totalTran`
-			FROM %project% p
-				LEFT JOIN %topic% t USING(`tpid`)
-				LEFT JOIN %co_province% cop ON cop.`provid`=t.`changwat`
-			%WHERE%
-			ORDER BY t.`tpid` DESC
-			LIMIT 50
-			';
-		$dbs = mydb::select($stmt);
-		//$ret.=mydb()->_query;
-
-		$tables = new Table();
-		$tables->thead = array(
-			'แผนงาน',
-			'tran -center -nowrap'.($orderKey == 'tran' ? ' -sort' : '') => '<i class="icon -material">assessment</i>',
-			'rate -center -nowrap' => '<i class="icon -material">star</i>',
-			'center -chanhwat' => 'จังหวัด',
-			'date' => 'วันที่สร้างแผนงาน'
-		);
-
-		foreach ($dbs->items as $rs) {
-			$tables->rows[] = array(
-				'<a href="' . url('project/planning/' . $rs->tpid) . '">' . $rs->title . '</a>',
-				$rs->totalTran ? '<i class="icon -material -sg-level -level-'.(round($rs->totalTran/10) + 1).'" title="จำนวน '.$rs->totalTran.' รายการ">check_circle_outline</i>' : '',
-				'<i class="icon -material rating-star '.($rs->rating != '' ? '-rate-'.round($rs->rating) : '').'">star</i>',
-				$rs->provname,
-				$rs->created
-			);
-		}
-		$ret .= $tables->build();
-		$ret .= '</div>';
-		//$ret.=print_o($dbs,'$dbs');
-
-		$ret .= '<style type="text/css">
-		#detail-list>tbody>tr>td:nth-child(n+2) {text-align: center;}
-		.nav.-table-export {display: none;}
-		.-checkbox>abbr>span {display: none; padding-left: 16px;"}
-		</style>';
-
-		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'แผนงานกองทุน',
-				'navigator' => [
-					R::View('project.nav.planning'),
-				], // navigator
-			]), // AppBar
-			'children' => [
-				$ret,
-			],
-		]);
 	}
 }
 ?>

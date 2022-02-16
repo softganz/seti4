@@ -306,5 +306,24 @@ class CounterModel {
 		$counter->members=mydb::select('SELECT COUNT(*) `total` FROM %users% LIMIT 1')->total;
 		return $counter;
 	}
+
+	public static function onlineCount() {
+		return mydb::select('SELECT COUNT(*) `total` FROM %users_online% LIMIT 1')->total;
+	}
+
+	public static function onlineUsers($conditions = []) {
+		if ($conditions['type'] == 'user') mydb::where('o.`host` NOT LIKE "%bot%" AND o.`host` NOT LIKE "%craw%"');
+		else if ($conditions['type'] == 'member') mydb::where('o.`uid` IS NOT NULL');
+		else if ($conditions['type'] == 'bot') mydb::where('(o.`host` LIKE "%bot%" OR o.`host` LIKE "%craw%")');
+
+		$dbs = mydb::select(
+			'SELECT o.*, u.`username`
+			FROM %users_online% o
+				LEFT JOIN %users% u ON u.`uid` = o.`uid`
+			%WHERE%
+			ORDER BY o.`access` DESC'
+		);
+		return $dbs->items;
+	}
 }
 ?>

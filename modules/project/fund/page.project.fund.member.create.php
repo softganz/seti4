@@ -25,9 +25,9 @@ function project_fund_member_create($self, $fundInfo) {
 	$ret = '<header class="header"><h3>เพิ่มสมาชิกใหม่</h3></header>';
 
 	$data = (object)post();
-	$stmt = 'SELECT MAX(`username`) `username` FROM %users% WHERE `username` LIKE :funduser LIMIT 1';
+	$stmt = 'SELECT MAX(`username`) `username` FROM %users% WHERE `username` LIKE :funduser AND LENGTH(`username`) = 10 LIMIT 1';
 	$rs = mydb::select($stmt,':funduser',$fundId.'-%');
-	//if (i()->username == 'softganz') $ret.=print_o($rs,'$rs');
+	// if (i()->username == 'softganz') $ret.=print_o($rs,'$rs');
 
 	list($username,$lastid) = explode('-',$rs->username);
 	if (empty($username)) $username = $fundId;
