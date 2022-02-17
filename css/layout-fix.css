@@ -1,0 +1,75 @@
+/* Page Layout */
+.page.-page {margin: 0 auto; padding: 0;}
+
+.page.-header {height: 48px; width: 100%; margin: 0 auto; padding: 0; z-index: 1000; opacity: 0.9; position: fixed;}
+	.page.-header>.wrapper {display: flex; flex-wrap: wrap; margin: 0 auto;}
+	.page.-header header {width: 48px; height: 48px; margin: 0; overflow: hidden; background: transparent none 0 0 no-repeat; text-indent: -999em; border-radius: 0%; position: absolute;}
+	.page.-header h1 {margin: 0; padding: 0;}
+	.page.-header h1>a {height: 48px; display: block;}
+
+.page.-nav {margin: 0; padding: 0; flex: 1; display: flex; flex-wrap: nowrap; justify-content: flex-end;}
+	.page.-nav>.nav.-main {order: -1;}
+	.page.-nav>.nav.-owner {order: 10; padding-right: 0; position: relative; z-index: 1101;}
+	.page.-nav>.nav.-search {display: none;}
+
+	.page.-nav .profile>a>.profile-photo {margin: 0;}
+	.page.-nav .profile>ul {border-radius: 8px; overflow: hidden;}
+	.page.-nav .profile>a>strong {display: none;}
+	.page.-nav .profile>a>.profile-photo {width: 28px; height: 28px; margin: 0 5px 0 0; padding:2px; display: inline-block; background: #ddd; border-radius: 50%; border: none;}
+	.page.-nav .signform {margin:0; padding: 16px 16px 0 16px; border-radius: 8px;}
+	.page.-nav .signform .form-item {padding: 0 0 8px 0;}
+	.page.-nav .signform .form-item>label {top: 0; left: 10px; font-size: 0.7em; color: #999;}
+	.page.-nav .signform .form-text,
+	.page.-nav .signform .form-password {padding: 10px 12px 0; width: calc(100% - 24px); border-radius: 32px;}
+	.page.-nav .signform .form-select {background-color: #fff; text-align: center; border-radius: 32px; padding: 14px 24px 14px 12px; height: auto;}
+	.page.-nav .signform .btn.-primary {width: 100%; padding: 10px 0; border-radius: 32px;}
+	.page.-nav .signform a {display: block; padding: 8px; text-align: center;}
+
+	.page.-nav>.nav.-owner>ul>li>a {padding: 0; margin: 0 6px; border-radius: 16px;}
+	.page.-nav>.nav.-owner>ul>li:last-child>a {border-radius: 0; padding: 0 4px ; margin-right: 0;}
+	.page.-nav>.nav.-owner>ul>li>a>.icon {color: #666;}
+	.page.-nav>.nav.-owner>ul>li>a>.icon:only-child {padding: 4px;}
+	.page.-nav>.nav.-owner .-signout span {display: none;}
+	.page.-nav>.nav.-search .search-box {width: 70px; margin: 6px 0 auto 0; height: 32px; border-radius: 16px;}
+	.page.-nav>.nav.-search .search-box button {border-radius: 0 16px 16px 0;}
+	.page.-nav>.nav.-main .menu.-pulldown>li>a {overflow: hidden;}
+	.page.-nav>.nav.-main:not(.-owner) .menu.-main>li {font-weight: bold;}
+	.page.-nav>.nav.-main .menu.-main>li ul {font-weight: normal;}
+	.page.-nav>.nav.-main .menu.-main ul {min-width: 240px;}
+	.page.-nav>.nav.-main {flex: 1; height:48px; margin:0; display: flex; flex-wrap: nowrap; justify-content: flex-end; z-index:1100;}
+	.page.-nav>.nav.-main.sg-responsivemenu.-active>.menu {top: 48px;}
+
+.page.-content {margin: 0 auto; padding: 48px 0 0 0; position: relative;}
+.page.-footer {margin:20px 0 0 0;clear:both; padding:10px; font-size: 0.9em; text-align: center;}
+	.page.-footer>.wrapper {margin: 0 auto;}
+	.page.-footer p {margin: 0; padding: 0;}
+
+@media (min-width:30em) {	/* 480/16 */
+	.nav.-owner .-signout span {display: initial;}
+}
+
+@media (min-width: 43.75em) { /* 700/16 */
+	.page.-content {padding-top: 96px;}
+
+	.page.-nav {flex-wrap: wrap;}
+	.page.-nav>.nav.-main.-owner {height: 45px;}
+	.page.-nav>.nav.-search {flex: 1; display: block;}
+	.page.-nav>.nav.-search .search-box {width: 200px; margin-left: auto;}
+	.page.-nav>.nav.-main {position: relative; flex: 1 0 100%; justify-content: flex-start; order: 99;}
+	.page.-nav>.nav.-main>.menu.-main {display: block; position: relative;}
+	.page.-nav>.nav.-main .sg-navtoggle {display: none;}
+	.page.-nav>.nav.sg-responsivemenu>.menu {display: flex;}
+
+	.module-home .ribbon {width:24px; position: absolute; border: none; background: transparent; top: 58px; left: 4px; z-index: 1000;}
+	.module-home .user-menu {width: 200px;}
+	.module-home .user-menu>li {display: none;}
+	.module-home .user-menu>li:first-child {display: block;}
+	.module-home .user-menu>li>a {border: none;}
+	.module-home .user-menu>li>a {border: none; background-color: #b5b5b5; padding: 2px; border-radius: 50%;}
+}
+
+@media (min-width:60em) {	/* 980/16 */
+	.page.-content {padding-top: 104px;}
+}
+
+/* @end */
