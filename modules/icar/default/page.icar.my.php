@@ -16,7 +16,7 @@ function icar_my($self) {
 	$shopId = post('shop');
 	$paraSearch = post('q');
 	$paraOrder = SG\getFirst(post('o'),'indate');
-	$paraSold = post('sold');
+	$paraSold = strtoupper(post('sold'));
 
 	if (!user_access('create icar content')) {
 		if (i()->ok) {
@@ -56,8 +56,8 @@ function icar_my($self) {
 	if ($paraSearch) {
 		mydb::where('(i.`plate` LIKE :q OR b.`name` LIKE :q OR i.`enginno` LIKE :q OR i.`bodyno` LIKE :q)',':q','%'.$paraSearch.'%');
 	}
-	if (strtoupper($paraSold) === 'YES') mydb::where('`sold` = "Yes"');
-	else if (strtoupper($paraSold) === 'NO') mydb::where('`sold` = No');
+	if ($paraSold === 'YES') mydb::where('`sold` = "Yes"');
+	else if ($paraSold === 'NO') mydb::where('`sold` IS NULL');
 	$orderList = array('brandname'=>'`brandname`', 'plate'=>'`plate`', 'buydate'=>'`buydate`', 'indate'=>'`tpid`');
 	$orderBy = SG\getFirst($orderList[$paraOrder], $orderList['indate']);
 
@@ -92,7 +92,7 @@ function icar_my($self) {
 		ORDER BY $ORDER$ $SORT$
 		$LIMIT$';
 	$dbs=mydb::select($stmt);
-	//$ret .= mydb()->_query;
+	// $ret .= mydb()->_query;
 	//$ret .= print_o($dbs, '$dbs');
 
 	$totals = $dbs->_found_rows;
@@ -106,18 +106,26 @@ function icar_my($self) {
 	$pagenv = new PageNavigator($itemPerPage,$page,$totals,q(),false,$pagePara);
 	$no=$pagenv?$pagenv->FirstItem():0;
 
-	if ($dbs->_empty) {
-		$ret .= message('notify','<p>ยังไม่มีรถในร้าน คลิก <a class="btn -primary" href="'.url('icar/buy').'">ซื้อรถเข้าร้าน</a> เพื่อซื้อรถเข้าร้าน</p>');
-		return $ret;
-	}
 	$ui=new ui('span');
 	$ui->add('{tr:Sort by,เรียงตาม} : <a class="sg-action'.($paraOrder=='brandname' ? ' -active':'').'" href="'.url(q(),array('shop'=>$shopId,'o'=>'brandname','sold'=>$paraSold,'q'=>$paraSearch)).'" data-rel="#main">{tr:Brand,ยี่ห้อ}</a>');
 	$ui->add('<a class="sg-action'.($paraOrder=='plate' ? ' -active':'').'" href="'.url(q(),array('shop'=>$shopId,'o'=>'plate','sold'=>$paraSold,'q'=>$paraSearch)).'" data-rel="#main">{tr:Plate,ทะเบียน}</a>');
 	$ui->add('<a class="sg-action'.($paraOrder=='buydate' ? ' -active':'').'" href="'.url(q(),array('shop'=>$shopId,'o'=>'buydate','sold'=>$paraSold,'q'=>$paraSearch)).'" data-rel="#main">{tr:Buy Date,วันที่ซื้อ}</a>');
 	$ui->add('<a class="sg-action'.($paraOrder=='indate' ? ' -active':'').'" href="'.url(q(),array('shop'=>$shopId,'o'=>'indate','sold'=>$paraSold,'q'=>$paraSearch)).'" data-rel="#main">{tr:Created,วันที่ป้อน}</a>');
-	$ui->add($paraSold ? '<a class="sg-action" href="'.url(q(),array('shop'=>$shopId,'q'=>$paraSearch)).'" data-rel="#main">{tr:Not Sold,ยังไม่ขาย}</a>' : '<a class="sg-action" href="'.url(q(),array('shop'=>$shopId,'sold'=>'yes','q'=>$paraSearch)).'" data-rel="#main">{tr:Sold,ขายแล้ว}</a>');
+	if ($paraSold === 'YES') {
+		$ui->add('<a class="sg-action" href="'.url(q(), ['shop' => $shopId, 'q' => $paraSearch]).'" data-rel="#main">{tr:Sold,ขายแล้ว}</a>');
+	} else if ($paraSold === 'NO') {
+		$ui->add('<a class="sg-action" href="'.url(q(), ['shop' => $shopId, 'sold' => 'yes', 'q' => $paraSearch]).'" data-rel="#main">{tr:Not Sold,ยังไม่ขาย}</a>');
+	} else {
+		$ui->add('<a class="sg-action" href="'.url(q(), ['shop' => $shopId, 'sold' => 'no', 'q' => $paraSearch]).'" data-rel="#main">{tr:All cars,รถทั้งหมด}</a>');
+	}
+	// $ui->add($paraSold === 'YES' ? '<a class="sg-action" href="'.url(q(), ['shop' => $shopId,'q' => $paraSearch]).'" data-rel="#main">{tr:Not Sold,ยังไม่ขาย}</a>' : '<a class="sg-action" href="'.url(q(), ['shop' => $shopId, 'sold' => 'yes', 'q' => $paraSearch]).'" data-rel="#main">{tr:Sold,ขายแล้ว}</a>');
 	$ui->add('{tr:Total,ทั้งหมด} <strong>'.number_format($totals).'</strong> {tr:cars,คัน}');
 	$ret.='<div class="statusbar">'.$ui->build().'</div>';
+
+	if ($dbs->_empty) {
+		$ret .= message('notify','<p>ยังไม่มีรถในร้าน คลิก <a class="btn -primary" href="'.url('icar/buy').'">ซื้อรถเข้าร้าน</a> เพื่อซื้อรถเข้าร้าน</p>');
+		return $ret;
+	}
 
 	$orows=$prows=array();
 	foreach ($dbs->items as $rs) {
