@@ -40,7 +40,7 @@ function project_admin_user($self, $uid = NULL) {
 				ON DUPLICATE KEY UPDATE `orgid` = :orgid';
 			mydb::query($stmt,':orgid',post('orgid'),':uid',$uid,':membership',post('membership'));
 		} else if (post('action') == 'deleteorg' && post('orgid')) {
-			mydb::query('DELETE FROM %org_officer% WHERE `orgid `= :orgid AND `uid` = :uid LIMIT 1',':orgid',post('orgid'),':uid',$uid);
+			mydb::query('DELETE FROM %org_officer% WHERE `orgid`= :orgid AND `uid` = :uid LIMIT 1',':orgid',post('orgid'),':uid',$uid);
 			//$ret.=mydb()->_query;
 		} else if (post('action') == 'changerole' && post('role')) {
 			mydb::query('UPDATE %users% SET `roles` = :roles WHERE `uid` = :uid LIMIT 1',':uid',$uid,':roles',post('role'));

@@ -12,8 +12,12 @@
 
 class GreenApiProductList extends Page {
 	var $customerId;
+	var $order;
+	var $sort;
+	var $page;
+	var $item;
 
-	function __construct($arg1 = NULL) {
+	function __construct() {
 		$this->customerId = post('customerId');
 		$this->order = SG\getFirst(post('order'), 'id');
 		$this->sort = SG\getFirst(post('sort'), 'd');
@@ -67,15 +71,6 @@ class GreenApiProductList extends Page {
 		// $result->debug = mydb()->_query;
 
 		return $result;
-
-		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Title',
-			]), // AppBar
-			'body' => new Widget([
-				'children' => [], // children
-			]), // Widget
-		]);
 	}
 }
 ?>

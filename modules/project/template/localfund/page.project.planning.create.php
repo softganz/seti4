@@ -19,9 +19,10 @@ class ProjectPlanningCreate extends Page {
 		$year = post('yr');
 
 		$fundInfo = R::Model('project.fund.get',$orgId);
+		$isEdit = $fundInfo->is->edit || $fundInfo->is->trainer;
 
-		if (!$fundInfo) return message('error','ไม่มีข้อมูลตามที่ระบุ');
-		if (!$fundInfo->right->edit) return message('error', 'Access Denied');
+		if (!$fundInfo->orgId) return message('error','ไม่มีข้อมูลตามที่ระบุ');
+		if (!$isEdit) return message('error', 'Access Denied');
 
 		// Check have planning in year
 		$stmt = 'SELECT p.`tpid`, t.`orgid`, t.`title`, p.`pryear`, tr.`refid`

@@ -1,27 +1,21 @@
 <?php
 /**
-* Module :: Description
+* Green API :: Create Order
 * Created 2022-01-27
-* Modify  2022-01-27
+* Modify  2022-02-17
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage green/api/order/create
 */
 
 class GreenApiOrderCreate extends Page {
-	var $arg1;
-
-	function __construct($arg1 = NULL) {
-		$this->arg1 = $arg1;
-	}
-
 	function build() {
 		//TODO: ตรวจสอบ token ด้วย
 
 		$data = (Object) [
 			'orderId' => post('orderId') ? intval(post('orderId')) : NULL,
+			'userId' => i()->uid,
 			'customerId' => intval(post('customerId')),
 			'productId' => intval(post('productId')),
 			'units' => intval(post('units')),
@@ -38,14 +32,14 @@ class GreenApiOrderCreate extends Page {
 				'code' => _HTTP_ERROR_NOT_ACCEPTABLE,
 				'text' => 'ข้อมูลไม่ครบถ้วน',
 			];
-			return new ErrorMessage(['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'ข้อมูลไม่ครบถ้วน']);
+			// return new ErrorMessage(['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'ข้อมูลไม่ครบถ้วน']);
 		}
 
 		mydb::query(
 			'INSERT INTO %green_order%
-			(`orderId`, `parentOrderId`, `customerId`, `productId`, `units`, `pricePerUnit`, `start`, `end`, `created`)
+			(`orderId`, `parentOrderId`, `uid`, `customerId`, `productId`, `units`, `pricePerUnit`, `start`, `end`, `created`)
 			VALUES
-			(:orderId, :parentOrderId, :customerId, :productId, :units, :pricePerUnit, :start, :end, :created)
+			(:orderId, :parentOrderId, :userId, :customerId, :productId, :units, :pricePerUnit, :start, :end, :created)
 			ON DUPLICATE KEY UPDATE
 			`units` = :units
 			, `pricePerUnit` = :pricePerUnit
@@ -59,17 +53,6 @@ class GreenApiOrderCreate extends Page {
 		// debugMsg(mydb()->_query);
 
 		return $data;
-
-		debugMsg(mydb()->_query);
-
-		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Title',
-			]), // AppBar
-			'body' => new Widget([
-				'children' => [], // children
-			]), // Widget
-		]);
 	}
 }
 ?>

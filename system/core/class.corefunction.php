@@ -404,6 +404,18 @@ class R {
 		$loadResult = load_resource_file('manifest.'.$modulename);
 		return $loadResult;
 	}
+
+	public static function Asset($assetName) {
+		// assetName Format : project:name.ext
+		// assetFile Format : {module}.name.ext
+		// Location Folder : modules/{}/template/assets, modules/{module}/assets, system/assets
+		list($moduleName, $assetName) = explode(':', $assetName);
+		// debugMsg($assetName);
+		$packageName = 'asset:'.$moduleName.'/'.$assetName;
+		// $found = false;
+		list($funcName, $found, $fileName, $resourceType, $resultContent) = load_resource_file($packageName);
+		return $resultContent;
+	}
 }
 
 /**
@@ -551,7 +563,7 @@ function load_lib($file, $folder = NULL) {
  * @param String $func
  * @return Mixed
  */
-function load_resource_file($packageName) {
+function load_resource_file($packageName, $debug = false) {
 	static $loadCount = 0;
 	static $debugFunc = [];
 	static $loadFiles = [];
@@ -560,13 +572,14 @@ function load_resource_file($packageName) {
 	$resourceFileToLoad = '';
 	$found = false;
 	$resourceType = '';
+	$resultContent = NULL;
 	$ret = [];
 	$isDebugable = true;
 	$template = cfg('template');
 	if (cfg('template.add'))
 		$template = cfg('template.add').';'.$template;
 
-	$debugLoadfile = debug('load');
+	$debugLoadfile = debug('load') || $debug;
 
 	$loadCount++;
 
@@ -584,12 +597,18 @@ function load_resource_file($packageName) {
 			list($src1, $packageFolder, $package) = $out;
 		}
 		$request = explode('.',$package);
-		$module = $request[0];
-		// debugMsg('package = '.$package);
-		// debugMsg($request, '$request');
+		if ($resourceType == 'asset') {
+			$module = $packageFolder;
+		} else {
+			$module = $request[0];
+		}
+		// if ($debugLoadfile) debugMsg('package = '.$package.', packageFolder = '.$packageFolder);
+		// if ($debugLoadfile) debugMsg($request, '$request');
 	} else {
 		return false;
 	}
+
+	$loadAction = in_array($resourceType, ['asset']) ? 'content' : 'include';
 
 	if ($debugLoadfile) $caller = get_caller(__FUNCTION__);
 	// debugMsg($caller,'$caller');
@@ -604,7 +623,7 @@ function load_resource_file($packageName) {
 	$fileName = $funcName = '';
 	$paths = [];
 
-	if (in_array($resourceType, ['r', 'widget', 'view', 'page', 'on']) && $template) {
+	if (in_array($resourceType, ['r', 'widget', 'view', 'page', 'on', 'asset']) && $template) {
 		foreach (explode(';', $template) as $item)
 			if ($item) $paths[] = 'modules/'.$module.'/template/'.trim($item);
 	}
@@ -680,6 +699,12 @@ function load_resource_file($packageName) {
 			$funcName = NULL;
 			// debugMsg('LOAD Package = '.$package.' , folder = '.$packageFolder);
 			break;
+		case 'asset':
+			// $fileName = 'asset.';
+			$paths[] = 'modules/'.$packageFolder.'/assets';
+			$paths[] = 'system/'.$packageFolder.'/assets';
+			$funcName = NULL;
+			break;
 	}
 
 	if (!in_array($module, $loadCfg)) {
@@ -694,7 +719,10 @@ function load_resource_file($packageName) {
 	}
 
 
-	$fileName .= implode('.',$request).(preg_match('/\.php$/i', $package) ? '' : '.php');
+	$fileName .= implode('.',$request);
+	if (!in_array($resourceType, ['asset'])) {
+		$fileName .= (preg_match('/\.php$/i', $package) ? '' : '.php');
+	}
 	if(!is_null($funcName)) $funcName .= implode('_',$request);
 
 	// if resource file was loaded
@@ -731,26 +759,32 @@ function load_resource_file($packageName) {
 				// Check function exists, if not set function return found
 				if (file_exists($resourceFileToLoad)) {
 					$loadFiles[$packageName] = $resourceFileToLoad;
-					require_once($resourceFileToLoad);
-					// debugMsg($loadFiles,'$loadFiles');
-					$debugFunc[$funcName] = $isDebugable =! (isset($debug) && $debug === false);
-					$debugStr .= '<span style="color:green;">Found and load file '.$resourceFileToLoad.'</span><br />'._NL;
-
-					// Check function exists, if not set function return found
-					if ($funcName || $className) {
-						if (class_exists($className)) {
-							// $debugStr .= '<span style="color:green;">Execute class '.$className.'() complete.</span><br />'._NL;
-							$found = true;
-							break;
-						} else if (function_exists($funcName)) {
-							// $debugStr .= '<span style="color:green;">Execute function '.$funcName.'() complete.</span><br />'._NL;
-							$found = true;
-							break;
-						} else {
-							// $debugStr .= '<span style="color:red;">Execute function '.$funcName.'() is not exist.</span><br />'._NL;
-						}
-					} else {
+					if ($loadAction == 'content') {
+						$resultContent = file_get_contents($resourceFileToLoad);
 						$found = true;
+						$debugStr .= '<span style="color:green;">Found and load file '.$resourceFileToLoad.'</span><br />'._NL;
+					} else {
+						require_once($resourceFileToLoad);
+						// debugMsg($loadFiles,'$loadFiles');
+						$debugFunc[$funcName] = $isDebugable =! (isset($debug) && $debug === false);
+						$debugStr .= '<span style="color:green;">Found and load file '.$resourceFileToLoad.'</span><br />'._NL;
+
+						// Check function exists, if not set function return found
+						if ($funcName || $className) {
+							if (class_exists($className)) {
+								// $debugStr .= '<span style="color:green;">Execute class '.$className.'() complete.</span><br />'._NL;
+								$found = true;
+								break;
+							} else if (function_exists($funcName)) {
+								// $debugStr .= '<span style="color:green;">Execute function '.$funcName.'() complete.</span><br />'._NL;
+								$found = true;
+								break;
+							} else {
+								// $debugStr .= '<span style="color:red;">Execute function '.$funcName.'() is not exist.</span><br />'._NL;
+							}
+						} else {
+							$found = true;
+						}
 					}
 				} else {
 					$resourceFileToLoad = '';
@@ -769,7 +803,7 @@ function load_resource_file($packageName) {
 	if (class_exists($className)) {
 		return [$className, $found, $resourceFileToLoad, $resourceType];
 	} else {
-		return [$funcName, $found, $resourceFileToLoad, $resourceType];
+		return [$funcName, $found, $resourceFileToLoad, $resourceType, $resultContent];
 	}
 }
 

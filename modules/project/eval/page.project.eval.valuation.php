@@ -1,6 +1,6 @@
 <?php
 /**
-* Project :: แบบประเมินคุณค่าของโครงการที่เกี่ยวข้องกับการสร้างเสริมสุขภาพ (Valuation)
+* Project :: Eval Valuation
 * Created 2021-12-14
 * Modify  2021-12-14
 *
@@ -60,6 +60,10 @@ class ProjectEvalValuation extends Page {
 			]);
 		}
 
+		// $schema = json_decode(file_get_contents('modules/project/assets/schema.eval.valuation.json', true));
+		$schema = json_decode(R::Asset('project:schema.project.valuation.json'));
+		// debugMsg($schema,'$schema');
+
 		return new Scaffold([
 			'appBar' => new ProjectInfoAppBarWidget($this->projectInfo),
 			// 'floatingActionButton' => $floatingActionButton,
@@ -73,7 +77,7 @@ class ProjectEvalValuation extends Page {
 				] : NULL,
 
 				'children' => [
-					'<h2 class="title -main">แบบประเมินคุณค่าของโครงการที่เกี่ยวข้องกับการสร้างเสริมสุขภาพ</h3>'._NL,
+					'<h2 class="title -main">'.$schema->title->label.'</h3>'._NL,
 
 					// Title
 					new Container([
@@ -84,7 +88,7 @@ class ProjectEvalValuation extends Page {
 								. ($projectInfo->info->agrno ? 'รหัสสัญญา <strong>'.$projectInfo->info->agrno.'</strong> ' : '')
 								. 'ระยะเวลาโครงการ <strong>'.sg_date($projectInfo->info->date_from,'ว ดดด ปปปป').' - '.sg_date($projectInfo->info->date_end,'ว ดดด ปปปป').'</strong>'
 								. '</p>'._NL,
-							'<p><em>แบบประเมินคุณค่าของโครงการที่เกี่ยวข้องกับการสร้างเสริมสุขภาพ เป็นการคุณค่าที่เกิดจากโครงการในมิติต่อไปนี้</p><ul><li>ความรู้ด้านการสร้างเสริมสุขภาพและนวัตกรรมเชิงระบบสุขภาพชุมชน</li><li>การปรับเปลี่ยนพฤติกรรมที่มีผลต่อสุขภาวะ</li><li>การปรับเปลี่ยนสิ่งแวดล้อมที่เอื้อต่อสุขภาวะ</li><li>ผลกระทบเชิงบวกและนโยบายสาธารณะที่เอื้อต่อการสร้างสุขภาวะชุมชน</li><li>กระบวนการชุมชน</li><li>มิติสุขภาวะปัญญา / สุขภาวะทางจิตวิญญาณ</li></ul></em></p>',
+							$schema->description,
 						], // children
 					]), // Container
 
@@ -96,22 +100,23 @@ class ProjectEvalValuation extends Page {
 							'class' => 'project-valuation-form -other',
 							'colgroup' => ['width="20%"','width="5%"','width="5%"','width="25%"','width="25%"','width="25%"'],
 							'thead' => '<thead><tr><th rowspan="2">คุณค่าที่เกิดขึ้น<br />ประเด็น</th><th colspan="2">ผลที่เกิดขึ้น</th><th rowspan="2">รายละเอียด/การจัดการ</th><th rowspan="2">หลักฐาน/แหล่งอ้างอิง</th><th rowspan="2">แนวทางการพัฒนาต่อ</th></tr><tr><th style="width:30px;">ใช่</th><th style="width:30px;">ไม่ใช่</th></tr></thead>',
-							'children' => (function($valuationTr, $formid) {
+							'children' => (function($valuationTr, $formid, $schema) {
 								$rows = [];
-								foreach ($this->valuationItems() as $mainKey => $mainValue) {
-									$rows[] = array('<td colspan="6"><h3>'.$mainValue['title'].'</h3></td>');
+								foreach ($schema->body as $mainKey => $mainValue) {
+								// foreach ($this->valuationItems() as $mainKey => $mainValue) {
+									$rows[] = array('<td colspan="6"><h3>'.$mainValue->title.'</h3></td>');
 
-									foreach ($mainValue['items'] as $k => $v) {
-										if (!empty($v['section'])) $rows[] = '<header>';
-										if (empty($v['section'])) {
-											$rows[] = array('<td colspan="6"><b>'.$v['title'].'</b></td>');
+									foreach ($mainValue->items as $k => $v) {
+										if (!empty($v->section)) $rows[] = '<header>';
+										if (empty($v->section)) {
+											$rows[] = array('<td colspan="6"><b>'.$v->title.'</b></td>');
 											continue;
 										}
 
-										$section = $mainKey.'.'.$v['section'];
+										$section = $mainKey.'.'.$v->section;
 										$irs = $valuationTr->items[$section] ? end($valuationTr->items[$section]) : (Object) [];
 										unset($row);
-										$row[] = '<span>'.($v['section']).'. '.$v['title'].'</span>';
+										$row[] = '<span>'.($v->section).'. '.$v->title.'</span>';
 										$row[] = view::inlineedit(array('group'=>$formid.':'.$section,'fld'=>'rate1', 'name'=>'rate'.$section, 'tr'=>$irs->trid, 'value'=>$irs->rate1),'1:',$this->right->editMode,'radio');
 										$row[] = view::inlineedit(array('group'=>$formid.':'.$section,'fld'=>'rate1', 'name'=>'rate'.$section, 'tr'=>$irs->trid, 'value'=>$irs->rate1),'0:',$this->right->editMode,'radio');
 										$row[] = view::inlineedit(array('group'=>$formid.':'.$section,'fld'=>'text1','tr'=>$irs->trid,'ret'=>'html', 'value'=>trim($irs->text1)),$irs->text1,$this->right->editMode,'textarea');
@@ -123,7 +128,7 @@ class ProjectEvalValuation extends Page {
 									}
 								}
 								return $rows;
-							})($valuationTr, $formid),
+							})($valuationTr, $formid, $schema),
 						]), // Container
 					]), // Container
 
@@ -474,7 +479,7 @@ function project_eval_valuation($self, $projectId, $action = NULL, $actionId = N
 
 	$ret.='<p class="noprint">หมายเหตุ *<ul><li><strong>สรุปผลการทำโครงการ (บทคัดย่อ)</strong> จะนำไปใส่ในบทคัดย่อของรายงานฉบับสมบูรณ์</li><li>หากต้องการใช้ค่าเริ่มต้นของสรุปผลการทำโครงการ (บทคัดย่อ) ให้ลบข้อความในช่องสรุปผลการทำโครงการ (บทคัดย่อ) ทั้งหมด แล้วกดปุ่ม Refresh</li></ul></p>';
 	$ret .= '</section><!-- section-7 -->';
-*/
+	*/
 
 	if ($isViewOnly) {
 		// Do nothing
