@@ -38,7 +38,7 @@ function icar_my($self) {
 	}
 
 	$title=user_access('administrator icars')?'Administrator@iCarSmile':$shopInfo->shopname;
-	
+
 	R::View('icar.toolbar', $self, $title);
 	//$ret.=print_o($shopInfo,'$shopInfo');
 
@@ -56,8 +56,8 @@ function icar_my($self) {
 	if ($paraSearch) {
 		mydb::where('(i.`plate` LIKE :q OR b.`name` LIKE :q OR i.`enginno` LIKE :q OR i.`bodyno` LIKE :q)',':q','%'.$paraSearch.'%');
 	}
-	mydb::where('`sold` '.($paraSold ? ' = "Yes"' : 'IS NULL'));
-
+	if (strtoupper($paraSold) === 'YES') mydb::where('`sold` = "Yes"');
+	else if (strtoupper($paraSold) === 'NO') mydb::where('`sold` = No');
 	$orderList = array('brandname'=>'`brandname`', 'plate'=>'`plate`', 'buydate'=>'`buydate`', 'indate'=>'`tpid`');
 	$orderBy = SG\getFirst($orderList[$paraOrder], $orderList['indate']);
 
