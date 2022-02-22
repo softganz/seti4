@@ -2,7 +2,7 @@
 /**
 * iMed API :: Create Patient Visit Item
 * Created 2021-08-17
-* Modify  2021-09-05
+* Modify  2022-02-20
 *
 * @param Array $_REQUEST
 * @return Widget
@@ -10,9 +10,12 @@
 * @usage imed/api/visit/create
 */
 
-$debug = true;
-
 class ImedApiVisitCreate extends Page {
+	var $psnId;
+
+	function __construct() {
+		$this->psnId = intval(post('psnId'));
+	}
 	function build() {
 		$isCreateVisit = i()->ok;
 		if (!$isCreateVisit) return message(['responseCode' => _HTTP_ERROR_FORBIDDEN, 'msg' => 'ขออภัย ท่านไม่สามารถเขียนบันทึกการเยี่ยมบ้านได้']);
@@ -20,61 +23,101 @@ class ImedApiVisitCreate extends Page {
 
 		$result = (Object) [
 			'seqId' => NULL,
-			'psnId' => intval(post('psnId')),
+			'psnId' => $this->psnId,
 			'error' => false,
 			'msg' => NULL,
 		];
 
-		$post->seqId = SG\getFirst(post('seqId'),NULL);
-		$post->psnId = SG\getFirst(post('psnId'), post('pid'));
-		$post->visitType = SG\getFirst(post('visitType'));
-		$post->msg = post('msg');
-		$post->uid = i()->uid;
-		$post->timedata = sg_date(post('timedata')?post('timedata'):date('U'),'U');
-		$post->created = date('U');
-		$post->service = post('service');
-		//$ret .= print_o(R()->appAgent,'R()->appAgent');
-		if (R()->appAgent) {
-			$post->appsrc = R()->appAgent->OS;
-			$post->appagent = R()->appAgent->dev.'/'.R()->appAgent->ver.' ('.R()->appAgent->type.';'.R()->appAgent->OS.')';
-		} else if (preg_match('/imed\/app/',$_SERVER["HTTP_REFERER"])) {
-			$post->appsrc = 'Web App';
-			$post->appagent = 'Web App';
-		} else {
-			$post->appsrc = 'Web';
-			$post->appagent = 'Web';
-		}
-		//$ret .= 'SET appsrc = '.$post->appsrc.' '.$post->appagent.'<br />';
+		$post = (Object) [
+			'seqId' => SG\getFirst(post('seqId'),NULL),
+			'psnId' => SG\getFirst(post('psnId'), post('pid')),
+			'visitType' => SG\getFirst(post('visitType')),
+			'msg' => post('msg'),
+			'uid' => i()->uid,
+			'timedata' => sg_date(post('timedata')?post('timedata'):date('U'),'U'),
+			'created' => date('U'),
+			'service' => post('service'),
+			'appSrc' => NULL,
+			'appAgent' => NULL,
+		];
 
-		$stmt = 'INSERT INTO %imed_service%
-				(`seq`, `pid`, `uid`, `visitType`, `service`, `appsrc`, `appagent`, `rx`, `timedata`, `created`)
-					VALUES
-				(:seqId, :psnId, :uid, :visitType, :service, :appsrc, :appagent, :msg, :timedata, :created)
-				ON DUPLICATE KEY UPDATE
-				`rx` = :msg
-				';
-		mydb::query($stmt, $post);
+		if (R()->appAgent) {
+			$post->appSrc = R()->appAgent->OS;
+			$post->appAgent = R()->appAgent->dev.'/'.R()->appAgent->ver.' ('.R()->appAgent->type.';'.R()->appAgent->OS.')';
+		} else if (preg_match('/imed\/app/',$_SERVER["HTTP_REFERER"])) {
+			$post->appSrc = 'Web App';
+			$post->appAgent = 'Web App';
+		} else {
+			$post->appSrc = 'Web';
+			$post->appAgent = 'Web';
+		}
+		//$ret .= 'SET appSrc = '.$post->appSrc.' '.$post->appAgent.'<br />';
+
+		mydb::query(
+			'INSERT INTO %imed_service%
+			(`seq`, `pid`, `uid`, `visitType`, `service`, `appSrc`, `appAgent`, `rx`, `timedata`, `created`)
+				VALUES
+			(:seqId, :psnId, :uid, :visitType, :service, :appSrc, :appAgent, :msg, :timedata, :created)
+			ON DUPLICATE KEY UPDATE
+			`rx` = :msg
+			',
+			$post
+		);
 
 		if (empty($post->seqId)) $post->seqId = mydb()->insert_id;
 
-		// $ret.=mydb()->_query;
-
 		$result->seqId = $post->seqId;
+		$result->affected_rows = mydb()->_affected_rows;
+		// debugMsg(mydb(),'mydb()');
 
 		// Save service complete
-		if (mydb()->affected_rows == 1) {
-			$stmt = 'INSERT INTO %imed_patient% (`pid`, `uid`, `created`) VALUES (:psnId, :uid, :created) ON DUPLICATE KEY UPDATE `service` = `service` + 1';
-			mydb::query($stmt, $post);
-			//$ret .= mydb()->_query;
+		if (mydb()->_affected_rows == 1) {
+			mydb::query(
+				'INSERT INTO %imed_patient%
+				(`pid`, `uid`, `created`)
+				VALUES
+				(:psnId, :uid, :created)
+				ON DUPLICATE KEY UPDATE
+				`service` = `service` + 1',
+				$post
+			);
+
+			// Send data to https://www.khonsongkhla.com
+			import('model:imed.khonsongkhla.php');
+
+			$patientInfo = R::Model('imed.patient.get',$this->psnId);
+
+			if (strlen($patientInfo->info->cid) == 13 && substr($patientInfo->info->areacode,0, 2) == '90') {
+				$khonSongkhlaModel = new ImedKhonsongkhlaModel();
+				// $khonSongkhlaModel->login();
+				// debugMsg($khonSongkhlaModel->refreshToken(), 'refreshToken');
+				// debugMsg($khonSongkhlaModel, '$khonSongkhlaModel');
+				// debugMsg($this,'$this');
+
+
+
+				$data = (Object) [
+					'cid' => $patientInfo->info->cid,
+					'date' => sg_date($post->timedata, 'ปปปป-m-d'),
+					'socialActivity' => 'elder_care',
+					'source' => 'scf',
+					'serviceUnit' => 'scf',
+					'description' => $post->msg,
+				];
+
+				$result->khonsongkhla = $khonSongkhlaModel->addPublicService($data);
+				// debugMsg($result, '$result');
+
+				// $khonSongkhlaModel->deletePublicService(['cid' => $this->patientInfo->info->cid, 'id' => 12]);
+
+				// debugMsg($khonSongkhlaModel->getPublicServiceList($this->patientInfo->info->cid), '$aid');
+			}
+
+
 		}
 
 		$result->msg = 'บันทีกการเยี่ยมบ้านเรียบร้อย';
 
-		// debugMsg($post,'$post');
-		// $ret .= '$result = '.$result;
-		// $ret .= print_o($dataFB,'$dataFB');
-		// $ret .= print_o($result,'$result');
-		// $ret .= print_o(post(),'post()');
 		return $result;
 	}
 }

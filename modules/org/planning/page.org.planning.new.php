@@ -1,13 +1,13 @@
 <?php
 /**
-* Org :: Planning Home Page
+* Org :: New Planning Form
 * Created 2021-08-10
 * Modify  2021-08-11
 *
 * @param Object $orgInfo
 * @return Widget
 *
-* @usage org/{id}/planning
+* @usage org/{id}/planning.new
 */
 
 $debug = true;

@@ -89,12 +89,18 @@ class ImedVisitModel {
 
 		if (!$psnId) return NULL;
 
-		$result = (Object) [];
+		$result = (Object) [
+			'seqId' => $seqId,
+			'psnId' => $psnId,
+			'RIGHT' => NULL,
+			'RIGHTBIN' => NULL,
+			'error' => NULL,
+		];
 
 		mydb::query('SET @@group_concat_max_len = 4096;');
 
-		mydb::where(' s.`pid` = :pid AND s.`service` IN ("Treatment","Home Visit","Web Distance Treatment","Care Plan" ,"Care Service")',':pid',$psnId);
-		if ($seqId) mydb::where('s.`seq` = :seq',':seq',$seqId);
+		mydb::where(' s.`pid` = :psnId AND s.`service` IN ("Treatment","Home Visit","Web Distance Treatment","Care Plan" ,"Care Service")',':psnId',$psnId);
+		if ($seqId) mydb::where('s.`seq` = :seqId',':seqId',$seqId);
 
 		$stmt = 'SELECT
 			  s.`seq` `seqId`, s.`pid` `psnId`
@@ -129,11 +135,6 @@ class ImedVisitModel {
 
 		if (!$debug) mydb::clearprop($dbs);
 
-		$result->seqId = $seqId;
-		$result->psnId = $psnId;
-		$result->RIGHT = NULL;
-		$result->RIGHTBIN = NULL;
-		$result->error = NULL;
 		if ($seqId) {
 			$result = (Object) ((Array) $result + (Array) $dbs);
 
@@ -247,7 +248,7 @@ class ImedVisitModel {
 			$LIMIT$
 			';
 
-		$result->items = mydb::select($stmt,':uid',$uid)->items;
+		$result->items = mydb::select($stmt)->items;
 		$result->count = count($result->items);
 		$result->query_time = mydb()->_last_query_time;
 

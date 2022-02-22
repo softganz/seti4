@@ -46,9 +46,9 @@ class ImedQtButtonWidget extends Widget {
 		]);
 	}
 
-	function _renderChildren($item) {
-		$qtInfo = $this->items($item);
-		return '<a class="sg-action imed-visit-qt-'.strtolower($item).'" href="'.url($qtInfo['url'], ['ref' => $this->refApp, 'formDone' => $this->formDone, 'fb' => $this->firebaseUpdate ? NULL : 'no']).'" data-rel="box" data-width="full">'.($qtInfo['icon'] ? $qtInfo['icon'] : '').'<span class="lang-text -th">'.$qtInfo['title'].'</span></a>';
+	function _renderChildren($childrens = [], $args = []) {
+		$qtInfo = $this->items($childrens);
+		return '<a class="sg-action imed-visit-qt-'.strtolower($childrens).'" href="'.url($qtInfo['url'], ['ref' => $this->refApp, 'formDone' => $this->formDone, 'fb' => $this->firebaseUpdate ? NULL : 'no']).'" data-rel="box" data-width="full">'.($qtInfo['icon'] ? $qtInfo['icon'] : '').'<span class="lang-text -th">'.$qtInfo['title'].'</span></a>';
 	}
 
 	function items($index = NULL) {

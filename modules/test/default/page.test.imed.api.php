@@ -11,12 +11,13 @@
 */
 
 class TestImedApi extends Page {
-	var $apiUrl;
+	// var $apiUrl = 'https://khonsongkhla.com';
+	var $apiUrl = 'https://sk-api.cqc-songkhlapao.com';
 	var $apiRequest;
 	var $token;
+	var $skdc;
 
 	function __construct() {
-		$this->apiUrl = 'https://khonsongkhla.com';
 		$this->apiRequest = post('api');
 		// $this->token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlhdCI6MTY0MjA0NDI1MywiZXhwIjoxNjQyMDYyMjUzLCJ0eXBlIjoiYWNjZXNzIn0.qhEngGu2qSMEZCqBo6H5KK4jBqqtCklT8LkRfubY0kc';
 		// $this->token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlhdCI6MTY0MjA0NDI1MywiZXhwIjoxNjQ0NjM2MjUzLCJ0eXBlIjoicmVmcmVzaCJ9.1q1fIYtlWUOkQ34p7BNslT8l8GV7ADaSqmNUwRJKVgk';
@@ -56,10 +57,10 @@ class TestImedApi extends Page {
 
 		if ($data->code) return new ErrorMessage([
 			'code' => $data->code,
-			'text' => $data->message.'<a class="sg-action btn" href="'.url('test/imed/api',['api' => 'login']).'" data-rel="box" data-width="full">LOGIN</a>'
+			'text' => '<p class="-sg-text-center">'.$data->message.'<br /><a class="sg-action btn -primary" href="'.url('test/imed/api',['api' => 'login']).'" data-rel="box" data-width="full"><i class="icon -material">login</i><span>LOGIN</span></a></p>'
 		]);
 
-		debugMsg($data, '$data');
+		// debugMsg($data[0], '$data');
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'Test :: iMed API User Role',
@@ -80,6 +81,8 @@ class TestImedApi extends Page {
 							function($item) {
 								return [
 									$item->title.$item->firstname.' '.$item->lastname,
+									$item->personalCode,
+									$item->address->raw.' ต.'.$item->address->tumbol.' อ.'.$item->address->amphur.' จ.'.$item->address->province,
 									'<a class="sg-action" href="'.url('test/imed/api', ['api' => 'serviceList', 'id' => $item->personalCode]).'" data-rel="box" data-width="full">Aid</a>',
 									'<a class="sg-action" href="'.url('test/imed/api', ['api' => 'publicList', 'id' => $item->personalCode]).'" data-rel="box" data-width="full">Public</a>',
 								];
@@ -108,9 +111,9 @@ class TestImedApi extends Page {
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 			CURLOPT_CUSTOMREQUEST => 'POST',
-			// CURLOPT_POSTFIELDS => 'email=ipanumas%40gmail.com&password=idc.skpo',
 			// CURLOPT_POSTFIELDS => 'email=w.chawan%40gmail.com&password=1234567A',
-			CURLOPT_POSTFIELDS => 'email=softganz%40gmail.com&password=ska.ebaj2010z',
+			// CURLOPT_POSTFIELDS => 'email=ipanumas%40gmail.com&password=idc.skpo',
+			CURLOPT_POSTFIELDS => 'email=softganz%40gmail.com&password=ska.ebaj2010',
 		]);
 
 		$response = curl_exec($curl);
@@ -119,7 +122,7 @@ class TestImedApi extends Page {
 		debugMsg($curl, '$curl');
 
 		$data = json_decode($response);
-debugMsg($data,'$data');
+		debugMsg($data,'$data');
 		$_SESSION['skdc'] = (Object) [
 			'id' => $data->user->id,
 			'email' => $data->user->email,
@@ -333,15 +336,18 @@ debugMsg($data,'$data');
 				'children' => [
 					new Table([
 						'class' => '-center',
-						'thead' => ['ID', 'Date', 'healthActivity', 'socialActivity', 'economicActivity'],
+						'thead' => ['ID', 'date' => 'Date', 'source', 'serviceUnit', 'healthActivity', 'socialActivity', 'economicActivity', 'description'],
 						'children' => array_map(
 							function($item) {
 								return [
 									$item->id,
 									$item->date,
+									$item->source,
+									$item->serviceUnit,
 									$item->healthActivity,
 									$item->socialActivity,
 									$item->economicActivity,
+									$item->description,
 								];
 							},
 							$data

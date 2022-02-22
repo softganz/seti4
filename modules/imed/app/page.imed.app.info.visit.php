@@ -10,73 +10,109 @@
 * @usage imed/app/{id}/info.visit
 */
 
-$debug = true;
+import('model:imed.khonsongkhla.php');
 
 class ImedAppInfoVisit extends Page {
 	var $psnId;
+	var $right;
 	var $patientInfo;
+
 	function __construct($patientInfo = NULL) {
 		$this->psnId = $patientInfo->psnId;
 		$this->patientInfo = $patientInfo;
+		$this->right = (Object) [
+			'edit' => is_admin('imed'),
+		];
 	}
 
 	function build() {
-		if (!$this->psnId) return message(['responseCode' => _HTTP_OK_NO_CONTENT, 'text' => 'ไม่มีข้อมูลผู้ป่วย']);
+		if (!i()->ok) return new ErrorMessage(['code' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'Access Denied']);
+		else if (!$this->psnId) return new ErrorMessage(['responseCode' => _HTTP_OK_NO_CONTENT, 'text' => 'ไม่มีข้อมูลผู้ป่วย']);
+
+		if (strlen($this->patientInfo->info->cid) == 13 && substr($this->patientInfo->info->areacode,0, 2) == '90') {
+			$khonSongkhlaModel = new ImedKhonsongkhlaModel();
+			// $khonSongkhlaModel->login();
+			// debugMsg($khonSongkhlaModel->refreshToken(), 'refreshToken');
+			// debugMsg($khonSongkhlaModel, '$khonSongkhlaModel');
+			// debugMsg($this,'$this');
+
+
+
+			$data = (Object) [
+				'cid' => $this->patientInfo->info->cid,
+				'date' => sg_date('ปปปป-m-d'),
+				'socialActivity' => 'elder_care',
+				'source' => 'scf',
+				'serviceUnit' => 'scf',
+				'description' => 'รายละเอียดการเยี่ยมบ้าน\r\nทดสอบ\r\nรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบEND',
+			];
+
+			// $khonSongkhlaModel->addPublicService($data);
+
+			// $khonSongkhlaModel->deletePublicService(['cid' => $this->patientInfo->info->cid, 'id' => 12]);
+
+			// debugMsg($khonSongkhlaModel->getPublicServiceList($this->patientInfo->info->cid), '$aid');
+		}
 
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => $this->patientInfo->info->realname,
 				'removeOnApp' => true,
+				'navigator' => [
+					$this->right->edit ? '<a class="sg-action" href="'.url('imed/visit/'.$this->psnId.'/all').'" data-rel="box" data-width="full"><i class="icon -material">view_list</i></a>' : NULL,
+				],
 			]), // AppBar
-			'children' => [
-				new Form([
-					'action' => url('imed/api/visit/create'),
-					'class' => 'sg-form -imed-visit',
-					'rel' => 'none',
-					'checkValid' => true,
-					'done' => 'callback:imedInfoVisitDone',
-					'children' => [
-						'service' => ['type' => 'hidden', 'value' => 'Home Visit',],
-						'psnId' => ['type' => 'hidden', 'value' => $this->psnId],
-						'msg' => [
-							'type'=>'textarea',
-							'label' => 'ข้อความเยี่ยมบ้าน',
-							'class' => '-fill',
-							'require' => true,
-							'rows' => 4,
-							'placeholder' => 'เขียนบันทึกข้อความในการเยี่ยมบ้าน',
-							'container' => '{class: "-label-in"}',
+			'body' => new Widget([
+				'children' => [
+					new Form([
+						'action' => url('imed/api/visit/create'),
+						'class' => 'sg-form -imed-visit',
+						'rel' => 'none',
+						'checkValid' => true,
+						'done' => 'callback:imedInfoVisitDone',
+						'children' => [
+							'service' => ['type' => 'hidden', 'value' => 'Home Visit',],
+							'psnId' => ['type' => 'hidden', 'value' => $this->psnId],
+							'msg' => [
+								'type'=>'textarea',
+								'label' => 'ข้อความเยี่ยมบ้าน',
+								'class' => '-fill',
+								'require' => true,
+								'rows' => 4,
+								'placeholder' => 'เขียนบันทึกข้อความในการเยี่ยมบ้าน',
+								'container' => '{class: "-label-in"}',
+							],
+							'timedata' => [
+								'label' => 'วันที่เยี่ยมบ้าน',
+								'type' => 'text',
+								'class' => 'sg-datepicker -fill',
+								'require' => true,
+								'readonly' => true,
+								'value' => sg_date(SG\getFirst($data->timedata,date('U')),'d/m/Y'),
+								'container' => '{class: "-label-in"}',
+							],
+							'go' => [
+								'type' => 'button',
+								'name' => NULL,
+								'value' => '<i class="icon -save -white"></i><span>โพสท์เยี่ยมบ้าน</span>',
+								'container' => '{class: "-sg-text-right"}',
+							],
+							'<p class="remark">** บันทึกข้อความในการเยี่ยมบ้าน ภาพถ่ายและข้อมูลประกอบการเยี่ยมบ้าน จะแสดงให้เห็นเฉพาะสมาชิกของกลุ่มและผู้ที่ได้รับสิทธิ์ในการดูแลผู้ป่วยในตำบล อำเภอ จังหวัด ของผู้ป่วยเท่านั้น กรุณาใช้ข้อความที่สุภาพ รักษาสิทธิ์และความเป็นส่วนตัวของผู้ป่วยตามแนวทางในการรักษาข้อมูลส่วนบุคคลของผู้ป่วย **</p>',
 						],
-						'timedata' => [
-							'label' => 'วันที่เยี่ยมบ้าน',
-							'type' => 'text',
-							'class' => 'sg-datepicker -fill',
-							'require' => true,
-							'readonly' => true,
-							'value' => sg_date(SG\getFirst($data->timedata,date('U')),'d/m/Y'),
-							'container' => '{class: "-label-in"}',
-						],
-						'go' => [
-							'type' => 'button',
-							'name' => NULL,
-							'value' => '<i class="icon -save -white"></i><span>โพสท์เยี่ยมบ้าน</span>',
-							'container' => '{class: "-sg-text-right"}',
-						],
-						'<p class="remark">** บันทึกข้อความในการเยี่ยมบ้าน ภาพถ่ายและข้อมูลประกอบการเยี่ยมบ้าน จะแสดงให้เห็นเฉพาะสมาชิกของกลุ่มและผู้ที่ได้รับสิทธิ์ในการดูแลผู้ป่วยในตำบล อำเภอ จังหวัด ของผู้ป่วยเท่านั้น กรุณาใช้ข้อความที่สุภาพ รักษาสิทธิ์และความเป็นส่วนตัวของผู้ป่วยตามแนวทางในการรักษาข้อมูลส่วนบุคคลของผู้ป่วย **</p>',
-					],
-				]), // Form
+					]), // Form
 
-				new ListTile([
-					'title' => '<h4>ประวัติการเยี่ยมบ้าน</h4>',
-					'leading' => '<i class="icon -material">medical_services</i>',
-				]), // ListTile
+					new ListTile([
+						'title' => '<h4>ประวัติการเยี่ยมบ้าน</h4>',
+						'leading' => '<i class="icon -material">medical_services</i>',
+					]), // ListTile
 
-				'<div id="imed-my-note" class="sg-load" data-url="'.url('imed/visits', ['pid' => $this->psnId, 'ref' => 'app']).'" data-replace="true">'._NL
-					. '<div class="loader -rotate" style="width: 64px; height: 64px; margin: 48px auto; display: block;"></div>'
-					. '</div><!-- imed-my-note -->',
+					'<div id="imed-my-note" class="sg-load" data-url="'.url('imed/visits', ['pid' => $this->psnId, 'ref' => 'app']).'" data-replace="true">'._NL
+						. '<div class="loader -rotate" style="width: 64px; height: 64px; margin: 48px auto; display: block;"></div>'
+						. '</div><!-- imed-my-note -->',
 
-				$this->_script(),
-			],
+					$this->_script(),
+				], // children
+			]), // Widget
 		]);
 	}
 

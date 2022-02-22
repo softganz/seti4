@@ -11,7 +11,7 @@
 * @usage org[/{id}/{action}/{tranId}]
 */
 
-$debug = true;
+import('model:org.php');
 
 class Org extends Page {
 	var $orgId;
@@ -66,7 +66,7 @@ class Org extends Page {
  * ============================================
  */
 
-import('model:org.php');
+// import('model:org.php');
 
 function org($self, $orgId = NULL, $action = NULL, $tranId = NULL) {
 	if ($orgId && is_numeric($orgId)) {

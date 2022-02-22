@@ -43,7 +43,7 @@ class ProjectMyAction extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'กิจกรรมโครงการ',
+				'title' => 'กิจกรรมโครงการ@'.i()->name,
 				'leading' => '<img class="profile-photo" src="'.model::user_photo(i()->username).'" width="32" height="32" />',
 				'navigator' => new AppBarNavWidget(['configName' => 'project.my', 'userSigned' => true]),
 			]), // AppBar
