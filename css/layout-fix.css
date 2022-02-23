@@ -8,6 +8,7 @@
 	.page.-header h1>a {height: 48px; display: block;}
 
 .page.-nav {margin: 0; padding: 0; flex: 1; display: flex; flex-wrap: nowrap; justify-content: flex-end;}
+	.page.-nav>* {flex: 0;}
 	.page.-nav>.nav.-main {order: -1;}
 	.page.-nav>.nav.-owner {order: 10; padding-right: 0; position: relative; z-index: 1101;}
 	.page.-nav>.nav.-search {display: none;}
@@ -36,7 +37,7 @@
 	.page.-nav>.nav.-main:not(.-owner) .menu.-main>li {font-weight: bold;}
 	.page.-nav>.nav.-main .menu.-main>li ul {font-weight: normal;}
 	.page.-nav>.nav.-main .menu.-main ul {min-width: 240px;}
-	.page.-nav>.nav.-main {flex: 1; height:48px; margin:0; display: flex; flex-wrap: nowrap; justify-content: flex-end; z-index:1100;}
+	.page.-nav>.nav.-main {height:48px; margin:0; display: flex; flex-wrap: nowrap; justify-content: flex-end; z-index:1100;}
 	.page.-nav>.nav.-main.sg-responsivemenu.-active>.menu {top: 48px;}
 
 .page.-content {margin: 0 auto; padding: 48px 0 0 0; position: relative;}
