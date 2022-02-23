@@ -1652,6 +1652,8 @@ $SCREENS
 $PRINT
 *------------------------------------*/
 @media print {
+	body {padding:0 0 0 0.25in; font: 1.4rem/1.6rem "TH Sarabun New","TH SarabunPSK","Browallia New","BrowalliaUPC", Arial, sans-serif; color: #000;}
+	h1,h2,h3,h4,h5,h6 {font: 15pt/16pt "TH Sarabun New","TH SarabunPSK","Browallia New","BrowalliaUPC", Arial, sans-serif; color: #000;}
 	a:link, a:visited {color:#000;}
 	.noprint, .-noprint, .-no-print {display: none !important;}
 	.-toprint, .-to-print {display: initial !important;}
