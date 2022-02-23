@@ -1642,6 +1642,10 @@ $SCREENS
 
 
 
+/* FIXED Other side effect by my css */
+.gm-style button {box-shadow: none;} /* Google Map Info close button */
+
+
 
 
 /*------------------------------------*
@@ -1657,7 +1661,7 @@ $PRINT
 	.sg-toolbar.-main>h2 {text-align: center; color: #000 !important;}
 	.sg-toolbar.-main form {display: none;}
 	.sg-toolbar.-main nav {display: none;}
-	.pagebreak {display: block;height:1px;color:#fff;border:none;page-break-after: always;}
+	.pagebreak {display: block; height: 1px; color: transparent; border: none; page-break-after: always;}
 	.-sg-box {box-shadow: none; border: none;}
 
 	.-nowrap {white-space: nowrap !important;}
@@ -1668,7 +1672,7 @@ $PRINT
 	.title {margin: 0; padding: 10px; font-size: 1.2em; color: #000 !important;}
 	h2.header {text-align:right;}
 
-	table.item {padding: 1px; border: 1px #ccc solid; clear:none; display: block; width: 100%;}
+	table.item {display: table; width: 100%; padding: 2px; box-shadow: 0 0 0 1px #333 inset; border: none; clear:none;}
 	table.item.-no-print {display: none;}
 	table.item tr td {padding: 1.0rem;border:none;border-bottom:1px #ccc solid;border-radius:0;vertical-align:top;}
 	table.item thead tr th {padding:4px 0px;border:none;border-top:1px #ccc solid; border-bottom:1px #ccc solid;border-radius:0;}
@@ -1685,6 +1689,11 @@ $PRINT
 		.item .col.-status {text-align:center;}
 		.item .col.-poster {text-align:center;}
 
+	.page.-header {display: none;}
+	.page.-content {margin: 0; padding: 0;}
+	.page.-footer {display: none;}
+	.page.-sidebar {display: none;}
+
 	#secondary , #navigator , .ribbon ,#edit-comment {display:none;}
 	#header-wrapper {margin:0;padding: 0; background: #fff none; color:#000; text-indent: 0;}
 	#header-wrapper h1 {width:100%;text-align:left;font-style:normal;font-size:18pt; background: #fff none; color:#000; float:none;}
@@ -1692,7 +1701,8 @@ $PRINT
 	#header-wrapper nav {display: none;}
 	#header-wrapper header {width: 100%; float:none; background: #000 none; text-indent: 0; color:#000;}
 
-	.page.-sidebar {display: none;}
+	#cse-search-box {display: none;}
+
 
 	.container>.row.-flex {display: flex; justify-content: space-between;}
 	.container>.row>.col.-md-* {margin:0;padding: 0; display: block; float: left;}
@@ -1719,12 +1729,3 @@ $PRINT
 	, input[type="checkbox"]:checked+.icon {color: #000; box-shadow: 0 0 0 2px #000 inset !important; border: none;}
 
 }
-
-
-
-
-
-
-
-/* FIXED Other side effect by my css */
-.gm-style button {box-shadow: none;} /* Google Map Info close button */

@@ -148,7 +148,7 @@ class ProjectFundFinancialPlanView extends Page {
 					]),
 					new ScrollView([
 						'child' => new Table([
-							'colgroup' => ['','','','amt -center' => '',''],
+							'colgroup' => ['', 'title -fill' => '','','amt -center' => '',''],
 							'children' => [
 								[
 									'1.',
