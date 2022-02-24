@@ -13,6 +13,7 @@
 	.page.-nav>.nav.-owner {order: 10; padding-right: 0; position: relative; z-index: 1101;}
 	.page.-nav>.nav.-search {display: none;}
 
+	.page.-nav .profile>a {white-space: nowrap;}
 	.page.-nav .profile>a>.profile-photo {margin: 0;}
 	.page.-nav .profile>ul {border-radius: 8px; overflow: hidden;}
 	.page.-nav .profile>a>strong {display: none;}
@@ -25,6 +26,7 @@
 	.page.-nav .signform .form-select {background-color: #fff; text-align: center; border-radius: 32px; padding: 14px 24px 14px 12px; height: auto;}
 	.page.-nav .signform .btn.-primary {width: 100%; padding: 10px 0; border-radius: 32px;}
 	.page.-nav .signform a {display: block; padding: 8px; text-align: center;}
+	.page.-nav .-signup {white-space: nowrap;}
 
 	.page.-nav>.nav.-owner>ul>li>a {padding: 0; margin: 0 6px; border-radius: 16px;}
 	.page.-nav>.nav.-owner>ul>li:last-child>a {border-radius: 0; padding: 0 4px ; margin-right: 0;}

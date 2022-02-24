@@ -30,7 +30,7 @@ function widget_signform() {
 
 	$ret .= '<a href="'.url('my').'">'
 			. (i()->ok ? '<img class="profile-photo" src="'.model::user_photo(i()->username).'" width="32" height="32" />' : '<i class="icon -person"></i>')
-			. (i()->ok ? '<strong>'.i()->name.'</strong>' : tr('Member zone','มุมสมาชิก'))
+			. '<span>'.(i()->ok ? '<strong>'.i()->name.'</strong>' : tr('Member zone','มุมสมาชิก')).'</span>'
 			. '</a>';
 
 	if (i()->ok) {
