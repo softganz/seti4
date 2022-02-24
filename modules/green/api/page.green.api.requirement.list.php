@@ -24,7 +24,7 @@ class GreenApiRequirementList extends Page {
 	function build() {
 		//TODO: ตรวจสอบ token ด้วย
 
-		$orderList = ['id' => 'requirementId', 'start' => 'start'];
+		$orderList = ['id' => 'r.`requirementId`', 'start' => 'r.`start`'];
 		$sortList = ['a' => 'ASC', 'd' => 'DESC'];
 
 		if (!$this->customerId) {
@@ -47,13 +47,13 @@ class GreenApiRequirementList extends Page {
 
 		$result = (Object) [
 			'count' => 0,
-			'items' => []
+			'items' => [],
 		];
 
 		if ($this->customerId) mydb::where('r.`customerId` = :customerId', ':customerId', $this->customerId);
 
 		mydb::value('$ORDER$', 'ORDER BY '.$orderList[$this->order].' '.$sortList[$this->sort]);
-		mydb::value('$LIMIT$', 'LIMIT '.($this->page - 1).','.$this->item);
+		mydb::value('$LIMIT$', $this->item === '*' ? '' : 'LIMIT '.($this->page - 1).','.$this->item);
 
 		$dbs = mydb::select(
 			'SELECT r.*
@@ -62,7 +62,6 @@ class GreenApiRequirementList extends Page {
 			-- , uc.`name` `unitName`
 			FROM %green_requirement% r
 				LEFT JOIN %green_product_code% pc ON pc.`productId` = r.`productId`
-				-- LEFT JOIN %green_unit_code% uc ON uc.`unitId` = r.`units`
 			%WHERE%
 			$ORDER$
 			$LIMIT$
