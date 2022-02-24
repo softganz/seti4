@@ -5,11 +5,11 @@
  * @param Integer $pid
  * @return XML and die
  */
-function org_edit_info($self, $keyid = NULL) {
+function org_edit_info($self, $orgId = NULL) {
 	$post = post();
 	$isDebugable = debug('inline');
 
-	if ($keyid) $post['keyid'] = $keyid;
+	if ($orgId) $post['keyid'] = $orgId;
 	list($group,$part) = explode(':',$post['group']);
 	$pid = intval(trim(SG\getFirst($post['id'],$post['pid'])));
 	$fieldUpdate = trim($post['fld']);
@@ -22,7 +22,7 @@ function org_edit_info($self, $keyid = NULL) {
 	$ret['tr'] = $tranId;
 	$ret['value'] = $retvalue = $value;
 	$ret['error'] = '';
-	$ret['debug'] = 'action='.$action.', group='.$group.', fld='.$fieldUpdate.', tr='.$tranId.'<br />Value = '.$value;
+	$ret['debug'] = 'action='.$action.', group='.$group.', orgId = '.$orgId.' fld='.$fieldUpdate.', tr='.$tranId.'<br />Value = '.$value;
 	//$ret['debug'].= '0 = '.mydb()->_query.'<br />';
 	//return $ret;
 	if (!$action) return $ret;
@@ -66,6 +66,8 @@ function org_edit_info($self, $keyid = NULL) {
 
 		$values = post();
 		unset($values['group']);
+		$values['orgId'] = $orgId;
+		$values['part'] = $part;
 		$values['value'] = $value;
 		$values['tranId'] = $tranId;
 		unset($values['tr'],$values['fld']);
@@ -142,29 +144,13 @@ function org_edit_info($self, $keyid = NULL) {
 
 				break;
 
-			// Maybe not use
-			/*
-			case 'qt' :
-				if ($tranId) {
-					$stmt='UPDATE %qt% SET `value`=:value, `umodify`=:umodify, `dmodify`=:dmodify WHERE `qid`=:tranId LIMIT 1';
-					$values['umodify']=i()->ok?i()->uid:'func.NULL';
-					$values['dmodify']=date('U');
-				} else {
-					$stmt='INSERT INTO %qt% SET `pid`=:tranId, `part`=:part, `value`=:value, `ucreated`=:ucreated, `dcreated`=:dcreated';
-					$values['part']=$fieldUpdate;
-					$values['ucreated']=i()->ok?i()->uid:'func.NULL';
-					$values['dcreated']=date('U');
-				}
-				break;
-			*/
-
 			case 'bigdata' :
-				$stmt='INSERT INTO %bigdata%
-								(`bigid`, `keyname`, `keyid`, `fldname`, `flddata`, `ucreated`, `created`)
-								VALUES
-								(:tranId, :keyname, :keyid, :fldname, :flddata, :ucreated, :dcreated)
-								ON DUPLICATE KEY UPDATE
-								`flddata`=:value, `modified`=:modified, `umodified`=:umodified';
+				$stmt = 'INSERT INTO %bigdata%
+					(`bigid`, `keyname`, `keyid`, `fldname`, `flddata`, `ucreated`, `created`)
+					VALUES
+					(:tranId, :keyname, :keyid, :fldname, :flddata, :ucreated, :dcreated)
+					ON DUPLICATE KEY UPDATE
+					`flddata`=:value, `modified`=:modified, `umodified`=:umodified';
 				$values['keyname']=$part;
 				$values['fldname']=$fieldUpdate;
 				$values['flddata']=$value;
@@ -175,7 +161,7 @@ function org_edit_info($self, $keyid = NULL) {
 				break;
 
 			case 'doing' :
-				$stmt='UPDATE %org_doings% SET '.mydb::create_fieldupdate($fieldUpdate).' WHERE `doid`=:tranId LIMIT 1';
+				$stmt = 'UPDATE %org_doings% SET '.mydb::create_fieldupdate($fieldUpdate).' WHERE `doid` = :tranId LIMIT 1';
 				break;
 
 			case 'map' :
@@ -209,6 +195,13 @@ function org_edit_info($self, $keyid = NULL) {
 				}
 				break;
 
+			case 'subject':
+				if ($value) {
+					$stmt = 'INSERT INTO %org_subject% (`orgId`, `subject`) VALUES (:orgId, :part) ON DUPLICATE KEY UPDATE `subject` = :part';
+				} else {
+					$stmt = 'DELETE FROM %org_subject% WHERE `orgId` = :orgId AND `subject` = :part LIMIT 1';
+				}
+				break;
 		}
 
 		// Save value into table

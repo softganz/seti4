@@ -52,7 +52,7 @@ class OrgPaMapView extends Page {
 				'id' => 'org-info',
 				'attribute' => $isEditMode ? [
 					'data-tpid' => $this->orgId,
-					'data-update-url' => url('org/edit/info'),
+					'data-update-url' => url('org/edit/info/'.$this->orgId),
 					'data-url' => url('org/'.$this->orgId.'/info.view', ['action' => 'edit']),
 					'data-debug' => debug('inline') ? 'inline' : NULL,
 					] : [
@@ -89,16 +89,51 @@ class OrgPaMapView extends Page {
 							// $tables->rows[] = [
 							[	'กลุ่มเครื่อข่าย',
 								view::inlineedit(
-									['group'=>'org', 'fld'=>'sector', 'tr'=>$orgInfo->orgid, 'value' => 'เดินวิ่ง'], // key of value
-									'เดินวิ่ง', // text of value
+									['group' => 'subject:1', 'fld' => 'subject', 'value' => array_key_exists(1, $orgInfo->subject) ? 'เดินวิ่ง' : ''],
+									'เดินวิ่ง',
 									$isEditMode,
 									'checkbox',
-									['เดินวิ่ง','ปั่นจักรยาน','สุขภาวะ','NCD','เปิดรับทั่วไป']
+									[1 => 'เดินวิ่ง']
+								)
+								.view::inlineedit(
+									['group' => 'subject:2', 'fld' => 'subject', 'value' => array_key_exists(2, $orgInfo->subject) ? 'ปั่นจักรยาน' : ''],
+									'ปั่นจักรยาน',
+									$isEditMode,
+									'checkbox',
+									[2 => 'ปั่นจักรยาน']
+								)
+								.view::inlineedit(
+									['group' => 'subject:3', 'fld' => 'subject', 'value' => array_key_exists(3, $orgInfo->subject) ? 'สุขภาวะ' : ''],
+									'สุขภาวะ',
+									$isEditMode,
+									'checkbox',
+									[3 => 'สุขภาวะ']
+								)
+								.view::inlineedit(
+									['group' => 'subject:4', 'fld' => 'subject', 'value' => array_key_exists(4, $orgInfo->subject) ? 'NCD' : ''],
+									'NCD',
+									$isEditMode,
+									'checkbox',
+									[4 => 'NCD']
+								)
+								.view::inlineedit(
+									['group' => 'subject:5', 'fld' => 'subject', 'value' => array_key_exists(5, $orgInfo->subject) ? 'เปิดรับทั่วไป' : ''],
+									'เปิดรับทั่วไป',
+									$isEditMode,
+									'checkbox',
+									[5 => 'เปิดรับทั่วไป']
 								),
+								// . view::inlineedit(
+								// 	['group'=>'org', 'fld'=>'sector', 'tr'=>$orgInfo->orgid, 'value' => 'เดินวิ่ง'], // key of value
+								// 	'เดินวิ่ง', // text of value
+								// 	$isEditMode,
+								// 	'checkbox',
+								// 	['เดินวิ่ง','ปั่นจักรยาน','สุขภาวะ','NCD','เปิดรับทั่วไป']
+								// ),
 								'config' => ['class' => '-sector'],
 							],
-							// ]; group=> table 
-							
+							// ]; group=> table
+
 
 														// $sectorList = R::Model('org.sector.list');
 							// $tables->rows[] = [
@@ -198,9 +233,9 @@ class OrgPaMapView extends Page {
 							if ($isViewOnly) {
 								// Do nothing
 							} else if ($this->isEditMode) {
-									return '<a class="sg-action btn -primary -circle48" href="'.url('org/'.$this->orgId.'/info.view', ['debug' => post('debug')]).'" data-rel="replace:#org-info"><i class="icon -material">done_all</i></a>';
+									return '<a class="sg-action btn -primary -circle48" href="'.url('org/'.$this->orgId.'/pa.map.view', ['debug' => post('debug')]).'" data-rel="replace:#org-info"><i class="icon -material">done_all</i></a>';
 							} else if ($this->right->edit) {
-								return '<a class="sg-action btn -floating -circle48" href="'.url('org/'.$this->orgId.'/info.view', ['action'=> 'edit', 'debug' => post('debug')]).'" data-rel="replace:#org-info"><i class="icon -material">edit</i></a>';
+								return '<a class="sg-action btn -floating -circle48" href="'.url('org/'.$this->orgId.'/pa.map.view', ['action'=> 'edit', 'debug' => post('debug')]).'" data-rel="replace:#org-info"><i class="icon -material">edit</i></a>';
 							}
 						})(), // child
 					]), // FloatingActionButton
