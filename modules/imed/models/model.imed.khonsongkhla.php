@@ -9,6 +9,8 @@
 *
 * @usage new ImedKhonSongkhlaModel([])
 * @usage ImedKhonSongkhlaModel::function($conditions, $options)
+*
+* API Docs : https://documenter.getpostman.com/view/1655636/UVXdPeA6
 */
 
 class ImedKhonSongkhlaModel {
@@ -116,7 +118,8 @@ class ImedKhonSongkhlaModel {
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_POSTFIELDS => 'refreshToken='.$this->auth->tokens->access->token,
+			CURLOPT_POSTFIELDS => 'refreshToken='.$this->auth->tokens->refresh->token,
+			// CURLOPT_POSTFIELDS => 'refreshToken=init',
 		]);
 
 		$response = curl_exec($curl);
@@ -125,10 +128,12 @@ class ImedKhonSongkhlaModel {
 		curl_close($curl);
 
 		// debugMsg($this->auth->tokens->refresh->token);
-		// debugMsg($refreshToken, '$refreshToken');
+		debugMsg($refreshToken, '$refreshToken');
 		if ($refreshToken->refresh) {
 			$this->auth->tokens = $refreshToken;
 			$this->saveToken();
+		} else {
+			$refreshToken = $this->login();
 		}
 		return $refreshToken;
 	}

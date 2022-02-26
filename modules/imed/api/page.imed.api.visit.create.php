@@ -89,6 +89,7 @@ class ImedApiVisitCreate extends Page {
 
 			if (strlen($patientInfo->info->cid) == 13 && substr($patientInfo->info->areacode,0, 2) == '90') {
 				$khonSongkhlaModel = new ImedKhonsongkhlaModel();
+				$khonSongkhlaModel->refreshToken();
 				// $khonSongkhlaModel->login();
 				// debugMsg($khonSongkhlaModel->refreshToken(), 'refreshToken');
 				// debugMsg($khonSongkhlaModel, '$khonSongkhlaModel');

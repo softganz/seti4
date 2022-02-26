@@ -31,6 +31,9 @@ class ImedVisitAll extends Page {
 
 	function build() {
 		$khonSongkhlaModel = new ImedKhonsongkhlaModel();
+		$refreshToken = $khonSongkhlaModel->refreshToken();
+		// debugMsg($refreshToken, '$refreshToken');
+		// if ($refreshToken->code) $khonSongkhlaModel->login();
 
 		if ($this->action) {
 			switch ($this->action) {
@@ -50,8 +53,6 @@ class ImedVisitAll extends Page {
 			return $result;
 		}
 
-		$khonSongkhlaModel->refreshToken();
-		// debugMsg($khonSongkhlaModel->refreshToken(), 'refreshToken');
 		// debugMsg($khonSongkhlaModel, '$khonSongkhlaModel');
 		// debugMsg($this,'$this');
 

@@ -10,7 +10,7 @@
 * @usage imed/app/{id}/info.visit
 */
 
-import('model:imed.khonsongkhla.php');
+// import('model:imed.khonsongkhla.php');
 
 class ImedAppInfoVisit extends Page {
 	var $psnId;
@@ -30,7 +30,7 @@ class ImedAppInfoVisit extends Page {
 		else if (!$this->psnId) return new ErrorMessage(['responseCode' => _HTTP_OK_NO_CONTENT, 'text' => 'ไม่มีข้อมูลผู้ป่วย']);
 
 		if (strlen($this->patientInfo->info->cid) == 13 && substr($this->patientInfo->info->areacode,0, 2) == '90') {
-			$khonSongkhlaModel = new ImedKhonsongkhlaModel();
+			// $khonSongkhlaModel = new ImedKhonsongkhlaModel();
 			// $khonSongkhlaModel->login();
 			// debugMsg($khonSongkhlaModel->refreshToken(), 'refreshToken');
 			// debugMsg($khonSongkhlaModel, '$khonSongkhlaModel');
@@ -38,14 +38,14 @@ class ImedAppInfoVisit extends Page {
 
 
 
-			$data = (Object) [
-				'cid' => $this->patientInfo->info->cid,
-				'date' => sg_date('ปปปป-m-d'),
-				'socialActivity' => 'elder_care',
-				'source' => 'scf',
-				'serviceUnit' => 'scf',
-				'description' => 'รายละเอียดการเยี่ยมบ้าน\r\nทดสอบ\r\nรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบEND',
-			];
+			// $data = (Object) [
+			// 	'cid' => $this->patientInfo->info->cid,
+			// 	'date' => sg_date('ปปปป-m-d'),
+			// 	'socialActivity' => 'elder_care',
+			// 	'source' => 'scf',
+			// 	'serviceUnit' => 'scf',
+			// 	'description' => 'รายละเอียดการเยี่ยมบ้าน\r\nทดสอบ\r\nรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบรายละเอียดการเยี่ยมบ้าน\r\nทดสอบEND',
+			// ];
 
 			// $khonSongkhlaModel->addPublicService($data);
 
