@@ -619,7 +619,7 @@ function load_resource_file($packageName, $debug = false) {
 	$coreFolder = _CORE_FOLDER;
 	$mainFolder = '';
 	if (is_dir('./modules/'.$module)) $mainFolder .= '.;';
-	$mainFolder .= $coreFolder;
+	$mainFolder .= rtrim($coreFolder,'/');
 	$fileName = $funcName = '';
 	$paths = [];
 
@@ -746,7 +746,7 @@ function load_resource_file($packageName, $debug = false) {
 			foreach ($paths as $path) {
 				$path = $mainFolderItem.'/'.$path;
 				$isPathExists = is_dir($path);
-				$debugStr .= 'Locate file in folder '.$path.' <b>('.($isPathExists?'exists':'not exists').')</b><br />'._NL;
+				$debugStr .= 'Locate file in folder '.$path.' <b>(folder '.($isPathExists?'exists':'not exists').')</b><br />'._NL;
 				if (!$isPathExists) continue;
 				$folderName = $path;
 				$isFolderExists = is_dir($folderName);
