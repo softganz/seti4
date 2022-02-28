@@ -128,13 +128,15 @@ class ImedKhonSongkhlaModel {
 		curl_close($curl);
 
 		// debugMsg($this->auth->tokens->refresh->token);
-		debugMsg($refreshToken, '$refreshToken');
 		if ($refreshToken->refresh) {
 			$this->auth->tokens = $refreshToken;
 			$this->saveToken();
+			debugMsg('REFRESH TOKEN COMPLETE');
 		} else {
 			$refreshToken = $this->login();
+			debugMsg('REFRESH TOKEN ERROR!!!!! LOGIN AGAIN!!!!');
 		}
+		debugMsg($refreshToken, '$refreshToken');
 		return $refreshToken;
 	}
 
