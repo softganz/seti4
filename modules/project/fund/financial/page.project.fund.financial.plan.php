@@ -148,21 +148,21 @@ class ProjectFundFinancialPlanView extends Page {
 					]),
 					new ScrollView([
 						'child' => new Table([
-							'colgroup' => ['', 'title -fill' => '','','amt -center' => '',''],
+							'colgroup' => ['no' => '', 'title' => '', 'amt -center' => '','amt -center' => '', 'text2 -center' => ''],
 							'children' => [
 								[
-									'1.',
+									'1',
 									'เงินคงเหลือยกมา',
 									'จำนวน',
 									number_format($this->planInfo->info->openBalance,2),
 									'บาท'
 								],
-								['2.', 'เงินโอนจาก สปสช.', 'จำนวน', number_format($this->planInfo->info->incomeNhso,2), 'บาท'],
-								['3.', 'เงินสมทบจาก อปท.', 'จำนวน', number_format($this->planInfo->info->incomeLocal,2), 'บาท'],
-								['4.', 'รายได้อื่น ๆ', 'จำนวน', number_format($this->planInfo->info->incomeOther,2), 'บาท'],
+								['2', 'เงินโอนจาก สปสช.', 'จำนวน', number_format($this->planInfo->info->incomeNhso,2), 'บาท'],
+								['3', 'เงินสมทบจาก อปท.', 'จำนวน', number_format($this->planInfo->info->incomeLocal,2), 'บาท'],
+								['4', 'รายได้อื่น ๆ', 'จำนวน', number_format($this->planInfo->info->incomeOther,2), 'บาท'],
 							], // children
 							'tfoot' => [
-								['', 'รวมเงิน', 'จำนวน', number_format($this->planInfo->info->incomeTotal,2), 'บาท'],
+								['<td></td>', 'รวมเงิน', 'จำนวน', number_format($this->planInfo->info->incomeTotal,2), 'บาท'],
 							], // tfoot
 						]), // Table
 					]),
