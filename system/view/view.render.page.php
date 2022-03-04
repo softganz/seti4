@@ -7,7 +7,7 @@
  * @return String
  */
 
-$debug = false;
+$debugLoadResource = false;
 
 class ViewRenderPage extends Widget {
 	var $self;

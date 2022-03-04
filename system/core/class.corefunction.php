@@ -563,7 +563,7 @@ function load_lib($file, $folder = NULL) {
  * @param String $func
  * @return Mixed
  */
-function load_resource_file($packageName, $debug = false) {
+function load_resource_file($packageName, $debugResourceFile = false) {
 	static $loadCount = 0;
 	static $debugFunc = [];
 	static $loadFiles = [];
@@ -579,7 +579,9 @@ function load_resource_file($packageName, $debug = false) {
 	if (cfg('template.add'))
 		$template = cfg('template.add').';'.$template;
 
-	$debugLoadfile = debug('load') || $debug;
+	$debugLoadfile = debug('load') || $debugResourceFile;
+
+	// unset($debugThisResource);
 
 	$loadCount++;
 
@@ -602,7 +604,7 @@ function load_resource_file($packageName, $debug = false) {
 		} else {
 			$module = $request[0];
 		}
-		// if ($debugLoadfile) debugMsg('package = '.$package.', packageFolder = '.$packageFolder);
+		// if ($debugLoadfile) debugMsg('resourceType = <b>'.$resourceType.'</b>, packageName = <b>'.$package.'</b>, packageFolder = <b>'.$packageFolder.'</b>');
 		// if ($debugLoadfile) debugMsg($request, '$request');
 	} else {
 		return false;
@@ -613,13 +615,13 @@ function load_resource_file($packageName, $debug = false) {
 	if ($debugLoadfile) $caller = get_caller(__FUNCTION__);
 	// debugMsg($caller,'$caller');
 
-	$debugStr .= '<div>Debug of '.__FUNCTION__.'() #'.$loadCount.' in <b>'.($caller['class'] ? $caller['class'] : '').($caller['type'] ? $caller['type'] : '').($caller['function'] ? $caller['function'].'()' : '').'</b> from '.$caller['file'].' line '.$caller['line'].'</div>'._NL
+	$debugStr = '<div>Debug of '.__FUNCTION__.'() #'.$loadCount.' in <b>'.($caller['class'] ? $caller['class'] : '').($caller['type'] ? $caller['type'] : '').($caller['function'] ? $caller['function'].'()' : '').'</b> from '.$caller['file'].' line '.$caller['line'].' with parameter <b>'.$packageName.'</b></div>'._NL
 		. 'Start load <b>'.($resourceType?' Resource '.strtoupper($resourceType).'':'Page').'</b> from package <b>'.$package.'</b><br />'._NL;
 
-	$coreFolder = _CORE_FOLDER;
+	$coreFolder = rtrim(_CORE_FOLDER,'/');
 	$mainFolder = '';
 	if (is_dir('./modules/'.$module)) $mainFolder .= '.;';
-	$mainFolder .= rtrim($coreFolder,'/');
+	$mainFolder .= $coreFolder;
 	$fileName = $funcName = '';
 	$paths = [];
 
@@ -707,12 +709,12 @@ function load_resource_file($packageName, $debug = false) {
 			break;
 	}
 
+	// Load module configuration file in json format
 	if (!in_array($module, $loadCfg)) {
 		$cfgPaths = [$coreFolder.'/modules/'.$module, $coreFolder.'/system', '.'];
 		$cfgFile = 'conf.'.$module.'.json';
 		// debugMsg($cfgPaths,'$cfgPaths');
 		foreach ($cfgPaths as $path) {
-			// debugMsg('$path = '.$path);
 		 	load_config($cfgFile, $path);
 		}
 		$loadCfg[] = $module;
@@ -725,12 +727,12 @@ function load_resource_file($packageName, $debug = false) {
 	}
 	if(!is_null($funcName)) $funcName .= implode('_',$request);
 
-	// if resource file was loaded
 	if ((($funcName && function_exists($funcName)) || ($className && class_exists($className)) ) && array_key_exists($packageName, $loadFiles)) {
+		// Resource file was loaded
 		$found = true;
 		$debugStr .= '<font color="green">Function '.$funcName.'() was already load.</font><br />'._NL;
-		//$isDebugable=$debugFunc[$funcName];
 	} else {
+		// Load resource file
 		if (cfg('template.add')) $debugStr .= 'template.add='.cfg('template.add').'<br />';
 		$debugStr .= '<a href="#" onclick="$(this).next().toggle();return false;">Caller >></a><div class="loadfunction__detail -hidden" style="border: 1px #ccc solid; margin: 0 8px; padding: 8px; border-radius: 8px;">'.(isset($caller['from'])?'Call from '.$caller['from']:'').'</div>'._NL;
 		$debugStr .= '<div>request = '.implode(($resourceType == 'page' ? '/' : '.'),$request).'</div>';
@@ -742,16 +744,13 @@ function load_resource_file($packageName, $debug = false) {
 		$debugStr .= 'Main folder = '.$mainFolder.'<br />';
 		$debugStr .= 'Path = '.implode('; ',$paths).'<br />'._NL;
 
-		foreach (explode(';',$mainFolder) as $mainFolderItem) {
+		foreach (explode(';', $mainFolder) as $mainFolderItem) {
+			// debugMsg('$mainFolderItem = '.$mainFolderItem.' $paths = '.implode(';',$paths));
 			foreach ($paths as $path) {
-				$path = $mainFolderItem.'/'.$path;
-				$isPathExists = is_dir($path);
-				$debugStr .= 'Locate file in folder '.$path.' <b>(folder '.($isPathExists?'exists':'not exists').')</b><br />'._NL;
+				$folderName = $mainFolderItem.'/'.$path;
+				$isPathExists = is_dir($folderName);
+				$debugStr .= 'Locate file in folder '.$folderName.' <b>(folder '.($isPathExists ? 'exists' : 'not exists').')</b><br />'._NL;
 				if (!$isPathExists) continue;
-				$folderName = $path;
-				$isFolderExists = is_dir($folderName);
-				//$debugStr.='Locate in folder : ['.$folder.'] => '.$folderName.($isFolderExists?' (<strong>is exists</strong>)':' (not exists)').'<br />';
-				if (!$isFolderExists) continue;
 
 				$resourceFileToLoad = $folderName.'/'.$fileName;
 				// debugMsg('$resourceFileToLoad = '.$resourceFileToLoad);
@@ -762,21 +761,24 @@ function load_resource_file($packageName, $debug = false) {
 					if ($loadAction == 'content') {
 						$resultContent = file_get_contents($resourceFileToLoad);
 						$found = true;
-						$debugStr .= '<span style="color:green;">Found and load file '.$resourceFileToLoad.'</span><br />'._NL;
+						$debugStr .= '<span style="color:green;">Found and get file content '.$resourceFileToLoad.'</span><br />'._NL;
 					} else {
 						require_once($resourceFileToLoad);
 						// debugMsg($loadFiles,'$loadFiles');
-						$debugFunc[$funcName] = $isDebugable =! (isset($debug) && $debug === false);
+
+						// Set Debug Load Resource from $debugLoadResource in resource file
+						// If you don't want to show in debug mode, add $debugLoadResource = false in top of resource file
+						$debugFunc[$funcName] = $isDebugable = !(isset($debugLoadResource) && $debugLoadResource === false);
 						$debugStr .= '<span style="color:green;">Found and load file '.$resourceFileToLoad.'</span><br />'._NL;
 
 						// Check function exists, if not set function return found
 						if ($funcName || $className) {
 							if (class_exists($className)) {
-								// $debugStr .= '<span style="color:green;">Execute class '.$className.'() complete.</span><br />'._NL;
+								$debugStr .= '<span style="color:green;">Found Execute class '.$className.'().</span><br />'._NL;
 								$found = true;
 								break;
 							} else if (function_exists($funcName)) {
-								// $debugStr .= '<span style="color:green;">Execute function '.$funcName.'() complete.</span><br />'._NL;
+								$debugStr .= '<span style="color:green;">Found Execute function '.$funcName.'().</span><br />'._NL;
 								$found = true;
 								break;
 							} else {
