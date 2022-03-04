@@ -32,11 +32,13 @@ class ImedPsycInfoVisit {
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => $psnInfo->info->fullname,
+				'navigator' => ['<a href="javascript:window.print()"><i class="icon -material">print</i></a>'],
 				'removeOnApp' => true,
 			]), // AppBar
 			'body' => new Container([
 				'children' => [
 					new Card([
+						'class' => '-noprint',
 						'children' => [
 							new ListTile([
 								'title' => 'เขียนบันทึกการเยี่ยมบ้าน',

@@ -50,6 +50,15 @@ class ImedAdmitStatusWidget extends Widget {
 		);
 		// debugMsg($patientCount, '$patientCount');
 
+		// mydb::where('m.`value` >= 19');
+		// mydb::value('$JOIN$', implode(_NL, $joins), false);
+		// if (i()->username == 'softganz') debugMsg(mydb::select('SELECT m.`psnid`, m.`value`
+		// 		FROM %qtmast% m
+		// 			$JOIN$
+		// 		%WHERE%
+		// 		GROUP BY m.`psnid`
+		// 		ORDER BY m.`qtdate` DESC'),'AAA');
+
 		return new ScrollView([
 			'child' => new Card([
 				'children' => [

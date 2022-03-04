@@ -24,7 +24,7 @@ function imed_admin_member($self) {
 		. '<input type="hidden" name="sid" id="sid" />'
 		. '<input type="hidden" name="o" value="name" />'
 		. '<input type="hidden" name="s" value="ASC" />'
-		. '<input class="" type="text" name="q" id="search-box" size="30" value="'.htmlspecialchars($searchStr).'" placeholder="Username or Name or Email" data-query="'.url('admin/get/username').'" data-callback="submit">'
+		. '<input class="sg-autocomplete" type="text" name="q" id="search-box" size="30" value="'.htmlspecialchars($searchStr).'" placeholder="Username or Name or Email" data-query="'.url('admin/get/username').'" data-callback="submit">'
 		. '<button><i class="icon -search"></i></button>'
 		. '</form>';
 
@@ -47,7 +47,7 @@ function imed_admin_member($self) {
 		LIMIT 100';
 
 	$dbs = mydb::select($stmt);
-	
+
 	//$ret .= mydb()->_query;
 	//$ret.=print_o($dbs);
 

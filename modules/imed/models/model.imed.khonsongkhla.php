@@ -1,10 +1,9 @@
 <?php
 /**
-* Model :: Description
+* iMed :: Khon Songkhla Data Center Model
 * Created 2022-02-20
-* Modify 	2022-02-20
+* Modify 	2022-02-28
 *
-* @param Array $args
 * @return Object
 *
 * @usage new ImedKhonSongkhlaModel([])
@@ -131,12 +130,12 @@ class ImedKhonSongkhlaModel {
 		if ($refreshToken->refresh) {
 			$this->auth->tokens = $refreshToken;
 			$this->saveToken();
-			debugMsg('REFRESH TOKEN COMPLETE');
+			// debugMsg('REFRESH TOKEN COMPLETE');
 		} else {
 			$refreshToken = $this->login();
-			debugMsg('REFRESH TOKEN ERROR!!!!! LOGIN AGAIN!!!!');
+			// debugMsg('REFRESH TOKEN ERROR!!!!! LOGIN AGAIN!!!!');
 		}
-		debugMsg($refreshToken, '$refreshToken');
+		// debugMsg($refreshToken, '$refreshToken');
 		return $refreshToken;
 	}
 

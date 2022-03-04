@@ -66,7 +66,7 @@ class ImedAppInfoVisit extends Page {
 				'children' => [
 					new Form([
 						'action' => url('imed/api/visit/create'),
-						'class' => 'sg-form -imed-visit',
+						'class' => 'sg-form -imed-visit -noprint',
 						'rel' => 'none',
 						'checkValid' => true,
 						'done' => 'callback:imedInfoVisitDone',

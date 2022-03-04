@@ -203,7 +203,7 @@ class ImedVisitRenderWidget extends Widget {
 				// Bottom Navigator
 				$psnId && $seqId && $isEdit ? new Row([
 					'tagName' => 'nav',
-					'class' => 'nav -card',
+					'class' => 'nav -card -noprint',
 					'mainAxisAlignment' => 'spacearound',
 					'crossAxisAlignment' => 'center',
 					'children' => [

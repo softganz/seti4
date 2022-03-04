@@ -63,10 +63,11 @@ class ImedVisit extends Page {
 		// if (empty($this->mainId) && empty($this->action)) $this->action = 'home';
 		// else if ($this->mainId && empty($this->action)) $this->action = 'info.home';
 
-		$argIndex = 2;
+		$argIndex = 3;
 
 		// debugMsg('PAGE CONTROLLER Id = '.$this->mainId.' , Action = '.$this->action.' , Arg['.$argIndex.'] = '.$this->_args[$argIndex]);
-		//debugMsg($this->_args, '$args');
+		// debugMsg($this->_args, '$args');
+		// debugMsg(array_slice($this->_args, $argIndex), '$arg');
 
 		return R::PageWidget(
 			'imed.visit.'.$this->action,

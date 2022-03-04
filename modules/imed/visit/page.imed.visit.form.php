@@ -51,7 +51,8 @@ class ImedVisitForm {
 			$schema = $formInfo->info->schema;
 		}
 
-		//debugMsg('<pre>'.$schema.'</pre>');
+		// debugMsg('formId = '.$formId);
+		// debugMsg('<pre>'.$schema.'</pre>');
 
 		// debugMsg($surveyInfo, '$surveyInfo');
 		// debugMsg($this->visitInfo, '$visitInfo');

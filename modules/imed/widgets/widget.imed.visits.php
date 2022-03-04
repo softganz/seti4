@@ -34,7 +34,7 @@ class ImedVisitsWidget extends Widget {
 						'child' => $item,
 					]);
 				}
-				if ($this->urlMore) $widgets[] = '<div id="getmore" style="flex: 1 0 100%;"><a class="sg-action btn -primary" href="'.$this->urlMore.'" data-rel="replace:#getmore" style="margin: 48px 16px 32px; padding: 16px 0; display: block; text-align: center; border-radius: 36px;"><span>มีอีก</span><i class="icon -material">navigate_next</i></a></div>';
+				if ($this->urlMore) $widgets[] = '<div id="getmore" class="-noprint" style="flex: 1 0 100%;"><a class="sg-action btn -primary" href="'.$this->urlMore.'" data-rel="replace:#getmore" style="margin: 48px 16px 32px; padding: 16px 0; display: block; text-align: center; border-radius: 36px;"><span>มีอีก</span><i class="icon -material">navigate_next</i></a></div>';
 				return $widgets;
 			})(), // children
 		]);

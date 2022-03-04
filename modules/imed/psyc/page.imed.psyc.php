@@ -6,10 +6,9 @@
 *
 * @param Int $psnId
 * @param String $action
-* @param Int $tranId
 * @return String
 *
-* @usage imed/psyc/{psnId}/{action[.action]}/{tranId}
+* @usage imed/psyc/{psnId}/{action[.action]}[/para]
 */
 
 $debug = true;
@@ -19,10 +18,9 @@ import('model:imed.patient');
 class iMedPsyc {
 	var $psnId;
 	var $args = [];
-	function __construct($psnId = NULL, $action = NULL, $tranId = NULL) {
+	function __construct($psnId = NULL, $action = NULL) {
 		$this->psnId = $psnId;
 		$this->action = $action;
-		$this->tranId = $tranId;
 		$this->args = func_get_args();
 	}
 
