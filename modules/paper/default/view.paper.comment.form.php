@@ -19,9 +19,6 @@ function view_paper_comment_form($topicInfo) {
 	// clear comment post value on comment post was save complete
 	$comment = $para->comment_post_complete ? (object)null : (object)post('comment',_TRIM+_STRIPTAG);
 
-	if ($terms = get_template('terms_of_service'))
-		$terms_of_service = file_get_contents($terms);
-
 	if ($terms_of_service && cfg('comment.terms_of_service.location') == 'above')
 		$ret .= $terms_of_service;
 

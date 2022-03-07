@@ -1,7 +1,0 @@
-App Url:
-
-- homeUrl = "https://hatyaicityclimate.org/flood/climate/feed"
-- cctvUrl = "https://hatyaicityclimate.org/flood/climate/cctv"
-- mapUrl = "https://hatyaicityclimate.org/flood/climate/map"
-- networkUrl = "https://hatyaicityclimate.org/flood/climate/network"
-- menuUrl = "https://hatyaicityclimate.org/flood/climate/menu"

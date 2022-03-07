@@ -180,10 +180,6 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 
 	if (debug('method')) $ret .= print_o($topic,'$topic').print_o($form,'$form');
 
-	if ($terms = get_template('terms_of_service')) {
-		$ret .= file_get_contents($terms);
-	}
-
 	model::member_menu();
 
 	$self->theme->navigator = user_menu();

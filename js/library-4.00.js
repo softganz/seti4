@@ -572,7 +572,7 @@ var editor = {
 		var html = "";
 		for (var i = 0; i < this.COLORS.length; i++) {
 			for (var j = 0; j < this.COLORS[i].length; j++) {
-			html=html+'<img src="/library/img/none.gif" width="'+cell_width+'" height="'+cell_width+'" onClick="editor.insert(\'[color=#' + this.COLORS[i][j] + ']\',\'[/color]\')" style="background-color:#'+this.COLORS[i][j]+';margin:0 1px 1px 0;">';
+			html=html+'<img src="/css/img/none.gif" width="'+cell_width+'" height="'+cell_width+'" onClick="editor.insert(\'[color=#' + this.COLORS[i][j] + ']\',\'[/color]\')" style="background-color:#'+this.COLORS[i][j]+';margin:0 1px 1px 0;">';
 			}
 		}
 		var elem=document.getElementById(id);

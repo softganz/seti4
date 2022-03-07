@@ -2398,7 +2398,6 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 	if (isAndroidWebViewReady) Android.showToast('กำลังอัพโหลดไฟล์')
 
 	console.log('sg-upload :: Inline upload file start and show result in '+target)
-	//notify("<p style=\"background-color:#fff;padding:16px;\"><img src=\"/library/img/loading.gif\" alt=\"Uploading\"/> กำลังอัพโหลดไฟล์ กรุณารอสักครู่<br />"+$this.val()+"<br /><img src=\""+$this.val()+"\" /></p>")
 	if ($form.data('before')) {
 		var tagName = $form.data('before')
 		var insertElement = '<'+tagName+targetClass+'><div class="loader -rotate -center"></div></'+tagName+'>'

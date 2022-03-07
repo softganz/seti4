@@ -4,7 +4,7 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 	var $form=$this.closest("form")
 	var target=$form.data('rel')
 	console.log('Inline upload file start and show result in '+target)
-	notify("<img src=\"/library/img/loading.gif\" alt=\"Uploading....\"/> กำลังอัพโหลดไฟล์ กรุณารอสักครู่....")
+	notify("<img src=\"/css/img/loading.gif\" alt=\"Uploading....\"/> กำลังอัพโหลดไฟล์ กรุณารอสักครู่....")
 	$form.ajaxForm({
 		success: function(data) {
 			if (target) {

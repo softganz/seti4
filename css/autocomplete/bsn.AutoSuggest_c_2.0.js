@@ -28,28 +28,28 @@ _bsn.AutoSuggest = function (fldID, param)
 	//
 	if (!document.getElementById)
 		return false;
-	
+
 	// get field via DOM
 	//
 	this.fld = _bsn.DOM.getElement(fldID);
 
 	if (!this.fld)
 		return false;
-	
+
 	// init variables
 	//
 	this.sInput 		= "";
 	this.nInputChars 	= 0;
 	this.aSuggestions 	= [];
 	this.iHighlighted 	= 0;
-	this.loading = 'url(/library/img/loading.gif) center right no-repeat';
+	this.loading = 'url(/css/img/loading.gif) center right no-repeat';
 	this.fld_old_bgstyle=this.fld.style.background;
-	
+
 	// parameters object
 	//
 	this.oP = (param) ? param : {};
-	
-	// defaults	
+
+	// defaults
 	//
 	if (!this.oP.minchars)									this.oP.minchars = 1;
 	if (!this.oP.method)									this.oP.meth = "get";
@@ -62,24 +62,24 @@ _bsn.AutoSuggest = function (fldID, param)
 	if (!this.oP.noresults)									this.oP.noresults = "No results!";
 	if (!this.oP.maxheight && this.oP.maxheight !== 0)		this.oP.maxheight = 250;
 	if (!this.oP.cache && this.oP.cache != false)			this.oP.cache = true;
-	
+
 	// set keyup handler for field
 	// and prevent autocomplete from client
 	//
 	var pointer = this;
-	
+
 	// NOTE: not using addEventListener because UpArrow fired twice in Safari
 	//_bsn.DOM.addEvent( this.fld, 'keyup', function(ev){ return pointer.onKeyPress(ev); } );
-	
+
 	this.fld.onkeypress 	= function(ev){ return pointer.onKeyPress(ev); }
 	this.fld.onkeyup 		= function(ev){ return pointer.onKeyUp(ev); }
-	
+
 	this.fld.setAttribute("autocomplete","off");
 }
 
 _bsn.AutoSuggest.prototype.onKeyPress = function(ev)
 {
-	
+
 	var key = (window.event) ? window.event.keyCode : ev.keyCode;
 
 	// set responses to keydown events in the field
@@ -90,7 +90,7 @@ _bsn.AutoSuggest.prototype.onKeyPress = function(ev)
 	var RETURN = 13;
 	var TAB = 9;
 	var ESC = 27;
-	
+
 	var bubble = true;
 
 	switch(key)
@@ -122,7 +122,7 @@ _bsn.AutoSuggest.prototype.onKeyUp = function(ev)
 
 	var ARRUP = 38;
 	var ARRDN = 40;
-	
+
 	var bubble = true;
 
 	switch(key)
@@ -153,7 +153,7 @@ _bsn.AutoSuggest.prototype.getSuggestions = function (val)
 	//
 	if (val == this.sInput)
 		return false;
-	
+
 	// input length is less than the min required to trigger a request
 	// reset input string
 	// do nothing
@@ -163,7 +163,7 @@ _bsn.AutoSuggest.prototype.getSuggestions = function (val)
 		this.sInput = "";
 		return false;
 	}
-	
+
 	// if caching enabled, and user is typing (ie. length of input is increasing)
 	// filter results out of aSuggestions from last request
 	//
@@ -175,13 +175,13 @@ _bsn.AutoSuggest.prototype.getSuggestions = function (val)
 			if (this.aSuggestions[i].value.substr(0,val.length).toLowerCase() == val.toLowerCase())
 				arr.push( this.aSuggestions[i] );
 		}
-		
+
 		this.sInput = val;
 		this.nInputChars = val.length;
 		this.aSuggestions = arr;
-		
+
 		this.createList(this.aSuggestions);
-		
+
 		return false;
 	}
 	else
@@ -204,16 +204,16 @@ _bsn.AutoSuggest.prototype.doAjaxRequest = function ()
 	this.fld.style.background=this.loading; // Add by softganz@gmail.com to enable loading
 
 	var pointer = this;
-	
+
 	// create ajax request
 
 // Problem with Thai charactor escape charactor
-// 
+//
 //	var url = this.oP.script+this.oP.varname+"="+escape(this.fld.value);
 
 	var url = this.oP.script+this.oP.varname+"="+escape(this.fld.value);
 	var meth = this.oP.meth;
-	
+
 	var onSuccessFunc = function (req) { pointer.setSuggestions(req) };
 	var onErrorFunc = function (status) { alert("AJAX error: "+status); };
 
@@ -227,11 +227,11 @@ _bsn.AutoSuggest.prototype.setSuggestions = function (req)
 	this.fld.style.background=this.fld_old_bgstyle; // Add by softganz@gmail to clear loading
 
 	this.aSuggestions = [];
-	
+
 	if (this.oP.json)
 	{
 		var jsondata = eval('(' + req.responseText + ')');
-		
+
 		for (var i=0;i<jsondata.results.length;i++)
 		{
 			this.aSuggestions.push(  { 'id':jsondata.results[i].id, 'value':jsondata.results[i].value, 'info':jsondata.results[i].info }  );
@@ -241,7 +241,7 @@ _bsn.AutoSuggest.prototype.setSuggestions = function (req)
 	{
 
 		var xml = req.responseXML;
-	
+
 		// traverse xml
 		//
 		var results = xml.getElementsByTagName('results')[0].childNodes;
@@ -251,9 +251,9 @@ _bsn.AutoSuggest.prototype.setSuggestions = function (req)
 			if (results[i].hasChildNodes())
 				this.aSuggestions.push(  { 'id':results[i].getAttribute('id'), 'value':results[i].childNodes[0].nodeValue, 'info':results[i].getAttribute('info') }  );
 		}
-	
+
 	}
-	
+
 	this.idAs = "as_"+this.fld.id;
 
 	this.createList(this.aSuggestions);
@@ -272,8 +272,8 @@ _bsn.AutoSuggest.prototype.createList = function(arr)
 
 	// create holding div
 	//
-	var div = _bsn.DOM.createElement("div", {id:this.idAs, className:this.oP.className});	
-	
+	var div = _bsn.DOM.createElement("div", {id:this.idAs, className:this.oP.className});
+
 	var hcorner = _bsn.DOM.createElement("div", {className:"as_corner"});
 	var hbar = _bsn.DOM.createElement("div", {className:"as_bar"});
 	var header = _bsn.DOM.createElement("div", {className:"as_header"});
@@ -284,7 +284,7 @@ _bsn.AutoSuggest.prototype.createList = function(arr)
 	// create and populate ul
 	//
 	var ul = _bsn.DOM.createElement("ul", {id:"as_ul"});
-	
+
 	// loop throught arr of suggestions
 	// creating an LI element for each suggestion
 	//
@@ -305,22 +305,22 @@ _bsn.AutoSuggest.prototype.createList = function(arr)
 			var small		= _bsn.DOM.createElement("small", {}, arr[i].info);
 			span.appendChild(small);
 		}
-		
+
 		var a 			= _bsn.DOM.createElement("a", { href:"#" });
-		
+
 		var tl 		= _bsn.DOM.createElement("span", {className:"tl"}, " ");
 		var tr 		= _bsn.DOM.createElement("span", {className:"tr"}, " ");
 		a.appendChild(tl);
 		a.appendChild(tr);
-		
+
 		a.appendChild(span);
-		
+
 		a.name = i+1;
 		a.onclick = function () { pointer.setHighlightedValue(); return false; }
 		a.onmouseover = function () { pointer.setHighlight(this.name); }
-		
+
 		var li 			= _bsn.DOM.createElement(  "li", {}, a  );
-		
+
 		ul.appendChild( li );
 	}
 
@@ -329,7 +329,7 @@ _bsn.AutoSuggest.prototype.createList = function(arr)
 	if (arr.length == 0)
 	{
 		var li 			= _bsn.DOM.createElement(  "li", {className:"as_warning"}, this.oP.noresults  );
-		
+
 		ul.appendChild( li );
 	}
 
@@ -347,7 +347,7 @@ _bsn.AutoSuggest.prototype.createList = function(arr)
 	// set width of holding div to width of field
 	//
 	var pos = _bsn.DOM.getPos(this.fld);
-	
+
 	div.style.left 		= pos.x + "px";
 	div.style.top 		= ( pos.y + this.fld.offsetHeight + this.oP.offsety ) + "px";
 	div.style.width 	= this.fld.offsetWidth + "px";
@@ -366,7 +366,7 @@ _bsn.AutoSuggest.prototype.createList = function(arr)
 	// currently no item is highlighted
 	//
 	this.iHighlighted = 0;
-	
+
 	// remove list after an interval
 	//
 	var pointer = this;
@@ -374,19 +374,19 @@ _bsn.AutoSuggest.prototype.createList = function(arr)
 }
 
 _bsn.AutoSuggest.prototype.changeHighlight = function(key)
-{	
+{
 	var list = _bsn.DOM.getElement("as_ul");
 	if (!list)
 		return false;
-	
+
 	var n;
 
 	if (key == 40)
 		n = this.iHighlighted + 1;
 	else if (key == 38)
 		n = this.iHighlighted - 1;
-	
-	
+
+
 	if (n > list.childNodes.length)
 		n = list.childNodes.length;
 	if (n < 1)
@@ -400,12 +400,12 @@ _bsn.AutoSuggest.prototype.setHighlight = function(n)
 	var list = _bsn.DOM.getElement("as_ul");
 	if (!list)
 		return false;
-	
+
 	if (this.iHighlighted > 0)
 		this.clearHighlight();
-	
+
 	this.iHighlighted = Number(n);
-	
+
 	list.childNodes[this.iHighlighted-1].className = "as_highlight";
 
 	this.killTimeout();
@@ -416,7 +416,7 @@ _bsn.AutoSuggest.prototype.clearHighlight = function()
 	var list = _bsn.DOM.getElement("as_ul");
 	if (!list)
 		return false;
-	
+
 	if (this.iHighlighted > 0)
 	{
 		list.childNodes[this.iHighlighted-1].className = "";
@@ -429,7 +429,7 @@ _bsn.AutoSuggest.prototype.setHighlightedValue = function ()
 	if (this.iHighlighted)
 	{
 		this.sInput = this.fld.value = this.aSuggestions[ this.iHighlighted-1 ].value;
-		
+
 		// move cursor to end of input (safari)
 		//
 		this.fld.focus();
@@ -437,7 +437,7 @@ _bsn.AutoSuggest.prototype.setHighlightedValue = function ()
 			this.fld.setSelectionRange(this.sInput.length, this.sInput.length);
 
 		this.clearSuggestions();
-		
+
 		// pass selected object to callback function, if exists
 		//
 		if (typeof(this.oP.callback) == "function")
@@ -459,9 +459,9 @@ _bsn.AutoSuggest.prototype.resetTimeout = function()
 
 _bsn.AutoSuggest.prototype.clearSuggestions = function ()
 {
-	
+
 	this.killTimeout();
-	
+
 	var ele = _bsn.DOM.getElement(this.idAs);
 	var pointer = this;
 	if (ele)
@@ -483,15 +483,15 @@ _bsn.Ajax = function ()
 
 _bsn.Ajax.prototype.makeRequest = function (url, meth, onComp, onErr)
 {
-	
+
 	if (meth != "POST")
 		meth = "GET";
-	
+
 	this.onComplete = onComp;
 	this.onError = onErr;
-	
+
 	var pointer = this;
-	
+
 	// branch for native XMLHttpRequest object
 	if (window.XMLHttpRequest)
 	{
@@ -515,7 +515,7 @@ _bsn.Ajax.prototype.makeRequest = function (url, meth, onComp, onErr)
 
 _bsn.Ajax.prototype.processReqChange = function()
 {
-	
+
 	// only if req shows "loaded"
 	if (this.req.readyState == 4) {
 		// only if "OK"
@@ -538,10 +538,10 @@ _bsn.DOM.createElement = function ( type, attr, cont, html )
 	var ne = document.createElement( type );
 	if (!ne)
 		return false;
-		
+
 	for (var a in attr)
 		ne[a] = attr[a];
-		
+
 	if (typeof(cont) == "string" && !html)
 		ne.appendChild( document.createTextNode(cont) );
 	else if (typeof(cont) == "string" && html)
@@ -555,20 +555,20 @@ _bsn.DOM.createElement = function ( type, attr, cont, html )
 _bsn.DOM.clearElement = function ( id )
 {
 	var ele = this.getElement( id );
-	
+
 	if (!ele)
 		return false;
-	
+
 	while (ele.childNodes.length)
 		ele.removeChild( ele.childNodes[0] );
-	
+
 	return true;
 }
 
 _bsn.DOM.removeElement = function ( ele )
 {
 	var e = this.getElement(ele);
-	
+
 	if (!e)
 		return false;
 	else if (e.parentNode.removeChild(e))
@@ -580,12 +580,12 @@ _bsn.DOM.removeElement = function ( ele )
 _bsn.DOM.replaceContent = function ( id, cont, html )
 {
 	var ele = this.getElement( id );
-	
+
 	if (!ele)
 		return false;
-	
+
 	this.clearElement( ele );
-	
+
 	if (typeof(cont) == "string" && !html)
 		ele.appendChild( document.createTextNode(cont) );
 	else if (typeof(cont) == "string" && html)
@@ -620,14 +620,14 @@ _bsn.DOM.getElement = function ( ele )
 _bsn.DOM.appendChildren = function ( id, arr )
 {
 	var ele = this.getElement( id );
-	
+
 	if (!ele)
 		return false;
-	
-	
+
+
 	if (typeof(arr) != "object")
 		return false;
-		
+
 	for (var i=0;i<arr.length;i++)
 	{
 		var cont = arr[i];
@@ -658,7 +658,7 @@ _bsn.DOM.getPos = function ( ele )
 
 
 	var obj = ele;
-	
+
 	var curtop = 0;
 	if (obj.offsetParent)
 	{
@@ -680,22 +680,22 @@ if (typeof(_bsn.Fader) == "undefined")
 	_bsn.Fader = {}
 
 _bsn.Fader = function (ele, from, to, fadetime, callback)
-{	
+{
 	if (!ele)
 		return false;
-	
+
 	this.ele = ele;
-	
+
 	this.from = from;
 	this.to = to;
-	
+
 	this.callback = callback;
-	
+
 	this.nDur = fadetime;
-		
+
 	this.nInt = 50;
 	this.nTime = 0;
-	
+
 	var p = this;
 	this.nID = setInterval(function() { p._fade() }, this.nInt);
 }
@@ -703,16 +703,16 @@ _bsn.Fader = function (ele, from, to, fadetime, callback)
 _bsn.Fader.prototype._fade = function()
 {
 	this.nTime += this.nInt;
-	
+
 	var ieop = Math.round( this._tween(this.nTime, this.from, this.to, this.nDur) * 100 );
 	var op = ieop / 100;
-	
+
 	if (this.ele.filters) // internet explorer
 	{
 		try
 		{
 			this.ele.filters.item("DXImageTransform.Microsoft.Alpha").opacity = ieop;
-		} catch (e) { 
+		} catch (e) {
 			// If it is not set initially, the browser will throw an error.  This will set it if it is not set yet.
 			this.ele.style.filter = 'progid:DXImageTransform.Microsoft.Alpha(opacity='+ieop+')';
 		}
@@ -721,7 +721,7 @@ _bsn.Fader.prototype._fade = function()
 	{
 		this.ele.style.opacity = op;
 	}
-	
+
 	if (this.nTime == this.nDur)
 	{
 		clearInterval( this.nID );

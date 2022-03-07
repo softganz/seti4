@@ -285,8 +285,8 @@ function _vid($topic) {
 				</script>',
 			];
 			$fields['children'][$vocab->name] = $form;
-			head('<script type="text/javascript" src="/library/autocomplete/bsn.AutoSuggest_c_2.0.js"></script>
-				<link rel="stylesheet" href="/library/autocomplete/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />');
+			head('<script type="text/javascript" src="/css/autocomplete/bsn.AutoSuggest_c_2.0.js"></script>
+				<link rel="stylesheet" href="/css/autocomplete/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />');
 		} else {
 			$vid = 'vocab_'.$vocab->vid;
 			$form = ['label' => $vocab->name];
