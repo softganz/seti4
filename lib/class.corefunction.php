@@ -1,6 +1,6 @@
 <?php
 /**
-* Core Function :: Function Process Web Configuration and Request
+* Core Function :: Controller Process Web Configuration and Request
 * Version 4.00
 * Created 2006-12-16
 * Modify  2022-03-07
