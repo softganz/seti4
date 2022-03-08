@@ -379,7 +379,7 @@ class SgCore {
 	* @param String ext_folder Each folder seperate by ;
 	* @return Mixed False on file not found and file location on found
 	*/
-	function getTemplate($filename = NULL, $ext_folder = NULL) {
+	static function getTemplate($filename = NULL, $ext_folder = NULL) {
 		if (empty($filename)) return false;
 		$theme_folder = [];
 		if ($ext_folder) {
@@ -411,7 +411,7 @@ class SgCore {
 	* @param Mixed $config_file
 	* @param Mixed $folder
 	*/
-	function loadConfig($config_file = NULL, $folders = ['./core/assets/conf']) {
+	static function loadConfig($config_file = NULL, $folders = ['./core/assets/conf']) {
 		$configArray = [];
 
 		if (is_array($config_file)) {
@@ -487,7 +487,7 @@ class SgCore {
 	* @param Boolean $show_result
 	* @return String Result from template file
 	*/
-	function loadTemplate($filename = NULL, $ext_folder = NULL, $show_result = true) {
+	static function loadTemplate($filename = NULL, $ext_folder = NULL, $show_result = true) {
 		$template_file = SgCore::getTemplate($filename, $ext_folder);
 		if (!$template_file) return;
 		$ret = '';
@@ -508,7 +508,7 @@ class SgCore {
 	* @param Boolean $debugResourceFile
 	* @return Mixed
 	*/
-	function loadResourceFile($packageName, $debugResourceFile = false) {
+	static function loadResourceFile($packageName, $debugResourceFile = false) {
 		static $loadCount = 0;
 		static $debugFunc = [];
 		static $loadFiles = [];
@@ -808,7 +808,7 @@ class SgCore {
 	* @param Object $para
 	* @return String
 	*/
-	function loadWidget($name, $para) {
+	static function loadWidget($name, $para) {
 		static $lists = [];
 		static $folders = [];
 		static $counter = 0;
@@ -898,7 +898,7 @@ class SgCore {
 	* Load extension file
 	* @param String $name
 	*/
-	function loadExtension($name) {
+	static function loadExtension($name) {
 		static $lists = [];
 		static $folders = [];
 		if (in_array($name,$lists)) return;
@@ -927,7 +927,7 @@ class SgCore {
 	* @param Array $menu
 	* @return String
 	*/
-	function processMenu($menu) {
+	static function processMenu($menu) {
 		$module = $menu['call']['module'];
 		$auth_code = $menu['access'];
 		$is_auth = user_access($auth_code);
@@ -1003,7 +1003,7 @@ class SgCore {
 		return [$exeClass, $found, $ret];
 	}
 
-	function processIndex($page = 'index', $text = NULL) {
+	static function processIndex($page = 'index', $text = NULL) {
 		global $request_result;
 		$request_result = $text;
 		$result = SgCore::loadTemplate($page, NULL, false);
@@ -1015,7 +1015,7 @@ class SgCore {
 	* @param String $html
 	* @return String
 	*/
-	function processVariable($html) {
+	static function processVariable($html) {
 		$vars = [
 			'q' => q(),
 			'domain' => cfg('domain'),
@@ -1073,7 +1073,7 @@ class SgCore {
 	* https://domain.com?setting:[app[=yes]][theme[=name]]
 	* https://domain.com?options:option1[,option2[,option3[...]]]
 	*/
-	function processSetting(&$R) {
+	static function processSetting(&$R) {
 		$scriptName = str_replace('/', '.', ltrim($_SERVER['SCRIPT_NAME'],'/'));
 		$cookie_id = substr($scriptName, strpos($scriptName, '.') + 1, strpos($scriptName, '.',strpos($scriptName, '.')+1) - strpos($scriptName, '.') - 1); // folder/domain.com/index.php => domain
 		$cookieKey = _ON_LOCAL ? 'setting:'.$cookie_id : 'setting';
@@ -1124,7 +1124,7 @@ class SgCore {
 	 * Do request process from url address and return result in string
 	 * @return String
 	 */
-	function processController($loadTemplate = true, $pageTemplate = NULL) {
+	static function processController($loadTemplate = true, $pageTemplate = NULL) {
 		global $R,$page,$request_time,$request_process_time,$site_message;
 		$request = $R->request;
 		$method_result = '';
@@ -1314,7 +1314,7 @@ class SgCore {
 	* @param String $lang
 	* @param String
 	*/
-	function setLang($lang = NULL) {
+	static function setLang($lang = NULL) {
 		//echo 'lang='.$_GET['lang'].'='.$_REQUEST['lang'].'='.post('lang').'='.$lang.'='.$_COOKIE['lang'];
 		if ($lang) {
 			// do nothing
