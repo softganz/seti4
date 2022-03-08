@@ -2181,12 +2181,12 @@ function tr($text, $translateText = NULL) {
 	$lang = strtolower(cfg('lang'));
 	if (empty($load)) {
 		$load[] = 'core.en.po';
-		include(_CORE_FOLDER.'po/core.en.po');
+		include(_CORE_FOLDER.'/core/po/core.en.po');
 	}
 	$current_lang_po = strtolower('core.'.$lang.'-'.cfg('client.characterset').'.po');
 	if (!in_array($current_lang_po,$load)) {
 		$load[] = $current_lang_po;
-		include(_CORE_FOLDER.'po/'.$current_lang_po);
+		include(_CORE_FOLDER.'/core/po/'.$current_lang_po);
 		//print_o($dict,'$dict',1);
 		if ($dict && is_array($dict)) {
 			foreach ($dict[$lang] as $key => $value) {
@@ -2198,7 +2198,7 @@ function tr($text, $translateText = NULL) {
 	// Load new dictionary
 	if ($text == 'load' && $translateText) {
 		$load_lang_po = strtolower($translateText.'.'.$lang.'-'.cfg('client.characterset').'.po');
-		$load_lang_file = _CORE_FOLDER.'po/'.$load_lang_po;
+		$load_lang_file = _CORE_FOLDER.'/core/po/'.$load_lang_po;
 		if (!in_array($load_lang_po,$load) && file_exists($load_lang_file)) {
 			$load[] = $load_lang_po;
 			unset($dict);
@@ -2222,7 +2222,7 @@ function tr($text, $translateText = NULL) {
 
 	// Start translate text
 	$searchKey = strtolower(strip_tags($text));
-	$result = $lang != 'en' && $translateText ? $translateText : (array_key_exists($searchKey,$dictionary[$lang]) ? $dictionary[$lang][$searchKey] : $text);
+	$result = $lang != 'en' && $translateText ? $translateText : (is_array($dictionary[$lang]) && array_key_exists($searchKey,$dictionary[$lang]) ? $dictionary[$lang][$searchKey] : $text);
 	return $result;
 }
 
