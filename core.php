@@ -16,9 +16,9 @@
  */
 
 error_reporting(E_ALL);
-
-$coreFolder = rtrim(dirname(__FILE__), '/core');
-
+// echo dirname(__FILE__).'<br />';
+$coreFolder = preg_replace('/\/core$/i', '', dirname(__FILE__));
+// echo $coreFolder.'<br />';
 // Set core location on request
 if (array_key_exists('core', $_GET)) {
 	$setCore = $_GET['core'];
@@ -46,7 +46,7 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 cfg('core.version.name', 'Seti');
 cfg('core.version.code', 5);
 cfg('core.version.major', '4');
-cfg('core.version', '4.1.00');
+cfg('core.version', '4.2.rc');
 cfg('core.location', ini_get('include_path'));
 cfg('core.release', '2021-12-21');
 cfg('core.folder', _CORE_FOLDER);
