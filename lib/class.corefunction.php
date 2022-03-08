@@ -575,11 +575,24 @@ class SgCore {
 		}
 
 		switch ($resourceType) {
+			case 'manifest' : // Manifest Resource
+				$fileName = 'manifest.';
+				$funcName = NULL;
+				if (is_dir(_CORE_FOLDER.'/modules/'.$module)) {
+					$paths[] = 'modules/'.$module;
+				} else if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
+					$paths[] = 'core/modules/'.$module;
+				} else {
+					$paths[] = 'core/modules/system';
+				}
+				break;
+
 			case 'module' :
 				$fileName = 'module.';
 				$funcName = 'module_';
-				$paths[] = 'modules/'.$module;
-				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
+				if (is_dir(_CORE_FOLDER.'/modules/'.$module)) {
+					$paths[] = 'modules/'.$module;
+				} else if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
 					$paths[] = 'core/modules/'.$module;
 				} else {
 					$paths[] = 'core/modules/system';
@@ -645,17 +658,6 @@ class SgCore {
 				$funcName = 'on_';
 				$paths[] = 'modules/'.$module.'/r';
 				$paths[] = 'core/models';
-				break;
-
-			case 'manifest' : // Manifest Resource
-				$fileName = 'manifest.';
-				$funcName = NULL;
-				$paths[] = 'modules/'.$module;
-				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
-					$paths[] = 'core/modules/'.$module;
-				} else {
-					$paths[] = 'core/modules/system';
-				}
 				break;
 
 			case 'page' : // Page Resource
