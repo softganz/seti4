@@ -24,8 +24,8 @@ $includeFileList = [
 	'lib/class.view.php',
 	'lib/class.sg.php',
 	'lib/class.poison.php',
-	'model/model.user.php',
-	'model/model.counter.php',
+	'models/model.user.php',
+	'models/model.counter.php',
 	// Extend Library
 	// 'lib/lib.corefunction.v'.cfg('core.version.major').'.php',
 ];
@@ -595,7 +595,7 @@ class SgCore {
 					if (isset($request[1])) $paths[] = 'core/modules/'.$module.'/'.$request[1];
 					$paths[] = 'core/modules/'.$module.'/widgets';
 				} else {
-					$paths[] = 'core/widget';
+					$paths[] = 'core/widgets';
 				}
 				break;
 
@@ -609,7 +609,7 @@ class SgCore {
 					if (isset($request[1])) $paths[] = 'core/modules/'.$module.'/'.$request[1].'/models';
 					$paths[] = 'core/modules/'.$module.'/models';
 				}
-				$paths[] = 'core/model';
+				$paths[] = 'core/models';
 				break;
 
 			case 'r' : // Model Resource
@@ -621,7 +621,7 @@ class SgCore {
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
 					$paths[] = 'core/modules/'.$module.'/r';
 				}
-				$paths[] = 'core/model';
+				$paths[] = 'core/models';
 				break;
 
 			case 'view' : // View Resource
@@ -644,7 +644,7 @@ class SgCore {
 				$fileName = 'on.';
 				$funcName = 'on_';
 				$paths[] = 'modules/'.$module.'/r';
-				$paths[] = 'core/model';
+				$paths[] = 'core/models';
 				break;
 
 			case 'manifest' : // Manifest Resource
@@ -844,7 +844,7 @@ class SgCore {
 			// Load widget from filename widget.name.php function=widget_name
 			if (empty($folders)) {
 				$folders = cfg('theme.template');
-				$folders[] = _CORE_FOLDER.'/core/widget/';
+				$folders[] = _CORE_FOLDER.'/core/widgets/';
 			}
 
 			$is_debug = debug('widget');

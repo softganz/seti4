@@ -6,18 +6,20 @@ Folder structure
 
 seti4
 ├── core
-⎪   ├── lib
 ⎪   ├── assets
 ⎪   ├── css
 ⎪   ├── js
-⎪   ├── model
+⎪   ├── lib
+⎪   ├── models
 ⎪   ├── modules
 ⎪   ⎪   ├── module1
 ⎪   ⎪   └── module2
 ⎪   ├── po
 ⎪   ├── ui
+⎪   ├── upgrade
 ⎪   ├── view
-⎪   └── widget
+⎪   ├── widgets
+⎪   └── core.php
 └── modules
     ├── module1
     └── module2
