@@ -118,8 +118,13 @@ function loadJS($requestFile, $ext) {
 	$module = end($dir);
 
 	if (preg_match('/^(js|css)\//', $requestFile)) {
+		// Core js/css
 		$fileName = _CORE_FOLDER.'/core/'.$requestFile;
+	} else if (is_dir(_CORE_FOLDER.'/core/modules/'.$module)) {
+		// Module is core module
+		$fileName .=  _CORE_FOLDER.'/core/modules/'.$module.'/'.basename($requestFile);
 	} else {
+		// Module is user module
 		$fileName .=  _CORE_FOLDER.'/modules/'.$module.'/'.basename($requestFile);
 	}
 
@@ -138,7 +143,7 @@ function loadJS($requestFile, $ext) {
 
 	header('Content-Type: '.$headerType);
 
-	//echo "Request = $requestFile \rFirstFolder = $firstFolder \rModule = $module \rFile location = $fileName\r\r";
+	// echo "Request = $requestFile \rFirstFolder = $firstFolder \rModule = $module \rFile location = $fileName\r\r";
 	if (file_exists($fileName)) require($fileName);
 	// else echo '// '.$requestFile.' '.$fileName.' not found!!!';
 	return;
