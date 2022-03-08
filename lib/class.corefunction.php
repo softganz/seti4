@@ -2104,7 +2104,7 @@ function core_version_check() {
 	if (post('upgrade')=='yes' || $version_force) cfg('version.autoupgrade',true);
 	if (!cfg('version.autoupgrade')) return 'ระบบมีความต้องการปรับปรุงจากรุ่น <strong>'.$version_install.'</strong> เป็นรุ่น <strong>'.$version_current.'</strong> แต่การปรับปรุงอัตโนมัติถูกปิด. <a href="'.url(q(),'upgrade=yes').'">เริ่มปรับปรุงรุ่น?</a>';
 
-	$upgrade_folder = _CORE_FOLDER.'/upgrade/';
+	$upgrade_folder = _CORE_FOLDER.'/core/upgrade/';
 	if (!file_exists($upgrade_folder)) return 'Upgrade folder not extsts.';
 
 	set_time_limit(0); // run very long time

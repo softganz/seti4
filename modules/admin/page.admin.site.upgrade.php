@@ -11,7 +11,7 @@ function admin_site_upgrade($self) {
 
 	if (cfg('version.install')==cfg('core.version.install')) $ret.=message('status','Congratulation, Your software is a lastest version.');
 
-	$upgrade_folder=_CORE_FOLDER.'upgrade/';
+	$upgrade_folder = _CORE_FOLDER.'/core/upgrade/';
 	// $ret.='<p>Upgrade from folder '.$upgrade_folder.'</p>';
 	if (!file_exists($upgrade_folder)) return $ret.message('error',$upgrade_folder.' folder not extsts.');
 
