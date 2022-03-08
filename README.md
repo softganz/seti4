@@ -4,6 +4,7 @@ Read Me
 
 Folder structure
 
+<pre>
 seti4
 ├── core
 ⎪   ├── assets
@@ -23,6 +24,7 @@ seti4
 └── modules
     ├── module1
     └── module2
+</pre>
 
 Forder description
 
