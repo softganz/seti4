@@ -17,7 +17,7 @@
 
 error_reporting(E_ALL);
 
-$coreFolder = preg_replace('/\/core$/i', '', dirname(__FILE__));
+$coreFolder = preg_replace('/(\/|\\\\)core$/i', '', dirname(__FILE__));
 
 // Set core location on request
 if (array_key_exists('core', $_GET)) {
