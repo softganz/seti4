@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created 2006-12-16
- * @modify  2022-03-05
+ * @modify  2022-03-08
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
  */
 
 error_reporting(E_ALL);
-// echo dirname(__FILE__).'<br />';
+
 $coreFolder = preg_replace('/\/core$/i', '', dirname(__FILE__));
-// echo $coreFolder.'<br />';
+
 // Set core location on request
 if (array_key_exists('core', $_GET)) {
 	$setCore = $_GET['core'];
-	if ($setCore == 'clear') {
+	if ($setCore === 'clear') {
 		setcookie('core', NULL, time()-1000,'/');
 		unset($_COOKIE['core']);
 	} else {
@@ -32,7 +32,7 @@ if (array_key_exists('core', $_GET)) {
 }
 if (array_key_exists('core', $_COOKIE)) {
 	$include_path = '/Users/httpdocs/cms/'.$_COOKIE['core'];
-	if (file_exists($include_path)) {
+	if (is_dir($include_path)) {
 		ini_set('include_path', $include_path);
 		$coreFolder = $include_path;
 	}
@@ -44,11 +44,11 @@ define('_CORE_FUNCTION_FILE', _CORE_FOLDER.'/core/lib/class.corefunction.php');
 if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name', 'Seti');
-cfg('core.version.code', 5);
+cfg('core.version.code', 6);
 cfg('core.version.major', '4');
 cfg('core.version', '4.2.rc');
 cfg('core.location', ini_get('include_path'));
-cfg('core.release', '2021-12-21');
+cfg('core.release', '2022-03-08');
 cfg('core.folder', _CORE_FOLDER);
 cfg('core.config', _CONFIG_FILE);
 
