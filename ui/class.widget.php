@@ -376,8 +376,8 @@ class DebugMsg extends Widget {
 	}
 } // End of class DebugMsg
 
-class ErrorMessage extends Widget {
-	var $widgetName = 'ErrorMessage';
+class Message extends Widget {
+	var $widgetName = 'Message';
 	var $tagName = 'div';
 	var $code;
 	var $type;
@@ -390,8 +390,11 @@ class ErrorMessage extends Widget {
 
 		return $text;
 	}
-} // End of class ListTile
+} // End of class Message
 
+class ErrorMessage extends Message {
+	var $widgetName = 'ErrorMessage';
+} // End of class ErrorMessage
 
 // Complex Widget
 
