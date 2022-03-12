@@ -15,9 +15,11 @@ function r_paper_comment_delete($commentId, $options = '{}') {
 	$options = sg_json_decode($options, $defaults);
 	$debug = $options->debug;
 
-	$result->complete = false;
-	$result->error = false;
-	$result->process[] = 'Paper comment delete request';
+	$result = (Object) [
+		'complete' => false,
+		'error' => false,
+		'process' => ['Paper comment delete request'],
+	];
 
 	$simulate = debug('simulate');
 
@@ -32,8 +34,10 @@ function r_paper_comment_delete($commentId, $options = '{}') {
 	}
 
 
-	$stmt = 'SELECT `cid`, `tpid` FROM %topic_comments% WHERE `cid` IN (:cid)';
-	$toDeleteDbs = mydb::select($stmt, ':cid', 'SET:'.implode(',', $commentId));
+	$toDeleteDbs = mydb::select(
+		'SELECT `cid`, `tpid` FROM %topic_comments% WHERE `cid` IN (:cid)',
+		[':cid' => 'SET:'.implode(',', $commentId)]
+	);
 
 	if ($toDeleteDbs->_empty) $result->process[] = 'Nothing to delete';
 
@@ -117,10 +121,12 @@ function r_paper_comment_delete($commentId, $options = '{}') {
 
 	// send alert email
 	if (cfg('alert.email') && in_array('comment',explode(',',cfg('alert.module')))) {
-		$mail->to=cfg('alert.email');
-		$mail->title='-- post : '.strip_tags($comment->title).' : '.$comment->content_type;
-		$mail->name=i()->name;
-		$mail->from='alert@'.cfg('domain.short');
+		$mail = (Object) [
+			'to' => cfg('alert.email'),
+			'title' => '-- post : '.strip_tags($comment->title).' : '.$comment->content_type,
+			'name' => i()->name,
+			'from' => 'alert@'.cfg('domain.short'),
+		];
 		if (cfg('alert.cc')) $mail->cc=cfg('alert.cc');
 		if (cfg('alert.bcc')) $mail->bcc=cfg('alert.bcc');
 
