@@ -206,6 +206,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 		//console.log(doneItem, doneExplode)
 		//console.log('doneType = ',doneType, 'doneAction = ',doneAction)
 		//console.log('doneTarget = ',doneTarget)
+		console.log(data)
 
 		switch (doneType) {
 
@@ -277,6 +278,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 
 			case 'reload':
 				var refreshUrl = doneExplode.length > 1 ? doneExplode[1] : document.URL
+				refreshUrl = refreshUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
 				window.location = refreshUrl
 				break
 
@@ -286,6 +288,8 @@ function sgActionDone(doneData, $this, data, options = {}) {
 				var loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($ele.data('url') ? $ele.data('url') : document.URL)
 				if (loadUrl && ($ele.length || doneTarget == 'none')) {
 					// console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
+					loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
+
 					$.post(loadUrl,function(html){
 						switch (doneAction) {
 							case 'replace' : $ele.replaceWith(html); break;
