@@ -30,7 +30,7 @@ class Widget {
 					if (is_null($childValue)) continue;
 					$this->children[$childName] = $childValue;
 				}
-			} else if (preg_match('/^(data\-)(.*)/', $argKey, $out) || in_array($argKey, ['rel', 'done', 'boxWidth', 'boxHeight'])) {
+			} else if (preg_match('/^(data\-)(.*)/', $argKey, $out) || in_array($argKey, ['rel', 'before', 'done', 'boxWidth', 'boxHeight'])) {
 				if ($out) $argKey = $out[2];
 				$this->data($argKey, $argValue);
 			} else {
@@ -258,27 +258,6 @@ class Row extends Widget {
 	var $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class Row
 
-class Button extends Widget {
-	var $widgetName = 'Button';
-	function __construct($args = []) {
-		parent::__construct($args);
-		//debugMsg($args, '$args');
-		//debugMsg($this, '$this');
-	}
-	function toString() {
-		$attr = [
-			'href' => $this->url,
-			'class' => trim('widget-'.strtolower($this->widgetName).' btn '.SG\getFirst($this->class)),
-			'title' => SG\getFirst($this->title),
-		]+$this->config->data;
-		$button = '<a '.sg_implode_attr($attr).'>'
-			. ($this->icon ? '<i class="icon -material">'.$this->icon.'</i>' : '')
-			. ($this->text ? '<span>'.$this->text.'</span>' : '')
-			. '</a>';
-		return $button;
-	}
-} // End of class Button
-
 class FloatingActionButton extends Widget {
 	var $widgetName = 'FloatingActionButton';
 	var $tagName = 'div';
@@ -395,6 +374,61 @@ class Message extends Widget {
 class ErrorMessage extends Message {
 	var $widgetName = 'ErrorMessage';
 } // End of class ErrorMessage
+
+// Element wiget
+class Button extends Widget {
+	var $widgetName = 'Button';
+	var $version = '0.01';
+	var $tagName = 'a';
+	var $text;
+	var $icon;
+
+	function __construct($args = []) {
+		parent::__construct($args);
+		//debugMsg($args, '$args');
+		// debugMsg($this, '$this');
+	}
+	function toString() {
+		$attr = [
+			'href' => $this->url,
+			'class' => trim('widget-'.strtolower($this->widgetName).' btn '.SG\getFirst($this->class)),
+			'title' => SG\getFirst($this->title),
+		] + (Array) $this->attribute;
+		$button = '<a '.sg_implode_attr($attr).'>'
+			. ($this->icon ? $this->_renderChildren([$this->icon]) : '')
+			   // '<i class="icon -material">'.$this->icon.'</i>' : '')
+			. ($this->text ? '<span>'.$this->text.'</span>' : '')
+			. '</a>';
+		return $button;
+	}
+} // End of class Button
+
+class Icon extends Widget {
+	var $widgetName = 'Icon';
+	var $version = '0.01';
+	var $icon;
+	var $type = 'material';
+
+	function __construct($icon, $args = []) {
+		$this->icon = $icon;
+		parent::__construct($args);
+	}
+	function toString() {
+		$attr = [
+			'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.SG\getFirst($this->class)),
+		] + (Array) $this->attribute;
+
+		if (preg_match('/$</', $this->icon)) {
+			return $this->icon;
+		} else {
+			$icon = '<i '.sg_implode_attr($attr).'>'
+				. $this->icon
+				. '</i>';
+			return $icon;
+		}
+	}
+
+}
 
 // Complex Widget
 
