@@ -101,18 +101,20 @@ class Form extends Widget {
 		if ($formTitle) $ret .= '<h3 class="title">'.$formTitle.'</h3>'._NL;
 		if ($this->description) $ret .= '<div class="description">'.$this->description.'</div>';
 
-		foreach ($this->children as $fieldKey => $item) {
-			if (is_object($item) && method_exists($item, 'build')) {
-				$ret .= $item->build();
-			} else if (is_array($item) && array_key_exists('children', $item)) {
-				foreach ($item['children'] as $groupKey => $groupItem) {
+		foreach ($this->children as $fieldKey => $formElement) {
+			if (is_object($formElement) && method_exists($formElement, 'build')) {
+				// Form element is widget
+				$ret .= $formElement->build();
+			} else if (is_array($formElement) && array_key_exists('children', $formElement)) {
+				// Form element is array and has key children
+				foreach ($formElement['children'] as $groupKey => $groupItem) {
 					// $ret .= $this->_renderChild($formVariable, $groupKey, $groupItem);
 					list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $groupKey, $groupItem);
 					$formArray[$tag_id] = $renderChildrenResult;
 					$ret .= $renderChildrenResult;
 				}
 			} else {
-				list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $fieldKey, $item);
+				list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $fieldKey, $formElement);
 				$formArray[$tag_id] = $renderChildrenResult;
 				$ret .= $renderChildrenResult;
 			}
@@ -125,113 +127,107 @@ class Form extends Widget {
 		return $returnType == 'text' ? $ret : $formArray;
 	}
 
-	function _renderChild($formVariable, $fieldKey, $item) {
-		if (is_object($item) && method_exists($item, 'build')) {
-			return $item->build();
-		} else if (is_string($item)) {
-			return [NULL, $item._NL._NL];
-		} else if (is_array($item)) {
-			$item = (Object) $item;
+	function _renderChild($formVariable, $fieldKey, $formElement) {
+		if (is_object($formElement) && method_exists($formElement, 'build')) {
+			return $formElement->build();
+		} else if (is_string($formElement)) {
+			return [NULL, $formElement._NL._NL];
+		} else if (is_array($formElement)) {
+			$formElement = (Object) $formElement;
 		}
 
 		$name = '';
 		$tag_id = '';
 		$containerClass = '';
 
-		// Fixed bug :: Old version direct set property with form->field->key = value
-		// if (property_exists($this, $fieldKey)) {
-		// 	foreach ($this->{$fieldKey} as $fkey => $fvalue) {
-		// 		$item->{$fkey} = $fvalue;
-		// 	}
-		// 	unset($this->$fieldKey);
-		// }
-
-		if ($item->config) {
-			$item->config = SG\json_decode($item->config);
+		if ($formElement->config) {
+			$formElement->config = SG\json_decode($formElement->config);
 		}
 
-		if ($item->id) {
-			$tag_id = $item->id;
+		if ($formElement->id) {
+			$tag_id = $formElement->id;
 		} else {
-			$tag_id = $item->name ? $item->name : ($formVariable ? $formVariable.'-':'').$fieldKey;
+			$tag_id = $formElement->name ? $formElement->name : ($formVariable ? $formVariable.'-':'').$fieldKey;
 			$tag_id = 'edit-'.preg_replace(array('/([\W]+$)+/','/([\W])+/'),array('','-'),$tag_id);
 		}
 
 		$tag_id = strtolower($tag_id);
 
-		if ($item->name !== false) {
-			$name = $item->name ? $item->name : ($formVariable ? $formVariable.'['.$fieldKey.']' : $fieldKey);
+		if ($formElement->name !== false) {
+			$name = $formElement->name ? $formElement->name : ($formVariable ? $formVariable.'['.$fieldKey.']' : $fieldKey);
 		}
 
-		if (isset($item->container) && is_object($item->container)) {
-			$item->container = (Array) $item->container;
-		} else if (isset($item->container) && is_string($item->container) && substr($item->container,0,1) == '{') {
-			$item->container = (Array) SG\json_decode($item->container);
+		if (isset($formElement->container) && is_object($formElement->container)) {
+			$formElement->container = (Array) $formElement->container;
+		} else if (isset($formElement->container) && is_string($formElement->container) && substr($formElement->container,0,1) == '{') {
+			$formElement->container = (Array) SG\json_decode($formElement->container);
 		}
 
-		$isFormGroup = preg_match('/-group/', $item->container['class']);
+		$isFormGroup = preg_match('/-group/', $formElement->container['class']);
 
-		// if ($item->container['type']) {
-		// 	switch ($item->container['type']) {
+		// if ($formElement->container['type']) {
+		// 	switch ($formElement->container['type']) {
 		// 		case 'fieldset' :
-		// 			$ret .= '<fieldset class="'.($item->container['collapsible']?'collapsible':'').'">'._NL;
-		// 			if ($item->container['legend']) $ret .= '<legend>'.$item->container['legend'].'</legend>'._NL;
+		// 			$ret .= '<fieldset class="'.($formElement->container['collapsible']?'collapsible':'').'">'._NL;
+		// 			if ($formElement->container['legend']) $ret .= '<legend>'.$formElement->container['legend'].'</legend>'._NL;
 		// 			break;
 		// 	}
-		// 	if ($item->container['collapsible']) $ret.='<div id="'.$tag_id.'" style="display: none; height: auto;" class="fieldset-wrapper">'._NL;
+		// 	if ($formElement->container['collapsible']) $ret.='<div id="'.$tag_id.'" style="display: none; height: auto;" class="fieldset-wrapper">'._NL;
 		// }
 
-		$containerClass = $item->containerclass;
-		if ($item->container) {
-			if ($item->container['class']) {
-				$containerClass .= trim(' '.$item->container['class']);
+		$containerClass = $formElement->containerclass;
+		if ($formElement->container) {
+			if ($formElement->container['class']) {
+				$containerClass .= trim(' '.$formElement->container['class']);
 			}
 		}
 
 		$ret .= '<div id="form-item-'.$tag_id.'" '
-				. 'class="form-'.(in_array($item->type,array('','')) ? $item->type : 'item -'.$tag_id).($containerClass ? ' '.$containerClass : '')
-				. ($item->type == 'hidden' ? ' -hidden' : '')
+				. 'class="form-'.(in_array($formElement->type,array('','')) ? $formElement->type : 'item -'.$tag_id).($containerClass ? ' '.$containerClass : '')
+				. ($formElement->type == 'hidden' ? ' -hidden' : '')
 				. '"'
-				. ' '.sg_implode_attr($item->container)
+				. ' '.sg_implode_attr($formElement->container)
 				. '>'._NL;
-		if ($item->label) {
-			$ret .= '	<label for="'.$tag_id.'" class="'.($item->config->label == 'hide' ? '-hidden' : '').'">'.$item->label.($item->require?' <span class="form-required" title="This field is required.">*</span>':'').'</label>'._NL;
+		if ($formElement->label) {
+			$ret .= '	<label for="'.$tag_id.'" class="'.($formElement->config->label == 'hide' ? '-hidden' : '').'">'.$formElement->label.($formElement->require?' <span class="form-required" title="This field is required.">*</span>':'').'</label>'._NL;
 		}
 
 		if ($isFormGroup) $ret .= '<span class="form-group">'._NL;
-		if ($item->pretext)
-			$ret .= $item->pretext;
+		if ($formElement->pretext)
+			$ret .= $formElement->pretext;
 
-		if ($item->attr && (is_array($item->attr) || is_object($item->attr))) {
-			$item->attr = sg_implode_attr($item->attr);
+		// Item attribute from key attribute, if not define use key attr
+		$formElement->attribute = SG\getFirst($formElement->attribute, $formElement->attr);
+		if ($formElement->attribute && (is_array($formElement->attribute) || is_object($formElement->attribute))) {
+			$formElement->attribute = sg_implode_attr($formElement->attribute);
 		}
 
-		switch ($item->type) {
-			case 'textfield' : $ret .= $this->_renderTextField($tag_id, $name, $item); break;
-			case 'hidden': $ret .= $this->_renderHidden($tag_id, $name, $item); break;
+		switch ($formElement->type) {
+			case 'textfield' : $ret .= $this->_renderTextField($tag_id, $name, $formElement); break;
+			case 'hidden': $ret .= $this->_renderHidden($tag_id, $name, $formElement); break;
 			case 'text' :
-			case 'password' : $ret .= $this->_renderTextPassword($tag_id, $name, $item); break;
-			case 'textarea' : $ret .= $this->_renderTextArea($tag_id, $name, $item); break;
+			case 'password' : $ret .= $this->_renderTextPassword($tag_id, $name, $formElement); break;
+			case 'textarea' : $ret .= $this->_renderTextArea($tag_id, $name, $formElement); break;
 			case 'radio' :
-			case 'checkbox' : $ret .= $this->_renderRadioCheckbox($tag_id, $name, $item); break;
-			case 'select' : $ret .= $this->_renderSelect($tag_id, $name, $item); break;
-			case 'file' : $ret .= $this->_renderFile($tag_id, $name, $item); break;
-			case 'button' : $ret .= $this->_renderButton($tag_id, $name, $item); break;
-			case 'submit' : $ret .= $this->_renderSubmit($tag_id, $name, $item); break;
-			case 'date' : $ret .= $this->_renderDate($tag_id, $name, $item); break;
-			case 'time' : $ret .= $this->_renderTime($tag_id, $name, $item); break;
-			case 'hour' : $ret .= $this->_renderHour($tag_id, $name, $item); break;
-			case 'colorpicker' : $ret .= $this->_renderColorPicker($tag_id, $name, $item); break;
+			case 'checkbox' : $ret .= $this->_renderRadioCheckbox($tag_id, $name, $formElement); break;
+			case 'select' : $ret .= $this->_renderSelect($tag_id, $name, $formElement); break;
+			case 'file' : $ret .= $this->_renderFile($tag_id, $name, $formElement); break;
+			case 'button' : $ret .= $this->_renderButton($tag_id, $name, $formElement); break;
+			case 'submit' : $ret .= $this->_renderSubmit($tag_id, $name, $formElement); break;
+			case 'date' : $ret .= $this->_renderDate($tag_id, $name, $formElement); break;
+			case 'time' : $ret .= $this->_renderTime($tag_id, $name, $formElement); break;
+			case 'hour' : $ret .= $this->_renderHour($tag_id, $name, $formElement); break;
+			case 'colorpicker' : $ret .= $this->_renderColorPicker($tag_id, $name, $formElement); break;
 		}
 
-		if ($item->posttext) $ret .= $item->posttext._NL;
+		if ($formElement->posttext) $ret .= $formElement->posttext._NL;
 		if ($isFormGroup) $ret .= '</span><!-- form-group -->'._NL;
-		if ($item->description) $ret .= _NL.'<div class="description">'.$item->description.'</div>';
+		if ($formElement->description) $ret .= _NL.'<div class="description">'.$formElement->description.'</div>';
 		$ret .= _NL.'</div>';
 
-		// if ($item->container['type']) {
-		// 	if ($item->container['collapsible']) $ret.=_NL.'</div>';
-		// 	$ret .= _NL.'</'.$item->container['type'].'>';
+		// if ($formElement->container['type']) {
+		// 	if ($formElement->container['collapsible']) $ret.=_NL.'</div>';
+		// 	$ret .= _NL.'</'.$formElement->container['type'].'>';
 		// }
 		$ret .= _NL._NL;
 		return [$tag_id, $ret];
@@ -239,97 +235,96 @@ class Form extends Widget {
 
 	// Render Field
 
-	function _renderTextField($tag_id, $name, $item) {
-		return '<div id="'.$tag_id.'">'.$item->value.'</div>';
+	function _renderTextField($tag_id, $name, $formElement) {
+		return '<div id="'.$tag_id.'">'.$formElement->value.'</div>';
 	}
 
-	function _renderHidden($tag_id, $name, $item) {
-		return '<input type="hidden" name="'.$name.'" id="'.$tag_id.'" class="'.($item->require?'-require':'').'" value="'.htmlspecialchars($item->value).'" />'._NL._NL;
+	function _renderHidden($tag_id, $name, $formElement) {
+		return '<input type="hidden" name="'.$name.'" id="'.$tag_id.'" class="'.($formElement->require?'-require':'').'" value="'.htmlspecialchars($formElement->value).'" />'._NL._NL;
 	}
 
-	function _renderTextPassword($tag_id, $name, $item) {
+	function _renderTextPassword($tag_id, $name, $formElement) {
 		$ret = '<input'
-			. ($this->readonly || $item->readonly ?' readonly="readonly"' : '')
-			. ($item->autocomplete ? ' autocomplete="'.$item->autocomplete.'"' : '')
-			. ($item->maxlength ? ' maxlength="'.$item->maxlength.'"' : '')
-			. ($item->size ? ' size="'.$item->size.'"' : '')
+			. ($this->readonly || $formElement->readonly ?' readonly="readonly"' : '')
+			. ($formElement->autocomplete ? ' autocomplete="'.$formElement->autocomplete.'"' : '')
+			. ($formElement->maxlength ? ' maxlength="'.$formElement->maxlength.'"' : '')
+			. ($formElement->size ? ' size="'.$formElement->size.'"' : '')
 			. ($name ? ' name="'.$name.'"' : ' ')
 			. ' id="'.$tag_id.'"'
-			. ' class="form-'.$item->type
-				. ($item->class ? ' '.$item->class : '')
-				. ($item->require ? ' -require' : '')
-				. ($item->readonly ? ' -readonly' : '')
+			. ' class="form-'.$formElement->type
+				. ($formElement->class ? ' '.$formElement->class : '')
+				. ($formElement->require ? ' -require' : '')
+				. ($formElement->readonly ? ' -readonly' : '')
 				. '"'
-			. ' type="'.$item->type.'"'
-			. ($item->attr ? ' '.$item->attr : '')
-			. ($item->style ? ' style="'.$item->style.'"' : '')
-			. ($item->{"autocomplete-url"} ? ' autocomplete-url="'.$item->{"autocomplete-url"}.'"' : '')
-			. ' value="'.htmlspecialchars($item->value).'"'
-			. (isset($item->placeholder) ? ' placeholder="'.$item->placeholder.'"' : '')
+			. ' type="'.$formElement->type.'"'
+			. ($formElement->attribute ? ' '.$formElement->attribute : '')
+			. ($formElement->style ? ' style="'.$formElement->style.'"' : '')
+			. ($formElement->{"autocomplete-url"} ? ' autocomplete-url="'.$formElement->{"autocomplete-url"}.'"' : '')
+			. ' value="'.htmlspecialchars($formElement->value).'"'
+			. (isset($formElement->placeholder) ? ' placeholder="'.$formElement->placeholder.'"' : '')
 			. ' />';
 		return $ret;
 	}
 
-	function _renderTextArea($tag_id, $name, $item) {
+	function _renderTextArea($tag_id, $name, $formElement) {
 		$ret .= '	<div class="resizable-textarea">'
 			. '<textarea'
-			. ($this->readonly || $item->readonly ? ' readonly="readonly"' : '')
-			. ' cols="'.($item->cols ? $item->cols : '60').'"'
-			. ' rows="'.($item->rows ? $item->rows : 10).'"'
+			. ($this->readonly || $formElement->readonly ? ' readonly="readonly"' : '')
+			. ' cols="'.($formElement->cols ? $formElement->cols : '60').'"'
+			. ' rows="'.($formElement->rows ? $formElement->rows : 10).'"'
 			. ' name="'.$name.'"'
 			. ' id="'.$tag_id.'"'
 			. ' class="form-textarea resizable processed'
-				. ($item->require ? ' -require' : '')
-				. ($item->readonly ? ' -readonly' : '')
-				. ($item->class ? ' '.$item->class : '')
+				. ($formElement->require ? ' -require' : '')
+				. ($formElement->readonly ? ' -readonly' : '')
+				. ($formElement->class ? ' '.$formElement->class : '')
 				. '"'
-			. ($item->attr ? ' '.$item->attr : '')
-			. (isset($item->placeholder) ? ' placeholder="'.$item->placeholder.'"' : '')
+			. ($formElement->attribute ? ' '.$formElement->attribute : '')
+			. (isset($formElement->placeholder) ? ' placeholder="'.$formElement->placeholder.'"' : '')
 			. '>'
-			. $item->value
+			. $formElement->value
 			. '</textarea>'
 			. '<div style="margin-right: -4px;" class="grippie"></div>'
 			. '</div>';
 		return $ret;
 	}
 
-	function _renderRadioCheckbox($tag_id, $name, $item) {
+	function _renderRadioCheckbox($tag_id, $name, $formElement) {
 		$ret = '';
-		// if (!is_array($item->value)) $item->value=(array)$item->value;
-		if (!isset($item->display)) $item->display='-block';
+		// if (!is_array($formElement->value)) $formElement->value=(array)$formElement->value;
+		if (!isset($formElement->display)) $formElement->display='-block';
 		$itemIndex = 0;
-		//debugMsg($item,'$item');
 
-		foreach ($item->options as $option_key => $option_value) {
+		foreach ($formElement->options as $option_key => $option_value) {
 			if (is_null($option_value)) continue;
 			$itemIndex++;
 			if (is_array($option_value) || is_object($option_value)) {
 				//debugMsg('$option_key = '.$option_key);
 				//debugMsg($option_value, '$option_value');
 				$ret.='<span class="options-group"><span class="options-group-label">'.$option_key.'</span>'._NL;
-				//$ret .= $this->_renderRadio($option_key, $tag_id, $item, $option_value['key'], $option_value['label']);
+				//$ret .= $this->_renderRadio($option_key, $tag_id, $formElement, $option_value['key'], $option_value['label']);
 
 				foreach ($option_value as $option_key=>$option_value) {
-					//$ret .= '	<option value="'.$option_key.'"'.(in_array($option_key,$item->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$option_value.'</option>'._NL;
-					$ret .= '<label class="option -'.$item->display.'" >';
+					//$ret .= '	<option value="'.$option_key.'"'.(in_array($option_key,$formElement->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$option_value.'</option>'._NL;
+					$ret .= '<label class="option -'.$formElement->display.'" >';
 					$ret .= '<input'
-						. ($this->readonly || $item->readonly ? ' readonly="readonly"':'')
-						. ' name="'.$name.($item->multiple ? '['.$option_key.']' : '').'"'
+						. ($this->readonly || $formElement->readonly ? ' readonly="readonly"':'')
+						. ' name="'.$name.($formElement->multiple ? '['.$option_key.']' : '').'"'
 						. ' value="'.$option_key.'"';
-					if (is_array($item->value)) {
-						$option_value_key=array_keys($item->value);
-						$ret .= in_array($option_key,array_intersect(array_keys($item->options),$item->value)) ? ' checked="checked"':'';
+					if (is_array($formElement->value)) {
+						$option_value_key=array_keys($formElement->value);
+						$ret .= in_array($option_key,array_intersect(array_keys($formElement->options),$formElement->value)) ? ' checked="checked"':'';
 
 						//debugMsg('Array option_key='.$option_key.'<br />');
-						//debugMsg($item->options, '$item->options');
-						//debugMsg('option_value_key='.print_o($item->value,'$item->value').'<br />');
+						//debugMsg($formElement->options, '$formElement->options');
+						//debugMsg('option_value_key='.print_o($formElement->value,'$formElement->value').'<br />');
 					} else {
 						//echo 'Else option_key='.$option_key.'<br />';
-						$ret .= $option_key == $item->value ? ' checked="checked"':'';
+						$ret .= $option_key == $formElement->value ? ' checked="checked"':'';
 					}
-					$ret .= ' class="form-'.$item->type.($item->class ? ' '.$item->class : '').($item->require ? ' -require':'').'"'
-						. ' type="'.$item->type.'"'
-						. ($item->attr?' '.$item->attr:'')
+					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
+						. ' type="'.$formElement->type.'"'
+						. ($formElement->attribute?' '.$formElement->attribute:'')
 						. ' /> ';
 					$ret .= $option_value;
 
@@ -337,15 +332,15 @@ class Form extends Widget {
 				}
 				$ret.='</span>'._NL;
 			} else {
-				//$ret .= $this->_renderRadio($fieldKey, $tag_id, $item, $option_key, $option_value);
-				if ($item->separate) {
-					$name = $item->name ? $item->name.$option_key : ($this->variable ? $this->variable.'['.$fieldKey.$option_key.']' : $fieldKey);
+				//$ret .= $this->_renderRadio($fieldKey, $tag_id, $formElement, $option_key, $option_value);
+				if ($formElement->separate) {
+					$name = $formElement->name ? $formElement->name.$option_key : ($this->variable ? $this->variable.'['.$fieldKey.$option_key.']' : $fieldKey);
 				}
 
-				if ($item->config->capsule) {
-					$ret .= '<'.$item->config->capsule->tag.' class="'.$item->config->capsule->class.'">';
+				if ($formElement->config->capsule) {
+					$ret .= '<'.$formElement->config->capsule->tag.' class="'.$formElement->config->capsule->class.'">';
 				}
-				$ret .= '		<label class="option'.($item->display ? ' '.$item->display : '').'">';
+				$ret .= '		<label class="option'.($formElement->display ? ' '.$formElement->display : '').'">';
 				if (substr($option_value, 0, 6) == '&nbsp;') {
 					// Show label only
 				} else {
@@ -353,24 +348,24 @@ class Form extends Widget {
 						$ret .= '&nbsp;&nbsp;&nbsp;&nbsp;';
 					}
 					$ret .= '<input id="'.$tag_id.'-'.$itemIndex.'"'
-						. ($this->readonly || $item->readonly ? ' readonly="readonly" disabled="disabled"' : '')
-						. ' name="'.$name.($item->multiple ? '['.$option_key.']' : '').'"'
+						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"' : '')
+						. ' name="'.$name.($formElement->multiple ? '['.$option_key.']' : '').'"'
 						. ' value="'.$option_key.'"';
-					if (is_array($item->value)) {
-						$option_value_key = array_keys($item->value);
-						$ret .= in_array($option_key, array_intersect(array_keys($item->options), $item->value)) ? ' checked="checked"':'';
-					} else if (isset($item->value) && $option_key == $item->value) {
+					if (is_array($formElement->value)) {
+						$option_value_key = array_keys($formElement->value);
+						$ret .= in_array($option_key, array_intersect(array_keys($formElement->options), $formElement->value)) ? ' checked="checked"':'';
+					} else if (isset($formElement->value) && $option_key == $formElement->value) {
 						$ret .= ' checked="checked"';
 					}
-					$ret .= ' class="form-'.$item->type.($item->class ? ' '.$item->class : '').($item->require?' -require':'').'"'
-						. ' type="'.$item->type.'"'
-						. ($item->attr ? ' '.$item->attr:'')
+					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'"'
+						. ' type="'.$formElement->type.'"'
+						. ($formElement->attribute ? ' '.$formElement->attribute:'')
 						. ' /> ';
 				}
 				$ret .= $option_value;
 				$ret .= '</label>'._NL;
-				if ($item->config->capsule) {
-					$ret .= '</'.$item->config->capsule->tag.'>';
+				if ($formElement->config->capsule) {
+					$ret .= '</'.$formElement->config->capsule->tag.'>';
 				}
 			}
 		}
@@ -378,63 +373,62 @@ class Form extends Widget {
 	}
 
 	// Method _renderRadioNew not used/ not test
-	function _renderRadioNew($fieldKey, $tag_id, $item, $option_key, $option_value) {
+	function _renderRadioNew($fieldKey, $tag_id, $formElement, $option_key, $option_value) {
 		$ret = '';
-		if ($item->separate) {
-			$name = $item->name ? $item->name.$option_key : ($this->variable ? $this->variable.'['.$fieldKey.$option_key.']' : $fieldKey);
+		if ($formElement->separate) {
+			$name = $formElement->name ? $formElement->name.$option_key : ($this->variable ? $this->variable.'['.$fieldKey.$option_key.']' : $fieldKey);
 		}
 
-		if ($item->config->capsule) {
-			$ret .= '<'.$item->config->capsule->tag.' class="'.$item->config->capsule->class.'">';
+		if ($formElement->config->capsule) {
+			$ret .= '<'.$formElement->config->capsule->tag.' class="'.$formElement->config->capsule->class.'">';
 		}
-		$ret .= '		<label class="option'.($item->display ? ' '.$item->display : '').'">';
+		$ret .= '		<label class="option'.($formElement->display ? ' '.$formElement->display : '').'">';
 		if (substr($option_value, 0, 6) == '&nbsp;') {
 			// Show label only
 		} else {
 			$ret .= '<input id="'.$tag_id.'-'.$itemIndex.'"'
-				. ($this->readonly || $item->readonly ? ' readonly="readonly" disabled="disabled"' : '')
-				. ' name="'.$name.($item->multiple ? '['.$option_key.']' : '').'"'
+				. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"' : '')
+				. ' name="'.$name.($formElement->multiple ? '['.$option_key.']' : '').'"'
 				. ' value="'.$option_key.'"';
-			if (is_array($item->value)) {
-				$option_value_key = array_keys($item->value);
-				$ret .= in_array($option_key, array_intersect(array_keys($item->options), $item->value)) ? ' checked="checked"':'';
-			} else if (isset($item->value) && $option_key == $item->value) {
+			if (is_array($formElement->value)) {
+				$option_value_key = array_keys($formElement->value);
+				$ret .= in_array($option_key, array_intersect(array_keys($formElement->options), $formElement->value)) ? ' checked="checked"':'';
+			} else if (isset($formElement->value) && $option_key == $formElement->value) {
 				$ret .= ' checked="checked"';
 			}
-			$ret .= ' class="form-'.$item->type.($item->class ? ' '.$item->class : '').($item->require?' -require':'').'"'
-				. ' type="'.$item->type.'"'
-				. ($item->attr ? ' '.$item->attr:'')
+			$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'"'
+				. ' type="'.$formElement->type.'"'
+				. ($formElement->attribute ? ' '.$formElement->attribute:'')
 				. ' /> ';
 		}
 		$ret .= $option_value;
 		$ret .= '</label>'._NL;
-		if ($item->config->capsule) {
-			$ret .= '</'.$item->config->capsule->tag.'>';
+		if ($formElement->config->capsule) {
+			$ret .= '</'.$formElement->config->capsule->tag.'>';
 		}
 		return $ret;
 	}
 
-	function _renderSelect($tag_id, $name, $item) {
-		if (!is_array($item->value)) $item->value = (Array) $item->value;
+	function _renderSelect($tag_id, $name, $formElement) {
+		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
 		$selectStr = '	<select '
-			. ($this->readonly || $item->readonly ? 'readonly="readonly" ' : '').' '
-			. ($item->multiple ? 'multiple="multiple" ' : '').($item->size?'size="'.$item->size.'" ':'')
+			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" ' : '').' '
+			. ($formElement->multiple ? 'multiple="multiple" ' : '').($formElement->size?'size="'.$formElement->size.'" ':'')
 			. ' name="'.$name.'" id="'.$tag_id.'" '
-			. 'class="form-'.$item->type.($item->class ? ' '.$item->class : '').($item->require ? ' -require' : '').($this->readonly || $item->readonly ? ' -disabled' : '').'"'
-			. ($item->onChange ? ' onChange=\''.$item->onChange.'\'' : '')
-			. ($item->style ? 'style="'.$item->style.'"' : '')
-			. ($item->attr ? ' '.$item->attr : '')
-			. ($item->attribute ? ' '.$item->attribute : '')
+			. 'class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require' : '').($this->readonly || $formElement->readonly ? ' -disabled' : '').'"'
+			. ($formElement->onChange ? ' onChange=\''.$formElement->onChange.'\'' : '')
+			. ($formElement->style ? 'style="'.$formElement->style.'"' : '')
+			. ($formElement->attribute ? ' '.$formElement->attribute : '')
 			. '>'._NL;
 
-		if (is_string($item->options) && preg_match('/^\</', $item->options)) {
+		if (is_string($formElement->options) && preg_match('/^\</', $formElement->options)) {
 			// Option is tag
-			$selectStr .= $item->options;
-			unset($item->options);
-		} else if (is_string($item->options)) {
+			$selectStr .= $formElement->options;
+			unset($formElement->options);
+		} else if (is_string($formElement->options)) {
 			// Option is string and contain ,
 			$selectOptions = array();
-			foreach (explode(',', $item->options) as $eachOption) {
+			foreach (explode(',', $formElement->options) as $eachOption) {
 				if (preg_match('/(.*)\=\>(.*)/', $eachOption, $out)) {
 					// Option format key=value
 					$selectOptions[strtoupper(trim($out[1])) === 'NULL' ? '' : trim($out[1])] = trim($out[2]);
@@ -447,16 +441,16 @@ class Form extends Widget {
 					$selectOptions[$eachOption] = $eachOption;
 				}
 			}
-			$item->options = $selectOptions;
+			$formElement->options = $selectOptions;
 		}
 
-		foreach ($item->options as $option_key => $option_value) {
+		foreach ($formElement->options as $option_key => $option_value) {
 			if (is_object($option_value)) $option_value = (Array) $option_value;
 			if (is_array($option_value) && array_key_exists('label', $option_value)) {
 				// Option is array has key label : [1=>"label", attr=>["data-key"=>"data-key-value",...]]
 				$selectStr .= '	<option '
 					. 'value="'.$option_key.'"'
-					. (in_array($option_key,$item->value)?' selected="selected"':'')
+					. (in_array($option_key,$formElement->value)?' selected="selected"':'')
 					. ($option_value['attr'] ? ' '.sg_implode_attr($option_value['attr']) : '')
 					. '>'
 					. $option_value['label']
@@ -465,7 +459,7 @@ class Form extends Widget {
 				// Option is array, then make option group
 				$selectStr .= '	<optgroup label="'.$option_key.'">'._NL;
 				foreach ($option_value as $option_key=>$option_value) {
-					$selectStr .= '	<option value="'.$option_key.'"'.(in_array($option_key,$item->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$option_value.'</option>'._NL;
+					$selectStr .= '	<option value="'.$option_key.'"'.(in_array($option_key,$formElement->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$option_value.'</option>'._NL;
 				}
 				$selectStr .= '	</optgroup>'._NL;
 			} else if (substr($option_key,0,3) === 'sep') {
@@ -473,7 +467,7 @@ class Form extends Widget {
 				$selectStr .= '<option disabled="disabled">'.$option_value.'</option>';
 			} else {
 				// Option is string
-				$selectStr .= '	<option value="'.$option_key.'"'.(in_array($option_key,$item->value)?' selected="selected"':'').'>'.$option_value.'</option>'._NL;
+				$selectStr .= '	<option value="'.$option_key.'"'.(in_array($option_key,$formElement->value)?' selected="selected"':'').'>'.$option_value.'</option>'._NL;
 			}
 		}
 		$selectStr .= '	</select>';
@@ -481,24 +475,24 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderFile($tag_id, $name, $item) {
-		if ($item->count) {
-			for ($i = 1; $i <= $item->count; $i++) {
-				$ret .= '	<input '.($item->size?'size="'.$item->size.'" ':'').' name="'.$name.'['.$i.']" id="'.$tag_id.'-'.$i.'" class="form-'.$item->type.($item->require?' -require':'').'" type="'.$item->type.'" />';
+	function _renderFile($tag_id, $name, $formElement) {
+		if ($formElement->count) {
+			for ($i = 1; $i <= $formElement->count; $i++) {
+				$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'['.$i.']" id="'.$tag_id.'-'.$i.'" class="form-'.$formElement->type.($formElement->require?' -require':'').'" type="'.$formElement->type.'" />';
 			}
 		} else {
-			$ret .= '	<input '.($item->size?'size="'.$item->size.'" ':'').' name="'.$name.'" id="'.$tag_id.'" class="form-'.$item->type.($item->class ? ' '.$item->class : '').($item->require?' -require':'').'" type="'.$item->type.'"'.($item->multiple?'multiple="multiple"':'').' />';
+			$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'" id="'.$tag_id.'" class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'" type="'.$formElement->type.'"'.($formElement->multiple?'multiple="multiple"':'').' />';
 		}
 		return $ret;
 	}
 
-	function _renderButton($tag_id, $name, $item) {
-		if (empty($item->items) && !empty($item->value)) {
-			$ret .= '	<button type="submit" '.(empty($item->name) ? '' : 'name="'.$name.'"').' class="btn '.SG\getFirst($item->class, '-primary').'" value="'.htmlspecialchars(strip_tags($item->value)).'" '.($this->readonly || $item->readonly ? 'disabled="disabled" ' : '').'>'.SG\getFirst($item->text, $item->value).'</button> ';
-		} else if (is_array($item->items) && !empty($item->items['value'])) {
-			$ret .= '	<button'.(isset($item->items['type'])?' type="'.$item->items['type'].'"':'').' name="'.(isset($item->items['name'])?$item->items['name']:$name).'" class="btn'.($item->items['class']?' '.$item->items['class']:'').'" value="'.htmlspecialchars(strip_tags($item->items['value'])).'" '.($this->readonly || $item->readonly?'disabled="disabled" ':'').'>'.$item->items['value'].'</button> ';
+	function _renderButton($tag_id, $name, $formElement) {
+		if (empty($formElement->items) && !empty($formElement->value)) {
+			$ret .= '	<button type="submit" '.(empty($formElement->name) ? '' : 'name="'.$name.'"').' class="btn '.SG\getFirst($formElement->class, '-primary').'" value="'.htmlspecialchars(strip_tags($formElement->value)).'" '.($this->readonly || $formElement->readonly ? 'disabled="disabled" ' : '').'>'.SG\getFirst($formElement->text, $formElement->value).'</button> ';
+		} else if (is_array($formElement->items) && !empty($formElement->items['value'])) {
+			$ret .= '	<button'.(isset($formElement->items['type'])?' type="'.$formElement->items['type'].'"':'').' name="'.(isset($formElement->items['name'])?$formElement->items['name']:$name).'" class="btn'.($formElement->items['class']?' '.$formElement->items['class']:'').'" value="'.htmlspecialchars(strip_tags($formElement->items['value'])).'" '.($this->readonly || $formElement->readonly?'disabled="disabled" ':'').'>'.$formElement->items['value'].'</button> ';
 		} else {
-			foreach ($item->items as $key => $button) {
+			foreach ($formElement->items as $key => $button) {
 				if (is_null($button)) {
 					continue;
 				} else if ($button['type'] == 'text') {
@@ -509,7 +503,7 @@ class Form extends Widget {
 						. ' name="'.SG\getFirst($button['name'],is_string($key) ? $key : $name).'" '
 						. 'class="btn'.($button['class']?' '.$button['class']:'').'" '
 						. 'value="'.SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'" '
-						. ($this->readonly || $item->readonly?'disabled="disabled" ':'').'>'
+						. ($this->readonly || $formElement->readonly?'disabled="disabled" ':'').'>'
 						. $button['value']
 						. '</button> ';
 				}
@@ -518,92 +512,92 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderSubmit($tag_id, $name, $item) {
+	function _renderSubmit($tag_id, $name, $formElement) {
 		$ret = '';
-		foreach ($item->items as $key=>$value) {
+		foreach ($formElement->items as $key=>$value) {
 			if (substr($key,0,4)=='text') $ret .= $value;
-			else $ret .= '	<input name="'.$key.'" '.($this->isReadOnly || $item->readonly?'readonly="readonly" ':'').'class="btn'.($key=='save'?' -primary':'').' -'.$key.($item->class?' '.$item->class:'').'"  type="'.$item->type.'" value="'.$value.'" />';
+			else $ret .= '	<input name="'.$key.'" '.($this->isReadOnly || $formElement->readonly?'readonly="readonly" ':'').'class="btn'.($key=='save'?' -primary':'').' -'.$key.($formElement->class?' '.$formElement->class:'').'"  type="'.$formElement->type.'" value="'.$value.'" />';
 		}
 		return $ret;
 	}
 
-	function _renderDate($tag_id, $name, $item) {
+	function _renderDate($tag_id, $name, $formElement) {
 		$months['BC'] = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 		$months['DC'] = ['Jan','Feb','Apr','March','May','June','July','Aug','Sep','Oct','Nov','Dec'];
 
-		list($year_from,$year_no,$year_sort) = explode(',',$item->year->range);
+		list($year_from,$year_no,$year_sort) = explode(',',$formElement->year->range);
 		if (empty($year_from)) $year_from = date('Y');
 		else if (in_array(substr($year_from,0,1),array('-','+'))) $year_from = date('Y')+$year_from;
 		if (empty($year_no)) $year_no = 5;
 
-		$ret = '<select id="'.$tag_id.'-date" class="form-select" name="'.$name.'[date]" '.($this->readonly || $item->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
-		$ret .= '<option value="">'.($item->year->type=='BC'?'วันที่':'Date').'</option>'._NL;
+		$ret = '<select id="'.$tag_id.'-date" class="form-select" name="'.$name.'[date]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
+		$ret .= '<option value="">'.($formElement->year->type=='BC'?'วันที่':'Date').'</option>'._NL;
 		for ($i = 1; $i <= 31; $i++) {
-			$ret .= '<option value="'.sprintf('%02d',$i).'"'.($item->value->date==$i?' selected':'').'>'.sprintf('%02d',$i).'</option>'._NL;
+			$ret .= '<option value="'.sprintf('%02d',$i).'"'.($formElement->value->date==$i?' selected':'').'>'.sprintf('%02d',$i).'</option>'._NL;
 		}
 		$ret .= '</select>'._NL;
-		$ret .= '<select id="'.$tag_id.'-month" class="form-select" name="'.$name.'[month]" '.($this->readonly || $item->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
-		$ret .= '<option value="">'.($item->year->type=='BC'?'เดือน':'Month').'</option>'._NL;
+		$ret .= '<select id="'.$tag_id.'-month" class="form-select" name="'.$name.'[month]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
+		$ret .= '<option value="">'.($formElement->year->type=='BC'?'เดือน':'Month').'</option>'._NL;
 		for ($i = 1; $i <= 12; $i++) {
-			$ret .= '<option value="'.sprintf('%02d',$i).'"'.($item->value->month==$i?' selected':'').'>'.sprintf('%02d',$i).'-'.($item->year->type=='BC'?$months['BC'][$i-1]:$months['DC'][$i-1]).'</option>'._NL;
+			$ret .= '<option value="'.sprintf('%02d',$i).'"'.($formElement->value->month==$i?' selected':'').'>'.sprintf('%02d',$i).'-'.($formElement->year->type=='BC'?$months['BC'][$i-1]:$months['DC'][$i-1]).'</option>'._NL;
 		}
 		$ret .= '</select>'._NL;
-		$ret .= '<select id="'.$tag_id.'-year" class="form-select" name="'.$name.'[year]" '.($this->readonly || $item->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
-		$ret .= '<option value="">'.($item->year->type=='BC'?'ปี พ.ศ.':'Year').'</option>'._NL;
+		$ret .= '<select id="'.$tag_id.'-year" class="form-select" name="'.$name.'[year]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
+		$ret .= '<option value="">'.($formElement->year->type=='BC'?'ปี พ.ศ.':'Year').'</option>'._NL;
 		if ($year_sort == 'DESC') {
 			for ($i = $year_from; $i > $year_from-$year_no; $i--) {
-				$ret.='<option value="'.$i.'"'.($item->value->year==$i?' selected':'').'>'.($item->year->type=='BC'?$i+543:$i).'</option>'._NL;
+				$ret.='<option value="'.$i.'"'.($formElement->value->year==$i?' selected':'').'>'.($formElement->year->type=='BC'?$i+543:$i).'</option>'._NL;
 			}
 		} else {
 			for ($i = $year_from; $i < $year_from+$year_no; $i++) {
-				$ret .= '<option value="'.$i.'"'.($item->value->year==$i?' selected':'').'>'.($item->year->type=='BC'?$i+543:$i).'</option>'._NL;
+				$ret .= '<option value="'.$i.'"'.($formElement->value->year==$i?' selected':'').'>'.($formElement->year->type=='BC'?$i+543:$i).'</option>'._NL;
 			}
 		}
 		$ret .= '</select>'._NL;
 		return $ret;
 	}
 
-	function _renderTime($tag_id, $name, $item) {
+	function _renderTime($tag_id, $name, $formElement) {
 		$times = [];
-		$start_time = SG\getFirst($item->start, 0);
-		$end_time = SG\getFirst($item->end ,24);
-		$step_time = SG\getFirst($item->step, 15);
+		$start_time = SG\getFirst($formElement->start, 0);
+		$end_time = SG\getFirst($formElement->end ,24);
+		$step_time = SG\getFirst($formElement->step, 15);
 		for ($hr = $start_time; $hr < $end_time; $hr++) {
 			for ($min = 0; $min < 60; $min += $step_time) {
 				$times[] = sprintf('%02d',$hr).':'.sprintf('%02d',$min);
 			}
 		}
-		$ret = '<select id="'.$tag_id.'" class="form-select'.($item->class?' '.$item->class:'').'" name="'.$name.'">'._NL;
+		$ret = '<select id="'.$tag_id.'" class="form-select'.($formElement->class?' '.$formElement->class:'').'" name="'.$name.'">'._NL;
 		foreach ($times as $time) {
-			$ret .= '<option value="'.$time.'"'.($time == $item->value?' selected="selected"':'').'>'.$time.'</option>';
+			$ret .= '<option value="'.$time.'"'.($time == $formElement->value?' selected="selected"':'').'>'.$time.'</option>';
 		}
 		$ret .= '</select>';
 		return $ret;
 	}
 
-	function _renderHour($tag_id, $name, $item) {
-		$start_time = SG\getFirst($item->start, 0);
-		$end_time = SG\getFirst($item->end, 24);
-		$step_time = SG\getFirst($item->step, 15);
+	function _renderHour($tag_id, $name, $formElement) {
+		$start_time = SG\getFirst($formElement->start, 0);
+		$end_time = SG\getFirst($formElement->end, 24);
+		$step_time = SG\getFirst($formElement->step, 15);
 		$ret = '<select id="'.$tag_id.'" class="form-select" name="'.$name.'[hour]">'._NL;
 		for ($hr = $start_time; $hr < $end_time; $hr++) {
-			$ret .= '<option value="'.sprintf('%02d',$hr).'"'.($hr == $item->value->hour?' selected="selected"':'').'>'.sprintf('%02d',$hr).'</option>';
+			$ret .= '<option value="'.sprintf('%02d',$hr).'"'.($hr == $formElement->value->hour?' selected="selected"':'').'>'.sprintf('%02d',$hr).'</option>';
 		}
 		$ret .= '</select> : ';
 		$ret .= '<select id="'.$tag_id.'" class="form-select" name="'.$name.'[min]">'._NL;
 		for ($min = 0; $min < 60; $min++) {
-			$ret .= '<option value="'.sprintf('%02d',$min).'"'.($min == $item->value->min?' selected="selected"':'').'>'.sprintf('%02d',$min).'</option>';
+			$ret .= '<option value="'.sprintf('%02d',$min).'"'.($min == $formElement->value->min?' selected="selected"':'').'>'.sprintf('%02d',$min).'</option>';
 		}
 		$ret .= '</select>';
 		return $ret;
 	}
 
-	function _renderColorPicker($tag_id, $name, $item) {
+	function _renderColorPicker($tag_id, $name, $formElement) {
 		$ret = '';
-		if (empty($item->color)) $item->color='#ffffff, #cccccc, #c0c0c0, #999999, #666666, #333333, #000000, #ffcccc, #ff6666, #ff0000, #cc0000, #990000, #660000, #330000, #ffcc99, #ff9966, #ff9900, #ff6600, #cc6600, #993300, #663300, #ffff99, #ffff66, #ffcc66, #ffcc33, #cc9933, #996633, #663333, #ffffcc, #ffff33, #ffff00, #ffcc00, #999900, #666600, #333300, #99ff99, #66ff99, #33ff33, #33cc00, #009900, #006600, #003300, #99ffff, #33ffff, #66cccc, #00cccc, #339999, #336666, #003333, #ccffff, #66ffff, #33ccff, #3366ff, #3333ff, #000099, #000066, #ccccff, #9999ff, #6666cc, #6633ff, #6600cc, #333399, #330099, #ffccff, #ff99ff, #cc66cc, #cc33cc, #993399, #663366, #330033';
-		foreach (explode(',',$item->color) as $color) {
+		if (empty($formElement->color)) $formElement->color='#ffffff, #cccccc, #c0c0c0, #999999, #666666, #333333, #000000, #ffcccc, #ff6666, #ff0000, #cc0000, #990000, #660000, #330000, #ffcc99, #ff9966, #ff9900, #ff6600, #cc6600, #993300, #663300, #ffff99, #ffff66, #ffcc66, #ffcc33, #cc9933, #996633, #663333, #ffffcc, #ffff33, #ffff00, #ffcc00, #999900, #666600, #333300, #99ff99, #66ff99, #33ff33, #33cc00, #009900, #006600, #003300, #99ffff, #33ffff, #66cccc, #00cccc, #339999, #336666, #003333, #ccffff, #66ffff, #33ccff, #3366ff, #3333ff, #000099, #000066, #ccccff, #9999ff, #6666cc, #6633ff, #6600cc, #333399, #330099, #ffccff, #ff99ff, #cc66cc, #cc33cc, #993399, #663366, #330033';
+		foreach (explode(',',$formElement->color) as $color) {
 			$color = trim($color);
-			$ret .= '<span style="background:'.$color.'; display:inline-block; padding:4px; border-radius: 4px; width: 18px; height: 18px;"><input type="radio" name="'.$name.'" value="'.$color.'"'.($color == $item->value?' checked="checked"':'').' style="outline: none; box-shadow: none; margin: 0 0 0 2px; padding: 0; height: 16px; width: 16px;" /></span>'._NL;
+			$ret .= '<span style="background:'.$color.'; display:inline-block; padding:4px; border-radius: 4px; width: 18px; height: 18px;"><input type="radio" name="'.$name.'" value="'.$color.'"'.($color == $formElement->value?' checked="checked"':'').' style="outline: none; box-shadow: none; margin: 0 0 0 2px; padding: 0; height: 16px; width: 16px;" /></span>'._NL;
 		}
 		return $ret;
 	}
