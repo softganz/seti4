@@ -233,6 +233,17 @@ class Container extends Widget {
 	}
 } // End of class Container
 
+class Center extends Widget {
+	var $widgetName = 'Center';
+	var $tagName = 'div';
+	var $class = '-sg-text-center';
+
+	function __construct($args = []) {
+		parent::__construct($args);
+	}
+
+} // End of class Center
+
 class Column extends Widget {
 	var $widgetName = 'Column';
 	var $tagName = 'div';
