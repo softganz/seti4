@@ -39,6 +39,7 @@
 
 .widget-appbar {flex: 1 0 100%; display: flex; margin: 0 0 2px 0; padding: 0; flex-wrap: wrap; align-items: center; position: relative; -ms-overflow-style: none; scrollbar-width: none;}
 	.widget-appbar::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;}
+	.widget-appbar.-report>.-nav {background-color: transparent;}
 
 	.widget-appbar>.-title {flex: 1; margin:0; padding: 0 8px; height: 4.8rem; font-size: 1.8rem; line-height: 4.8rem; overflow: hidden;}
 
