@@ -20,12 +20,15 @@ class Widget {
 	var $id;
 	var $class;
 	var $config = NULL; // Object
+	var $attribute = [];
 
 	function __construct($args = []) {
 		$this->initConfig();
 		foreach ($args as $argKey => $argValue) {
-			if ($argKey == 'config' && is_array($argValue)) $argValue = (Object) $argValue;
-			if ($argKey == 'children') {
+			if ($argKey === 'config' && is_array($argValue)) $argValue = (Object) $argValue;
+			if ($argKey === 'attribute' && is_array($argValue)) {
+				$this->attribute = array_replace_recursive($this->attribute, $argValue);
+			} else if ($argKey === 'children') {
 				foreach ($argValue as $childName => $childValue) {
 					if (is_null($childValue)) continue;
 					$this->children[$childName] = $childValue;
@@ -33,6 +36,7 @@ class Widget {
 			} else if (preg_match('/^(data\-)(.*)/', $argKey, $out) || in_array($argKey, ['rel', 'before', 'done', 'boxWidth', 'boxHeight'])) {
 				if ($out) $argKey = $out[2];
 				$this->data($argKey, $argValue);
+				$this->attribute['data-'.$argKey] = $argValue;
 			} else {
 				$this->{$argKey} = $argValue;
 			}
@@ -396,16 +400,17 @@ class Button extends Widget {
 
 	function __construct($args = []) {
 		parent::__construct($args);
-		//debugMsg($args, '$args');
+		// debugMsg($args, '$args');
 		// debugMsg($this, '$this');
 	}
+
 	function toString() {
-		$attr = [
+		$attribute = [
 			'href' => $this->url,
 			'class' => trim('widget-'.strtolower($this->widgetName).' btn '.SG\getFirst($this->class)),
 			'title' => SG\getFirst($this->title),
 		] + (Array) $this->attribute;
-		$button = '<a '.sg_implode_attr($attr).'>'
+		$button = '<a '.sg_implode_attr($attribute).'>'
 			. ($this->icon ? $this->_renderChildren([$this->icon]) : '')
 			   // '<i class="icon -material">'.$this->icon.'</i>' : '')
 			. ($this->text ? '<span>'.$this->text.'</span>' : '')
