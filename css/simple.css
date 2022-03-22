@@ -1489,8 +1489,8 @@ $SCREENS
 		*/
 		#cboxOverlay {background:#000;}
 		#colorbox {outline:0; background: #fff; border-radius: 2px; border-radius: 10px;}
-		#cboxWrapper {border-radius: 2px;}
-		#cboxContent{margin-top:48px; padding-bottom: 16px; overflow:visible; border:none; position: relative;}
+		#cboxWrapper {border-radius: 2px; background-color: #f5f5f5;}
+		#cboxContent{margin-top:48px; overflow:visible; border:none; position: relative;}
 
 			#cboxLoadedContent .-hover {z-index: 1001;}
 
@@ -1507,7 +1507,7 @@ $SCREENS
 			#cboxLoadedContent .box-page .header:first-of-type>.nav {display: block;}
 			#cboxLoadedContent .box-page .header:first-of-type>.nav.-back {display: flex;}
 
-			.box-page {width: 100%; min-height: calc(100% - 8px); padding: 4px 0; background-color: #f5f5f5;}
+			.box-page {width: 100%; }
 			.box-page .form-item.-sg-box-bottom {position: absolute; bottom: 0; display: inline-block;}
 			.box-page .form-item.-sg-box-bottom.-sg-text-right {right: 8px;}
 
