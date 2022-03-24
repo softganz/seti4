@@ -419,9 +419,10 @@ class Button extends Widget {
 	}
 } // End of class Button
 
+// Usage: new Icon(iconName, property=[])
 class Icon extends Widget {
 	var $widgetName = 'Icon';
-	var $version = '0.01';
+	var $version = '0.02';
 	var $icon;
 	var $type = 'material';
 
@@ -429,21 +430,23 @@ class Icon extends Widget {
 		$this->icon = $icon;
 		parent::__construct($args);
 	}
-	function toString() {
-		$attr = [
-			'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.SG\getFirst($this->class)),
-		] + (Array) $this->attribute;
 
+	function toString() {
 		if (preg_match('/$</', $this->icon)) {
 			return $this->icon;
 		} else {
-			$icon = '<i '.sg_implode_attr($attr).'>'
+			$attribute = array_replace_recursive(
+				$this->attribute,
+				[
+					'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.SG\getFirst($this->class))
+				]
+			);
+			$icon = '<i '.sg_implode_attr($attribute).'>'
 				. $this->icon
 				. '</i>';
 			return $icon;
 		}
 	}
-
 }
 
 // Complex Widget
