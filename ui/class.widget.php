@@ -245,7 +245,6 @@ class Center extends Widget {
 	function __construct($args = []) {
 		parent::__construct($args);
 	}
-
 } // End of class Center
 
 class Column extends Widget {
