@@ -23,7 +23,7 @@ function paper_like_status($self, $tpid, $status = NULL) {
 					break;
 
 				case 'rate':
-					$ret .= R::Page('node.review', $self, $tpid);
+					$ret .= (R::PageWidget('node.review', [(Object)['nodeId' => $tpid]]))->build();
 					return $ret;
 
 				default:
@@ -39,64 +39,54 @@ function paper_like_status($self, $tpid, $status = NULL) {
 	$likeTotals = $nodeInfo->liketimes;
 
 
-	$isMyAction = array();
+	$isMyAction = [];
+
 	if (i()->ok) {
 		$stmt = 'SELECT DISTINCT
-						  `action`
-						FROM %reaction%
-						WHERE `refid` = :tpid AND `uid` = :uid;
-						-- {key: "action"}
-						';
+			`action`
+			FROM %reaction%
+			WHERE `refid` = :tpid AND `uid` = :uid;
+			-- {key: "action", value: "action"}
+			';
 		$isMyAction = explode(',',mydb::select($stmt, ':tpid',$tpid, ':uid', i()->uid)->lists->text);
+		$isMyAction = mydb::select($stmt, ':tpid',$tpid, ':uid', i()->uid)->items;
 	}
 
-	/*
-	$stmt = 'SELECT COUNT(*) `totals`
-					FROM %reaction%
-					WHERE `refid` = :tpid
-					GROUP BY `action`;
-					-- {key: "action"}
-					';
-	$likeTotals = mydb::select($stmt, ':tpid',$tpid)->items;
-	*/
-
-	$stmt = 'SELECT COUNT(*) `totals`
-					FROM %reaction%
-					WHERE `refid` = :tpid AND `action` = "TOPIC.BOOK" LIMIT 1';
-	$bookmarkTotals = mydb::select($stmt, ':tpid',$tpid)->totals;
-	//$ret .= '<div style="text-align:left;">'.print_o($isMyAction,'$isMyAction').'</div>';
-	//$ret .= '<div style="text-align:left;">'.print_o($likeTotals,'$likeTotals').'</div>';
+	$bookmarkTotals = mydb::select(
+		'SELECT COUNT(*) `totals`
+		FROM %reaction%
+		WHERE `refid` = :tpid AND `action` = "TOPIC.BOOK" LIMIT 1',
+		[ ':tpid' => $tpid]
+	)->totals;
 
 	$btnClass = i()->ok ? '' : ' -disabled';
 
 	$ui = new Ui('span', 'ui-like-status');
 	if ($error) $ui->add($error);
 
-	/*
-	$ui->add('<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/rate').'" data-rel="box" rel="nofollow"><i class="icon -star -gray"></i><span>'.$ratings.' Ratings</span> <span>'.$views.' Views</span></a>');
-	$ui->add('<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/like').'" data-rel="replace:.ui-like-status" title="'.number_format($likeTotals['TOPIC.LIKE']->totals).' People Like this" rel="nofollow"><i class="icon -thumbup '.(in_array('TOPIC.LIKE',$isMyAction) ? '' : '-gray').'"></i><span>Like</span></a>');
-	$ui->add('<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/bookmark').'" data-rel="replace:.ui-like-status" title="'.number_format($likeTotals['TOPIC.BOOK']->totals).' Peoples bookmark this" rel="nofollow"><i class="icon -favorite '.(in_array('TOPIC.BOOK',$isMyAction) ? '' : '-outline -gray').'"></i><span>Bookmark</span></a>');
-	*/
+	$ui->add(
+		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/rate').'" rel="nofollow" data-width="600" data-rel="box" title="คลิกเพื่อรีวิวและให้คะแนน">':'<a class="btn -link'.$btnClass.'">')
+		.'<i class="icon -material rating-star '.($ratings != '' ? '-rate-'.round($ratings) : '').'">star</i>'
+		.'<span>'.$ratings.' Ratings</span><span>'.$views.' Views</span>'
+		.'</a>'
+	);
 
 	$ui->add(
-				(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/rate').'" rel="nofollow" data-width="600" data-rel="box" title="คลิกเพื่อรีวิวและให้คะแนน">':'<a class="btn -link'.$btnClass.'">')
-				.'<i class="icon -material rating-star '.($ratings != '' ? '-rate-'.round($ratings) : '').'">star</i>'
-				.'<span>'.$ratings.' Ratings</span><span>'.$views.' Views</span>'
-				.'</a>'
-			);
+		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/like').'" data-rel="replace:.ui-like-status" title="'.number_format($likeTotals).' People Like this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
+		. '<i class="icon -thumbup '.(array_key_exists('TOPIC.LIKE',$isMyAction) ? '' : '-gray').'"></i>'
+		. '<span>'.($likeTotals ? $likeTotals.' Likes' : 'Like').'</span>'
+		. '</a>'
+	);
+
 	$ui->add(
-				(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/like').'" data-rel="replace:.ui-like-status" title="'.number_format($likeTotals).' People Like this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
-				. '<i class="icon -thumbup '.(in_array('TOPIC.LIKE',$isMyAction) ? '' : '-gray').'"></i>'
-				. '<span>'.($likeTotals ? $likeTotals.' Likes' : 'Like').'</span>'
-				. '</a>'
-			);
-	$ui->add(
-				(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/bookmark').'" data-rel="replace:.ui-like-status" title="'.number_format($bookmarkTotals).' Peoples Bookmark this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
-				. '<i class="icon -favorite '.(in_array('TOPIC.BOOK',$isMyAction) ? '' : '-outline -gray').'"></i>'
-				. '<span class="">Bookmark</span>'
-				. '</a>'
-			);
+		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/bookmark').'" data-rel="replace:.ui-like-status" title="'.number_format($bookmarkTotals).' Peoples Bookmark this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
+		. '<i class="icon -material '.(array_key_exists('TOPIC.BOOK',$isMyAction) ? '-active' : '-gray').'">bookmark_add</i>'
+		. '<span class="">Bookmark</span>'
+		. '</a>'
+	);
+
 	$ret .= $ui->build();
+
 	return $ret;
 }
 ?>

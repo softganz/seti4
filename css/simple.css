@@ -1417,13 +1417,13 @@ $SCREENS
 
 	.admin-panel h3 {padding:8px;background-color: #ccc;}
 
-	.icon.rating-star {color: #ccc; border-radius: 50%; border: none;}
-	.rating-star.-rate-0 {color: #dfff00;}
-	.rating-star.-rate-1 {color: #dfff00;}
-	.rating-star.-rate-2 {color: #ffcc00;}
-	.rating-star.-rate-3 {color: #a5ff00;}
-	.rating-star.-rate-4 {color: #84cc00;}
-	.rating-star.-rate-5 {color: #3a8c00;}
+	.icon.rating-star {color: #ccc; border-radius: 50%; border: none; background-color: #fff;}
+	.rating-star.-rate-0 {color: #dfff00; background-color: #b9d400;}
+	.rating-star.-rate-1 {color: #dfff00; background-color: #b9d400;}
+	.rating-star.-rate-2 {color: #ffcc00; background-color: #ff9300;}
+	.rating-star.-rate-3 {color: #a5ff00; background-color: #4ed000;}
+	.rating-star.-rate-4 {color: #5ddf00; background-color: #659c00;}
+	.rating-star.-rate-5 {color: #5ddf00; background-color: #3a8c00;}
 
 	.sg-datepicker {z-index: 999999;}
 

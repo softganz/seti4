@@ -247,7 +247,7 @@
 	.ui-like-status .icon {color: #ccc;}
 	.ui-like-status .icon.-active {color: #333;}
 	.ui-like-status .icon.-green {color: green;}
-	.ui-like-status .icon.-yellow {color: #ffb200;}
+	.ui-like-status .icon.-yellow {color: #ffb200; background-color: #f60; border-radius: 50%; width: 22px; height: 22px; font-size: 22px;}
 	.ui-like-status .icon.-red {color: red;}
 
 
