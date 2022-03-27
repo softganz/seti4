@@ -386,7 +386,7 @@ $SCREENS
 	.center {margin:0 auto; display:table; float:none;	}
 	.big {font-size: 1.3em;}
 
-	.notify {background: #FAD163; margin: 8px 0; padding:4px; text-align: center; position: relative;}
+	.notify {background: #FAD163; margin: 8px 0; padding:4px; text-align: center; position: relative; overflow: hidden;}
 	span.notify {padding:0 2px; margin: 0 5px; display: inline-block; border-radius: 10px; cursor: pointer;}
 
 	.messages {padding:10px; width:70%; margin:20px auto; background:#eee; border-radius:0; border-left: 2px #999 solid;}
