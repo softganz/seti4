@@ -72,14 +72,14 @@ function paper_like_status($self, $tpid, $status = NULL) {
 	);
 
 	$ui->add(
-		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/like').'" data-rel="replace:.ui-like-status" title="'.number_format($likeTotals).' People Like this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
+		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/like').'" data-rel="replace:.ui-like-status" data-options=\'{"silent": true}\' title="'.number_format($likeTotals).' People Like this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
 		. '<i class="icon -thumbup '.(array_key_exists('TOPIC.LIKE',$isMyAction) ? '' : '-gray').'"></i>'
 		. '<span>'.($likeTotals ? $likeTotals.' Likes' : 'Like').'</span>'
 		. '</a>'
 	);
 
 	$ui->add(
-		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/bookmark').'" data-rel="replace:.ui-like-status" title="'.number_format($bookmarkTotals).' Peoples Bookmark this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
+		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/bookmark').'" data-rel="replace:.ui-like-status" data-options=\'{"silent": true}\' title="'.number_format($bookmarkTotals).' Peoples Bookmark this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
 		. '<i class="icon -material '.(array_key_exists('TOPIC.BOOK',$isMyAction) ? '-active' : '-gray').'">bookmark_add</i>'
 		. '<span class="">Bookmark</span>'
 		. '</a>'
