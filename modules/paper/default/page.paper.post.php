@@ -40,7 +40,6 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 		if (user_access('administer papers')) user_menu('post','Create new topic',url('paper/post'));
 		$self->theme->navigator = user_menu();
 
-
 		$types = model::get_topic_type();
 		$self->theme->title = 'Create content</h2>';
 		$is_type_post = false;
@@ -70,7 +69,7 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 
 	event_tricker('paper.post.init',$self,$topic);
 
-	//debugMsg($moduleName.'.paper.post.permission');
+	// debugMsg($moduleName.'.paper.post.permission');
 
 	if ($moduleName && !R::On($moduleName.'.paper.post.permission',$self, $type, $tid)) {
 		return message('error','Access denied');

@@ -8,8 +8,6 @@
 * @return Object $options
 */
 
-$debug = true;
-
 function on_paper_paper_post_permission() {
 	return true;
 }

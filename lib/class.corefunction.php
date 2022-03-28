@@ -657,6 +657,7 @@ class SgCore {
 				$fileName = 'on.';
 				$funcName = 'on_';
 				$paths[] = 'modules/'.$module.'/r';
+				$paths[] = 'core/modules/'.$module.'/r';
 				$paths[] = 'core/models';
 				break;
 
