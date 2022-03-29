@@ -37,7 +37,8 @@ function widget_project() {
 	if ($para->{'data-projectid'}) mydb::where('p.`tpid` = :projectId', ':projectId', $para->{'data-projectid'});
 	if (!empty($para->{'data-set'})) mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$para->{'data-set'});
 
-	$stmt='SELECT
+	$dbs = mydb::select(
+		'SELECT
 		tr.`trid`, tr.`calid`, tr.`tpid`
 		, p.`projectset`, t.`title`
 		, c.`title` `actionTitle`
@@ -54,8 +55,8 @@ function widget_project() {
 		%WHERE%
 		GROUP BY tr.`trid`
 		ORDER BY tr.`trid` DESC
-		LIMIT '.$para->{"data-limit"};
-	$dbs=mydb::select($stmt);
+		LIMIT '.$para->{"data-limit"}
+	);
 	// if (i()->username == 'softganz') {
 	// 	debugMsg($para, '$para');
 	// 	debugMsg(mydb()->_query);
@@ -63,34 +64,42 @@ function widget_project() {
 
 	if ($dbs->_empty) return array($ret,$para);
 
-	$cardUi = new Ui('div', 'ui-card topic-list'.($para->{'data-class'} ? ' '.$para->{'data-class'} : ''));
-	//$ret='<ul class="topic-list'.($para->{'data-class'} ? ' '.$para->{'data-class'} : '').'">'._NL;
-	foreach ($dbs->items as $rs) {
-	  list($photo)=explode(',',$rs->photos);
-	  $linkUrl = url('project/'.$rs->tpid.'/action.view/'.$rs->trid);
-	  $linkTitle = htmlspecialchars($rs->title);
-	  $cardUi->add(
-	  		($photo ? '<a href="'.$linkUrl.'" title="'.$linkTitle.'"><img class="photo" src="'.cfg('paper.upload.photo.url').$photo.'" width="'.$para->{"data-show-photo-width"}.'" height="'.$para->{"data-show-photo-height"}.'" alt="'.$linkTitle.'" /></a>' : '')
-	  		. '<h3><a href="'.$linkUrl.'" title="'.$linkTitle.'">'.$rs->title.'</a></h3>'
-	  		. '<span class="summary">'
-	  		. ($rs->actionTitle ? '<span class="-subtitle">'.$rs->actionTitle.' : </span>' : '')
-	  		. '<span class="-output">'.trim(strip_tags(sg_text2html($rs->outputOutcome ? $rs->outputOutcome : $rs->actionDetail)))
-	  		. '</span>'
-	  		. '<span class="timestamp">@'.sg_date($rs->created,'d ดด ปป H:i').'</span>'._NL,
-	  		array(
-	  			'class' => 'sg-action'
-	  				. ($para->{'data-item-class'} ? ' '.$para->{'data-item-class'} : ''),
-	  			'href' => $linkUrl,
-	  		)
-	  	);
-	}
+	$tagName = $para->{'data-show-style'};
+
+	$cardUi = new Ui([
+		'tagName' => $tagName,
+		'class' => 'ui-card topic-list'.($para->{'data-class'} ? ' '.$para->{'data-class'} : ''),
+		'children' => array_map(
+			function ($rs) {
+				list($photo) = explode(',', $rs->photos);
+				$linkUrl = url('project/'.$rs->tpid.'/action.view/'.$rs->trid);
+				$linkTitle = htmlspecialchars($rs->title);
+
+				return [
+					'text' => ($photo ? '<a href="'.$linkUrl.'" title="'.$linkTitle.'"><img class="photo" src="'.cfg('paper.upload.photo.url').$photo.'" width="'.$para->{"data-show-photo-width"}.'" height="'.$para->{"data-show-photo-height"}.'" alt="'.$linkTitle.'" /></a>' : '')
+						. '<h3><a href="'.$linkUrl.'" title="'.$linkTitle.'">'.$rs->title.'</a></h3>'
+						. '<span class="summary">'
+						. ($rs->actionTitle ? '<span class="-subtitle">'.$rs->actionTitle.' : </span>' : '')
+						. '<span class="-output">'.trim(strip_tags(sg_text2html($rs->outputOutcome ? $rs->outputOutcome : $rs->actionDetail)))
+						. '</span>'
+						. '<span class="timestamp">@'.sg_date($rs->created,'d ดด ปป H:i').'</span>'._NL,
+					'options' => [
+						'class' => 'sg-action'
+							. ($para->{'data-item-class'} ? ' '.$para->{'data-item-class'} : ''),
+						'href' => $linkUrl,
+					]
+				];
+			}, $dbs->items
+		), // children
+	]);
+
 	$ret .= $cardUi->build()._NL;
 
 	if ($para->{'show-readall'}) {
-		list($readalltext,$readallurl)=explode(':',$para->{'show-readall'});
-		$ret.='<p class="readall"><a href="'.url($readallurl).'">'.$readalltext.'</a></p>';
+		list($readalltext, $readallurl) = explode(':',$para->{'show-readall'});
+		$ret .= '<p class="readall"><a href="'.url($readallurl).'">'.$readalltext.'</a></p>';
 	}
 	if ($para->{'data-footer'}) $ret .= $para->{'data-footer'}._NL;
-	return array($ret,$para);
+	return [$ret, $para];
 }
 ?>
