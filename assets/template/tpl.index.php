@@ -49,8 +49,8 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 -->
 
-<script type="text/javascript" src="<?php echo $jsLocation;?>library<?php echo cfg('library.version')?'-'.cfg('library.version'):'';?>.min.js<?php echo cfg('theme.stylesheet.para');?>"></script>
-<script type="text/javascript" src="<?php echo $jsLocation;?>sgui.min.js<?php echo cfg('theme.stylesheet.para');?>"></script>
+<script type="text/javascript" src="<?php echo $jsLocation.'library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js').cfg('theme.stylesheet.para');?>"></script>
+<script type="text/javascript" src="<?php echo $jsLocation.($_SESSION['devMode'] ? 'sgui.js':'sgui.min.js').cfg('theme.stylesheet.para');?>"></script>
 
 
 <?php if (!cfg('head.include.first')) echo implode(_NL,head());?>

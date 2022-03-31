@@ -207,6 +207,11 @@ session_set_save_handler(
 
 session_start();
 
+// Set JS Min file, ?jsMin=no/yes/clear
+if (array_key_exists('devMode', $_GET)) {
+	if (in_array($_GET['devMode'], ['','clear'])) unset($_SESSION['devMode']);
+	else $_SESSION['devMode'] = 'yes';
+}
 
 
 /**
