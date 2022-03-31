@@ -1,22 +1,17 @@
 <?php
 /**
-* Module :: Description
-* Created 2022-03-31
+* Admin :: Site Configuration
+* Created 2016-11-08
 * Modify  2022-03-31
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage admin/config
 */
 
+import('widget:admin.menu.config.php');
+
 class AdminConfig extends Page {
-	var $arg1;
-
-	function __construct($arg1 = NULL) {
-		$this->arg1 = $arg1;
-	}
-
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
@@ -26,22 +21,10 @@ class AdminConfig extends Page {
 			'body' => new Container([
 				'class' => 'admin-panel',
 				'children' => [
-					R::View('admin.menu.config'),
+					new AdminMenuConfigWidget(),
 				], // children
 			]), // Widget
 		]);
 	}
-}
-?>
-
-<?php
-function admin_config($self) {
-	$self->theme->title='Site Configuration';
-	$ret.='<div class="admin-panel">';
-	$ret.='<div class="body">';
-	$ret.=R::View('admin.menu.config');
-	$ret.='</div>';
-	$ret.='</div>';
-	return $ret;
 }
 ?>
