@@ -17,12 +17,12 @@ class AdminMenuLogWidget extends Widget {
 					'children' => [
 						new ListTile([
 							'crossAxisAlignment' => 'start',
-							'title' => 'Ban Lis',
+							'title' => 'Ban List',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
 								'class' => 'btn',
 								'url' => url('admin/log/ban'),
-								'text' => 'Ban Lis',
+								'text' => 'Ban List',
 							]),
 							'subtitle' => 'View IP ban list.',
 						]),
