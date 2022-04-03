@@ -74,8 +74,6 @@ class Table extends Widget {
 			$ret .= '</colgroup>'._NL;
 		}
 
-
-
 		// Create table header
 		if (!isset($this->thead) && isset($this->header))
 			$this->thead = $this->header;
@@ -103,8 +101,10 @@ class Table extends Widget {
 				++$colNo;
 			}
 			$headerTag .= '</tr>';
+		} else {
+			$headerTag = '';
 		}
-		$ret .= $$this->showHeader ? '<thead>'.$headerTag.'</thead>'._NL : '';
+		$ret .= $this->showHeader ? '<thead>'.$headerTag.'</thead>'._NL : '';
 
 
 
