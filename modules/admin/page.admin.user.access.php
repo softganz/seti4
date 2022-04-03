@@ -32,9 +32,11 @@ function admin_user_access($self) {
 	$ret .= '<form class="sg-form" method="post" action="'.url(q()).'" data-rel="notify" >';
 
 
-	$tables = new Table();
-	$tables->addConfig('showHeader',false);
-	$tables->thead['permission -nowrap']='Permission';
+	$tables = new Table([
+		'showHeader' => false,
+		'thead' => ['permission -nowrap' => 'Permission'],
+	]);
+
 	foreach ($roles as $role_name=>$role_perm) {
 		$tables->thead['center -'.$role_name]=$role_name;
 		$roles->$role_name=explode(',',$role_perm);

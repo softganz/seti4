@@ -1,16 +1,16 @@
 <?php
 /********************************************
-* Class :: Table
-* Table class for create table
+* Widget :: Table
+* Table widget for create table
 *
 * Created 2020-10-01
-* Modify  2021-09-14
+* Modify  2022-04-03
 *
 * @usage new Table([key => value])
 ********************************************/
 
 class Table extends Widget {
-	var $config = ['showHeader' => true];
+	var $config = [];
 	var $class = 'widget-table item';
 	var $showHeader = true;
 	var $repeatHeader = 0;
@@ -38,7 +38,6 @@ class Table extends Widget {
 		$colgroups = [];
 		$headerkey = [];
 		$captionStr = SG\getFirst($this->config->caption,$this->caption);
-		$showHeader = SG\getFirst($this->showHeader, $config->showHeader);
 
 		// Create table tag
 		$ret = '<table';
@@ -63,14 +62,14 @@ class Table extends Widget {
 		if (isset($this->colgroup) && is_array($this->colgroup)) {
 			$colgroups = $this->colgroup;
 			$ret .= '<colgroup>'._NL;
-			$cno = 1;
+			$colNo = 1;
 			foreach ($colgroups as $key => $value) {
 				if (is_array($value) || (is_string($value) && substr($value, 0, 1) == '{')) {
 					$value = sg_implode_attr(sg_json_decode($value));
 				}
 				$ret .= '<col '.$value.'/>'._NL;
-				$headerkey[$cno] = is_numeric($key) ? '-col-'.$cno : $key;
-				$cno++;
+				$headerkey[$colNo] = is_numeric($key) ? '-col-'.$colNo : $key;
+				$colNo++;
 			}
 			$ret .= '</colgroup>'._NL;
 		}
@@ -88,23 +87,24 @@ class Table extends Widget {
 				$headerTag
 			);
 		} else if (isset($this->thead) && is_array($this->thead)) {
-			$cno = 1;
+			$colNo = 1;
 			$headerTag = '<tr class="header">';
 			foreach ($this->thead as $thkey => $th) {
-				$thkey = is_numeric($thkey) ? $cno : $thkey;
+				if (is_null($th)) continue;
+				$thkey = is_numeric($thkey) ? $colNo : $thkey;
 				if (!$colgroups) {
-					$headerkey[$cno] = is_numeric($thkey) ? 'col-'.$thkey : $thkey;
+					$headerkey[$colNo] = is_numeric($thkey) ? 'col-'.$thkey : $thkey;
 				}
 				if (substr($th,0,4) == '<th ') {
 					$headerTag .= $th;
 				} else {
 					$headerTag .= '<th class="header-'.$thkey.'">'.$th.'</th>';
 				}
-				++$cno;
+				++$colNo;
 			}
 			$headerTag .= '</tr>';
 		}
-		$ret .= $showHeader ? '<thead>'.$headerTag.'</thead>'._NL : '';
+		$ret .= $$this->showHeader ? '<thead>'.$headerTag.'</thead>'._NL : '';
 
 
 
@@ -114,7 +114,7 @@ class Table extends Widget {
 	 	unset($this->rows);
 
 		if (isset($this->children)) {
-			$rno = 0;
+			$rowNo = 0;
 
 			$ret .= '<tbody>'._NL;
 			foreach ($this->children as $row) {
@@ -123,7 +123,7 @@ class Table extends Widget {
 					continue;
 				}
 
-				if ($this->repeatHeader && $rno && $rno % $this->repeatHeader == 0)
+				if ($this->repeatHeader && $rowNo && $rowNo % $this->repeatHeader == 0)
 					$ret .= $headerTag._NL;
 				$rowConfig = [];
 				if (is_array($row) && array_key_exists('config', $row)) {
@@ -136,9 +136,9 @@ class Table extends Widget {
 					continue;
 				}
 
-				++$rno;
+				++$rowNo;
 
-				$rowConfig['class'] = 'row -row-'.$rno.(isset($rowConfig['class']) ? ' '.$rowConfig['class'] : '');
+				$rowConfig['class'] = 'row -row-'.$rowNo.(isset($rowConfig['class']) ? ' '.$rowConfig['class'] : '');
 				if (array_key_exists('attr', $rowConfig)) {
 					$attr = $rowConfig['attr'].' ';
 					unset($rowConfig['attr']);
@@ -152,10 +152,10 @@ class Table extends Widget {
 				$attr = trim($attr);
 				$ret .= '<tr '.$attr.'>'._NL;
 
-				$cno=0;
+				$colNo = 0;
 
 				foreach ($row as $colKey => $colData) {
-					++$cno;
+					++$colNo;
 					if (is_object($colData)) $colData = 'Object';
 					else if (is_array($colData)) {
 						// Column data is an Array
@@ -172,7 +172,7 @@ class Table extends Widget {
 							}
 						}
 						if (!$already_class)
-							$ret .= $headerkey[$cno] ? ' class="col '.$headerkey[$cno].' col-'.$headerkey[$cno].'"' : '';
+							$ret .= $headerkey[$colNo] ? ' class="col '.$headerkey[$colNo].' col-'.$headerkey[$colNo].'"' : '';
 						$ret.='>'.$colvalue.'</td>'._NL;
 					} else if (strtolower(substr($colData, 0, 3)) == '<th') {
 						// Column data is TH
@@ -182,12 +182,12 @@ class Table extends Widget {
 						$ret .= $colData._NL;
 					} else {
 						// Column data is String
-						list($colFirstKey) = explode(' ', trim($headerkey[$cno]));
+						list($colFirstKey) = explode(' ', trim($headerkey[$colNo]));
 						$ret .= '	<td';
 						if (is_string($colKey) && substr($colKey, 0, 1) != '-')
 							$ret .= ' class="'.$colKey.'"';
 						else
-							$ret .= ($headerkey[$cno] ? ' class="col -'.$headerkey[$cno].' col-'.$colFirstKey.(is_string($colKey)?' '.$colKey:'').'"' : '');
+							$ret .= ($headerkey[$colNo] ? ' class="col -'.$headerkey[$colNo].' col-'.$colFirstKey.(is_string($colKey)?' '.$colKey:'').'"' : '');
 						$ret .= '>'.$colData.'</td>'._NL;
 					}
 				}
@@ -202,7 +202,7 @@ class Table extends Widget {
 			if (is_string($this->tfoot)) {
 				$ret .= $this->tfoot._NL;
 			} else if (is_array($this->tfoot)) {
-				$cno = 0;
+				$colNo = 0;
 				foreach ($this->tfoot as $tfoot) {
 					if (is_string($tfoot)) {
 						$ret .= $tfoot._NL;
@@ -211,10 +211,10 @@ class Table extends Widget {
 						unset($tfoot['config']);
 						$ret .= '<tr'.($tfootconfig['style'] ? ' style="'.$tfootconfig['style'].'"' : '').'>'._NL;
 
-						$cno = 0;
+						$colNo = 0;
 						foreach ($tfoot as $tfoot_text) {
-							++$cno;
-							$ret .= '	'.(strtolower(substr($tfoot_text,0,3)) == '<td' ? $tfoot_text : '<td class="col -'.$headerkey[$cno].' col-'.$headerkey[$cno].'">'.$tfoot_text.'</td>');
+							++$colNo;
+							$ret .= '	'.(strtolower(substr($tfoot_text,0,3)) == '<td' ? $tfoot_text : '<td class="col -'.$headerkey[$colNo].' col-'.$headerkey[$colNo].'">'.$tfoot_text.'</td>');
 							$ret .= _NL;
 						}
 						$ret .= '</tr>'._NL;
