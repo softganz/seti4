@@ -317,13 +317,11 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 	$dataOptions = (Object) [];
 	if (array_key_exists('options', $fld)) {
 		$dataOptions = json_decode($fld['options']);
-		//debugMsg($fld['options']);
-		// debugMsg($dataOptions,'$dataOptions');
 		unset($fld['options']);
 	}
 
 	if (isset($fld['container'])) {
-		$dataOptions->container = json_decode($fld['container']);
+		$container = json_decode($fld['container']);
 		unset($fld['container']);
 	}
 
@@ -340,7 +338,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 	if (is_null($fld['min-value'])) unset($fld['min-value']);
 	if (is_null($fld['max-value'])) unset($fld['max-value']);
 
-	$ret .= '<span class="inline-edit-item'.($dataOptions->container->class ? ' '.$dataOptions->container->class : '').($input_type ? ' -'.$input_type : '').'"'.($dataOptions->container->id ? ' id="'.$dataOptions->container->id.'"' : '').'>';
+	$ret .= '<span class="inline-edit-item'.($container->class ? ' '.$container->class : '').($input_type ? ' -'.$input_type : '').'"'.($container->id ? ' id="'.$container->id.'"' : '').'>';
 	if ($fld['label']) $ret .= '<label class="inline-edit-label">' . $fld['label'] . '</label>';
 
 
@@ -353,7 +351,8 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 		if (is_string($data)) $data = explode(',', '==เลือก==,' . $data);
 		else if (is_array($data) && count($data) > 0) $data = array('==เลือก==') + $data;
 
-		if ($fld['fld']) $attr .= 'data-fld="' . $fld['fld'] . '"';
+		if ($fld['fld']) $attr .= 'data-fld="' . $fld['fld'] . '" ';
+		unset($fld['fld']);
 
 
 		if (array_key_exists('value', $fld)) {

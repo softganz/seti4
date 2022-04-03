@@ -1038,11 +1038,14 @@ $(document).on('submit', 'form.sg-form', function(e) {
 		}
 
 		var dataOptions = $this.data('options')
+		// console.log('typeof container',typeof dataOptions.container)
+		// if (typeof dataOptions.container === "object") delete dataOptions.container
 		var settings = $.extend({}, $.fn.sgInlineEdit.defaults, defaults, options, dataOptions)
-
+		// console.log(typeof settings.container)
+		// if (typeof settings.container === 'object') delete settings.container
 		//console.log('dataOptions',dataOptions)
 		//console.log($this.data('options'))
-		//console.log('SG-INLINE-EDIT SETTING:',settings)
+		console.log('SG-INLINE-EDIT SETTING:',settings)
 
 		if ($this.data('type') == 'textarea') settings.inputcssclass = 'form-textarea'
 		else if ($this.data('type') == 'text') settings.inputcssclass = 'form-text'

@@ -448,6 +448,57 @@ class Icon extends Widget {
 	}
 }
 
+class InlineEdit extends Widget {
+	var $widgetName = 'InlineEdit';
+	// var $tagName = 'span';
+	var $version = '0.01';
+	var $text;
+	var $type;
+	var $editMode;
+	var $emptyText = '...';
+	var $selectOptions = [];
+
+	function __construct($args = []) {
+		parent::__construct($args);
+	}
+
+	function _render() {
+		// SG\inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'text', $data = [], $emptytext = '...')
+		$fld = [];
+		if ($this->label) $fld['label'] = $this->label;
+		if (!is_null($this->group)) $fld['group'] = $this->group;
+		if (!is_null($this->field)) $fld['fld'] = $this->field;
+		if (!is_null($this->value)) $fld['value'] = $this->value;
+		if (!is_null($this->minValue)) $fld['min-value'] = $this->minValue;
+		if (!is_null($this->maxValue)) $fld['max-value'] = $this->maxValue;
+		if (!is_null($this->require)) $fld['require'] = $this->require;
+		if (!is_null($this->ret)) $fld['ret'] = $this->ret;
+		if (!is_null($this->preText)) $fld['pretext'] = $this->preText;
+		if (!is_null($this->postText)) $fld['posttext'] = $this->postText;
+		if (!is_null($this->options)) $fld['options'] = $this->options;
+		if (!is_null($this->description)) $fld['desc'] = $this->desc;
+		$fld['container'] = is_null($this->container) ? (Object) [] : $this->container;
+
+		if ($this->inputClass) $fld['class'] = $this->inputClass;
+		$fld['container']->class = 'widget-inlineedit'.($this->class ? ' '.$this->class : '');
+
+		$ret = SG\inlineEdit($fld, $this->text, $this->editMode, $this->type, $this->selectOptions, $this->emptyText);
+		// debugMsg($fld, '$fld');
+		return $ret;
+	}
+
+	// @override
+	function toString() {
+		$ret = '<!-- Start of '.$this->widgetName.' -->'._NL;
+		$ret .= $this->_renderWidgetContainerStart();
+		$ret .= $this->_render();
+		if ($this->debug) $ret .= (new DebugMsg($this, '$this'))->build();
+		$ret .= $this->_renderWidgetContainerEnd()._NL;
+		$ret .= '<!-- End of '.$this->widgetName.' -->'._NL;
+		return $ret;
+	}
+} // End of class Container
+
 // Complex Widget
 
 class Scaffold extends Widget {

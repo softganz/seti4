@@ -84,6 +84,8 @@
 .widget-dropbox {}
 
 
+.widget-inlineedit {display: block;}
+	.widget-inlineedit.-hots>label {font-weight: bold;}
 
 .ui-nav {}
 	.ui-nav.-sg-text-center {text-align: left;}
