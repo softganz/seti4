@@ -227,8 +227,5 @@ class Table extends Widget {
 		return $ret;
 	}
 
-	// @override
-	function build() {return $this->toString();}
-
 } // End of class Table
 ?>
