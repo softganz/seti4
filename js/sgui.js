@@ -1045,7 +1045,7 @@ $(document).on('submit', 'form.sg-form', function(e) {
 		// if (typeof settings.container === 'object') delete settings.container
 		//console.log('dataOptions',dataOptions)
 		//console.log($this.data('options'))
-		console.log('SG-INLINE-EDIT SETTING:',settings)
+		// console.log('SG-INLINE-EDIT SETTING:',settings)
 
 		if ($this.data('type') == 'textarea') settings.inputcssclass = 'form-textarea'
 		else if ($this.data('type') == 'text') settings.inputcssclass = 'form-text'
@@ -1099,9 +1099,9 @@ $(document).on('submit', 'form.sg-form', function(e) {
 
 		self.save = function($this, value, callback) {
 			//console.log('Update Value = '+value)
-		// console.log($parent.data('updateUrl'))
-		// console.log('postUrl = ', postUrl)
-		// console.log($parent.data());
+			// console.log($parent.data('updateUrl'))
+			// console.log('postUrl = ', postUrl)
+			// console.log($parent.data());
 
 			if (postUrl === undefined) {
 				console.log('POSTURL UNDEFINED')
@@ -1196,22 +1196,11 @@ $(document).on('submit', 'form.sg-form', function(e) {
 					+ (debug && data.debug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br />PARAMETER : group = '+para.group+', FIELD = '+para.fld+', TRAN = '+para.tr+', VALUE = '+data.value+'<br />DEBUG : '+data.debug+'<br />Return : TRAN = '+data.tr+'<br />'+replaceTrMsg+'</div>' : ''),
 					debug ? 300000 : 5000);
 
-				// Process Done Action
-				if (settings.done) sgActionDone(settings.done, $this, data);
-
-				/*
-				if (settings.rel) {
-					if (settings.ret) {
-						//console.log("Return URL "+settings.ret)
-						$.post(settings.ret, function(html) {
-							sgUpdateData(html, settings.rel, $this)
-						})
-					} else {
-						sgUpdateData(data.value, settings.rel, $this)
-					}
-				}
-				*/
-
+			}, settings.result)
+			.fail(function(data) {
+				notify('ERROR ON POSTING. Please Contact Admin.');
+				// console.log(data)
+			}).done(function(data) {
 				// Process callback function
 				var callbackFunction =  settings.callback ? settings.callback : $this.data('callback')
 
@@ -1225,46 +1214,11 @@ $(document).on('submit', 'form.sg-form', function(e) {
 						window.location = callbackFunction;
 					}
 				}
-			}, settings.result)
-			.fail(function(data) {
-				notify('ERROR ON POSTING. Please Contact Admin.');
-				// console.log(data)
-			}).done(function(data) {
-				// console.log($this.data('done'),$this,data)
-				sgActionDone($this.data('done'), $this, data)
+
+				// Process action done
+				if (settings.done) sgActionDone(settings.done, $this, data);
 				console.log('$.sgInlineEdit DONE!!!')
 			});
-
-
-			/*
-			if (firebaseConfig) {
-				//console.log(para);
-				var data = {}
-				data.tags = 'Project Transaction Update';
-				if (typeof para.id != 'undefined')
-					data.tpid = para.id;
-				if (typeof para.group != 'undefined')
-					data.group = para.group;
-				if (typeof para.fld != 'undefined')
-					data.field = para.fld;
-				if (typeof para.tr != 'undefined')
-					data.tr = para.tr;
-				data.value = para.value;
-				data.url = window.location.href;
-				data.time = firebase.database.ServerValue.TIMESTAMP;
-				//console.log(data)
-				//ref = database.ref('/update/aa/');
-				ref.push(data, function(error){
-					if (error) {
-						console.log('Data could not be saved.' + error);
-					} else {
-						console.log('Data saved successfully.');
-					}
-				});
-				//ref.off();
-				//console.log(ref);
-			}
-			*/
 		}
 
 		// SAVE value immediately when radio or checkbox click
