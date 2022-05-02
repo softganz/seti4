@@ -901,17 +901,21 @@ class MyDb {
 	* @return record set
 	*/
 	public static function convert_record_to_recordset($rs) {
-		$value->_type='record set';
-		$value->_empty=true;
-		$value->_error=false;
-		$value->_num_rows=0;
-		$value->items=array();
+		$value = (Object) [
+			'_type' => 'record set',
+			'_empty' => true,
+			'_error' => false,
+			'_num_rows' => 0,
+			'items' => [],
+		];
+
 		if (!is_object($rs)) return $value;
+
 		if ($rs->_num_rows) {
-			foreach ($rs as $k=>$v) if (substr($k,0,1)=='_') unset($rs->$k);
-			$value->items[]=$rs;
-			$value->_num_rows=1;
-			$value->_empty=false;
+			foreach ($rs as $k => $v) if (substr($k,0,1) == '_') unset($rs->$k);
+			$value->items[] = $rs;
+			$value->_num_rows = 1;
+			$value->_empty = false;
 		}
 		return $value;
 	}
