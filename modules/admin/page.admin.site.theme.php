@@ -14,7 +14,6 @@ function admin_site_theme($self) {
 		if (!is_dir($theme_folder.'/'.$entry)) continue;
 		$themes[] = $entry;
 	}
-	asort($theme_folder);
 	$d->close();
 
 	// Show Theme Color Palatte

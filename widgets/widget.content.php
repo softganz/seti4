@@ -110,16 +110,19 @@ global $today;
 <div class=\"photo\"><a href=\"$_url\" title=\"".htmlspecialchars($title)."\">{$photo}</a></div>
 <div class=\"summary\">{$summary}</div>
 <div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"';
+
+	$topics = (Object) [];
+
 	if ($para->{'data-model'}) {
-		$model=$para->{'data-model'};
-		$topics=model::$model($para);
+		$model = $para->{'data-model'};
+		$topics = model::$model($para);
 	}
 	// debugMsg('$model = '.$model);
 	// debugMsg($para, '$para');
 	// debugMsg($topics->_query);
 	// debugMsg($topics,'$topics');
 
-	if ($topics->_type=='record') $topics=mydb::convert_record_to_recordset($topics);
+	if ($topics->_type == 'record') $topics = mydb::convert_record_to_recordset($topics);
 	if ($topics->_empty) return;
 
 	if (is_string($para->{'show-style'})) $pattern=$patterns->{$para->{'show-style'}};

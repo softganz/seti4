@@ -46,31 +46,41 @@ class View {
 			$topics->items[]=$args[0];
 			array_shift($args);
 		} else {
-			$topics->_num_rows=0;
-			$topics->items[]=array();
+			$topics = (Object) [
+				'_num_rows' => 0,
+				'items' => [],
+			];
 		}
 
 		$para=para($args,'url=paper/$tpid','limit=5');
 		$dateformat=SG\getFirst($para->dateformat,cfg('dateformat'));
 
-		$patterns->short->{'list-style'}='ul';
-		$patterns->short->value='" <span class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')." | <span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." replies</span>":"")."</span>"';
-
-		$patterns->reply->{'list-style'}='ul';
-		$patterns->reply->value='" <span class=\"timestamp\">".sg_date($last_reply,\''.$dateformat.'\')." | <span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." replies</span>":"")."</span>"';
-
-		$patterns->shortview->{'list-style'}='ul';
-		$patterns->shortview->value='" <span class=\"timestamp\">@".sg_date($created,\''.$dateformat.'\')." (<span class=\"view\">".$view."</span>".($reply?"|<span class=\"reply\">".$reply."</span>":"").")</span>"';
-
-		$patterns->detail->{'list-style'}='dl';
-		$patterns->detail->value='"<dd class=\"timestamp\">@".sg_date($created,\''.$dateformat.'\')."</dd>
-		<dd class=\"summary\">{$photo}{$summary}</dd>
-		<dd class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></dd>"';
-
-				$patterns->div->{'list-style'}='div';
-				$patterns->div->value='"<div class=\"timestamp\">@".sg_date($created,\''.$dateformat.'\')."</div>
-		<div class=\"summary\"><a href=\"$_url\" title=\"".htmlspecialchars($title)."\">{$photo}</a>{$summary}</div>
-		<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"';
+		$patterns = (Object) [
+			'short' => (Object) [
+				'list-style' => 'ul',
+				'value' => '" <span class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')." | <span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." replies</span>":"")."</span>"',
+			],
+			'reply' => (Object) [
+				'list-style' => 'ul',
+				'value' => '" <span class=\"timestamp\">".sg_date($last_reply,\''.$dateformat.'\')." | <span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." replies</span>":"")."</span>"',
+			],
+			'shortview' => (Object) [
+				'list-style' => 'ul',
+				'value' => '" <span class=\"timestamp\">@".sg_date($created,\''.$dateformat.'\')." (<span class=\"view\">".$view."</span>".($reply?"|<span class=\"reply\">".$reply."</span>":"").")</span>"',
+			],
+			'detail' => (Object) [
+				'list-style' => 'dl',
+				'value' => '"<dd class=\"timestamp\">@".sg_date($created,\''.$dateformat.'\')."</dd>
+					<dd class=\"summary\">{$photo}{$summary}</dd>
+					<dd class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></dd>"',
+			],
+			'div' => (Object) [
+				'list-style' => 'div',
+				'value' => '"<div class=\"timestamp\">@".sg_date($created,\''.$dateformat.'\')."</div>
+					<div class=\"summary\"><a href=\"$_url\" title=\"".htmlspecialchars($title)."\">{$photo}</a>{$summary}</div>
+					<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"',
+			],
+		];
 
 		if ($para->model) {
 			$model=$para->model;

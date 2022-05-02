@@ -48,7 +48,7 @@ cfg('core.version.code', 6);
 cfg('core.version.major', '4');
 cfg('core.version', '4.2.rc');
 cfg('core.location', ini_get('include_path'));
-cfg('core.release', '2022-03-08');
+cfg('core.release', '2022-05-01');
 cfg('core.folder', _CORE_FOLDER);
 cfg('core.config', _CONFIG_FILE);
 
