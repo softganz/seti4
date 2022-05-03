@@ -2,7 +2,7 @@
 /**
 * RSS :: Get Counter
 * Created 2021-09-20
-* Modify  2021-09-20
+* Modify  2022-05-03
 *
 * @param String $arg1
 * @return Widget
@@ -10,13 +10,63 @@
 * @usage rss/counter
 */
 
-$debug = true;
-
 class RssCounter extends Page {
-	var $arg1;
+	function build() {
+		// sendheader($type = 'text/xml');
+		$timer = new Timer();
+		$timer->start(0);
 
-	function __construct($arg1 = NULL) {
-		$this->arg1 = $arg1;
+		$day = SG\getFirst($para->day, 7);
+
+		$counter = cfg('counter');
+
+		mydb::value('$LIMIT$', $day);
+		$result = mydb::select(
+			'SELECT
+				`log_date`, SUM(`hits`) `hits`, SUM(`users`) `users`
+			FROM %counter_day%
+			GROUP BY `log_date`
+			ORDER BY `log_date` DESC
+			LIMIT $LIMIT$'
+		);
+
+		$timer->stop(0);
+
+		$channel = [
+			'title' => 'Counter Statistics',
+			'link' => cfg('domain').'/rss/counter/day/'.$day,
+			'description' => strip_tags(cfg('web.slogan')),
+			'language' => 'en-us',
+			'pubDate' => date('Y-m-d H:i:s'),
+			'lastBuildDate' => date('Y-m-d H:i:s'),
+			'generator' => 'SoftGanz RSS',
+			'managingEditor' => 'support@softganz.com',
+			'webMaster' => 'webmaster@softganz.com',
+			'responseTime' => $timer->get(0),
+			'online' => [
+				'date' => date('Y-m-d H:i:s'),
+				'members' => intval($counter->online_members),
+				'users' => intval($counter->online_count),
+				'memberName' => htmlspecialchars($counter->online_name),
+			],
+			'items' => [],
+		];
+
+		foreach ( $result->items as $rs) {
+			$channel['items'][] = [
+				'title' => 'stat',
+				'date' => $rs->log_date,
+				'hits' => intval($rs->hits),
+				'users' => intval($rs->users),
+				'description' => $rs->log_date.'/'.$rs->hits.'/'.$rs->users
+			];
+		}
+
+		return $channel;
+
+		// $ret .= $this->_create_rss($channel);
+
+		// return $ret;
 	}
 
 	/*
@@ -57,58 +107,6 @@ class RssCounter extends Page {
 <channel>
 '.$header.$items.'</channel>
 </rss>';
-		return $ret;
-	}
-
-	function build() {
-		sendheader($type = 'text/xml');
-		$timer = new timer();
-		$timer->start(0);
-
-		$day = SG\getFirst($para->day, 7);
-
-		$counter = cfg('counter');
-
-		mydb::value('$LIMIT$', $day);
-		$result = mydb::select(
-			'SELECT
-				`log_date`, SUM(`hits`) `hits`, SUM(`users`) `users`
-			FROM %counter_day%
-			GROUP BY `log_date`
-			ORDER BY `log_date` DESC
-			LIMIT $LIMIT$'
-		);
-
-		$timer->stop(0);
-
-		$channel = [
-			'title' => 'Counter Statistics',
-			'link' => cfg('domain').'/rss/counter/day/'.$day,
-			'description' => strip_tags(cfg('web.slogan')),
-			'language' => 'en-us',
-			'pubDate' => date('Y-m-d H:i:s'),
-			'lastBuildDate' => date('Y-m-d H:i:s'),
-			'generator' => 'SoftGanz RSS',
-			'managingEditor' => 'support@softganz.com',
-			'webMaster' => 'webmaster@softganz.com',
-			'item' => [
-				[
-					'title' => 'online',
-					'description' => date('Y-m-d H:i:s').'/'.$counter->online_members.'/'.$counter->online_count.'/'.htmlspecialchars($counter->online_name),
-				],
-				['title' => 'response time','description'=>$timer->get(0)],
-			],
-		];
-
-		foreach ( $result->items as $rs) {
-			$channel['item'][] = [
-				'title' => 'stat',
-				'description' => $rs->log_date.'/'.$rs->hits.'/'.$rs->users
-			];
-		}
-
-		$ret .= $this->_create_rss($channel);
-
 		return $ret;
 	}
 }
