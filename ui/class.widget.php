@@ -35,6 +35,7 @@ class Widget {
 				}
 			} else if (preg_match('/^(data\-)(.*)/', $argKey, $out) || in_array($argKey, ['rel', 'before', 'done', 'boxWidth', 'boxHeight'])) {
 				if ($out) $argKey = $out[2];
+				$this->{$argKey} = $argValue;
 				$this->data($argKey, $argValue);
 				$this->attribute['data-'.$argKey] = $argValue;
 			} else {

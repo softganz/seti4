@@ -2,12 +2,12 @@
  * SoftGanz JavaScript Library
  *
  * @package library
- * @version 4.00.002
+ * @version 4.00.004
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com>
  * http://www.softganz.com
  * @created 2009-09-22
- * @modify  2019-11-27
+ * @modify  2022-05-07
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,6 +177,7 @@ $(document).on('submit','form.signform', function(e) {
 		.fail(function(response) {
 			// Sometime sign in ok but error 500:Internal error or empty response
 			// On error, responseJSON have value ok
+			// console.log(response)
 			if (response.responseJSON.ok) {
 				console.log('SIGN IN RESPONSE FAIL BUT OK!!!!')
 				signInOk(response.responseJSON)
@@ -187,6 +188,7 @@ $(document).on('submit','form.signform', function(e) {
 		})
 		.done(function(result) {
 			console.log('SIGN IN DONE!!!!')
+			// console.log(result)
 			if (result.ok) signInOk(result)
 		});
 	}
