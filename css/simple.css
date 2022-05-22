@@ -217,12 +217,12 @@ $SCREENS
 	blockquote {margin: 5px 20px; padding: 5px 20px; background: #FFFFEE none left top no-repeat; border-left: 2px solid #F5F8EF;}
 
 	a {cursor: pointer;}
-	a.tagadelic {margin: 0 0 4px 0; padding: 4px 8px; line-height: 16pt; background: #eee; display: inline-block; border-radius: 4px;}
-	a.level1 {font-size: 100%;}
-	a.level2 {font-size: 120%;}
-	a.level3 {font-size: 140%;}
-	a.level4 {font-size: 160%;}
-	a.level5 {font-size: 180%;}
+	a.-tagadelic {margin: 0 0 4px 0; display: inline-block; border-radius: 4px;}
+	a.-level1 {font-size: 100%;}
+	a.-level2 {font-size: 120%;}
+	a.-level3 {font-size: 140%;}
+	a.-level4 {font-size: 160%;}
+	a.-level5 {font-size: 180%;}
 	a.-fill {display: block;}
 
 	h1 {font-size: 1.6em;}

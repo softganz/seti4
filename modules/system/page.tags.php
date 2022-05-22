@@ -43,7 +43,7 @@ function tags($self, $tagIdList = NULL) {
 		foreach ($tagDbs->items as $tag) {
 			if ($tag->process == -1) continue;
 			$level = round($tag->topics/$tag->max*4)+1;
-			$ret .= '<a href="'.url('tags/'.$tag->tid).'" class="tagadelic level'.$level.'">'.$tag->name.'</a> '._NL;
+			$ret .= '<a href="'.url('tags/'.$tag->tid).'" class="btn -tagadelic -level'.$level.'">'.$tag->name.'</a> '._NL;
 		}
 	} else if (is_numeric($tagIdList) || preg_match('/,/', $tagIdList)) {
 		// Show tag topics list
