@@ -53,8 +53,13 @@ class UserModel {
 
 	public static function create($user, $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = sg_json_decode($options, $defaults);
+		$options = SG\json_decode($options, $defaults);
 		$debug = $options->debug;
+
+		if (is_object($user)) ; // Do nothing
+		else if (is_string($user) && preg_match('/^{/',$user)) $user = SG\json_decode($user);
+		else if (is_array($user)) $user = (Object) $user;
+		else $user = (Object) [];
 
 		$result = (Object) [
 			'uid' => NULL,
@@ -64,7 +69,7 @@ class UserModel {
 			'auth' => 'user',
 			'process' => ['UserModel::create() => request'],
 		];
-		$user->encryptPassword = sg_encrypt($user->password,cfg('encrypt_key'));
+
 
 		// debugMsg($user,'$user');
 
@@ -80,8 +85,8 @@ class UserModel {
 			$result->process[] = 'create user and ready to used';
 		}
 
+		$user->encryptPassword = sg_encrypt($user->password,cfg('encrypt_key'));
 		$user->datein = 'func.NOW()';
-
 		if (empty($user->about)) $user->about = '';
 		if (empty($user->phone)) $user->phone = '';
 		if (empty($user->email)) $user->email = '';
