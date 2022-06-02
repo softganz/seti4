@@ -140,6 +140,48 @@ class UserModel {
 		return $result;
 	}
 
+	// delete user information
+	function delete($uid) {
+		$rs = UserModel::get($uid);
+		$result = (Object) [
+			'code' => NULL,
+			'message' => NULL,
+		];
+
+		$uid = $rs->uid;
+
+		if (empty($uid)) {
+			$result->code = _HTTP_ERROR_NOT_ALLOWED;
+			$result->message = 'User <em>'.$uid.'</em> not exists.';
+		} else if ($uid == 1) {
+			$result->code = _HTTP_ERROR_NOT_ALLOWED;
+			$result->message = 'User was lock.';
+		} else if ($rs->status == 'enable') {
+			$result->code = _HTTP_ERROR_NOT_ALLOWED;
+			$result->message = 'User was active.';
+		} else {
+			unset($result->code);
+			$result->message = 'User deleted.';
+			mydb::query(
+				'DELETE FROM %users% WHERE `uid` = :uid LIMIT 1',
+				[':uid' => $uid]
+			);
+
+			mydb::query(
+				'DELETE FROM %topic_user% WHERE `uid` = :uid',
+				[':uid' => $uid]
+			);
+
+			if (mydb::table_exists('org_officer')) {
+				mydb::query(
+					'DELETE FROM %org_officer% WHERE `uid` = :uid',
+					[':uid' => $uid]
+				);
+			}
+		}
+		return $result;
+	}
+
 	public static function clearLogin() {
 		$user = (Object) [
 			'ok' => false,
