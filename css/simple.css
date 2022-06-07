@@ -79,6 +79,7 @@ pre {tab-size: 1;}
 .-sg-block {display: block;}
 .-sg-inline-block {display: inline-block;}
 .-sg-nowrap {white-space: nowrap !important;}
+.-sg-line-through {text-decoration: line-through !important;}
 
 
 .-sg-16 {width: 16px !important; height: 16px !important; font-size: 16px !important;}
