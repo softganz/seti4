@@ -2269,7 +2269,7 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 		select: function(event, ui) {
 			// Return in ui.item.value , ui.item.label
 			// Do something with id
-			console.log('Select ' + ui.item.value);
+			// console.log('Select ' + ui.item.value);
 			if ($this.data('altfld')) {
 				var altElement = "#"+$this.data('altfld')
 				if ($form.find(altElement).length) {
@@ -2283,8 +2283,9 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 			// data-select = {"id-1":"result field key 1", "id-2":"result field key 2"}
 			if ($this.data('select')!=undefined) {
 				var selectValue=$this.data('select');
+				// console.log(selectValue)
 				if (typeof selectValue == 'object') {
-					//console.log(selectValue)
+					// console.log("Select Value is Object", selectValue)
 					var x;
 					for (x in selectValue) {
 						$('#'+x).val(ui.item[selectValue[x]]);

@@ -806,7 +806,7 @@ function sg_implode_attr($attr=array(), $sep = ' ', $options = '{}') {
 	if (is_array($attr)) {
 		foreach ($attr as $k => $v) {
 			if (is_null($v)) continue;
-			if ($k === 'data-options') {
+			if ($k === 'data-options' || (is_string($v) && preg_match('/^\{/', $v))) {
 				$ret .= $k.'='."'".trim($v)."'".$sep;
 			} else {
 				$ret .= $k.'='.$options->quote.$v.$options->quote.$sep;
