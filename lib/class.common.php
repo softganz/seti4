@@ -437,32 +437,42 @@ class Arrays {
 class Cache {
 	public static function add($cid, $data, $expire, $headers) {
 		$data = SG\json_encode($data);
-		$stmt = 'INSERT INTO %cache%
+		mydb::query(
+			'INSERT INTO %cache%
 			(`cid`, `data`, `expire`, `created`, `headers`)
 			VALUES
-			(:cid, :data, :expire, :created, :headers)';
-		mydb::query($stmt, ':cid', $cid, ':data', $data, ':expire', $expire, ':created', time(), ':headers', $headers);
+			(:cid, :data, :expire, :created, :headers)
+			ON DUPLICATE KEY UPDATE
+			`cid` = :cid',
+			[
+				':cid' => $cid,
+				':data' => $data,
+				':expire' => $expire,
+				':created' => time(),
+				':headers' => $headers,
+			]
+		);
 		// echo mydb()->_query;
 	}
 
 	public static function get($cid) {
-		$result = mydb::select('SELECT * FROM %cache% WHERE cid = :cid LIMIT 1', ':cid', $cid);
+		$result = mydb::select('SELECT * FROM %cache% c WHERE c.`cid` = :cid LIMIT 1', [':cid' => $cid]);
 		if ($result->count()) {
 			mydb::clearprop($result);
 			$result->data = preg_match('/^{/', $result->data) ? SG\json_decode($result->data) : unserialize($result->data);
+			$result->data->token = $result->data->session;
 			$result->remain = $result->expire - time();
 		}
 		return $result;
 	}
 
 	public static function clear($cid) {
-		mydb::query('DELETE FROM %cache% WHERE cid = :cid LIMIT 1', ':cid', $cid);
+		mydb::query('DELETE FROM %cache% WHERE cid = :cid LIMIT 1', [':cid' => $cid]);
 	}
 
 	public static function clear_expire() {
 		$ctime = time();
-		$sql_cmd = 'DELETE FROM %cache% WHERE (expire > 0) and (expire - '.$ctime.' < 0)';
-		mydb::query($sql_cmd);
+		mydb::query('DELETE FROM %cache% WHERE (expire > 0) and (expire - '.$ctime.' < 0)');
 		// *** Cause sign in error
 		//mydb::query('OPTIMIZE TABLE %cache%');
 	}

@@ -14,7 +14,7 @@
 $debug = true;
 
 function r_changwat_get($conditions = NULL, $options = '{}') {
-	$defaults = '{debug: false, result: "record"}';
+	$defaults = '{debug: false, result: "record", region: "changwat"}';
 	$options = SG\json_decode($options, $defaults);
 	$debug = $options->debug;
 
@@ -39,20 +39,20 @@ function r_changwat_get($conditions = NULL, $options = '{}') {
 	$changwatList = mydb::select($stmt)->items;
 	debugMsg($dbs, '$dbs');
 
-	if ($options->region == 'zone') {
-		$result = $result + array(
+	if ($options->region === 'country') {
+		$result = $result + [
 			'TH' => '++ ทั้งประเทศ',
-			'ระดับภาค' => array(
+			'ระดับภาค' => [
 				1 => '++ ภาคกลาง',
 				3 => '++ ภาคตะวันออกเฉียงเหนือ',
 				5 => '++ ภาคเหนือ',
 				8 => '++ ภาคใต้',
-			)
-		);
+			]
+		];
 	}
 
 	foreach ($changwatList as $rs) {
-		if ($options->region == 'changwat') {
+		if ($options->region === 'changwat') {
 			$result[$rs->provid] = $rs->provname;
 		} else {
 			$result['ระดับจังหวัด'][$rs->provid] = $rs->provname;

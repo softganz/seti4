@@ -676,8 +676,8 @@ sg_text2html($topic->post->body).'
 		$sql_cmd .= ' FROM %topic% AS t ';
 
 
-		if ($para->category || $para->tag) $sql_cmd .= '  LEFT JOIN %tag_topic% tp ON tp.tpid=t.tpid ';
 		if ($para->field->body) $sql_cmd .= '   LEFT JOIN %topic_revisions% AS r ON r.revid=t.revid';
+		if ($para->category || $para->tag) $sql_cmd .= '  LEFT JOIN %tag_topic% tp ON tp.tpid=t.tpid ';
 		if ($para->havephoto) $sql_cmd .= '		LEFT JOIN %topic_files% f ON f.`tpid`=t.`tpid` AND (`cid` IS NULL OR `cid` = 0) AND f.`type`="photo"';
 		// check query condition
 		if ($para->tpid) $where[] = 't.`tpid` = '.$para->tpid;

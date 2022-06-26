@@ -141,7 +141,7 @@ class UserModel {
 	}
 
 	// delete user information
-	function delete($uid) {
+	public static function delete($uid) {
 		$rs = UserModel::get($uid);
 		$result = (Object) [
 			'code' => NULL,
@@ -267,6 +267,37 @@ class UserModel {
 		return $user;
 	}
 
+	public static function externalSignIn($args) {
+		$result = (Object) [];
+		$session_id = $args['token'];
+		$cookielength = 10*365*24*60;
+		$remember_time = time()+$cookielength*60;
+		// if ($cookielength == -1) $cookielength = 10*365*24*60;
+
+		if ($args['email'] && $session_id) {
+			$user = mydb::select('SELECT * FROM %users% WHERE `email` = :email LIMIT 1', [':email' => $args['email']]);
+			$result->query = mydb()->_query;
+			// debugMsg($user, '$user');
+			if (!$user->uid) return (Object) ['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Invalid email'];
+			$result = (Object) [
+				'ok' => true,
+				'uid' => intval($user->uid),
+				'username' => $user->username,
+				'name' => $user->name,
+				'session' => $session_id,
+				'token' => $session_id,
+				'remember' => $cookielength*60,
+				'ip' => GetEnv('REMOTE_ADDR'),
+				'admin' => false,
+				'roles' => $user->roles ? explode(',',$user->roles) : [],
+			];
+
+			$_SESSION['user'] = $result;
+			cache::add('user:'.$session_id, $result, $remember_time, $result->username);
+		}
+		return $result;
+	}
+
 	public static function checkLogin() {
 		$user = (Object) [
 			'ok' => false,
@@ -274,6 +305,11 @@ class UserModel {
 		];
 
 		// echo ('Get login '.print_o($_COOKIE,'$_COOKIE'));
+
+		if (function_exists("apache_request_headers")) {
+			$headers = apache_request_headers();
+			$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+		}
 
 		// User sign in from any page
 		if ($_POST['username'] && $_POST['password']) {
@@ -311,6 +347,11 @@ class UserModel {
 			}
 			$user = $result;
 			$user->signInResult = tr('Sign in complete');
+			return $user;
+		} else if ($authHeader) {
+			list($authType, $authToken) = explode(' ', $authHeader);
+			$user = Cache::get('user:'.$authToken)->data;
+			// $user->authHeader = $authHeader;
 			return $user;
 		} else if ($token = post('token')) {
 			$user = Cache::get('user:'.$token)->data;

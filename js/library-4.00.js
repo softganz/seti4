@@ -2,12 +2,12 @@
  * SoftGanz JavaScript Library
  *
  * @package library
- * @version 4.00.004
+ * @version 4.00.05
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com>
  * http://www.softganz.com
  * @created 2009-09-22
- * @modify  2022-05-07
+ * @modify  2022-06-22
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 'use strict'
 
-console.log('SG-LIBRARY Version 4.00 loaded');
+console.log('SG-LIBRARY Version 4.00.05 loaded');
 
 let thaiMonthName = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 let debugSignIn = false
@@ -198,7 +198,7 @@ $(document).on('submit','form.signform', function(e) {
 
 
 $(document).ready(function() {
-	$('body').prepend('<div id="notify" class="notify-main -no-print"></div><div id="tooltip" class="-noprint"></div>');
+	$('body').append('<div id="notify" class="notify-main -no-print"></div><div id="tooltip" class="-noprint"></div>');
 	$("#notify").hide();
 
 	$('a[href$=".pdf"], a[href*="files/"]').addClass('pdflink');

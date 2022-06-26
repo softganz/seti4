@@ -106,7 +106,7 @@ if (cfg('web.header')===false) {
 }?>
 
 <div id="content-wrapper" class="page -content">
-<div class="debug"><?php echo user_access('access debugging program') ? debugMsg() : '';?></div>
+<?php echo user_access('access debugging program') ? debugMsg() : '';?>
 <?php if (cfg('web.primary')) echo '<div id="primary" class="page -primary">'._NL;?>
 <?php if (cfg('web.message')) echo '<div id="web-message">'.cfg('web.message').'</div>'._NL;?>
 <?php echo $GLOBALS['request_result'];?>
