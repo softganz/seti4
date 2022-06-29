@@ -582,13 +582,31 @@ class Page extends Widget {
 	var $widgetName = 'Page';
 
 	function __construct($args = []) {
+		$this->widgetName = get_class($this);
+		// Get module name form first word by split uppercase of widgetName
+		$this->module = strToLower(preg_split('/(?=[A-Z])/', $this->widgetName, -1, PREG_SPLIT_NO_EMPTY)[0]);
 		$this->version = cfg($this->module.'.version');
 		$this->theme = (Object) ['option' => cfg('topic.property')->option];
-		$this->widgetName = get_class($this);
-		// debugMsg('Page Class = '.get_class($this));
 		parent::__construct($args);
+		// Remove unused property
+		unset($this->tagName, $this->childTagName, $this->attribute, $this->config);
+	}
+
+	function build() {
+		return new Scaffold([
+			'appBar' => new AppBar(['title' => 'Web Page']),
+			'body' => new Widget(['child' => 'This page is underconstruction.']),
+		]);
 	}
 } // End of class Page
+
+class PageApi extends Page {
+	var $widgetName = 'PageApi';
+
+	function build() {
+		return (Object) [];
+	}
+} // End of class PageApi
 
 class StepMenuWidget extends Widget {
 	var $widgetName = 'StepMenu';
