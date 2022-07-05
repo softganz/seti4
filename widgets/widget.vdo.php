@@ -31,9 +31,9 @@ function widget_vdo() {
 		default : $width=$para->{'data-width'}; $height=$para->{'data-height'}; break;
 	};
 
-	$ret='<!--widget stat --><object type="application/x-shockwave-flash" width="'.$width.'" height="'.$height.'" data="/library/mediaplayer.swf?file='.$para->{'data-src'}.'&autostart=false&stretching=exactfit&amp;'.( $para->{'data-img'} ? 'image='.$para->{'data-img'} : '' ).'">
-<param name="movie" value="/library/mediaplayer.swf?file='.$para->{"data-src"}.'&autostart=false&stretching=exactfit&amp;image=http://epay4u.com/upload/easy_investment.jpg" width="'.$width.'" height="'.$height.'" />
-<embed src="/library/mediaplayer.swf" width="'.$width.'" height="'.$height.'" flashvars="file='.$para->{"data-src"}.'&autostart=false&stretching=exactfit&amp;image=http://epay4u.com/upload/easy_investment.jpg" />
+	$ret='<!--widget stat --><object type="application/x-shockwave-flash" width="'.$width.'" height="'.$height.'" data="https://softganz.com/library/mediaplayer.swf?file='.$para->{'data-src'}.'&autostart=false&stretching=exactfit&amp;'.( $para->{'data-img'} ? 'image='.$para->{'data-img'} : '' ).'">
+<param name="movie" value="https://softganz.com/library/mediaplayer.swf?file='.$para->{"data-src"}.'&autostart=false&stretching=exactfit&amp;image=http://epay4u.com/upload/easy_investment.jpg" width="'.$width.'" height="'.$height.'" />
+<embed src="https://softganz.com/library/mediaplayer.swf" width="'.$width.'" height="'.$height.'" flashvars="file='.$para->{"data-src"}.'&autostart=false&stretching=exactfit&amp;image=http://epay4u.com/upload/easy_investment.jpg" />
 </object><!--end of widget stat-->';
 	return array($ret,$para);
 }

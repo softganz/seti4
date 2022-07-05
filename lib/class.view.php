@@ -283,9 +283,9 @@ class View {
 	 */
 	public static function photo_slide($id,$w,$h,$imgfile,$para=NULL) {
 		$ret = '<div'.($id?' id="'.$id.'"':'').' class="slide" style="'.($w?'width:'.$w.'px;':'').($h?'height:'.$h.'px;':'').'">'._NL
-					.'	<object type="application/x-shockwave-flash" data="'.cfg('library').'imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.SG\getFirst($w,'100%').'" height="'.SG\getFirst($h,'100%').'">'._NL
-					.'	<param name="movie" value="'.cfg('library').'imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.SG\getFirst($w,'100%').'" height="'.SG\getFirst($h,'100%').'" />'._NL
-					.'	<embed src="'.cfg('library').'imagerotator.swf" width="100%" height="100%" flashvars="file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" style="width:100%;height:100%;" />'._NL
+					.'	<object type="application/x-shockwave-flash" data="https://softganz.com/library/imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.SG\getFirst($w,'100%').'" height="'.SG\getFirst($h,'100%').'">'._NL
+					.'	<param name="movie" value="https://softganz.com/library/imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.SG\getFirst($w,'100%').'" height="'.SG\getFirst($h,'100%').'" />'._NL
+					.'	<embed src="https://softganz.com/library/imagerotator.swf" width="100%" height="100%" flashvars="file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" style="width:100%;height:100%;" />'._NL
 					.'	</object>'._NL
 					.'</div>';
 		return $ret;

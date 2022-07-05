@@ -86,9 +86,9 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 	if ($topicInfo->video->file && $topicInfo->property->option->show_video) {
 		$autostart='false';
 		$flashvar='file='.$topicInfo->video->_url.'&autostart='.$autostart.'&stretching=exactfit'.($topicInfo->photo->items[0]->_src?'&amp;image='.$topicInfo->photo->items[0]->_src:'');
-		$player='<object type="application/x-shockwave-flash" width="100%" height="100%" data="/library/mediaplayer.swf?'.$flashvar.'" >
-		<param name="movie" value="/library/mediaplayer.swf?'.$flashvar.'" width="100%" height="100%" />
-		<embed src="/library/mediaplayer.swf" width="100%" height="100%" flashvars="'.$flashvar.'" />
+		$player='<object type="application/x-shockwave-flash" width="100%" height="100%" data="https://softganz.com/library/mediaplayer.swf?'.$flashvar.'" >
+		<param name="movie" value="https://softganz.com/library/mediaplayer.swf?'.$flashvar.'" width="100%" height="100%" />
+		<embed src="https://softganz.com/library/mediaplayer.swf" width="100%" height="100%" flashvars="'.$flashvar.'" />
 		</object>';
 
 		$body->video='<div id="online-vdo">'.$player.'</div>';
