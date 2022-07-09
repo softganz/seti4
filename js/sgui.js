@@ -2957,10 +2957,16 @@ var sgDrawMap = function(thisMap, options = {}) {
 			lat: marker.lat,
 			lng: marker.lng,
 			draggable: settings.drag == 'map' ? false : true,
-			// infoWindow: {title: settings.pin.title, content: currentInfoText},
+			infoWindow: {title: settings.pin.title, content: currentInfoText},
 			dragend: function(event) {
 				updateLocationValue(event.latLng.lat(), event.latLng.lng())
-			}
+			},
+			// mouseover: function(){
+			// 	(this.infoWindow).open(this.map, this);
+			// },
+			// mouseout: function(){
+			// 	this.infoWindow.close();
+			// }
 		})
 	}
 
