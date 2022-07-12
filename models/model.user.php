@@ -192,6 +192,29 @@ class UserModel {
 		$_SESSION['user'] = null;
 	}
 
+	public static function signOutProcess() {
+		$token = i()->token;
+		$result = (Object) [
+			'signed' => false,
+			'group' => [],
+			'cookie.id' => cfg('cookie.id'),
+			'cookie.path' => cfg('cookie.path'),
+			'cookie.domain' => cfg('cookie.domain'),
+			'token' => $token,
+			'session' => $_SESSION['user'],
+			'i' => i(),
+		];
+		if (i()->ok) {
+			$cacheId = 'user:'.$token;
+			setcookie(cfg('cookie.id'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
+			setcookie(cfg('cookie.u'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
+			$_SESSION['user'] = NULL;
+			Cache::Clear($cacheId);
+		}
+		// $result->signed = i()->ok;
+		return $result;
+	}
+
 	public static function signInProcess($username = NULL, $password = NULL, $cookielength = false) {
 		$rs = mydb::select('SELECT * FROM %users% u WHERE `username` = :username LIMIT 1', [':username' => $username]);
 
@@ -236,10 +259,11 @@ class UserModel {
 			'uid' => intval($rs->uid),
 			'username' => $rs->username,
 			'name' => $rs->name,
-			'session' => $session_id,
 			'remember' => $cookielength*60,
 			'ip' => GetEnv('REMOTE_ADDR'),
 			'admin' => false,
+			'session' => $session_id,
+			'token' => $session_id,
 			'roles' => $rs->roles ? explode(',',$rs->roles) : [],
 		];
 

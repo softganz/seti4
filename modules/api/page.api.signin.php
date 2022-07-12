@@ -9,21 +9,44 @@
 * @usage api/signin
 */
 
-$debug = true;
-
 import('model:user.php');
 
-class ApiSignin extends Page {
-	function __construct() {}
+class ApiSignin extends PageApi {
+	var $username;
+	var $password;
+	var $appId;
+	var $appToken;
+	var $token;
+	var $email;
+
+	function __construct() {
+		$this->username = $_SERVER['HTTP_USERNAME'];
+		$this->password = $_SERVER['HTTP_PASSWORD'];
+		$this->appId = $_SERVER['HTTP_APPID'];
+		$this->appToken = $_SERVER['HTTP_APPTOKEN'];
+		$this->token = $_SERVER['HTTP_SIGNINTOKEN'];
+		$this->email = $_SERVER['HTTP_SIGNINEMAIL'];
+		// Old version use post('user') && post('pw')
+	}
 
 	function build() {
-		$json = (Object) [];
+		$result = (Object) [
+			'signed' => NULL,
+			'status' => NULL,
+			'username' => $this->username,
+			'password' => $this->password,
+			// "headerError" => "Text",
+			// "descriptionError" => "Text"
+			// 'server' => $_SERVER,
+			// 'this' => $this,
+		];
 
 		$user = NULL;
 
-		if (post('user') && post('pw')) {
+		if ($this->username && $this->password) {
 			// debugMsg('SIGN');
-			$user = UserModel::signInProcess(post('user'),post('pw'),-1);
+			$user = UserModel::signInProcess($this->username, $this->password, -1);
+			// $result->user = $user;
 			// debugMsg($result, '$result');
 			// $user = i();
 			// $json->result = $result;
@@ -36,25 +59,22 @@ class ApiSignin extends Page {
 			$user = i();
 		}
 
-		$json->signed = $user->ok ? true : false;
-		$json->token = NULL;
+		$result->signed = $user->ok ? true : false;
+		$result->token = NULL;
 
 		if ($user->ok) {
-			$json->userId = $user->uid;
-			$json->name = $user->name;
-			$json->username = $user->username;
-			$json->token = $user->session;
+			$result->status = 'complete';
+			$result->name = $user->name;
+			$result->token = $user->session;
 
-			// $json->user = i();
+			// $result->user = i();
+		} else {
+			$result->status = 'fail';
+			$result->code = _HTTP_ERROR_UNAUTHORIZED;
+			$result->text = 'Sign In Error';
 		}
 
-		// $json->post = array_slice(post(),1);
-		// $json->user = $user;
-		// $json->cache = $userCache->data ? $userCache : NULL;
-		// $json->i = i();
-		// unset($json->i->server);
-
-		return $json;
+		return $result;
 	}
 }
 ?>

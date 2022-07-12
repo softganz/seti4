@@ -1207,7 +1207,7 @@ $SCREENS
 
 
 	/* @group profile */
-	.profile-photo {width: 32px; height: 32px; margin: 0; display: inline-block; border-radius: 50%; overflow: hidden; border: 2px #eee solid; vertical-align: middle;}
+	.profile-photo {width: 32px; height: 32px; margin: 0; line-height: 32px; display: inline-block; border-radius: 50%; overflow: hidden; border: 2px #eee solid; vertical-align: middle;}
 	.profile-photo.-sg-big {margin: 0px auto 32px; width: 196px; height: 196px; display: block; }
 
 	.profile-content img.member-photo {width:200px; height:200px; margin:0 10px; display:block; float:right; }

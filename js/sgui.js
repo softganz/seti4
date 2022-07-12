@@ -206,7 +206,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 		//console.log(doneItem, doneExplode)
 		//console.log('doneType = ',doneType, 'doneAction = ',doneAction)
 		//console.log('doneTarget = ',doneTarget)
-		console.log(data)
+		// console.log(data)
 
 		switch (doneType) {
 
