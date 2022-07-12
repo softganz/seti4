@@ -169,16 +169,16 @@ class BigDataModel {
 		];
 
 		if (preg_match('/\//', $conditions->key)) {
-			list($conditions->key, $condition->name, $keyId, $fldRef) = explode('/', $conditions->key);
+			list($conditions->key, $conditions->name, $keyId, $fldRef) = explode('/', $conditions->key);
 		}
 
 		if (!$conditions->key) return $result;
 
 		mydb::where('`keyName` = :keyName', ':keyName', $conditions->key);
 
-		if (is_string($condition->name)) {
-			$condition->name = preg_replace('/\*$/', '%', $condition->name);
-			mydb::where('`fldName` LIKE :fldName', ':fldName', $condition->name);
+		if (is_string($conditions->name)) {
+			$conditions->name = preg_replace('/\*$/', '%', $conditions->name);
+			mydb::where('`fldName` LIKE :fldName', ':fldName', $conditions->name);
 		} else if (is_array($conditions->name)) {
 			mydb::where('`fldName` IN ( :fldName )', ':fldName', 'SET-STRING:'.implode(',', $conditions->name));
 		}
