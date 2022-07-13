@@ -3,6 +3,7 @@
 let sgUiVersion = '4.00.02'
 let debugSG = false
 let defaultRelTarget = "#main"
+let sgBoxPage = 0
 
 console.log('SG-UI Version ' + sgUiVersion + ' loaded');
 

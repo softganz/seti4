@@ -34,7 +34,6 @@ let gMapsLoaded = false
 let sgTabIdActive = null
 
 let sgPrintWindow = null
-let sgBoxPage = 0
 
 
 function loadGoogleMaps(callback) {
@@ -122,23 +121,77 @@ function sgPrintPage(str) {
 // if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
 // 	alert('hello world');
 // }
-window.onhashchange = function() {
-	if (window.innerDocClick) {
-		window.innerDocClick = false;
-	} else {
-		console.log("HASH = ",window.location.hash)
-		if (window.location.hash != '#undefined') {
-			console.log("HASH != undefined")
-			// goBack();
-		} else {
-			console.log("HASH = undefined")
-			history.pushState("", document.title, window.location.pathname);
-			location.reload();
-		}
-	}
-}
 
+// if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
+//   // alert('hello world');
+//   console.log(window.performance)
+//   // return false
+// }
 
+// Case 1
+// document.onmouseover = function() {
+// 	//User's mouse is inside the page.
+// 	window.innerDocClick = true;
+// 	console.log('onMouseOver')
+// }
+
+// document.onmouseleave = function() {
+// 	//User's mouse has left the page.
+// 	window.innerDocClick = false;
+// 	console.log('onMouseLeave')
+// }
+
+// Case 2
+// window.onhashchange = function() {
+// 	console.log('onHashChange')
+// 	if (window.innerDocClick) {
+// 		window.innerDocClick = false;
+// 	} else {
+// 		console.log("HASH = ",window.location.hash)
+// 		if (window.location.hash != '#undefined') {
+// 			console.log("HASH != undefined => Go Back")
+// 			// goBack();
+// 		} else {
+// 			console.log("HASH = undefined => Reload")
+// 			history.pushState("", document.title, window.location.pathname);
+// 			// location.reload();
+// 		}
+// 	}
+// }
+
+// Case 3
+// window.addEventListener('popstate', function(event) {
+// 	var state = event.state
+// 	console.log('State = ', state)
+// 	// The popstate event is fired each time when the current history entry changes.
+
+// 	if (state !== null) {
+// 		console.log('Call AJAX')
+// 	}
+// 	// var r = confirm("You pressed a Back button! Are you sure?!");
+
+// 	// if (r == true) {
+// 	// 	// Call Back button programmatically as per user confirmation.
+// 	// 	history.back();
+// 	// 	// Uncomment below line to redirect to the previous page instead.
+// 	// 	// window.location = document.referrer // Note: IE11 is not supporting this.
+// 	// } else {
+// 	// 	// Stay on the current page.
+// 	// 	history.pushState(null, null, window.location.pathname);
+// 	// }
+
+// 	// history.pushState(null, null, window.location.pathname);
+
+// }, false);
+
+// window.onbeforeunload = function(e) {
+// 	alert('onbeforeunload')
+//   e.preventDefault();
+//   // e.returnValue = 'There are unsaved changes. Sure you want to leave?';
+// };
+// $(window).unload(function() {
+// 	alert('unload')
+// });
 
 $(document).on('click',function(e) {
 	window.onscroll = function(){};
