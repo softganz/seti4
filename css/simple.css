@@ -1544,10 +1544,9 @@ $SCREENS
 
 
 	#colorbox.-full
-	, #colorbox.-full>#cboxWrapper
+	, #colorbox.-full #cboxWrapper
 	, #colorbox.-full #cboxContent
 	, #colorbox.-full #cboxLoadedContent {width: 100% !important; height: 100% !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; float: none !important; border-radius: 0;}
-		#colorbox.-full {top: 48px !important;}
 		#colorbox.-full #cboxWrapper>div:nth-child(2) {height: 100% !important;}
 		#colorbox.-full #cboxLoadedContent {height: calc(100% - 96px) !important;}
 
