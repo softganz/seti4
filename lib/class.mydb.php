@@ -373,17 +373,19 @@ class MyDb {
 			$mysqlStmt = call_user_func_array([$myDb, 'prepare'], $prepareArgs);
 
 			$stmt = $mysqlStmt->_query;
+			// echo '<pre>'.$stmt.'</pre>';
+			// print_r($mysqlStmt);
+			// echo $mysqlStmt['errno'];
 
 			// debugMsg($prepareArgs,'$prepareArgs');
 			// debugMsg('Query :: QUERY prepare = '.$stmt);
-
-			$mysqlStmt->close();
+			if (!$mysqlStmt->errno) $mysqlStmt->close();
 			$resultmode = NULL;
 		}
 
 		if ($myDb->simulate) echo 'Simulate :'.$stmt;
 
-		$data=array();
+		$data = [];
 
 		$timer = new Timer();
 		$timer->start('query');
