@@ -90,6 +90,9 @@
 .widget-inlineedit {display: block;}
 	.widget-inlineedit.-hots>label {font-weight: bold;}
 
+.widget-column {}
+	.widget-column.-sg-text-ceter>* {text-align: center;}
+
 .ui-nav {}
 	.ui-nav.-sg-text-center {text-align: left;}
 	.ui-nav.-sg-text-center>li {text-align: center;}

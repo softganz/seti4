@@ -10,86 +10,8 @@
 
 $debug = true;
 
-function view_user_register_form($register = array()) {
-	$form = new Form('register', url(q()), 'edit-register', 'sg-form user-register-form');
-	$form->addConfig('title', '<header class="header"><h3>'.tr('Register New Member').'</h3></header>');
-	$form->addData('checkValid', true);
-
-	if ($register->rel) {
-		$form->addData('rel',$register->rel);
-		$form->addField('rel', array('type' => 'hidden','value' => $register->rel));
-	}
-	if ($register->ret) {
-		$form->addField('ret', array('type' => 'hidden','value' => $register->ret));
-	}
-
-
-	$form->addField('step',array('type' => 'hidden','value' => 1));
-
-	$form->addText('<fieldset id="account"><legend>ข้อมูลสมาชิก (Account information)</legend>');
-
-	$form->addField(
-		'username',
-		array(
-			'type' => 'text',
-			'label' => 'ชื่อสมาชิก ( Username )',
-			'maxlength' =>cfg('member.username.maxlength'),
-			'class' => '-fill',
-			'require' => true,
-			'value' =>htmlspecialchars($register->username),
-			'placeholder' => 'username',
-			'description' => cfg('member.username.format_text'),
-			'attr' => array('style' => 'text-transform:lowercase;')
-		)
-	);
-
-	$form->addField(
-		'password',
-		array(
-			'type' => 'password',
-			'label' => 'รหัสผ่าน ( Password )',
-			'maxlength' =>cfg('member.password.maxlength'),
-			'class' => '-fill',
-			'require' => true,
-			'value' =>htmlspecialchars($register->password),
-			'placeholder' => 'password',
-			'description' => 'รหัสผ่านต้องมีความยาวอย่างน้อย <strong>6 ตัวอักษร</strong>'
-		)
-	);
-
-	$form->addField(
-		'repassword',
-		array(
-			'type' => 'password',
-			'label' => 'ยืนยันรหัสผ่าน ( Re-enter Password )',
-			'maxlength' =>cfg('member.password.maxlength'),
-			'class' => '-fill',
-			'require' => true,
-			'value' => htmlspecialchars($register->repassword),
-			'placeholder' => 're-password',
-			'description' => 'ยืนยันรหัสผ่านอีกครั้งเพื่อความถูกต้องของการป้อนรหัสผ่าน'
-		)
-	);
-
-	$form->addText('</fieldset>');
-
-	$form->addText('<fieldset id="personal"><legend>ข้อมูลส่วนบุคคล (Personal information)</legend>');
-
-	$form->addField(
-		'name',
-		array(
-			'type' => 'text',
-			'label' => 'ชื่อสำหรับแสดง ( Name )',
-			'maxlength' => 50,
-			'class' => '-fill',
-			'require' => true,
-			'value' =>htmlspecialchars($register->name),
-			'placeholder' => 'ชื่อจริง',
-			'description' => cfg('member.username.name_text')
-		)
-	);
-
-	$emailDesc='<ul><li>กรุณาป้อนอี-เมล์ของท่านให้ถูกต้อง ทางเว็บไซท์จะไม่มีการแสดงอีเมล์นี้ของท่านในหน้าเว็บไซท์ แต่จะใช้ในกรณีดังต่อไปนี้<ol><li>ท่านลืมรหัสผ่าน ระบบจะส่งรหัสผ่านไปให้ท่านตามอีเมล์ที่ระบุนี้</li><li>มีการติดต่อจากแบบฟอร์มที่ให้กรอกในหน้าเว็บไซท์เพื่อส่งถึงท่าน</li></ol></li>';
+function view_user_register_form($register = []) {
+	$emailDesc = '<ul><li>กรุณาป้อนอี-เมล์ของท่านให้ถูกต้อง ทางเว็บไซท์จะไม่มีการแสดงอีเมล์นี้ของท่านในหน้าเว็บไซท์ แต่จะใช้ในกรณีดังต่อไปนี้<ol><li>ท่านลืมรหัสผ่าน ระบบจะส่งรหัสผ่านไปให้ท่านตามอีเมล์ที่ระบุนี้</li><li>มีการติดต่อจากแบบฟอร์มที่ให้กรอกในหน้าเว็บไซท์เพื่อส่งถึงท่าน</li></ol></li>';
 
 	switch (cfg('member.registration.method')) {
 		case 'email' :
@@ -105,59 +27,131 @@ function view_user_register_form($register = array()) {
 
 	$emailDesc .= '</ul>';
 
-	$form->addField(
-		'email',
-		array(
-			'type' => 'text',
-			'label' => 'อีเมล์ ( E-Mail )',
-			'maxlength' => 50,
-			'class' => '-fill',
-			'require' => true,
-			'value' => htmlspecialchars($register->email),
-			'description' => $emailDesc,
-		)
-	);
+	$form = new Form([
+		'variable' => 'register',
+		'action' => url(q()),
+		'id' => 'edit-register',
+		'class' => 'sg-form user-register-form',
+		'title' => '<header class="header"><h3>'.tr('Register New Member').'</h3></header>',
+		'checkValid' => true,
+		'rel' => $register->rel ? $register->rel : NULL,
+		'children' => [
+			'rel' => $register->rel ? ['type' => 'hidden','value' => $register->rel] : NULL,
+			'ret' => $register->ret ? ['type' => 'hidden','value' => $register->ret] : NULL,
+			'step' => ['type' => 'hidden','value' => 1],
 
-	$form->addText('</fieldset>');
+			($googleId = cfg('signin')->google->id) ? new Container([
+				'class' => '-sg-text-center',
+				'children' => [
+					'<script src="https://accounts.google.com/gsi/client" async defer></script>
+					<div id="g_id_onload"
+						data-client_id="'.$googleId.'"
+						data-login_uri="'._DOMAIN.url('user/register', ['signWith' => 'google']).'"
+						data-auto_prompt="false"
+						data-ux_mode="redirect"
+						>
+					</div>
+					<div class="g_id_signin"
+						data-type="standard"
+						data-size="large"
+						data-theme="filled_blue"
+						data-text="signup_with"
+						data-context="signup"
+						data-shape="circle"
+						data-logo_alignment="left"
+						>
+					</div>',
+					'<div><span>หรือ</span><hr /></div>',
+				], // children
+			]) : NULL,
 
-	$form->addField(
-		'submit',
-		array(
-			'type' => 'button',
-			'items' => array(
-				'cancel' => array(
-					'type' => 'cancel',
-					'class' => '-link',
-					'value' => '<i class="icon -cancel -gray"></i><span>{tr:Cancel}</span>'
-				),
-				'next' => array(
-					'type' => 'submit',
-					'class' => '-primary',
-					'value' => '<i class="icon -forward -white"></i><span>{tr:Next}</span>'
-				),
-			),
-			'container' => array('class' => '-sg-text-right'),
-		)
-	);
+			'<fieldset id="account"><legend>ข้อมูลสมาชิก (Account information)</legend>',
+			'username' => [
+				'type' => 'text',
+				'label' => 'ชื่อสมาชิก ( Username )',
+				'maxlength' =>cfg('member.username.maxlength'),
+				'class' => '-fill',
+				'require' => true,
+				'value' => $register->username,
+				'placeholder' => 'username',
+				'description' => cfg('member.username.format_text'),
+				'attr' => array('style' => 'text-transform:lowercase;')
+			],
+			'password' => [
+				'type' => 'password',
+				'label' => 'รหัสผ่าน ( Password )',
+				'maxlength' =>cfg('member.password.maxlength'),
+				'class' => '-fill',
+				'require' => true,
+				'value' => $register->password,
+				'placeholder' => 'password',
+				'description' => 'รหัสผ่านต้องมีความยาวอย่างน้อย <strong>6 ตัวอักษร</strong>'
+			],
+			'repassword' => [
+				'type' => 'password',
+				'label' => 'ยืนยันรหัสผ่าน ( Re-enter Password )',
+				'maxlength' =>cfg('member.password.maxlength'),
+				'class' => '-fill',
+				'require' => true,
+				'value' => $register->repassword,
+				'placeholder' => 're-password',
+				'description' => 'ยืนยันรหัสผ่านอีกครั้งเพื่อความถูกต้องของการป้อนรหัสผ่าน'
+			],
+			'</fieldset>',
+			'<fieldset id="personal"><legend>ข้อมูลส่วนบุคคล (Personal information)</legend>',
+			'name' => [
+				'type' => 'text',
+				'label' => 'ชื่อสำหรับแสดง ( Name )',
+				'maxlength' => 50,
+				'class' => '-fill',
+				'require' => true,
+				'value' => $register->name,
+				'placeholder' => 'ชื่อจริง',
+				'description' => cfg('member.username.name_text')
+			],
+			'email' => [
+				'type' => 'text',
+				'label' => 'อีเมล์ ( E-Mail )',
+				'maxlength' => 50,
+				'class' => '-fill',
+				'require' => true,
+				'value' => $register->email,
+				'description' => $emailDesc,
+			],
+			'</fieldset>',
+			'submit' => [
+				'type' => 'button',
+				'items' => [
+					'cancel' => [
+						'type' => 'cancel',
+						'class' => '-link',
+						'value' => '<i class="icon -cancel -gray"></i><span>{tr:Cancel}</span>'
+					],
+					'next' => [
+						'type' => 'submit',
+						'class' => '-primary',
+						'value' => '<i class="icon -forward -white"></i><span>{tr:Next}</span>'
+					],
+				],
+				'container' => ['class' => '-sg-text-right'],
+			],
+			'help' => [
+				'type' => 'textfield',
+				'value' => '<strong>หมายเหตุ</strong> กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * กํากับอยู่ให้ครบถ้วนสมบูรณ์'
+			],
+		], // children
+	]);
 
-	$form->addField(
-		'help',
-		array(
-			'type' => 'textfield',
-			'value' => '<strong>หมายเหตุ</strong> กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * กํากับอยู่ให้ครบถ้วนสมบูรณ์'
-		)
-	);
-
-	event_tricker('user.register_form',$self,$register,$form);
+	event_tricker('user.register_form', $self, $register, $form);
 
 	$ret .= $form->build();
 
 	$ret .= '<script type="text/javascript">
 		$(document).ready(function() {
 		$("#edit-register-username").keyup(function() {
-			$("#edit-register-name").val($("#edit-register-username").val());
-		});
-		});
+			$("#edit-register-name").val($("#edit-register-username").val())
+		})
+	})
 	</script>';
 
 	return $ret;

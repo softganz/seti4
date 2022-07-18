@@ -66,6 +66,9 @@ class UserModel {
 			'complete' => false,
 			'error' => false,
 			'password' => NULL,
+			'username' => $user->username,
+			'name' => $user->name,
+			'email' => $user->email,
 			'auth' => 'user',
 			'process' => ['UserModel::create() => request'],
 		];
@@ -73,11 +76,11 @@ class UserModel {
 
 		// debugMsg($user,'$user');
 
-		if (in_array(cfg('member.registration.method'),array('email'))) {
+		if (in_array(cfg('member.registration.method'), ['email'])) {
 			$user->status = 'waiting';
 			$user->code = md5(uniqid(rand())); // better, difficult to guess
 			$result->process[] = 'create user with email registration method';
-		} else if (in_array(cfg('member.registration.method'),array('waiting','waiting,email'))) {
+		} else if (in_array(cfg('member.registration.method'), ['waiting','waiting,email'])) {
 			$user->status = 'waiting';
 			$result->process[] = 'create user with admin check registration method';
 		} else {
@@ -85,13 +88,13 @@ class UserModel {
 			$result->process[] = 'create user and ready to used';
 		}
 
-		$user->encryptPassword = sg_encrypt($user->password,cfg('encrypt_key'));
+		$user->encryptPassword = $user->password ? sg_encrypt($user->password,cfg('encrypt_key')) : NULL;
 		$user->datein = 'func.NOW()';
 		if (empty($user->about)) $user->about = '';
 		if (empty($user->phone)) $user->phone = '';
 		if (empty($user->email)) $user->email = '';
 		if (empty($user->organization)) $user->organization = '';
-		$user->realName = SG\getFirst($user->realName);
+		$user->realName = SG\getFirst($user->name, $user->realName);
 		$user->lastName = SG\getFirst($user->lastName);
 		$user->admin_remark = SG\getFirst($user->admin_remark);
 
@@ -259,6 +262,7 @@ class UserModel {
 			'uid' => intval($rs->uid),
 			'username' => $rs->username,
 			'name' => $rs->name,
+				'email' => $rs->email,
 			'remember' => $cookielength*60,
 			'ip' => GetEnv('REMOTE_ADDR'),
 			'admin' => false,
@@ -271,17 +275,21 @@ class UserModel {
 
 		cache::add('user:'.$session_id, $user, $remember_time, $username);
 
-
-		model::watch_log('user','Signin','user '.$username.' was signin',$user->uid);
-
-		$stmt = 'UPDATE %users% SET
+		mydb::query(
+			'UPDATE %users% SET
 			`last_login` = `login_time` ,
 			`last_login_ip` = `login_ip` ,
 			`login_time` = :login_time,
 			`login_ip` = :ip
-			WHERE uid = :uid LIMIT 1';
+			WHERE uid = :uid LIMIT 1',
+			[
+				':login_time' => date('Y-m-d H:i:s'),
+				':ip' => ip2long($user->ip),
+				':uid' => $user->uid,
+			]
+		);
 
-		mydb::query($stmt,':login_time', date('Y-m-d H:i:s'),':ip',ip2long($user->ip),':uid',$user->uid);
+		model::watch_log('user','Signin','user '.$username.' was signin',$user->uid);
 
 		$debug_str .= '<p>query='.mydb()->_query.'</p>';
 		$debug_str .= print_o($_COOKIE,'$COOKIE');
@@ -308,6 +316,7 @@ class UserModel {
 				'uid' => intval($user->uid),
 				'username' => $user->username,
 				'name' => $user->name,
+				'email' => $user->email,
 				'session' => $session_id,
 				'token' => $session_id,
 				'remember' => $cookielength*60,
@@ -318,6 +327,27 @@ class UserModel {
 
 			$_SESSION['user'] = $result;
 			cache::add('user:'.$session_id, $result, $remember_time, $result->username);
+
+			if ($cookielength == -1) $cookielength = 10*365*24*60;
+			if (empty($cookielength)) $cookielength = cfg('member.signin.remembertime');
+			$remember_time = time()+$cookielength*60;
+			setcookie(cfg('cookie.id'),$session_id,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
+			setcookie(cfg('cookie.u'),$result->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
+
+			mydb::query(
+				'UPDATE %users% SET
+				`last_login` = `login_time` ,
+				`last_login_ip` = `login_ip` ,
+				`login_time` = :login_time,
+				`login_ip` = :ip
+				WHERE uid = :uid LIMIT 1',
+				[
+					':login_time' => date('Y-m-d H:i:s'),
+					':ip' => ip2long($result->ip),
+					':uid' => $result->uid,
+				]
+			);
+			model::watch_log('user','Signin by Google','Email '.$result->email.' ('.$result->username.') was signin with Google',$result->uid);
 		}
 		return $result;
 	}
@@ -335,7 +365,7 @@ class UserModel {
 			$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 		}
 
-		// User sign in from any page
+		// User sign in from any page using POST method only
 		if ($_POST['username'] && $_POST['password']) {
 			cache::clear_expire();
 			$username = $_POST['username'];
@@ -372,6 +402,32 @@ class UserModel {
 			$user = $result;
 			$user->signInResult = tr('Sign in complete');
 			return $user;
+		} else if (($credential = post('credential')) && post('signMethod') === 'google') {
+			// Google Sign In
+			$jwt = Jwt::isValid($credential);
+
+			// Check value different between email
+			// $jwt->payload->nbf (running)
+			// $jwt->payload->jti
+			// $jwt->payload->sub (same on email, diff on other email)
+			// $jwt->signature
+			// $jwt->signatureProvided
+			// print_o($jwt, '$jwt',1);
+			// SignIn complete
+			if ($jwt->payload->email) {
+				$result = UserModel::externalSignIn([
+					'email' => $jwt->payload->email,
+					'token' => $jwt->payload->jti
+				]);
+				if (!$result->uid) {
+					model::watch_log('user','Invalid signin','Email '.$result->email.' ('.$result->username.') signin with Google error',$result->uid);
+				}
+
+				return $result->uid ? $result : (Object) ['signInErrorMessage' => 'Google account '.$jwt->payload->email.' is not recognized for Google Sign-In on this site. Please make sure you are using the same account that you have previously linked.'];
+			} else {
+				model::watch_log('user','Invalid signin','Invalid credential => '.$credential);
+				return (Object) ['signInResult' => 'Invalid user signin'];
+			}
 		} else if ($authHeader) {
 			list($authType, $authToken) = explode(' ', $authHeader);
 			$user = Cache::get('user:'.$authToken)->data;

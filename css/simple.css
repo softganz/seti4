@@ -859,7 +859,6 @@ $SCREENS
 		.options-group-label {display: block; font-weight: bold;}
 		.option.-inline {display: inline;}
 
-	.form .-error {color: red; font-size: 0.9em;}
 	.form.-inlineitem .form-item {display: inline-block; vertical-align: top;}
 	.form.-inlineitem .form-item.-hidden {display: none;}
 	.form.-inlineitem .form-item label {display: inline-block;}
@@ -1178,9 +1177,9 @@ $SCREENS
 	.login {margin: 0; padding: 0 16px;}
 		.login h3 {margin-bottom: 16px; font-size: 1.3em; text-align: center;}
 		.login h5 {margin:0;padding:16px 0 0 0;border-top:1px #ccc solid;clear:both;}
-		.login>.-form {margin-bottom: 64px;}
+		.login>.-form {}
 		.login>.-info {}
-		.login>.-form>.form {max-width: 280px; margin: 0 auto 16px; padding: 16px; border-radius: 8px; background-color: #fff;}
+		.login>.-form>.form {max-width: 230px; margin: 0 auto; padding: 16px; border-radius: 8px; background-color: #fff;}
 		.login>.-info .btn.-fill {max-width: 260px; margin: 32px auto;}
 		.login>.-form>.form>.ui-action {display: block; text-align: center;}
 		.login .signform .form-item {margin-bottom: 8px; position: relative;}
@@ -1194,6 +1193,7 @@ $SCREENS
 		.login .member-zone .form-item .btn.-fill {width: 100%; padding:8px 0; }
 		.login .member-zone .form-item .button-signin:hover {background-color: #286090; color:#fff;}
 
+		.login .g_id_signin iframe {margin: 2px auto !Important;}
 
 
 

@@ -18,8 +18,8 @@
 */
 
 /********************************************
- * Class :: sgClass
- * Base class of SoftGanz Framework
+* Class :: sgClass
+* Base class of SoftGanz Framework
 ********************************************/
 class sgClass {
 	private $_PROPERTY;
@@ -68,8 +68,8 @@ class sgClass {
 
 
 /********************************************
- * Class :: Cfg
- * Cfg class for keep core system configuration
+* Class :: Cfg
+* Cfg class for keep core system configuration
 ********************************************/
 class Cfg {
 	var $cfg = array();
@@ -143,8 +143,8 @@ class Cfg {
 
 
 /********************************************
- * Class :: Timer
- * Timer class for timer of execution
+* Class :: Timer
+* Timer class for timer of execution
 ********************************************/
 class Timer {
 	var $time;
@@ -324,8 +324,8 @@ class Session {
 
 
 /********************************************
- * Class :: Arrays
- * Arrays class for array data
+* Class :: Arrays
+* Arrays class for array data
 ********************************************/
 class Arrays {
 	static function value($arr=array(),$name='', $options = array()) {
@@ -431,8 +431,8 @@ class Arrays {
 
 
 /********************************************
- * Class :: Cache
- * Cache class for manage cache
+* Class :: Cache
+* Cache class for manage cache
 ********************************************/
 class Cache {
 	public static function add($cid, $data, $expire, $headers) {
@@ -557,8 +557,8 @@ class classFile {
 
 
 /********************************************
- * Class :: Firebase
- * Firebase is a Google Realtime database
+* Class :: Firebase
+* Firebase is a Google Realtime database
 ********************************************/
 class Firebase {
 	function __construct($url,$table) {
@@ -687,4 +687,70 @@ class Firebase {
 		return $ret;
 	}
 } // End of class Firebase
+
+
+/*********************************
+Class  :: Jwt
+**********************************/
+
+class Jwt {
+	public static function generate($headers, $payload, $secret = 'secret') {
+		$headers_encoded = Jwt::base64url_encode(json_encode($headers));
+
+		$payload_encoded = Jwt::base64url_encode(json_encode($payload));
+
+		$signature = hash_hmac('SHA256', "$headers_encoded.$payload_encoded", $secret, true);
+		$signature_encoded = Jwt::base64url_encode($signature);
+
+		$jwt = "$headers_encoded.$payload_encoded.$signature_encoded";
+
+		return $jwt;
+	}
+
+	public static function isValid($jwt, $secret = 'secret') {
+		// split the jwt
+		$tokenParts = explode('.', $jwt);
+		$header = base64_decode($tokenParts[0]);
+		$payload = base64_decode($tokenParts[1]);
+		$signature_provided = $tokenParts[2];
+
+		// echo '$jwt = '.$jwt.'<br /><br />';
+		// echo '$header = '.$header.'<br /><br />';
+		// echo '$payload = '.$payload.'<br /><br />';
+		// check the expiration time - note this will cause an error if there is no 'exp' claim in the jwt
+		$expiration = json_decode($payload)->exp;
+		$is_token_expired = ($expiration - time()) < 0;
+
+		// echo 'expiration = '.$expiration.' '.date('Y-m-d H:i:s', $expiration).'<br /><br />';
+		// build a signature based on the header and payload using the secret
+		$base64_url_header = Jwt::base64url_encode($header);
+		$base64_url_payload = Jwt::base64url_encode($payload);
+		$signature = hash_hmac('SHA256', $base64_url_header . "." . $base64_url_payload, $secret, true);
+		$base64_url_signature = Jwt::base64url_encode($signature);
+
+		// verify it matches the signature provided in the jwt
+		$is_signature_valid = ($base64_url_signature === $signature_provided);
+
+		// echo '$base64_url_signature = '.$base64_url_signature.'<br /><br />';
+		// echo '$signature_provided = '.$signature_provided.'<br /><br />';
+
+		return (Object) [
+			'header' => json_decode($header),
+			'payload' => json_decode($payload),
+			'expiration' => $expiration,
+			'signature' => $base64_url_signature,
+			'signatureProvided' => $signature_provided,
+			'valid' => $is_token_expired || !$is_signature_valid ? 0 : 1,
+		];
+		if ($is_token_expired || !$is_signature_valid) {
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+	}
+
+	public static function base64url_encode($str) {
+	    return rtrim(strtr(base64_encode($str), '+/', '-_'), '=');
+	}
+}
 ?>

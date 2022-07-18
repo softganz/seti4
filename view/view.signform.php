@@ -56,7 +56,6 @@ function view_signform($options = '{}') {
 		return $ret;
 	}
 
-
 	$options->done .= ' | moveto:0,0';
 	// Show signin form
 	$form = new Form([
@@ -74,7 +73,7 @@ function view_signform($options = '{}') {
 				'id'  =>  'username-'.uniqid(),
 				'label' => tr('Username').' '.tr('or').' '.tr('e-mail'),
 				'class' => '-username -fill',
-				'placeholder' => 'Username or email',
+				'placeholder' => 'Username or E-mail',
 				'maxlength' => 50,
 				'autocomplete' => 'off',
 				'value' => SG\getFirst($options->username,post('user_u')),
@@ -109,9 +108,47 @@ function view_signform($options = '{}') {
 				'class' => '-primary -fill',
 				'value' => '<i class="icon -material">login</i><span>'.tr('Sign in').'</span>'
 			],
-		'trialing' => '<span class="ui-action">'
-			. (user_access('register new member') && $options->showRegist ? '<a class="sg-action btn -link" href="'.url('user/register', array('ret' => $options->signret, 'rel' => $options->regRel)).'" data-rel="'.$options->regRel.'"><i class="icon -material">person_add</i><span>'.tr('Create new account').'</span></a> ' : '')
-			. '<a class="btn -link" href="javascript:void(0)" onclick="window.location=\''.url('user/password').'\';return false;"><i class="icon -material -gray">restore</i><span>'.tr('Request new password').'?</span></a></span>'._NL,
+			($googleId = cfg('signin')->google->id) ? new Column([
+				'class' => '-sg-text-center',
+				'children' => [
+					'หรือ',
+					'<script src="https://accounts.google.com/gsi/client" async defer></script>
+					<div id="g_id_onload"
+						data-client_id="'.$googleId.'"
+						data-login_uri="'._DOMAIN.url(q(), ['signMethod' => 'google']).'"
+						data-auto_prompt="false"
+						data-ux_mode="redirect"
+					></div>
+					<div class="g_id_signin"
+						data-type="standard"
+						data-size="large"
+						data-theme="filled_blue"
+						data-text="sign_in_with"
+						data-shape="circle"
+						data-logo_alignment="left"
+					></div>
+					</div>',
+					isset(R()->message->signInErrorInSignForm) ? new Container([
+						'class' => '-error',
+						'children' => [
+							new Icon('error', ['class' => '-error']),
+							R()->message->signInErrorInSignForm
+						], // children
+					]) : NULL, // Container
+				], // children
+			]) : NULL, // Column
+
+			new Column([
+				'class' => '-sg-text-center',
+				'children' => [
+					'<hr />',
+					'ยังไม่ได้เป็นสมาชิก',
+					'<span class="ui-action">'
+					. (user_access('register new member') && $options->showRegist ? '<a class="sg-action btn" href="'.url('user/register', ['ret' => $options->signret, 'rel' => $options->regRel]).'" data-rel="'.$options->regRel.'"><i class="icon -material">person_add</i><span>'.tr('Create new account').'</span></a> ' : '')
+					. '<div style="height: 16px;"></div>'
+					. '<a class="btn -link" href="javascript:void(0)" onclick="window.location=\''.url('user/password').'\';return false;"><i class="icon -material -gray">restore</i><span>'.tr('Request new password').'?</span></a></span>'._NL,
+				], // children
+			]), // Column
 		], // children
 	]);
 
@@ -119,6 +156,25 @@ function view_signform($options = '{}') {
 
 	$ret .= '<div class="-form"><h3>'.tr('I already have an account.').'</h3>';
 	$ret .= $form->build();
+
+	// $ret .= '<div class="-sg-text-center">หรือ<br />
+	// 	<script src="https://accounts.google.com/gsi/client" async defer></script>
+	// 	<div id="g_id_onload"
+	// 		data-client_id="530187295990-lb8kuro5entopcdvrqa9g6mlcjrohmm3.apps.googleusercontent.com"
+	// 		data-login_uri="'._DOMAIN.url('signin/google/complete').'"
+	// 		data-auto_prompt="false">
+	// 	</div>
+	// 	<div class="g_id_signin"
+	// 		data-type="standard"
+	// 		data-size="large"
+	// 		data-theme="outline"
+	// 		data-text="sign_in_with"
+	// 		data-shape="rectangular"
+	// 		data-logo_alignment="left">
+	// 	</div>
+	// 	<style>.g_id_signin iframe {margin: 8px auto !Important;}</style>
+	// </div>';
+
 	if ($options->showGuide > 0) {
 		$ret .= '<div class="-guideline"><h5>คำแนะนำในการเข้าสู่ระบบ</h5><ul><li>ป้อน <b>บัญชีผู้ใช้ (username) หรืออีเมล์ (email)</b> ที่ลงทะเบียนไว้กับเว็บไซท์</li><li>ป้อน <b>รหัสผ่าน (password)</b></li><li>คลิกที่ปุ่ม <strong>เข้าสู่ระบบ (Sign In)</strong></li><li>กรณีลืมรหัสผ่านคลิกที่ <b>ลืมรหัสผ่าน?</b></li><li>กรณีที่ยังไม่มีบัญชีผู้ใช้ กรุณา <strong>สมัครสมาชิก</strong> ก่อน</li></ul></div>';
 	}
@@ -126,16 +182,16 @@ function view_signform($options = '{}') {
 	$ret .= '</div>';
 
 	// Show not member in -info
-	if ($options->showInfo > 0) {
-		$ret .= '<div class="-info"><h3>'.tr('I am a new customer!').'</h3>';
-		if (user_access('register new member')) {
-			$ret .= '<p>'.tr(cfg('web.msg.createnewusertext')).'</p>'
-				. '<a class="sg-action btn -secondary -fill" href="'.url('user/register', array('ret' => $options->signret)).'" data-rel="'.$options->regRel.'"><i class="icon -material -gray">person_add</i><span>'.tr('Create an Account').'</span></a>';
-		} else {
-			$ret .= '<p><b>เว็บไซท์ไม่ได้เปิดให้ผู้สนใจสมัครสมาชิกด้วยตนเอง</b><br />หากท่านต้องการสมัครเป็นสมาชิก กรุณาติดต่อผู้ดูแลระบบ.</p>';
-		}
-		$ret .= '</div>';
-	}
+	// if ($options->showInfo > 0) {
+	// 	$ret .= '<div class="-info"><h3>'.tr('I am a new customer!').'</h3>';
+	// 	if (user_access('register new member')) {
+	// 		$ret .= '<p>'.tr(cfg('web.msg.createnewusertext')).'</p>'
+	// 			. '<a class="sg-action btn -secondary -fill" href="'.url('user/register', array('ret' => $options->signret)).'" data-rel="'.$options->regRel.'"><i class="icon -material -gray">person_add</i><span>'.tr('Create an Account').'</span></a>';
+	// 	} else {
+	// 		$ret .= '<p><b>เว็บไซท์ไม่ได้เปิดให้ผู้สนใจสมัครสมาชิกด้วยตนเอง</b><br />หากท่านต้องการสมัครเป็นสมาชิก กรุณาติดต่อผู้ดูแลระบบ.</p>';
+	// 	}
+	// 	$ret .= '</div>';
+	// }
 
 	$ret .= '</div><!-- login -->';
 

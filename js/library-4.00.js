@@ -2,7 +2,7 @@
  * SoftGanz JavaScript Library
  *
  * @package library
- * @version 4.00.05
+ * @version 4.00.06
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com>
  * http://www.softganz.com
@@ -23,18 +23,15 @@
 
 'use strict'
 
-console.log('SG-LIBRARY Version 4.00.05 loaded');
-
+let sgLibraryVersion = '4.00.06'
 let thaiMonthName = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 let debugSignIn = false
 let firebaseConfig
-
 let gMapsLoaded = false
-
 let sgTabIdActive = null
-
 let sgPrintWindow = null
 
+console.log('SG-LIBRARY Version ' + sgLibraryVersion + ' loaded');
 
 function loadGoogleMaps(callback) {
 	//console.log(googleMapKeyApi)

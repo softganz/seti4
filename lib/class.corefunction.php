@@ -226,6 +226,8 @@ if ($R->user->signInResult) {
 	sendHeader('application/json');
 	http_response_code($R->user->ok ? _HTTP_OK :_HTTP_ERROR_UNAUTHORIZED);
 	die(SG\json_encode($R->user));
+} else if ($R->user->signInErrorMessage) {
+	$R->message->signInErrorInSignForm = $R->user->signInErrorMessage;
 }
 
 $R->user->admin = user_access('access administrator pages');
@@ -276,10 +278,12 @@ class R {
 	public $timer;
 	public $user;
 	public $mydb;
+	public $message;
 
 	function __construct() {
-		$this->setting = new stdClass();
-		$this->options = new stdClass();
+		$this->setting = (Object) [];
+		$this->options = (Object) [];
+		$this->message = (Object) [];
 	}
 
 	public static function Option($key = NULL, $value = NULL) {
@@ -1248,17 +1252,22 @@ class SgCore {
 				$request_result .= $pageResultWidget;
 			}
 
-
 			if (cfg('Content-Type') == 'text/xml') {
 				die(process_widget($request_result));
 			} else if (!_AJAX && is_array($request_result) && isset($request_result['location'])) {
 				location($body['location']);
 				die;
 			} else if (_AJAX || is_array($request_result) || is_object($request_result)) {
+				// print_o($request_result, '$request_result',1);
 				if (is_array($request_result) || is_object($request_result)) {
 					sendHeader('application/json');
+					if (is_object($request_result) && $request_result->responseCode) {
+						http_response_code($request_result->responseCode);
+						// echo 'RESPONSE_CODE = '.$request_result->responseCode.'<br />';
+					}
 					$request_result = SG\json_encode($request_result);
 				}
+				// die('@'.date('H:i:s'));
 				// Show AppBar as Box Header
 				if (is_object($pageResultWidget->appBar) && $pageResultWidget->appBar->boxHeader && method_exists($pageResultWidget->appBar, 'build')) {
 					$pageResultWidget->appBar->showInBox = true;

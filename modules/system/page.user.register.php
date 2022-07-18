@@ -19,7 +19,7 @@ function user_register($self) {
 	$register = (Object) post('register',_TRIM+_STRIPTAG);
 
 	// print_o($register,'$register',1);
-	if (post('rel')) $register->rel=post('rel');
+	if (post('rel')) $register->rel = post('rel');
 
 	if ($_POST) {
 		$error = false;
@@ -133,7 +133,54 @@ e-mail : '.$register->email.'</p>
 
 	$ret .= message('error',$error);
 
-	if ($error && $register->step == 1) {
+	if (post('signWith') === 'google') {
+		$jwt = Jwt::isValid(post('credential'));
+
+		if ($jwt->payload->email) {
+			return new Form([
+				'title' => 'Sign Up With Google',
+				'action' => url('api/user/register/google'),
+				'class' => 'sg-form',
+				'checkValid' => true,
+				'rel' => 'notify',
+				'done' => 'reload:'.url('api/system/date', ['credential' => post('credential')]),
+				'children' => [
+					new Container([
+						'class' => '-sg-text-center',
+						'child' => '<img class="profile-photo" src="'.$jwt->payload->picture.'" /> '.$jwt->payload->email,
+					]), // Container
+					'name' => [
+						'type' => 'text',
+						'class' => '-fill',
+						'require' => true,
+						'value' => $jwt->payload->name,
+						'placeholder' => 'ระบุชื่อ-นามสกุล',
+					],
+					'email' => [
+						'type' => 'text',
+						'class' => '-fill',
+						'readonly' => true,
+						'value' => $jwt->payload->email,
+					],
+					'googleToken' => [
+						'type' => 'hidden',
+						'value' => post('credential'),
+					],
+					'accept' => [
+						'type' => 'checkbox',
+						'require' => true,
+						'options' => ['yes' => 'ใช่, ฉันเข้าใจและยอมรับข้อตกลงรวมทั้งเงื่อนไขในการใช้บริการ'],
+					],
+					'save' => [
+						'type' => 'button',
+						'value' => 'Create my account',
+						'class' => '-primary -fill',
+					],
+					new Container(['class' => '-sg-text-center', 'child' => 'ฉันมีบัญชีการใช้งานอยู่แล้ว? <a class="btn -link" href="'.url('signin').'">เข้าสู่ระบบสมาชิก</a>']), // Container
+				], // children
+			]);
+		}
+	} else if ($error && $register->step == 1) {
 		$ret .= R::View('user.register.form',$register);
 	} else if ($error && $register->step == 2) {
 		$ret .= R::View('user.register.confirm',$register);

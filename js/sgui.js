@@ -1,6 +1,6 @@
 'use strict'
 
-let sgUiVersion = '4.00.02'
+let sgUiVersion = '4.00.03'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPage = 0
@@ -646,12 +646,18 @@ function sgWebViewDomProcess(id) {
 					window.location = callback
 				}
 			}).fail(function(response) {
+				// console.log('sg-action FAIL');
 				// console.log(response)
-				// let errorMsg = 'ERROR : ' + (response.responseText.charAt(0) != '<' ? response.responseText : '') + '<br />( '+response.status + ' : ' + response.statusText + ' )';
-				let errorMsg = 'ERROR : ' + response.responseText + '<br />( '+response.status + ' : ' + response.statusText + ' )';
+				let errorMsg = 'ERROR : '
+				if (response.responseJSON.text) {
+					errorMsg += response.responseJSON.text+' ('+response.status+')'
+				} else {
+					errorMsg += response.statusText+' ('+response.status+')'
+				}
 				notify(errorMsg)
 			})
 			.done(function() {
+				// console.log('sg-action COMPLETE');
 				sgActionDone(linkData.done, $this, doneResult)
 			})
 			return
@@ -712,7 +718,6 @@ function sgWebViewDomProcess(id) {
 		//console.log('RESULT ', result)
 		return !result.actionResult
 	});
-
 })(jQuery);
 
 
@@ -888,12 +893,18 @@ $(document).on('submit', 'form.sg-form', function(e) {
 			}, $this.data('dataType') == undefined ? null : $this.data('dataType')
 		).fail(function(response) {
 			// console.log(response)
-			let errorMsg = 'ERROR : ' + response.responseText + '<br />( '+response.status + ' : ' + response.statusText + ' )';
-			// let errorMsg = 'ERROR : ' + (response.responseText.charAt(0) != '<' ? response.responseText : '') + '<br />( '+response.status+' : '+response.statusText+' )';
+			// console.log('sg-form FAIL')
+			let errorMsg = 'ERROR : '
+			if (response.responseJSON.text) {
+				errorMsg += response.responseJSON.text+' ('+response.status+')'
+			} else {
+				errorMsg += response.statusText+' ('+response.status+')'
+			}
 			notify(errorMsg)
 			if (debugSG) console.log(response)
-			return true
+			return false
 		}).done(function() {
+			console.log('sg-form COMPLETE')
 			sgActionDone($this.data('done'), $this, doneResult);
 		})
 	}
