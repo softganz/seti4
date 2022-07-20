@@ -388,6 +388,9 @@ class Message extends Widget {
 
 class ErrorMessage extends Message {
 	var $widgetName = 'ErrorMessage';
+	// function build() {
+	// 	return (Object) ['responseCode' => $this->responseCode, 'text' => $this->text];
+	// }
 } // End of class ErrorMessage
 
 // Element wiget

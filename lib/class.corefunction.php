@@ -157,6 +157,17 @@ if (!$R->myDb->status) {
 // Load config variable from table
 SgCore::loadConfig(cfg_db());
 
+if (banIp(getenv('REMOTE_ADDR'))) die('Sorry!!!! You were banned.');
+
+// if ($site_message) {
+// 	$ret .= '<p class="notify">'.tr('<h2>Website temporary out of service.</h2><p>My Website is currently out of service ('.$site_message.'). We should be back shortly. Thank you for your patience.</p>','<strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ').'</p>';
+// 	ob_start();
+// 	SgCore::loadTemplate('home');
+// 	$ret .= ob_get_contents();
+// 	ob_end_clean();
+// 	die($ret);
+// }
+
 if ($request == 'robots.txt') die(cfg('robots.txt'));
 
 // Clear user_access
@@ -1135,29 +1146,19 @@ class SgCore {
 	 * @return String
 	 */
 	static function processController($loadTemplate = true, $pageTemplate = NULL) {
-		global $R,$page,$request_time,$request_process_time,$site_message;
-		$request = $R->request;
+		global $R,$page,$request_time,$request_process_time;
+		$request = R()->request;
 		$method_result = '';
 		$request_result = '';
+		$isLoadHomePage = false;
 		$isDebugProcess = debug('process');
 
 		if ($isDebugProcess) $process_debug = 'process debug of <b>'.$request.'</b> request<br />'._NL;
 
-		if ($site_message) {
-			$ret .= '<p class="notify">'.tr('<h2>Website temporary out of service.</h2><p>My Website is currently out of service ('.$site_message.'). We should be back shortly. Thank you for your patience.</p>','<strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ').'</p>';
-				ob_start();
-				SgCore::loadTemplate('home');
-				$ret .= ob_get_contents();
-				ob_end_clean();
-				return $ret;
-		}
-
-		if (banIp(getenv('REMOTE_ADDR'))) die('Sorry!!!! You were banned.');
-
 		if (isset($GLOBALS['message'])) $request_result .= $GLOBALS['message'];
 		if (cfg('web.readonly')) $request_result .= message('status',cfg('web.readonly_message'));
 
-		$R->timer->start($request);
+		R()->timer->start($request);
 
 	 	// Show splash if not visite site in 1 hour
 		$webhomepage = cfg('web.homepage');
@@ -1177,7 +1178,7 @@ class SgCore {
 				ob_end_clean();
 				$request = '';
 			} else {
-				$R->request = $request = $home;
+				R()->request = $request = $home;
 				q($request);
 				//debugMsg('$home='.$home.' $request='.$request.' q()='.q()).' cfg(page_id)='.cfg('page_id');
 				$manifest = R::Manifest(q(0));
@@ -1207,6 +1208,8 @@ class SgCore {
 
 		if ($isDebugProcess  && $manifest) $process_debug .= 'Manifest module file : '.print_o($manifest,'$manifest').'<br />';
 
+		if ($isLoadHomePage) cfg('page_id','home');
+
 		// Load Page On Request
 		if ($manifest[1] && $menu) { // This is a core version 4
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 <b>'.$request.'</b><br />';
@@ -1215,7 +1218,6 @@ class SgCore {
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 			list($exeClass,$found,$pageResultWidget) = SgCore::processMenu($menu);
 		}
-		if ($isLoadHomePage) cfg('page_id','home');
 
 		if ($found) {
 			// Set splash page was show
@@ -1223,8 +1225,10 @@ class SgCore {
 				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 			}
 
-			// Convert Widget Class to String
+			// Build Widget Class to String
 			if (is_object($pageResultWidget) && method_exists($pageResultWidget, 'build')) {
+				// print_o($pageResultWidget,'$pageResultWidget',1);
+				// Case widget, Call method build()
 				$request_result = $pageResultWidget->build();
 				// Create App Bar
 				if ($pageResultWidget->appBar) {
@@ -1243,15 +1247,18 @@ class SgCore {
 					$exeClass->appBar = $pageResultWidget->appBar;
 					$exeClass->sideBar = $pageResultWidget->sideBar;
 				}
+
 				if ($pageResultWidget->floatingActionButton) {
 					$exeClass->floatingActionButton = $pageResultWidget->floatingActionButton;
 				}
 			} else if (is_array($pageResultWidget) || is_object($pageResultWidget)) {
 				$request_result = $pageResultWidget;
 			} else {
+				// Result is String, join
 				$request_result .= $pageResultWidget;
 			}
 
+			// Generate result by content type
 			if (cfg('Content-Type') == 'text/xml') {
 				die(process_widget($request_result));
 			} else if (!_AJAX && is_array($request_result) && isset($request_result['location'])) {
@@ -1259,20 +1266,37 @@ class SgCore {
 				die;
 			} else if (_AJAX || is_array($request_result) || is_object($request_result)) {
 				// print_o($request_result, '$request_result',1);
+
+				// Check error result
+				$ajaxError = (Object) ['responseCode' => NULL, 'text' => NULL];
+				if (is_object($pageResultWidget) && $pageResultWidget->widgetName === 'ErrorMessage' && $pageResultWidget->responseCode) {
+					$ajaxError->responseCode = $pageResultWidget->responseCode;
+					$ajaxError->text = $pageResultWidget->text;
+				} else if (is_object($request_result) && $request_result->responseCode) {
+					$ajaxError->responseCode = $request_result->responseCode;
+					$ajaxError->text = $request_result->text;
+				} else if (is_array($request_result) && $request_result['responseCode']) {
+					$ajaxError->responseCode = $request_result['responseCode'];
+					$ajaxError->text = $request_result['text'];
+				}
+				// Send error with json
+				if ($ajaxError->responseCode) {
+					sendHeader('application/json');
+					http_response_code($ajaxError->responseCode);
+					die(SG\json_encode($ajaxError));
+				}
+
 				if (is_array($request_result) || is_object($request_result)) {
 					sendHeader('application/json');
-					if (is_object($request_result) && $request_result->responseCode) {
-						http_response_code($request_result->responseCode);
-						// echo 'RESPONSE_CODE = '.$request_result->responseCode.'<br />';
-					}
 					$request_result = SG\json_encode($request_result);
 				}
-				// die('@'.date('H:i:s'));
+
 				// Show AppBar as Box Header
 				if (is_object($pageResultWidget->appBar) && $pageResultWidget->appBar->boxHeader && method_exists($pageResultWidget->appBar, 'build')) {
 					$pageResultWidget->appBar->showInBox = true;
 					$request_result = $pageResultWidget->appBar->build() . $request_result;
 				}
+
 				die(debugMsg().process_widget($request_result));
 			} else if (_HTML && (is_array($request_result) || is_object($request_result))) {
 				die(process_widget(print_o($request_result,'$request_result')));
@@ -1280,6 +1304,7 @@ class SgCore {
 				die(process_widget($request_result));
 			}
 		} else {
+			http_response_code(_HTTP_ERROR_NOT_FOUND);
 			R::Model('watchdog.log','system','Page not found');
 			// Set header to no found and noacrchive when url address is load function page
 			if ($q == str_replace('.', '/', $package)) {
@@ -1299,15 +1324,15 @@ class SgCore {
 		$request_result = R::View('render.page',$exeClass,$request_result);
 		$request_result = process_widget($request_result);
 
-		$R->timer->stop($request);
+		R()->timer->stop($request);
 
 		if ($isDebugProcess) $process_debug .= print_o($menu,'$menu');
 		if ($isDebugProcess) $process_debug .= print_o(q(0,'all'),'$q');
 
 		if (debug('menu')) debugMsg(menu(),'$menu');
 		if ($isDebugProcess) debugMsg($process_debug.(isset($GLOBALS['process_debug'])?print_o($GLOBALS['process_debug']):''));
-		$request_time[$request] = $R->timer->get($request,5);
-		$request_process_time = $GLOBALS['request_process_time']+$R->timer->get($request);
+		$request_time[$request] = R()->timer->get($request,5);
+		$request_process_time = $GLOBALS['request_process_time']+R()->timer->get($request);
 		if (debug('timer')) debugMsg('Request process time : '.$request_process_time.' ms.'.print_o($request_time));
 
 		if (debug('html')) debugMsg(htmlview($request_result,'html tag'));

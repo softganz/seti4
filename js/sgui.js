@@ -892,8 +892,8 @@ $(document).on('submit', 'form.sg-form', function(e) {
 				}
 			}, $this.data('dataType') == undefined ? null : $this.data('dataType')
 		).fail(function(response) {
-			// console.log(response)
 			// console.log('sg-form FAIL')
+			// console.log(response)
 			let errorMsg = 'ERROR : '
 			if (response.responseJSON.text) {
 				errorMsg += response.responseJSON.text+' ('+response.status+')'
@@ -903,8 +903,9 @@ $(document).on('submit', 'form.sg-form', function(e) {
 			notify(errorMsg)
 			if (debugSG) console.log(response)
 			return false
-		}).done(function() {
-			console.log('sg-form COMPLETE')
+		}).done(function(response) {
+			// console.log('sg-form COMPLETE')
+			// console.log(response)
 			sgActionDone($this.data('done'), $this, doneResult);
 		})
 	}
