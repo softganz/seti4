@@ -197,6 +197,8 @@ class Form extends Widget {
 			$ret .= $formElement->pretext;
 
 		// Item attribute from key attribute, if not define use key attr
+		// print_o($formElement, '$formElement',1);
+		if (!isset($formElement->attribute)) $formElement->attribute = [];
 		$formElement->attribute = SG\getFirst($formElement->attribute, $formElement->attr, []);
 		if ($formElement->attribute && (is_array($formElement->attribute) || is_object($formElement->attribute))) {
 			$formElement->attribute = sg_implode_attr($formElement->attribute);
