@@ -243,9 +243,9 @@ $SCREENS
 	input::placeholder, textarea::placeholder {color: #999; font-style: italic; font-size: 0.9em;}
 
 
-	.-left {text-align: : left;}
+	.-left {text-align: left;}
 	.-right {text-align: right;}
-	.-center {text-align: : center;}
+	.-center {text-align: center;}
 	.-bigsize {font-style: 1.2em;}
 	.-uppercase {text-transform: uppercase;}
 	.-forprint {margin:20px; padding:20px; border:2px #ccc solid; box-shadow: 2px 2px 10px #ccc; position: relative;}
@@ -522,6 +522,8 @@ $SCREENS
 			.item .newitem td {background-color: #E5BBA0;}
 			.item.-center td, .item.-center th {text-align: center;}
 			.item.-cols8 td {width:12.5%;}
+			.item.-cols2 td:first-child {white-space: nowrap;}
+			.item.-cols2 td:nth-child(2) {width: 100%;}
 			.item .col.-center {text-align: center;}
 			.item .col.-left {text-align: left;}
 			.item .col.-right {text-align: right;}
