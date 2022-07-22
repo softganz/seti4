@@ -420,7 +420,8 @@ class MyDb {
 				while ($row = $res->fetch_array(MYSQLI_ASSOC)){
 					$data->items[] = (object) $row;
 				}
-				$res->free();
+				// print_o($res, '$res',1);
+				// $res->free();
 				// Free result set
 				$res->close();
 				$myDb->mysqli->next_result();
