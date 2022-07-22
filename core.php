@@ -44,11 +44,11 @@ define('_CORE_FUNCTION_FILE', _CORE_FOLDER.'/core/lib/class.corefunction.php');
 if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name', 'Seti');
-cfg('core.version.code', 6);
-cfg('core.version.major', '4');
-cfg('core.version', '4.2.rc');
+cfg('core.version.code', 7);
+cfg('core.version.major', 4);
+cfg('core.version', '4.2');
 cfg('core.location', ini_get('include_path'));
-cfg('core.release', '2022-05-01');
+cfg('core.release', '2022-07-22');
 cfg('core.folder', _CORE_FOLDER);
 cfg('core.config', _CONFIG_FILE);
 
