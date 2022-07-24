@@ -597,6 +597,7 @@ class Page extends Widget {
 		$this->version = cfg($this->module.'.version');
 		$this->theme = (Object) ['option' => cfg('topic.property')->option];
 		parent::__construct($args);
+
 		// Remove unused property
 		unset($this->tagName, $this->childTagName, $this->attribute, $this->config);
 	}
