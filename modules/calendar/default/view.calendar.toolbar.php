@@ -16,8 +16,8 @@ function view_calendar_toolbar($self, $calInfo=NULL,$options = '{}') {
 
 	$ret.='<nav class="nav -submodule -calendar">';
 	$ui=new Ui(NULL,'ui-nav -calendar');
-	$ui->add('<a class="" href="'.url('calendar',NULL,'prev').'"><i class="icon -back"></i></a>','{class: "-nav -prev"}');
-	$ui->add('<a class="" href="'.url('calendar',NULL,'next').'"><i class="icon -forward"></i></a>','{class: "-nav -next"}');
+	$ui->add('<a class="" href="'.url('calendar',NULL,'prev').'"><i class="icon -material">navigate_before</i></a>','{class: "-nav -prev"}');
+	$ui->add('<a class="" href="'.url('calendar',NULL,'next').'"><i class="icon -material">navigate_next</i></a>','{class: "-nav -next"}');
 	$ui->add('<a id="calendar-today" href="'.url('calendar',NULL,'today').'" title="Today">'.tr('Today').'</a>','{class: "-nav -today"}');
 
 	$ui->add('<a><strong id="calendar-current-month">'.sg_date('ดดด ปปปป').'</strong></a>','{class: "-current -month"}');

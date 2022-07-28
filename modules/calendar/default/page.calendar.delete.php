@@ -44,7 +44,7 @@ function calendar_delete($self, $calId) {
 
 		$ret .= '<p style="margin: 32px;"><b>คำเตือน : จะทำการลบข้อมูลปฏิทินรายการนี้ และจะไม่สามารถเรียกคืนได้อีกแล้ว กรุณายืนยัน?</b></p>';
 
-		$ret .= '<div class="-sg-text-right"><a class="sg-action btn -link -cancel" href="javascript:void(0)" data-rel="close"><i class="icon -cancel -gray"></i>{tr:CANCEL}</a> <a class="sg-action btn -danger" href="'.url(q(),array('module'=>$module,'confirm'=>'yes')).'" data-rel="none" data-callback="calendarRefresh" data-x-ret="'.url('calendar',array('year'=>sg_date($calendarInfo->from_date,'Y'),'month'=>sg_date($calendarInfo->from_date,'m'))).'" data-done="close"><i class="icon -delete -white"></i><span>ดำเนินการลบ</span></a></div>';
+		$ret .= '<div class="-sg-text-right"><a class="sg-action btn -link -cancel" href="javascript:void(0)" data-rel="close"><i class="icon -material -gray">cancel</i>{tr:CANCEL}</a> <a class="sg-action btn -danger" href="'.url(q(),array('module'=>$module,'confirm'=>'yes')).'" data-rel="none" data-callback="calendarRefresh" data-x-ret="'.url('calendar',array('year'=>sg_date($calendarInfo->from_date,'Y'),'month'=>sg_date($calendarInfo->from_date,'m'))).'" data-done="close"><i class="icon -material">delete</i><span>ดำเนินการลบ</span></a></div>';
 	}
 
 	$ret .= '<script>

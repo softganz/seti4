@@ -164,7 +164,7 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 
 				$ui = new Ui('span');
 				if ($deleteurl) {
-					$ui->add('<a class="sg-action -no-print" href="'.url($deleteurl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-removeparent="li"><i class="icon -cancel -gray"></i></a>');
+					$ui->add('<a class="sg-action -no-print" href="'.url($deleteurl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-removeparent="li"><i class="icon -material -gray">cancel</i></a>');
 				}
 				$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 			} else {
@@ -175,7 +175,7 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 					. '</a>';
 				$ui = new Ui();
 				if ($deleteurl) {
-					$ui->add('<a class="sg-action -no-print" href="'.url($deleteurl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-removeparent="li"><i class="icon -cancel -gray"></i></a>');
+					$ui->add('<a class="sg-action -no-print" href="'.url($deleteurl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-removeparent="li"><i class="icon -material -gray">cancel</i></a>');
 				}
 				$linkInfo .= $ui->build();
 			}

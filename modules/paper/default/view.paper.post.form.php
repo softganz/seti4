@@ -222,7 +222,7 @@ function view_paper_post_form($topic) {
 					'preview'=>array(
 						'type'=>'submit',
 						'class'=>'-secondary',
-						'value'=>'<i class="icon -viewdoc"></i><span>'.tr('Preview').'</span>'
+						'value'=>'<i class="icon -material">find_in_page</i><span>'.tr('Preview').'</span>'
 						),
 					*/
 					'draft' => [

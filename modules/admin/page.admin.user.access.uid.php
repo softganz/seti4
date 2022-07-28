@@ -26,7 +26,7 @@ function admin_user_access_uid($self,$uid) {
 	$roles_count=count((array)$roles);
 
 	$ret .= '<form method="post" action="'.url(q()).'" >';
-	$ret .= '<p><button class="btn -primary" type="submit"><i class="icon -save -white"></i><span>Save permissions</span></button></p>';
+	$ret .= '<p><button class="btn -primary" type="submit"><i class="icon -material">done_all</i><span>Save permissions</span></button></p>';
 	$ret .= '<table class="item" width="100%" cellspacing="1" cellpadding="3" border="0">';
 	$ret .= '<thead><tr><th>Permission</th>';
 	foreach ($roles as $role_name=>$role_perm) {
@@ -59,7 +59,7 @@ function admin_user_access_uid($self,$uid) {
 	}
 	$ret .= '</tbody>';
 	$ret .= '</table>';
-	$ret .= '<p><button class="btn -primary" type="submit"><i class="icon -save -white"></i><span>Save permissions</span></button></p>';
+	$ret .= '<p><button class="btn -primary" type="submit"><i class="icon -material">done_all</i><span>Save permissions</span></button></p>';
 	$ret.='</form>';
 	return $ret;
 }

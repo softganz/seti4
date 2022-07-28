@@ -14,7 +14,7 @@ function admin_content_topic($self) {
 	$ret .= '<h2>Topic Listing</h2>';
 	$ret .= '<form method="get" action="'.url('admin/content/topic').'">';
 	$ret .= sg_client_convert('ย้อนหลัง').' <input type="text" name="day" value="'.$day.'" style="width:30px;"> '.sg_client_convert('วัน ');
-	$ret .= '<button class="btn -primary" type="submit"><i class="icon -viewdoc -white"></i><span> Go </span></button>';
+	$ret .= '<button class="btn -primary" type="submit"><i class="icon -material">find_in_page</i><span> Go </span></button>';
 	$ret .= '</form>';
 
 	$stmt='SELECT

@@ -42,7 +42,7 @@ class AdminUserRoles extends Page {
 										return [
 											$role,
 											$value,
-											'<a class="btn -link" href="'.url('admin/user/roles/edit/'.$role).'" title="edit permissions"><i class="icon -edit"></i><span class="-hidden">Edit Permissions</span></a>'
+											'<a class="btn -link" href="'.url('admin/user/roles/edit/'.$role).'" title="edit permissions"><i class="icon -material">edit</i><span class="-hidden">Edit Permissions</span></a>'
 										];
 									},
 									array_keys((Array) cfg('roles')),
@@ -51,7 +51,7 @@ class AdminUserRoles extends Page {
 								[
 									'input' => [
 										'<td colspan="2"><input class="form-text -fill" type="text" size="20" name="rolename" placeholder="Enter new role name" /></td>',
-										'<button class="btn -primary" type="submit"><i class="icon -addbig -white"></i><span>Add Role</span></button>'
+										'<button class="btn -primary" type="submit"><i class="icon -material">add</i><span>Add Role</span></button>'
 									],
 								],
 							]), // Table

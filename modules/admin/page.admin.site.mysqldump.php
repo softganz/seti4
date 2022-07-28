@@ -23,7 +23,7 @@ function admin_site_mysqldump($self,$table) {
 					'dump',
 					array(
 						'type'=>'button',
-						'value'=>'<i class="icon -save -white"></i><span>Start Dump File</span>',
+						'value'=>'<i class="icon -material">done_all</i><span>Start Dump File</span>',
 						)
 					);
 

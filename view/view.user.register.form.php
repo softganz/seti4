@@ -125,12 +125,12 @@ function view_user_register_form($register = []) {
 					'cancel' => [
 						'type' => 'cancel',
 						'class' => '-link',
-						'value' => '<i class="icon -cancel -gray"></i><span>{tr:Cancel}</span>'
+						'value' => '<i class="icon -material -gray">cancel</i><span>{tr:Cancel}</span>'
 					],
 					'next' => [
 						'type' => 'submit',
 						'class' => '-primary',
-						'value' => '<i class="icon -forward -white"></i><span>{tr:Next}</span>'
+						'value' => '<i class="icon -material">navigate_next</i><span>{tr:Next}</span>'
 					],
 				],
 				'container' => ['class' => '-sg-text-right'],

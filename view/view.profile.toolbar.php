@@ -11,11 +11,11 @@ function view_profile_toolbar($self,$uid=NULL) {
 	$self->theme->title='Profile';
 
 	$ui=new Ui(NULL,'ui-nav');
-	$ui->add('<a href="'.url('my').'" title="My Profile"><i class="icon -home"></i></a>');
+	$ui->add('<a href="'.url('my').'" title="My Profile"><i class="icon -material">home</i></a>');
 	if ($uid) {
-		$ui->add('<a href="'.url('my/change/'.$uid).'" title="ข้อมูลส่วนตัว"><i class="icon -person"></i></a>');
-		$ui->add('<a href="'.url('paper/user/'.$uid).'" title="เอกสารของฉัน"><i class="icon -view"></i></a>');
-		$ui->add('<a href="'.url('signout').'" title="ออกจากระบบ"><i class="icon -unlock"></i></a>');
+		$ui->add('<a href="'.url('my/change/'.$uid).'" title="ข้อมูลส่วนตัว"><i class="icon -material">person</i></a>');
+		$ui->add('<a href="'.url('paper/user/'.$uid).'" title="เอกสารของฉัน"><i class="icon -material">find_in_page</i></a>');
+		$ui->add('<a href="'.url('signout').'" title="ออกจากระบบ"><i class="icon -material -gray">lock_open</i></a>');
 	}
 
 	$ret.='<nav class="nav -submodule -profile"><!-- nav of profile.nav -->';

@@ -111,7 +111,7 @@ function view_admin_taxonomy_form($tag=NULL,$vocab=array(),$message=NULL) {
 					'save',
 					array(
 						'type'=>'button',
-						'value'=>'<i class="icon -save -white"></i><span>Save Tag</span>',
+						'value'=>'<i class="icon -material">done_all</i><span>Save Tag</span>',
 						)
 					);
 

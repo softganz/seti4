@@ -77,7 +77,7 @@ function paper_edit_docs_add($self, $topicInfo) {
 							array(
 								'type'=>'button',
 								'name'=>'upload',
-								'value'=>'<i class="icon -upload -white"></i><span>{tr:Upload}</span>',
+								'value'=>'<i class="icon -material">cloud_upload</i><span>{tr:Upload}</span>',
 								'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('paper/'.$tpid.'/docs').'" data-rel="close"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 								'container' => '{class: "-sg-text-right"}',
 								)

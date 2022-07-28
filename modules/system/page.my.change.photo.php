@@ -73,8 +73,8 @@ function my_change_photo($self) {
 					'save',
 					array(
 						'type' => 'button',
-						'value' => '<i class="icon -upload -white"></i><span>UPLOAD PHOTO</span>',
-						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my').'" data-rel="close"><i class="icon -cancel -gray"></i><span>{tr:CANCEL}</span></a>',
+						'value' => '<i class="icon -material">cloud_upload</i><span>UPLOAD PHOTO</span>',
+						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my').'" data-rel="close"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 						'container' => array('class'=>'-sg-text-right'),
 					)
 				);

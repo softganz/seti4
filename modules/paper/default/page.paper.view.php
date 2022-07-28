@@ -132,7 +132,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 	if ($topicInfo->archived) {
 		user_menu(
 			'edit',
-			'<i class="icon -sg-16 -material">archive</i>',
+			'<i class="icon -material -sg-16">archive</i>',
 			$isAdminPaper ? url('paper/'.$tpid.'/edit/archive') : 'javascript:void(0)',
 			'{title: "'.($isAdminPaper ? ' Click to Un' : '').'Archive topic"}'
 		);
@@ -141,7 +141,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 		$self->theme->ribbon->class = 'navigator-manage';
 		user_menu(
 			'edit',
-			'<i class="icon -sg-16 -material -gray">edit</i>',
+			'<i class="icon -material -gray -sg-16">edit</i>',
 			url('paper/'.$tpid.'/edit'),
 			'title','Edit topic detail'
 		);
@@ -216,7 +216,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 		if ($topicInfo->info->status < _LOCK)
 			user_menu(
 				'delete',
-				'<i class="icon -sg-16 -material -gray">delete</i>',
+				'<i class="icon -material -gray -sg-16">delete</i>',
 				url('paper/'.$tpid.'/delete'),
 				'{"class": "sg-action", "data-rel": "box", "data-width" : 480, "title": "Delete topic"}'
 			);
@@ -464,7 +464,7 @@ class XPaperView extends Page {
 		if ($topicInfo->archived) {
 			user_menu(
 				'edit',
-				'<i class="icon -sg-16 -material">archive</i>',
+				'<i class="icon -material -gray -sg-16">archive</i>',
 				$isAdminPaper ? url('paper/'.$tpid.'/edit/archive') : 'javascript:void(0)',
 				'{title: "'.($isAdminPaper ? ' Click to Un' : '').'Archive topic"}'
 			);
@@ -473,7 +473,7 @@ class XPaperView extends Page {
 			$self->theme->ribbon->class = 'navigator-manage';
 			user_menu(
 				'edit',
-				'<i class="icon -sg-16 -material -gray">edit</i>',
+				'<i class="icon -material -gray -sg-16">edit</i>',
 				url('paper/'.$tpid.'/edit'),
 				'title','Edit topic detail'
 			);
@@ -548,7 +548,7 @@ class XPaperView extends Page {
 			if ($topicInfo->info->status < _LOCK)
 				user_menu(
 					'delete',
-					'<i class="icon -sg-16 -material -gray">delete</i>',
+					'<i class="icon -material -gray -sg-16">delete</i>',
 					url('paper/'.$tpid.'/delete'),
 					'{"class": "sg-action", "data-rel": "box", "data-width" : 480, "title": "Delete topic"}'
 				);

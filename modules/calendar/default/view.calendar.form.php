@@ -36,8 +36,8 @@ function view_calendar_form($calInfo = [], $para = NULL) {
 			'tpid' => $para->module ? ['type' => 'hidden','value' => $calInfo->tpid] : ($calInfo->calId && $calInfo->tpid ? ['type' => 'hidden','value' => $calInfo->tpid] : NULL),
 			'topsave' => [
 				'type' => 'button',
-				'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>',
-				'pretext' => '<a class="sg-action btn -back-to-calendar -link -cancel" style="position: absolute; left: 0;" data-rel="#calendar-body"><i class="icon -back -gray"></i>กลับสู่หน้าปฏิทิน</a><a class="btn -back-to-calendar -link -cancel"><i class="icon -cancel -gray"></i><span>{tr:CANCEL}</span></a>',
+				'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+				'pretext' => '<a class="sg-action btn -back-to-calendar -link -cancel" style="position: absolute; left: 0;" data-rel="#calendar-body"><i class="icon -material -gray">navigate_before</i>กลับสู่หน้าปฏิทิน</a><a class="btn -back-to-calendar -link -cancel"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 				'container' => '{class:"-sg-text-right"}',
 			],
 			'title' => [
@@ -87,7 +87,7 @@ function view_calendar_form($calInfo = [], $para = NULL) {
 				'maxlength' => 255,
 				'value' => htmlspecialchars($calInfo->location),
 				'attr' => array('data-altfld' => 'edit-calendar-areacode'),
-				'posttext' => '<a href="javascript:void(0)" id="calendar-addmap"><i class="icon -pin" style="position: absolute; right: 0; margin-top: 4px;"></i></a><div id="calendar-mapcanvas" class="-hidden"></div>',
+				'posttext' => '<a href="javascript:void(0)" id="calendar-addmap"><i class="icon -material" style="position: absolute; right: 0; margin-top: 4px;">place</i></a><div id="calendar-mapcanvas" class="-hidden"></div>',
 			],
 
 			'category' => mydb::table_exists('%calendar_category%')
@@ -132,8 +132,8 @@ function view_calendar_form($calInfo = [], $para = NULL) {
 
 			'save' => [
 				'type' => 'button',
-				'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>',
-				'pretext' => '<a class="btn -back-to-calendar -link -cancel"><i class="icon -cancel -gray"></i><span>{tr:CANCEL}</span></a>',
+				'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+				'pretext' => '<a class="btn -back-to-calendar -link -cancel"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 				'container' => array('class'=>'-sg-text-right'),
 			],
 		], // children

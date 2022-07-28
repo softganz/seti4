@@ -175,13 +175,13 @@ function admin_ftp($self) {
 	}
 	$ret.= $tables->build();
 	//$ret.=print_o($_POST,'$_POST');
-	$ret.='<div class="form-item"><button class="btn -danger" type="submit" name="delete" value="Delete file"><i class="icon -delete -white"></i><span>Delete Select File</span></button></div>';
-	$ret.='<div class="form-item" style="margin-top:64px;"><label>Create Folder name</label><input type="text" name="mkfolder" placeholder="Enter folder name" /></div><div class="form-item"><label>Folder Permission</label><input type="text" name="mkfolder_perm" placeholder="Enter permission" /></div><div class="form-item"><button class="btn" type="submit" name="makefolder" value="Make folder"><i class="icon -addbig"></i><span>Make Folder</span></button></div>
+	$ret.='<div class="form-item"><button class="btn -danger" type="submit" name="delete" value="Delete file"><i class="icon -material">delete</i><span>Delete Select File</span></button></div>';
+	$ret.='<div class="form-item" style="margin-top:64px;"><label>Create Folder name</label><input type="text" name="mkfolder" placeholder="Enter folder name" /></div><div class="form-item"><label>Folder Permission</label><input type="text" name="mkfolder_perm" placeholder="Enter permission" /></div><div class="form-item"><button class="btn" type="submit" name="makefolder" value="Make folder"><i class="icon -material">add</i><span>Make Folder</span></button></div>
 	</td>
 	<td align="center">
-		<div class="form-item"><button id="refresh" class="btn -primary -nowrap -fill" type="submit" name="refresh" value="refresh"><i class="icon -refresh -white"></i><span>Refresh</span></button></div>
-		<div class="form-item"><button class="btn -nowrap" type="submit" name="copytoremote" value=" >> "><span>Copy to Right</span><i class="icon -forward"></i></button></div>
-		<div class="form-item"><button class="btn -nowrap" type="submit" name="copytolocal" value=" << "><i class="icon -back"></i><span>Copy to Left</span></button></div>
+		<div class="form-item"><button id="refresh" class="btn -primary -nowrap -fill" type="submit" name="refresh" value="refresh"><i class="icon -material">refresh</i><span>Refresh</span></button></div>
+		<div class="form-item"><button class="btn -nowrap" type="submit" name="copytoremote" value=" >> "><span>Copy to Right</span><i class="icon -material">navigate_next</i></button></div>
+		<div class="form-item"><button class="btn -nowrap" type="submit" name="copytolocal" value=" << "><i class="icon -material">navigate_before</i><span>Copy to Left</span></button></div>
 		<div class="form-item"><input type="checkbox" name="simulate" '.($_POST['simulate']?'checked':'').'> Simulate</div>
 	</td>
 	<td>';

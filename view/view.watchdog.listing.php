@@ -7,7 +7,7 @@ function view_watchdog_listing($dbs) {
 	foreach ($dbs->items as $rs) {
 		$no++;
 		$ui = new Ui();
-		if ($isAdmin) $ui->add('<a class="sg-action" href="'.url('watchdog/'.$rs->wid.'/delete').'" data-rel="none" data-done="remove:.-detail-'.$rs->wid.'" data-title="ลบรายการ" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -cancel -gray"></i></a>');
+		if ($isAdmin) $ui->add('<a class="sg-action" href="'.url('watchdog/'.$rs->wid.'/delete').'" data-rel="none" data-done="remove:.-detail-'.$rs->wid.'" data-title="ลบรายการ" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -material -gray">cancel</i></a>');
 		$menu = '<nav class="nav -icons -hover">'.$ui->build().'</nav>';
 		$tables->rows[]=array($rs->wid,
 				$rs->date,

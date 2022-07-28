@@ -125,7 +125,7 @@ function paper_comment_senddelete($self, $cid) {
 	$form->addField('save',
 					array(
 						'type' => 'button',
-						'value' => '<i class="icon -save -white"></i><span>'.tr('SEND').'</span>',
+						'value' => '<i class="icon -material">done_all</i><span>'.tr('SEND').'</span>',
 						'container' => '{class: "-sg-text-right"}',
 					)
 				);

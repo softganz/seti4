@@ -104,9 +104,9 @@ function view_paper_comment_draw($topic=NULL,$para=NULL,$archive=false,$thread=N
 			'title' => 'Comment #'.($page_start_item+$no).'</span><span>'.$rs->subject,
 			'trailing' => user_access('administer contents,administer comments,administer papers','edit own comment',$rs->uid) ? new Row([
 				'children' => [
-					'<a class="sg-action btn -link" href="'.url('paper/'.$rs->tpid.'/edit.comment/'.$rs->cid).'" data-rel="#message-id-'.$rs->cid.' .message-body" title="Edit comment"><i class="icon -edit -gray"></i></a>',
-					'<a class="sg-action btn -link" href="'.url('paper/info/api/'.$rs->tpid.'/comment.delete/'.$rs->cid).'" data-rel="none" data-done="remove:#comment-id-'.$rs->cid.'" data-title="Delete this comment" data-confirm="Delete this comment. Are you sure?" title="Delete comment"><i class="icon -delete -gray"></i></a>',
-					user_access('administer contents,administer comments,administer papers') ? '<a class="sg-action btn -link" href="'.url('paper/info/api/'.$rs->tpid.'/comment.hide/'.$rs->cid).'" data-rel="refresh" title="Hide this comment"><i class="icon -visible -gray"></i></a>' : NULL,
+					'<a class="sg-action btn -link" href="'.url('paper/'.$rs->tpid.'/edit.comment/'.$rs->cid).'" data-rel="#message-id-'.$rs->cid.' .message-body" title="Edit comment"><i class="icon -material -grey">edit</i></a>',
+					'<a class="sg-action btn -link" href="'.url('paper/info/api/'.$rs->tpid.'/comment.delete/'.$rs->cid).'" data-rel="none" data-done="remove:#comment-id-'.$rs->cid.'" data-title="Delete this comment" data-confirm="Delete this comment. Are you sure?" title="Delete comment"><i class="icon -material">delete</i></a>',
+					user_access('administer contents,administer comments,administer papers') ? '<a class="sg-action btn -link" href="'.url('paper/info/api/'.$rs->tpid.'/comment.hide/'.$rs->cid).'" data-rel="refresh" title="Hide this comment"><i class="icon -material -gray">visibility</i></a>' : NULL,
 				],
 			]) : NULL,
 		]))->build();

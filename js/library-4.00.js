@@ -349,7 +349,7 @@ $(document).on('click','a[data-confirm]',function(ele) {
 				}
 			},
 			Ok : {
-				text: ' <i class="icon -save -white"></i> OK ',
+				text: ' <i class="icon -material">done_all</i> OK ',
 				btnClass: 'btn -primary',
 				keys: ['enter', 'o'],
 				action: function() {

@@ -204,7 +204,7 @@ function node_review($self, $tpid) {
 
 	$form->addField(
 					'submit',
-					array('type' => 'button', 'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>', 'container' => array('class' => '-sg-text-right'))
+					array('type' => 'button', 'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>', 'container' => array('class' => '-sg-text-right'))
 				);
 
 	$ret .= $form->build();

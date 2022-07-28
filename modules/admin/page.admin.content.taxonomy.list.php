@@ -20,7 +20,7 @@ function admin_content_taxonomy_list($self,$vid) {
 			$term->weight,
 			$term->liststyle,
 			$term->listclass,
-			'<a href="'.url('admin/content/taxonomy/edit/'.$term->tid).'"><i class="icon -edit"></i><span class="-hidden">Edit</span></a> <a href="'.url('tags/'.$term->tid).'">topics</a>'
+			'<a href="'.url('admin/content/taxonomy/edit/'.$term->tid).'"><i class="icon -material">edit</i><span class="-hidden">Edit</span></a> <a href="'.url('tags/'.$term->tid).'">topics</a>'
 		);
 	}
 	$ret.=$tables->build();

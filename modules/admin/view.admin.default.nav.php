@@ -10,7 +10,7 @@ function view_admin_default_nav() {
 	$active=q(1);
 
 	$ui=new Ui(NULL,'ui-nav -info');
-		$ui->add('<a href="'.url('admin').'"><i class="icon -home"></i><span class="">Home</span></a>');
+		$ui->add('<a href="'.url('admin').'"><i class="icon -material">home</i><span class="">Home</span></a>');
 	//$ui->add('<a href="'.url('admin/task').'">'.tr('By task').'</a>');
 	//$ui->add('<a href="'.url('admin/module').'">'.tr('By modules').'</a>');
 	$ui->add('<a href="'.url('admin/content').'"><i class="icon -material">ballot</i><span>{tr:Content}</span></a>');

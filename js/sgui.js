@@ -1045,8 +1045,8 @@ $(document).on('submit', 'form.sg-form', function(e) {
 						window[callbackFunction]($this,$parent);
 					}
 				},
-			cancel		: $(this).data('button')=='yes' ? '<button class="btn -link -cancel"><i class="icon -cancel -gray"></i><span>ยกเลิก</span></button>':null,
-			submit		: $(this).data('button')=='yes' ? '<button class="btn -primary"><i class="icon -save -white"></i><span>บันทึก</span></button>':null,
+			cancel		: $(this).data('button')=='yes' ? '<button class="btn -link -cancel"><i class="icon -material -gray">cancel</i><span>ยกเลิก</span></button>':null,
+			submit		: $(this).data('button')=='yes' ? '<button class="btn -primary"><i class="icon -material -white">done_all</i><span>บันทึก</span></button>':null,
 			placeholder: $(this).data('placeholder') ? $(this).data('placeholder') : '...',
 		}
 
@@ -1585,7 +1585,7 @@ $(document).on('submit', 'form.sg-form', function(e) {
 * Softganz expand DOM below parent
 * Written by Panumas Nontapan
 * https://softganz.com
-* Using <header><h3>Text</h3><a class="sg-expand"><icon class="icon -material">expand_less</i></a></header>
+* Using <header><h3>Text</h3><a class="sg-expand"><i class="icon -material">expand_less</i></a></header>
 */
 (function($) {	// sg-expand
 	$(document).on("click",".sg-expand",function() {

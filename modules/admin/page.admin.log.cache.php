@@ -35,8 +35,8 @@ function admin_log_cache($self) {
 	$ret .= '<form method="post" action="'.url(q()).'">';
 
 	$ret .= '<nav class="nav -page">'
-		. '<button class="btn" type="submit" name="delete" value="Delete"><i class="icon -delete"></i><span>DELETE SELECTED CACHES</span></button> '
-		. '<a class="btn" href="'.url('admin/log/cache').'"><i class="icon -refresh"></i><span>REFRESH</span></a> '
+		. '<button class="btn" type="submit" name="delete" value="Delete"><i class="icon -material">delete</i><span>DELETE SELECTED CACHES</span></button> '
+		. '<a class="btn" href="'.url('admin/log/cache').'"><i class="icon -material">refresh</i><span>REFRESH</span></a> '
 		. '<a class="btn -danger" href="'.url('admin/log/cache/clear').'"><span>CLEAR ALL CACHES</span></a>'
 		. '</nav>';
 

@@ -24,9 +24,9 @@ function admin_content_taxonomy($self) {
 	$ui=new Ui('span');
 	foreach ($dbs->items as $rs) {
 		$ui->clear();
-		$ui->add('<a href="'.url('admin/content/vocabulary/edit/'.$rs->vid).'"><i class="icon -edit"></i><span class="-hidden">Edit vocabulary</span></a>');
-		$ui->add('<a href="'.url('admin/content/taxonomy/list/'.$rs->vid).'"><i class="icon -list"></i><span class="-hidden">List tags</span></a>');
-		$ui->add('<a href="'.url('admin/content/taxonomy/add/'.$rs->vid).'"><i class="icon -add"></i><span class="-hidden">Add tags</span></a>');
+		$ui->add('<a href="'.url('admin/content/vocabulary/edit/'.$rs->vid).'"><i class="icon -material">edit</i><span class="-hidden">Edit vocabulary</span></a>');
+		$ui->add('<a href="'.url('admin/content/taxonomy/list/'.$rs->vid).'"><i class="icon -material">view_list</i><span class="-hidden">List tags</span></a>');
+		$ui->add('<a href="'.url('admin/content/taxonomy/add/'.$rs->vid).'"><i class="icon -material">add_circle</i><span class="-hidden">Add tags</span></a>');
 		$tables->rows[]=array(
 			$rs->vid,
 			$rs->name,

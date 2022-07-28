@@ -73,7 +73,7 @@ function paper_like_status($self, $tpid, $status = NULL) {
 
 	$ui->add(
 		(i()->ok ? '<a class="sg-action btn -link'.$btnClass.'" href="'.url('paper/like/status/'.$tpid.'/like').'" data-rel="replace:.ui-like-status" data-options=\'{"silent": true}\' title="'.number_format($likeTotals).' People Like this" rel="nofollow">' : '<a class="btn -link'.$btnClass.'">')
-		. '<i class="icon -thumbup '.(array_key_exists('TOPIC.LIKE',$isMyAction) ? '' : '-gray').'"></i>'
+		. '<i class="icon -material '.(array_key_exists('TOPIC.LIKE',$isMyAction) ? '' : '-gray').'">thumb_up_alt</i>'
 		. '<span>'.($likeTotals ? $likeTotals.' Likes' : 'Like').'</span>'
 		. '</a>'
 	);

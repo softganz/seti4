@@ -454,7 +454,7 @@ class Icon extends Widget {
 
 class ExpandButton extends Widget {
 	function toString() {
-		return '<a class="sg-expand btn -link -no-print" href="javascript:void(0)"><icon class="icon -material">expand_less</icon></a>';
+		return '<a class="sg-expand btn -link -no-print" href="javascript:void(0)"><i class="icon -material">expand_less</i></a>';
 	}
 }
 

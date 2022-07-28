@@ -15,8 +15,8 @@ function admin_content_type($self) {
 	$ui=new Ui('span');
 	foreach ($dbs->items as $type) {
 		$ui->clear();
-		$ui->add('<a href="'.url('admin/content/type/edit/'.$type->type).'"><i class="icon -edit"></i></a>');
-		if (!$type->locked) $ui->add('<a class="sg-action" href="'.url('admin/content/type/delete/'.$type->type).'" data-confirm="Delete content type. Are you sure?" data-rel="none" data-removeparent="tr"><i class="icon -delete"></i></a>');
+		$ui->add('<a href="'.url('admin/content/type/edit/'.$type->type).'"><i class="icon -material">edit</i></a>');
+		if (!$type->locked) $ui->add('<a class="sg-action" href="'.url('admin/content/type/delete/'.$type->type).'" data-confirm="Delete content type. Are you sure?" data-rel="none" data-removeparent="tr"><i class="icon -material">delete</i></a>');
 		$tables->rows[]=array(
 			'<a href="'.url('admin/content/type/edit/'.$type->type).'">'.$type->name.'</a>',
 			$type->type,

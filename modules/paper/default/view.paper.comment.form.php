@@ -279,7 +279,7 @@ function view_paper_comment_form($topicInfo) {
 			] : NULL,
 			'submit' => [
 				'type' => 'button',
-				'value' => '<i class="icon -save -white"></i><span>'.tr('POST COMMENT').'</span>',
+				'value' => '<i class="icon -material">done_all</i><span>'.tr('POST COMMENT').'</span>',
 				'container' => '{class: "-sg-text-right"}',
 			],
 		], // children

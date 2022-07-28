@@ -54,7 +54,7 @@ function r_calendar_delete($conditions, $options = '{}') {
 
 		$ret .= '<p style="margin: 32px;"><b>คำเตือน : จะทำการลบข้อมูลปฏิทินรายการนี้ และจะไม่สามารถเรียกคืนได้อีกแล้ว กรุณายืนยัน?</b></p>';
 
-		$ret .= '<div class="-sg-text-right"><a class="sg-action btn -link -cancel" href="javascript:void(0)" data-rel="close"><i class="icon -cancel -gray"></i>{tr:CANCEL}</a> <a class="btn -danger" href="'.url(q(),array('confirm'=>'yes')).'"><i class="icon -delete -white"></i><span>ดำเนินการลบ</span></a></div>';
+		$ret .= '<div class="-sg-text-right"><a class="sg-action btn -link -cancel" href="javascript:void(0)" data-rel="close"><i class="icon -material -gray">cancel</i>{tr:CANCEL}</a> <a class="btn -danger" href="'.url(q(),array('confirm'=>'yes')).'"><i class="icon -material">delete</i><span>ดำเนินการลบ</span></a></div>';
 	}
 
 	return $result;

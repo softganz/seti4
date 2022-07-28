@@ -65,11 +65,11 @@ function watchdog_analysis($self) {
 	$form = new Form(NULL, url('watchdog/analysis'), NULL, '-inlineitem');
 	$form->addConfig('method', 'GET');
 	$form->addField('d', array('type' => 'text', 'label' => 'Show Last ', 'class' => '-numeric', 'size' => 6, 'value' => $days, 'posttext' => ' days'));
-	$form->addField('go', array('type' => 'button', 'value' => '<i class="icon -search -white"></i><span>GO</span>'));
+	$form->addField('go', array('type' => 'button', 'value' => '<i class="icon -material">search</i><span>GO</span>'));
 	$ui->add($form->build());
 
 	if ($is_admin) {
-		$ui->add('<a class="sg-action btn -link" href="'.url('watchdog/analysis',array('delete'=>'emptymodule')).'" data-confirm="ต้องการลบข้อมูล กรุณายืนยัน?" data-rel="notify"><i class="icon -delete"></i><span>Clear empty module on watchlog</span></a>&nbsp;');
+		$ui->add('<a class="sg-action btn -link" href="'.url('watchdog/analysis',array('delete'=>'emptymodule')).'" data-confirm="ต้องการลบข้อมูล กรุณายืนยัน?" data-rel="notify"><i class="icon -material">delete</i><span>Clear empty module on watchlog</span></a>&nbsp;');
 	}
 
 	$ret .= '<nav class="nav -page">'.$ui->build().'</nav>';
@@ -96,7 +96,7 @@ function watchdog_analysis($self) {
 			'<a class="sg-action" href="'.url('watchdog/analysis',array('module'=>$rs->module)).'" data-rel="box">'.$rs->module.'</a>',
 			'<a class="sg-action" href="'.url('watchdog/analysis',array('module'=>$rs->module,'keyword'=>urlencode($rs->keyword))).'" data-rel="box">'.$rs->keyword.'</a>',
 			$rs->totals,
-			$is_admin?'<a class="sg-action" href="'.url('watchdog/analysis','delete='.$rs->module.':'.$rs->keyword).'" data-title="Delete logs" data-confirm="ต้องการลบข้อมูล กรุณายืนยัน?" data-rel="this" data-done="remove:parent tr"><i class="icon -delete"></i></a>':'',
+			$is_admin?'<a class="sg-action" href="'.url('watchdog/analysis','delete='.$rs->module.':'.$rs->keyword).'" data-title="Delete logs" data-confirm="ต้องการลบข้อมูล กรุณายืนยัน?" data-rel="this" data-done="remove:parent tr"><i class="icon -material">delete</i></a>':'',
 		);
 	}
 

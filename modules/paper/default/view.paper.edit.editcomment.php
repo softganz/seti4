@@ -132,8 +132,8 @@ function view_paper_edit_editcomment($topicInfo, $commentId) {
 					array(
 						'type' => 'button',
 						'container' => array('class' => '-sg-text-right'),
-						'value' => '<i class="icon -save -white"></i><span>'.tr('Save').'</span>',
-						'pretext' => '<a class="btn -link sg-action" href="'.url('paper/edit/'.$topicInfo->tpid.'/editcomment/'.$commentId,array('cancel'=>'yes')).'" data-rel="#message-id-'.$commentId.' .message-body"><i class="icon -cancel -gray"></i><span>'.tr('Cancel').'</span></a>',
+						'value' => '<i class="icon -material">done_all</i><span>'.tr('Save').'</span>',
+						'pretext' => '<a class="btn -link sg-action" href="'.url('paper/edit/'.$topicInfo->tpid.'/editcomment/'.$commentId,array('cancel'=>'yes')).'" data-rel="#message-id-'.$commentId.' .message-body"><i class="icon -material -gray">cancel</i><span>'.tr('Cancel').'</span></a>',
 					)
 				);
 

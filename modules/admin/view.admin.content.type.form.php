@@ -148,7 +148,7 @@ function view_admin_content_type_form($type=NULL,$message=NULL) {
 
 			'save' => [
 				'type'=>'button',
-				'value'=>'<i class="icon -save -white"></i><span>Save content type</span>',
+				'value'=>'<i class="icon -material">done_all</i><span>Save content type</span>',
 				'container' => '{class: "-sg-text-right"}',
 			],
 		], // children

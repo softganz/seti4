@@ -103,7 +103,7 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 	$navbar .= $ui->build();
 
 	if ($taggroup) {
-		//$navbar .= '<a class="sg-action btn -floating -circle48 -fixed -at-bottom -at-right" href="'.url('admin/category/create',array('g'=>$taggroup)).'" title="สร้างคำถามใหม่" data-rel="replace:#admin-category"><i class="icon -addbig -white"></i></a>';
+		//$navbar .= '<a class="sg-action btn -floating -circle48 -fixed -at-bottom -at-right" href="'.url('admin/category/create',array('g'=>$taggroup)).'" title="สร้างคำถามใหม่" data-rel="replace:#admin-category"><i class="icon -material">add</i></a>';
 	}
 	$navbar .= '</nav><!--navbar-->'._NL;
 	//$self->theme->navbar=$navbar;
@@ -256,8 +256,8 @@ function __admin_category_form($taggroup, $data = NULL) {
 		'save',
 		array(
 			'type' => 'button',
-			'value' => '<i class="icon -save -white"></i><span>บันทึก</span>',
-			'pretext' => '<a class="sg-action btn -link" href="'.url('admin/category',array('g'=>$taggroup)).'" data-rel="#main"><i class="icon -cancel -gray"></i>{tr:CANCEL}</a>',
+			'value' => '<i class="icon -material">done_all</i><span>บันทึก</span>',
+			'pretext' => '<a class="sg-action btn -link" href="'.url('admin/category',array('g'=>$taggroup)).'" data-rel="#main"><i class="icon -material -gray">cancel</i>{tr:CANCEL}</a>',
 			'container' => array('class' => '-sg-text-right'),
 		)
 	);
@@ -280,7 +280,7 @@ function __admin_category_list($taggroup) {
 	$tables = new Table();
 	$tables->thead = array('i1 -center'=>'tid','i2 -center'=>'catid','i3 -center'=>'parent','name','i4 -center'=>'process','i5 -center'=>'weight','default -center -hover-parent'=>'default');
 	foreach ($dbs->items as $rs) {
-		$menu = '<nav class="nav iconset -hover"><a class="sg-action" href="'.url('admin/category/edit', array('g'=>$rs->taggroup, 'id'=>$rs->tid)).'" data-rel="replace:#admin-category"><i class="icon -edit -gray></i></a></nav>">';
+		$menu = '<nav class="nav iconset -hover"><a class="sg-action" href="'.url('admin/category/edit', array('g'=>$rs->taggroup, 'id'=>$rs->tid)).'" data-rel="replace:#admin-category"><i class="icon -material">edit</i></a></nav>">';
 		$tables->rows[] = array(
 			$rs->tid,
 			$rs->catid,
@@ -293,7 +293,7 @@ function __admin_category_list($taggroup) {
 		);
 	}
 	$ret .= $tables->build();
-	$ret .= '<div class="btn-floating -right-bottom"><a class="sg-action btn -floating -circle48" href="'.url('admin/category/create',array('g'=>$taggroup)).'" data-rel="replace:#admin-category"><i class="icon -addbig -white"></i></a></div>';
+	$ret .= '<div class="btn-floating -right-bottom"><a class="sg-action btn -floating -circle48" href="'.url('admin/category/create',array('g'=>$taggroup)).'" data-rel="replace:#admin-category"><i class="icon -material">add</i></a></div>';
 	return $ret;
 }
 ?>

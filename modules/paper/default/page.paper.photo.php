@@ -24,7 +24,7 @@ function paper_photo($self, $topicInfo, $photoId = NULL) {
 
 	if ($isEdit) {
 		if (user_access('upload photo')) {
-			$ui->add('<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('paper/info/api/'.$tpid.'/photo.change/'.$photo->fid).'" data-rel="refresh" data-done="close"><span class="btn -link fileinput-button"><i class="icon -camera"></i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>');
+			$ui->add('<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('paper/info/api/'.$tpid.'/photo.change/'.$photo->fid).'" data-rel="refresh" data-done="close"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>');
 		}
 		$ui->add('<a class="sg-action" href="'.url('paper/'.$tpid.'/edit.photo.info/'.$photo->fid).'" data-rel="box" data-width="640" data-height="80%"><i class="icon -material">edit</i><span class="-hidden">{tr:Edit detail}</span></a>');
 

@@ -155,16 +155,16 @@ function admin_user_edit($self,$uid) {
 						'items'=>array(
 											'remove'=>array(
 																'type'=>'text',
-																'value'=>'<a class="sg-action btn -link" href="'.url('admin/user/delete/'.$uid).'" data-rel="#main" data-confirm="Delete this user, Are you sure?"><i class="icon -delete"></i><span>Remove this user</span></a> Or ',
+																'value'=>'<a class="sg-action btn -link" href="'.url('admin/user/delete/'.$uid).'" data-rel="#main" data-confirm="Delete this user, Are you sure?"><i class="icon -material">delete</i><span>Remove this user</span></a> Or ',
 																),
 											'cancel'=>array(
 																'type'=>'cancel',
-																'value'=>'<i class="icon -cancel"></i><span>Cancel</span>'
+																'value'=>'<i class="icon -material">cancel</i><span>Cancel</span>'
 																),
 											'save'=>array(
 																'type'=>'submit',
 																'class'=>'-primary',
-																'value'=>'<i class="icon -save -white"></i><span>Save User Information</span>'
+																'value'=>'<i class="icon -material">done_all</i><span>Save User Information</span>'
 																),
 											),
 							'container' => '{class: "-sg-text-right"}',

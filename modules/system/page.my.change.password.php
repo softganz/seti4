@@ -92,8 +92,8 @@ function my_change_password($self) {
 		'submit',
 		array(
 			'type' => 'button',
-			'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>',
-			'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my',array('closewebview'=>'YES')).'" data-rel="close"><i class="icon -cancel -gray"></i><span>{tr:CANCEL}</span></a>',
+			'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+			'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my',array('closewebview'=>'YES')).'" data-rel="close"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 			'container' => array('class' => '-sg-text-right'),
 		)
 	);

@@ -41,7 +41,7 @@ function profile_detail($self, $uid = NULL) {
 	$form->addField('save',
 					array(
 						'type' => 'button',
-						'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>',
+						'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
 						'container' => array('class' => '-sg-text-right'),
 						'pretext' => '<a href="">CANCEL</a> ',
 					)
@@ -267,7 +267,7 @@ function profile_detail($self, $uid = NULL) {
 	$form->addField('save2',
 					array(
 						'type' => 'button',
-						'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>',
+						'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
 						'container' => array('class' => '-sg-text-right'),
 						'pretext' => '<a href="'.url('profile/'.$user->uid).'">CANCEL</a> ',
 					)

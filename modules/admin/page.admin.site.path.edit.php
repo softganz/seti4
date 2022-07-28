@@ -57,11 +57,11 @@ function admin_site_path_edit($self,$id) {
 				'save'=>array(
 					'type'=>'submit',
 					'class'=>'-primary',
-					'value'=>'<i class="icon -save -white"></i><span>Save configuration</span>'
+					'value'=>'<i class="icon -material">done_all</i><span>Save configuration</span>'
 					),
 				'cancel'=>array(
 					'type'=>'cancel',
-					'value'=>'<i class="icon -cancel"></i><span>Cancel</span>'
+					'value'=>'<i class="icon -material">cancel</i><span>Cancel</span>'
 					),
 				),
 			)

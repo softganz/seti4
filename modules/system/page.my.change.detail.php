@@ -54,9 +54,9 @@ function my_change_detail($self) {
 	$form->addField('save',
 					array(
 						'type' => 'button',
-						'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>',
+						'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
 						'container' => array('class' => '-sg-text-right'),
-						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my').'" data-rel="close"><i class="icon -cancel -gray"></i><span>{tr:CANCEL}</span></a> ',
+						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my').'" data-rel="close"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a> ',
 					)
 				);
 
@@ -280,9 +280,9 @@ function my_change_detail($self) {
 	$form->addField('save2',
 					array(
 						'type' => 'button',
-						'value' => '<i class="icon -save -white"></i><span>{tr:SAVE}</span>',
+						'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
 						'container' => array('class' => '-sg-text-right'),
-						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my').'" data-rel="close"><i class="icon -cancel -gray"></i><span>{tr:CANCEL}</span></a> ',
+						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('my').'" data-rel="close"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a> ',
 					)
 				);
 

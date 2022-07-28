@@ -59,7 +59,7 @@ function admin_user_access($self) {
 			}
 			$tables->rows[]=$row;
 		}
-		$tables->rows[]=array('<td colspan="'.($roles_count+1).'" align="right"><div class="form-item"><button class="btn -primary" type="submit"><i class="icon -save -white"></i><span>Save permissions</span></button></td>');
+		$tables->rows[]=array('<td colspan="'.($roles_count+1).'" align="right"><div class="form-item"><button class="btn -primary" type="submit"><i class="icon -material">done_all</i><span>Save permissions</span></button></td>');
 	}
 	$ret.=$tables->build();
 	$ret.='</form>';

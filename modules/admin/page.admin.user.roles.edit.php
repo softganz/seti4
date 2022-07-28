@@ -30,7 +30,7 @@ function admin_user_roles_edit($self,$rolename) {
 		'fieldname',
 		array(
 			'type'=>'button',
-			'value'=>'<i class="icon -save -white"></i><span>Save Role</span>',
+			'value'=>'<i class="icon -material">done_all</i><span>Save Role</span>',
 			'posttext'=>!in_array($rolename,array('anonymous','member'))?' or <a class="sg-action" href="'.url('admin/user/roles/delete/'.$rolename).'" data-rel="none" data-callback="'.url('admin/user/roles').'" data-confirm="Delete this role. Comfirm?">Delete this role</a>':NULL,
 		)
 	);

@@ -79,7 +79,7 @@ function paper_edit_photo_add($self, $topicInfo) {
 							array(
 								'type'=>'button',
 								'name'=>'upload',
-								'value'=>'<i class="icon -upload -white"></i><span>{tr:Upload}</span>',
+								'value'=>'<i class="icon -material">cloud_upload</i><span>{tr:Upload}</span>',
 								'container' => '{class: "-sg-text-right"}',
 								)
 							);
@@ -108,7 +108,7 @@ function paper_edit_photo_add($self, $topicInfo) {
 							array(
 								'type'=>'button',
 								'name'=>'upload',
-								'value'=>'<i class="icon -upload -white"></i><span>{tr:Upload}</span>',
+								'value'=>'<i class="icon -material">cloud_upload</i><span>{tr:Upload}</span>',
 								'container' => '{class: "-sg-text-right"}',
 								)
 							);

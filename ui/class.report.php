@@ -131,9 +131,9 @@ class Report extends Widget {
 
 		if ($this->groupUi->count()) {
 			$ret .= '<div class="-group">'._NL;
-			if ($this->config->showArrowLeft) $ret .= '<a class="group-nav -left"><i class="icon -material">chevron_left</i></a>';
+			if ($this->config->showArrowLeft) $ret .= '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>';
 			$ret .= $this->groupUi->build()._NL;
-			if ($this->config->showArrowRight) $ret .= '<a class="group-nav -right"><i class="icon -material">chevron_right</i></a>'._NL;
+			if ($this->config->showArrowRight) $ret .= '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL;
 			$ret .= '</div>'._NL;
 		}
 

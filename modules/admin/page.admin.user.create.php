@@ -74,15 +74,15 @@ function admin_user_create($self) {
 				'save'=>array(
 					'type'=>'submit',
 					'class'=>'-primary',
-					'value'=>'<i class="icon -save -white"></i><span>Create users</span>'
+					'value'=>'<i class="icon -material">done_all</i><span>Create users</span>'
 				),
 				'cancel'=>array(
 					'type'=>'cancel',
-					'value'=>'<i class="icon -cancel"></i><span>Cancel</span>'
+					'value'=>'<i class="icon -material">cancel</i><span>Cancel</span>'
 				),
 				'reset'=>array(
 					'type'=>'reset',
-					'value'=>'<i class="icon -reset"></i><span>Reset</span>'
+					'value'=>'<i class="icon -material">restart_alt</i><span>Reset</span>'
 				),
 			),
 		)

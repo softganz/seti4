@@ -131,7 +131,7 @@ function view_admin_vocabulary_form($vocab=array(),$message=NULL) {
 					'save',
 					array(
 						'type'=>'button',
-						'value'=>'<i class="icon -save -white"></i><span>Save Vocabulary</span>',
+						'value'=>'<i class="icon -material">done_all</i><span>Save Vocabulary</span>',
 						)
 					);
 

@@ -139,7 +139,7 @@ function r_doc_upload($docFiles, $data = NULL, $options = '{}') {
 			$linkInfo .= '<a href="'.$uploadUrl.'"><img class="doc-logo -pdf" src="http://img.softganz.com/icon/pdf-icon.png" /><span class="-title">'.$docData->title.'</span></a>';
 			$ui = new Ui('span');
 			if ($deleteurl) {
-				$ui->add('<a class="sg-action" href="'.url($deleteurl.$fid).'" title="ลบไฟล์นี้" data-confirm="ยืนยันว่าจะลบไฟล์นี้?" data-rel="notify" data-removeparent="li"><i class="icon -cancel"></i></a>');
+				$ui->add('<a class="sg-action" href="'.url($deleteurl.$fid).'" title="ลบไฟล์นี้" data-confirm="ยืนยันว่าจะลบไฟล์นี้?" data-rel="notify" data-removeparent="li"><i class="icon -material">cancel</i></a>');
 			}
 			$linkInfo .= '<nav class="nav iconset -hover -no-print">'.$ui->build().'</nav>';
 

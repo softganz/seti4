@@ -7,7 +7,7 @@
 		$dropUi->add('<a class="sg-action btn -link" href="'.url('imed/visit/'.$visitInfo->psnid.'/depress.form/'.$visitInfo->seq,array('ref'=>'main')).'" data-rel="box" data-width="640" data-max-height="80%"><i class="icon -material -q9-level '.$q9Level.'">accessibility_new</i><span>แบบประเมินภาวะซึมเศร้า</span></a>');
 
 		$dropUi->add('<sep>');
-		$dropUi->add('<a class="sg-action" href="'.url('imed/api/visit/'.$visitInfo->psnid.'/delete/'.$visitInfo->seq).'" title="ลบรายการบันทึกนี้ทิ้ง" data-rel="notify" data-title="ลบรายการบันทึก" data-confirm="ลบรายการบันทึกนี้ทิ้ง กรุณายืนยัน?" data-removeparent="div.imed-my-note>.ui-item"><i class="icon -delete"></i><span>ลบบันทึกเยี่ยมบ้าน</span></a>');
+		$dropUi->add('<a class="sg-action" href="'.url('imed/api/visit/'.$visitInfo->psnid.'/delete/'.$visitInfo->seq).'" title="ลบรายการบันทึกนี้ทิ้ง" data-rel="notify" data-title="ลบรายการบันทึก" data-confirm="ลบรายการบันทึกนี้ทิ้ง กรุณายืนยัน?" data-removeparent="div.imed-my-note>.ui-item"><i class="icon -material">delete</i><span>ลบบันทึกเยี่ยมบ้าน</span></a>');
 	}
 
 	if ($dropUi->show()) $headerUi->add(sg_dropbox($dropUi->show()));

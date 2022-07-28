@@ -25,8 +25,8 @@ function admin_site_path($self) {
 	$ui=new Ui('span');
 	foreach ($alias->items as $item) {
 		$ui->clear();
-		$ui->add('<a href="'.url('admin/site/path/edit/'.$item->pid).'" title="Module configuration"><i class="icon -edit"></i></a>');
-		$ui->add('<a class="sg-action" href="'.url('admin/site/path/remove/'.$item->pid).'" data-rel="none" data-confirm="Are you sure you want to delete path alias?" data-removeparent="tr"><i class="icon -delete"></i></a>');
+		$ui->add('<a href="'.url('admin/site/path/edit/'.$item->pid).'" title="Module configuration"><i class="icon -material">edit</i></a>');
+		$ui->add('<a class="sg-action" href="'.url('admin/site/path/remove/'.$item->pid).'" data-rel="none" data-confirm="Are you sure you want to delete path alias?" data-removeparent="tr"><i class="icon -material">delete</i></a>');
 		$tables->rows[]=array(
 										$item->alias,
 										$item->system,
@@ -36,7 +36,7 @@ function admin_site_path($self) {
 	$tables->rows[]=array(
 										'<input class="form-text -fill" type="text" size="20" name="alias" placeholder="Enter Alias Path">',
 										'<input class="form-text -fill" type="text" size="20" name="system" placeholder="Enter Existing System Path">',
-										'<button class="btn -primary" type="submit" name="add" value="Create new aias"><i class="icon -addbig -white"></i><span>Create new aias</span></button>',
+										'<button class="btn -primary" type="submit" name="add" value="Create new aias"><i class="icon -material">add</i><span>Create new aias</span></button>',
 										);
 
 	$ret.='<form method="post" action="'.url('admin/site/path').'">';

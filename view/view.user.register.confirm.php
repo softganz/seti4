@@ -59,12 +59,12 @@ function view_user_register_confirm($register=array()) {
 											'cancel'=>array(
 																'type'=>'cancel',
 																'class'=>'-link',
-																'value'=>'<i class="icon -cancel -gray"></i><span>{tr:Cancel}</span>'
+																'value'=>'<i class="icon -material -gray">cancel</i><span>{tr:Cancel}</span>'
 																),
 											'confirm'=>array(
 																'type'=>'submit',
 																'class'=>'-primary',
-																'value'=>'<i class="icon -save -white"></i><span>{tr:Confirm}</span>'
+																'value'=>'<i class="icon -material">done_all</i><span>{tr:Confirm}</span>'
 																),
 											),
 						'container'=>array('class'=>'-sg-text-right'),

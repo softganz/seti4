@@ -38,22 +38,22 @@ function calendar_view($self, $id=NULL) {
 	}
 
 	$ui = new Ui();
-	$ui->add('<a id="calendar-back" class="sg-action btn -link" title="กลับสู่หน้าปฏิทิน" data-rel="close"><i class="icon -back"></i><span>BACK</span></a>');
+	$ui->add('<a id="calendar-back" class="sg-action btn -link" title="กลับสู่หน้าปฏิทิน" data-rel="close"><i class="icon -material">navigate_before</i><span>BACK</span></a>');
 	if ($is_edit) {
-		$ui->add('<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/edit',array('module'=>$module)).'" title="แก้ไขรายละเอียด" data-rel="#calendar-body" data-done="close"><i class="icon -edit"></i></a>');
+		$ui->add('<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/edit',array('module'=>$module)).'" title="แก้ไขรายละเอียด" data-rel="#calendar-body" data-done="close"><i class="icon -material">edit</i></a>');
 
 		// ปิดปุ่มลบชั่วคราว จนกว่าจะหาวิธีที่ดีกว่านี้
 		if (mydb::table_exists('%project_tr%')) {
 			if (mydb::select('SELECT `calid` FROM %project_tr% WHERE `calid` = :id LIMIT 1',':id',$id)->calid) {
-				$ui->add('<a href="javascript:void(0)" class="-disabled" title="ลบรายการไม่ได้"><i class="icon -delete -gray"></i></a>');
+				$ui->add('<a href="javascript:void(0)" class="-disabled" title="ลบรายการไม่ได้"><i class="icon -material">delete</i></a>');
 			} else {
-				$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/delete',array('module'=>$module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -delete"></i></a>');
+				$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/delete',array('module'=>$module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -material">delete</i></a>');
 			}
 		} else {
-			$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/delete',array('module'=>$module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -delete"></i></a>');
+			$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/delete',array('module'=>$module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -material">delete</i></a>');
 		}
 	}
-	if (module_install('project') && $rs->tpid) $ui->add('<a class="sg-action btn -link" href="'.url('project/'.$rs->tpid.'/info.calendar.short/'.$rs->id).'" data-rel="box" title="การดำเนินกิจกรรม"><i class="icon -viewdoc"></i></a>');
+	if (module_install('project') && $rs->tpid) $ui->add('<a class="sg-action btn -link" href="'.url('project/'.$rs->tpid.'/info.calendar.short/'.$rs->id).'" data-rel="box" title="การดำเนินกิจกรรม"><i class="icon -material">find_in_page</i></a>');
 
 	$ret .= '<nav class="nav -page">'.$ui->build().'</nav>';
 

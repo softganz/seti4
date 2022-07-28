@@ -110,7 +110,7 @@ function admin_category_form($self, $tagInfo = NULL) {
 	$form->addField('save',
 		array(
 			'type' => 'button',
-			'value' => '<i class="icon -save -white"></i><span>บันทึก</span>',
+			'value' => '<i class="icon -material">done_all</i><span>บันทึก</span>',
 			'pretext' => '<a class="sg-action btn -link -cancel" href="#" data-rel="close"><i class="icon -material -gray">cancel</i>{tr:CANCEL}</a>',
 			'container' => array('class' => '-sg-text-right'),
 		)
