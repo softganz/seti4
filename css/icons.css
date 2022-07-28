@@ -3,8 +3,9 @@
 /* Not inclode |Material+Icons+Two+Tone */
 
 .icon {
-	width: 24px;
-	height: 24px;
+	/* Don't set width and height, it effect on large font size on mobile */
+	width: 2.4rem;
+	height: 2.4rem;
 	padding: 0;
 	margin: 0;
 	border: none;
@@ -15,7 +16,7 @@
 	background: transparent none no-repeat 0 0;
 	color: #444444;
 	font-weight: normal;
-	font-size: 24px;
+	font-size: 2.4rem;
 	font-style: normal;
 	line-height: 1;
 	letter-spacing: normal;
@@ -34,11 +35,11 @@
 	font-feature-settings: 'liga';
 }
 
-.icon.-sg-16 {width: 16px; height: 16px; font-size: 16px;}
-.icon.-sg-24 {width: 24px; height: 24px; font-size: 24px;}
-.icon.-sg-32 {width: 32px; height: 32px; font-size: 32px;}
-.icon.-sg-48 {width: 48px; height: 48px; font-size: 48px;}
-.icon.-sg-64 {width: 64px; height: 64px; font-size: 64px;}
+.icon.-sg-16 {font-size: 1.6rem;}
+.icon.-sg-24 {font-size: 2.4rem;}
+.icon.-sg-32 {font-size: 3.2rem;}
+.icon.-sg-48 {font-size: 4.8rem;}
+.icon.-sg-64 {font-size: 6.4rem;}
 
 .icon.-gray {color: #808080;}
 .icon.-white {color: #f5f5f5; opacity: 0.9;}
@@ -48,7 +49,12 @@
 .icon.-sg-active {color: green;}
 .icon.-sg-inactive {color: #b0b0b0;}
 
-.icon.-material {font-family: 'Material Icons';}
+.icon.-material {font-family: 'Material Icons'; width: auto; height: auto;}
+.icon.-material.-sg-16 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-24 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-32 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-48 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-64 {width: auto !important; height: auto !important;}
 .icon.-material.-normal {font-family: 'Material Icons';}
 .icon.-material.-outline {font-family: 'Material Icons Outlined';}
 .icon.-material.-two-tone {font-family: 'Material Icons Two Tone';}
@@ -59,11 +65,12 @@
 
 .icon>img, .icon>svg {width: 100%; height: 100%; margin: 0; padding: 0; border: none; box-shadow: none; display: block;}
 
-.icon.-circle {border-radius: 50%;}
 .icon.-box {border-radius: 4px;}
 
-.icon.-circle.-gray {box-shadow: 0 0 1px 1px #808080;}
+.icon.-circle {border-radius: 50%; box-shadow: 0 0 1px 1px #808080;}
+.icon.-circle.-gray {box-shadow: 0 0 1px 1px #808080; background-color: #f5f5f5;}
 .icon.-circle.-green {box-shadow: 0 0 1px 1px green inset; background-color: #dbffdc;}
+.icon.-circle.-yellow {box-shadow: 0 0 1px 1px #ffb200 inset; background-color: #ffedc4;}
 .icon.-circle.-red {box-shadow: 0 0 1px 1px red inset; background-color: #ffd1d1;}
 
 .icon.-none {text-indent: 0; width: auto; height: auto; background-image: none;}

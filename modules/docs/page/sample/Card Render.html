@@ -101,7 +101,7 @@
 	if ($isEdit) {
 		$cardUi->add('<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('imed/api/visit/'.$visitInfo->psnid.'/photo.upload/'.$visitInfo->seq).'" data-rel="noteUnit-'.$visitInfo->seq.' .album" data-append="li"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>'.$cameraStr.'</span><input type="file" name="photo[]" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="uplaod" /></form>');
 		$cardUi->add('<a class="sg-action btn -link" href="'.url('imed/visit/'.$visitInfo->psnid.'/need.form/'.$visitInfo->seq).'" data-rel="box" data-width="640" data-width="80%"><i class="icon -material">how_to_reg</i><span>ความต้องการ</span></a>');
-		$cardUi->add('<a class="sg-action btn -link" href="'.url('imed/visit/'.$visitInfo->psnid.'/vitalsign.form/'.$visitInfo->seq,array('ref'=>'main')).'" data-rel="box" data-width="640" data-max-height="80%"><i class="icon -local -vitalsign -white '.($hasVitalsign?'-has':'-not').'"></i><span>{tr:Vital Signs}</span></a>');
+		$cardUi->add('<a class="sg-action btn -link" href="'.url('imed/visit/'.$visitInfo->psnid.'/vitalsign.form/'.$visitInfo->seq,array('ref'=>'main')).'" data-rel="box" data-width="640" data-max-height="80%"><i class="icon -material">assist_walker</i><span>{tr:Vital Signs}</span></a>');
 		$cardUi->add('<a class="sg-action btn -link" href="'.url('imed/visit/'.$visitInfo->psnid.'/form.barthel/'.$visitInfo->seq,array('ref'=>'main')).'" data-rel="box" data-width="640" data-height="80%"><i class="icon -local -barthel'.$barthelLevel.'"></i><span>{tr:Barthel ADL Index}</span></a>');
 	}
 
