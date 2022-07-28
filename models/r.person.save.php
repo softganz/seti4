@@ -76,6 +76,10 @@ function r_person_save($data, $options = '{}') {
 
 	if (empty($data->phone)) $data->phone = '';
 
+	if (empty($data->graduated)) $data->graduated = '';
+	if (empty($data->faculty)) $data->faculty = '';
+	$data->userid = SG\getFirst($data->userid);
+
 	$data->uid = SG\getFirst($data->uid, i()->uid, NULL);
 	$data->created = date('U');
 	$data->userId = SG\getFirst($data->userId, NULL);
