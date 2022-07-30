@@ -30,6 +30,11 @@ class ApiSignin extends PageApi {
 	}
 
 	function build() {
+		// if (function_exists("apache_request_headers")) {
+		// 	$headers = apache_request_headers();
+		// 	$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+		// }
+
 		$result = (Object) [
 			'signed' => NULL,
 			'status' => NULL,
@@ -39,6 +44,7 @@ class ApiSignin extends PageApi {
 			// "descriptionError" => "Text"
 			// 'server' => $_SERVER,
 			// 'this' => $this,
+			// 'headers' => $headers,
 		];
 
 		$user = NULL;
