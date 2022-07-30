@@ -1449,8 +1449,6 @@ $SCREENS
 		.my-profile-wrapper>.-photo {width: 196px; height: 196px; margin: 0px auto 8px; display: block; border-radius: 50%; overflow: hidden; border: 2px #eee solid;}
 		.my-profile-wrapper>.-name {text-align: center; font-weight: bold;}
 		.my-profile-wrapper>.-upload {position: absolute; top: 16px; right: calc(50% - 112px); padding: 0; margin: 0; background-color: transparent;}
-	.module.-app-theme-dark .my-profile-wrapper {background-color: #333; color: #eee;}
-		.module.-app-theme-dark .my-profile-wrapper>.-upload .icon {color: #eee;}
 
 
 
@@ -1567,6 +1565,12 @@ $SCREENS
 
 
 
+/* Light Theme Color */
+
+
+/* Dark Theme Color */
+	.module.-app-theme-dark .my-profile-wrapper {background-color: #333; color: #eee;}
+		.module.-app-theme-dark .my-profile-wrapper>.-upload .icon {color: #eee;}
 
 
 
