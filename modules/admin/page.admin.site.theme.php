@@ -28,8 +28,8 @@ function admin_site_theme($self) {
 		$theme_thumbnail_file=$theme_folder.'/'.$theme.'/theme.thumbnail.png';
 		$theme_thumbnail=_url.cfg('theme.folder').'/'.$theme.'/theme.thumbnail.png';
 		$ui->add('<h3>Theme name : '.$theme.'</h3>'
-						.(file_exists($theme_thumbnail_file)?'<a href="'.url('admin/site/theme/select/'.$theme).'"><img src="'.$theme_thumbnail.'" alt="'.$theme.'" width="200" /></a>':'No theme photo.')
-						.'<p><a href="'.url('admin/site/theme/select/'.$theme).'">Set as default</a></p>');
+			.(file_exists($theme_thumbnail_file)?'<a href="'.url('admin/site/theme/select/'.$theme).'"><img src="'.$theme_thumbnail.'" alt="'.$theme.'" width="200" /></a>':'No theme photo.')
+			.'<p><a href="'.url('admin/site/theme/select/'.$theme).'">Set as default</a></p>');
 	}
 	$ret.=$ui->build();
 	$ret.='</div><!-- col -->';
@@ -65,8 +65,7 @@ function admin_site_theme($self) {
 			'type'=>'textarea',
 			'label'=>'CSS ที่นำมาตกแต่ง :',
 			'class'=>'-fill',
-			'rows'=>20,
-			'cols'=>60,
+			'rows'=>18,
 			'value'=>htmlspecialchars(cfg($cfg_name)),
 			)
 		);
