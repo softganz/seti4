@@ -403,7 +403,7 @@ class MyDb {
 					if ($res = $myDb->mysqli->store_result()) {
 						// Cycle through each results
 						foreach ($res->fetch_all(MYSQLI_ASSOC) as $rs)
-							$data[$i]->items[] = (object) $rs;;
+							$data[$i]->items[] = (Object) $rs;;
 						$res->free();
 						$i++;
 					}
@@ -411,14 +411,14 @@ class MyDb {
 				$myDb->mysqli->next_result();
 			}
 		} else {
-			$data = (object) NULL;
+			$data = (Object) NULL;
 			$res = $myDb->mysqli->query($stmt);
 			$data->_query = $stmt;
 			if (is_object($res) && $res) {
 				if ($debug) debugMsg('QUERY RESULT of '.$stmt.'<br />$res = ');
 				// Cycle through results
 				while ($row = $res->fetch_array(MYSQLI_ASSOC)){
-					$data->items[] = (object) $row;
+					$data->items[] = (Object) $row;
 				}
 				// print_o($res, '$res',1);
 				// $res->free();
@@ -654,19 +654,21 @@ class MyDb {
 					while($rs = $stmtResult->fetch_array(MYSQLI_ASSOC)) {
 						if ($options->showCount) echo ++$rsCount.' ';
 						if (isset($options->group) && $options->group != '') {
-							if (isset($options->key)) {
-								$selectResult->items[$rs[$options->group]][$rs[$options->key]] = (object)$rs;
+							if (isset($options->key) && isset($options->value)) {
+								$selectResult->items[$rs[$options->group]][$rs[$options->key]] = $rs[$options->value];
+							} else if (isset($options->key)) {
+								$selectResult->items[$rs[$options->group]][$rs[$options->key]] = (Object)$rs;
 							} else {
-								$selectResult->items[$rs[$options->group]][] = (object)$rs;
+								$selectResult->items[$rs[$options->group]][] = (Object) $rs;
 							}
 						} else if (isset($options->key)) {
 							if ($options->value) {
 								$selectResult->items[$rs[$options->key]] = $rs[$options->value];
 							} else {
-								$selectResult->items[$rs[$options->key]] = (object)$rs;
+								$selectResult->items[$rs[$options->key]] = (Object) $rs;
 							}
 						} else {
-							$selectResult->items[] = (object)$rs;
+							$selectResult->items[] = (Object) $rs;
 						}
 						// Calculate SUM on field by config->sum
 						if ($sumFields) {
