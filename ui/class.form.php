@@ -361,6 +361,7 @@ class Form extends Widget {
 					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'"'
 						. ' type="'.$formElement->type.'"'
 						. ($formElement->attribute ? ' '.$formElement->attribute:'')
+						. ($formElement->onChange ? ' onChange=\''.$formElement->onChange.'\'' : '')
 						. ' /> ';
 				}
 				$ret .= $option_value;
