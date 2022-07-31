@@ -646,8 +646,8 @@ function sgWebViewDomProcess(id) {
 					window.location = callback
 				}
 			}).fail(function(response) {
-				console.log('sg-action FAIL');
-				console.log(response)
+				// console.log('sg-action FAIL');
+				// console.log(response)
 				let errorMsg = 'ERROR : '
 				if (response.responseJSON.text) {
 					errorMsg += response.responseJSON.text+' ('+response.status+')'
