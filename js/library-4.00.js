@@ -23,7 +23,7 @@
 
 'use strict'
 
-let sgLibraryVersion = '4.00.06'
+let sgLibraryVersion = '4.00.07'
 let thaiMonthName = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 let debugSignIn = false
 let firebaseConfig

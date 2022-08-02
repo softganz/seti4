@@ -4,15 +4,57 @@ let sgUiVersion = '4.00.03'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPage = 0
+let cameraPermission = false
 
-console.log('SG-UI Version ' + sgUiVersion + ' loaded');
+console.log('SG-UI Version ' + sgUiVersion + ' loaded')
 
-
+// For Mobile Web App Communication
 let isAndroidWebViewReady = typeof Android == 'object'
-let isFlutterInAppWebViewReady = false;
+let isFlutterInAppWebViewReady = false
 window.addEventListener("flutterInAppWebViewPlatformReady", function(event) {
-	isFlutterInAppWebViewReady = true;
+	isFlutterInAppWebViewReady = true
+	let status = window.flutter_inappwebview.callHandler("getCameraPermission").then(function(result) {
+		cameraPermission = result
+		// console.log('<==== JavaScript: Result from getCameraPermission', cameraPermission)
+	})
 });
+
+// Add click event to input type="file"
+// for Flutter inapp_webview to check camera permission
+$(document).on('click', 'input[type="file"]', function() {
+	console.log('<==== INPUT TYPE FILE CLICK')
+	console.log('JavaScript: Camera permission is ', cameraPermission)
+	if (isFlutterInAppWebViewReady) {
+		if (cameraPermission == 'PermissionStatus.denied') {
+			// console.log("JavaScript: Request permission")
+			// let status = window.flutter_inappwebview.callHandler("getCameraPermission", {key:"key1", value: "Tet"})
+			// console.log('Return Status is ', JSON.stringify(status))
+
+			// return requestCameraPermission()
+			let result = window.flutter_inappwebview.callHandler("requestCameraPermission").then(function(permissionResult) {
+				cameraPermission = permissionResult
+				// console.log('JavaScript: RESULT', cameraPermission)
+			});
+			// console.log('Result is ', result)
+			// console.log(result.toString())
+			// console.log('JavaScript: After call Camera permission result is ',JSON.stringify(result))
+			return false
+		}
+	}
+});
+
+async function requestCameraPermission() {
+	let result = await window.flutter_inappwebview.callHandler("requestCameraPermission")
+	console.log('CAMERA PERMISSION (after) is ', cameraPermission)
+	// console.log('Result is ', result)
+	// console.log(result.toString())
+	console.log('JavaScript: call CAMERA permission result is ',JSON.stringify(result))
+	if (cameraPermission) {
+		return true
+	} else {
+		return false
+	}
+}
 
 /*
 * sgFindTargetElement :: Find target element
@@ -3007,24 +3049,31 @@ var sgDrawMap = function(thisMap, options = {}) {
 		notify("กำลังหาตำแหน่งปัจจุบัน");
 		// Try HTML5 geolocation.
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function(position) {
-				notify()
-				$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
-				if (currentMarker == undefined) {
-					currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
-					var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
-					infoWindow.open($map, currentMarker)
-					is_point = true
-				}
-				currentMarker.setPosition($map.getCenter())
-				updateLocationValue(position.coords.latitude, position.coords.longitude)
-			}, function() {
-				notify("Error: The Geolocation service failed.", 5000);
-			});
+			navigator.geolocation.getCurrentPosition(
+				// Complete
+				function(position) {
+					notify()
+					$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
+					if (currentMarker == undefined) {
+						currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
+						var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+						infoWindow.open($map, currentMarker)
+						is_point = true
+					}
+					currentMarker.setPosition($map.getCenter())
+					updateLocationValue(position.coords.latitude, position.coords.longitude)
+				},
+				// Error
+				function(e) {
+					notify("Error: The Geolocation service failed.", 5000);
+				},
+				{ timeout: 7000, enableHighAccuracy: true, maximumAge: 0 }
+			);
 		} else {
 			// Browser doesnt support Geolocation
 			notify("Error: Browser doesnt support Geolocation.", 5000);
 		}
+
 		return false;
 	});
 
