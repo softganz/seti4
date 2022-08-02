@@ -220,5 +220,26 @@ class NodeModel {
 
 		return $result;
 	}
+
+	public static function member($tpid) {
+		return mydb::select(
+			'SELECT a.`uid`, a.`membership`
+			, u.`username`, u.`name`, u.`email`
+			FROM
+				(
+				SELECT t.`uid`, "CREATOR" `membership`
+				FROM %topic% t
+				WHERE `tpid` = :tpid
+				UNION
+				 SELECT tu.`uid`, tu.`membership`
+				FROM %topic_user% tu
+				WHERE `tpid` = :tpid
+				) a
+				LEFT JOIN %users% u ON u.`uid` = a.`uid`
+			GROUP BY `uid`;
+			-- {key: "uid"}',
+			[':tpid' => $tpid]
+		)->items;
+	}
 }
 ?>
