@@ -11,8 +11,9 @@ function r_person_save($data, $options = '{}') {
 	$options = sg_json_decode($options, $defaults);
 	$debug = $options->debug;
 
-	$result = NULL;
-	$result->psnid = NULL;
+	$result = (Object) [
+		'psnid' => NULL,
+	];
 
 	if (empty($data->psnid)) $data->psnid = NULL;
 
