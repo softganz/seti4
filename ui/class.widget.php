@@ -400,6 +400,7 @@ class Button extends Widget {
 	var $tagName = 'a';
 	var $text;
 	var $icon;
+	var $href;
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -409,13 +410,16 @@ class Button extends Widget {
 
 	function toString() {
 		$attribute = [
-			'href' => $this->url,
-			'class' => trim('widget-'.strtolower($this->widgetName).' btn '.SG\getFirst($this->class)),
+			'href' => $this->href,
+			'class' => trim(
+				'widget-'.strtolower($this->widgetName).' btn'
+				. ($this->type ? ' -'.$this->type : '')
+				. ($this->class ? ' '.$this->class : '')
+			),
 			'title' => SG\getFirst($this->title),
 		] + (Array) $this->attribute;
 		$button = '<a '.sg_implode_attr($attribute).'>'
 			. ($this->icon ? $this->_renderChildren([$this->icon]) : '')
-			   // '<i class="icon -material">'.$this->icon.'</i>' : '')
 			. ($this->text ? '<span>'.$this->text.'</span>' : '')
 			. '</a>';
 		return $button;
@@ -618,7 +622,7 @@ class PageApi extends Page {
 	}
 } // End of class PageApi
 
-class StepMenuWidget extends Widget {
+class StepMenu extends Widget {
 	var $widgetName = 'StepMenu';
 	var $tagName = 'nav';
 	var $class = '';
@@ -641,5 +645,5 @@ class StepMenuWidget extends Widget {
 	function _renderChildren($childrens = [], $args = []) {
 		return parent::_renderChildren();
 	}
-} // End of class StepMenuWidget
+} // End of class StepMenu
 ?>

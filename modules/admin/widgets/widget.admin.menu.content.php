@@ -21,8 +21,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Comments',
 							'leading' => new Icon('comment'),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/comment/list'),
+								'href' => url('admin/comment/list'),
 								'text' => 'View Comments',
 							]),
 							'subtitle' => 'List and edit site comments and the comment moderation queue.',
@@ -37,8 +36,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Content',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/content/topic'),
+								'href' => url('admin/content/topic'),
 								'text' => 'View Content',
 							]),
 							'subtitle' => 'View, edit, and delete your site\'s content.',
@@ -53,8 +51,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Content types',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/content/type'),
+								'href' => url('admin/content/type'),
 								'text' => 'Content types',
 							]),
 							'subtitle' => 'Manage posts by content type, including default status, front page promotion, etc.',
@@ -69,8 +66,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Create new content',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('paper/post'),
+								'href' => url('paper/post'),
 								'text' => 'Create new content',
 							]),
 							'subtitle' => 'Create new content topic.',
@@ -85,8 +81,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Post settings',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/content/node-settings'),
+								'href' => url('admin/content/node-settings'),
 								'text' => 'Post settings',
 							]),
 							'subtitle' => 'Control posting behavior, such as teaser length, requiring previews before posting, and the number of posts on the front page.',
@@ -101,8 +96,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'RSS publishing',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/content/rss-publishing'),
+								'href' => url('admin/content/rss-publishing'),
 								'text' => 'RSS publishing',
 							]),
 							'subtitle' => 'Configure the number of items per feed and whether feeds should be titles/teasers/full-text.',
@@ -117,8 +111,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Taxonomy',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/content/taxonomy'),
+								'href' => url('admin/content/taxonomy'),
 								'text' => 'Taxonomy',
 							]),
 							'subtitle' => 'Manage tagging, categorization, and classification of your content.',
@@ -133,30 +126,13 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Top hit content',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('paper/list/list-style/table/order/view'),
+								'href' => url('paper/list/list-style/table/order/view'),
 								'text' => 'Top hit content',
 							]),
 							'subtitle' => 'List top hit contents.',
 						]),
 					], // children
 				]), // Card
-
-				// new Card([
-				// 	'children' => [
-				// 		new ListTile([
-				// 			'crossAxisAlignment' => 'start',
-				// 			'title' => '',
-				// 			'leading' => new Icon(''),
-				// 			'trailing' => new Button([
-				// 				'class' => 'btn',
-				// 				'url' => url(''),
-				// 				'text' => '',
-				// 			]),
-				// 			'subtitle' => '',
-				// 		]),
-				// 	], // children
-				// ]), // Card
 
 			], // children
 		]);

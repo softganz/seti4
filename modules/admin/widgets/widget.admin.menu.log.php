@@ -20,8 +20,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Ban List',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/log/ban'),
+								'href' => url('admin/log/ban'),
 								'text' => 'Ban List',
 							]),
 							'subtitle' => 'View IP ban list.',
@@ -37,8 +36,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Cache viewer',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/log/cache'),
+								'href' => url('admin/log/cache'),
 								'text' => 'Cache viewer',
 							]),
 							'subtitle' => 'View cache log.',
@@ -53,8 +51,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Clear log',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/log/clear'),
+								'href' => url('admin/log/clear'),
 								'text' => 'Clear log',
 							]),
 							'subtitle' => 'Clear old log.',
@@ -69,8 +66,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Recent log entries',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('watchdog'),
+								'href' => url('watchdog'),
 								'text' => 'Recent log entries',
 							]),
 							'subtitle' => 'View recent log entries.',
@@ -85,8 +81,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Last "access denied" errors',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('watchdog/list/keyword/access denied'),
+								'href' => url('watchdog/list/keyword/access denied'),
 								'text' => 'View access denied',
 							]),
 							'subtitle' => 'Last of "Access denied" url address',
@@ -101,8 +96,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Last "page not found" errors',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('watchdog/list/keyword/page not found'),
+								'href' => url('watchdog/list/keyword/page not found'),
 								'text' => 'Last "page not found" errors',
 							]),
 							'subtitle' => 'Last of error "Page not found" url address',
@@ -117,8 +111,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Top "access denied" errors',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('watchdog/list/keyword/access denied'),
+								'href' => url('watchdog/list/keyword/access denied'),
 								'text' => 'Top "access denied" errors',
 							]),
 							'subtitle' => 'Top of Access denied url address',
@@ -133,8 +126,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Top "page not found" errors',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('watchdog/list/keyword/page not found'),
+								'href' => url('watchdog/list/keyword/page not found'),
 								'text' => 'Top "page not found" errors',
 							]),
 							'subtitle' => 'Top "page not found" errors',
@@ -149,8 +141,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Log analysis',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('watchdog/analysis'),
+								'href' => url('watchdog/analysis'),
 								'text' => 'Log analysis',
 							]),
 							'subtitle' => '',
@@ -165,8 +156,7 @@ class AdminMenuLogWidget extends Widget {
 							'title' => 'Web statistics',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('stats'),
+								'href' => url('stats'),
 								'text' => 'Web statistics',
 							]),
 							'subtitle' => 'Show web statistics',

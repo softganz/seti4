@@ -53,7 +53,7 @@ class Admin extends Page {
 													'leading' => new Icon('stars'),
 													'trailing' => new Button([
 														'class' => '-link',
-														'url' => url('admin/'.$menuKey),
+														'href' => url('admin/'.$menuKey),
 														'icon' => new Icon('settings'),
 													]), // Button
 												]), // ListTile

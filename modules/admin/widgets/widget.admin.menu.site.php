@@ -20,8 +20,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Installation',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/install'),
+								'href' => url('admin/install'),
 								'text' => 'Installation',
 							]),
 							'subtitle' => 'Install new table with other table prefix.',
@@ -36,8 +35,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Modules',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/module'),
+								'href' => url('admin/site/module'),
 								'text' => 'Modules',
 							]),
 							'subtitle' => 'Add / Remove / Configuration site modules.',
@@ -52,8 +50,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site information',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/info'),
+								'href' => url('admin/site/info'),
 								'text' => 'Site information',
 							]),
 							'subtitle' => 'Change basic site information, such as the site name, slogan, e-mail address, mission, front page and more.',
@@ -68,8 +65,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site initial command',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/init'),
+								'href' => url('admin/site/init'),
 								'text' => 'Site initial command',
 							]),
 							'subtitle' => 'Command execute before request process.',
@@ -84,8 +80,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site completed command',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/complete'),
+								'href' => url('admin/site/complete'),
 								'text' => 'Site completed command',
 							]),
 							'subtitle' => 'Command execute before tag &lt;/body&gt; was display.',
@@ -100,8 +95,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site maintenance',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/maintenance'),
+								'href' => url('admin/site/maintenance'),
 								'text' => 'Site maintenance',
 							]),
 							'subtitle' => 'Take the site offline for maintenance or bring it back online.',
@@ -116,8 +110,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site readonly',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/readonly'),
+								'href' => url('admin/site/readonly'),
 								'text' => 'Site readonly',
 							]),
 							'subtitle' => 'Take the site into readonly for maintenance.',
@@ -132,8 +125,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Themes',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/theme'),
+								'href' => url('admin/site/theme'),
 								'text' => 'Themes',
 							]),
 							'subtitle' => 'Change which theme your site uses or allows users to set.',
@@ -148,8 +140,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Upgrades',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/upgrade'),
+								'href' => url('admin/site/upgrade'),
 								'text' => 'Upgrades',
 							]),
 							'subtitle' => 'Upgrade website database.',
@@ -164,8 +155,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'URL aliases',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/site/path'),
+								'href' => url('admin/site/path'),
 								'text' => 'URL aliases',
 							]),
 							'subtitle' => 'Change your site\'s URL paths by aliasing them.',

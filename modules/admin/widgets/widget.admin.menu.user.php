@@ -20,8 +20,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Access control',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/user/access'),
+								'href' => url('admin/user/access'),
 								'text' => 'Access control',
 							]),
 							'subtitle' => 'User can access each of module.',
@@ -36,8 +35,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Access rules',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/user/rules'),
+								'href' => url('admin/user/rules'),
 								'text' => 'Access rules',
 							]),
 							'subtitle' => 'Rules.',
@@ -52,8 +50,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Create users',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/user/create'),
+								'href' => url('admin/user/create'),
 								'text' => 'Create users',
 							]),
 							'subtitle' => 'Create many users in one click.',
@@ -68,8 +65,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Roles',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/user/roles'),
+								'href' => url('admin/user/roles'),
 								'text' => 'Roles',
 							]),
 							'subtitle' => 'Roles for each user group.',
@@ -84,8 +80,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Users',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/user/list'),
+								'href' => url('admin/user/list'),
 								'text' => 'Users',
 							]),
 							'subtitle' => 'All user listing.',
@@ -100,8 +95,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'User settings',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
-								'class' => 'btn',
-								'url' => url('admin/user/setting'),
+								'href' => url('admin/user/setting'),
 								'text' => 'User settings',
 							]),
 							'subtitle' => 'Setting for user.',
