@@ -701,7 +701,7 @@ function sgWebViewDomProcess(id) {
 			.done(function() {
 				// console.log('sg-action COMPLETE');
 				sgActionDone(linkData.done, $this, doneResult)
-			})
+			});
 			return
 		}
 
@@ -2807,6 +2807,7 @@ var sgDrawMap = function(thisMap, options = {}) {
 		height: '100%',
 		pin: [],
 		markers: [],
+		done: null,
 		debug: false,
 		callback : false,
 	}
@@ -2948,7 +2949,21 @@ var sgDrawMap = function(thisMap, options = {}) {
 			}
 			notify("บันทึกเรียบร้อย"+data, 3000)
 			//console.log(data)
-		});
+			}).fail(function(response) {
+				// console.log('sg-action FAIL');
+				// console.log(response)
+				let errorMsg = 'ERROR : '
+				if (response.responseJSON.text) {
+					errorMsg += response.responseJSON.text+' ('+response.status+')'
+				} else {
+					errorMsg += response.statusText+' ('+response.status+')'
+				}
+				notify(errorMsg)
+			})
+			.done(function() {
+				// console.log('sg-action COMPLETE');
+				sgActionDone(settings.done)
+			})
 	}
 
 	var editLocation = function(latLng) {
