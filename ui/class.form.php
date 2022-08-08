@@ -105,13 +105,31 @@ class Form extends Widget {
 			if (is_object($formElement) && method_exists($formElement, 'build')) {
 				// Form element is widget
 				$ret .= $formElement->build();
+			} else if (is_object($formElement)) {
+				// Form element is array and has key children
+				foreach ($formElement as $groupKey => $groupItem) {
+					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
+						// Item is widget
+						$ret .= $groupItem->build();
+					} else {
+						// Item is array or string
+						list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $groupKey, $groupItem);
+						$formArray[$tag_id] = $renderChildrenResult;
+						$ret .= $renderChildrenResult;
+					}
+				}
 			} else if (is_array($formElement) && array_key_exists('children', $formElement)) {
 				// Form element is array and has key children
 				foreach ($formElement['children'] as $groupKey => $groupItem) {
-					// $ret .= $this->_renderChild($formVariable, $groupKey, $groupItem);
-					list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $groupKey, $groupItem);
-					$formArray[$tag_id] = $renderChildrenResult;
-					$ret .= $renderChildrenResult;
+					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
+						// Item is widget
+						$ret .= $groupItem->build();
+					} else {
+						// Item is array or string
+						list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $groupKey, $groupItem);
+						$formArray[$tag_id] = $renderChildrenResult;
+						$ret .= $renderChildrenResult;
+					}
 				}
 			} else {
 				list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $fieldKey, $formElement);
