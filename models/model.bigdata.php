@@ -175,6 +175,7 @@ class BigDataModel {
 		if (!$conditions->key) return $result;
 
 		mydb::where('`keyName` = :keyName', ':keyName', $conditions->key);
+		if ($conditions->id) mydb::where('`keyId` = :keyId', ':keyId', $conditions->id);
 
 		if (is_string($conditions->name)) {
 			$conditions->name = preg_replace('/\*$/', '%', $conditions->name);
