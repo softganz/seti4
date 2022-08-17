@@ -254,7 +254,7 @@ function json_decode($json, $default = '{}') {
 
 function json_encode($input) {
 	if (defined('JSON_UNESCAPED_UNICODE')) {
-		return \json_encode($input,JSON_UNESCAPED_UNICODE+JSON_PRETTY_PRINT);
+		return \json_encode($input,JSON_UNESCAPED_UNICODE+JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES);
 	} else {
 		return preg_replace_callback('/\\\\u([0-9a-zA-Z]{4})/', function ($matches) {
 			return mb_convert_encoding(pack('H*', $matches[1]), 'UTF-8', 'UTF-16');
