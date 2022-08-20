@@ -331,6 +331,7 @@ class Nav extends Widget {
 
 	function __construct($args = []) {
 		parent::__construct($args);
+		if ($args['type']) $this->class .= ' -'.$args['type'];
 	}
 } // End of class Nav
 
