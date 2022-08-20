@@ -59,7 +59,7 @@
 	.widget-appbar>.-nav>.-more {position: absolute; right: 8px; top: 8px; overflow: visible;}
 
 	.widget-appbar>.-trailing {height: 4.8rem; display: flex; align-items: center;}
-	.widget-appbar>.-trailing .widget-row>.-item>.btn {padding: 4px 6px; box-shadow: none; margin: 0 4px;}
+	.widget-appbar>.-trailing .widget-row>.-item>.btn {box-shadow: none; margin: 0 4px;}
 	.widget-appbar>.-trailing .widget-dropbox>a {background-color: transparent; box-shadow: none;}
 	.widget-appbar>.-trailing .widget-dropbox>a:hover {background-color: #fff; opacity: 0.5;}
 	.widget-appbar .form-report {background-color: transparent; box-shadow: none; margin: 0; padding: 0;}
@@ -83,6 +83,8 @@
 	.widget-nav.-vertical {flex: 0 0 100%; flex-wrap: wrap;}
 	.widget-nav.-vertical>ul {flex: 0 0 100%; flex-wrap: wrap;}
 	.widget-nav.-vertical>ul>li {flex: 0 0 100%; flex-wrap: wrap; padding: 0;}
+	.widget-nav.-vertical>ul>li>a {display: flex; padding: 8px;}
+	.widget-nav.-vertical>ul>li>a>span {flex: 1;}
 	.widget-nav.-main-axis-end>ul {margin-left: auto;}
 
 .widget-dropbox {}

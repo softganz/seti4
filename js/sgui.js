@@ -306,7 +306,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 				if (doneExplode[1].substr(0,1) === '#') {
 					if ($(doneExplode[1]).length) {
 						// Scroll to element id
-						$('html,body').animate({ scrollTop: $(doneExplode[1]).offset().top - 64 }, 'slow');
+						$('html,body').animate({ scrollTop: $(doneExplode[1]).offset().top - $('#header-wrapper').height() - 16 }, 'slow');
 					}
 				} else {
 					var moveto = doneExplode[1].split(',');
