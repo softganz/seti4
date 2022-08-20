@@ -11,7 +11,7 @@
 $debug = true;
 
 function view_button_floating($url = NULL, $options = '{}') {
-	$defaults = '{debug:false, title:"", icon: "-addbig -white"}';
+	$defaults = '{debug:false, title:"", icon: "add"}';
 	$options = sg_json_decode($options,$defaults);
 	$debug = $options->debug;
 
@@ -22,7 +22,7 @@ function view_button_floating($url = NULL, $options = '{}') {
 	} else if (substr($url, 0,1) == '<') {
 		$links[] = $url;
 	} else {
-		$links[] = '<a class="btn -floating -circle48" href="'.$url.'" title="'.$options->title.'"><i class="icon '.$options->icon.'"></i></a>';
+		$links[] = '<a class="btn -floating -circle48" href="'.$url.'" title="'.$options->title.'"><i class="icon -material">'.$options->icon.'</i></a>';
 	}
 
 
