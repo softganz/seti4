@@ -506,7 +506,7 @@ $SCREENS
 
 	/* @group item */
 	.item {}
-	table.item {width:100%; margin:0 0 10px 0; border-collapse: collapse;border-spacing: 0; border:none; background: #fff;line-height: 1.8em; display: table;}
+	table.item {width:100%; margin:0 0 10px 0; border-collapse: collapse;border-spacing: 0; border:none; background: #fff; display: table;}
 	table.item.-table {width:auto;}
 		.item>caption {margin:0;padding:4px;font-size:1.1em;color:#333;font-weight:bold; background: #f1f1f1; border-radius: 0;}
 		.item>thead>tr.header, .item>tbody>tr.header {display: table-row;}
