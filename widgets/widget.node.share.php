@@ -40,6 +40,7 @@ class NodeShareWidget extends Widget {
 				// Share by copy link
 				$this->copyLink ? new Card([
 					'class' => 'copy-link',
+					'style' => 'margin: 8px;',
 					'children' => [
 						new ListTile([
 							'leading' => '<i class="icon -material">link</i>',
@@ -50,7 +51,7 @@ class NodeShareWidget extends Widget {
 							'class' => '-sg-paddingnorm -sg-padding-8',
 							'children' => [
 								'<input type="text" id="copy-link" class="form-text -fill" value="'.$this->copyLink.'" />',
-								'<a class="btn -link" onClick=\'navigator.clipboard.writeText("'.$this->copyLink.'")\'><i class="icon -material -sg-16">content_copy</i><span>Copy link</span></a>',
+								'<a class="btn -link" onClick=\'navigator.clipboard.writeText("'.$this->copyLink.'"); notify("สำเนาลิงก์เรียบร้อย",1000)\'><i class="icon -material -sg-16">content_copy</i><span>Copy link</span></a>',
 							], // children
 						]), // Row
 						'<style>.copy-link>.widget-row>.-item:first-child {flex: 1}</style>',
@@ -60,6 +61,7 @@ class NodeShareWidget extends Widget {
 				// Add member form and member list
 				$this->shareMember ? new Card([
 					'class' => 'widget-share-member-list',
+					'style' => 'margin: 8px;',
 					'children' => [
 						new ListTile([
 							'leading' => '<i class="icon -material">person_add_alt</i>',
