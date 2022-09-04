@@ -156,24 +156,30 @@ class Table extends Widget {
 
 				foreach ($row as $colKey => $colData) {
 					++$colNo;
-					if (is_object($colData)) $colData = 'Object';
-					else if (is_array($colData)) {
+					if (is_array($colData) || is_object($colData)) {
 						// Column data is an Array
+						$colValue = '';
 						$already_class = false;
 						$ret .= '	<td';
-						foreach ($colData as $colk => $colv) {
-							$colvalue = '';
-							if (empty($colk)) {
-								$colvalue = $colv;
-								unset($col[$colk]);
-							} else {
-								if ($colk == 'class') $already_class = true;
-								$ret .= ' '.$colk.'="'.$colv.'"';
+						if (is_object($colData) && method_exists($colData, 'build')) {
+							$colValue = $colData->build().'</td>';
+						} else if (is_object($colData)) {
+							$colValue = '*Object*';
+						} else {
+							foreach ($colData as $colk => $colv) {
+								if (empty($colk)) {
+									$colValue = $colv;
+									// unset($col[$colk]);
+								} else {
+									if ($colk == 'class') $already_class = true;
+									$ret .= ' '.$colk.'="'.$colv.'"';
+								}
 							}
 						}
-						if (!$already_class)
+						if (!$already_class) {
 							$ret .= $headerkey[$colNo] ? ' class="col '.$headerkey[$colNo].' col-'.$headerkey[$colNo].'"' : '';
-						$ret.='>'.$colvalue.'</td>'._NL;
+						}
+						$ret .= '>'.$colValue.'</td>'._NL;
 					} else if (strtolower(substr($colData, 0, 3)) == '<th') {
 						// Column data is TH
 						$ret .= $colData._NL;
