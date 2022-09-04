@@ -20,6 +20,8 @@ class Form extends Widget {
 	var $trailing;
 	var $description;
 	var $footer;
+	var $onSubmit;
+	var $onFormSubmit;
 	var $children = [];
 
 	function __construct($args = []) {
@@ -84,6 +86,8 @@ class Form extends Widget {
 				. (isset($this->config->attr) ? ' '.(is_array($this->config->attr) ? sg_implode_attr($this->config->attr) : $this->config->attr) : '')
 				. (isset($this->config->data) ? ' '.(is_array($this->config->data) ? sg_implode_attr($this->config->data) : $this->config->data) : '')
 				. ($this->style ? ' style="'.$this->style.'"' : '')
+				. ($this->onSubmit ? 'onSubmit = \'return '.$this->onSubmit.'(event)\'' : '')
+				. ($this->onFormSubmit ? 'data-onformsubmit = \''.$this->onFormSubmit.'\'' : '')
 				. ' >';
 
 			$ret .= $formStr._NL._NL;
