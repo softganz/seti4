@@ -399,21 +399,20 @@ class Button extends Widget {
 	var $widgetName = 'Button';
 	var $version = '0.01';
 	var $tagName = 'a';
+	var $href;
+	var $type = 'normal'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
 	var $text;
 	var $icon;
-	var $href;
 
 	function __construct($args = []) {
 		parent::__construct($args);
-		// debugMsg($args, '$args');
-		// debugMsg($this, '$this');
 	}
 
 	function toString() {
 		$attribute = [
 			'href' => $this->href,
 			'class' => trim(
-				'widget-'.strtolower($this->widgetName).' btn'
+				'widget-'.strtolower($this->widgetName).' '.($this->type === 'default' ? '' : 'btn')
 				. ($this->type ? ' -'.$this->type : '')
 				. ($this->class ? ' '.$this->class : '')
 			),
