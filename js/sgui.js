@@ -262,7 +262,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 				break;
 
 			case 'function':
-				let fn = '(function'+doneTarget+')($this,data)'
+				let fn = '(function '+doneTarget+')($this,data)'
 				eval(fn)
 				break;
 
@@ -412,17 +412,23 @@ function sgWebViewDomProcess(id) {
 
 			if (openType == 'browser') {
 				if (isFlutterInAppWebViewReady) {
+					const args = [location, linkData.webviewTitle, linkData];
+					let r = window.flutter_inappwebview.callHandler("openBrowser", ...args);
 				} else if (isAndroidWebViewReady) {
 					Android.openBrowser(location, webviewData)
 				}
 			} else if (openType == 'googlemap') {
 				if (isFlutterInAppWebViewReady) {
+					const args = [location, linkData];
+					let r = window.flutter_inappwebview.callHandler("openGoogleMap", ...args);
 				} else if (isAndroidWebViewReady) {
 					Android.openGoogleMap(location, webviewData)
 				}
 			} else if (openType == 'server') {
 				if (debugSG) console.log('Change to Server to '+linkData.server)
 				if (isFlutterInAppWebViewReady) {
+					const args = [linkData.server];
+					let r = window.flutter_inappwebview.callHandler("useServer", ...args);
 				} else if (isAndroidWebViewReady) {
 					Android.useServer(linkData.server)
 				}
@@ -789,12 +795,13 @@ $(document).ready(function(){
 * https://softganz.com
 * Using <form class="sg-form"></form>
 */
-$(document).on('submit', 'form.sg-form', function(e) {
+$(document).on('submit', 'form.sg-form', function(event) {
 	var $this = $(this)
 	var relTarget = $this.data('rel')
 	var retUrl = $this.data('ret')
 	var onComplete = $this.data('complete')
 	var checkValid = $this.data('checkvalid')
+	let onFormSubmit = $this.data('onformsubmit')
 	var silent = $this.data('silent')
 	var errorField = ''
 	var errorMsg = ''
@@ -838,6 +845,20 @@ $(document).on('submit', 'form.sg-form', function(e) {
 		if (errorField) return false;
 	}
 
+	// Process callback function
+	// console.log('onFormSubmit',onFormSubmit,window[onFormSubmit])
+	if (onFormSubmit && typeof window[onFormSubmit] === 'function') {
+		// console.log('onFormSubmit START')
+		return new Promise((resolve, reject) => {
+			// event.preventDefault()
+			// return false
+			return window[onFormSubmit](event, this);
+		});
+	}
+	// console.log('FORM CONTINUE')
+	// event.preventDefault()
+	// return false;
+
 
 	if (relTarget == undefined) return true;
 
@@ -854,10 +875,10 @@ $(document).on('submit', 'form.sg-form', function(e) {
 				if (onComplete == 'remove') {
 					$this.remove()
 				} else if (onComplete == 'close' || onComplete == 'closebox') {
-					if ($(e.rel).closest('.sg-dropbox.box').length!=0) {
+					if ($(event.rel).closest('.sg-dropbox.box').length!=0) {
 						$('.sg-dropbox.box').children('div').hide()
 						$('.sg-dropbox.box.active').removeClass('active')
-						//alert($(e.rel).closest('.sg-dropbox.box').attr('class'))
+						//alert($(event.rel).closest('.sg-dropbox.box').attr('class'))
 					} else {
 						$.colorbox.close()
 					}
@@ -899,10 +920,10 @@ $(document).on('submit', 'form.sg-form', function(e) {
 				if (onComplete == 'remove') {
 					$this.remove()
 				} else if (onComplete == 'close' || onComplete == 'closebox') {
-					if ($(e.rel).closest('.sg-dropbox.box').length!=0) {
+					if ($(event.rel).closest('.sg-dropbox.box').length!=0) {
 						$('.sg-dropbox.box').children('div').hide()
 						$('.sg-dropbox.box.active').removeClass('active')
-						//alert($(e.rel).closest('.sg-dropbox.box').attr('class'))
+						//alert($(event.rel).closest('.sg-dropbox.box').attr('class'))
 					} else {
 						$.colorbox.close()
 					}
