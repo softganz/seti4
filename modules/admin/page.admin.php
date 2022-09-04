@@ -52,7 +52,7 @@ class Admin extends Page {
 													'title' => $menuItem,
 													'leading' => new Icon('stars'),
 													'trailing' => new Button([
-														'class' => '-link',
+														'type' => 'normal',
 														'href' => url('admin/'.$menuKey),
 														'icon' => new Icon('settings'),
 													]), // Button

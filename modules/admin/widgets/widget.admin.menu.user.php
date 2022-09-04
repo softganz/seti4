@@ -35,6 +35,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Access rules',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/user/rules'),
 								'text' => 'Access rules',
 							]),
@@ -50,6 +51,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Create users',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/user/create'),
 								'text' => 'Create users',
 							]),
@@ -65,6 +67,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Roles',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/user/roles'),
 								'text' => 'Roles',
 							]),
@@ -80,6 +83,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Users',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/user/list'),
 								'text' => 'Users',
 							]),
@@ -95,6 +99,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'User settings',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/user/setting'),
 								'text' => 'User settings',
 							]),

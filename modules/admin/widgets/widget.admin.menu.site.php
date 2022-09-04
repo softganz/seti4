@@ -20,6 +20,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Installation',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/install'),
 								'text' => 'Installation',
 							]),
@@ -35,6 +36,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Modules',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/module'),
 								'text' => 'Modules',
 							]),
@@ -50,6 +52,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site information',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/info'),
 								'text' => 'Site information',
 							]),
@@ -65,6 +68,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site initial command',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/init'),
 								'text' => 'Site initial command',
 							]),
@@ -80,6 +84,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site completed command',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/complete'),
 								'text' => 'Site completed command',
 							]),
@@ -95,6 +100,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site maintenance',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/maintenance'),
 								'text' => 'Site maintenance',
 							]),
@@ -110,6 +116,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Site readonly',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/readonly'),
 								'text' => 'Site readonly',
 							]),
@@ -125,6 +132,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Themes',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/theme'),
 								'text' => 'Themes',
 							]),
@@ -140,6 +148,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'Upgrades',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/upgrade'),
 								'text' => 'Upgrades',
 							]),
@@ -155,6 +164,7 @@ class AdminMenuSiteWidget extends Widget {
 							'title' => 'URL aliases',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/site/path'),
 								'text' => 'URL aliases',
 							]),

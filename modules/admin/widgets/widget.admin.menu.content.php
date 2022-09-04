@@ -21,6 +21,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Comments',
 							'leading' => new Icon('comment'),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/comment/list'),
 								'text' => 'View Comments',
 							]),
@@ -36,6 +37,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Content',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/content/topic'),
 								'text' => 'View Content',
 							]),
@@ -51,6 +53,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Content types',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/content/type'),
 								'text' => 'Content types',
 							]),
@@ -66,6 +69,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Create new content',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('paper/post'),
 								'text' => 'Create new content',
 							]),
@@ -81,6 +85,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Post settings',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/content/node-settings'),
 								'text' => 'Post settings',
 							]),
@@ -96,6 +101,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'RSS publishing',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/content/rss-publishing'),
 								'text' => 'RSS publishing',
 							]),
@@ -111,6 +117,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Taxonomy',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/content/taxonomy'),
 								'text' => 'Taxonomy',
 							]),
@@ -126,6 +133,7 @@ class AdminMenuContentWidget extends Widget {
 							'title' => 'Top hit content',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('paper/list/list-style/table/order/view'),
 								'text' => 'Top hit content',
 							]),
