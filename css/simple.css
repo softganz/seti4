@@ -294,7 +294,7 @@ $SCREENS
 		.btn.-link {background-color: transparent; box-shadow: none;}
 		.btn.-link:hover {background-color: #eee;}
 		.btn.-cancel {color: #999; margin-right: 16px;}
-		.btn.-cancel>.icon {color: #ccc;}
+		.btn.-cancel>.icon {color: #999;}
 
 		.btn.-floating {color: #FFE0E0; background-color: #DB4437; border: none; box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)}
 		.btn.-floating:hover {background-color: #f60;}
