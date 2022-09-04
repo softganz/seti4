@@ -1174,7 +1174,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.save = function($this, value, callback) {
-			//console.log('Update Value = '+value)
+			// console.log('Update Value = '+value)
 			// console.log($parent.data('updateUrl'))
 			// console.log('postUrl = ', postUrl)
 			// console.log($parent.data());
@@ -1556,19 +1556,24 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			},
 
 			submit: function (settings, original) {
-					var dateRaw = $('input', this).datepicker('getDate');
-					var dateFormatted;
-
-					if (settings.datepicker.format) {
-						dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
-					} else {
-						dateFormatted = dateRaw;
-					}
+				let dateRaw = $('input', this).datepicker('getDate');
+				let dateFormatted;
+				if (dateRaw === null) {
+					dateFormatted = null
+				} else if (settings.datepicker.format) {
+					dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
+				} else {
+					dateFormatted = dateRaw;
+				}
+				if (dateFormatted) {
 					$('input', this).val(dateFormatted);
-					$('input', this).datepicker('hide');
-				},
+				} else {
+					$('input', this).val('');
+				}
+				$('input', this).datepicker('hide');
+			},
 
-				plugin : function(settings, original) {
+			plugin : function(settings, original) {
 				// prevent disappearing of calendar
 				//settings.onblur = 'submit';
 				settings.onblur = 'nothing'
