@@ -403,21 +403,35 @@ class Button extends Widget {
 	var $type = 'normal'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
 	var $text;
 	var $icon;
+	var $variable;
 
-	function __construct($args = []) {
+	function __construct($args = [], $variable = NULL) {
 		parent::__construct($args);
+		$this->variable = $variable;
 	}
 
 	function toString() {
+		// Check right by access
+		if ($this->access) {
+			if (!defined($this->access)) return NULL;
+			else if (!($this->variable->RIGHT & constant($this->access))) return NULL;
+		}
+
 		$attribute = [
 			'href' => $this->href,
 			'class' => trim(
-				'widget-'.strtolower($this->widgetName).' '.($this->type === 'default' ? '' : 'btn')
+				'widget-'.strtolower($this->widgetName).($this->type === 'default' ? '' : ' btn')
 				. ($this->type ? ' -'.$this->type : '')
 				. ($this->class ? ' '.$this->class : '')
 			),
 			'title' => SG\getFirst($this->title),
+			'data-rel' => SG\getFirst($this->rel),
+			'data-before' => SG\getFirst($this->before),
+			'data-done' => SG\getFirst($this->done),
 		] + (Array) $this->attribute;
+
+		$attribute['href'] = preg_replace('/\{\{projectId\}\}/', $this->variable->projectId, $attribute['href']);
+
 		$button = '<a '.sg_implode_attr($attribute).'>'
 			. ($this->icon ? $this->_renderChildren([$this->icon]) : '')
 			. ($this->text ? '<span>'.$this->text.'</span>' : '')
