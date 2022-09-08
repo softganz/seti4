@@ -156,6 +156,8 @@ class Form extends Widget {
 			return [NULL, $formElement._NL._NL];
 		} else if (is_array($formElement)) {
 			$formElement = (Object) $formElement;
+		} else {
+			$formElement = (Object) $formElement;
 		}
 
 		$name = '';
