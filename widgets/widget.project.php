@@ -30,10 +30,11 @@
  * @example <div class="widget project" data-limit="20" data-header="Project Activities" data-footer="By SoftGanz"></div>
  */
 function widget_project() {
-	$para=para(func_get_args(),'data-limit=5','data-show-style=ul','data-show-photo-width=100','data-show-photo-height=80');
-	$dateformat=SG\getFirst($para->{'data-show-dateformat'},cfg('dateformat'));
+	$para = para(func_get_args(),'data-limit=5','data-show-style=ul','data-show-photo-width=100','data-show-photo-height=80');
+	$dateformat = SG\getFirst($para->{'data-show-dateformat'},cfg('dateformat'));
 
-	mydb::where('tr.`formid`="activity" AND tr.`part` IN ("owner","trainer")');
+	mydb::where('t.`status` IN ( :status )', ':status', [_PUBLISH, _LOCK]);
+	mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
 	if ($para->{'data-projectid'}) mydb::where('p.`tpid` = :projectId', ':projectId', $para->{'data-projectid'});
 	if (!empty($para->{'data-set'})) mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$para->{'data-set'});
 
@@ -62,7 +63,7 @@ function widget_project() {
 	// 	debugMsg(mydb()->_query);
 	// }
 
-	if ($dbs->_empty) return array($ret,$para);
+	if ($dbs->_empty) return [$ret,$para];
 
 	$tagName = $para->{'data-show-style'};
 
