@@ -430,7 +430,11 @@ class Button extends Widget {
 			'data-done' => SG\getFirst($this->done),
 		] + (Array) $this->attribute;
 
-		$attribute['href'] = preg_replace('/\{\{projectId\}\}/', $this->variable->projectId, $attribute['href']);
+		if (is_null($attribute['href'])) {
+			unset($attribute['href']);
+		} else {
+			$attribute['href'] = preg_replace('/\{\{projectId\}\}/', $this->variable->projectId, $attribute['href']);
+		}
 
 		$button = '<a '.sg_implode_attr($attribute).'>'
 			. ($this->icon ? $this->_renderChildren([$this->icon]) : '')
