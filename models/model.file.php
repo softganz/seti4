@@ -68,32 +68,33 @@ class FileModel {
 		return $result;
 	}
 
-	public static function items($conditions, $options = '{}') {
-		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
-		$debug = $options->debug;
-
+	public static function items($attributes) {
 		$result = (Object) [
 			'count' => 0,
 			'items' => [],
 		];
 
-		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
-		} else if (is_object($conditions)) {
+		if (is_string($attributes) && preg_match('/^{/',$attributes)) {
+			$attributes = SG\json_decode($attributes);
+		} else if (is_object($attributes)) {
 			//
-		} else if (is_array($conditions)) {
-			$conditions = (Object) $conditions;
+		} else if (is_array($attributes)) {
+			$attributes = (Object) $attributes;
 		} else {
-			$conditions = (Object) ['id' => $conditions];
+			$attributes = (Object) ['id' => $attributes];
 		}
 
 		// TODO: Code for get items
 
-		if ($conditions->nodeId) mydb::where('f.`tpid` = :nodeId', ':nodeId', $conditions->nodeId);
-		if ($conditions->tagName) mydb::where('f.`tagName` = :tagName', ':tagName', $conditions->tagName);
-		if ($conditions->type) mydb::where('f.`type` = :type', ':type', $conditions->type);
-		if ($conditions->refId) mydb::where('f.`refId` = :refId', ':refId', $conditions->refId);
+		if ($attributes->nodeId) mydb::where('f.`tpid` = :nodeId', ':nodeId', $attributes->nodeId);
+		if ($attributes->type) mydb::where('f.`type` = :type', ':type', $attributes->type);
+		if ($attributes->refId) mydb::where('f.`refId` = :refId', ':refId', $attributes->refId);
+		if ($attributes->orgId) mydb::where('f.`orgId` = :orgId', ':orgId', $attributes->orgId);
+		if ($attributes->tagName) mydb::where('f.`tagName` = :tagName', ':tagName', $attributes->tagName);
+		if ($attributes->tagNameLike) mydb::where('f.`tagName` LIKE :tagNameLike', ':tagNameLike', $attributes->tagNameLike);
+
+		mydb::value('$ORDER$', '');
+		if ($attributes->orderBy) mydb::value('$ORDER$', 'ORDER BY '.$attributes->orderBy, false);
 
 		$dbs = mydb::select(
 			'SELECT
@@ -122,7 +123,7 @@ class FileModel {
 			, f.`ip`
 			FROM %topic_files% f
 			%WHERE%
-			'
+			$ORDER$'
 		);
 
 		$result->count = count($dbs->items);
@@ -152,7 +153,7 @@ class FileModel {
 		$photoFilenameLength = SG\getFirst($options->fileNameLength, 30);
 		$isUploadSingleFile = true;
 
-		$deleteurl = $data->deleteurl;
+		$deleteUrl = SG\getFirst($data->deleteUrl, $data->deleteurl);
 		//$ret='Upload photo of orgid '.$orgid.' tagName='.$tagName.' photoPrename '.$photoPrename.'<br />';
 
 
@@ -212,37 +213,38 @@ class FileModel {
 
 			$photo_upload = $upload->filename;
 
-			$picsData = new stdClass();
-
-			$picsData->fid = empty($data->fid) ? NULL : $data->fid;
-			$picsData->tpid = empty($data->tpid) ? NULL : $data->tpid;
-			$picsData->cid = empty($data->cid) ? NULL : $data->cid;
-			$picsData->type = $ext == 'pdf' ? 'doc' : 'photo';
-			$picsData->title = SG\getFirst($data->title, $postFile['name']);
-			$picsData->tagname = empty($data->tagname) ? NULL : $data->tagname;
-
-			$picsData->orgid = empty($data->orgid) ? NULL : $data->orgid;
-			$picsData->uid = SG\getFirst($data->uid,i()->uid);
-			$picsData->file = $photo_upload;
-			$picsData->refid = empty($data->refid) ? NULL : $data->refid;
-			$picsData->description = $data->description;
-			$picsData->timestamp = 'func.NOW()';
-			$picsData->ip = ip2long(GetEnv('REMOTE_ADDR'));
+			$picsData = (Object) [
+				'fid' => SG\getFirst($data->fid),
+				'tpid' => SG\getFirst($data->tpid),
+				'cid' => SG\getFirst($data->cid),
+				'type' => $ext == 'pdf' ? 'doc' : 'photo',
+				'title' => SG\getFirst($data->title, $postFile['name']),
+				'tagName' => SG\getFirst($data->tagName, $data->tagname),
+				'orgId' => SG\getFirst($data->orgId, $data->orgid),
+				'uid' => SG\getFirst($data->uid,i()->uid),
+				'file' => $photo_upload,
+				'refId' => SG\getFirst($data->refId, $data->refid),
+				'description' => $data->description,
+				'timestamp' => 'func.NOW()',
+				'ip' => ip2long(GetEnv('REMOTE_ADDR')),
+			];
 
 			$linkInfo = '';
 
 			if ($upload->copy()) {
 				//$ret.='<p>Upload file '.$postFile['name'].' save complete.</p>';
-				$stmt = 'INSERT INTO %topic_files%
+
+				mydb::query(
+					'INSERT INTO %topic_files%
 					(
 						`fid`
 					, `tpid`
 					, `cid`
 					, `type`
-					, `orgid`
+					, `orgId`
 					, `uid`
-					, `refid`
-					, `tagname`
+					, `refId`
+					, `tagName`
 					, `file`
 					, `title`
 					, `description`
@@ -253,19 +255,19 @@ class FileModel {
 					, :tpid
 					, :cid
 					, :type
-					, :orgid
+					, :orgId
 					, :uid
-					, :refid
-					, :tagname
+					, :refId
+					, :tagName
 					, :file
 					, :title
 					, :description
 					, :timestamp
 					, :ip
 					) ON DUPLICATE KEY UPDATE
-					`file` = :file';
-
-				mydb::query($stmt, $picsData);
+					`file` = :file',
+					$picsData
+				);
 
 				if (empty($picsData->fid)) $fid = $picsData->fid = mydb()->insert_id;
 
@@ -288,8 +290,8 @@ class FileModel {
 					if ($options->showDetail) $linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
 
 					$ui = new Ui('span');
-					if ($deleteurl) {
-						$ui->add('<a class="sg-action -no-print" href="'.url($deleteurl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-removeparent="li"><i class="icon -material -gray">cancel</i></a>');
+					if ($deleteUrl) {
+						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
 					}
 					$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 				} else {
@@ -298,11 +300,11 @@ class FileModel {
 						. '<img class="photoitem -doc" src="//img.softganz.com/icon/icon-file.png" width="63" />'
 						. '<span class="title">'.$picsData->title.'</span>'
 						. '</a>';
-					$ui = new Ui();
-					if ($deleteurl) {
-						$ui->add('<a class="sg-action -no-print" href="'.url($deleteurl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-removeparent="li"><i class="icon -material -gray">cancel</i></a>');
+					$ui = new Ui('span');
+					if ($deleteUrl) {
+						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
 					}
-					$linkInfo .= $ui->build();
+					$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 				}
 
 				$picsData->link = $linkInfo;

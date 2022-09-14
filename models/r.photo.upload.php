@@ -96,10 +96,10 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 		$picsData->title = SG\getFirst($data->title, $postFile['name']);
 		$picsData->tagname = empty($data->tagname) ? NULL : $data->tagname;
 
-		$picsData->orgid = empty($data->orgid) ? NULL : $data->orgid;
+		$picsData->orgid = SG\getFirst($data->orgId, $data->orgid);
 		$picsData->uid = SG\getFirst($data->uid,i()->uid);
 		$picsData->file = $photo_upload;
-		$picsData->refid = empty($data->refid) ? NULL : $data->refid;
+		$picsData->refid = SG\getFirst($data->refId, $data->refid);
 		$picsData->description = $data->description;
 		$picsData->timestamp = 'func.NOW()';
 		$picsData->ip = ip2long(GetEnv('REMOTE_ADDR'));
