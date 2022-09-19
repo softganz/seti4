@@ -65,7 +65,7 @@ class AdminUserList extends Page {
 		$stmt = 'SELECT SQL_CALC_FOUND_ROWS
 			u.`uid`, u.`username`, u.`name`
 			, u.`status`
-			, u.`email`, u.`roles`, u.`datein`, u.`last_login`
+			, u.`email`, u.`roles`, u.`datein`, u.`login_time`, u.`last_login`
 			, u.`admin_remark`
 			FROM %users% AS u
 			%WHERE%
@@ -112,6 +112,7 @@ class AdminUserList extends Page {
 								'email'=>'Email <a href="'.url($currentUrl, ['order' => 'email']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'email' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'roles'=>'Roles <a href="'.url($currentUrl, ['order' => 'role']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'role' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'reg -date'=>'Register date <a href="'.url($currentUrl, ['order' => 'reg']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'reg' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'currentIn -date' => 'Current Login',
 								'last -date' => 'Last login <a href="'.url($currentUrl, ['order' => 'login']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'login' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'remark -hover-parent' => 'Admin remark',
 							],
@@ -134,6 +135,7 @@ class AdminUserList extends Page {
 										$rs->email,
 										$rolesList ? implode(', ', $rolesList) : '',
 										sg_date($rs->datein,'M j, Y @G:i'),
+										$rs->login_time ? sg_date($rs->login_time,'M j, Y @G:i') : '',
 										$rs->last_login ? sg_date($rs->last_login,'M j, Y @G:i') : '',
 										$rs->admin_remark
 										.$menu->build(),
