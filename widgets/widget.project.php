@@ -34,34 +34,44 @@ function widget_project() {
 	$dateformat = SG\getFirst($para->{'data-show-dateformat'},cfg('dateformat'));
 
 	mydb::where('t.`status` IN ( :status )', ':status', [_PUBLISH, _LOCK]);
-	mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
+	// mydb::where('(t.`status` = :publish OR t.`status` = :lock)', ':publish', _PUBLISH, ':lock', _LOCK);
+	// mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
 	if ($para->{'data-projectid'}) mydb::where('p.`tpid` = :projectId', ':projectId', $para->{'data-projectid'});
 	if (!empty($para->{'data-set'})) mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$para->{'data-set'});
 
+	mydb::value('$LIMIT$', 'LIMIT '.$para->{"data-limit"});
 	$dbs = mydb::select(
 		'SELECT
-		tr.`trid`, tr.`calid`, tr.`tpid`
+		action.`trid`, action.`calid`, action.`tpid`
 		, p.`projectset`, t.`title`
 		, c.`title` `actionTitle`
-		, tr.`text4` `outputOutcome`, tr.`text2` `actionDetail`
-		, tr.`created`
+		, action.`gallery`
+		, action.`outputOutcome`, action.`actionDetail`
+		, action.`created`
 		, GROUP_CONCAT(DISTINCT f.`file`) photos
-		FROM %project_tr% tr
-			LEFT JOIN %topic% t ON t.`tpid`=tr.`tpid`
-			LEFT JOIN %project% p ON p.`tpid`=t.`tpid`
-			LEFT JOIN %calendar% c ON c.`tpid` = tr.`tpid` AND c.`id` = tr.`calid`
-			LEFT JOIN %topic_files% f ON f.`tpid` = tr.`tpid`
-				AND f.`gallery` = tr.`gallery` AND f.`type` = "photo"
+		FROM (
+			SELECT *
+				, tr.`text4` `outputOutcome`, tr.`text2` `actionDetail`
+			FROM %project_tr% tr
+			WHERE tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")
+			ORDER BY tr.`trid` DESC
+			$LIMIT$
+		) action
+			LEFT JOIN %topic% t ON t.`tpid` = action.`tpid`
+			LEFT JOIN %project% p ON p.`tpid` = t.`tpid`
+			LEFT JOIN %calendar% c ON c.`tpid` = action.`tpid` AND c.`id` = action.`calid`
+			LEFT JOIN %topic_files% f ON f.`tpid` = action.`tpid`
+				AND f.`gallery` = action.`gallery` AND f.`type` = "photo"
 				AND (f.`tagname` IS NULL OR f.`tagname` LIKE "project,action")
 		%WHERE%
-		GROUP BY tr.`trid`
-		ORDER BY tr.`trid` DESC
-		LIMIT '.$para->{"data-limit"}
+		GROUP BY `trid`'
 	);
 	// if (i()->username == 'softganz') {
 	// 	debugMsg($para, '$para');
-	// 	debugMsg(mydb()->_query);
+		// debugMsg(mydb()->_query);
 	// }
+
+	// return [$para->{"data-limit"}, $para];
 
 	if ($dbs->_empty) return [$ret,$para];
 
