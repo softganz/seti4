@@ -40,12 +40,12 @@ class Table extends Widget {
 		$captionStr = SG\getFirst($this->config->caption,$this->caption);
 
 		// Create table tag
-		$ret = '<table';
-		if (isset($this->id))
-			$ret .= ' id="'.$this->id.'"';
-		if (isset($this->class))
-			$ret .= ' class="'.$this->class.'"';
-		if ($this->style) $ret .= 'style="'.$this->style.'"';
+		$ret = '<table'
+			. (isset($this->id) ? ' id="'.$this->id.'"' : '')
+			. (isset($this->class) ? ' class="'.$this->class.'"' : '')
+		  . ($this->style ? ' style="'.$this->style.'"' : '')
+			. ($this->attribute && is_array($this->attribute) ? ' '.sg_implode_attr($this->attribute) : '');
+
 		if (isset($this->attr)) {
 			if (is_string($this->attr))
 				$ret .= ' '.$this->attr;
