@@ -240,7 +240,7 @@ $SCREENS
 
 	legend {padding: 0 10px; font-weight: bold; font-style: italic;}
 
-	input::placeholder, textarea::placeholder {color: #999; font-style: italic; font-size: 0.9em;}
+	input::placeholder, textarea::placeholder {color: #ccc; font-style: italic; font-size: 0.9em;}
 
 
 	.-left {text-align: left;}
@@ -806,6 +806,8 @@ $SCREENS
 		.form-text.-date {text-align:center;}
 		.form-text.-time {text-align:center;}
 		.form-text.-readonly {color:gray;}
+
+		.form-text[disabled] {box-shadow: 0 0 0 1px transparent; inset;}
 
 		.form-text.-require,
 		.form-select.-require,
