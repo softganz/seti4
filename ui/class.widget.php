@@ -12,7 +12,17 @@
 * Class :: Widget
 * Widget class for base of all widget
 ********************************************/
-class Widget {
+class WidgetBase {
+	var $widgetName = 'Widget';
+	var $version;
+	function __construct($args = []) {
+		foreach ($args as $argKey => $argValue) {
+			$this->{$argKey} = $argValue;
+		}
+	}
+}
+
+class Widget extends WidgetBase {
 	var $widgetName = 'Widget';
 	var $version;
 	var $tagName = '';
@@ -403,6 +413,7 @@ class Button extends Widget {
 	var $type = 'normal'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
 	var $text;
 	var $icon;
+	var $iconPosition = 'left'; // left,right,top,bottom
 	var $variable;
 
 	function __construct($args = [], $variable = NULL) {
@@ -437,8 +448,9 @@ class Button extends Widget {
 		}
 
 		$button = '<a '.sg_implode_attr($attribute).'>'
-			. ($this->icon ? $this->_renderChildren([$this->icon]) : '')
+			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
 			. ($this->text ? '<span>'.$this->text.'</span>' : '')
+			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
 			. '</a>';
 		return $button;
 	}
@@ -608,7 +620,7 @@ class AppBar extends Widget {
 	}
 } // End of class AppBar
 
-class Page extends Widget {
+class Page extends WidgetBase {
 	var $module = NULL;
 	var $widgetName = 'Page';
 
@@ -619,9 +631,6 @@ class Page extends Widget {
 		$this->version = cfg($this->module.'.version');
 		$this->theme = (Object) ['option' => cfg('topic.property')->option];
 		parent::__construct($args);
-
-		// Remove unused property
-		unset($this->tagName, $this->childTagName, $this->attribute, $this->config);
 	}
 
 	function build() {
@@ -634,9 +643,21 @@ class Page extends Widget {
 
 class PageApi extends Page {
 	var $widgetName = 'PageApi';
+	var $action;
+	var $actionMethod;
+
+	function __construct($args = []) {
+		parent::__construct($args);
+		$this->actionMethod = (preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->action));
+		unset($this->theme);
+	}
 
 	function build() {
-		return (Object) [];
+		if (method_exists($this, $this->actionMethod) && ($reflection = new ReflectionMethod($this, $this->actionMethod)) && $reflection->isPublic()) {
+			return $this->{$this->actionMethod}();
+		} else {
+			return new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Action not found!!!']);
+		}
 	}
 } // End of class PageApi
 
