@@ -215,7 +215,8 @@ class FileModel {
 
 			$picsData = (Object) [
 				'fid' => SG\getFirst($data->fid),
-				'tpid' => SG\getFirst($data->tpid),
+				'nodeId' => SG\getFirst($data->nodeId, $data->tpid),
+				'tpid' => SG\getFirst($data->nodeId, $data->tpid),
 				'cid' => SG\getFirst($data->cid),
 				'type' => $ext == 'pdf' ? 'doc' : 'photo',
 				'title' => SG\getFirst($data->title, $postFile['name']),
@@ -224,7 +225,7 @@ class FileModel {
 				'uid' => SG\getFirst($data->uid,i()->uid),
 				'file' => $photo_upload,
 				'refId' => SG\getFirst($data->refId, $data->refid),
-				'description' => $data->description,
+				'description' => SG\getFirst($data->description),
 				'timestamp' => 'func.NOW()',
 				'ip' => ip2long(GetEnv('REMOTE_ADDR')),
 			];
@@ -252,7 +253,7 @@ class FileModel {
 					, `ip`
 					) VALUES (
 					  :fid
-					, :tpid
+					, :nodeId
 					, :cid
 					, :type
 					, :orgId
