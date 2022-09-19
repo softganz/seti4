@@ -15,6 +15,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 	$topicInfo = is_object($tpid) ? $tpid : R::Model('paper.get',$tpid);
 	//paper_model::get_topic_by_id($tpid);//R::Model('paper.get',$tpid,$para);
 	$tpid = $topicInfo->tpid;
+	$body = (Object) [];
 
 	$isAdminPaper = user_access('administer contents,administer papers');
 	$isEditPaper = user_access('administer contents,administer papers','edit own paper',$topicInfo->uid);
