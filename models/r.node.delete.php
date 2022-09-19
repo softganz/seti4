@@ -13,11 +13,11 @@ function r_node_delete($tpid, $options = '{}') {
 	$options = sg_json_decode($options, $defaults);
 	$debug = $options->debug;
 
-	$result = NULL;
-
-	$result->complete=false;
-	$result->error=false;
-	$result->process[]='__edit_delete request';
+	$result = (Object) [
+		'complete' => false,
+		'error' => false,
+		'process' => ['__edit_delete request'],
+	];
 
 	$simulate = $options->simulate;
 
