@@ -69,22 +69,23 @@ class FileModel {
 	}
 
 	public static function items($attributes) {
+		$defaults = [
+			'nodeId' => NULL,
+			'type' => NULL,
+			'refId' => NULL,
+			'orgId' => NULL,
+			'tagName' => NULL,
+			'tagNameLike' => NULL,
+			'orderBy' => NULL,
+			'resultGroup' => NULL,
+		];
+
 		$result = (Object) [
 			'count' => 0,
 			'items' => [],
 		];
 
-		if (is_string($attributes) && preg_match('/^{/',$attributes)) {
-			$attributes = SG\json_decode($attributes);
-		} else if (is_object($attributes)) {
-			//
-		} else if (is_array($attributes)) {
-			$attributes = (Object) $attributes;
-		} else {
-			$attributes = (Object) ['id' => $attributes];
-		}
-
-		// TODO: Code for get items
+		$attributes = (Object) array_replace_recursive($defaults, $attributes);
 
 		if ($attributes->nodeId) mydb::where('f.`tpid` = :nodeId', ':nodeId', $attributes->nodeId);
 		if ($attributes->type) mydb::where('f.`type` = :type', ':type', $attributes->type);
@@ -95,6 +96,9 @@ class FileModel {
 
 		mydb::value('$ORDER$', '');
 		if ($attributes->orderBy) mydb::value('$ORDER$', 'ORDER BY '.$attributes->orderBy, false);
+
+		$queryOption = [];
+		if ($attributes->resultGroup) $queryOption['group'] = $attributes->resultGroup;
 
 		$dbs = mydb::select(
 			'SELECT
@@ -123,7 +127,9 @@ class FileModel {
 			, f.`ip`
 			FROM %topic_files% f
 			%WHERE%
-			$ORDER$'
+			$ORDER$;
+			'.($queryOption ? '-- '.json_encode($queryOption) : '')
+			// Must json_encode for json single line
 		);
 
 		$result->count = count($dbs->items);
