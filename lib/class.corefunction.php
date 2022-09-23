@@ -1146,7 +1146,7 @@ class SgCore {
 	 * @return String
 	 */
 	static function processController($loadTemplate = true, $pageTemplate = NULL) {
-		global $R,$page,$request_time,$request_process_time;
+		global $page,$request_time,$request_process_time;
 		$request = R()->request;
 		$method_result = '';
 		$request_result = '';
@@ -1160,17 +1160,17 @@ class SgCore {
 
 		R()->timer->start($request);
 
-	 	// Show splash if not visite site in 1 hour
-		$webhomepage = cfg('web.homepage');
-
-		if (!isset($request) || empty($request) || ($request == 'home') || ($request == $webhomepage)) {
+		if (!isset($request) || empty($request) || ($request == 'home') || ($request == cfg('web.homepage'))) {
 			// Check for splash page
-			if (cfg('web.splash.time') > 0 && $splash = url_alias('splash') && empty($_COOKIE['splash'])) {
+		 	// Show splash if not visite site in time
+			if (cfg('web.splash.time') > 0 && $splashPage = url_alias('splash') && empty($_COOKIE['splash'])) {
 				cfg('page_id','splash');
 				location('splash');
 			}
 
+			// Show home page
 			$home = cfg('web.homepage');
+			$isLoadHomePage = true;
 			if (empty($home)) {
 				ob_start();
 				SgCore::loadTemplate('home');
@@ -1180,10 +1180,9 @@ class SgCore {
 			} else {
 				R()->request = $request = $home;
 				q($request);
-				//debugMsg('$home='.$home.' $request='.$request.' q()='.q()).' cfg(page_id)='.cfg('page_id');
+				// debugMsg('$home='.$home.' $request='.$request.' q()='.q()).' cfg(page_id)='.cfg('page_id');
 				$manifest = R::Manifest(q(0));
 				$menu = menu($request);
-				$isLoadHomePage = true;
 			}
 		} else if ($request) {
 			// Load Module Manifest
@@ -1208,8 +1207,6 @@ class SgCore {
 
 		if ($isDebugProcess  && $manifest) $process_debug .= 'Manifest module file : '.print_o($manifest,'$manifest').'<br />';
 
-		if ($isLoadHomePage) cfg('page_id','home');
-
 		// Load Page On Request
 		if ($manifest[1] && $menu) { // This is a core version 4
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 <b>'.$request.'</b><br />';
@@ -1218,6 +1215,9 @@ class SgCore {
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 			list($exeClass,$found,$pageResultWidget) = SgCore::processMenu($menu);
 		}
+
+		// Set page id to home
+		if ($isLoadHomePage) cfg('page_id','home');
 
 		if ($found) {
 			// Set splash page was show
