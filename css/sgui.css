@@ -33,6 +33,8 @@
 	.widget-stepmenu>ul>.ui-item.-active>* {background-color: green; color:#fff;}
 	.widget-stepmenu>ul>.ui-item.-active>*:hover {background-color: #008912;}
 	.widget-stepmenu>ul>.ui-item.-active .icon {color: #fff;}
+	.widget-stepmenu>ul>.ui-item>.-cancel {background-color: red;}
+	.widget-stepmenu>ul>.ui-item>.-cancel>.icon {color:#fff;}
 
 .widget-card {margin: 8px 0;}
 	.widget-card .widget-table:last-child {margin-bottom: 8px;}
@@ -425,25 +427,6 @@
 /* @end */
 
 
-
-/* @group progress-bar */
-.progress-bar {display: block; padding: 0 8px;}
-	.progress-bar>ul {margin:8px 0 24px 0; padding: 0; list-style-type: none; height:24px; border-bottom: 1px #ccc solid; display: flex; flex-wrap: nowrap; justify-content: space-between;}
-	.progress-bar>ul>.-item {display: block; flex: 0 0 48px; text-align: center;}
-	.progress-bar .status {display: block; width: 48px; height: 48px; margin: 0 auto; background-color: #eee; line-height: 48px; border-radius: 50%;}
-	.progress-bar .status:hover {background-color: #f5f5f5;}
-	.progress-bar .status.-active {background-color: green; color:#fff;}
-	.progress-bar .status.-active:hover {background-color: #008912;}
-	.progress-bar .status.-process-1.-active {background-color: yellow; color: #333;}
-	.progress-bar .status.-process-2.-active {background-color: orange;}
-	.progress-bar .status.-process-3.-active {background-color: magenta;}
-	.progress-bar .status.-process-4.-active {background-color: blue;}
-	.progress-bar .status.-process-5.-active {background-color: green;}
-	.progress-bar .status.-cancel {background-color: red;}
-	.progress-bar .status>.icon {margin-top: 12px; color: grey;}
-	.progress-bar .status.-active>.icon {color: #fff;}
-	.progress-bar .status.-cancel>.icon {color: #fff;}
-/* @end */
 
 /* @group ui-statusbar */
 .ui-statusbar {margin:8px 0 32px 0; padding: 0; list-style-type: none; height:24px; border-bottom: 1px #ccc solid; display: flex; flex-wrap: nowrap; justify-content: space-between;}
