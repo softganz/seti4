@@ -675,8 +675,9 @@ class StepMenu extends Widget {
 	}
 
 	function _renderChildContainerStart($stepIndex, $args = []) {
+		$stepIndex++;
 		return '<'.$this->childContainer['tagName'].' '
-			. 'class="ui-item -step-'.$stepIndex.($this->childContainer['class'] ? $this->childContainer['class'] : '').($stepIndex == $this->currentStep ? ' -current-step' : '').(in_array($stepIndex,$this->activeStep) ? ' -active' : '').'" '
+			. 'class="ui-item -step-'.$stepIndex.($this->childContainer['class'] ? $this->childContainer['class'] : '').($stepIndex == $this->currentStep ? ' -current-step' : '').(isset($this->activeStep[$stepIndex]) && $this->activeStep[$stepIndex] ? ' -active' : '').'" '
 			. '>';
 	}
 
