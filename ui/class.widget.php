@@ -574,6 +574,9 @@ class AppBar extends Widget {
 	var $widgetName = 'AppBar';
 	var $tagName = 'div';
 	var $title;
+	var $leading;
+	var $trailing;
+	var $navigator;
 	var $boxHeader = false;
 	var $showInBox = false;
 	var $removeOnApp = false;
