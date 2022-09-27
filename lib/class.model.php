@@ -14,8 +14,10 @@
  * the Free Software Foundation; either version 2 of the License.
  * ============================================
  */
+// @deprecated
+// All function will deprecate and move this class to be base class of all model
 
-class model {
+class Model {
 
 	public static function user_clear() {
 		R()->user = (Object) [
