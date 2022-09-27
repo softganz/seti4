@@ -351,8 +351,10 @@ class R {
 	public static function PageWidget($packageName, $args = []) {
 		list($className, $found, $fileName, $resourceType) = SgCore::loadResourceFile('page.'.$packageName);
 		if ($found && class_exists($className) && method_exists($className, 'build')) {
+			// Found page widget
 			return (new $className(...$args))->build();
 		} else if ($found && function_exists($className)) {
+			// Found page function version, function name = className
 			array_unshift($args, new Module());
 			$ret = $className(...$args);
 			return new Widget(['exeClass' => $args[0], 'child' => $ret]);
