@@ -546,6 +546,32 @@ class InlineEdit extends Widget {
 	}
 } // End of class Container
 
+class StepMenu extends Widget {
+	var $widgetName = 'StepMenu';
+	var $tagName = 'nav';
+	var $class = '';
+	var $childrenContainer = ['tagName' => 'ul'];
+	var $childContainer = ['tagName' => 'li'];
+	var $currentStep = NULL;
+	var $activeStep = [];
+
+	function __construct($args = []) {
+		parent::__construct($args);
+	}
+
+	function _renderChildContainerStart($stepIndex, $args = []) {
+		$stepIndex++;
+		return '<'.$this->childContainer['tagName'].' '
+			. 'class="ui-item -step-'.$stepIndex.($this->childContainer['class'] ? $this->childContainer['class'] : '').($stepIndex == $this->currentStep ? ' -current-step' : '').(isset($this->activeStep[$stepIndex]) && $this->activeStep[$stepIndex] ? ' -active' : '').'" '
+			. '>';
+	}
+
+	// @override
+	function _renderChildren($childrens = [], $args = []) {
+		return parent::_renderChildren();
+	}
+} // End of class StepMenu
+
 // Complex Widget
 
 class Scaffold extends Widget {
@@ -623,17 +649,42 @@ class AppBar extends Widget {
 	}
 } // End of class AppBar
 
-class Page extends WidgetBase {
+
+
+
+/**
+ * Page Widget Group
+ *
+ * For page interface
+ */
+class PageBase extends WidgetBase {
+	var $widgetName = 'PageBase';
 	var $module = NULL;
-	var $widgetName = 'Page';
+	var $debug = false;
 
 	function __construct($args = []) {
 		$this->widgetName = get_class($this);
 		// Get module name form first word by split uppercase of widgetName
 		$this->module = strToLower(preg_split('/(?=[A-Z])/', $this->widgetName, -1, PREG_SPLIT_NO_EMPTY)[0]);
 		$this->version = cfg($this->module.'.version');
-		$this->theme = (Object) ['option' => cfg('topic.property')->option];
 		parent::__construct($args);
+		if ($this->debug) {
+			debugMsg('PAGE CONTROLLER Id = '.$this->qtRef.' , Action = '.$this->action.' , Arg['.$this->argIndex.'] = '.$this->_args[$this->argIndex]);
+			debugMsg($this->_args, '$args');
+			debugMsg($this, '$this');
+		}
+	}
+
+	// Test function
+	function foo() {return 'foo';}
+} // End of class PageBase
+
+class Page extends PageBase {
+	var $widgetName = 'Page';
+
+	function __construct($args = []) {
+		parent::__construct($args);
+		$this->theme = (Object) ['option' => cfg('topic.property')->option];
 	}
 
 	function build() {
@@ -644,7 +695,7 @@ class Page extends WidgetBase {
 	}
 } // End of class Page
 
-class PageApi extends Page {
+class PageApi extends PageBase {
 	var $widgetName = 'PageApi';
 	var $action;
 	var $actionMethod;
@@ -664,29 +715,22 @@ class PageApi extends Page {
 	}
 } // End of class PageApi
 
-class StepMenu extends Widget {
-	var $widgetName = 'StepMenu';
-	var $tagName = 'nav';
-	var $class = '';
-	var $childrenContainer = ['tagName' => 'ul'];
-	var $childContainer = ['tagName' => 'li'];
-	var $currentStep = NULL;
-	var $activeStep = [];
+class PageController extends PageBase {
+	var $widgetName = 'PageController';
+	var $action;
+	var $argIndex;
+	var $_args = [];
+	var $info;
 
 	function __construct($args = []) {
 		parent::__construct($args);
 	}
 
-	function _renderChildContainerStart($stepIndex, $args = []) {
-		$stepIndex++;
-		return '<'.$this->childContainer['tagName'].' '
-			. 'class="ui-item -step-'.$stepIndex.($this->childContainer['class'] ? $this->childContainer['class'] : '').($stepIndex == $this->currentStep ? ' -current-step' : '').(isset($this->activeStep[$stepIndex]) && $this->activeStep[$stepIndex] ? ' -active' : '').'" '
-			. '>';
+	function build() {
+		return R::PageWidget(
+			$this->action,
+			[-1 => $this->info] + array_slice($this->_args, $this->argIndex)
+		);
 	}
-
-	// @override
-	function _renderChildren($childrens = [], $args = []) {
-		return parent::_renderChildren();
-	}
-} // End of class StepMenu
+} // End of class PageController
 ?>
