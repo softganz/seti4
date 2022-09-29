@@ -439,6 +439,7 @@ class Button extends Widget {
 			'data-rel' => SG\getFirst($this->rel),
 			'data-before' => SG\getFirst($this->before),
 			'data-done' => SG\getFirst($this->done),
+			'onClick' => $this->onClick ? $this->onClick : NULL,
 		] + (Array) $this->attribute;
 
 		if (is_null($attribute['href'])) {
@@ -703,7 +704,6 @@ class PageApi extends PageBase {
 	function __construct($args = []) {
 		parent::__construct($args);
 		$this->actionMethod = (preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->action));
-		unset($this->theme);
 	}
 
 	function build() {
