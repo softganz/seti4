@@ -384,7 +384,7 @@ class BigData {
 		$this->keyid=$keyId;
 	}
 
-	function addField($fldName,$fldData,$fldType='string',$keyName=NULL,$keyId=NULL) {
+	public static function addField($fldName,$fldData,$fldType='string',$keyName=NULL,$keyId=NULL) {
 		$data = [
 			'keyname' => isset($keyName)?$keyName:$this->keyname,
 			'keyid' => isset($keyId)?$keyId:$this->keyid,
@@ -407,13 +407,13 @@ class BigData {
 		return $bigid;
 	}
 
-	function removeField($fldName,$keyName=NULL,$keyId=NULL) {
+	public static function removeField($fldName,$keyName=NULL,$keyId=NULL) {
 		$stmt='DELETE FROM %bigdata% WHERE `keyname`=:keyname AND `keyid`=:keyid AND `fldname`=:fldname';
 		mydb::query($stmt,':keyname',$keyName, ':keyid',$keyId, ':fldname',$fldName);
 		//echo mydb()->_query;
 	}
 
-	function getField($fldName,$keyName=NULL,$keyId=NULL) {
+	public static function getField($fldName,$keyName=NULL,$keyId=NULL) {
 		$stmt='SELECT * FROM %bigdata% WHERE `keyname`=:keyname'.($keyId=='*' ? '' : ' AND `keyid`=:keyid').($fldName=='*' ? '':' AND `fldname`=:fldname').' ORDER BY `bigid` ASC';
 		$dbs=mydb::select($stmt,':keyname',$keyName, ':keyid',$keyId, ':fldname',$fldName);
 		//echo mydb()->_query;
