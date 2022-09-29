@@ -718,8 +718,8 @@ class PageApi extends PageBase {
 class PageController extends PageBase {
 	var $widgetName = 'PageController';
 	var $action;
-	var $argIndex;
-	var $_args = [];
+	var $argIndex = 2;
+	var $args = [];
 	var $info;
 
 	function __construct($args = []) {
@@ -729,7 +729,7 @@ class PageController extends PageBase {
 	function build() {
 		return R::PageWidget(
 			$this->action,
-			[-1 => $this->info] + array_slice($this->_args, $this->argIndex)
+			[-1 => $this->info] + array_slice($this->args, $this->argIndex)
 		);
 	}
 } // End of class PageController
