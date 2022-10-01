@@ -229,43 +229,26 @@ class Session {
 
 		if ($debug) echo 'Session write of '.$sess_id.'<br />data = '.$data.'<br />';
 
-		//$mydb->query('INSERT INTO %watchdog% (`date`,`module`,`keyword`,`message`) VALUES ("'.date('Y-m-d H:i:s').'","session","write","'.mysqli_real_escape_string($mydb, $data).'")');
-
 		if(preg_match('/^(user\|)(.*)/', $data, $out)) {
 			$userInfo = unserialize($out[2]);
 		}
 
-		// $stmt = 'INSERT INTO %session%
-		// 	(`sess_id`, `sess_start`, `sess_last_acc`, `sess_data`)
-		// 	VALUES
-		// 	(
-		// 		  "'.mysqli_real_escape_string($mydb, $sess_id).'"
-		// 		, NOW()
-		// 		, NOW()
-		// 		, "'.mysqli_real_escape_string($mydb, $data).'"
-		// 	)
-		// 	ON DUPLICATE KEY UPDATE
-		// 		  `sess_last_acc` = NOW()
-		// 		, sess_data = "'.mysqli_real_escape_string($mydb, $data).'"
-		// 	';
-
-		// $mydb->query($stmt);
-
 		$stmt = 'INSERT INTO %session%
-			(`sess_id`, `sess_start`, `sess_last_acc`, `sess_data`)
+			(`sess_id`, `user`, `sess_start`, `sess_last_acc`, `sess_data`)
 			VALUES
 			(
 				  "'.$mydb->escape($sess_id).'"
+				, "'.$mydb->escape(i()->username).'"
 				, NOW()
 				, NOW()
 				, "'.$mydb->escape($data).'"
 			)
 			ON DUPLICATE KEY UPDATE
 				  `sess_last_acc` = NOW()
-				, sess_data = "'.$mydb->escape($data).'"
+				, `user` = "'.$mydb->escape(i()->username).'"
+				, `sess_data` = "'.$mydb->escape($data).'"
 			';
 		mydb::query($stmt);
-		//$mydb->query('INSERT INTO %watchdog% (`module`,`keyword`,`message`) VALUES ("session","write","'.mysqli_real_escape_string($mydb, $mydb->_query).'")');
 
 		if ($debug) echo '$sess_id = '.$sess_id.'<br />';
 		if ($debug) echo 'query = '.$mydb->_query.'<br />';
