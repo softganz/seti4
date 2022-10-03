@@ -43,7 +43,7 @@ class AdminUserList extends Page {
 		if ($this->uid) {
 			mydb::where('u.`username` = :sid', ':sid', $this->uid);
 		} else if ($this->search) {
-			mydb::where('(u.`username` LIKE :q OR u.`name` LIKE :q OR u.`email` LIKE :q)', ':q', '%'.$$this->search.'%');
+			mydb::where('(u.`username` LIKE :q OR u.`name` LIKE :q OR u.`email` LIKE :q)', ':q', '%'.$this->search.'%');
 		}
 
 		if ($this->status) mydb::where('u.`status` = :status', ':status', $this->status);
