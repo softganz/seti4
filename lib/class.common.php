@@ -229,44 +229,40 @@ class Session {
 
 		if ($debug) echo 'Session write of '.$sess_id.'<br />data = '.$data.'<br />';
 
-		if(preg_match('/^(user\|)(.*)/', $data, $out)) {
+		if(preg_match('/(user\|)(.*)/', $data, $out)) {
 			$userInfo = unserialize($out[2]);
 		}
+		if ($debug) print_o($userInfo, '$userInfo', 1);
 
-		$stmt = 'INSERT INTO %session%
+		mydb::query(
+			'INSERT INTO %session%
 			(`sess_id`, `user`, `sess_start`, `sess_last_acc`, `sess_data`)
 			VALUES
 			(
-				  "'.$mydb->escape($sess_id).'"
-				, "'.$mydb->escape(i()->username).'"
+				"'.$mydb->escape($sess_id).'"
+				, "'.$mydb->escape($userInfo->username).'"
 				, NOW()
 				, NOW()
 				, "'.$mydb->escape($data).'"
 			)
 			ON DUPLICATE KEY UPDATE
-				  `sess_last_acc` = NOW()
-				, `user` = "'.$mydb->escape(i()->username).'"
+				`sess_last_acc` = NOW()
+				, `user` = "'.$mydb->escape($userInfo->username).'"
 				, `sess_data` = "'.$mydb->escape($data).'"
-			';
-		mydb::query($stmt);
+			'
+		);
 
 		if ($debug) echo '$sess_id = '.$sess_id.'<br />';
 		if ($debug) echo 'query = '.$mydb->_query.'<br />';
 
 		if ($userInfo->ok && $userInfo->username) {
-			// $stmt = 'UPDATE %session% SET
-			// 	`user` = "'.mysqli_real_escape_string($mydb, $userInfo->username).'"
-			// 	, `expire` = "'.mysqli_real_escape_string($mydb, $userInfo->remember).'"
-			// 	WHERE `sess_id` = "'.mysqli_real_escape_string($mydb, $sess_id).'"
-			// 	LIMIT 1';
-			// $mydb->query($stmt);
-
-			$stmt = 'UPDATE %session% SET
+			$mydb->query(
+				'UPDATE %session% SET
 				`user` = "'.$mydb->escape($userInfo->username).'"
 				, `expire` = "'.$mydb->escape($userInfo->remember).'"
 				WHERE `sess_id` = "'.$mydb->escape($sess_id).'"
-				LIMIT 1';
-			$mydb->query($stmt);
+				LIMIT 1'
+			);
 
 			if ($debug) echo 'query = '.$mydb->_query.'<br />';
 		}
