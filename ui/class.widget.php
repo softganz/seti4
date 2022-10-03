@@ -428,7 +428,7 @@ class Button extends Widget {
 			else if (!($this->variable->RIGHT & constant($this->access))) return NULL;
 		}
 
-		$attribute = [
+		$attribute = array_replace_recursive([
 			'href' => $this->href,
 			'class' => trim(
 				'widget-'.strtolower($this->widgetName).($this->type === 'default' ? '' : ' btn')
@@ -440,7 +440,7 @@ class Button extends Widget {
 			'data-before' => SG\getFirst($this->before),
 			'data-done' => SG\getFirst($this->done),
 			'onClick' => $this->onClick ? $this->onClick : NULL,
-		] + (Array) $this->attribute;
+		], (Array) $this->attribute);
 
 		if (is_null($attribute['href'])) {
 			unset($attribute['href']);
