@@ -661,6 +661,13 @@ function sgWebViewDomProcess(id) {
 			if (debugSG) console.log("Load from url "+url)
 			if (!settings.silent) notify(settings.indicator);
 
+			// Show iframe in box
+			if ($this.data('type') == 'iframe') {
+				sgShowBox('<iframe src="'+url+'"></iframe>', $this, {clearBoxContent: relTarget == 'clear'})
+				notify('')
+				return
+			}
+
 			$.post(url, para, function(html) {
 				doneResult = html
 				notify()
@@ -693,7 +700,12 @@ function sgWebViewDomProcess(id) {
 				} else if (callback) {
 					window.location = callback
 				}
-			}).fail(function(response) {
+			})
+			.done(function() {
+				// console.log('sg-action COMPLETE');
+				sgActionDone(linkData.done, $this, doneResult)
+			})
+			.fail(function(response) {
 				// console.log('sg-action FAIL');
 				// console.log(response)
 				let errorMsg = 'ERROR : '
@@ -703,10 +715,6 @@ function sgWebViewDomProcess(id) {
 					errorMsg += response.statusText+' ('+response.status+')'
 				}
 				notify(errorMsg)
-			})
-			.done(function() {
-				// console.log('sg-action COMPLETE');
-				sgActionDone(linkData.done, $this, doneResult)
 			});
 			return
 		}
