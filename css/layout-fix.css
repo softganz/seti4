@@ -13,11 +13,6 @@
 	.page.-nav>.nav.-owner {order: 10; padding-right: 0; position: relative; z-index: 1101;}
 	.page.-nav>.nav.-search {display: none;}
 
-	.page.-nav .profile>a {white-space: nowrap;}
-	.page.-nav .profile>a>.profile-photo {margin: 0;}
-	.page.-nav .profile>ul {border-radius: 8px; overflow: hidden;}
-	.page.-nav .profile>a>strong {display: none;}
-	.page.-nav .profile>a>.profile-photo {width: 28px; height: 28px; margin: 0 5px 0 0; padding:2px; display: inline-block; background: #ddd; border-radius: 50%; border: none;}
 	.page.-nav .signform {margin:0; padding: 16px 16px 0 16px; border-radius: 8px;}
 	.page.-nav .signform .form-item {padding: 0 0 8px 0;}
 	.page.-nav .signform .form-item>label {top: 0; left: 10px; font-size: 0.7em; color: #999;}
@@ -28,15 +23,21 @@
 	.page.-nav .signform a {display: block; padding: 8px; text-align: center;}
 	.page.-nav .-signup {white-space: nowrap;}
 
-	.page.-nav>.nav.-owner>ul>li>a {padding: 0; margin: 0 6px; border-radius: 16px;}
-	.page.-nav>.nav.-owner>ul>li:last-child>a {border-radius: 0; padding: 0 4px ; margin-right: 0;}
+	.page.-nav>.nav.-owner>ul>li>a {padding: 0; margin: 0 4px; border-radius: 16px; box-shadow: 0 0 1px #333;}
 	.page.-nav>.nav.-owner>ul>li>a>.icon {color: #666;}
 	.page.-nav>.nav.-owner>ul>li>a>.icon:only-child {padding: 4px;}
 	.page.-nav>.nav.-owner .-signout span {display: none;}
+	.page.-nav>.nav.-owner li.-profile>a {white-space: nowrap;}
+	.page.-nav>.nav.-owner li.-profile>a>.profile-photo {margin: 0;}
+	.page.-nav>.nav.-owner li.-profile>ul {border-radius: 8px; overflow: hidden;}
+	.page.-nav>.nav.-owner li.-profile>a>span {display: none;}
+	.page.-nav>.nav.-owner li.-profile>a>.profile-photo {width: 32px; height: 32px; margin: 0; padding: 0; display: inline-block; background: #ddd; border-radius: 50%; border: none;}
+	.page.-nav>.nav.-owner li.-signout>a>.icon {padding: 4px;}
+
 	.page.-nav>.nav.-search .search-box {width: 70px; margin: 6px 0 auto 0; height: 32px; border-radius: 16px;}
 	.page.-nav>.nav.-search .search-box button {border-radius: 0 16px 16px 0;}
 	.page.-nav>.nav.-main .menu.-pulldown>li>a {overflow: hidden;}
-	.page.-nav>.nav.-main:not(.-owner) .menu.-main>li {font-weight: bold;}
+	.page.-nav>.nav.-main:not(.-owner) .menu.-main>li {font-weight: normal;}
 	.page.-nav>.nav.-main .menu.-main>li ul {font-weight: normal;}
 	.page.-nav>.nav.-main .menu.-main ul {min-width: 240px;}
 	.page.-nav>.nav.-main {height:48px; margin:0; display: flex; flex-wrap: nowrap; justify-content: flex-end; z-index:1100;}

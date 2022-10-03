@@ -1476,9 +1476,10 @@ $SCREENS
 			#cboxLoadedContent .box-page .header:first-of-type>.nav {display: block;}
 			#cboxLoadedContent .box-page .header:first-of-type>.nav.-back {display: flex;}
 
-			.box-page {width: 100%; }
+			.box-page {width: 100%; height: 100%;}
 			.box-page .form-item.-sg-box-bottom {position: absolute; bottom: 0; display: inline-block;}
 			.box-page .form-item.-sg-box-bottom.-sg-text-right {right: 8px;}
+			.box-page>iframe {width: 100%; height: 100%;}
 
 			.cboxIframe {background: #fff;}
 			#cboxError {padding: 50px; border: 1px solid #ccc;}
