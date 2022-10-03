@@ -14,8 +14,7 @@ function user($self) {
 	if (i()->ok) {
 		location('profile/'.i()->uid);
 	} else {
-		$ret .= R::Page('signin', $self);
+		return R::PageWidget('signin');
 	}
-	return $ret;
 }
 ?>

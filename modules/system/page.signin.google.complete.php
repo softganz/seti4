@@ -1,13 +1,13 @@
 <?php
 /**
-* Module :: Description
-* Created 2022-07-16
-* Modify  2022-07-16
+* SignIn 	:: SignIn With Google Account Complete
+* Created :: 2022-07-16
+* Modify  :: 2022-07-16
+* Version	:: 2
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage signin/google/complete
 */
 
 class SigninGoogleComplete extends Page {
@@ -47,8 +47,8 @@ class SigninGoogleComplete extends Page {
 
 					'<h2>JWT</h2>',
 
-					print_o($user, '$user'),
-					print_o($jwt, '$jwt'),
+					// print_o($user, '$user'),
+					// print_o($jwt, '$jwt'),
 					// $ret .= nl2br("\n");
 
 					// $ret .= '<h2>$_COOKIE</h2>';

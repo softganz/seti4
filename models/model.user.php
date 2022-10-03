@@ -299,6 +299,58 @@ class UserModel {
 		return $user;
 	}
 
+	/**
+	 * {name: "Real name", email: "E-mail", }
+	 */
+	public static function externalUserCreate(
+		$user = [
+			'email' => NULL,
+			'name' => NULL,
+			'prefix' => NULL,
+			'signin' => true,
+			'token' => NULL,
+		]
+	) {
+		$user = (Object) $user;
+		if (empty($user->email) || empty($user->name)) return false;
+
+		do {
+			$username = $user->prefix.SG\uniqid(20);
+		} while (UserModel::get(['username' => $username]));
+
+		$createUserResult = UserModel::create([
+			'username' => $username,
+			'password' => NULL,
+			'name' => $user->name,
+			'email' => $user->email,
+		]);
+
+		if (!$createUserResult->uid) {
+			return (Object) [
+				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
+				'text' => 'ไม่สามารถสร้างสมาชิกตามข้อมูลที่ระบุได้',
+			];
+		}
+
+		$result = (Object) [
+			'userId' => $createUserResult->uid,
+			'username' => $createUserResult->username,
+			'name' => $createUserResult->name,
+			'email' => $createUserResult->email,
+		];
+
+		// print_o($user, '$user', 1);
+		// Process User Sign In
+		if ($result->userId && $user->signin) {
+			// echo '<br /><br /><br /><br /><br />SIGN IN';
+			$result->signin = UserModel::externalSignIn([
+				'email' => $user->email,
+				'token' => $user->token,
+			]);
+		}
+		return $result;
+	}
+
 	public static function externalSignIn($args) {
 		$result = (Object) [];
 		$session_id = $args['token'];

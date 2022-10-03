@@ -13,42 +13,94 @@
 class SigninPsuComplete extends Page {
 	var $code;
 	var $scope;
+	var $debug;
 	var $token;
+	var $me;
+	var $psuPassport;
 
 	function __construct() {
 		parent::__construct([
 			'code' => post('code'),
 			'scope' => 'openid',
 			'token' => (Object) [],
+			'me' => (Object) [],
+			'psuPassport' => cfg('signin')->psu,
+			'debug' => false,
 		]);
 	}
 
 	function build() {
-		$psuPassport = cfg('signin');
-		// $jwt = Jwt::isValid($this->code);
+		if (empty($this->code)) {
+			return new ErrorMessage([
+				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
+				'text' => 'ข้อมูลที่ได้รับจาก PSU Passport ไม่ครบถ้วน',
+			]);
+		}
 
-		$apacheHeaders = apache_request_headers();
 		$_SESSION['state'] = bin2hex(random_bytes(5));
 		$_SESSION['psupassport'] = $this->code;
 
 		if ($this->code) {
-			$tokenResponse = $this->getToken();
-			$me = $this->getMe();
-			// SignIn as PSU Passport
-			// $user = UserModel::externalSignIn([
-			// 	'email' => 'psupassport@psu.ac.th',
-			// 	'token' => $this->code,
-			// ]);
+			$this->token = $this->getToken();
 
-			$profile = $this->getProfile();
+			if ($this->token->access_token) {
+				$this->me = $this->getMe();
+				// $profile = $this->getProfile();
+			}
+
+			// Dummy Token
+			// $this->token = (Object) [
+			// 	'access_token' => '43546f6f2ce39b004a19d433908aa7f08740a14f',
+			// 	'expires_in' => 3600,
+			// 	'token_type' => 'Bearer',
+			// 	'scope' => 'openid',
+			// 	'refresh_token' => '69e8bd4983e197d08b85a29958f2811e62a91d77',
+			// ];
+			// $this->me = (Object) [
+			// 	'user_login' => 'panumas.n',
+			// 	'user_email' => 'softganz@gmail.com',
+			// 	'description' => 'ภาณุมาศ นนทพันธ์',
+			// 	'displayname' => 'PANUMAS NONTAPAN',
+			// ];
+
+			if ($this->me->user_email) {
+				$userInfo = UserModel::get(['email' => $this->me->user_email]);
+				// print_o($userInfo, '$userInfo', 1);
+				if ($userInfo->uid) {
+					// Already member
+					// SignIn as PSU Passport
+					$user = UserModel::externalSignIn([
+						'email' => $this->me->user_email,
+						'token' => $this->token->access_token,
+					]);
+				} else {
+					// Not a member
+					// Create new user
+					$createUserResult = UserModel::externalUserCreate([
+						'prefix' => 'psu-',
+						'name' => $this->me->description,
+						'email' => $this->me->user_email,
+						'signin' => true,
+						'token' => $this->token->access_token,
+					]);
+					// print_o($createUserResult, '$createUserResult',1);
+				}
+				// debugMsg($userInfo, '$userInfo');
+			}
+		}
+
+		if (!$this->debug && ($psupassportRetuen = $_SESSION['psupassportRetuen'])) {
+			unset($_SESSION['psupassportRetuen']);
+			location($psupassportRetuen);
+			return;
 		}
 
 		$authParam = [
 			'response_type' => 'code',
-			'client_id' => $psuPassport->getToken->clientId,
+			'client_id' => $this->psuPassport->clientId,
 			'state' => $_SESSION['state'],
 			'scope' => $this->scope,
-			'redirect_uri' => $psuPassport->getToken->callBackUrl,
+			'redirect_uri' => $this->psuPassport->urlCallBack,
 		];
 
 		return new Scaffold([
@@ -58,147 +110,69 @@ class SigninPsuComplete extends Page {
 			'body' => new Widget([
 				'children' => [
 					new Center([
-						'child' => '<a class="btn" href="https://oauth.psu.ac.th/?oauth=authorize&'.http_build_query($authParam).'">Login with PSU Passport</a>',
+						'child' => '<a class="btn" href="'.$this->psuPassport->urlAuth.'&'.http_build_query($authParam).'">Login with PSU Passport</a>',
 					]),
 					new ListTile(['title' => 'Result']),
 					new Column([
 						'children' => [
 							'CODE = '.$this->code,
-							SG\getFirst($this->loginId, 'NO LOGIN-ID'),
-							SG\getFirst($this->loginName, 'NO NAME'),
 						],
 					]),
 
-					$this->code ? $tokenResponse : NULL,
-					new DebugMsg($this->token, '$this->token'),
-					debugMsg($me, '$me'),
+					$this->token->access_token ? new Column([
+						'children' => [
+								$this->me->user_login,
+								$this->me->user_email,
+								$this->me->description,
+								$this->me->displayname,
+								new DebugMsg($this->token, '$this->token'),
+								new DebugMsg($this->me, '$this->me'),
+							// $profile,
+						], //children
+					]) : NULL,
 
-					$this->token ? $this->getProfile() : NULL,
+					$this->token->error ? new Container([
+						'child' => 'TOKEN ERROR : '.$this->token->error.' : '.$this->token->error_description
+					]) : NULL,
 
-					new DebugMsg($apacheHeaders, '$apacheHeaders'),
-					new DebugMsg($headers, '$headers'),
-					new DebugMsg(post(), 'post()'),
-					// new DebugMsg($this, '$this'),
-					new DebugMsg($_SERVER, '$_SERVER'),
+					// new DebugMsg(post(), 'post()'),
+					// new DebugMsg($this->psuPassport, '$this->psuPassport'),
 				], // children
 			]), // Widget
 		]);
 	}
 
 	function getToken() {
-		$psuPassport = cfg('signin');
 		// Get Access Token
 		// grant_type: client_credentials,authorization_code
 
 		$curl = curl_init();
-		$accessUrl = $psuPassport->accessToken->accessTokenUrl.'?oauth=token';
-		// $headers = [
-		// 	"Authorization: Bearer ".$this->code,
-		// 	'client_id' => $psuPassport->getToken->clientId,
-		// 	'client_secret' => $psuPassport->getToken->clientSecret,
-		// ];
 
-		// $curl = curl_init();
-		// curl_setopt_array($curl, array(
-		// 	CURLOPT_URL => $accessUrl,
-		// 	CURLOPT_RETURNTRANSFER => true,
-		// 	CURLOPT_ENCODING => '',
-		// 	CURLOPT_MAXREDIRS => 10,
-		// 	CURLOPT_TIMEOUT => 0,
-		// 	CURLOPT_FOLLOWLOCATION => true,
-		// 	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		// 	CURLOPT_CUSTOMREQUEST => 'POST',
-		// 	CURLOPT_HTTPHEADER => $headers,
-		// ));
-		// $queryParam = [
-		// 	'code' => $this->code,
-		// 	'grant_type' => 'authorization_code',
-		// 	'scope' => $this->scope,
-		// 	'client_id' => $psuPassport->getToken->clientId,
-		// 	'client_secret' => $psuPassport->getToken->clientSecret,
-		// 	'redirect_uri' => $psuPassport->getToken->callBackUrl,
-		// ];
-		// $params = [
-		//   CURLOPT_URL =>  $accessUrl.'&'.http_build_query($queryParam),
-		//   CURLOPT_RETURNTRANSFER => true,
-		//   CURLOPT_MAXREDIRS => 10,
-		//   CURLOPT_TIMEOUT => 30,
-		//   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		//   // CURLOPT_CUSTOMREQUEST => "GET",
-		//   CURLOPT_POST => true,
-		//   CURLOPT_NOBODY => false,
-		//   CURLOPT_POSTFIELDS => $queryParam,
-		//   CURLOPT_HTTPHEADER => [
-		//     "cache-control: no-cache",
-		//     "content-type: application/x-www-form-urlencoded",
-		//     "accept: *",
-		//     "accept-encoding: gzip, deflate",
-		//   ],
-		// ];
-		// curl_setopt_array($curl, $params);
-
-		curl_setopt_array($curl, array(
-			CURLOPT_URL => 'https://oauth.psu.ac.th?oauth=token',
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => '',
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 0,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_POSTFIELDS => array(
-				'grant_type' => 'authorization_code',
-				'code' => $this->code,
-				'client_id' => 'oauthpsu1759',
-				'client_secret' => 'edab08fa992167bc97d787c929ece82c',
-				'redirect_uri' => 'https%3A%2F%2F1t1u.psu.ac.th%2Fsignin%2Fpsu%2Fcomplete'
-			),
-		));
+		curl_setopt_array($curl,
+			[
+				CURLOPT_URL => $this->psuPassport->urlAccessToken,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_ENCODING => '',
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => 'POST',
+				CURLOPT_POSTFIELDS => [
+					'grant_type' => 'authorization_code',
+					'code' => $this->code,
+					'client_id' => $this->psuPassport->clientId,
+					'client_secret' => $this->psuPassport->clientSecret,
+					'redirect_uri' => $this->psuPassport->urlCallBack
+				],
+			]
+		);
 
 		$accessResponse = curl_exec($curl);
-		$this->token = json_decode($accessResponse);
 		$err = curl_error($curl);
-
 		curl_close($curl);
 
-		return new Container([
-			'children' => [
-				new ListTile(['title' => 'Access Token']),
-				new DebugMsg('Access Token URL = '.$accessUrl),
-				new DebugMsg('Access Token Response = '.$accessResponse),
-				new DebugMsg('ERROR = '.$err),
-				new DebugMsg($params, '$params'),
-			],
-		]);
-	}
-
-	function getToken2() {
-		$psuPassport = cfg('signin');
-		$client_id = $psuPassport->getToken->clientId;
-		$client_secret = $psuPassport->getToken->clientSecret;
-		$redirect_uri= $psuPassport->getToken->callBackUrl;
-		$authorization_code = $this->code;
-		$tokenUrl = $psuPassport->accessToken->accessTokenUrl.'?oauth=token';
-		$url = '['.$tokenUrl.']('.$tokenUrl.')';
-
-		$data = array(
-			'client_id' => $client_id,
-			'client_secret' => $client_secret,
-			'redirect_uri' => $redirect_uri,
-			'code' => $authorization_code
-		);
-
-		$options = array(
-			'http' => array(
-			    'header'  => "Content-type: application/json\r\n",
-			    'method'  => 'POST',
-			    'content' => json_encode($data)
-			)
-		);
-		$context  = stream_context_create($options);
-		$result = file_get_contents($url, false, $context);
-
-		return $result;
+		return json_decode($accessResponse);
 	}
 
 	function getMe() {
@@ -209,7 +183,7 @@ class SigninPsuComplete extends Page {
 		];
 
 		curl_setopt_array($curl, [
-			CURLOPT_URL => 'https://oauth.psu.ac.th?oauth=me',
+			CURLOPT_URL => $this->psuPassport->urlMe,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => '',
 			CURLOPT_MAXREDIRS => 10,
@@ -223,17 +197,8 @@ class SigninPsuComplete extends Page {
 		$response = curl_exec($curl);
 		$profile = json_decode($response);
 
-		$this->loginId = SG\getFirst($profile->{"login-id"}, 'NO LOGIN-ID');
-		$this->loginName = SG\getFirst($profile->{"first-name-th"}, 'NO NAME');
-
 		curl_close($curl);
-		return new Container([
-			'children' => [
-				new ListTile(['title' => 'Profile Token']),
-				new DebugMsg($response),
-				new DebugMsg($profile, '$profile'),
-			],
-		]);
+		return $profile;
 	}
 
 	function getProfile() {
@@ -244,7 +209,7 @@ class SigninPsuComplete extends Page {
 		];
 
 		curl_setopt_array($curl, [
-			CURLOPT_URL => 'https://oauth.psu.ac.th?oauth=profile',
+			CURLOPT_URL => $this->psuPassport->urlProfile,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => '',
 			CURLOPT_MAXREDIRS => 10,
@@ -258,17 +223,8 @@ class SigninPsuComplete extends Page {
 		$response = curl_exec($curl);
 		$profile = json_decode($response);
 
-		$this->loginId = SG\getFirst($profile->{"login-id"}, 'NO LOGIN-ID');
-		$this->loginName = SG\getFirst($profile->{"first-name-th"}, 'NO NAME');
-
 		curl_close($curl);
-		return new Container([
-			'children' => [
-				new ListTile(['title' => 'Profile Token']),
-				new DebugMsg($response),
-				new DebugMsg($profile, '$profile'),
-			],
-		]);
+		return $profile;
 	}
 }
 ?>

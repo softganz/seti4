@@ -176,7 +176,7 @@ e-mail : '.$register->email.'</p>
 						'value' => 'Create my account',
 						'class' => '-primary -fill',
 					],
-					new Container(['class' => '-sg-text-center', 'child' => 'ฉันมีบัญชีการใช้งานอยู่แล้ว? <a class="btn -link" href="'.url('signin').'">เข้าสู่ระบบสมาชิก</a>']), // Container
+					new Container(['class' => '-sg-text-center', 'child' => 'ฉันมีบัญชีการใช้งานอยู่แล้ว? <a class="btn -link" href="'.url('my').'"><i class="icon -material">login</i><s[an>เข้าสู่ระบบสมาชิก</span></a>']), // Container
 				], // children
 			]);
 		}

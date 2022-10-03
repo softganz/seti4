@@ -1,21 +1,16 @@
 <?php
 /**
-* Module :: Description
-* Created 2022-07-16
-* Modify  2022-07-16
+* SignIn 	:: Description
+* Created :: 2022-07-16
+* Modify  :: 2022-07-16
+* Version	:: 1
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage signin/google
 */
 
 class SigninGoogle extends Page {
-	var $arg1;
-
-	function __construct($arg1 = NULL) {
-		$this->arg1 = $arg1;
-	}
 
 	function build() {
 		return new Scaffold([

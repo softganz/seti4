@@ -35,7 +35,7 @@ class Model {
 			user_menu(
 				'signin',
 				'Sign in',
-				url('signin', ['showGuide' => 0, 'showInfo' => 0, 'showRegist' => 0]),
+				url('my', ['showGuide' => 0, 'showInfo' => 0, 'showRegist' => 0]),
 				'{"class":"sg-action", "data-rel":"box", "data-width":"320"}'
 			);
 			return;

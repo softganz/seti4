@@ -1,15 +1,13 @@
 <?php
 /**
-* Module :: Description
-* Created 2022-07-17
-* Modify  2022-07-17
+* API 		:: User Rergister by Google Account
+* Created :: 2022-07-17
+* Modify  :: 2022-09-02
+* Version	:: 2
 *
-* @param Int $mainId
-* @param String $action
-* @param Int $tranId
-* @return String
+* @return Widget
 *
-* @usage module/api/{id}/{action}[/{tranId}]
+* @usage api/user/register/google
 */
 
 class ApiUserRegisterGoogle extends Page {
@@ -26,43 +24,39 @@ class ApiUserRegisterGoogle extends Page {
 	function build() {
 		$jwt = Jwt::isValid($this->googleToken);
 
-		if (!$jwt->payload->email) return (Object) ['responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'ข้อมูลสำหรับลงทะเบียนไม่ถูกต้อง'];
-		else if (UserModel::get(['email' => $jwt->payload->email])) {
-			return (Object) ['responseCode' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'อีเมล์นี้มีผู้อื่นสมัครไว้แล้ว ไม่สามารถสมัครซ้ำได้'];
+		if (!$jwt->payload->email) {
+			return (Object) [
+				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
+				'text' => 'ข้อมูลสำหรับลงทะเบียนไม่ถูกต้อง',
+			];
+		} else if (UserModel::get(['email' => $jwt->payload->email])) {
+			return (Object) [
+				'responseCode' => _HTTP_ERROR_NOT_ALLOWED,
+				'text' => 'อีเมล์นี้มีผู้อื่นสมัครไว้แล้ว ไม่สามารถสมัครซ้ำได้',
+			];
 		}
 
-		do {
-			$username = SG\uniqid(20);
-		} while (UserModel::get(['username' => $username]));
-
-		$createUserResult = UserModel::create([
-			'username' => $username,
-			'password' => NULL,
+		$createUserResult = UserModel::externalUserCreate([
+			'prefix' => 'google-',
 			'name' => $this->name,
 			'email' => $jwt->payload->email,
+			'signin' => true,
+			'token' => $this->googleToken,
 		]);
 
-		if (!$createUserResult->uid) {
+		// print_o($createUserResult, '$createUserResult', 1);
+		if (!$createUserResult->userId) {
 			return (Object) ['responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'ไม่สามารถสร้างสมาชิกตามข้อมูลที่ระบุได้'];
 		}
 
-		$result = (Object) [
-			'userId' => $createUserResult->uid,
+		return (Object) [
+			'userId' => $createUserResult->userId,
 			'username' => $createUserResult->username,
 			'name' => $createUserResult->name,
 			'email' => $createUserResult->email,
 			// 'createUserResult' => $createUserResult,
 			// 'post' => post(),
 		];
-
-		// Process User Sign In
-		if ($result->useId) {
-			$result->signin = UserModel::externalSignIn([
-				'email' => $this->email,
-				'token' => $this->googleToken,
-			]);
-		}
-		return $result;
 	}
 }
 ?>

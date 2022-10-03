@@ -1,41 +1,68 @@
 <?php
 /**
-* Module Method
-* Created 2019-09-05
-* Modify  2019-09-05
+* SignIn  :: Sign In
+* Created :: 2019-09-05
+* Modify  :: 2022-10-02
+* Version :: 2
 *
-* @param Object $self
-* @return String
+* @return Widget
+*
+* @usage signin
 */
 
-$debug = true;
+class Signin extends Page {
+	var $username;
+	var $password;
+	var $time;
+	var $ret;
+	var $rel;
+	var $signRet;
+	var $showTime;
+	var $showGuide;
+	var $showInfo;
+	var $showRegist;
 
-function signin($self, $options = '{}') {
-	if (post('u')) {
-		$options = new stdClass();
-		$options->username = post('u');
-		$options->password = post('pw');
-		if(post('rel')) $options->rel = post('rel');
-		if(post('ret')) $options->ret = post('ret');
-		$ret .= R::View('signform', $options);
-	} else if (i()->ok) {
-		location('my');
-	} else {
-		$options = SG\json_decode($options);
-
-		if(post('time')) $options->time = post('time');
-		if(post('ret')) $options->ret = post('ret');
-		if(post('rel')) $options->rel = post('rel');
-		if(post('signret')) $options->signret = post('signret');
-		if(post('showTime')) $options->showTime = post('showTime');
-		if(post('showGuide') === '0') $options->showGuide = false;
-		if(post('showInfo') === '0') $options->showInfo = false;
-		if(post('showRegist') === '0') $options->showRegist = false;
-
-		$ret .= '<header class="header -box -hidden"><h3>@Secure Sign In</h3></header>';
-		$ret .= R::View('signform', $options);
+	function __construct() {
+		parent::__construct([
+			'username' => post('u'),
+			'password' => post('pw'),
+			'time' => post('time'),
+			'ret' => post('ret'),
+			'rel' => post('rel'),
+			'signRet' => post('signret'),
+			'showTime' => post('showTime'),
+			'showGuide' => post('showGuide') === '0' ? false : true,
+			'showInfo' => post('showInfo') === '0' ? false : true,
+			'showRegist' => post('showRegist') === '0' ? false : true,
+		]);
 	}
 
-	return $ret;
+	function build() {
+		if (i()->ok) {
+			location('my');
+		} else {
+			$options = (Object) [
+				'username' => $this->username,
+				'password' => $this->password,
+				'time' => $this->time,
+				'ret' => $this->ret,
+				'rel' => $this->rel,
+				'signret' => $this->signRet,
+				'showTime' => $this->showTime,
+				'showGuide' => $this->showGuide,
+				'showInfo' => $this->showInfo,
+				'showRegist' => $this->showRegist,
+			];
+		}
+
+		return new Scaffold([
+			'body' => new Widget([
+				'children' => [
+					'<header class="header -box -hidden"><h3>@Secure Sign In</h3></header>',
+					R::View('signform', $options),
+				], // children
+			]), // Widget
+		]);
+	}
 }
 ?>

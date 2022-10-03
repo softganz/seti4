@@ -52,7 +52,7 @@ function view_signform($options = '{}') {
 
 	// Show link
 	if ($options->signform == 'link') {
-		$ret.='<ul class="member-zone"><li><a href="'.url('signin').'">'.tr('Sign in').'</a></li><li><a href="'.url('user/register').'">'.tr('Join with us').'!</a></li></ul>';
+		$ret.='<ul class="member-zone"><li><a href="'.url('my').'">'.tr('Sign in').'</a></li><li><a href="'.url('user/register').'">'.tr('Join with us').'!</a></li></ul>';
 		return $ret;
 	}
 
