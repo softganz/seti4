@@ -258,6 +258,20 @@ class Form extends Widget {
 		return [$tag_id, $ret];
 	}
 
+	private function onElementEvent($event, $onChangeValue) {
+		if (empty($onChangeValue)) return '';
+		switch ($onChangeValue) {
+			case 'submit':
+				$result = ' '.$event.' = \'$(this).closest(form).submit()\'';
+				break;
+
+			default:
+				$result = ' '.$event.' = \''.$onChange.'\'';
+				break;
+		}
+		return $result;
+	}
+
 	// Render Field
 
 	function _renderTextField($tag_id, $name, $formElement) {
@@ -385,7 +399,7 @@ class Form extends Widget {
 					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'"'
 						. ' type="'.$formElement->type.'"'
 						. ($formElement->attribute ? ' '.$formElement->attribute:'')
-						. ($formElement->onChange ? ' onChange=\''.$formElement->onChange.'\'' : '')
+						. $this->onElementEvent('onChange', $formElement->onChange)
 						. ' /> ';
 				}
 				$ret .= $option_value;
@@ -442,7 +456,7 @@ class Form extends Widget {
 			. ($formElement->multiple ? 'multiple="multiple" ' : '').($formElement->size?'size="'.$formElement->size.'" ':'')
 			. ' name="'.$name.'" id="'.$tag_id.'" '
 			. 'class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require' : '').($this->readonly || $formElement->readonly ? ' -disabled' : '').'"'
-			. ($formElement->onChange ? ' onChange=\''.$formElement->onChange.'\'' : '')
+			. $this->onElementEvent('onChange', $formElement->onChange)
 			. ($formElement->style ? 'style="'.$formElement->style.'"' : '')
 			. ($formElement->attribute ? ' '.$formElement->attribute : '')
 			. '>'._NL;
