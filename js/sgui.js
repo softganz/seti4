@@ -594,64 +594,20 @@ function sgWebViewDomProcess(id) {
 				return
 			}
 
-			// if (isAndroidWebViewReady || isFlutterInAppWebViewReady) {
-			// 	var androidData
-
-			// 	if (linkData.webview && linkData.webviewTitle == undefined) {
-			// 		linkData.webviewTitle = linkData.webview
-			// 		linkData.android = 'webview'
-			// 		delete linkData.webview
-			// 	}
-
-			// 	androidData = JSON.stringify(linkData)
-
-			// 	//console.log('data = '+JSON.stringify(linkData.data))
-
-			// 	if (linkData.android == 'browser') {
-			// 		var location = $this.attr('href')
-			// 		if (isFlutterInAppWebViewReady) {
-			// 		} else if (isAndroidWebViewReady) {
-			// 			Android.openBrowser(location, androidData)
-			// 		}
-			// 		return
-			// 	} else if (linkData.android == 'googlemap') {
-			// 		var location = $this.attr('href')
-			// 		if (isFlutterInAppWebViewReady) {
-			// 		} else if (isAndroidWebViewReady) {
-			// 			Android.openGoogleMap(location, androidData)
-			// 		}
-			// 		return
-			// 	} else if (linkData.android == 'server') {
-			// 		if (debugSG) console.log('Change to Server to '+linkData.server)
-			// 		if (isFlutterInAppWebViewReady) {
-			// 		} else if (isAndroidWebViewReady) {
-			// 			Android.useServer(linkData.server)
-			// 		}
-			// 		return
-			// 	} else if (linkData.android == 'webview' || linkData.webview) {
-			// 		var pattern = /^((http|https|ftp):\/\/)/
-			// 		var location = pattern.test(url) ? url :document.location.origin + url
-			// 		if (isFlutterInAppWebViewReady) {
-			// 			const args = [location,linkData.webviewTitle,linkData];
-			// 			let r = window.flutter_inappwebview.callHandler("showWebView", ...args);
-			// 			console.log(r)
-			// 		} else if (isAndroidWebViewReady) {
-			// 			Android.showWebView(location, androidData)
-			// 		}
-			// 		return
-			// 	}
-			// }
-
 			if (relTarget == undefined && retUrl == undefined) {
-				var hasPara = JSON.stringify(para) != '{}'
-				var hrefUrl = $this.attr('href')
+				// No attribute data-rel and data-ret
+				// Redirect to href
+				let hasPara = JSON.stringify(para) != '{}'
+				let hrefUrl = $this.attr('href')
 				hrefUrl = hrefUrl + (hasPara ? (hrefUrl.indexOf('?') == -1 ? '?' : '&') + $.param(para) : '')
 				window.location = hrefUrl
 				return true
 			} else if (url && url.substr(0,1) == '#') {
-				console.log("LOAD FROM DOM "+url)
-				var html = null
-				if ($(url).length) html = $(url).get(0).innerHTML
+				// href is begin with #
+				// Get HTML from #id and send to data-rel
+				console.log('LOAD FROM DOM ' + url)
+				let html = null
+				if (url != '#' && $(url).length) html = $(url).get(0).innerHTML
 				sgUpdateData(html, relTarget, $this)
 				sgActionDone(linkData.done, $this, doneResult)
 				return
@@ -667,6 +623,7 @@ function sgWebViewDomProcess(id) {
 				notify('')
 				return
 			}
+			// console.log('URL = '+url)
 
 			$.post(url, para, function(html) {
 				doneResult = html
@@ -683,8 +640,10 @@ function sgWebViewDomProcess(id) {
 					sgUpdateData(html, relTarget, $this)
 				}
 
+				// @deprecated => use data-done="remove:parent element"
 				// REMOVE element after done
 				if (linkData.removeparent) {
+					console.log('removeparent')
 					var removeTag = linkData.removeparent
 					var $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag)
 					$removeElement.remove()
@@ -716,6 +675,8 @@ function sgWebViewDomProcess(id) {
 				}
 				notify(errorMsg)
 			});
+
+			// console.log('sg-action done')
 			return
 		}
 

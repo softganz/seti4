@@ -986,26 +986,4 @@ function sg_cleanXlsSepString(&$str) {
 	$str=strip_tags($str);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// TODO: Deprecate
-function sg_is_confirm() {
-	return strtoupper(post('confirm')) == strtoupper(_CONFIRM_VALUE);
-}
-
 ?>

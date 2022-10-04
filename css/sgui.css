@@ -151,7 +151,7 @@
 	.ui-step>.ui-item.-done .step-num {background: green; color: #fff; border: 1px green solid;}
 
 
-/* deprecated */
+/* @deprecated */
 .sg-toolbar {display: flex; margin: 0; padding: 0; flex-wrap: wrap; position: relative; -ms-overflow-style: none; scrollbar-width: none;}
 	.sg-toolbar::-webkit-scrollbar {display: none;}
 	.sg-toolbar>h2 {flex: 1 0 calc(100% - 16px); margin:0; padding: 0 8px; height:2.6em; font-size: 1.1em; line-height: 2.8em; overflow: hidden;}

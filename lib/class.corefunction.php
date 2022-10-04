@@ -2418,7 +2418,7 @@ function post($key = NULL, $flag = _TRIM) {
 		unset($key);
 	}
 
-	// Function deprecate in php 8
+	// Function deprecated in php 8
 	// $magic_quote = get_magic_quotes_gpc();
 	// if ( $magic_quote == 1 ) $post = arrays::convert($post,_STRIPSLASHES);
 

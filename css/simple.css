@@ -920,7 +920,7 @@ $SCREENS
 	.nav.-main {}
 		.nav.-main {height:48px; margin:0; z-index:1100;}
 		.nav.-main .-header {display: none;}
-		/* @deprecate class .menu.-main */
+		/* @deprecated class .menu.-main */
 		.nav.-main .menu.-main {height:48px;}
 		.nav.-main .menu.-main li.-has-sub {}
 		.nav.-main .menu.-main li.-has-sub:after {content : ''; position: absolute; margin-top: -24px; left: auto; right: 8px; width: 0px; height: 0px; display: inline-block; border-bottom: 4px solid transparent; border-top: 4px solid transparent; border-left: 4px solid #2f2f2f; font-size: 0px; line-height: 0px;}
