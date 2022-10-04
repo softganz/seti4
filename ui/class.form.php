@@ -266,7 +266,7 @@ class Form extends Widget {
 				break;
 
 			default:
-				$result = ' '.$event.' = \''.$onChange.'\'';
+				$result = ' '.$event.' = \''.$onChangeValue.'\'';
 				break;
 		}
 		return $result;
