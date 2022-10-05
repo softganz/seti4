@@ -23,17 +23,20 @@
 	.page.-nav .signform a {display: block; padding: 8px; text-align: center;}
 	.page.-nav .-signup {white-space: nowrap;}
 
-	.page.-nav>.nav.-owner>ul>li>a {padding: 0; margin: 0 4px; border-radius: 16px; box-shadow: 0 0 1px #333;}
-	.page.-nav>.nav.-owner>ul>li>a>.icon {color: #666;}
-	.page.-nav>.nav.-owner>ul>li>a>.icon:only-child {padding: 4px;}
-	.page.-nav>.nav.-owner .-signout span {display: none;}
+	.page.-nav>.nav.-owner>*>*>a {padding: 0; margin: 0 4px; border-radius: 16px; box-shadow: 0 0 1px #333;}
+	.page.-nav>.nav.-owner>*>*>a>.icon {color: #666;}
+	.page.-nav>.nav.-owner>*>*>a>.icon:only-child {padding: 4px;}
+
 	.page.-nav>.nav.-owner li.-profile>a {white-space: nowrap; font-weight: bold;}
 	.page.-nav>.nav.-owner li.-profile>a>.profile-photo {margin: 0;}
 	.page.-nav>.nav.-owner li.-profile>a>.icon {padding: 4px;}
-	.page.-nav>.nav.-owner li.-profile>ul {border-radius: 8px; overflow: hidden;}
 	.page.-nav>.nav.-owner li.-profile>a>span {display: none; padding: 0 8px 0 4px;}
 	.page.-nav>.nav.-owner li.-profile>a>.profile-photo {width: 32px; height: 32px; margin: 0; padding: 0; display: inline-block; background: #ddd; border-radius: 50%; border: none;}
+	.page.-nav>.nav.-owner li.-profile>ul {border-radius: 8px; overflow: hidden;}
+
+	.page.-nav>.nav.-owner li.-signout span {display: none;}
 	.page.-nav>.nav.-owner li.-signout>a>.icon {padding: 4px;}
+
 	.page.-nav>.nav.-owner li.-signup>a {border-radius: 16px; padding: 1px 8px; line-height: 30px; font-weight: bold;}
 	.page.-nav>.nav.-owner li.-signup>a>.icon {padding: 4px;}
 
