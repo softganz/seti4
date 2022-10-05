@@ -44,9 +44,9 @@ define('_CORE_FUNCTION_FILE', _CORE_FOLDER.'/core/lib/class.corefunction.php');
 if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name', 'Seti');
-cfg('core.version.code', 8);
 cfg('core.version.major', 4);
-cfg('core.version', '4.2.01');
+cfg('core.version.code', 9);
+cfg('core.version', '4.2.02');
 cfg('core.location', ini_get('include_path'));
 cfg('core.release', '2022-07-22');
 cfg('core.folder', _CORE_FOLDER);
