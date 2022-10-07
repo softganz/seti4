@@ -223,7 +223,7 @@ class NodeModel {
 
 	public static function member($tpid) {
 		return mydb::select(
-			'SELECT a.`uid`, a.`membership`
+			'SELECT a.`uid`, UPPER(a.`membership`) `membership`
 			, u.`username`, u.`name`, u.`email`
 			FROM
 				(
