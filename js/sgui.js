@@ -84,22 +84,22 @@ function sgFindTargetElement(target, $this) {
 * @param Object options
 */
 function sgShowBox(html, $this, options, e) {
-	var defaults = {
+	let defaults = {
 		fixed: true,
 		opacity: 0.5,
 		width: "95%",
 		maxHeight: "95%",
 		maxWidth: "95%",
-		className: 'colorbox'+($this.data('width') == 'full' ? ' -full' : ''),
+		className: 'colorbox' + ($this && $this.data('width') == 'full' ? ' -full' : ''),
 		//iframe: false,
 		onComplete: function() {}
 	}
 
-	var $boxElement = $('#cboxLoadedContent')
-	var linkUrl
-	var thisIsJ = false
-	var currentX = window.scrollX
-	var currentY = window.scrollY
+	let $boxElement = $('#cboxLoadedContent')
+	let linkUrl
+	let thisIsJ = false
+	let currentX = window.scrollX
+	let currentY = window.scrollY
 
 	options = $.extend(defaults, options)
 	if ($this instanceof jQuery) {
@@ -128,11 +128,11 @@ function sgShowBox(html, $this, options, e) {
 
 	if (thisIsJ && $this.data('rel') === 'img') {
 		sgBoxPage = 0
-		var group = $this.data("group")
+		let group = $this.data("group")
 		options.open = true
 
 		$('.sg-action[data-group="'+group+'"]').each(function(i){
-			var $elem = $(this)
+			let $elem = $(this)
 			$elem.colorbox(options)
 		})
 		$this.colorbox(options)
@@ -142,7 +142,7 @@ function sgShowBox(html, $this, options, e) {
 		if (debugSG) console.log('Link Url =',linkUrl)
 		$boxElement.find('.box-page').hide()
 		sgBoxPage++
-		var pageHtml = '<div class="box-page" data-page="'+sgBoxPage+'" data-url="'+linkUrl+'">'+html+'</div>'
+		let pageHtml = '<div class="box-page" data-page="'+sgBoxPage+'" data-url="'+linkUrl+'">'+html+'</div>'
 		$boxElement.append(pageHtml)
 	}	else {
 		sgBoxPage++
