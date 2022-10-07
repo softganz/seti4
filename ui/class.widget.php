@@ -384,16 +384,14 @@ class DebugMsg extends Widget {
 class Message extends Widget {
 	var $widgetName = 'Message';
 	var $tagName = 'div';
-	var $code;
+	var $responseCode;
 	var $type;
 	var $text;
 
 	// @override
 	function toString() {
-		if ($this->code) http_response_code($this->code);
-		$text = $this->text;
-
-		return $text;
+		if ($this->responseCode) http_response_code($this->responseCode);
+		return $this->text;
 	}
 } // End of class Message
 

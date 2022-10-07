@@ -296,7 +296,7 @@ class PaperInfoApi extends Page {
 		case 'comment.delete':
 			if ($tranId && SG\confirm()) {
 				$result = R::Model('paper.comment.delete',$tranId);
-				$ret = $result->complete ? new Message(['code' => _HTTP_OK, 'text' => 'Comment deleted.']) : new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'มีข้อผิดพลาดในการลบความเห็น']);
+				$ret = $result->complete ? new Message(['responseCode' => _HTTP_OK, 'text' => 'Comment deleted.']) : new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'มีข้อผิดพลาดในการลบความเห็น']);
 			}
 			break;
 
