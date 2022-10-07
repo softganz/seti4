@@ -85,7 +85,7 @@ class NodeShareWidget extends Widget {
 										'data-query' => $this->shareMember['query'],
 										'data-altfld' => 'uid',
 									],
-									'posttext' => '<div class="input-append"><span><select class="form-select" style="max-width: 100px;">'.(function() {
+									'posttext' => '<div class="input-append"><span><select class="form-select" name="membership" style="max-width: 100px;">'.(function() {
 										$options = '';
 										foreach ($this->membershipType as $optionKey => $optionValue) {
 											$options .= '<option value="'.$optionKey.'"'.($optionKey == $this->membershipValue ? ' selected="selected"' : '').'>'.$optionValue.'</option>';
