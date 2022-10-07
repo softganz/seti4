@@ -573,6 +573,109 @@ class StepMenu extends Widget {
 	}
 } // End of class StepMenu
 
+class ListItem extends Widget {
+	var $widgetName = 'ListItem';
+	var $forceBuild = false;
+	var $seperator = ' · ';
+	var $tagName = 'ul';
+	var $uiItemClass = 'ui-item -item';
+	var $wrapperType = array('ul' => 'li','span' => 'span','div' => 'div', 'div a'=>'a', 'ol'=>'li');
+	var $type = 'action';
+
+	function _renderChildren($childrens = [], $args = []) {
+		$ret = '';
+		foreach ($this->children as $key => $value) {
+			if (is_array($value)) {
+				$child = (Object) $value;
+			} else if (is_object($value)) {
+				$child = $value;
+			} else {
+				$child = (Object) ['text' => $value, 'options' => NULL];
+			}
+
+			// Convert options to object
+			$options = is_string($child->options) ? SG\json_decode($child->options): (Object) $child->options;
+
+			$uiItemClass = $this->uiItemClass.($options->class ? ' '.$options->class : '');
+			if (in_array($child->text, array('-','<sep>'))) {
+				$uiItemClass .= ' -sep';
+				$child->text = '<hr size="1" />';
+			}
+			$options->class = $uiItemClass;
+
+			$uiItemTag = $this->wrapperType[$this->tagName];
+			$ret .= $uiItemTag ? '<'.$uiItemTag.' '.sg_implode_attr($options).'>' : '';
+			$ret .= $child->text;
+			$ret .= $uiItemTag ? '</'.$uiItemTag.'>' : '';
+			$ret .= _NL;
+		}
+		return $ret;
+	}
+
+	function build() {
+		if (empty($this->children) && $this->forceBuild === false) return;
+
+		// $uiType = ['action' => 'ui-action', 'card' => 'ui-card', 'menu' => 'ui-menu', 'album' => 'ui-album', 'nav' => 'ui-nav'];
+
+		$ret = '';
+
+		$attrText = '';
+		$join = $this->tagName;
+		$attrs = [];
+
+		if ($this->config->id) $attrs['id'] = $this->config->id;
+		else if ($this->id) $attrs['id'] = $this->id;
+
+		$attrs['class'] = 'widget-'.strtolower($this->widgetName);
+		if ($this->type) $attrs['class'] .= ' '.$uiType[$this->type];
+		if ($this->class) $attrs['class'] .= ' '.$this->class;
+		if ($this->columnPerRow) $attrs['class'] .= ' -sg-flex -co-'.$this->columnPerRow;
+
+		foreach ($this->config->data as $key => $value) $attrs[$key] = $value;
+
+		foreach ($this->config->attr as $key => $value) $attrs[$key] = $value;
+
+		foreach ($attrs as $key => $value) {
+			$attrText .= $key.'="'.$value.'" ';
+		}
+
+		$attrText = trim($attrText);
+
+		list($joinTag) = explode(' ', $join);
+		$ret .= '<'.$joinTag.' '.$attrText.'>'._NL;
+
+		if ($this->header->text) {
+			$headerClass = $this->header->attr->class;
+			unset($this->header->attr->class);
+			$ret .= '<header class="header'.($headerClass ? ' '.$headerClass : '').'" '.sg_implode_attr($this->header->attr).'>'
+				. ($this->header->options->preText ? $this->header->options->preText : '')
+				. $this->header->text
+				. ($this->header->options->postText ? $this->header->options->postText : '')
+				. '</header>';
+			if ($headerClass) $this->header->attr->class = $headerClass;
+		}
+		$ret .= $this->_renderChildren();
+		$ret .= '</'.$joinTag.'>'._NL;
+
+		if ($this->config->nav) {
+			$this->container = $this->config->nav;
+		} else if ($this->config->container) {
+			$this->container = $this->config->container;
+		}
+
+		if ($this->container) {
+			$container = SG\json_decode($this->container);
+			$containerTag = $this->config->nav ? 'nav' : $container->tag;
+			unset($container->tag);
+			$containerAttr = sg_implode_attr($container);
+
+			$ret = '<'.$containerTag.' '.$containerAttr.'>'.$ret.'</'.$containerTag.'>';
+		}
+
+		return $ret;
+	}
+} // End of class List
+
 // Complex Widget
 
 class Scaffold extends Widget {
