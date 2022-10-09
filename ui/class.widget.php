@@ -101,8 +101,7 @@ class Widget extends WidgetBase {
 	function _renderEachChildWidget($key, $widget) {
 		$result = '';
 		if (is_object($widget) && method_exists($widget, 'build')) {
-			// debugMsg('_render Call build "'.$widget->widgetName.'" (Class '.get_class($widget).') id "'.$widget->id.'"');
-			// debugMsg($widget, '$widget');
+			// Build Widget
 			$buildResult = $widget->build();
 			if (is_object($buildResult) && method_exists($buildResult, 'build')) {
 				$result .= $buildResult->build();
@@ -110,15 +109,16 @@ class Widget extends WidgetBase {
 				$result .= $buildResult;
 			}
 		} else if (is_object($widget)) {
-			// debugMsg('_render without build "'.$widget->widgetName.'" id "'.$widget->id.'"');
+			// Build General Object
 			$result .= SG\json_encode($widget);
 		} else if (is_array($widget)) {
-			// debugMsg('_render array');
+			// Build Array
 			$result .= SG\json_encode($widget);
 		} else if (is_string($widget) && $widget === '<sep>') {
+			// Build Seperator
 			$result = '<hr class="separator" size="0" />';
 		} else {
-			// debugMsg('_render value');
+			// Build Text
 			$result .= $widget;
 		}
 		return $result;
@@ -431,6 +431,7 @@ class Button extends Widget {
 			'data-rel' => SG\getFirst($this->rel),
 			'data-before' => SG\getFirst($this->before),
 			'data-done' => SG\getFirst($this->done),
+			'target' => SG\getFirst($this->target),
 			'onClick' => $this->onClick ? $this->onClick : NULL,
 		], (Array) $this->attribute);
 
