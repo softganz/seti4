@@ -30,6 +30,8 @@ class Widget extends WidgetBase {
 	var $id;
 	var $class;
 	var $itemClass;
+	var $child;
+	var $children = [];
 	var $config = NULL; // Object
 	var $attribute = [];
 
