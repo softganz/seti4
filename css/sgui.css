@@ -138,6 +138,25 @@
 .widget-column {}
 	.widget-column.-sg-text-ceter>* {text-align: center;}
 
+.widget-album {list-style-type: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-start; width: initial !important;}
+	.widget-album>* {flex: 0 0 206px; padding: 0; margin: 2px; position: relative; overflow: hidden; background-color: #eee;}
+	.widget-album>*::before {content: ""; float: left; padding-top: 100%;}
+	.widget-album>* .photoitem {height: 100%; width: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
+	.widget-album>* .photoitem.-wide {height: 100%; width: auto;}
+	.widget-album>* .photoitem.-tall {height: auto; width: 100%;}
+	.widget-album>* .title {position: absolute; bottom: 0; left: 0; right: 0; text-align: center;}
+	.widget-album>* .inline-edit-item.-photodetail {position: absolute; bottom: 0; left: 0; right: 0;}
+	.widget-album>*.-upload {background-color: transparent;}
+	.widget-album>*.-upload>form {position: absolute; margin: 0; padding: 0; top: 0; left: 0; right: 0; bottom: 0; text-align: center;}
+	.widget-album>*.-upload>form .btn {margin: 0; padding: 0; padding-top: calc(50% - 24px); box-shadow: none; border: none; background-color: #fff; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 8px;}
+	.widget-album>*.-upload>form .btn:hover {background-color: #f5f5f5;}
+	.widget-album>*.-upload>form .btn>span {display: block; flex: 1 0 100%; padding: 0;}
+	.widget-album>*>.-hover {position: absolute; top: 4px; right: 4px;}
+
+
+
+
+/* Old style widget */
 .ui-nav {}
 	.ui-nav.-sg-text-center {text-align: left;}
 	.ui-nav.-sg-text-center>li {text-align: center;}
