@@ -232,15 +232,13 @@ function sg_user_folder($username) {
 	return $user_folder;
 }
 
-function sg_generate_nextfile($folder,$name,$ext,$digit=20) {
+function sg_generate_nextfile($folder, $name, $ext, $digit = 20) {
 	if (empty($name)) {
-		$prefix = 'W'; // a universal prefix prefix
-		$name = $prefix;
-		$name .= chr(rand(65,90));
-		$name .= time();
+		$prefix = 'W'; // a universal prefix
+		$name = strToLower($prefix.chr(rand(65,90)).time());
 	}
 	do {
-		$result=$folder.substr(uniqid($name).uniqid('',true).uniqid('',true),0,$digit).'.'.$ext;
+		$result = $folder.substr($name.SG\uniqid().SG\uniqid(), 0, $digit).'.'.$ext;
 	} while (file_exists($result));
 	return $result;
 }
