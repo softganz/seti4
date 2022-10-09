@@ -199,7 +199,6 @@ class FileModel {
 			if ($ext == 'pdf') {
 				$uploadFolder = cfg('paper.upload.document.folder');
 				$upload = new classFile($postFile, $uploadFolder);
-				//$ret.=print_o($upload,'$upload');
 			} else {
 				$upload = new classFile($postFile, $uploadFolder, cfg('photo.file_type'));
 				if (!$upload->valid_format()) {
@@ -341,7 +340,7 @@ class FileModel {
 	*/
 	public static function delete($fid, $options = '{}') {
 		$defaults = '{debug: false, deleteRecord: true, deleteFile: true}';
-		$options = sg_json_decode($options, $defaults);
+		$options = SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = (Object) [
@@ -351,8 +350,11 @@ class FileModel {
 		];
 
 
-		$stmt = 'SELECT * FROM %topic_files% f WHERE f.`fid` = :fid LIMIT 1';
-		$rs = mydb::select($stmt,':fid',$fid);
+		$rs = mydb::select(
+			'SELECT * FROM %topic_files% f WHERE f.`fid` = :fid LIMIT 1',
+			[':fid' => $fid]
+		);
+
 		$result->_query[] = mydb()->_query;
 
 		if ($rs->file) {
