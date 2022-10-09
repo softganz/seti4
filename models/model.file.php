@@ -68,7 +68,7 @@ class FileModel {
 		return $result;
 	}
 
-	public static function items($attributes) {
+	public static function items($attributes = []) {
 		$defaults = [
 			'nodeId' => NULL,
 			'type' => NULL,
