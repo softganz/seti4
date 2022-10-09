@@ -513,9 +513,9 @@ class classFile {
 		}
 	}
 
-	function generate_nextfile($format='pic',$digit=20) {
-		$new_filename=sg_generate_nextfile($this->folder,$format,$this->upload->_file->ext,$digit);
-		$this->upload->_file=sg_explode_filename($new_filename);
+	function generate_nextfile($name = 'pic', $digit = 20) {
+		$new_filename = sg_generate_nextfile($this->folder, $name, $this->upload->_file->ext, $digit);
+		$this->upload->_file = sg_explode_filename($new_filename);
 		$this->set_filename($this->upload->_file->name);
 	}
 
