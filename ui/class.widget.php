@@ -29,6 +29,7 @@ class Widget extends WidgetBase {
 	var $childTagName;
 	var $id;
 	var $class;
+	var $itemClass;
 	var $config = NULL; // Object
 	var $attribute = [];
 
@@ -167,10 +168,11 @@ class Widget extends WidgetBase {
 
 	// Container for each child of children
 	// @override
-	function _renderChildContainerStart($childrenKey, $args = []) {
+	function _renderChildContainerStart($childrenKey, $args = [], $childrenValue = []) {
 		$childTagName = SG\getFirst($this->childTagName, $this->childContainer['tagName']);
-		return $this->childContainer ? '<'.$childTagName
+		return $childTagName ? '<'.$childTagName
 		. ' class="'.($this->childContainer['class'] ? $this->childContainer['class']: '')
+		. ($this->itemClass ? ' '.$this->itemClass : '')
 		. (!is_numeric($childrenKey) ? ' -'.$childrenKey : '')
 		. ($args['class'] ? ' '.trim($args['class']) : '').'"'
 		. '>'
@@ -195,7 +197,7 @@ class Widget extends WidgetBase {
 		foreach ($childrens as $childrenKey => $childrenValue) {
 			$extraArgs = [];
 			if (is_string($childrenValue) && $childrenValue === '<sep>') $extraArgs['class'] = $args['class'].' -sep';
-			$ret .= $this->_renderChildContainerStart($childrenKey, $args + $extraArgs);
+			$ret .= $this->_renderChildContainerStart($childrenKey, $args + $extraArgs, $childrenValue);
 			$ret .= $this->_renderEachChildWidget($childrenKey, $childrenValue);
 			$ret .= $this->_renderChildContainerEnd()._NL;
 		}
@@ -266,14 +268,6 @@ class Column extends Widget {
 	function __construct($args = []) {
 		parent::__construct($args);
 	}
-
-	// function _renderChildContainerStart($childrenKey, $args = []) {
-	// 	return '<div class="-item">'._NL;
-	// }
-
-	// function _renderChildContainerEnd($args = []) {
-	// 	return '</div>';
-	// }
 } // End of class Column
 
 class Row extends Widget {
@@ -558,7 +552,7 @@ class StepMenu extends Widget {
 		parent::__construct($args);
 	}
 
-	function _renderChildContainerStart($stepIndex, $args = []) {
+	function _renderChildContainerStart($stepIndex, $args = [], $childrenValue = []) {
 		$stepIndex++;
 		return '<'.$this->childContainer['tagName'].' '
 			. 'class="ui-item -step-'.$stepIndex.($this->childContainer['class'] ? $this->childContainer['class'] : '').($stepIndex == $this->currentStep ? ' -current-step' : '').(isset($this->activeStep[$stepIndex]) && $this->activeStep[$stepIndex] ? ' -active' : '').'" '
@@ -811,7 +805,10 @@ class PageApi extends PageBase {
 		if (method_exists($this, $this->actionMethod) && ($reflection = new ReflectionMethod($this, $this->actionMethod)) && $reflection->isPublic()) {
 			return $this->{$this->actionMethod}();
 		} else {
-			return new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Action not found!!!']);
+			return new ErrorMessage([
+				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
+				'text' => 'Action not found!!!'
+			]);
 		}
 	}
 } // End of class PageApi
