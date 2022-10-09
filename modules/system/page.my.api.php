@@ -32,8 +32,8 @@ class MyApi extends Page {
 		$userId = $this->userId;
 		$this->userInfo = UserModel::get($userId);
 
-		if (empty($this->userInfo)) return message(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'PROCESS ERROR']);
-		else if (!$this->right->edit) return new ErrorMessage(['code' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Access Denied']);
+		if (empty($this->userInfo)) return new ErrorMessage(['responseCode' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'PROCESS ERROR']);
+		else if (!$this->right->edit) return new ErrorMessage(['responseCode' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Access Denied']);
 
 		$ret = '';
 
@@ -115,7 +115,7 @@ class MyApi extends Page {
 				break;
 
 			default:
-				return new ErrorMessage(['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Action not found!!!']);
+				return new ErrorMessage(['responseCode' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Action not found!!!']);
 				break;
 		}
 

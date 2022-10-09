@@ -52,7 +52,7 @@ class PaperApiComment extends Page {
 				break;
 
 			default:
-				return message(['code' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Action not found!!!']);
+				return new ErrorMessage(['responseCode' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Action not found!!!']);
 				break;
 		}
 
