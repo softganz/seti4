@@ -34,6 +34,7 @@ class Widget extends WidgetBase {
 	var $children = [];
 	var $config = NULL; // Object
 	var $attribute = [];
+	var $attributeText;
 
 	function __construct($args = []) {
 		$this->initConfig();
@@ -145,6 +146,7 @@ class Widget extends WidgetBase {
 			. ($this->data('class-name') ? 'data-class-name="'.$this->data('class-name').'"' : '')
 			. ($this->style ? ' style="'.$this->style.'" ' : '')
 			. ($this->attribute && is_array($this->attribute) ? ' '.sg_implode_attr($this->attribute) : '')
+			. ($this->attributeText ? ' '.$this->attributeText : '')
 			. '>'._NL
 		: '';
 	}
@@ -236,6 +238,7 @@ class Container extends Widget {
 	var $fillButton = false;
 
 	function __construct($args = []) {
+		// debugMsg($args, '$args');
 		parent::__construct($args);
 	}
 
