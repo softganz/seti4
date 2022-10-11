@@ -33,11 +33,19 @@ function widget_project() {
 	$para = para(func_get_args(),'data-limit=5','data-show-style=ul','data-show-photo-width=100','data-show-photo-height=80');
 	$dateformat = SG\getFirst($para->{'data-show-dateformat'},cfg('dateformat'));
 
+	$projectId = SG\getFirst($para->{'data-projectId'}, $para->{'data-projectid'});
+	$projectSet = SG\getFirst($para->{'data-set'});
+
 	mydb::where('t.`status` IN ( :status )', ':status', [_PUBLISH, _LOCK]);
 	// mydb::where('(t.`status` = :publish OR t.`status` = :lock)', ':publish', _PUBLISH, ':lock', _LOCK);
 	// mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
-	if ($para->{'data-projectid'}) mydb::where('p.`tpid` = :projectId', ':projectId', $para->{'data-projectid'});
-	if (!empty($para->{'data-set'})) mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$para->{'data-set'});
+	if ($projectId) {
+		mydb::where('p.`tpid` IN ( :projectId )', ':projectId', 'SET:'.$projectId);
+	}
+
+	if ($projectSet) {
+		mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$projectSet);
+	}
 
 	mydb::value('$LIMIT$', 'LIMIT '.$para->{"data-limit"});
 	$dbs = mydb::select(
@@ -55,7 +63,7 @@ function widget_project() {
 			FROM %project_tr% tr
 			WHERE tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")
 			ORDER BY tr.`trid` DESC
-			$LIMIT$
+			LIMIT 100
 		) action
 			LEFT JOIN %topic% t ON t.`tpid` = action.`tpid`
 			LEFT JOIN %project% p ON p.`tpid` = t.`tpid`
@@ -64,7 +72,8 @@ function widget_project() {
 				AND f.`gallery` = action.`gallery` AND f.`type` = "photo"
 				AND (f.`tagname` IS NULL OR f.`tagname` LIKE "project,action")
 		%WHERE%
-		GROUP BY `trid`'
+		GROUP BY `trid`
+		$LIMIT$'
 	);
 	// if (i()->username == 'softganz') {
 	// 	debugMsg($para, '$para');
