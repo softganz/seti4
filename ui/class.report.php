@@ -14,6 +14,7 @@
 
 class Report extends Widget {
 	var $queryUrl = '';
+	var $graphType = 'Bar';
 	var $groupUi = NULL;
 	var $optionsUi = NULL;
 	var $reportType = Array();
@@ -116,7 +117,7 @@ class Report extends Widget {
 		$ret .= '<form class="form" id="report-form" data-rel="none" method="get" action="">'._NL
 			. '<input type="hidden" name="dataType" value="'.$this->config->dataType.'" />'._NL
 			. '<input type="hidden" name="r" id="reporttype" value="" />'._NL
-			. '<input type="hidden" name="g" id="graphtype" value="" />'._NL
+			. '<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />'._NL
 			. ($this->config->showPage ? '<input id="page" type="hidden" name="page" value="" />'._NL : '')
 			. (post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="yes" />'._NL : '');
 

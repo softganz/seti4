@@ -1733,6 +1733,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			let chartType = $container.find('#graphtype').val()
 			let graphData = [['รายการ','จำนวน']]
 
+			console.log("graphType = ", chartType)
 			if (data.summary == undefined || $chartElement.length == 0) return
 
 			data.summary.forEach(function(item, index) {
