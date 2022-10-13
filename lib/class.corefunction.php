@@ -579,13 +579,16 @@ class SgCore {
 			return false;
 		}
 
+		$subModule = isset($request[1]) ? $request[1] : NULL;
+
 		$loadAction = in_array($resourceType, ['asset']) ? 'content' : 'include';
 
 		if ($debugLoadfile) $caller = get_caller(__FUNCTION__);
 		// debugMsg($caller,'$caller');
 
 		$debugStr = '<div>Debug of '.__FUNCTION__.'() #'.$loadCount.' in <b>'.($caller['class'] ? $caller['class'] : '').($caller['type'] ? $caller['type'] : '').($caller['function'] ? $caller['function'].'()' : '').'</b> from '.$caller['file'].' line '.$caller['line'].' with parameter <b>'.$packageName.'</b></div>'._NL
-			. 'Start load <b>'.($resourceType?' Resource '.strtoupper($resourceType).'':'Page').'</b> from package <b>'.$package.'</b><br />'._NL;
+			. 'Start load <b>'.($resourceType?' Resource '.strtoupper($resourceType).'':'Page').'</b> from package <b>'.$package.'</b><br />'._NL
+			. 'Module = <b>'.$module.'</b> , Sub Module = <b>'.$subModule.'</b><br />'._NL;
 
 		$importOnly = $caller['function'] === 'import';
 		if (is_dir('./modules/'.$module)) $mainFolder .= '.;';
@@ -624,24 +627,26 @@ class SgCore {
 			case 'widget' : // Widget Resource
 				$fileName = 'widget.';
 				$funcName = NULL;
-				if (isset($request[1])) $paths[] = 'modules/'.$module.'/'.$request[1];
+				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/widgets';
+				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule;
 				$paths[] = 'modules/'.$module.'/widgets';
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
-					if (isset($request[1])) $paths[] = 'core/modules/'.$module.'/'.$request[1];
+					if ($subModule) $paths[] = 'core/modules/'.$module.'/'.$subModule;
 					$paths[] = 'core/modules/'.$module.'/widgets';
 				} else {
 					$paths[] = 'core/widgets';
 				}
+				// debugMsg($paths, '$paths');
 				break;
 
 			case 'model' : // Model Resource
 				$fileName = 'model.';
 				$funcName = NULL;
 				$paths[] = 'modules/'.$module.'/template/'.$template;
-				if (isset($request[1])) $paths[] = 'modules/'.$module.'/'.$request[1].'/models';
+				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/models';
 				$paths[] = 'modules/'.$module.'/models';
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
-					if (isset($request[1])) $paths[] = 'core/modules/'.$module.'/'.$request[1].'/models';
+					if ($subModule) $paths[] = 'core/modules/'.$module.'/'.$subModule.'/models';
 					$paths[] = 'core/modules/'.$module.'/models';
 				}
 				$paths[] = 'core/models';
@@ -651,7 +656,7 @@ class SgCore {
 				$fileName = 'r.';
 				$funcName = 'r_';
 				//$paths[]='modules/'.$module;
-				//--if (isset($request[1])) $paths[]='modules/'.$module.'/'.$request[1];
+				//--if ($subModule) $paths[]='modules/'.$module.'/'.$subModule;
 				$paths[] = 'modules/'.$module.'/r';
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
 					$paths[] = 'core/modules/'.$module.'/r';
@@ -664,11 +669,11 @@ class SgCore {
 				$funcName = 'view_';
 				$className = 'View'.implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request));
 				//$paths[]='modules/'.$module;
-				if (isset($request[1])) $paths[] = 'modules/'.$module.'/'.$request[1];
+				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule;
 				$paths[] = 'modules/'.$module.'/default';
 				$paths[] = 'modules/'.$module;
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
-					if (isset($request[1])) $paths[] = 'core/modules/'.$module.'/'.$request[1];
+					if ($subModule) $paths[] = 'core/modules/'.$module.'/'.$subModule;
 					$paths[] = 'core/modules/'.$module.'/default';
 					$paths[] = 'core/modules/'.$module;
 				}
@@ -687,18 +692,18 @@ class SgCore {
 				$fileName = 'page.';
 				$funcName = '';
 				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request));
-				if (isset($request[1])) {
-					if (isset($request[2]) && is_string($request[2])) $paths[] = 'modules/'.$module.'/'.$request[1].'/'.$request[2];
-					$paths[] = 'modules/'.$module.'/'.$request[1];
+				if ($subModule) {
+					if (isset($request[2]) && is_string($request[2])) $paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
+					$paths[] = 'modules/'.$module.'/'.$subModule;
 				}
 				$paths[] = 'modules/'.$module.'/default';
 				$paths[] = 'modules/'.$module;
 
 				// Is in core module
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
-					if (isset($request[1])) {
-						if (isset($request[2]) && is_string($request[2])) $paths[] = 'core/modules/'.$module.'/'.$request[1].'/'.$request[2];
-						$paths[] = 'core/modules/'.$module.'/'.$request[1];
+					if ($subModule) {
+						if (isset($request[2]) && is_string($request[2])) $paths[] = 'core/modules/'.$module.'/'.$subModule.'/'.$request[2];
+						$paths[] = 'core/modules/'.$module.'/'.$subModule;
 					}
 					$paths[] = 'core/modules/'.$module.'/default';
 					$paths[] = 'core/modules/'.$module;
