@@ -127,38 +127,59 @@ function getFirst() {
 *
 * @return String
 */
-function getAPI($host, $options = '{}') {
+function api($args = []) {
+	if (is_string($args)) $args = ['url' => $args];
+
 	$default = '{port: null, username: null, password: null, type: "text"}';
 	$options = json_decode($options, $default);
+
 	// Get file from camera with curl function
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $host);
-	if (isset($username) && isset($password)) curl_setopt($ch, CURLOPT_USERPWD, $username.':'.$password);
-	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-	curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_ALL);
-	if (isset($port)) curl_setopt($ch, CURLOPT_PORT, $port);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 240);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_VERBOSE, 0);
+
+	$options = [
+		CURLOPT_URL => $args['url'],
+		CURLOPT_RETURNTRANSFER => isset($args['returnTransfer']) ? $args['returnTransfer'] : true,
+		// CURLOPT_RETURNTRANSFER => true,
+
+		CURLOPT_SSL_VERIFYHOST => 0,
+		CURLOPT_VERBOSE => 0,
+	];
+
+	if ($args['method'] == 'post') $options[CURLOPT_POST] = 1;
+	if ($args['postField']) $options[CURLOPT_POSTFIELDS] = $args['postField'];
+
+	// curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+	// curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_ALL);
+	// curl_setopt($ch, CURLOPT_TIMEOUT, 240);
+	// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	// curl_setopt($ch, CURLOPT_VERBOSE, 0);
+	// if (isset($username) && isset($password)) curl_setopt($ch, CURLOPT_USERPWD, $username.':'.$password);
+	// if (isset($port)) curl_setopt($ch, CURLOPT_PORT, $port);
+
+
 	//curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
 	//$headers = array("Cache-Control: no-cache",);
 	//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
 	//curl_setopt($ch, CURLOPT_FILE, $fh);
 
+	curl_setopt_array($ch,$options);
+
 	$result = curl_exec($ch);
 	$info = curl_getinfo($ch);
 	$info['error'] = curl_error($ch);
 	curl_close($ch);
-	if ($options->type == 'json') {
-		if (debug()) debugMsg($result);
-		$info['text'] = $result;
-		$info['result'] = \json_decode($result);
-	} else {
-		$info['result'] = $result;
-	}
 
-	return $info;
+	if ($args['result'] === 'json') {
+		if (debug()) debugMsg($result);
+		// $info['text'] = $result;
+		// $info['result'] = \json_decode($result);
+		return \json_decode($result);
+	} else if ($args['result'] === 'text') {
+		return $result;//['result'];
+	} else {
+		return $result;
+	}
 }
 
 
