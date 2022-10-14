@@ -570,7 +570,7 @@ class UserModel {
 		return $nextUsername;
 	}
 
-	function _getUserInfo() {
+	private function _getUserInfo() {
 		$result = mydb::select('SELECT * FROM %users% u WHERE `uid` = :userId LIMIT 1', ':userId', $this->userId);
 
 		if ($result->_empty) return NULL;
@@ -616,6 +616,19 @@ class UserModel {
 			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$register->username.'</em></strong> มีผู้อื่นใช้ไปแล้ว กรุณาใช้ชื่อใหม่';
 		}
 		return $result;
+	}
+
+	public static function profilePhoto($username = NULL, $fullSize = true) {
+		$filename = $fullSize ? 'profile.photo.jpg' : 'small.avatar.jpg';
+		$photo_file = cfg('upload.folder').'/'.$username.'/'.$filename;
+		$photo_url = cfg('upload.url').$username.'/'.$filename;
+		if ($username && file_exists($photo_file)) {
+			$time = filemtime($photo_file);
+			return $photo_url.'?t='.$time;
+		} else {
+			return '/css/img/photography.png';
+		}
+		return $photo;
 	}
 }
 ?>
