@@ -340,22 +340,45 @@ function sgMapErrorCode($code) {
 }
 
 function sgFatalError($code, $description, $file, $line) {
-	$uid = function_exists('i') ? i()->uid : NULL;
-	$accessAdmin = function_exists('user_access') ? user_access('access administrator pages') : NULL;
-	$isAdmin = $uid == 1 || $accessAdmin;
+	$accessDebug = function_exists('user_access') ? user_access('access debugging program') : NULL;
+	$isAdmin = $userId == 1 || $accessDebug;
 	$reportFileNmae = $file;
+
 	if (!$isAdmin) {
 		$reportFileNmae = basename($file);
 		$reportFileNmae = preg_replace('/^class\.|func\./', '', $reportFileNmae);
 		$reportFileNmae = preg_replace('/\.php$/', '', $reportFileNmae);
 	}
 
-	$msg = '<b>Fatal error: </b>'.$description.' in <b>'.$reportFileNmae.'</b> '
+	$reportData = [
+		'url' => _DOMAIN.$_SERVER['REQUEST_URI'],
+		'file' => $file,
+		'line' => $line,
+		'date' => date('Y-m-d H:i:s'),
+		'user' => function_exists('i') ? i()->uid : NULL,
+		'name' => function_exists('i') ? i()->name : NULL,
+		'referer' => $_SERVER["HTTP_REFERER"],
+		'agent'=> $_SERVER['HTTP_USER_AGENT'],
+	];
+
+	if (!in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
+		$result = SG\api([
+			'url' => 'https://softganz.com/system/issue/new',
+			// 'url' => 'http://localhost/seti/softganz.com/system/issue/new',
+			'method' => 'post',
+			'postField' => $reportData,
+			'returnTransfer' => true,
+			'result' => 'json',
+		]);
+	}
+
+	$msg = 'There is error in <b>'.$reportFileNmae.'</b> '
 		. 'line <b>'.$line.'</b>. '
 		. 'Please '
-		. '<a href="https://www.softganz.com/bug?f='.$reportFileNmae.'&l='.$line.'&d='.date('Y-m-d H:i:s').'&u='.(isset($_SERVER['REQUEST_SCHEME'])?$_SERVER['REQUEST_SCHEME']:'http').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'" target="_blank">'
-		. 'report to webmaster'
-		. '</a>.';
+		// . '<a href="https://www.softganz.com/system/issue/new?file='.$reportFileNmae.'&line='.$line.'&date='.$reportData['date'].'user='.$userId.'&url='.$errorUrl.'" target="_blank">'
+		. 'report to webmaster.'
+		// . '</a>'
+		. ($isAdmin ? '<br /><br />'.$description : '');
 
 	$msgHelp = '';
 	$debugMsg = debugMsg();
@@ -368,7 +391,7 @@ function sgFatalError($code, $description, $file, $line) {
 		<td width="80%">
 			<div style="border: 1px solid rgb(210, 210, 210); border-radius: 8px; background-color: rgb(241, 241, 241); padding: 30px;">
 			<h1>Fatal error'.($isAdmin ? '<span style="font-size: 0.6em;"> @PHP Version '.phpversion().'</span>' : '').'</h1>
-			<p>The requested URL <b>'.$_SERVER['REQUEST_URI'].'</b> was error.</p>
+			<p>The requested URL <b>'.$errorUrl.'</b> was error.</p>
 			<p>'.$msg.'</p>'
 			. ($msgHelp ? '<p><font color="gray">'.$msgHelp.'</font></p>' : '')
 			. '<hr>
