@@ -468,20 +468,17 @@ class Icon extends Widget {
 	}
 
 	function toString() {
-		if (preg_match('/$</', $this->icon)) {
-			return $this->icon;
-		} else {
-			$attribute = array_replace_recursive(
-				$this->attribute,
-				[
-					'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.SG\getFirst($this->class))
-				]
-			);
-			$icon = '<i '.sg_implode_attr($attribute).'>'
-				. $this->icon
-				. '</i>';
-			return $icon;
-		}
+		if (preg_match('/$</', $this->icon)) return $this->icon;
+
+		$attribute = array_replace_recursive(
+			$this->attribute,
+			[
+				'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.SG\getFirst($this->class))
+			]
+		);
+		return '<i '.sg_implode_attr($attribute).'>'
+			. $this->icon
+			. '</i>';
 	}
 }
 
@@ -673,6 +670,32 @@ class ListItem extends Widget {
 		return $ret;
 	}
 } // End of class List
+
+
+class ProfilePhoto extends Widget {
+	var $widgetName = 'ProfilePhoto';
+	var $version = '0.01';
+	var $username;
+
+	function __construct($username, $args = []) {
+		$this->username = $username;
+		parent::__construct($args);
+	}
+
+	function toString() {
+		$attribute = array_replace_recursive(
+			$this->attribute,
+			[
+				'class' => trim('widget-'.strtolower($this->widgetName).' '.SG\getFirst($this->class)).($this->size ? ' -size-'.$this->size : ''),
+				'src' => UserModel::profilePhoto($this->username),
+			]
+		);
+		return '<img '.sg_implode_attr($attribute).' />';
+	}
+}
+
+
+
 
 // Complex Widget
 
