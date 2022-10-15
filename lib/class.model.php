@@ -171,7 +171,7 @@ class Model {
 				$taxonomy->child=array();
 				if ($taxonomy->parent_name) {
 					$hierachys[$taxonomy->parent]=$taxonomy->parent_name;
-					$parents->parent=$taxonomy->parent;
+					$parents = (Object) ['parent' => $taxonomy->parent];
 					do {
 						$parents=mydb::select('SELECT h.tid,h.parent,t.name FROM %tag_hierarchy% h LEFT JOIN %tag% t ON t.tid=h.tid WHERE h.tid='.$parents->parent.' LIMIT 1');
 						if ($parents->_num_rows) {
