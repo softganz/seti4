@@ -136,6 +136,7 @@ class Form extends Widget {
 					}
 				}
 			} else if (is_array($formElement) && array_key_exists('children', $formElement)) {
+				// @deprecated
 				// Form element is array and has key children
 				foreach ($formElement['children'] as $groupKey => $groupItem) {
 					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
