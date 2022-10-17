@@ -505,23 +505,28 @@ var editor = {
 	start_tag : '',
 	end_tag : '',
 
-	click : function (e) {
-		var evt
-		e ? evt = e : evt = event;
-		var cSrc=evt.target?evt.target:evt.srcElement;
-		var elem=document.getElementsByTagName('textarea');
-		var ctrl=cSrc.parentNode;
-		var myField
-		var dom
+	click : function (domEvent) {
+		let evt
+		domEvent ? evt = domEvent : evt = event;
+		let cSrc = evt.target ? evt.target : evt.srcElement;
+		let elem = document.getElementsByTagName('textarea');
+		let ctrl = cSrc.parentNode;
+		let myField
+		let dom
 		//alert(ctrl);
 		//alert('click '+ctrl+' : '+ctrl.id+' : '+ctrl.className);
 		//myField=document.getElementById(ctrl.title);
 		//alert('set myField ',editor.myField.id);
-		if (ctrl && ctrl.className=='editor') {
-			myField=document.getElementById(ctrl.title);
+		// console.log('CLICK')
+		// console.log(ctrl.id)
+		// if (ctrl && ctrl.id == 'edit-detail-body-control') {
+		if (ctrl && ctrl.className == 'editor') {
+			myField = document.getElementById(ctrl.title);
 			//alert('set myField ',editor.myField.id);
 			//			debug('<p>control parent id '+ctrl.id+' : '+ctrl.title+' : '+ctrl.className+' : '+ctrl.parentNode.id+'</p>',false);
 			//			debug('insert into id '+myField.id+' tag = '+editor.start_tag+' | '+editor.end_tag);
+			// console.log(domEvent)
+			// console.log(event)
 			if (editor.start_tag) editor.insertCode(myField,editor.start_tag,editor.end_tag);
 		}
 		editor.start_tag='';
@@ -529,6 +534,7 @@ var editor = {
 	} ,
 
 	insert : function (i,o) {
+		// console.log("INSERT")
 		if(i == undefined) { i=''; }
 		if(o == undefined) { o=''; }
 		this.start_tag=i;
@@ -536,6 +542,8 @@ var editor = {
 	} ,
 
 	insertCode : function(myField,i,o) {
+		// console.log('INSERT CODE')
+		// console.log(myField)
 		// IE selection support
 		if (document.selection) {
 			myField.focus();
@@ -635,10 +643,10 @@ var editor = {
 }
 
 /* init bb click */
-if (typeof document.attachEvent!='undefined') {
-	document.attachEvent('onclick',editor.click);
+if (typeof document.attachEvent != 'undefined') {
+	document.attachEvent('onclick', editor.click);
 } else {
-	document.addEventListener('click',editor.click,false);
+	document.addEventListener('click', editor.click, false);
 }
 
 
