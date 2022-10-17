@@ -60,9 +60,11 @@ function paper_delete($self, $topicInfo, $para = NULL) {
 
 	// Start delete topic
 
-	$result->complete=false;
-	$result->error=false;
-	$result->process[]='__edit_delete request';
+	$result = (Object) [
+		'complete' => false,
+		'error' => false,
+		'process' => ['__edit_delete request'],
+	];
 
 	//if ($para->edit!='delete' || $confirm!='yes') return message('error','Invalid parameter');
 
@@ -171,10 +173,12 @@ function paper_delete($self, $topicInfo, $para = NULL) {
 
 	// send email alert on delete
 	if (cfg('alert.email') && in_array('paper',explode(',',cfg('alert.module')))) {
-		$mail->to=cfg('alert.email');
-		$mail->title='-- topic : '.strip_tags($topicInfo->title).' : '.$topicInfo->tags[0]->name;
-		$mail->name=i()->name;
-		$mail->from='alert@'.cfg('domain.short');
+		$mail = (Object) [
+			'to' => cfg('alert.email'),
+			'title' => '-- topic : '.strip_tags($topicInfo->title).' : '.$topicInfo->tags[0]->name,
+			'name' => i()->name,
+			'from' => 'alert@'.cfg('domain.short'),
+		];
 		if (cfg('alert.cc')) $mail->cc=cfg('alert.cc');
 		if (cfg('alert.bcc')) $mail->bcc=cfg('alert.bcc');
 
