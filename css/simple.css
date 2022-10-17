@@ -1381,6 +1381,7 @@ $SCREENS
 
 	.form-report {display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; background-color: #fff; box-shadow: 0 0 0 1px #eee inset; margin-bottom: 8px; border-radius: 8px; padding: 4px;}
 		.form-report .form-item {padding: 4px;}
+		.form-report label:not(.-hidden) {display: inline-block;}
 		.form-report .form-text
 		, .form-report .form-select {border-radius: 32px; max-width: 100px;}
 
