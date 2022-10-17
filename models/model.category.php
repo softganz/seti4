@@ -15,7 +15,7 @@ class CategoryModel {
 	function __construct($args = []) {
 	}
 
-	function get($conditions, $options = '{}') {
+	public static function get($conditions, $options = '{}') {
 		$defaults = '{debug: false, result: "default", fullValue : false, order: "tg.`weight` ASC, tg.`$KEY$` ASC", selectText: ""}';
 		$options = SG\json_decode($options, $defaults);
 		$debug = $options->debug;
