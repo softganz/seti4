@@ -105,114 +105,112 @@ function view_paper_post_form($topic) {
 				'size' => 50,
 				'description' => '<strong>ข้อกำหนดในการส่งไฟล์วีดิโอ</strong><ul><li>ไฟล์ประเภท <strong>flv</strong> ขนาดไม่เกิน <strong>'.ini_get('upload_max_filesize').'B</strong>. </li><li>หากวีดิโอเป็นไฟล์นามสกุลอื่น จะต้องทำการแปลงให้เป็นนามสกุล .flv ก่อนส่งขึ้นเว็บ</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์วีดิโอที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
 			] : NULL,
+			[
+				[],
+				'tabs_start' => '<div class="sg-tabs"><ul class="tabs tabs_input">',
+				'tabs_1' => '<li class="-active"><a href="#tabs_1">'.tr('Poster').'</a></li>',
+				'tabs_2' => user_access('upload photo')?'<li><a href="#tabs_2">'.tr('Photo').'</a></li>':'',
+				'tabs_3' => user_access('upload document')?'<li><a href="#tabs_3">'.tr('Documents').'</a></li>':'',
+				'tabs_4' => '<li><a href="#tabs_4">'.tr('Input Format').'</a></li>',
+				'tabs_5' => user_access('administer contents')?'<li><a href="#tabs_5">'.tr('Options').'</a></li>':'',
+				'tabs_e' => '</ul>',
 
-			'tabs' => [
-				'children' => [
-					'tabs_start' => '<div class="sg-tabs"><ul class="tabs tabs_input">',
-					'tabs_1' => '<li class="-active"><a href="#tabs_1">'.tr('Poster').'</a></li>',
-					'tabs_2' => user_access('upload photo')?'<li><a href="#tabs_2">'.tr('Photo').'</a></li>':'',
-					'tabs_3' => user_access('upload document')?'<li><a href="#tabs_3">'.tr('Documents').'</a></li>':'',
-					'tabs_4' => '<li><a href="#tabs_4">'.tr('Input Format').'</a></li>',
-					'tabs_5' => user_access('administer contents')?'<li><a href="#tabs_5">'.tr('Options').'</a></li>':'',
-					'tabs_e' => '</ul>',
-
-					'tabs_1_div_s' => '<div id="tabs_1" class="tabs_input" style="display:block;"><h4>{tr:Poster}</h4>',
-					'poster' => [
-						'type' => 'text',
-						'label' => 'Sender'.(i()->ok?' (you are member)':''),
-						'class' => '-fill',
-						'require' => true,
-						'readonly' => i()->ok && !cfg('member.name_alias'),
-						'value' => SG\getFirst($topic->post->poster,i()->name),
-					],
-					'email' => !i()->ok ? [
-						'type' => 'text',
-						'label' => tr('Email'),
-						'class' => '-fill',
-						'require' => cfg('topic.require.mail'),
-						'value' => $topic->post->email,
-					] : NULL,
-					'website' => !i()->ok ? [
-						'type' => 'text',
-						'label' => tr('Website'),
-						'class' => '-fill',
-						'require' => cfg('topic.require.homepage'),
-						'value' => $topic->post->website,
-					] : NULL,
-					'tabs_1_div_e' => '</div>',
-
-
-					'tabs_2_div_s' => user_access('upload photo') ? '<div id="tabs_2" class="tabs_input"><h4>{tr:Photo}</h4>' : NULL,
-					'photo' => user_access('upload photo') ? [
-						'label' => tr('Select photo to upload'),
-						'name' => 'photo',
-						'type' => 'file',
-						'size' => 50,
-						'description' => '<strong>ข้อกำหนดในการส่งไฟล์ภาพ</strong><ul><li>ไฟล์ภาพประเภท jpg,gif,png ขนาดไม่เกิน <strong>'.cfg('photo.max_file_size').'KB ('.number_format(cfg('photo.max_file_size')*1024).' bytes)</strong>. </li><li>ท่านควรย่อภาพให้ได้ขนาดที่ต้องการใช้งานก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มชื่อภาพ , คำอธิบายภาพ หรือ ส่งภาพเพิ่มเติม สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดภาพในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์ภาพที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
-					] : NULL,
-					'tabs_2_div_e' => user_access('upload photo') ? '</div>' : NULL,
-
-					'tabs_3_div_s' => user_access('upload document') ? '<div id="tabs_3" class="tabs_input"><h4>เอกสารประกอบ</h4>' : NULL,
-					'document' => user_access('upload document') ? [
-						'label' => tr('Select document to upload'),
-						'name' => 'document',
-						'type' => 'file',
-						'size' => 50,
-					] : NULL,
-					'document_title' => user_access('upload document') ? [
-						'type' => 'text',
-						'label' => 'Document title',
-						'maxlength' => 150,
-						'class' => '-fill',
-						'value' => $topic->post->document_title,
-					] : NULL,
-					'document_description' => user_access('upload document') ? [
-						'type' => 'textarea',
-						'label' => 'Document description',
-						'class' => '-fill',
-						'rows' => 3,
-						'value' => $topic->post->document_description,
-						'pretext' => editor::softganz_editor('edit-document-description'),
-						'description' => '<strong>ข้อกำหนดในการส่งไฟล์เอกสารประกอบ</strong><ul><li>ไฟล์เอกสารจะต้องเป็นไฟล์ประเภท <strong>.'.implode(' , .',cfg('topic.doc.file_ext')).'</strong> เท่านั้น </li><li>ขนาดไฟล์ต้องไม่เกิน <strong>'.ini_get('upload_max_filesize').'B</strong></li><li>หากไฟล์เอกสารเป็นในรูปแบบอื่น ท่านควรแปลงให้เป็น Acrobat reader (pdf) ให้เรียบร้อยก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มไฟล์เอกสารประกอบ , แก้ไข หรือ ลบทิ้ง สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดเอกสารประกอบในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์เอกสารประกอบทั้งหมดที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
-					] : NULL,
-					'tabs_3_div_e' => user_access('upload document') ? '</div>' : NULL,
-
-					'tabs_4_div_s' => user_access('upload document') ? '<div id="tabs_4" class="tabs_input"><h4>{tr:Input Format}</h4>' : NULL,
-					'input_format' => user_access('upload document') ? [
-						'label' => 'Input Format',
-						'type' => 'radio',
-						'name' => 'topic[property][input_format]',
-						'options' => [
-							'markdown' => 'HTML & Markdown<div class="description"><ul><li>Lines and paragraphs break automatically.</li><li>Allowed HTML tags: '.htmlspecialchars('<a> <em> <strong> <code> <ul> <ol> <li> <img> <br> <p> <blockquote> <h3> <h4> <summary>').'</li><li>Use &lt;!--break--&gt; to create page breaks.</li><li>You can use <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> to format and style the text.</li><li>For complete details on the Markdown syntax, see the <a href="http://daringfireball.net/projects/markdown/syntax">Markdown documentation</a>.</li></ul></div>',
-							'html' => 'HTML Only<div class="description"><ul><li>No lines and paragraphs break.</li><li>Allowed HTML tags like HTML format above.</li></ul></div>',
-							'php' => user_access('administer contents') ? 'PHP & HTML<div class="description"><ul><li>No lines and paragraphs break.</li><li>Allowed HTML tags like HTML format above.</li><li>Allowed PHP Code in detail</li></ul></div>' : NULL,
-						],
-						'value' => $topic->post->property['input_format'],
-					] : NULL,
-					'tabs_4_div_e' => user_access('upload document') ? '</div>' : NULL,
-
-					'tabs_5_div_s' => user_access('administer contents') ? '<div id="tabs_5" class="tabs_input"><h4>ตัวเลือก</h4>' : NULL,
-					'sticky' => user_access('administer contents') ? [
-						'label' => 'Sticky',
-						'type' => 'radio',
-						'options' => (function() {
-							$options = [0 => 'None'];
-							foreach (cfg('sticky') as $key => $value) $options[$key] = $value;
-							return $options;
-						})(),
-						'value' => $topic->post->sticky,
-						'posttext' => '<label><input type="checkbox" name="clear_sticky" /> Clear all sticky of this section</label>',
-					] : NULL,
-					'promote' => user_access('administer contents') ? [
-						'label' => 'Options',
-						'type' => 'checkbox',
-						'options' => ['1' => 'Promoted to frontpage'],
-						'value' => $topic->post->promote,
-					] : NULL,
-					'tabs_5_div_e' => user_access('administer contents') ? '</div>' : NULL,
-
-					'tabs_end' => '</div>',
+				'tabs_1_div_s' => '<div id="tabs_1" class="tabs_input" style="display:block;"><h4>{tr:Poster}</h4>',
+				'poster' => [
+					'type' => 'text',
+					'label' => 'Sender'.(i()->ok?' (you are member)':''),
+					'class' => '-fill',
+					'require' => true,
+					'readonly' => i()->ok && !cfg('member.name_alias'),
+					'value' => SG\getFirst($topic->post->poster,i()->name),
 				],
+				'email' => !i()->ok ? [
+					'type' => 'text',
+					'label' => tr('Email'),
+					'class' => '-fill',
+					'require' => cfg('topic.require.mail'),
+					'value' => $topic->post->email,
+				] : NULL,
+				'website' => !i()->ok ? [
+					'type' => 'text',
+					'label' => tr('Website'),
+					'class' => '-fill',
+					'require' => cfg('topic.require.homepage'),
+					'value' => $topic->post->website,
+				] : NULL,
+				'tabs_1_div_e' => '</div>',
+
+
+				'tabs_2_div_s' => user_access('upload photo') ? '<div id="tabs_2" class="tabs_input"><h4>{tr:Photo}</h4>' : NULL,
+				'photo' => user_access('upload photo') ? [
+					'label' => tr('Select photo to upload'),
+					'name' => 'photo',
+					'type' => 'file',
+					'size' => 50,
+					'description' => '<strong>ข้อกำหนดในการส่งไฟล์ภาพ</strong><ul><li>ไฟล์ภาพประเภท jpg,gif,png ขนาดไม่เกิน <strong>'.cfg('photo.max_file_size').'KB ('.number_format(cfg('photo.max_file_size')*1024).' bytes)</strong>. </li><li>ท่านควรย่อภาพให้ได้ขนาดที่ต้องการใช้งานก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มชื่อภาพ , คำอธิบายภาพ หรือ ส่งภาพเพิ่มเติม สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดภาพในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์ภาพที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
+				] : NULL,
+				'tabs_2_div_e' => user_access('upload photo') ? '</div>' : NULL,
+
+				'tabs_3_div_s' => user_access('upload document') ? '<div id="tabs_3" class="tabs_input"><h4>เอกสารประกอบ</h4>' : NULL,
+				'document' => user_access('upload document') ? [
+					'label' => tr('Select document to upload'),
+					'name' => 'document',
+					'type' => 'file',
+					'size' => 50,
+				] : NULL,
+				'document_title' => user_access('upload document') ? [
+					'type' => 'text',
+					'label' => 'Document title',
+					'maxlength' => 150,
+					'class' => '-fill',
+					'value' => $topic->post->document_title,
+				] : NULL,
+				'document_description' => user_access('upload document') ? [
+					'type' => 'textarea',
+					'label' => 'Document description',
+					'class' => '-fill',
+					'rows' => 3,
+					'value' => $topic->post->document_description,
+					'pretext' => editor::softganz_editor('edit-document-description'),
+					'description' => '<strong>ข้อกำหนดในการส่งไฟล์เอกสารประกอบ</strong><ul><li>ไฟล์เอกสารจะต้องเป็นไฟล์ประเภท <strong>.'.implode(' , .',cfg('topic.doc.file_ext')).'</strong> เท่านั้น </li><li>ขนาดไฟล์ต้องไม่เกิน <strong>'.ini_get('upload_max_filesize').'B</strong></li><li>หากไฟล์เอกสารเป็นในรูปแบบอื่น ท่านควรแปลงให้เป็น Acrobat reader (pdf) ให้เรียบร้อยก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มไฟล์เอกสารประกอบ , แก้ไข หรือ ลบทิ้ง สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดเอกสารประกอบในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์เอกสารประกอบทั้งหมดที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
+				] : NULL,
+				'tabs_3_div_e' => user_access('upload document') ? '</div>' : NULL,
+
+				'tabs_4_div_s' => user_access('upload document') ? '<div id="tabs_4" class="tabs_input"><h4>{tr:Input Format}</h4>' : NULL,
+				'input_format' => user_access('upload document') ? [
+					'label' => 'Input Format',
+					'type' => 'radio',
+					'name' => 'topic[property][input_format]',
+					'options' => [
+						'markdown' => 'HTML & Markdown<div class="description"><ul><li>Lines and paragraphs break automatically.</li><li>Allowed HTML tags: '.htmlspecialchars('<a> <em> <strong> <code> <ul> <ol> <li> <img> <br> <p> <blockquote> <h3> <h4> <summary>').'</li><li>Use &lt;!--break--&gt; to create page breaks.</li><li>You can use <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> to format and style the text.</li><li>For complete details on the Markdown syntax, see the <a href="http://daringfireball.net/projects/markdown/syntax">Markdown documentation</a>.</li></ul></div>',
+						'html' => 'HTML Only<div class="description"><ul><li>No lines and paragraphs break.</li><li>Allowed HTML tags like HTML format above.</li></ul></div>',
+						'php' => user_access('administer contents') ? 'PHP & HTML<div class="description"><ul><li>No lines and paragraphs break.</li><li>Allowed HTML tags like HTML format above.</li><li>Allowed PHP Code in detail</li></ul></div>' : NULL,
+					],
+					'value' => $topic->post->property['input_format'],
+				] : NULL,
+				'tabs_4_div_e' => user_access('upload document') ? '</div>' : NULL,
+
+				'tabs_5_div_s' => user_access('administer contents') ? '<div id="tabs_5" class="tabs_input"><h4>ตัวเลือก</h4>' : NULL,
+				'sticky' => user_access('administer contents') ? [
+					'label' => 'Sticky',
+					'type' => 'radio',
+					'options' => (function() {
+						$options = [0 => 'None'];
+						foreach (cfg('sticky') as $key => $value) $options[$key] = $value;
+						return $options;
+					})(),
+					'value' => $topic->post->sticky,
+					'posttext' => '<label><input type="checkbox" name="clear_sticky" /> Clear all sticky of this section</label>',
+				] : NULL,
+				'promote' => user_access('administer contents') ? [
+					'label' => 'Options',
+					'type' => 'checkbox',
+					'options' => ['1' => 'Promoted to frontpage'],
+					'value' => $topic->post->promote,
+				] : NULL,
+				'tabs_5_div_e' => user_access('administer contents') ? '</div>' : NULL,
+
+				'tabs_end' => '</div>',
 			],
 
 			'submit' => [

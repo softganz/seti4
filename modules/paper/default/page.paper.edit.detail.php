@@ -80,12 +80,12 @@ function paper_edit_detail($self, $topicInfo) {
 				'description' => 'คำแนะนำ : เนื่องจากได้มีการเปลี่ยนแปลงวิธีการขึ้นบรรทัดใหม่ ซึ่งมีรายละเอียดดังนี้<ul><li>วิธีการขึ้นบรรทัดใหม่โดยไม่เว้นช่องว่างระหว่างบรรทัด ให้เคาะเว้นวรรค (Space bar) ที่ท้ายบรรทัดจำนวนหนึ่งครั้ง</li><li>วิธีการขึ้นย่อหน้าใหม่ซึ่งจะมีการเว้นช่องว่างห่างจากบรรทัดด้านบนเล็กน้อย ให้เคาะ Enter จำนวน 2 ครั้ง</li><li>หากข้อความของท่านยาวเกินไป จะทำให้ไม่สามารถนำข้อความทั้งหมดไปแสดงในหน้าแรก ให้ใส่ &lt;!--break--&gt แทรกไว้ในตำแหน่งที่ต้องการให้ตัดไปแสดงผล</li></ul>',
 			] : NULL,
 			$topicInfo->photos ? (function($topicInfo) {
-				$photo_list = _NL.'<div id="edit-topic-body-control-photo" class="editor" title="edit-topic-body">';
+				$photo_list = _NL.'<div id="edit-topic-body-control-photo" class="editor" title="edit-detail-body">';
 				foreach ($topicInfo->photos as $photo) {
 					$photo_title = tr('Photo name').' : '.SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
 					$photo_desc = tr('Photo Description').' : '.SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
 					if ($topicInfo->property->input_format == 'markdown') {
-						$onclick = 'editor.insert("![ '.$photo_desc.' ]('.$photo->_url.' \"'.$photo_title.'\"'.(cfg('topic.photo.detail.class')?' class=\"'.cfg('topic.photo.detail.class').'\"':'').')");return false';
+						$onclick = 'editor.insert("![ '.$photo_desc.' ]('.$photo->_url.' \"'.$photo_title.'\" '.(cfg('topic.photo.detail.class')?' class=\"'.cfg('topic.photo.detail.class').'\"':'').')");return false';
 					} else {
 						$onclick = 'editor.insert("<img src=\"'.$photo->_url.'\" alt=\"'.htmlspecialchars($photo_desc).'\" title=\"'.htmlspecialchars($photo_title).'\"'.(cfg('topic.photo.detail.class')?' class=\"'.cfg('topic.photo.detail.class').'\"':'').' />");return false';
 					}
@@ -101,7 +101,7 @@ function paper_edit_detail($self, $topicInfo) {
 				$docs = mydb::select('SELECT * FROM %topic_files% WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc"',':tpid', $tpid);
 
 				if ($docs->_num_rows) {
-					$doc_list .= _NL.'<div id="edit-topic-body-control-docs" class="editor" title="edit-topic-body">';
+					$doc_list .= _NL.'<div id="edit-topic-body-control-docs" class="editor" title="edit-detail-body">';
 					foreach ($docs->items as $doc) {
 						$docDesc = preg_replace('/[\"\']/','','"'.SG\getFirst($doc->title,$doc->file).'"');
 						$docUrl = cfg('files.log') ? url('files/'.$doc->fid) : cfg('url').'upload/forum/'.sg_urlencode($doc->file);
