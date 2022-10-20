@@ -359,7 +359,10 @@ class R {
 			$ret = $className(...$args);
 			return new Widget(['exeClass' => $args[0], 'child' => $ret]);
 		} else {
-			return 'ERROR : PAGE NOT FOUND';
+			return new ErrorMessage([
+				'responseCode' => _HTTP_ERROR_NOT_FOUND,
+				'text' => 'PAGE NOT FOUND',
+			]);
 		}
 	}
 
