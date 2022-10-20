@@ -342,12 +342,12 @@ function sgMapErrorCode($code) {
 function sgFatalError($code, $description, $file, $line) {
 	$accessDebug = function_exists('user_access') ? user_access('access debugging program') : NULL;
 	$isAdmin = $userId == 1 || $accessDebug;
-	$reportFileNmae = $file;
+	$reportFileName = $file;
 
 	if (!$isAdmin) {
-		$reportFileNmae = basename($file);
-		$reportFileNmae = preg_replace('/^class\.|func\./', '', $reportFileNmae);
-		$reportFileNmae = preg_replace('/\.php$/', '', $reportFileNmae);
+		$reportFileName = basename($file);
+		$reportFileName = preg_replace('/^class\.|func\./', '', $reportFileName);
+		$reportFileName = preg_replace('/\.php$/', '', $reportFileName);
 	}
 
 	$reportData = [
@@ -359,6 +359,7 @@ function sgFatalError($code, $description, $file, $line) {
 		'name' => function_exists('i') ? i()->name : NULL,
 		'referer' => $_SERVER["HTTP_REFERER"],
 		'agent'=> $_SERVER['HTTP_USER_AGENT'],
+		'description' => $description,
 	];
 
 	if (!in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
@@ -372,10 +373,10 @@ function sgFatalError($code, $description, $file, $line) {
 		]);
 	}
 
-	$msg = 'There is error in <b>'.$reportFileNmae.'</b> '
+	$msg = 'There is error in <b>'.$reportFileName.'</b> '
 		. 'line <b>'.$line.'</b>. '
 		. 'Please '
-		// . '<a href="https://www.softganz.com/system/issue/new?file='.$reportFileNmae.'&line='.$line.'&date='.$reportData['date'].'user='.$userId.'&url='.$errorUrl.'" target="_blank">'
+		// . '<a href="https://www.softganz.com/system/issue/new?file='.$reportFileName.'&line='.$line.'&date='.$reportData['date'].'user='.$userId.'&url='.$errorUrl.'" target="_blank">'
 		. 'report to webmaster.'
 		// . '</a>'
 		. ($isAdmin ? '<br /><br />'.$description : '');
