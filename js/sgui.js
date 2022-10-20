@@ -1770,7 +1770,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			if (data.summary == undefined || $tableElement.length == 0) return
 
-			var table = $('<table></table>').addClass('item')
+			var table = $('<table></table>').addClass('widget-table')
 			var thead = $('<thead></thead>')
 
 			Object.keys(data.summaryFields).forEach( function(key) {
@@ -1834,7 +1834,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				.attr('onClick', 'export2excel("trans")')
 			$detailElement.append($('<nav></nav>').addClass('nav -page -table-export -sg-text-right').append(exportBtn))
 
-			var table = $('<table></table>').addClass('item').attr('id','detail-list')
+			var table = $('<table></table>').addClass('widget-table').attr('id','detail-list')
 			var thead = $('<thead></thead>')
 				.append($('<tr></tr>'));
 			Object.keys(data.itemsFields).forEach( function(key) {
