@@ -1,14 +1,13 @@
 <?php
 /**
-* Module  :: Description
+* System  :: Save New Issue
 * Created :: 2022-10-14
-* Modify  :: 2022-10-14
-* Version :: 1
+* Modify  :: 2022-10-20
+* Version :: 2
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage system/issue/new
 */
 
 class SystemIssueNew extends Page {
@@ -32,6 +31,7 @@ class SystemIssueNew extends Page {
 			'reportBy' => post('name'),
 			'referer' => post('referer'),
 			'agent' => post('agent'),
+			'description' => post('description'),
 		]);
 	}
 
@@ -49,6 +49,7 @@ class SystemIssueNew extends Page {
 				`host`, `path`, `query`, `file`, `line`
 				, `reportDate`, `reportUser`, `reportBy`
 				, `referer`, `agent`
+				, `description`
 				, `created`
 			)
 			VALUES
@@ -56,6 +57,7 @@ class SystemIssueNew extends Page {
 				:host, :path, :query, :file, :line
 				, :reportDate, :reportUser, :reportBy
 				, :referer, :agent
+				, :description
 				, :created
 			)',
 			[
@@ -69,6 +71,7 @@ class SystemIssueNew extends Page {
 				':reportBy' => $this->reportBy,
 				':referer' => $this->referer,
 				':agent' => $this->agent,
+				':description' => $this->description,
 				':created' => date('U'),
 			]
 		);

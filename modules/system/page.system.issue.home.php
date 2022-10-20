@@ -1,17 +1,16 @@
 <?php
 /**
-* Module  :: Description
+* Sysgtem :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2022-10-14
-* Version :: 1
+* Modify  :: 2022-10-20
+* Version :: 2
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage system/issue
 */
 
-class SystemIssueList extends Page {
+class SystemIssueHome extends Page {
 	var $right;
 
  	function __construct() {
@@ -39,7 +38,7 @@ class SystemIssueList extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Issue Report',
+				'title' => $dbs->_num_rows.' Issues Report',
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
@@ -65,8 +64,15 @@ class SystemIssueList extends Page {
 														'attribute' => ['data-title' => 'Close Issue', 'data-confirm' => 'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?',]
 													]), // Button
 													new Button([
-														'href' => $item->host.$item->path,
+														'href' => url('system/issue/'.$item->issueId),
 														'icon' => new Icon('find_in_page'),
+														'class' => 'sg-action',
+														'rel' => 'box',
+														'attribute' => ['data-width' => 'full']
+													]), // Button
+													new Button([
+														'href' => $item->host.$item->path,
+														'icon' => new Icon('public'),
 														'attribute' => ['target' => '_blank']
 													]), // Button
 												], // children
@@ -76,7 +82,7 @@ class SystemIssueList extends Page {
 											'child' => new Column([
 												'class' => '-sg-paddingnorm',
 												'children' => [
-													'referer : '.$item->referer,
+													'referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
 													'agent : '.$item->agent,
 												]
 											]), // Column
