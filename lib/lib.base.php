@@ -115,6 +115,16 @@ function getFirst() {
 	return NULL;
 }
 
+function getFirstInt() {
+	for ( $i = 0; $i < func_num_args(); $i++ ) {
+		$value = func_get_arg($i);
+		if (is_object($value) || is_array($value)) continue;
+		if (!(is_null($value) || trim($value) === '')) {
+			return intval($value);
+		}
+	}
+	return NULL;
+}
 
 
 /**
