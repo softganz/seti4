@@ -7,8 +7,6 @@
 * @usage import('model:code')
 */
 
-$debug = true;
-
 class ChangwatModel {
 	public static function items($conditions = NULL, $options = '{}') {
 		$defaults = '{debug: false, result: "record", zone: "changwat", selectText: null}';
@@ -59,7 +57,7 @@ class ChangwatModel {
 }
 
 class AmpurModel {
-	function inChangwat($changwat) {
+	public static function inChangwat($changwat) {
 		if (empty($changwat)) return [];
 
 		return mydb::select(
