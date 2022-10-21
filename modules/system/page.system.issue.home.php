@@ -49,7 +49,7 @@ class SystemIssueHome extends Page {
 								return new Card([
 									'children' => [
 										new ListTile([
-											'title' => $item->host.$item->path,
+											'title' => $item->host.$item->path.($item->query ? '?'.$item->query : ''),
 											'leading' => $item->issueId,
 											'subtitle' => ($item->reportBy ? 'By : '.$item->reportBy : NULL)
 												. (' @'.$item->reportDate),
@@ -71,7 +71,7 @@ class SystemIssueHome extends Page {
 														'attribute' => ['data-width' => 'full']
 													]), // Button
 													new Button([
-														'href' => $item->host.$item->path,
+														'href' => $item->host.$item->path.($item->query ? '?'.$item->query : ''),
 														'icon' => new Icon('public'),
 														'attribute' => ['target' => '_blank']
 													]), // Button
