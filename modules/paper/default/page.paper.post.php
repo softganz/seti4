@@ -9,7 +9,7 @@
 * @return String
 */
 
-$debug = true;
+import('model:node.php');
 
 function paper_post($self, $type = NULL, $tid = NULL) {
 	$ret = '';
@@ -111,9 +111,9 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 		$topic->post = (Object) post('topic',_TRIM+_STRIPTAG);
 
 		//debugMsg(post(),'post()');
-		//debugMsg($topic,'$topic');
+		// debugMsg($topic,'$topic');
 
-		$result = R::Model('node.create', $topic, '{debug: true}');
+		$result = NodeModel::create($topic, '{debug: false}');
 
 		//debugMsg($result,'$result');
 
