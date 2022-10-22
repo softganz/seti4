@@ -22,9 +22,9 @@ function view_admin_toolbar($self,$title=NULL,$nav='default',$info=NULL,$options
 
 	$self->theme->title=isset($title)?$title:'Web Site Administrator Page';
 
-	$ret.='<form id="search" class="search-box" method="get" action="'.url('admin/user/list').'" name="memberlist" role="search">';
-	$ret.='<input type="hidden" name="sid" id="sid" /><input id="search-box" class="sg-autocomplete" type="text" name="q" size="20" value="'.$_GET['q'].'" data-query="'.url('admin/get/username').'" data-altfld="sid" data-callback="submit" placeholder="Username or Name or Email"><input type="submit" class="button" value="ค้นหาสมาชิก">';
-	$ret.='</form>'._NL;
+	$ret .= '<form id="search" class="search-box" method="get" action="'.url('admin/user/list').'" name="memberlist" role="search">'
+		. '<input type="hidden" name="sid" id="sid" /><input id="search-box" class="sg-autocomplete" type="text" name="q" size="20" value="'.$_GET['q'].'" data-query="'.url('admin/get/username').'" data-altfld="sid" data-callback="submit" placeholder="Username or Name or Email"><button><i class="icon -material">search</i></button>'
+		. '</form>'._NL;
 
 	$subnav=R::View('admin.'.$nav.'.nav',$info,$options);
 	if ($subnav) {
