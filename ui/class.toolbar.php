@@ -6,9 +6,6 @@
 * Created 2020-10-01
 * Modify  2020-10-01
 *
-* Property
-* config {nav: "nav -icons"}
-*
 * @usage new Toolbar()
 ********************************************/
 
@@ -21,30 +18,20 @@ class Toolbar extends Widget {
 	var $info = NULL;
 
 	function __construct($self, $title = NULL, $nav = NULL, $info = NULL, $class = NULL, $options = '{}') {
-		if (is_array($self)) {
-			parent::__construct($self);
-			$this->self = $self->context;
-			$this->config->class = 'sg-toolbar '.($self['class'] ? $self['class'] : '-main');
-			if ($self['navigator']) {
-				foreach ($self['navigator'] as $key => $value) $this->addNav($key, $value);
-			}
-		} else {
-			$this->self = $self;
-			$this->title = $title;
-			$this->config->class = 'sg-toolbar '.($class ? $class : '-main');
-			$this->info = (is_string($info) AND substr($info,0,1) == '{') ? SG\json_decode($info) : $info;
+		$this->self = $self;
+		$this->title = $title;
+		$this->class = 'sg-toolbar '.($class ? $class : '-main');
+		$this->info = (is_string($info) AND substr($info,0,1) == '{') ? SG\json_decode($info) : $info;
 
-			if (is_string($nav)) {
-				$this->nav = $nav;
-				$this->navGroup = R::View($self->module.'.'.$nav.'.nav', $info, $options);
-				$this->config->class .= ' -'.$self->module.'-'.str_replace('.', '-', $nav);
-			}
-			$this->options = SG\json_decode($options);
-
-			$this->self->theme->title = $title;
-			$self->theme->toolbar = $this;
+		if (is_string($nav)) {
+			$this->nav = $nav;
+			$this->navGroup = R::View($self->module.'.'.$nav.'.nav', $info, $options);
+			$this->config->class .= ' -'.$self->module.'-'.str_replace('.', '-', $nav);
 		}
-		// return $this;
+		$this->options = SG\json_decode($options);
+
+		$this->self->theme->title = $title;
+		$self->theme->toolbar = $this;
 	}
 
 	function addNav($key, $nav) {
@@ -55,7 +42,7 @@ class Toolbar extends Widget {
 		$ret .= '<!-- Module Toolbar Start -->'._NL
 			. '<div '
 			. 'id="'.$this->self->module.'-toolbar" '
-			. 'class="'.$this->config->class
+			. 'class="'.$this->class
 			. (isset($this->self->theme->submodule) ? ' -'.$this->self->theme->submodule : '')
 			. '"' // end of class
 			. '>'._NL;
