@@ -14,10 +14,9 @@ function paper_user($self, $uid = NULL) {
 
 	$ret = '';
 
-	//$ret .= print_o($para,'$para');
-
-	if ($uid)
+	if (SG\getFirstInt($uid)) {
 		$ret .= R::Page('paper.list', $self, 'user',$uid, 'page',$para->page);
+	}
 	return $ret;
 }
 ?>
