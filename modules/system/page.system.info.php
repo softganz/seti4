@@ -11,6 +11,7 @@
 
 class SystemInfo extends Page {
 	function build() {
+		header('Access-Control-Allow-Origin: *');
 		return [
 			'coreName' => 'Seti',
 			'coreVersion' => cfg('core.version'),
