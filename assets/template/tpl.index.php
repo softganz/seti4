@@ -32,7 +32,7 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 }
 ?>
 <script type="text/javascript">var isRunOnHost=<?php echo cfg('server')?'true':'false';?></script>
-<script type="text/javascript">var rootUrl = url = "<?php echo _url;?>"</script>
+<script type="text/javascript">var rootUrl = url = "<?php echo _URL;?>"</script>
 
 <?php $jsLocation = cfg('clean_url')?'/js/':cfg('library');?>
 <script type="text/javascript" src="<?php echo $jsLocation;?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>

@@ -437,7 +437,7 @@ class FileModel {
 			$property->src = cfg('upload.url').$folder.'/'.sg_urlencode($fileName);
 			$property->name = cfg('upload.folder').$folder.'/'.sg_tis620_file($fileName);
 		} else {
-			$property->src = _url.cfg('upload_folder').'pics/'.$folderName.sg_urlencode($fileName);
+			$property->src = _URL.cfg('upload_folder').'pics/'.$folderName.sg_urlencode($fileName);
 			$property->name = $photo_location = cfg('folder.abs').cfg('upload_folder').'pics/'.$folderName.$fileName;
 		}
 
@@ -494,7 +494,7 @@ class FileModel {
 			$property->src = cfg('upload.url').$folder.'/'.sg_urlencode($fileName);
 		} else {
 			$property->name = $photo_location = cfg('folder.abs').cfg('upload_folder').$subFolder.$folderName.$fileName;
-			$property->src = _url.cfg('upload_folder').$subFolder.$folderName.sg_urlencode($fileName);
+			$property->src = _URL.cfg('upload_folder').$subFolder.$folderName.sg_urlencode($fileName);
 		}
 
 		if (file_exists($property->name)) {

@@ -265,12 +265,11 @@ $cfg['link_target'] = '_self';
 
 $cfg['paper.promote.items']=10;
 $cfg['paper.listing.field'] = 'detail,photo';
-
 $cfg['paper.upload.folder']=cfg('folder.abs').'upload/';
-$cfg['paper.upload.url']=_url.'upload/';
-$cfg['paper.upload.photo.url']=_url.'upload/pics/';
+$cfg['paper.upload.url']=_URL.'upload/';
+$cfg['paper.upload.photo.url']=_URL.'upload/pics/';
 $cfg['paper.upload.photo.folder']=cfg('folder.abs').'upload/pics/';
-$cfg['paper.upload.document.url']=_url.'upload/forum/';
+$cfg['paper.upload.document.url']=_URL.'upload/forum/';
 $cfg['paper.upload.document.folder']=cfg('folder.abs').'upload/forum/';
 
 

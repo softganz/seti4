@@ -191,7 +191,7 @@ global $today;
 				switch ($para->{'show-photo'}) {
 					case 'image' :
 						$photo=array_shift($topic->photo->items);
-						$topic->photo= '<div class="photo-th"><img class="'.$para->{'show-photo'}.'" src="'._url.$photo->_src.'" alt="" /></div>';break;
+						$topic->photo= '<div class="photo-th"><img class="'.$para->{'show-photo'}.'" src="'._URL.$photo->_src.'" alt="" /></div>';break;
 					case 'slide' : $topic->photo=view::photo_slide(NULL,$para->{'show-photo-width'},$para->{'show-photo-height'},'get/photoslide/'.$topic->tpid.'/imagerotator');break;
 					case 'list' : break;
 				}

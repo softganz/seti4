@@ -23,7 +23,7 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 }
 ?>
 <script type="text/javascript">var isRunOnHost=<?php echo cfg('server')?'true':'false';?></script>
-<script type="text/javascript">var url="<?php echo _url;?>";</script>
+<script type="text/javascript">var url="<?php echo _URL;?>";</script>
 <script type="text/javascript" src="<?php echo cfg('library');?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
 <script type="text/javascript" src="<?php echo cfg('library');?>jquery-ui.min<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
 <script type="text/javascript" src="<?php echo cfg('clean_url')?'js/js.':cfg('library');?>library<?php echo cfg('library.version')?'-'.cfg('library.version'):'';?>.js<?php echo cfg('theme.stylesheet.para');?>"></script>

@@ -18,7 +18,7 @@ class paper_model {
 
 	public static function get_photo_property($file,$photo) {
 		if (isset($photo)) $property=$photo;
-		$property->_src=_url.cfg('upload_folder').'pics/'.sg_urlencode($file);
+		$property->_src=_URL.cfg('upload_folder').'pics/'.sg_urlencode($file);
 		$property->_file=$photo_location=cfg('folder.abs').cfg('upload_folder').'pics/'.$file;
 		$property->_url=cfg('url.abs').cfg('upload_folder').'pics/'.sg_urlencode($file);
 		//		echo 'url.abs='.cfg('url.abs').' : '.$property->_url.'<br />';

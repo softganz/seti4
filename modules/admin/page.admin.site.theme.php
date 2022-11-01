@@ -26,7 +26,7 @@ function admin_site_theme($self) {
 	$ui=new Ui(NULL,'ui-card');
 	foreach ($themes as $theme) {
 		$theme_thumbnail_file=$theme_folder.'/'.$theme.'/theme.thumbnail.png';
-		$theme_thumbnail=_url.cfg('theme.folder').'/'.$theme.'/theme.thumbnail.png';
+		$theme_thumbnail=_URL.cfg('theme.folder').'/'.$theme.'/theme.thumbnail.png';
 		$ui->add('<h3>Theme name : '.$theme.'</h3>'
 			.(file_exists($theme_thumbnail_file)?'<a href="'.url('admin/site/theme/select/'.$theme).'"><img src="'.$theme_thumbnail.'" alt="'.$theme.'" width="200" /></a>':'No theme photo.')
 			.'<p><a href="'.url('admin/site/theme/select/'.$theme).'">Set as default</a></p>');

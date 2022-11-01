@@ -133,7 +133,7 @@ function api_image($self) {
 
 	if ( $debug ) {
 		echo _NL._NL.'<p><img src="'.url(q(),'src='.$para->src).'"></p>'._NL._NL;
-		echo '<p><img src="'._url.$para->src.'"><br />source file is '.$src_file.'</p>'._NL._NL;
+		echo '<p><img src="'._URL.$para->src.'"><br />source file is '.$src_file.'</p>'._NL._NL;
 		return true;
 	}
 

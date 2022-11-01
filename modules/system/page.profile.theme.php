@@ -20,7 +20,7 @@ function profile_theme($self) {
 	$ret .= '<ul>';
 	foreach ($themes as $theme) {
 		$theme_thumbnail_file=$theme_folder.'/'.$theme.'/theme.thumbnail.png';
-		$theme_thumbnail=_url.cfg('theme.folder').'/'.$theme.'/theme.thumbnail.png';
+		$theme_thumbnail=_URL.cfg('theme.folder').'/'.$theme.'/theme.thumbnail.png';
 		$ret.='<li><h3>Theme name : '.$theme.'</h3>';
 		$ret.=(file_exists($theme_thumbnail_file)?'<a href="'.url('profile/theme/select/'.$theme).'"><img src="'.$theme_thumbnail.'" alt="" /></a>':'No theme photo.');
 		$ret.='<p><a href="'.url('profile/theme/select/'.$theme).'">Select</a>';

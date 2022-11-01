@@ -70,7 +70,7 @@ define('_ON_LOCAL', cfg('domain.short') == 'localhost');
 define('_ON_HOST', cfg('domain.short') != 'localhost');
 define('_URL', cfg('url'));
 define('_url', cfg('url'));
-
+// debugMsg(_URL);
 
 // set to the user defined error handler
 set_error_handler('sgErrorHandler');

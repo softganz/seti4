@@ -158,7 +158,7 @@ class View {
 				switch ($para->photo) {
 					case 'image' :
 						$photo=array_shift($topic->photo->items);
-						$topic->photo= '<img class="'.$para->photo.'" src="'._url.$photo->_src.'" alt="" />';break;
+						$topic->photo= '<img class="'.$para->photo.'" src="'._URL.$photo->_src.'" alt="" />';break;
 					case 'slide' : $topic->photo=view::photo_slide(NULL,$para->photo_width,$para->photo_height,'get/photoslide/'.$topic->tpid.'/imagerotator');break;
 					case 'list' : break;
 				}
