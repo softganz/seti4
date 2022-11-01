@@ -8,7 +8,7 @@
 * @return String
 */
 
-$debug = true;
+import('model:ad.php');
 
 function view_paper_relatetopic($topicInfo) {
 	$ret = '';
@@ -66,9 +66,10 @@ function view_paper_relatetopic($topicInfo) {
 	if ($showAd && isset($GLOBALS['ad']->relate_topic)) {
 		$ret .='<div id="ad-relate_topic" class="ads -relate-topics"><h3>ลิงก์ผู้สนับสนุน</h3>'.$GLOBALS['ad']->relate_topic.'</div>';
 	}
-	$ret .=model::get_ad('relate_topic');
-	$ret .='<h3>'.tr('Relate topics').'</h3>'._NL;
-	$ret .='<ul class="topic-list -relate-topics">'._NL;
+
+	$ret .= AdModel::getAd('relate_topic');
+	$ret .= '<h3>'.tr('Relate topics').'</h3>'._NL;
+	$ret .= '<ul class="topic-list -relate-topics">'._NL;
 	$no=0;
 	foreach ($ref_dbs->items as $ref_rs) {
 		$ret .='<li><a href="'.url(($topicInfo->_relate_url?$topicInfo->_relate_url:'paper').'/'.$ref_rs->tpid).'">';
