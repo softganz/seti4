@@ -19,17 +19,6 @@
 
 class Model {
 
-	public static function user_clear() {
-		R()->user = (Object) [
-			'ok' => false,
-			'group' => [],
-		];
-		setcookie(cfg('cookie.id'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
-		setcookie(cfg('cookie.u'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
-		$_SESSION['user']=null;
-
-	}
-
 	public static function member_menu() {
 		if (!i()->ok) {
 			user_menu(
@@ -130,7 +119,7 @@ class Model {
 	}
 
 	public static function get_vocabulary($vid = NULL) {
-	static $vocabularies = array();
+		static $vocabularies = array();
 		if (!isset($vid)) {
 			$result=mydb::select('SELECT * FROM %vocabulary% ORDER BY weight,name ASC');
 			return $result;
@@ -148,24 +137,23 @@ class Model {
 		return $vocabularies[$vid];
 	}
 
-	public static function get_vocabulary_type($type) {
-		$dbs=mydb::select('SELECT vid FROM %vocabulary_types% WHERE `type`=:type',':type',$type);
-		$result=array();
-		foreach ($dbs->items as $rs) $result[]=$rs->vid;
-		return $result;
-	}
-
-	public static function get_synonyms($name) {}
-
 	public static function get_taxonomy($tid,$child=false) {
-	static $taxonomies = array();
+		static $taxonomies = array();
 		if (!array_key_exists($tid, $taxonomies)) {
-			$taxonomy = mydb::select('SELECT t.*,v.name as vocabulary_name,h.parent,ht.name as parent_name
-										FROM %tag% AS t
-											LEFT JOIN %vocabulary% AS v ON t.vid = v.vid
-											INNER JOIN %tag_hierarchy% AS h ON h.tid=t.tid
-											LEFT JOIN %tag% AS ht ON h.parent=ht.tid
-										WHERE t.tid=:tid ORDER BY t.weight, t.name LIMIT 1',':tid',$tid);
+			$taxonomy = mydb::select(
+				'SELECT
+				t.*
+				, v.`name` as `vocabulary_name`
+				, h.`parent`
+				, ht.`name` as `parent_name`
+				FROM %tag% AS t
+					LEFT JOIN %vocabulary% AS v ON t.vid = v.vid
+					INNER JOIN %tag_hierarchy% AS h ON h.tid=t.tid
+					LEFT JOIN %tag% AS ht ON h.parent=ht.tid
+				WHERE t.tid=:tid ORDER BY t.weight, t.name LIMIT 1',
+				[':tid' => $tid]
+			);
+
 			if ($taxonomy->_num_rows) {
 				$taxonomy->synonym=mydb::select('SELECT COUNT(*) `total` FROM %tag_synonym% s WHERE s.tid='.$tid.' LIMIT 1')->total;
 				$taxonomy->child=array();
@@ -199,7 +187,7 @@ class Model {
 	}
 
 	public static function get_taxonomy_tree($vid, $parent = 0, $depth = -1, $max_depth = NULL) {
-	static $children, $parents, $terms;
+		static $children, $parents, $terms;
 
 		$depth++;
 
@@ -353,22 +341,6 @@ sg_text2html($topic->post->body).'
 		return $photo;
 	}
 
-
-	public static function get_documents() {
-		$para=para(func_get_args());
-		if ($para->fid) $para->limit=1;
-
-		$where=array();
-		if ($para->fid) $where[]='f.fid='.$para->fid;
-		if ($para->gallery) $where[]='f.gallery='.$para->gallery;
-		$sql_cmd = 'SELECT f.* , u.username FROM %topic_files% AS f ';
-		$sql_cmd .= '  LEFT JOIN %users% as u ON u.uid=f.uid ';
-		$sql_cmd .= '  WHERE ('.implode(') (',$where).')';
-		if ($para->limit) $sql_cmd .= ' LIMIT '.$para->limit;
-		$result=mydb::select($sql_cmd);
-		return $result;
-	}
-
 	public static function get_photo_property($file, $folder = null) {
 		if (is_object($file)) {
 			$property = $file;
@@ -401,7 +373,7 @@ sg_text2html($topic->post->body).'
 			$property->_src = cfg('upload.url').$folder.'/'.sg_urlencode($filename);
 			$property->_file = cfg('upload.folder').$folder.'/'.sg_tis620_file($filename);
 		} else {
-			$property->_src = _url.cfg('upload_folder').'pics/'.$folderName.sg_urlencode($filename);
+			$property->_src = _URL.cfg('upload_folder').'pics/'.$folderName.sg_urlencode($filename);
 			$property->_file = $photo_location = cfg('folder.abs').cfg('upload_folder').'pics/'.$folderName.$filename;
 		}
 
@@ -420,104 +392,6 @@ sg_text2html($topic->post->body).'
 			$property->_exists=false;
 		}
 		return $property;
-	}
-
-	public static function get_photo() {
-		global $user;
-		$para = para(func_get_args());
-		$field = option($para->field);
-		if ($para->id) $id = $para->id;
-
-		$sql_cmd = 'SELECT f.* , u.username as username , u.name as owner_name ';
-		$sql_cmd .= '  FROM %topic_files% as f ';
-		$sql_cmd .= '  LEFT JOIN %users% as u ON f.uid=u.uid ';
-
-		$where[]='(type="photo")';
-		if ($para->id) $where[]='(f.fid in ('.$para->id.'))';
-		if ($para->gallery) $where[]='(f.gallery in ('.$para->gallery.'))';
-		if ($para->tag) $where[]='(f.tag=\''.$para->tag.'\')';
-		$limit = SG\getFirst($para->limit,1);
-		$sql_cmd .= $where ? ' WHERE '.implode(' and ',$where) : '';
-		$sql_cmd .= ' ORDER BY '.($para->order?$para->order:'fid').' '.($para->sort?$para->sort:'DESC');
-		if ($para->limit != 'all') $sql_cmd .= ' LIMIT '.$limit;
-
-		$result = mydb::select($sql_cmd);
-		debugMsg(mydb()->_query);
-		if ($result->_num_rows && $limit==1) {
-			$rs=$result;
-			unset($result);
-			$result->_num_rows=1;
-			$result->items[]=$rs;
-		}
-		if ($result->_num_rows) {
-			foreach ($result->items as $key=>$rs) {
-				$result->items[$key]->_src=cfg('upload.url').$rs->username.'/'.sg_urlencode($rs->file);
-				$result->items[$key]->_file=$photo_file=cfg('upload.folder').$rs->username.'/'.$rs->file;
-				if (file_exists($photo_file)) {
-					$size=getimagesize($photo_file);
-					$result->items[$key]->_size->width=$size[0];
-					$result->items[$key]->_size->height=$size[1];
-					$result->items[$key]->_size->attr=$size[3];
-					$result->items[$key]->_size->bits=$size['bits'];
-					$result->items[$key]->_size->channels=$size['channels'];
-					$result->items[$key]->_size->mime=$size['mime'];
-				}
-			}
-		}
-
-		if (debug('sql')) echo '<b>sql : </b>'.mydb()->_query.'<br /><br /><font color=red>'.mysql_error().'</font><br /><br /><font color=red>'.mysql_error().'</font><br /><br />';
-		return $limit==1 ? $result->items[0] : $result;
-	}
-
-	public static function get_ad($location=NULL,$items=1,$order=NULL, $sort='ASC') {
-		if (empty($items)) $items=1;
-		$result=array();
-		if (!mydb::table_exists('ad')) return ;
-
-		$stmt = 'SELECT * FROM %ad%
-							WHERE `location`="'.$location.'" AND `active`="yes" AND
-								(`start`<="'.date('Y-m-d H:i:s').'" AND `stop`>="'.date('Y-m-d H:i:s').'")
-							'.($order?'ORDER BY '.$order.' '.$sort:'');
-		$dbs=mydb::select($stmt);
-
-		if ($dbs->_empty) {
-			$stmt = 'SELECT * FROM %ad% WHERE `location`="'.$location.'" AND `default`="yes" ';
-			$dbs = mydb::select($stmt);
-		}
-		foreach ($dbs->items as $rs) {
-			$result[]=(array)$rs;
-		}
-		//$ret.=print_o($result,'$result');
-		srand((float) microtime() * 10000000);
-		$rand_keys = count($result)>$items ? ($items==1?array(array_rand($result, $items)):array_rand($result, $items)) : array_keys($result);
-		if ($rand_keys) {
-			$ret .= '<div id="ad-'.$location.'" class="ads">'._NL;
-			$ret .= '<ul>'._NL;
-			foreach ($rand_keys as $key) {
-				$ret .= '<li>';
-				$banner=$result[$key];
-				$ad_id[]=$banner['aid'];
-				$is_link=$banner['url']; // || (!empty($banner['body']) || ());
-				if ($is_link) $ret .= '<a href="'.url('ad/'.$banner['aid'].'/click').'" title="'.htmlspecialchars($banner['title']).'">';
-				$img=cfg('upload.url').cfg('ad.img_folder').'/'.$banner['file'];
-				$ext=strtolower(substr($img,strrpos($img,'.')+1));
-				if ($ext=='swf') {
-					$ret .='<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" width="'.$banner['width'].'" height="'.$banner['height'].'">
-	<param name="movie" value="'.$img.'">
-	<param name="quality" value="high">
-	<embed src="'.$img.'" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="'.$banner['width'].'" height="'.$banner['height'].'"></embed></object>';
-				} else if (in_array($ext,array('jpg','jpeg','gif','png'))) {
-					$ret .= '<img src="'.$img.'" width="'.$banner['width'].'" height="'.$banner['height'].'" alt="'.htmlspecialchars($banner['title']).'" />';
-				} else $ret.=$banner['body'];
-
-				if ($is_link) $ret .= '</a>';
-				$ret .= '</li>'._NL;
-			}
-			$ret .= '</ul>'._NL;
-			$ret .= '</div><!--end of ad location '.$location.'-->'._NL;
-			mydb::query('UPDATE %ad% SET views=views+1 WHERE aid in ('.implode(',',$ad_id).')');
-		}
-		return $ret;
 	}
 
 	public static function get_topic_by_id($tpid,$para=NULL,$revid=NULL) {
