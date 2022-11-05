@@ -42,11 +42,12 @@
 
 	.page.-nav>.nav.-search .search-box {width: 70px; margin: 6px 0 auto 0; height: 32px; border-radius: 16px;}
 	.page.-nav>.nav.-search .search-box button {border-radius: 0 16px 16px 0;}
+
+	.page.-nav>.nav.-main {height:48px; margin:0; display: flex; flex-wrap: nowrap; justify-content: flex-end; z-index:1100;}
 	.page.-nav>.nav.-main .menu.-pulldown>li>a {overflow: hidden;}
 	.page.-nav>.nav.-main:not(.-owner) .menu.-main>li {font-weight: normal;}
 	.page.-nav>.nav.-main .menu.-main>li ul {font-weight: normal;}
 	.page.-nav>.nav.-main .menu.-main ul {min-width: 240px;}
-	.page.-nav>.nav.-main {height:48px; margin:0; display: flex; flex-wrap: nowrap; justify-content: flex-end; z-index:1100;}
 	.page.-nav>.nav.-main.sg-responsivemenu.-active>.menu {top: 48px;}
 
 .page.-content {margin: 0 auto; padding: 48px 0 0 0; position: relative;}
