@@ -70,10 +70,10 @@ define('_ON_LOCAL', cfg('domain.short') == 'localhost');
 define('_ON_HOST', cfg('domain.short') != 'localhost');
 define('_URL', cfg('url'));
 define('_url', cfg('url'));
-// debugMsg(_URL);
 
 // set to the user defined error handler
 set_error_handler('sgErrorHandler');
+register_shutdown_function('sgShutdown');
 
 // Test error trigger
 //echo 'error_reporting()='.error_reporting().'('.E_ALL.')'.'<br />';
@@ -94,6 +94,11 @@ if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js','css']) && ba
 } else {
 	die('SORRY!!!! Core Function Not Exists.');
 }
+
+
+/* Core Process Load End */
+
+
 
 /**
  * Generate file not found from include file
@@ -269,7 +274,9 @@ function sgErrorHandler($code, $description, $file = null, $line = null, $contex
 	//echo '<p>Debug Error: code : '.$code.' display '.$displayErrors.' : ['.$code.'] : '.$description.' in [' . $file . ', line ' . $line . ']'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code).'</p>';
 	error_reporting(0);
 
-	if (sgIsFatalError($code)) echo sgFatalError($code,$description,$file,$line);
+	$description = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
+
+	if (sgIsFatalError($code)) echo sgFatalError($code, $description, $file, $line);
 
 	if ($displayErrors === 'off') {
 		return false;
@@ -359,7 +366,7 @@ function sgFatalError($code, $description, $file, $line) {
 		'name' => function_exists('i') ? i()->name : NULL,
 		'referer' => $_SERVER["HTTP_REFERER"],
 		'agent'=> $_SERVER['HTTP_USER_AGENT'],
-		'description' => $description,
+		'description' => 'Error at line <b>'.$line.'</b><br />'.$description,
 	];
 
 	if (!in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
@@ -373,13 +380,13 @@ function sgFatalError($code, $description, $file, $line) {
 		]);
 	}
 
-	$msg = 'There is error in <b>'.$reportFileName.'</b> '
-		. 'line <b>'.$line.'</b>. '
+	$msg = 'There is error in <b>'.$reportData['url'].'</b>.<br /><br />'
+		// . 'line <b>'.$line.'</b>. '
 		. 'Please '
 		// . '<a href="https://www.softganz.com/system/issue/new?file='.$reportFileName.'&line='.$line.'&date='.$reportData['date'].'user='.$userId.'&url='.$errorUrl.'" target="_blank">'
 		. 'report to webmaster.'
 		// . '</a>'
-		. ($isAdmin ? '<br /><br />'.$description : '');
+		. ($isAdmin ? '<br /><br />'.$reportData['description'] : '');
 
 	$msgHelp = '';
 	$debugMsg = debugMsg();
@@ -413,15 +420,12 @@ function sgIsFatalError($code) {
 }
 
 function sgShutdown() {
-	global $R;
 	$error = error_get_last();
 	if ( sgIsFatalError($error["type"]) ) {
 		sgErrorHandler( $error["type"], $error["message"], $error["file"], $error["line"] );
 	}
-	if (is_object($R->myDb) && method_exists($R->myDb,'close')) {
-		$R->myDb->close();
+	if (is_object(R()->myDb) && method_exists(R()->myDb,'close')) {
+		R()->myDb->close();
 	}
 }
-
-register_shutdown_function('sgShutdown');
 ?>
