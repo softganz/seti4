@@ -61,6 +61,22 @@ class UserModel {
 		else if (is_array($user)) $user = (Object) $user;
 		else $user = (Object) [];
 
+		if (empty($user->username)) {
+			return (Object) [
+				'uid' => NULL,
+				'complete' => false,
+				'error' => true,
+				'text' => 'Username not specify'
+			];
+		} else if (UserModel::get(['username' => $user->username])) {
+			return (Object) [
+				'uid' => NULL,
+				'complete' => false,
+				'error' => true,
+				'text' => 'Username was duplicate'
+			];
+		}
+
 		$result = (Object) [
 			'uid' => NULL,
 			'complete' => false,
@@ -70,7 +86,7 @@ class UserModel {
 			'name' => $user->name,
 			'email' => $user->email,
 			'auth' => 'user',
-			'process' => ['UserModel::create() => request'],
+			'process' => ['UserModel::create() => request']
 		];
 
 
@@ -98,10 +114,17 @@ class UserModel {
 		$user->lastName = SG\getFirst($user->lastName);
 		$user->admin_remark = SG\getFirst($user->admin_remark);
 
+		$user->userRoles = '';
+		if ($user->roles && is_string($user->roles)) {
+			$user->userRoles = $user->roles;
+		} else if (is_object($user->roles)) {
+			$user->userRoles = $user->roles->role;
+		}
+
 		$stmt = 'INSERT INTO %users%
-			( `username` , `password` , `name` , `phone` , `email` , `real_name`, `last_name`, `status` , `datein` , `about`, `organization`, `admin_remark` )
+			( `username` , `password` , `name` , `roles`, `phone` , `email` , `real_name`, `last_name`, `status` , `datein` , `about`, `organization`, `admin_remark` )
 			VALUES
-			( :username , :encryptPassword , :name , :phone , :email , :realName, :lastName, "enable" , :datein , "", :organization, :admin_remark )';
+			( :username , :encryptPassword , :name , :userRoles, :phone , :email , :realName, :lastName, "enable" , :datein , "", :organization, :admin_remark )';
 
 		mydb::query($stmt, $user);
 
@@ -120,9 +143,9 @@ class UserModel {
 		if ($user->roles) {
 			mydb::query(
 				'INSERT INTO %users_role%
-				(`uid`, `role`, `status`, `created`)
+				(`uid`, `role`, `status`, `approved`, `created`)
 				VALUES
-				(:userId, :role, :status, :created)
+				(:userId, :role, :status, :approved, :created)
 				ON DUPLICATE KEY UPDATE
 				`uid` = :userId
 				',
@@ -130,6 +153,7 @@ class UserModel {
 					':userId' => $result->uid,
 					':role' => $user->roles->role,
 					':status' => $user->roles->status,
+					':approved' => $user->roles->approved,
 					':created' => date('U'),
 				]
 			);
