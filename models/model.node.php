@@ -11,8 +11,6 @@
 * @usage NodeModel::function($conditions, $options)
 */
 
-$debug = true;
-
 class NodeModel {
 
 	public static function get($id, $options = '{}') {
