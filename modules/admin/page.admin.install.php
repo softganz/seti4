@@ -104,6 +104,10 @@ function __admin_install_set_default_config() {
  */
 function __admin_install_create_table($prefix=null) {
 	$query = (Object) [];
+	$result = (Object) [
+		'query' => [],
+	];
+
 	$query->block_daykey='CREATE TABLE IF NOT EXISTS %block_daykey% (
 		`id` int(10) unsigned NOT NULL auto_increment,
 		`key1` char(10) default NULL,
@@ -224,16 +228,16 @@ function __admin_install_create_table($prefix=null) {
 			KEY `access` (`access`)
 		);';
 
-	$query->users_online = 'CREATE TABLE IF NOT EXISTS %users_role% (
+	$query->users_role = 'CREATE TABLE IF NOT EXISTS %users_role% (
 			`uid` int(10) UNSIGNED NOT NULL,
-			`service` varchar(20) NOT NULL,
+			`role` varchar(20) NOT NULL,
 			`status` enum("WAITING","ENABLE","BLOCK") DEFAULT NULL,
 			`reason` varchar(100) DEFAULT NULL,
 			`approved` date DEFAULT NULL,
 			`created` bigint(20) DEFAULT NULL,
-			PRIMARY KEY (`uid`,`service`),
+			PRIMARY KEY (`uid`,`role`),
 			KEY `uid` (`uid`),
-			KEY `service` (`service`),
+			KEY `role` (`role`),
 			KEY `status` (`status`),
 			KEY `created` (`created`),
 			KEY `dateapproved` (`approved`)
