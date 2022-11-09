@@ -1,9 +1,9 @@
 <?php
 /**
 * Core Function :: Controller Process Web Configuration and Request
-* Version 4.00
-* Created 2006-12-16
-* Modify  2022-03-07
+* Created :: 2006-12-16
+* Modify  :: 2022-11-09
+* Version :: 2
 */
 
 global $R;
@@ -557,6 +557,9 @@ class SgCore {
 
 		$loadCount++;
 
+		// Remove .php extension
+		$packageName = preg_replace('/\.php$/i', '', $packageName);
+
 		if (preg_match('/^(r|widget|view|page|on|manifest|module)\.(.*)/i',$packageName,$out)) {
 			// Begin with keyword and follow by .
 			list(, $resourceType, $package) = $out;
@@ -695,6 +698,7 @@ class SgCore {
 				$fileName = 'page.';
 				$funcName = '';
 				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request));
+
 				if ($subModule) {
 					if (isset($request[2]) && is_string($request[2])) $paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
 					$paths[] = 'modules/'.$module.'/'.$subModule;
