@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created 2006-12-16
- * @modify  2022-03-08
+ * @modify  2022-11-09
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +45,10 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name', 'Seti');
 cfg('core.version.major', 4);
-cfg('core.version.code', 9);
-cfg('core.version', '4.2.02');
+cfg('core.version.code', 10);
+cfg('core.version', '4.2.03');
+cfg('core.release', '2022-11-09');
 cfg('core.location', ini_get('include_path'));
-cfg('core.release', '2022-07-22');
 cfg('core.folder', _CORE_FOLDER);
 cfg('core.config', _CONFIG_FILE);
 
@@ -70,6 +70,7 @@ define('_ON_LOCAL', cfg('domain.short') == 'localhost');
 define('_ON_HOST', cfg('domain.short') != 'localhost');
 define('_URL', cfg('url'));
 define('_url', cfg('url'));
+// debugMsg(_URL);
 
 // set to the user defined error handler
 set_error_handler('sgErrorHandler');
@@ -95,8 +96,8 @@ if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js','css']) && ba
 	die('SORRY!!!! Core Function Not Exists.');
 }
 
-
 /* Core Process Load End */
+
 
 
 
@@ -380,8 +381,8 @@ function sgFatalError($code, $description, $file, $line) {
 		]);
 	}
 
-	$msg = 'There is error in <b>'.$reportData['url'].'</b>.<br /><br />'
-		// . 'line <b>'.$line.'</b>. '
+	$msg = 'There is error in <b>'.$reportFileName.'</b> '
+		. 'line <b>'.$line.'</b>. '
 		. 'Please '
 		// . '<a href="https://www.softganz.com/system/issue/new?file='.$reportFileName.'&line='.$line.'&date='.$reportData['date'].'user='.$userId.'&url='.$errorUrl.'" target="_blank">'
 		. 'report to webmaster.'
@@ -420,12 +421,13 @@ function sgIsFatalError($code) {
 }
 
 function sgShutdown() {
+	global $R;
 	$error = error_get_last();
 	if ( sgIsFatalError($error["type"]) ) {
 		sgErrorHandler( $error["type"], $error["message"], $error["file"], $error["line"] );
 	}
-	if (is_object(R()->myDb) && method_exists(R()->myDb,'close')) {
-		R()->myDb->close();
+	if (is_object($R->myDb) && method_exists($R->myDb,'close')) {
+		$R->myDb->close();
 	}
 }
 ?>
