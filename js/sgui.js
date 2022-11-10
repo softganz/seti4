@@ -643,13 +643,10 @@ function sgWebViewDomProcess(id) {
 				// @deprecated => use data-done="remove:parent element"
 				// REMOVE element after done
 				if (linkData.removeparent) {
-					console.log('removeparent')
 					var removeTag = linkData.removeparent
 					var $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag)
 					$removeElement.remove()
 				}
-
-				//console.log('POST DONE')
 
 				// Process CALLBACK function
 				if (settings.callback) settings.callback($this,html)
