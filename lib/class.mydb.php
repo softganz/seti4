@@ -304,27 +304,29 @@ class MyDb {
 		//debugMsg('Prepare :: '.$stmt);
 		//debugMsg('With '.print_o($prepareArgs,'$prepareArgs'));
 
-		$prepareStmt = mydb::prepare_stmt($myDb, $stmt, $prepareArgs);
+		$replaceStmt = mydb::prepare_stmt($myDb, $stmt, $prepareArgs);
 
-		if (!$prepareStmt) return false;
+		if (!$replaceStmt || !$myDb->status) return false;
 
-		if ($myDb->status) {
-			$mysqlStmt = $myDb->mysqli->stmt_init();
+		$sqlStmt = $myDb->mysqli->stmt_init();
+		$sqlStmt->_prepare = false;
+		$sqlStmt->_errno = NULL;
+		$sqlStmt->_error_msg = NULL;
 
-			if ($mysqlStmt->prepare($prepareStmt)) {
-				$mysqlStmt->_prepare = true;
-			} else {
-				// if query error Prepare empty statement
-				$mysqlStmt->_prepare = false;
+		try {
+			if ($sqlStmt->prepare($replaceStmt)) {
+				$sqlStmt->_prepare = true;
 			}
-		} else {
-			$mysqlStmt = false;
+		} catch(Exception $exception) {
+			$sqlStmt->_errno = $exception->getCode();
+			$sqlStmt->_error_msg = $exception->getMessage();
+			// print_r($exception);
+			// debugMsg($sqlStmt, '$sqlStmtEXCEPTION');
 		}
 
-		$mysqlStmt->_query = trim($prepareStmt);
-		//debugMsg(print_o($mysqlStmt,'$mysqlStmt'));
+		$sqlStmt->_query = trim($replaceStmt);
 		//debugMsg('<em>===== PREPARE COMPLETE ('.$methodCount.') =====</em>');
-		return $mysqlStmt;
+		return $sqlStmt;
 	}
 
 
@@ -370,40 +372,48 @@ class MyDb {
 
 			$options = SG\json_decode($optionPara, $optionDefault);
 
-			$mysqlStmt = call_user_func_array([$myDb, 'prepare'], $prepareArgs);
+			$prepareStmt = call_user_func_array([$myDb, 'prepare'], $prepareArgs);
 
-			$stmt = $mysqlStmt->_query;
+			$stmt = $prepareStmt->_query;
 			// echo '<pre>'.$stmt.'</pre>';
-			// print_r($mysqlStmt);
-			// echo $mysqlStmt['errno'];
+			// print_o($prepareStmt, '$stmtResult',1);
+			// echo $prepareStmt['errno'];
 
 			// debugMsg($prepareArgs,'$prepareArgs');
 			// debugMsg('Query :: QUERY prepare = '.$stmt);
-			if (!$mysqlStmt->errno) $mysqlStmt->close();
+			if (!$prepareStmt->_errno) $prepareStmt->close();
 			$resultmode = NULL;
 		}
 
 		if ($myDb->simulate) echo 'Simulate :'.$stmt;
 
-		$data = [];
+		$data = (Object) [
+			'_error' => false,
+			'_error_no' => NULL,
+			'_affected_rows' => 0,
+			'_query' => '',
+			'items' => []
+		];
 
 		$timer = new Timer();
 		$timer->start('query');
 
-		if ($myDb->simulate) {
+		if ($prepareStmt->_errno) {
+			//
+		} else if ($myDb->simulate) {
 			$res = NULL;
 		} else if ($myDb->_multiquery) {
-			$data = [];
 			$res = $myDb->mysqli->multi_query($stmt);
 			if ($res) {
 				$i = 0;
+				$data->items[$i] = [];
 				// Cycle through multiquery results
 				do {
-					$data[$i]->_query = $stmt;
+					$data->_query .= $stmt._NL;
 					if ($res = $myDb->mysqli->store_result()) {
 						// Cycle through each results
 						foreach ($res->fetch_all(MYSQLI_ASSOC) as $rs)
-							$data[$i]->items[] = (Object) $rs;;
+							$data->items[$i][] = (Object) $rs;
 						$res->free();
 						$i++;
 					}
@@ -411,7 +421,6 @@ class MyDb {
 				$myDb->mysqli->next_result();
 			}
 		} else {
-			$data = (Object) NULL;
 			$res = $myDb->mysqli->query($stmt);
 			$data->_query = $stmt;
 			if (is_object($res) && $res) {
@@ -459,6 +468,7 @@ class MyDb {
 			$queryMsg .= ($affected_rows?' <strong>'.$affected_rows.'</strong> affected rows':'');
 			$queryMsg .= $error ? $error : '';
 			$queryMsg .= (isset($caller['from']) ? '<br /><font color="gray">-- Call from '.$caller['from'].'</font>':'');
+
 			$data->_query = $myDb->_query = $queryMsg;
 			$myDb->_query_items[] = $queryMsg;
 			mydb()->_query = $queryMsg;
@@ -540,31 +550,33 @@ class MyDb {
 
 		if (isset($options->sum)) $sumFields = explode(',',$options->sum);
 
-		$stmt = call_user_func_array([$myDb, 'prepare'], $args);
+		$prepareStmt = call_user_func_array([$myDb, 'prepare'], $args);
+		// debugMsg($prepareStmt, '$prepareStmt');
 
 		if ($isExtDb) unset($args[1]);
 
 		if ($debug) {
-			debugMsg('Prepare complete :: '.$stmt->_query);
-			debugMsg($stmt, '$stmt');
+			debugMsg('Prepare complete :: '.$prepareStmt->_query);
+			debugMsg($prepareStmt, '$prepareStmt');
 		}
 
-		// if (!$stmt->_prepare) return $selectResult;
+		// if (!$prepareStmt->_prepare) return $selectResult;
 
 		$timer = new Timer();
 		$timer->start('query');
 
-		if ($stmt->_prepare && $mysqlnd) {
+		if ($prepareStmt->_prepare && $mysqlnd) {
 			// get_result ใช้ได้เมื่อมี driver
 			// สามารถ query ได้มากกว่า
-			$stmt->execute();
-			$stmtResult = $stmt->get_result();
-			$affected_rows = $stmt->affected_rows;
-		} else if ($stmt->_prepare) {
-			$stmtResult = $myDb->mysqli->query($stmt->_query);
+			$prepareStmt->execute();
+			$stmtResult = $prepareStmt->get_result();
+			$affected_rows = $prepareStmt->affected_rows;
+		} else if ($prepareStmt->_prepare) {
+			$stmtResult = $myDb->mysqli->query($prepareStmt->_query);
 			$affected_rows = $myDb->mysqli->affected_rows;
 		} else {
 			// Prepare error
+			// debugMsg('PREPARE ERROR!!!'.$prepareStmt->_error_msg);
 		}
 
 		$timer->stop('query');
@@ -573,16 +585,16 @@ class MyDb {
 		$myDb->_query_times += $myDb->_last_query_time;
 
 
-		if ((isset($stmt->error) && $stmt->error) || post('debug')=='query') $caller = get_caller(__FUNCTION__);
+		if ((isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg) || post('debug')=='query') $caller = get_caller(__FUNCTION__);
 
-		$queryMsg = $stmt->_query.';';
-		$queryMsg .= (isset($stmt->error) && $stmt->error) ? '<font color="red">-- '.$stmt->errno.':'.$stmt->error.'</font>':'';
+		$queryMsg = $prepareStmt->_query.';';
+		$queryMsg .= (isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg) ? '<font color="red">-- '.$prepareStmt->_errno.':'.$prepareStmt->_error_msg.'</font>' : '';
 
-		$queryMsg .= '<br /><font color="green">-- '.($is_simulate?'was simulate ':'').'in <b>'.$myDb->_last_query_time.'</b> ms.</font>';
-		$queryMsg .= ($affected_rows?' <strong>'.$affected_rows.'</strong> affected rows':'');
-		$queryMsg .= (isset($caller['from']) ? '<br /><font color="gray">-- Call from '.$caller['from'].'</font><br />':'');
+		$queryMsg .= '<br /><font color="green">-- '.($is_simulate ? 'was simulate ' : '').'in <b>'.$myDb->_last_query_time.'</b> ms.</font>';
+		$queryMsg .= ($affected_rows ? ' <strong>'.$affected_rows.'</strong> affected rows' : '');
+		$queryMsg .= (isset($caller['from']) ? '<br /><font color="gray">-- Call from '.$caller['from'].'</font><br />' : '');
 
-		if ($debug && $stmt->error) debugMsg('<font color="red"><b>SELECT ERROR :</b><hr />'.$queryMsg.'</font>');
+		if ($debug && $prepareStmt->_error_msg) debugMsg('<font color="red"><b>SELECT ERROR :</b><hr />'.$queryMsg.'</font>');
 
 		if (mydb()->_watchlog) mydb()->_query = $queryMsg;
 
@@ -590,18 +602,20 @@ class MyDb {
 
 		$selectResult->_type = 'record set';
 		$selectResult->_empty = true;
-		$selectResult->_error = false;
+		$selectResult->_errno = $prepareStmt->_errno;
+		$selectResult->_error = $prepareStmt->_errno;
+		$selectResult->_error_msg = $prepareStmt->_error_msg;
 		$selectResult->_found_rows = 0;
 		$selectResult->_num_rows = 0;
 		$selectResult->_start_row = 0;
 		$selectResult->_times = $myDb->_last_query_time;
-		$selectResult->_query = $stmt->_query; //preg_replace('/\t/Sm', ' ', $stmt->_query).';';
+		$selectResult->_query = $prepareStmt->_query; //preg_replace('/\t/Sm', ' ', $prepareStmt->_query).';';
 		$selectResult->_vars = array_merge_recursive($myDb->_values, array_slice($args,1));
 		if ($sumFields) {
 			$selectResult->sum = new stdClass();
 			foreach ($sumFields as $v) $selectResult->sum->{$v} = 0;
 		}
-		if ($options->fieldType) $selectResult->_field = $myDb->__fetch_fields($stmt);
+		if ($options->fieldType) $selectResult->_field = $myDb->__fetch_fields($prepareStmt);
 
 		$selectResult->items = [];
 
@@ -610,11 +624,11 @@ class MyDb {
 		if ($options->reset) $myDb->reset();
 
 		// If error then watchdog log
-		if (isset($stmt->error) && $stmt->error && mydb()->_watchlog) {
+		if (isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg && mydb()->_watchlog) {
 			mydb()->_query = $queryMsg;
 			$selectResult->_query = $queryMsg;
-			$myDb->_error = $selectResult->_error = $stmt->errno;
-			$myDb->_error_msg = $selectResult->_error_msg = $stmt->error;
+			$myDb->_error = $selectResult->_errno;
+			$myDb->_error_msg = $selectResult->_error_msg;
 			if (mydb()->_watchlog) {
 				mydb()->_watchlog = false;
 				R::Model('watchdog.log','mydb','select',$queryMsg);
@@ -715,7 +729,7 @@ class MyDb {
 				break;
 		}
 
-		if ($stmt->_prepare) $stmt->close();
+		if ($prepareStmt->_prepare) $prepareStmt->close();
 		if ($debug) debugMsg('<font color="green"><b><=== SELECT END #'.$selectCountTimes.'</b></font>');
 
 		return $selectResult;
