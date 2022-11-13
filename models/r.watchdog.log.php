@@ -22,7 +22,7 @@ function r_watchdog_log($module = NULL, $keyword = NULL, $message = NULL, $uid =
 		'fldname' => $fldname,
 	];
 
-	//if (i()->username == 'softganz') echo 'LOG : '.mydb()->_query.'<br />';
+	// if (i()->username == 'softganz') echo 'LOG : '.mydb()->_query.'<br />';
 
 	mydb()->_watchlog = false;
 	$r = mydb::query(
@@ -33,6 +33,6 @@ function r_watchdog_log($module = NULL, $keyword = NULL, $message = NULL, $uid =
 		$watch);
 	mydb()->_watchlog = true;
 
-	//if (i()->username == 'softganz') echo 'WATCH : '.$stmt.print_o($watch,'$watch').print_o($r,'$r').'<br />';
+	// if (i()->username == 'softganz') echo 'WATCH : '.$stmt.print_o($watch,'$watch').print_o($r,'$r').'<br />';
 }
 ?>
