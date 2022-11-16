@@ -67,7 +67,7 @@ function view_paper_relatetopic($topicInfo) {
 		$ret .='<div id="ad-relate_topic" class="ads -relate-topics"><h3>ลิงก์ผู้สนับสนุน</h3>'.$GLOBALS['ad']->relate_topic.'</div>';
 	}
 
-	$ret .= AdModel::getAd('relate_topic');
+	$ret .= class_exists('AdModel') ? AdModel::getAd('relate_topic') : '';
 	$ret .= '<h3>'.tr('Relate topics').'</h3>'._NL;
 	$ret .= '<ul class="topic-list -relate-topics">'._NL;
 	$no=0;
