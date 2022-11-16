@@ -2784,7 +2784,11 @@ $(document).on('change','.sg-village', function() {
 
 
 
-
+/*
+* sgDrawMap :: Display Google Map
+* Written by Panumas Nontapan
+* https://softganz.com
+*/
 var sgDrawMap = function(thisMap, options = {}) {
 	var defaults = {
 		gisDigit: 14,
@@ -2800,6 +2804,7 @@ var sgDrawMap = function(thisMap, options = {}) {
 		height: '100%',
 		pin: [],
 		markers: [],
+		address: [],
 		done: null,
 		debug: false,
 		callback : false,
@@ -2955,7 +2960,7 @@ var sgDrawMap = function(thisMap, options = {}) {
 			})
 			.done(function() {
 				// console.log('sg-action COMPLETE');
-				sgActionDone(settings.done)
+				sgActionDone(settings.done, null, latLng)
 			})
 	}
 
@@ -3051,6 +3056,27 @@ var sgDrawMap = function(thisMap, options = {}) {
 				})
 			}
 		});
+	}
+
+	if (settings.address) {
+		$.each( settings.address, function(i, address) {
+			// console.log(address)
+			GMaps.geocode({
+				address: address,
+				callback: function(results, status) {
+					if (status == "OK") {
+						var latlng = results[0].geometry.location;
+						if (!is_point && i == 0) $map.setCenter(latlng.lat(), latlng.lng());
+						$map.addMarker({
+							lat: latlng.lat(),
+							lng: latlng.lng(),
+							icon: "https://softganz.com/library/img/geo/circle-green.png",
+							infoWindow: {content: address}
+						});
+					}
+				}
+			})
+		})
 	}
 
 	$("#getgis").click(function() {
