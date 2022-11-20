@@ -214,6 +214,13 @@ class Widget extends WidgetBase {
 	function toString() {
 		$ret = $this->widgetName != 'Widget' ? '<!-- Start of '.$this->widgetName.' -->'._NL : '';
 		$ret .= $this->_renderWidgetContainerStart();
+		if ($this->header) {
+			if (is_object($this->header) && method_exists($this->header, 'build')) {
+				$ret .= $this->header->build();
+			} if (is_string($this->header)) {
+				$ret .= $this->header;
+			}
+		}
 		if (isset($this->children) || isset($this->child) || isset($this->body)) {
 			$ret .= $this->_renderChildren();
 		}
