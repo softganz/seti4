@@ -62,16 +62,25 @@ class ViewRenderPage extends Widget {
 
 
 		// Get Scaffold SideBar from property sideBar
-		$sideBar = '';
-		if (is_object($self->sideBar) && method_exists($self->sideBar, 'build')) {
-			$sideBar = $self->sideBar->build();
-		} else if (is_string($self->sideBar)) {
-			$sideBar = $self->sideBar;
-		} else if ($self->theme->sidebar) {
-			$sideBar = $self->theme->sidebar;
-		}
+		$sideBar = SG\getFirst($self->sideBar, $self->theme->sidebar);
+		// print_o($sideBar, '$sideBar', 1);
+		// echo 'SIDEBAR = '.$sideBar;
 
-		// debugMsg($self,'$self');
+		if (is_object($sideBar) && method_exists($sideBar, 'build')) {
+			do {
+				$sideBar = $sideBar->build();
+			} while (is_object($sideBar) && method_exists($sideBar, 'build'));
+		} else if (is_string($sideBar)) {
+			// $sideBar = $self->sideBar;
+		} else {
+			$sideBar = '';
+		}
+		// else if ($self->theme->sidebar) {
+		// 	$sideBar = $self->theme->sidebar;
+		// }
+		// print_o($sideBar, '$sideBar', 1);
+		// echo $sideBar;
+		// debugMsg($self,'$selfRender');
 
 		if (isset($self->menu)) $GLOBALS['module_menu'] = $self->menu;
 		$id = isset($self->theme->id) ? $self->theme->id : 'content-'.$self->module;
