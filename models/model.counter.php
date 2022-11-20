@@ -289,7 +289,7 @@ class CounterModel {
 	*/
 
 	public static function make($counter = NULL) {
-		if ($counter) {
+		if (is_object($counter)) {
 			if (!isset($counter->users_count)) $counter->users_count=0;
 			if (!isset($counter->hits_count)) $counter->hits_count=0;
 			if (!isset($counter->used_log)) $counter->used_log=1;
@@ -297,11 +297,13 @@ class CounterModel {
 			if (!isset($counter->created_date)) $counter->created_date=date('Y-m-d H:i:s');
 		} else {
 			$rs=mydb::select('SELECT MIN(log_date) created, SUM(hits) total_hits, SUM(users) total_users FROM %counter_day% LIMIT 1');
-			$counter->users_count=$rs->total_users;
-			$counter->hits_count=$rs->total_hits;
-			$counter->used_log=1;
-			$counter->clear_period=0;
-			$counter->created_date=$rs->created;
+			$counter = (Object) [
+				'users_count' => $rs->total_users,
+				'hits_count' => $rs->total_hits,
+				'used_log' => 1,
+				'clear_period' => 0,
+				'created_date' => $rs->created,
+			];
 		}
 		$counter->members=mydb::select('SELECT COUNT(*) `total` FROM %users% LIMIT 1')->total;
 		return $counter;
