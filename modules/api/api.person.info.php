@@ -2,8 +2,8 @@
 /**
 * API  :: Person Info Api
 * Created :: 2022-09-28
-* Modify  :: 2022-09-28
-* Version :: 1
+* Modify  :: 2022-11-19
+* Version :: 2
 *
 * @param Int $psnId
 * @param String $action
@@ -14,12 +14,12 @@
 
 import('model:person.php');
 
-class ApiPersonInfo extends PageApi {
+class PersonInfoApi extends PageApi {
 	var $psnId;
 	var $action;
 	var $right;
 
-	function __construct($psnId, $action) {
+	function __construct($psnId = NULL, $action = NULL) {
 		parent::__construct([
 			'action' => $action,
 			'personInfo' => $psnId ? PersonModel::get($psnId) : NULL,

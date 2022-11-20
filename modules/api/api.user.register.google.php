@@ -2,15 +2,15 @@
 /**
 * API 		:: User Rergister by Google Account
 * Created :: 2022-07-17
-* Modify  :: 2022-09-02
-* Version	:: 2
+* Modify  :: 2022-11-19
+* Version	:: 3
 *
 * @return Widget
 *
 * @usage api/user/register/google
 */
 
-class ApiUserRegisterGoogle extends Page {
+class UserRegisterGoogleApi extends Page {
 	var $name;
 	var $email;
 	var $googleToken;

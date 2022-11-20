@@ -13,7 +13,7 @@
 * @usage module/api/{id}/{action}[/{tranId}]
 */
 
-class ApiSystem extends PageApi {
+class SystemApi extends PageApi {
 	var $action;
 	var $tranId;
 	var $right;
@@ -23,22 +23,25 @@ class ApiSystem extends PageApi {
 			'action' => $action,
 			'tranId' => $tranId,
 			'right' => (Object) [
-				'edit' => is_admin(),
+				'admin' => is_admin(),
 			],
 		]);
 	}
 
-	function build() {
-		if (!$this->right->edit) {
-			return new ErrorMessage([
-				'responseCode' => _HTTP_ERROR_FORBIDDEN,
-				'text' => 'Access Denied',
-			]);
-		}
-		return parent::build();
+	private function _accessDenied() {
+		return [
+			'responseCode' => _HTTP_ERROR_FORBIDDEN,
+			'text' => 'Access Denied',
+		];
+	}
+
+	function date() {
+		return date('Y-m-d H:i:s');
 	}
 
 	public function issueClose() {
+		if (!$this->right->admin) return $this->_accessDenied();
+
 		if ($issueId = $this->tranId) {
 			mydb::query(
 				'UPDATE %system_issue%
@@ -51,7 +54,6 @@ class ApiSystem extends PageApi {
 				]
 			);
 		}
-		debugMsg(mydb()->_query);
 	}
 }
 ?>

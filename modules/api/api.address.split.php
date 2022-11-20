@@ -1,24 +1,24 @@
 <?php
 /**
-* Module :: Description
-* Created 2021-11-20
-* Modify  2021-11-20
+* API     :: Split Address API
+* Created :: 2021-11-20
+* Modify  :: 2022-11-19
+* Version :: 2
 *
-* @param String $arg1
-* @return Widget
+* @return Array
 *
 * @usage module/{id}/method
 */
 
-$debug = true;
-
-class ApiAddressSplit extends Page {
+class AddressSplitApi extends PageApi {
 	var $address;
 	var $type;
 
 	function __construct() {
-		$this->address = post('address');
-		$this->type = SG\getFirst(post('type'), 'long');
+		parent::__construct([
+			'address' => post('address'),
+			'type' => SG\getFirst(post('type'), 'long'),
+		]);
 	}
 
 	function build() {

@@ -1,5 +1,35 @@
 <?php
 /**
+* API     :: Image API
+* Created :: 2022-11-19
+* Modify  :: 2022-11-19
+* Version :: 2
+*
+* @return Array
+*
+* @usage api/image?src=url
+*/
+
+class ImageApi extends PageApi {
+	var $queryText;
+	var $page;
+	var $items;
+
+	function __construct() {
+		parent::__construct([
+			'queryText' => SG\getFirst(post('q')),
+			'page' => SG\getFirst(post('page'), post('p'), 1),
+			'items' => SG\getFirst(post('item'), post('n'), 50),
+		]);
+	}
+
+	function build() {
+		return api_image();
+	}
+}
+?>
+<?php
+/**
 URL function : function for call by url address
 parameter :
 src = image source file
@@ -10,7 +40,7 @@ q = result image qulity when dsttype is jpg default is 80
 debug = yes for debuging program
 */
 
-function api_image($self) {
+function api_image() {
 	$para=para(func_get_args(),'q/80');
 	$para->src=$_GET['src'];
 	$src_file = cfg('folder.abs').$para->src;

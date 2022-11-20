@@ -1,8 +1,9 @@
 <?php
 /**
-* API :: User Sign Out
-* Created 2022-07-11
-* Modify  2022-07-12
+* API     :: User Sign Out
+* Created :: 2022-07-11
+* Modify  :: 2022-11-19
+* Version :: 2
 *
 * @return JSON
 *
@@ -11,7 +12,7 @@
 
 import('model:user.php');
 
-class ApiSignout extends PageApi {
+class SignoutApi extends PageApi {
 	function build() {
 		$result = UserModel::signOutProcess();
 

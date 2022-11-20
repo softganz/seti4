@@ -1,8 +1,9 @@
 <?php
 /**
-* API :: User Sign In
-* Created 2021-06-21
-* Modify  2021-06-21
+* API     :: User Sign In
+* Created :: 2021-06-21
+* Modify  :: 2022-11-19
+* Version :: 2
 *
 * @return JSON
 *
@@ -11,7 +12,7 @@
 
 import('model:user.php');
 
-class ApiSignin extends PageApi {
+class SigninApi extends PageApi {
 	var $username;
 	var $password;
 	var $appId;

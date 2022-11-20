@@ -547,7 +547,7 @@ class SgCore {
 		$mainFolder = '';
 		$paths = [];
 		$fileName = '';
-		$funcName = '';
+		$funcName = NULL;
 		$isDebugable = true;
 		$debugLoadfile = debug('load') || $debugResourceFile;
 		$template = cfg('template');
@@ -560,7 +560,7 @@ class SgCore {
 		// Remove .php extension
 		$packageName = preg_replace('/\.php$/i', '', $packageName);
 
-		if (preg_match('/^(r|widget|view|page|on|manifest|module)\.(.*)/i',$packageName,$out)) {
+		if (preg_match('/^(r|widget|view|page|api|on|manifest|module)\.(.*)/i',$packageName,$out)) {
 			// Begin with keyword and follow by .
 			list(, $resourceType, $package) = $out;
 			$request = explode('.',$package);
@@ -608,7 +608,6 @@ class SgCore {
 		switch ($resourceType) {
 			case 'manifest' : // Manifest Resource
 				$fileName = 'manifest.';
-				$funcName = NULL;
 				if (is_dir(_CORE_FOLDER.'/modules/'.$module)) {
 					$paths[] = 'modules/'.$module;
 				} else if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
@@ -632,7 +631,6 @@ class SgCore {
 
 			case 'widget' : // Widget Resource
 				$fileName = 'widget.';
-				$funcName = NULL;
 				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/widgets';
 				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule;
 				$paths[] = 'modules/'.$module.'/widgets';
@@ -647,7 +645,6 @@ class SgCore {
 
 			case 'model' : // Model Resource
 				$fileName = 'model.';
-				$funcName = NULL;
 				$paths[] = 'modules/'.$module.'/template/'.$template;
 				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/models';
 				$paths[] = 'modules/'.$module.'/models';
@@ -694,9 +691,22 @@ class SgCore {
 				$paths[] = 'core/models';
 				break;
 
+			case 'api' : // Page Resource
+				$fileName = 'api.';
+				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request)).'Api';
+
+				$paths[] = 'modules/'.$module.'/template/'.$template;
+				if ($subModule) {
+					if (isset($request[2]) && is_string($request[2])) $paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
+					$paths[] = 'modules/'.$module.'/'.$subModule;
+				}
+				$paths[] = 'modules/'.$module.'/api';
+				$paths[] = 'core/modules/api';
+				break;
+
 			case 'page' : // Page Resource
 				$fileName = 'page.';
-				$funcName = '';
+				$funcName = ''; // for page function of old version
 				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request));
 
 				if ($subModule) {
@@ -722,7 +732,6 @@ class SgCore {
 			case 'package':
 				$paths[] = 'modules/'.$packageFolder;
 				$paths[] = 'core/'.$packageFolder;
-				$funcName = NULL;
 				// debugMsg('LOAD Package = '.$package.' , folder = '.$packageFolder);
 				break;
 
@@ -730,7 +739,6 @@ class SgCore {
 				// $fileName = 'asset.';
 				$paths[] = 'modules/'.$packageFolder.'/assets';
 				$paths[] = 'core/'.$packageFolder.'/assets';
-				$funcName = NULL;
 				break;
 		}
 
@@ -751,7 +759,6 @@ class SgCore {
 			$fileName .= (preg_match('/\.php$/i', $package) ? '' : '.php');
 		}
 		if(!is_null($funcName)) $funcName .= implode('_',$request);
-
 		if ((($funcName && function_exists($funcName)) || ($className && class_exists($className)) ) && array_key_exists($packageName, $loadFiles)) {
 			// Resource file was loaded
 			$found = true;
@@ -962,7 +969,7 @@ class SgCore {
 	* @param Array $menu
 	* @return String
 	*/
-	static function processMenu($menu) {
+	static function processMenu($menu, $prefix = 'page') {
 		$module = $menu['call']['module'];
 		$auth_code = $menu['access'];
 		$is_auth = user_access($auth_code);
@@ -1005,7 +1012,7 @@ class SgCore {
 
 		do {
 			$funcArg = array_slice($menuArgs, count($funcName));
-			$pageFile = 'page.'.implode('.', $funcName);
+			$pageFile = $prefix.'.'.implode('.', $funcName);
 
 
 			if ($debugLoadfile) {
@@ -1165,6 +1172,7 @@ class SgCore {
 		$method_result = '';
 		$request_result = '';
 		$isLoadHomePage = false;
+		$requestFilePrefix = 'page';
 		$isDebugProcess = debug('process');
 
 		if ($isDebugProcess) $process_debug = 'process debug of <b>'.$request.'</b> request<br />'._NL;
@@ -1200,6 +1208,12 @@ class SgCore {
 			}
 		} else if ($request) {
 			// Load Module Manifest
+			// is API?
+			if (preg_match('/^api\/(.*)/', $request, $out)) {
+				$request = $out[1];
+				q($request);
+				$requestFilePrefix = 'api';
+			}
 			if (q(0)) $manifest = R::Manifest(q(0));
 			if ($url_alias = url_alias($request)) {
 				// check url alias
@@ -1224,11 +1238,12 @@ class SgCore {
 		// Load Page On Request
 		if ($manifest[1] && $menu) { // This is a core version 4
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 <b>'.$request.'</b><br />';
-			list($exeClass, $found, $pageResultWidget) = SgCore::processMenu($menu);
+			// list($exeClass, $found, $pageResultWidget) = SgCore::processMenu($menu);
 		} else { // Page no manifest
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
-			list($exeClass,$found,$pageResultWidget) = SgCore::processMenu($menu);
+			// list($exeClass, $found, $pageResultWidget) = SgCore::processMenu($menu);
 		}
+		list($exeClass, $found, $pageResultWidget) = SgCore::processMenu($menu, $requestFilePrefix);
 
 		// Set page id to home
 		if ($isLoadHomePage) cfg('page_id','home');
@@ -2343,9 +2358,10 @@ function menu($path = NULL, $title = NULL, $module = NULL, $method = NULL, $arg 
 	*		'type' => 'static'
 	* ]
 	*/
-	static $items = [];
+	static $menuItems = [];
 	static $is_sort = false;
 
+	// Set path menu item
 	if ( $path && isset($title) && isset($module) ) {
 		$q = q(0,'all');
 		//		if ($path=='ibuy/*0') echo $path.print_o($q,'$q');
@@ -2361,13 +2377,13 @@ function menu($path = NULL, $title = NULL, $module = NULL, $method = NULL, $arg 
 			if (!preg_match('/^'.preg_quote($path,'/').'/',q())) return false;
 
 			// not set menu if this path was ready set
-			if (array_key_exists($path, $items)) return false;
+			if (array_key_exists($path, $menuItems)) return false;
 		}
 
 		if (is_string($arg)) $arg = explode('/',$arg);
 		else if (is_null($arg)) $arg = [];
 
-		$items[$path] = [
+		$menuItems[$path] = [
 			'path' => $path,
 			'title' => $title,
 			'call' => ['module' => $module, 'method' => $method, 'arg' => $arg],
@@ -2381,15 +2397,16 @@ function menu($path = NULL, $title = NULL, $module = NULL, $method = NULL, $arg 
 	}
 
 	if (!$is_sort) {
-		krsort($items);
+		krsort($menuItems);
 		$is_sort = true;
 	}
-	if (!isset($path)) return $items;
+	if (!isset($path)) return $menuItems;
 
+	// Return request menu item
 	if (isset($path)) {
-		foreach ($items as $mnu) {
-			$pat = preg_quote($mnu['path'], '/');
-			if (preg_match('/^('.$pat.')/', $path)) {
+		foreach ($menuItems as $mnu) {
+			$pattern = preg_quote($mnu['path'], '/');
+			if (preg_match('/^('.$pattern.')/', $path)) {
 				$mnu['call']['arg'] = is_numeric($mnu['call']['arg']) ? q($mnu['call']['arg'],'all') : $mnu['call']['arg'];
 				return $mnu;
 			}
