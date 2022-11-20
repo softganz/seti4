@@ -29,7 +29,7 @@ class Table extends Widget {
 	}
 
 	function addConfig($key,$value) {
-		$this->config[$key] = $value;
+		$this->config->{$key} = $value;
 	}
 
 	function toString() {
