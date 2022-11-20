@@ -13,17 +13,28 @@
 
 $debug = true;
 
-function paper_info_file_download($self, $topicInfo, $fid) {
+function paper_info_file_download($self, $topicInfo = NULL, $fid = NULL) {
 	// Data Model
 	$tpid = $topicInfo->tpid;
 
+	if (!$tpid || !$fid) {
+		return new ErrorMessage([
+			'responseCode' => _HTTP_ERROR_NOT_FOUND,
+			'text' => 'ไม่พบไฟล์',
+		]);
+	}
+
 	$ret = '';
 
-	$stmt = 'SELECT f.*
+	$fileInfo = mydb::select(
+		'SELECT f.*
 		FROM %topic_files% f
-		WHERE f.`tpid` = :tpid AND f.`type` = "doc" AND f.`tagname` IS NULL AND f.`fid` = :fid LIMIT 1';
-
-	$fileInfo = mydb::select($stmt, ':tpid', $tpid, ':fid', $fid);
+		WHERE f.`tpid` = :tpid AND f.`type` = "doc" AND f.`tagname` IS NULL AND f.`fid` = :fid LIMIT 1',
+		[
+			':tpid' => $tpid,
+			':fid' => $fid,
+		]
+	);
 
 	if (!$fileInfo->count()) return message('error', 'ไม่พบไฟล์');
 
