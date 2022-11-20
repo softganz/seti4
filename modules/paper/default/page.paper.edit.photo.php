@@ -39,8 +39,8 @@ function paper_edit_photo($self, $topicInfo, $fileId = NULL) {
 
 	$ret .= '<style type="text/css">
 	.ui-card.album>.ui-item {width: 200px; height: 140px; overflow: hidden;}
-	.photos .item>tbody>tr>td:first-child {white-space: nowrap}
-	.photos .item>tbody>tr>td:nth-child(2) {width: 100%;}
+	.photos .widget-table>tbody>tr>td:first-child {white-space: nowrap}
+	.photos .widget-table>tbody>tr>td:nth-child(2) {width: 100%;}
 	</style>';
 
 	$ret .= '<script type="text/javascript">

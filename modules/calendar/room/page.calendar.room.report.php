@@ -58,8 +58,8 @@ function calendar_room_report($self) {
 	$dbs=mydb::select($stmt);
 
 	$ret.='<style type="text/css">
-	table.item td {text-align:center;}
-	table.item>tfoot>tr>td {font-weight:bold;background:#DDDDDD;}
+	.widget-table td {text-align:center;}
+	.widget-table>tfoot>tr>td {font-weight:bold;background:#DDDDDD;}
 	.form-item label {display:inline-block;}
 	.form-text {width:80px;}
 	.report-form {margin:0;padding:5px;border-radius:4px;background:#EDEDED;}

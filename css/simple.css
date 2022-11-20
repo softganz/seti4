@@ -7,9 +7,9 @@ Description : A simple theme.
 Template    : options
 Author      : Panumas Nontapan
 Author URI  : http://softganz.com
-Version     : 1.0
+Version     : 2
 Created     : 2018-10-15
-Last Modify : 2021-11-10
+Last Modify : 2022-11-17
 */
 
 @import url(reset.css);
@@ -474,7 +474,7 @@ $SCREENS
 
 	/* @group header */
 	.header {}
-		.header:not(tr) {margin: 0 0 4px 0; padding:8px; position: relative; color:#333; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap; background-color: transparent;}
+		.header:not(tr) {margin: 0 0 4px 0; padding:8px; position: relative; color:#333; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap;}
 		.header.-hidden {display: none;}
 		.header>h3 {margin: 0; padding: 0; height: 48px; line-height: 48px; flex: 7 0; background-color: transparent; overflow: hidden;}
 		.header>.nav {margin: 0; padding: 6px 8px;}
@@ -1472,7 +1472,7 @@ $SCREENS
 			#cboxLoadedContent .header>.nav form {display: inherit; vertical-align: middle;}
 			#cboxLoadedContent .header>.nav .sg-dropbox>a {box-shadow: none; background-color: transparent;}
 			#cboxLoadedContent .box-page>.header:first-of-type,
-			#cboxLoadedContent .box-page>*>.header:first-of-type {width: calc( 100% - 32px ); margin: 0; padding: 0 32px 0 0; position: absolute; color:#333; top: -48px; left:0; z-index: 10; background-color: transparent; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap;}
+			#cboxLoadedContent .box-page>*>.header:first-of-type {width: calc( 100% - 32px ); margin: 0; padding: 0 32px 0 0; position: absolute; color:#333; top: -48px; left:0; z-index: 10; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap;}
 			#cboxLoadedContent .box-page .header:first-of-type>.nav {display: block;}
 			#cboxLoadedContent .box-page .header:first-of-type>.nav.-back {display: flex;}
 

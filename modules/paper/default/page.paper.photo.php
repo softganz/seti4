@@ -64,8 +64,8 @@ function paper_photo($self, $topicInfo, $photoId = NULL) {
 
 	$ret .= '<style type="text/css">
 	.photo-items .photo {display: block; margin: 0 auto 16px;}
-	.photo-items .item>tbody>tr>td:first-child {white-space: nowrap; text-align: right;}
-	.photo-items .item>tbody>tr>td:nth-child(2) {width: 100%;}
+	.photo-items .widget-table>tbody>tr>td:first-child {white-space: nowrap; text-align: right;}
+	.photo-items .widget-table>tbody>tr>td:nth-child(2) {width: 100%;}
 	</style>';
 	return $ret;
 }

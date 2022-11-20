@@ -113,15 +113,15 @@ p.readall a:hover { color : #FF0000; font-weight:bold; }
 	-moz-border-radius:10px;
 }
 
-table.item {border:1px #FFF2BF solid;border-collapse:collapse;}
-table.item th,table.item td , table.item caption {padding:2px;border-bottom:1px #fff solid;border-right:1px #fff solid;}
-table.item caption, table.item th { background-color:#f1e6b8;font-weight:bold; }
-table.item .odd {background-color:#fffdf7; }
-table.item .even {background-color:#fcf7e4; }
-table.item span.forum_datestamp {margin:0;padding:0;}
-table.item tr.footer td {background-color:#f1e6b8;font-weight:bold; }
-table.item td.item-date {text-align:center;}
-table.item td.item-currency {text-align:right;}
+.widget-table {border:1px #FFF2BF solid;border-collapse:collapse;}
+.widget-table th,.widget-table td , .widget-table caption {padding:2px;border-bottom:1px #fff solid;border-right:1px #fff solid;}
+.widget-table caption, .widget-table th { background-color:#f1e6b8;font-weight:bold; }
+.widget-table .odd {background-color:#fffdf7; }
+.widget-table .even {background-color:#fcf7e4; }
+.widget-table span.forum_datestamp {margin:0;padding:0;}
+.widget-table tr.footer td {background-color:#f1e6b8;font-weight:bold; }
+.widget-table td.widget-table-date {text-align:center;}
+.widget-table td.item-currency {text-align:right;}
 .editor img {cursor:pointer;}
 
 /* dropdown menu */
@@ -667,7 +667,7 @@ div.content-admin ul.tabs li a {
 	padding-left:10px;
 	padding-right:10px;
 }
-div.content-admin table.item {
+div.content-admin .widget-table {
 	width:100%;
 }
 

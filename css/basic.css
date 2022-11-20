@@ -25,9 +25,9 @@ Last Modify : 2010-02-03
 	.timestamp {text-align:right;color:#666;}
 	.search-box {display:none;}
 	.toolbar {display:none;}
-	table.item {padding:0;border:1px #ccc solid;clear:none;}
-	table.item tr td {padding:2px 0px;border-bottom:1px #ccc solid;border-radius:0;vertical-align:top;}
-	table.item thead tr th {padding:2px 0px;border:1px #ccc solid;border-radius:0;}
+	.widget-table {padding:0;border:1px #ccc solid;clear:none;}
+	.widget-table tr td {padding:2px 0px;border-bottom:1px #ccc solid;border-radius:0;vertical-align:top;}
+	.widget-table thead tr th {padding:2px 0px;border:1px #ccc solid;border-radius:0;}
 }
 
 @media screen {
@@ -186,13 +186,13 @@ Last Modify : 2010-02-03
 	}
 
 	/* @group item */
-	table.item {width:100%;margin:1px 0 10px 0;border:1px #ccc solid;border-radius:4px;border-collapse: collapse;border-spacing: 0;}
-	.item caption {margin:2px 0;padding:4px;font-size:1.1em;color:#333;font-weight:bold;background-color:#ddd;border-radius:4px;}
-	.item thead th {background-color:#ddd;border-radius:4px;}
-	.item .odd {background-color:#fafafa;}
-	.item .even {background-color:#e5e5e5;}
-	.item td,th {padding:2px;}
-	.item td {vertical-align:top;}
+	.widget-table {width:100%;margin:1px 0 10px 0;border:1px #ccc solid;border-radius:4px;border-collapse: collapse;border-spacing: 0;}
+	.widget-table caption {margin:2px 0;padding:4px;font-size:1.1em;color:#333;font-weight:bold;background-color:#ddd;border-radius:4px;}
+	.widget-table thead th {background-color:#ddd;border-radius:4px;}
+	.widget-table .odd {background-color:#fafafa;}
+	.widget-table .even {background-color:#e5e5e5;}
+	.widget-table td,th {padding:2px;}
+	.widget-table td {vertical-align:top;}
 	/* @end */
 
 	/* @group dropdown */
@@ -661,7 +661,7 @@ Last Modify : 2010-02-03
 
 	/* @group comment */
 	.comment {margin:0;overflow:hidden;}
-	.comment .item {height:1%;margin:0 0 1px 0;padding:0 0 10px 0;clear:both;}
+	.comment .widget-table {height:1%;margin:0 0 1px 0;padding:0 0 10px 0;clear:both;}
 	.comment .odd { background-color:#FFF9DF;}
 	.comment .even {background-color:#FFFEEF;}
 	.comment .no {

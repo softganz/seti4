@@ -20,36 +20,40 @@ function view_stats_hits_per_month() {
 	$hits_count = 0;
 	$users_count = 0;
 
-	$tables = new Table();
-	$tables->addClass('hits -sg-text-center');
-	$tables->addConfig('caption', 'Hits per month');
-	$tables->thead = array(
-		'date -date' => 'Date',
-		'chart -fill' => '',
-		'Hits',
-		'Users',
-	);
+	$tables = new Table([
+		'class' => 'hits -sg-text-center',
+		'caption' => 'Hits per month',
+		'thead' => [
+			'date -date' => 'Date',
+			'chart -fill' => '',
+			'Hits',
+			'Users',
+		],
+		'children' => array_map(
+			function($rs) use($hits_count, $users_count, $max_hits) {
+				$hits_count = $hits_count+$rs->hits;
+				$users_count = $users_count+$rs->users;
+				if ( $max_hits > 0 ) $hit_width = round($rs->hits*200/$max_hits);
+				if ( $max_hits > 0 ) $user_width = round($rs->users*200/$max_hits);
 
-	foreach ($dbs->items as $rs) {
-		$hits_count = $hits_count+$rs->hits;
-		$users_count = $users_count+$rs->users;
-		if ( $max_hits > 0 ) $hit_width = round($rs->hits*200/$max_hits);
-		if ( $max_hits > 0 ) $user_width = round($rs->users*200/$max_hits);
-
-		$tables->rows[] = array(
-			'<a href="'.url('stats/hits/per/day/'.$rs->log_month).'">'.$rs->log_month.'</a>',
-			'<div class="hits-item -hit" style="width:'.$hit_width.'px;"></div><div class="hits-item -user" style="width:'.$user_width.'px;"></div>',
-			number_format($rs->hits),
-			number_format($rs->users),
-		);
-	}
-
-	$tables->tfoot[] = array(
-		'',
-		'Total',
-		number_format($hits_count),
-		number_format($users_count),
-	);
+				return [
+					'<a href="'.url('stats/hits/per/day/'.$rs->log_month).'">'.$rs->log_month.'</a>',
+					'<div class="hits-item -hit" style="width:'.$hit_width.'px;"></div><div class="hits-item -user" style="width:'.$user_width.'px;"></div>',
+					number_format($rs->hits),
+					number_format($rs->users),
+				];
+			},
+			$dbs->items
+		), // children
+		'tfoot' => [
+			[
+				'',
+				'Total',
+				number_format($hits_count),
+				number_format($users_count),
+			]
+		]
+	]);
 
 	$ret .= $tables->build();
 

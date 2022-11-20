@@ -69,8 +69,8 @@ function stats_report_10min($self,$date=NULL) {
 .first_row {border-left:1px #eee solid;}
 .label {background:#eee;border-left:1px #fff solid;}
 .graph {width:4px;background:gray;border-top:1px red solid;}
-.item {margin:20px;}
-.item td {text-align:center;}
+.widget-table {margin:20px;}
+.widget-table td {text-align:center;}
 --></style>';
 	return $ret;
 }

@@ -238,6 +238,9 @@ function sgUpdateData(html, relTarget, $this, options = {}) {
 */
 function sgActionDone(doneData, $this, data, options = {}) {
 	if (doneData === undefined) return
+
+	doneData = doneData.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
+
 	doneData.split('|').map(function(doneItem) {
 		var doneExplode = doneItem.trim().split(':')
 		var doneType = doneExplode[0].split('->')[0]
@@ -321,7 +324,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 
 			case 'reload':
 				var refreshUrl = doneExplode.length > 1 ? doneExplode[1] : document.URL
-				refreshUrl = refreshUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
+				// refreshUrl = refreshUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
 				window.location = refreshUrl
 				break
 
@@ -331,7 +334,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 				var loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($ele.data('url') ? $ele.data('url') : document.URL)
 				if (loadUrl && ($ele.length || doneTarget == 'none')) {
 					// console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
-					loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
+					// loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
 
 					$.post(loadUrl,function(html){
 						switch (doneAction) {

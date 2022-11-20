@@ -11,17 +11,16 @@
 
 class Table extends Widget {
 	var $config = [];
-	var $class = 'widget-table item';
 	var $showHeader = true;
 	var $repeatHeader = 0;
 	var $rows = [];
 
-	function __construct($class = NULL) {
-		if (is_array($class)) {
-			if ($class['class']) $class['class'] = 'widget-table item '.$class['class'];
-			parent::__construct($class);
+	function __construct($args = []) {
+		if (is_array($args)) {
+			// if ($class['class']) $class['class'] = 'widget-table item '.$class['class'];
+			parent::__construct($args);
 		} else {
-			if ($class) $this->class = $class;
+			// if ($class) $this->class = $class;
 		}
 	}
 
@@ -40,9 +39,12 @@ class Table extends Widget {
 		$captionStr = SG\getFirst($this->config->caption,$this->caption);
 
 		// Create table tag
-		$ret = '<table'
+		$ret = '<table '
 			. (isset($this->id) ? ' id="'.$this->id.'"' : '')
-			. (isset($this->class) ? ' class="'.$this->class.'"' : '')
+			. 'class="widget-'.strtolower($this->widgetName).' item'.($this->class ? ' '.$this->class : '')
+			. ($this->mainAxisAlignment ? ' -main-axis-'.strtolower($this->mainAxisAlignment) : '')
+			. ($this->crossAxisAlignment ? ' -cross-axis-'.strtolower($this->crossAxisAlignment) : '')
+			. '" '
 		  . ($this->style ? ' style="'.$this->style.'"' : '')
 			. ($this->attribute && is_array($this->attribute) ? ' '.sg_implode_attr($this->attribute) : '');
 

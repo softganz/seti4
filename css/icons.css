@@ -41,13 +41,13 @@
 .icon.-sg-48 {font-size: 4.8rem;}
 .icon.-sg-64 {font-size: 6.4rem;}
 
-.icon.-gray {color: #808080;}
-.icon.-white {color: #f5f5f5; opacity: 0.9;}
-.icon.-green {color: green;}
-.icon.-yellow {color: #ffb200;}
-.icon.-red {color: red;}
-.icon.-sg-active {color: green;}
-.icon.-sg-inactive {color: #b0b0b0;}
+.icon.-material.-material.-gray {color: #808080;}
+.icon.-material.-white {color: #f5f5f5; opacity: 0.9;}
+.icon.-material.-green {color: green;}
+.icon.-material.-yellow {color: #ffb200;}
+.icon.-material.-red {color: red;}
+.icon.-material.-sg-active {color: green;}
+.icon.-material.-sg-inactive {color: #b0b0b0;}
 
 .icon.-material {font-family: 'Material Icons'; width: auto; height: auto;}
 .icon.-material.-sg-16 {width: auto !important; height: auto !important;}
