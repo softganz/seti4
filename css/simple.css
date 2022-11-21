@@ -274,12 +274,13 @@ $SCREENS
 		.btn.-sg-64 {padding: 0;}
 		.btn.-sg-64>.icon {margin-top: 20px;}
 		.btn.-big {padding-top: 16px; padding-bottom: 16px;}
+		.btn.-normal {}
 		.btn.-primary {font-weight: normal; color: #E5F2FF; box-shadow: 0 0 0 1px #2179ff inset; cursor: pointer; background-color: #057BFF;}
 		.btn.-primary:hover {background-color: #1672ff; box-shadow: 0 0 0 1px #1672ff inset;}
-		.btn.-secondary {}
 		.btn.-primary>.icon {opacity: 0.8;}
 		.btn.-primary>.icon.-material {color: #f5f5f5;}
 		.btn.-primary>span {opacity: 0.9;}
+		.btn.-secondary {}
 		.btn.-secondary:hover {}
 		.btn.-success {color: #c5ffc6; background-color: #5FB660; box-shadow: 0 0 0 1px #5BAF5C inset;}
 		.btn.-success:hover {background-color: #67C768;}

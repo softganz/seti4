@@ -414,7 +414,7 @@ class Button extends Widget {
 	var $version = '0.01';
 	var $tagName = 'a';
 	var $href;
-	var $type = 'normal'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
+	var $type; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
 	var $text;
 	var $icon;
 	var $iconPosition = 'left'; // left,right,top,bottom
@@ -435,7 +435,7 @@ class Button extends Widget {
 		$attribute = array_replace_recursive([
 			'href' => $this->href,
 			'class' => trim(
-				'widget-'.strtolower($this->widgetName).($this->type === 'default' ? '' : ' btn')
+				'widget-'.strtolower($this->widgetName).(empty($this->type) ? '' : ' btn')
 				. ($this->type ? ' -'.$this->type : '')
 				. ($this->class ? ' '.$this->class : '')
 			),

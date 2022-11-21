@@ -56,6 +56,7 @@ class SystemIssueHome extends Page {
 											'trailing' => new Nav([
 												'children' => [
 													new Button([
+														'type' => 'link',
 														'href' => url('api/system/issue.close/'.$item->issueId),
 														'icon' => new Icon('done'),
 														'class' => 'sg-action',
@@ -64,6 +65,7 @@ class SystemIssueHome extends Page {
 														'attribute' => ['data-title' => 'Close Issue', 'data-confirm' => 'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?',]
 													]), // Button
 													new Button([
+														'type' => 'link',
 														'href' => url('system/issue/'.$item->issueId),
 														'icon' => new Icon('find_in_page'),
 														'class' => 'sg-action',
@@ -71,6 +73,7 @@ class SystemIssueHome extends Page {
 														'attribute' => ['data-width' => 'full']
 													]), // Button
 													new Button([
+														'type' => 'link',
 														'href' => $item->host.$item->path.($item->query ? '?'.$item->query : ''),
 														'icon' => new Icon('public'),
 														'attribute' => ['target' => '_blank']

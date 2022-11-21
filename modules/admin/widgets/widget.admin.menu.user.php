@@ -20,6 +20,7 @@ class AdminMenuUserWidget extends Widget {
 							'title' => 'Access control',
 							'leading' => new Icon(''),
 							'trailing' => new Button([
+								'type' => 'normal',
 								'href' => url('admin/user/access'),
 								'text' => 'Access control',
 							]),
