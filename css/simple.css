@@ -412,7 +412,7 @@ $SCREENS
 		.card.-photo .iconset {position: absolute; top: 0; right: 0; }
 
 
-	.debug {width:100%;background:#fff;font-size:9pt;}
+	.debug {width: 100%; background: #fff; font-size: 9pt;}
 
 	.notify-main {margin:5px 0; padding:4px 20px !important; padding:0; display:none; font-weight:bold; white-space:nowrap; font-size:9pt; text-align:center; background-color: #FAD163; overflow:auto; position: fixed; top: 4px; border-radius:5px; z-index:999999; max-width: 70%; max-height: 30%;}
 	.notify-main ul {text-align: left;}
@@ -448,7 +448,7 @@ $SCREENS
 		tr:hover>td.-hover-parent>.-hover {padding: 4px; display: inline-block; top: 4px; right: 4px; background-color: #ffe9e9; opacity: 0.85;}
 
 
-	button, .button {font-size: 1em; color: #050505; margin-right:20px; padding: 3px 10px; border-radius: 2px; display: inline-block; background:#f0f0f0; box-shadow: 0px 0px 0px 1px #d2d2d2 inset; border:none;}
+	button, .button {font-size: 1em; color: #050505; margin-right: 20px; padding: 3px 10px; border-radius: 2px; display: inline-block; background-color: #f0f0f0; box-shadow: 0px 0px 0px 1px #d2d2d2 inset; border:none;}
 	button:hover, .button:hover {background: #e5e5e5;}
 	.button.-save {font-size:1.4em;}
 	.button.-floating {margin:0; padding: 4px 10px; box-shadow: 2px 2px 3px #aaa; font-weight: normal; color: #fff; border: none; cursor: pointer; display: inline-block; background-color:#0065bd;}

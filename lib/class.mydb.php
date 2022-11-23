@@ -320,7 +320,7 @@ class MyDb {
 		} catch(Exception $exception) {
 			$sqlStmt->_errno = $exception->getCode();
 			$sqlStmt->_error_msg = $exception->getMessage();
-			// print_r($exception);
+			// debugMsg(print_r($exception,1);
 			// debugMsg($sqlStmt, '$sqlStmtEXCEPTION');
 		}
 

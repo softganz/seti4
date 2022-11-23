@@ -7,7 +7,7 @@
 *
 * @return Array
 *
-* @usage api/user?changwat=changwatId
+* @usage api/user
 */
 
 class UserApi extends PageApi {
