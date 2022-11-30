@@ -449,7 +449,7 @@ $SCREENS
 
 
 	button, .button {font-size: 1em; color: #050505; margin-right: 20px; padding: 3px 10px; border-radius: 2px; display: inline-block; background-color: #f0f0f0; box-shadow: 0px 0px 0px 1px #d2d2d2 inset; border:none;}
-	button:hover, .button:hover {background: #e5e5e5;}
+	button:hover, .button:hover {background-color: #e5e5e5;}
 	.button.-save {font-size:1.4em;}
 	.button.-floating {margin:0; padding: 4px 10px; box-shadow: 2px 2px 3px #aaa; font-weight: normal; color: #fff; border: none; cursor: pointer; display: inline-block; background-color:#0065bd;}
 	.button.-highlight {margin-left:8px; margin-right:8px;}
@@ -1040,6 +1040,7 @@ $SCREENS
 	.nav.-app-menu {margin: 16px 8px; background-color: #fff; border-radius: 8px; display: flex; flex-wrap: wrap;}
 		.nav.-app-menu>ul {display: flex; flex-wrap: wrap; justify-content: flex-start;}
 		.nav.-app-menu p {padding: 16px 8px;}
+		.nav.-app-menu>.widget-listtile {flex: 1 0 100%; padding: 2px; margin: 0; border-radius: 8px;}
 		.nav.-app-menu .header {flex: 1 0 100%; padding: 2px; margin: 0; border-radius: 8px;}
 		.nav.-app-menu .header>h3 {padding: 8px; margin: 0; height: auto; line-height: unset;}
 		.nav.-app-menu .-item, .nav.-app-menu .ui-item {margin: 8px; flex: 0 0 auto; text-align: center; background-color: #f5fff3; box-shadow: 0 0 0 1px #ccf3cc inset; border-radius: 8px; position: relative; overflow: hidden;}
@@ -1419,6 +1420,12 @@ $SCREENS
 
 
 
+	.apps-list {}
+		.apps-list>ul {padding: 4px; gap: 16px; flex-wrap: wrap; justify-content: flex-start;}
+		.apps-list>ul>li {border-radius: 8px; overflow: hidden; padding: 0 !important;}
+		.apps-list>ul>li>a {width: 150px; height: 64px; padding: 8px; background-color: #ccc; display: flex; flex-wrap: wrap; justify-content: flex-start; font-size: 1.6rem;}
+		.apps-list>ul>li>a>.icon {font-size: 2.8rem;}
+		.apps-list>ul>li>a>span {flex: 1 0 100%;}
 
 	/* SoftGanz Application CSS */
 	.module.-softganz-app {}
