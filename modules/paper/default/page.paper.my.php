@@ -32,17 +32,35 @@ class PaperMy extends Page {
 				'navigator' => [
 					new Form([
 						'action' => url(q()),
-						'class' => 'sg-form -sg-flex',
+						'class' => 'form-report sg-form -sg-paddingnorm',
 						'rel' => '#paper-my',
 						'children' => [
 							'year' => [
 								'type' => 'select',
-								'options' => ['' => '== ทุกปี =='] + mydb::select('SELECT YEAR(`created`) `year`, CONCAT("พ.ศ.",YEAR(`created`)+543) `bcyear` FROM %topic% WHERE `created` > 0 GROUP BY `year` ORDER BY `year` DESC; -- {key: "year", value: "bcyear"}')->items,
+								'onChange' => 'submit',
+								'options' => ['' => '== ทุกปี ==']
+									+ $dbs = mydb::select(
+										'SELECT YEAR(`created`) `year`, CONCAT("พ.ศ.",YEAR(`created`)+543) `bcyear`
+										FROM %topic%
+										WHERE `created` IS NOT NULL AND `type` IN ("story", "page")
+										GROUP BY `year`
+										ORDER BY `year` DESC;
+										-- {key: "year", value: "bcyear"}'
+									)->items,
 								'value' => post('year'),
 							],
 							'user' => $this->isAdminPaper ? [
 								'type' => 'select',
-								'options' => ['' => '== ทุกผู้ส่ง =='] + mydb::select('SELECT u.`uid`, u.`name` FROM %topic% t LEFT JOIN %users% u USING(`uid`) WHERE u.`uid` IS NOT NULL ORDER BY CONVERT(`name` USING tis620) ASC; -- {key: "uid", value: "name"}')->items,
+								'onChange' => 'submit',
+								'options' => ['' => '== ทุกผู้ส่ง ==']
+									+ mydb::select(
+										'SELECT u.`uid`, u.`name`
+										FROM %topic% t
+											LEFT JOIN %users% u USING(`uid`)
+										WHERE u.`uid` IS NOT NULL AND `type` IN ("story", "page")
+										ORDER BY CONVERT(`name` USING tis620) ASC;
+										-- {key: "uid", value: "name"}'
+									)->items,
 								'value' => post('user'),
 							] : NULL,
 							'q' => ['type' => 'text', 'placeholder' => 'ค้นหาหัวข้อข่าว', 'value' => post('q'),],
