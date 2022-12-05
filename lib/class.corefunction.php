@@ -705,6 +705,10 @@ class SgCore {
 					$paths[] = 'modules/'.$module.'/'.$subModule;
 				}
 				$paths[] = 'modules/'.$module.'/api';
+				if ($subModule) {
+					$paths[] = 'core/modules/'.$module.'/'.$subModule;
+				}
+				$paths[] = 'core/modules/'.$module.'/api';
 				$paths[] = 'core/modules/api';
 				break;
 

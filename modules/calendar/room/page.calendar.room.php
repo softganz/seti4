@@ -1,5 +1,47 @@
 <?php
 /**
+* Module  :: Page Controller
+* Created :: 2019-08-03
+* Modify  :: 2022-12-05
+* Version :: 2
+*
+* @param Int $resvId
+* @param String $action
+* @return Widget
+*
+* @usage calendar/room/[/{resvId}/{action}/{tranId}]
+*/
+
+class CalendarRoom extends PageController {
+	var $resvId;
+	var $action;
+
+	function __construct($resvId = NULL, $action = NULL) {
+		if (empty($resvId) && empty($action)) $action = 'home';
+		else if ($resvId && empty($action)) $action = 'view';
+		parent::__construct([
+			'resvId' => $resvId,
+			'action' => 'calendar.room.'.$action,
+			'args' => func_get_args(),
+			'info' => is_numeric($resvId) ? R::Model('calendar.get.resv',$resvId) : NULL,
+		]);
+	}
+
+	function build() {
+		// debugMsg('Id '.$this->resvId.' Action = '.$this->action.' TranId = '.$this->tranId);
+
+		// $isAccess = $resvInfo->RIGHT & _IS_ACCESS;
+
+		// if (!$isAccess) {
+		// return new ErrorMessage(['responseCode' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'access denied']);
+		// }
+
+		return parent::build();
+	}
+}
+?>
+<?php
+/**
 * Calendar Room
 * Created 2019-08-03
 * Modify  2019-08-03
@@ -52,23 +94,26 @@ function calendar_room($self, $resvId = NULL, $action = NULL, $tranId = NULL) {
 					$post->org_name=SG\getFirst($post->org_name,$post->org_name_etc);
 					$post->equipment=SG\getFirst(implode(',',$post->equipment),'func.NULL');
 					$post->created=date('U');
+
 					$stmt='INSERT INTO %calendar_room%
-										(`calid`, `roomid`, `uid`, `title`, `body`, `resv_by`, `org_name`, `checkin`, `from_time`, `to_time`, `peoples`, `equipment`, `phone`, `created`)
-									VALUES
-										(:calid, :roomid, :uid, :title, :body, :resv_by, :org_name, :checkin, :from_time, :to_time, :peoples, :equipment, :phone, :created)
-									ON DUPLICATE KEY UPDATE
-									`roomid`=:roomid
-									, `title`=:title
-									, `body`=:body
-									, `resv_by`=:resv_by
-									, `org_name`=:org_name
-									, `checkin`=:checkin
-									, `from_time`=:from_time
-									, `to_time`=:to_time
-									, `peoples`=:peoples
-									, `equipment`=:equipment
-									, `phone`=:phone';
+							(`calid`, `roomid`, `uid`, `title`, `body`, `resv_by`, `org_name`, `checkin`, `from_time`, `to_time`, `peoples`, `equipment`, `phone`, `created`)
+						VALUES
+							(:calid, :roomid, :uid, :title, :body, :resv_by, :org_name, :checkin, :from_time, :to_time, :peoples, :equipment, :phone, :created)
+						ON DUPLICATE KEY UPDATE
+						`roomid`=:roomid
+						, `title`=:title
+						, `body`=:body
+						, `resv_by`=:resv_by
+						, `org_name`=:org_name
+						, `checkin`=:checkin
+						, `from_time`=:from_time
+						, `to_time`=:to_time
+						, `peoples`=:peoples
+						, `equipment`=:equipment
+						, `phone`=:phone';
+
 					mydb::query($stmt,$post);
+
 					//				$ret.=print_o($post,'$post');
 					//				$ret.=mydb()->_query;
 

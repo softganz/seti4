@@ -37,7 +37,7 @@ function view_calendar_toolbar($self, $calInfo=NULL,$options = '{}') {
 	if (property('calendar.room:title') && user_access('access calendar rooms')) {
 		$ui->add('<a href="'.url('calendar/room').'">รายการจองห้องประชุม</a>','{class: "-room"}');
 		if (user_access('create calendar room content')) {
-			$ui->add('<a href="'.url('calendar/room/post').'" title="ลงรายการขอจองใช้ห้องประชุม">ขอจองห้องประชุม</a>','{class: "-room -post"}');
+			$ui->add('<a class="sg-action" href="'.url('calendar/room/new').'" title="ลงรายการขอจองใช้ห้องประชุม" data-rel="box" data-width="full">ขอจองห้องประชุม</a>','{class: "-room -post"}');
 			$ui->add('<a href="'.url('calendar/room/report').'" title="รายงาน">รายงาน</a>','{class: "-room -report"}');
 		}
 
