@@ -21,8 +21,6 @@ function calendar_room_post($self, $data = NULL) {
 
 	if ($error) $ret.=message('error',$error);
 
-	$roomProperty = property('calendar.room');
-
 	if (is_object($data)) {
 	} else if (is_array($data)) {
 		$data = (Object) $data;
@@ -34,7 +32,7 @@ function calendar_room_post($self, $data = NULL) {
 
 	$form = new Form([
 		'variable' => 'room',
-		'action' => url(q()),
+		'action' => url('calendar/room/save'),
 		'id' => 'edit-meeting',
 		'children' => [
 			'tbutton' => [
@@ -48,6 +46,7 @@ function calendar_room_post($self, $data = NULL) {
 				'label' => 'ห้องประชุม:',
 				'require' => true,
 				'options' => (function() {
+					$roomProperty = property('calendar.room');
 					$tree = model::get_taxonomy_tree($roomProperty['roomvid']);
 					$options = [];
 					foreach ($tree as $term) {
