@@ -23,7 +23,12 @@ function calendar_room_post($self, $data = NULL) {
 
 	$roomProperty = property('calendar.room');
 
-	if (is_array($data)) $data=(object)$data;
+	if (is_object($data)) {
+	} else if (is_array($data)) {
+		$data = (Object) $data;
+	} else {
+		$data = (Object) [];
+	}
 	$data->from_time=substr($data->from_time,0,5);
 	$data->to_time=substr($data->to_time,0,5);
 
