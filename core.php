@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created 2006-12-16
- * @modify  2022-11-09
+ * @modify  2022-12-03
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ cfg('core.version.name', 'Seti');
 cfg('core.version.major', 4);
 cfg('core.version.code', 10);
 cfg('core.version', '4.2.03');
-cfg('core.release', '2022-11-09');
+cfg('core.release', '2022-12-03');
 cfg('core.location', ini_get('include_path'));
 cfg('core.folder', _CORE_FOLDER);
 cfg('core.config', _CONFIG_FILE);
@@ -410,7 +410,7 @@ function sgFatalError($code, $description, $file, $line) {
 		<td></td>
 	</tr>
 	'
-	.($isAdmin && $debugMsg ? '<tr><td></td><td><div style="border:1px solid rgb(210, 210, 210);background-color: rgb(241, 241, 241);padding:30px;-moz-border-radius:10px;">'.$debugMsg.'</div></td><td></td></tr>' : '').'
+	.($isAdmin && $debugMsg ? '<tr><td></td><td>'.$debugMsg.'<style>.debug-msg {padding: 16px; border:1px #ccc solid; margin: 16px 0; border-radius: 8px; background-color: #fafafa;}</style></td><td></td></tr>' : '').'
 	</table>
 	</body>
 	</html>';
