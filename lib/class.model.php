@@ -70,7 +70,7 @@ class Model {
 		} else if (!array_key_exists($tid, $types)) {
 			$result = mydb::select('SELECT t.*, IF(t.`module` IS NULL OR t.`module` = "","paper",t.`module`) `module`  FROM %topic_types% AS t WHERE t.`type` = :tid LIMIT 1',':tid',$tid);
 			if (!$result->_empty) {
-				if (!$debug) mydb::clearprop($result);
+				if (!$debug) mydb::clearProp($result);
 				$types[$tid] = $result;
 				$types[$tid]->topic_options = SG\getFirst(cfg('topic_options_'.$tid),NULL);
 			}

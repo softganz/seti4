@@ -39,7 +39,7 @@ function r_paper_comment_get($conditions, $options = '{}') {
 
 
 
-	$result = mydb::clearprop($rs);
+	$result = mydb::clearProp($rs);
 	return $result;
 }
 ?>

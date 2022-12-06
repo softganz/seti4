@@ -74,7 +74,7 @@ class PersonModel {
 		if (empty($rs->_num_rows)) return NULL;
 
 
-		if (!$debug) mydb::clearprop($rs);
+		if (!$debug) mydb::clearProp($rs);
 
 		$rs->realname=trim($rs->name.' '.$rs->lname);
 		$rs->fullname=trim($rs->prename.' '.$rs->name.' '.$rs->lname);

@@ -12,7 +12,7 @@
 
 class FormatModel {
 	public static function get($orgId, $docName) {
-		return mydb::clearprop(
+		return mydb::clearProp(
 			mydb::select(
 				'SELECT `orgId`, `docName` `name`, `docFormat` `format`, `lastNo`, `resetOnPeriod` `reset`
 				FROM %lastno%

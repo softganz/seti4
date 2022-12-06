@@ -40,7 +40,7 @@ class SystemIssue extends PageController {
 	}
 
 	public function getIssue($issueId) {
-		return mydb::clearprop(mydb::select(
+		return mydb::clearProp(mydb::select(
 			'SELECT *
 			FROM %system_issue%
 			WHERE `issueId` = :issueId

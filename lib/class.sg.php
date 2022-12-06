@@ -457,7 +457,7 @@ class BigData {
 
 		$result->id = $result->info->autoId;
 		if ($result->info->type === 'JSON') $result->data = SG\json_decode($result->info->data);
-		$result->info = mydb::clearprop($result->info);
+		$result->info = mydb::clearProp($result->info);
 		return $result;
 	}
 

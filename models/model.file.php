@@ -61,7 +61,7 @@ class FileModel {
 			'fileId' => $rs->id,
 			'fileName' => $rs->fileName,
 			'title' => $rs->title,
-			'info' => mydb::clearprop($rs),
+			'info' => mydb::clearProp($rs),
 			'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName) : NULL),
 		];
 

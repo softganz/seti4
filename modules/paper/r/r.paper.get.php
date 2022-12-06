@@ -69,7 +69,7 @@ function r_paper_get($conditions, $options = '{}') {
 
 	if ($rs->_empty) return NULL;
 
-	mydb::clearprop($rs);
+	mydb::clearProp($rs);
 
 	if ($rs->orgid && $options->initTemplate) R::Module('org.template', $rs->orgid);
 

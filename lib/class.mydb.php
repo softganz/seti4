@@ -720,7 +720,7 @@ class MyDb {
 				$selectResult->_empty = $selectResult->_num_rows <= 0;
 				if ($options->fieldOnly) {
 					// debugMsg($selectResult, 'selectResult');
-					$selectResult = mydb::clearprop($selectResult);
+					$selectResult = mydb::clearProp($selectResult);
 					// debugMsg((Array)$selectResult, 'selectResult');
 					// debugMsg('COUNT='.count((Array)$selectResult));
 					// if (isset($selectResult->items) && count($selectResult->items) == 0) $selectResult = NULL;
@@ -783,7 +783,7 @@ class MyDb {
 	* @param Object $rs
 	* @return Object
 	*/
-	public static function clearprop($rs) {
+	public static function clearProp($rs) {
 		foreach ($rs as $key => $value) {
 			if (substr($key,0,1)=='_') unset($rs->{$key});
 		}
@@ -1046,7 +1046,7 @@ class MyDb {
 		return $fields;
 	}
 
-	public static function printtable($dbs, $options = '{}') {
+	public static function printTable($dbs, $options = '{}') {
 		$defaults = '{class: ""}';
 		$options = SG\json_decode($options,$defaults);
 

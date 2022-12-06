@@ -437,7 +437,7 @@ class Cache {
 	public static function get($cid) {
 		$result = mydb::select('SELECT * FROM %cache% c WHERE c.`cid` = :cid LIMIT 1', [':cid' => $cid]);
 		if ($result->count()) {
-			mydb::clearprop($result);
+			mydb::clearProp($result);
 			$result->data = preg_match('/^{/', $result->data) ? SG\json_decode($result->data) : unserialize($result->data);
 			$result->data->token = $result->data->session;
 			$result->remain = $result->expire - time();

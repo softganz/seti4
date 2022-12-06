@@ -37,7 +37,7 @@ function r_code_ampur_get($conditions, $options = '{}') {
 
 	$result = mydb::select($stmt, ':ampurId', $id);
 
-	mydb::clearprop($result);
+	mydb::clearProp($result);
 
 	if ($result->id) {
 		$stmt = 'SELECT * FROM %co_subdistrict% WHERE LEFT(`subdistid`,4) = :ampurId; -- {key: "subdistid", reset: false}';

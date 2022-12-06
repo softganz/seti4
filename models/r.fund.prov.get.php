@@ -14,7 +14,7 @@ function r_fund_prov_get($prov,$options='{}') {
 
 	if ($rs->_num_rows) {
 		if ($options->getAllRecord) $result=$rs->items;
-		else $result=$options->clearProp?mydb::clearprop($rs):$rs;
+		else $result=$options->clearProp?mydb::clearProp($rs):$rs;
 	} else $result=null;
 
 	if ($options->debug) {

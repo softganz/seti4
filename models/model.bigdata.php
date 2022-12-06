@@ -156,7 +156,7 @@ class BigDataModel {
 		}
 
 		if ($bigId) {
-			return mydb::clearprop(mydb::select(
+			return mydb::clearProp(mydb::select(
 				'SELECT `bigId` `id`, `keyName` `key`, `fldName` `name`, `fldType` `type`, `fldRef` `refId`, `fldData` `value`, `created` `createdDate`, `uCreated` `createdBy`, `modified` `modifiedDate`, `uModified` `modifiedBy`
 				FROM %bigdata% WHERE `bigId` = :bigId LIMIT 1',
 				[':bigId' => $bigId]

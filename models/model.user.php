@@ -45,7 +45,7 @@ class UserModel {
 
 		if ($result->_empty) return NULL;
 
-		mydb::clearprop($result);
+		mydb::clearProp($result);
 		$result->roles = empty($result->roles) ? array('member') : explode(',','member,'.$result->roles);
 
 		return $result;
@@ -599,7 +599,7 @@ class UserModel {
 
 		if ($result->_empty) return NULL;
 
-		mydb::clearprop($result);
+		mydb::clearProp($result);
 		foreach ($result as $key => $value) $this->{$key} = $value;
 		$this->fullName = trim($this->real_name.' '.$this->last_name);
 

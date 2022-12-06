@@ -11,13 +11,6 @@
 */
 
 class CalendarRoomReport extends Page {
-	var $arg1;
-
-	function __construct($arg1 = NULL) {
-		parent::__construct([
-			'arg1' => $arg1
-		]);
-	}
 
 	function build() {
 		$roomProperty = property('calendar.room');
@@ -122,6 +115,7 @@ class CalendarRoomReport extends Page {
 					$ret,
 
 					new Table([
+						'class' => '-center',
 						'caption' => 'รายงานการใช้ห้องประชุม',
 						'thead' => ['เดือน-ปี','amt times'=>'จำนวนครั้ง'],
 						'children' => array_map(
@@ -135,14 +129,6 @@ class CalendarRoomReport extends Page {
 							['รวมทั้งสิ้น',number_format($total)],
 						],
 					]), // Table
-
-					'<style type="text/css">
-					.widget-table td {text-align:center;}
-					.widget-table>tfoot>tr>td {font-weight:bold;background:#DDDDDD;}
-					.form-item label {display:inline-block;}
-					.form-text {width:80px;}
-					.report-form {margin:0;padding:5px;border-radius:4px;background:#EDEDED;}
-					</style>',
 
 				], // children
 			]), // Widget

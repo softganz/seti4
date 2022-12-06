@@ -40,7 +40,7 @@ class ReactionModel {
 			[':topicId' => $conditions->id]
 		);
 
-		$result = mydb::clearprop($result);
+		$result = mydb::clearProp($result);
 
 		if ($conditions->bookmark) {
 			$result->bookmarks = mydb::select(
