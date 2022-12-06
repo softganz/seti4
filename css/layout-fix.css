@@ -18,13 +18,13 @@
 		.page.-nav>.nav.-main>.menu>li>a {padding: 0 8px; white-space: nowrap;}
 		.page.-nav>.nav.-main>.menu ul {min-width: 240px; font-weight: normal;}
 
-		.page.-nav>.sg-responsivemenu>.sg-navtoggle {box-shadow: none; background-color: transparent; margin-right: 16px; padding: 0; border-radius: 50%; width: 32px; height: 32px; align-items: center;}
-		.page.-nav>.sg-responsivemenu>ul {display: none;}
-		.page.-nav>.sg-responsivemenu.-active>ul {height: auto; display: block; position: absolute; top: 48px; left: 0; right: 0;}
-		.page.-nav>.sg-responsivemenu.-active>ul>li {float: none;}
-		.page.-nav>.sg-responsivemenu.-active>ul ul {margin-left: 64px;}
-		.page.-nav>.sg-responsivemenu.-active>ul {background-color: #000;}
-		.page.-nav>.sg-responsivemenu.-active>ul>li>a {color: #fff;}
+		.page.-nav>.nav.sg-responsivemenu>.sg-navtoggle {box-shadow: none; background-color: transparent; margin-right: 16px; padding: 0; border-radius: 50%; width: 32px; height: 32px; align-items: center;}
+		.page.-nav>.nav.sg-responsivemenu>ul {display: none;}
+		.page.-nav>.nav.sg-responsivemenu.-active>ul {height: auto; display: block; position: absolute; top: 48px; left: 0; right: 0; background-color: #000;}
+		.page.-nav>.nav.sg-responsivemenu.-active>ul>li {float: none;}
+		.page.-nav>.nav.sg-responsivemenu.-active>ul>li>a {color: #fff; padding-left: 16px;}
+		.page.-nav>.nav.sg-responsivemenu.-active>ul>li>a:hover {background-color: #333; border-radius: 0;}
+		.page.-nav>.nav.sg-responsivemenu.-active>ul ul {margin-left: 64px; box-shadow: none;}
 
 	.page.-nav>.nav.-owner {order: 10; padding-right: 0; position: relative; z-index: 1101;}
 		.page.-nav>.nav.-owner>*>*>a {padding: 0; margin: 0 4px; border-radius: 16px;}
