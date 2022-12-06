@@ -66,7 +66,7 @@
 */
 
 @media (min-width: 43.75em) { /* 700/16 = 43.75 @responsive menu */
-	.page.-nav>.sg-responsivemenu>ul {display: block;}
+	.page.-nav>.nav.sg-responsivemenu>ul {display: block;}
 	.page.-nav>.nav.-main {justify-content: flex-start;}
 	.page.-nav>.nav.-main.-owner {height: 45px;}
 	.page.-nav>.nav.-search {display: block;}
