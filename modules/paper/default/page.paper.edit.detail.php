@@ -38,7 +38,7 @@ function paper_edit_detail($self, $topicInfo) {
 	// 	if (sg::is_spam_word($data->detail)) {
 	// 		$ret .= message('error','มีข้อความที่ไม่เหมาะสมอยู่ในสิ่งที่ป้อนมา');
 	// 	} else {
-	// 		$result = paper_model::_edit_update($topic,$para,$data);
+	// 		$result = PaperModel::_edit_update($topic,$para,$data);
 	// 		return $result;
 	// 	}
 	// } else if ($_POST['cancel']) {

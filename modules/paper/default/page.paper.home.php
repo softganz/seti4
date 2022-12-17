@@ -35,7 +35,7 @@ function paper_home($self) {
 			'limit' => 10,
 			'option' => option('no_page_bottom,no_menu,no_header,no_package_footer,no_toolbar,no_div'),
 		];
-		$sticky = paper_model::get_topic_by_condition($sticky_para);
+		$sticky = PaperModel::get_topic_by_condition($sticky_para);
 	}
 
 	if ($sticky->_num_rows) {
@@ -65,7 +65,7 @@ function paper_home($self) {
 		'page' => $getPage,
 	];
 
-	//$promote = paper_model::get_topic_by_condition($promote_para);
+	//$promote = PaperModel::get_topic_by_condition($promote_para);
 
 	$promote = R::Model('paper.get.topics',$promote_para, $options);
 

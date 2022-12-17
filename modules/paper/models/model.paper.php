@@ -1,6 +1,6 @@
 <?php
 /**
- * paper_model class for paper model
+ * PaperModel class for paper model
  *
  * @package paper
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
@@ -14,7 +14,7 @@
  * ============================================
  */
 
-class paper_model {
+class PaperModel {
 
 	public static function get_photo_property($file,$photo) {
 		if (isset($photo)) $property=$photo;
@@ -233,7 +233,7 @@ class paper_model {
 
 	public static function modify_photo($photo,$post) {
 		$result->error=false;
-		$result->process[]='paper_model::modify_photo request';
+		$result->process[]='PaperModel::modify_photo request';
 		$result->post=print_o($post,'$post');
 		$result->photo=print_o($photo,'$photo');
 
@@ -262,7 +262,7 @@ class paper_model {
 
 	public static function delete_photo($photo_id=array(),$is_simulate=false) {
 		$result->error=false;
-		$result->process[]='paper_model::delete_photo request';
+		$result->process[]='PaperModel::delete_photo request';
 
 		if (empty($photo_id)) return $result;
 		if (is_string($photo_id)) {$id=$photo_id;unset($photo_id);$photo_id[]=$id;}
@@ -297,7 +297,7 @@ class paper_model {
 		}
 
 		if ($result->deleted->file) $result->deleted->name=implode(',',$result->deleted->file);
-		$result->process[]='paper_model::delete_photo request complete';
+		$result->process[]='PaperModel::delete_photo request complete';
 		return $result;
 	}
 
@@ -353,5 +353,5 @@ class paper_model {
 		*/
 	}
 
-} // end of class paper_model
+} // end of class PaperModel
 ?>

@@ -37,7 +37,7 @@ function view_paper_comment_form($topicInfo) {
 		$ret .= $para->_comment_post;
 
 	if ($_GET['quote']) {
-		$quote = paper_model::get_comment_by_id($_GET['quote']);
+		$quote = PaperModel::get_comment_by_id($_GET['quote']);
 		$comment->comment = '[quote author='.SG\getFirst($quote->name,$quote->owner).' link=paper/'.$quote->tpid.'#comment-10831 date='.sg_date($quote->timestamp,'U').']'._NL;
 		$comment->comment .= trim(strip_tags(sg_text2html($quote->comment),'<p><ul><ol><li>,<strong><em><u>'))._NL;
 		$comment->comment .= '[/quote]'._NL._NL;

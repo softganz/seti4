@@ -12,7 +12,7 @@ $debug = true;
 function paper_upcomming($self) {
 	$self->para=$para=para(func_get_args(),'field='.cfg('paper.listing.field'),'list-style=dl','type=story','condition=promote<>1',1);
 	event_tricker('paper.listing.init',$self,$topics,$para);
-	$topics=paper_model::get_topic_by_condition($para);
+	$topics=PaperModel::get_topic_by_condition($para);
 
 	$self->theme->class='content-paper';
 	if ($para->tag) $self->theme->class.=' paper-tag-'.$para->tag;

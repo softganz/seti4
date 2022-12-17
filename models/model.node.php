@@ -81,7 +81,7 @@ class NodeModel {
 
 		$error=$field_missing=$document_error=array();
 
-		$result->process[]='paper_model::save_topic '.($simulate?'<strong>simulation</strong> ':'').'request';
+		$result->process[]='NodeModel::save_topic '.($simulate?'<strong>simulation</strong> ':'').'request';
 
 		// Get node type on wmpty
 		if (!$topic->type->type) $topic->type = CommonModel::get_topic_type($topic->post->type);
@@ -377,7 +377,7 @@ class NodeModel {
 		} else {
 			$result->complete=true;
 		}
-		$result->process[]='paper_model::save_topic complete';
+		$result->process[]='NodeModel::save_topic complete';
 		return $result;
 	}
 

@@ -133,7 +133,7 @@ function paper_edit_photo_add($self, $topicInfo) {
 
 	/*
 	if ($para->delete && SG\confirm()) {
-		$result=paper_model::delete_photo($para->delete);
+		$result=PaperModel::delete_photo($para->delete);
 		//$ret.=print_o($result,'$result');
 
 		if ($result->error) {

@@ -22,7 +22,7 @@ function paper_list($self) {
 		'page' => $getPage,
 	];
 
-	//$promote = paper_model::get_topic_by_condition($promote_para);
+	//$promote = PaperModel::get_topic_by_condition($promote_para);
 
 	//debugMsg($para, '$para');
 
@@ -35,7 +35,7 @@ function paper_list($self) {
 
 	$topics = R::Model('paper.get.topics',$para, $options);
 
-	//$topics = paper_model::get_topic_by_condition($para);
+	//$topics = PaperModel::get_topic_by_condition($para);
 
 	if (isset($topics->forum)) $GLOBALS['paper']->forum=$topics->forum;
 
@@ -77,7 +77,7 @@ function paper_list($self) {
 		$sticky_para->tag=$para->tag;
 		$sticky_para->field='detail,photo';
 		$sticky_para->limit=cfg('sticky.category.items');
-		$stickys=paper_model::get_topic_by_condition($sticky_para);
+		$stickys=PaperModel::get_topic_by_condition($sticky_para);
 		foreach ($topics->items as $key=>$topic) if ($topic->sticky==_CATEGORY_STICKY) unset($topics->items[$key]);
 		$topics->items=array_merge($stickys->items,$topics->items);
 		$topics->_num_rows=count($topics->items);

@@ -64,7 +64,7 @@ function contents($self, $contentNameList = NULL) {
 			$sticky_para->sticky=_CATEGORY_STICKY;
 			$sticky_para->category=$para->category;
 			$sticky_para->limit=cfg('sticky.category.items');
-			$stickys=paper_model::get_topic_by_condition($sticky_para);
+			$stickys=PaperModel::get_topic_by_condition($sticky_para);
 			foreach ($topics->items as $key=>$topic) if ($topic->sticky==_CATEGORY_STICKY) unset($topics->items[$key]);
 			$topics->items=array_merge($stickys->items,$topics->items);
 			$topics->_num_rows=count($topics->items);

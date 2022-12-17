@@ -31,5 +31,5 @@ menu('paper','Paper Home','paper','__controller',1,'access papers','static');
 
 cfg('paper.permission', 'access papers,add bookmarks,edit own paper,administer papers,administer paper tags,post paper without approval,input format type php,input format type script');
 
-include_once('class.paper.model.php');
+include_once('models/model.paper.php');
 ?>

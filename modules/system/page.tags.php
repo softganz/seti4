@@ -107,7 +107,7 @@ function tags($self, $tagIdList = NULL) {
 					'limit' => cfg('sticky.category.items'),
 					'debug' => false,
 				];
-				//$stickys=paper_model::get_topic_by_condition($sticky_para);
+				//$stickys=PaperModel::get_topic_by_condition($sticky_para);
 				$stickys = R::Model('paper.get.topics', $stickyPara, $stickyOption);
 				//$ret .= print_o($stickys,'$stickys');
 
