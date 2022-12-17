@@ -27,7 +27,7 @@ class My extends Page {
 			'body' => new Column([
 				'children' => [
 					new ProfilePhotoWidget([
-						'photo' => model::user_photo($userInfo->username),
+						'photo' => CommonModel::user_photo($userInfo->username),
 						'children' => [
 							new Form([
 								'class' => 'sg-form -upload -upload-profile-photo',

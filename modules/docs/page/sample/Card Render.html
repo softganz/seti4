@@ -15,7 +15,7 @@
 	$ret .= '<div class="header">'
 			. '<span>'
 			. $posterUrl
-			. '<img class="poster-photo" src="'.model::user_photo($visitInfo->username).'" width="32" height="32" alt="" />'
+			. '<img class="poster-photo" src="'.CommonModel::user_photo($visitInfo->username).'" width="32" height="32" alt="" />'
 			. '<span class="poster-name">'.$visitInfo->name.'</a> '
 			. '<span class="-visit-patient">'
 			. ($visitInfo->service ? ' {tr:'.$visitInfo->service.'}' : '')
@@ -49,7 +49,7 @@
 			list($fid,$photofile)=explode('|', $photoItem);
 			if (!$fid) continue;
 			$ret.='<li class="-hover-parent">';
-			$ret.='<a class="sg-action" href="'.imed_model::upload_photo($photofile).'" data-rel="img"><img src="'.imed_model::upload_photo($photofile).'" /></a>';
+			$ret.='<a class="sg-action" href="'.ImedModel::upload_photo($photofile).'" data-rel="img"><img src="'.ImedModel::upload_photo($photofile).'" /></a>';
 			if ($isEdit) {
 				$ui=new Ui('span','iconset -hover');
 				$ui->add('<a class="sg-action noprint" href="'.url('imed/api/visit/'.$visitInfo->psnid.'/photo.delete/'.$visitInfo->seq, array('f'=>$fid)).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="none" data-removeparent="li"><i class="icon -material">cancel</i></a>');

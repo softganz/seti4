@@ -1,6 +1,6 @@
 <?php
 function admin_content_type_delete($self,$type_id) {
-	$type=model::get_topic_type($type_id);
+	$type=CommonModel::get_topic_type($type_id);
 
 	if (SG\confirm()) {
 		if ($type->locked) return message('error','Content types was locked');

@@ -114,7 +114,7 @@ function view_paper_comment_draw($topic=NULL,$para=NULL,$archive=false,$thread=N
 		$ret .= '<div id="comment-id-'.$rs->cid.'" class="item '.$subclass.'">'._NL;
 		$ret .= $commentHeader;
 
-		$member_photo=model::user_photo($rs->username);
+		$member_photo=CommonModel::user_photo($rs->username);
 
 		$ret .= '<div class="owner">';
 		$ret .= '<span class="owner-photo"><img class="owner-photo" src="'.$member_photo.'" alt="" /></span>';

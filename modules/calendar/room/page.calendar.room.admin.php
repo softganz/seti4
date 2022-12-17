@@ -67,7 +67,7 @@ class CalendarRoomAdmin extends Page {
 							$roomList = array(-1 => '===เลือก===');
 							foreach ($vocabs->items as $vocab) $roomList[$vocab->vid] = $vocab->name;
 							return $roomList;
-						})(model::get_vocabulary()),
+						})(CommonModel::get_vocabulary()),
 						'posttext' => '<a class="btn -link" href="'.url('admin/content/taxonomy/list/'.$property['roomvid']).'"><i class="icon -material">add</i><span>เพิ่ม/ลบรายชื่อห้องประชุม</span></a>',
 					],
 					'save' => [

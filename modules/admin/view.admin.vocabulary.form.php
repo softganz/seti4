@@ -46,9 +46,9 @@ function view_admin_vocabulary_form($vocab=array(),$message=NULL) {
 							)
 						);
 
-	$typeList=model::get_topic_type()->items;
+	$typeList=CommonModel::get_topic_type()->items;
 	$optionsType=array();
-	foreach (model::get_topic_type()->items as $item) {
+	foreach (CommonModel::get_topic_type()->items as $item) {
 		$optionsType[$item->type]=$item->name;
 	}
 	$form->addField(

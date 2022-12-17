@@ -250,7 +250,7 @@ class UserModel {
 		$user = (Object) ['rs' => $rs];
 
 		if (!in_array($rs->status, ['enable',1])) {
-			model::watch_log('user','Invalid signin','user '.$username.' not exists or disabled');
+			CommonModel::watch_log('user','Invalid signin','user '.$username.' not exists or disabled');
 			return false;
 		}
 		$de_password = sg_decrypt($rs->password,cfg('encrypt_key'));
@@ -260,7 +260,7 @@ class UserModel {
 			$ip = GetEnv('REMOTE_ADDR');
 			$stmt = 'UPDATE %users% SET tries = tries+1, remote_ip = :ip , date_tries = NOW() WHERE username = :username LIMIT 1';
 			mydb::query($stmt,':ip',$ip, ':username',$username);
-			model::watch_log('user','Invalid signin',$username.' incorrect password');
+			CommonModel::watch_log('user','Invalid signin',$username.' incorrect password');
 			return false;
 		}
 
@@ -313,7 +313,7 @@ class UserModel {
 			]
 		);
 
-		model::watch_log('user','Signin','user '.$username.' was signin',$user->uid);
+		CommonModel::watch_log('user','Signin','user '.$username.' was signin',$user->uid);
 
 		$debug_str .= '<p>query='.mydb()->_query.'</p>';
 		$debug_str .= print_o($_COOKIE,'$COOKIE');
@@ -423,7 +423,7 @@ class UserModel {
 					':uid' => $result->uid,
 				]
 			);
-			model::watch_log('user','Signin by Google','Email '.$result->email.' ('.$result->username.') was signin with Google',$result->uid);
+			CommonModel::watch_log('user','Signin by Google','Email '.$result->email.' ('.$result->username.') was signin with Google',$result->uid);
 		}
 		return $result;
 	}
@@ -496,12 +496,12 @@ class UserModel {
 					'token' => $jwt->payload->jti
 				]);
 				if (!$result->uid) {
-					model::watch_log('user','Invalid signin','Email '.$result->email.' ('.$result->username.') signin with Google error',$result->uid);
+					CommonModel::watch_log('user','Invalid signin','Email '.$result->email.' ('.$result->username.') signin with Google error',$result->uid);
 				}
 
 				return $result->uid ? $result : (Object) ['signInErrorMessage' => 'Google account '.$jwt->payload->email.' is not recognized for Google Sign-In on this site. Please make sure you are using the same account that you have previously linked.'];
 			} else {
-				model::watch_log('user','Invalid signin','Invalid credential => '.$credential);
+				CommonModel::watch_log('user','Invalid signin','Invalid credential => '.$credential);
 				return (Object) ['signInResult' => 'Invalid user signin'];
 			}
 		} else if ($authHeader) {

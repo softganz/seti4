@@ -18,7 +18,7 @@
 function contents($self, $contentNameList = NULL) {
 		$self->para=$para=para(func_get_args(),'field='.cfg('paper.listing.field'),'list-style=div');
 		$para->type=$contentNameList;
-		$types=model::get_topic_type($contentNameList);
+		$types=CommonModel::get_topic_type($contentNameList);
 
 		event_tricker('paper.listing.init',$self,$topics,$para);
 
@@ -46,7 +46,7 @@ function contents($self, $contentNameList = NULL) {
 
 		user_menu('home','Home',url());
 		user_menu('type',$types->name,url('contents/'.$types->type));
-		model::member_menu();
+		CommonModel::member_menu();
 		if ($topics->forum->cid && ($topics->forum->public==1 ||
 			($topics->forum->public==2 && i()->ok) ||
 			user_access('administer contents,administer papers,create '.$topics->forum->fid.' paper'))) {

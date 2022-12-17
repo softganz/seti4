@@ -6,7 +6,7 @@ function admin_content_type_add($self) {
 		if (empty($type->name)) $error[]='Name field is required.';
 		if (empty($type->type)) $error[]='Type field is required.';
 		if (empty($type->title_label)) $error[]='Title field label field is required.';
-		if (model::get_topic_type($type->type)) $error[]='Type name <b>'.$type->type.'</b> is inused.';
+		if (CommonModel::get_topic_type($type->type)) $error[]='Type name <b>'.$type->type.'</b> is inused.';
 
 		if ($error) {
 			$message=message('error',$error);

@@ -53,7 +53,7 @@ function paper_list($self) {
 		if (user_access('administer contents,administer papers')) user_menu('paper','paper',url('paper'));
 		if ($topics->forum->fid && cfg('member.menu.paper.forum')) user_menu('forum',$topics->forum->forum,url('paper/forum/'.$topics->forum->fid));
 		if ($topics->forum->cid) user_menu('category',$topics->forum->category,url('paper/category/'.$topics->forum->cid));
-		model::member_menu();
+		CommonModel::member_menu();
 		if ($topics->forum->cid && ($topics->forum->public==1 ||
 			($topics->forum->public==2 && i()->ok) ||
 			user_access('administer contents,administer papers,create '.$topics->forum->fid.' paper'))) {

@@ -148,7 +148,7 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 
 
 			if ($picsData->type == 'photo') {
-				$picsData->photo = $photo = model::get_photo_property($upload->filename);
+				$picsData->photo = $photo = CommonModel::get_photo_property($upload->filename);
 
 				if ($data->link == 'href') {
 					$uploadUrl = url('project/'.$data->tpid.'/info.photo/'.$fid);

@@ -1,8 +1,8 @@
 <?php
 function admin_content_taxonomy_edit($seld,$tid) {
 	$tag=(object)post('tag');
-	$db_tag=model::get_taxonomy($tid);
-	$vocab=model::get_vocabulary($db_tag->vid);
+	$db_tag=CommonModel::get_taxonomy($tid);
+	$vocab=CommonModel::get_vocabulary($db_tag->vid);
 
 
 	if ($_POST) {

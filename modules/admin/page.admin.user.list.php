@@ -130,7 +130,7 @@ class AdminUserList extends Page {
 									$menu->add('<a class="sg-action" href="'.url('admin/user/edit/'.$rs->uid).'" data-rel="box" title="Edit user property" data-width="640"><i class="icon -material">edit</i></a>');
 
 									return [
-										'<img class="profile-photo" src="'.model::user_photo($rs->username).'" width="48" height="48" />',
+										'<img class="profile-photo" src="'.CommonModel::user_photo($rs->username).'" width="48" height="48" />',
 										'<strong>'.$rs->name.'</strong><br />'.$rs->username.'('.$rs->uid.')',
 										$rs->email,
 										$rolesList ? implode(', ', $rolesList) : '',

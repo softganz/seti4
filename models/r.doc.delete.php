@@ -32,7 +32,7 @@ function r_doc_delete($fid, $options = '{}') {
 			unlink($filename);
 		}
 
-		model::watch_log('photo', 'remove doc', 'File id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')');
+		CommonModel::watch_log('photo', 'remove doc', 'File id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')');
 	}
 	return $result;
 }

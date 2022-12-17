@@ -17,7 +17,7 @@ function forum_home($self, $forumId = NULL) {
 	$getOrder = post('ord');
 	$getSort = post('sort');
 	$getItems = SG\getFirst(post('items'), $defaultItems);
-	$types = model::get_topic_type($self->content_type);
+	$types = CommonModel::get_topic_type($self->content_type);
 
 	$self->theme->header->text = tr($types->name);
 	$self->theme->header->description = $types->description;
@@ -58,7 +58,7 @@ function forum_home($self, $forumId = NULL) {
 
 	event_tricker('paper.listing.init',$self,$topics,$topicCondition);
 
-	model::member_menu();
+	CommonModel::member_menu();
 
 	if (user_access('create forum content')) user_menu('new',tr('Create new topic'),url('paper/post/forum'));
 
@@ -78,7 +78,7 @@ function forum_home($self, $forumId = NULL) {
 	$vocab = mydb::select('SELECT * FROM %vocabulary_types% WHERE type="forum" LIMIT 1');
 
 	if ($vocab->_num_rows) {
-		$tree = model::get_taxonomy_tree($vocab->vid);
+		$tree = CommonModel::get_taxonomy_tree($vocab->vid);
 		$topic_count = mydb::select('SELECT tid,COUNT(*) AS topics FROM %tag_topic% WHERE vid = :vid GROUP BY tid', ':vid',$vocab->vid);
 		foreach ($topic_count->items as $topic) $topics[$topic->tid] = $topic->topics;
 	}

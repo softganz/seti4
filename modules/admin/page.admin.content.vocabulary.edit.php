@@ -1,7 +1,7 @@
 <?php
 function admin_content_vocabulary_edit($self,$vid) {
 	//$this->nav.=$this->sep.' <a href="'.url('admin/content/taxonomy').'">Categories</a> ';
-	$db_vocab=model::get_vocabulary($vid);
+	$db_vocab=CommonModel::get_vocabulary($vid);
 
 	/*
 	$db_vocab=(array) mydb::select('SELECT * FROM %vocabulary% WHERE vid='.$vid.' LIMIT 1');

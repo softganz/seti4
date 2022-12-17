@@ -38,7 +38,7 @@ function profile($self,$uid=NULL) {
 	foreach ($dbs->items as $rs) {
 		if ($rs->username==='root') continue;
 		$card='<h3><a href="'.url('profile/'.$rs->uid).'">'.$rs->name.'</a></h3>'._NL;
-		$card .= '<img src="'.model::user_photo($rs->username).'" alt="'.htmlspecialchars($rs->name).'" />'._NL;
+		$card .= '<img src="'.CommonModel::user_photo($rs->username).'" alt="'.htmlspecialchars($rs->name).'" />'._NL;
 		if ($rs->real_name) $card.=$rs->real_name.($rs->mid_name?' ('.$rs->mid_name.')':'').' '.$rs->last_name.'<br />'._NL;
 		if ($rs->organization) $card.=$rs->organization ? $rs->organization.'<br />'._NL:'';
 		$card.='<a href="'.url('profile/'.$rs->uid).'">มีต่อ &raquo;</a>'._NL;

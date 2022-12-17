@@ -20,7 +20,7 @@ class MyPhoto extends Page {
 				'type' => 'album',
 				'children' => array_map(
 					function($rs) {
-						$photo = model::get_photo_property($rs->file);
+						$photo = CommonModel::get_photo_property($rs->file);
 						$cardStr = '';
 						if ($photo->_exists) {
 							$cardStr .= '<a class="sg-action" href="'.$photo->_src.'" data-rel="img"><img class="photoitem -'.($photo->_size->width>$photo->_size->height?'wide':'tall').'" src="'.$photo->_src.'" height="206" width="206" /></a>';

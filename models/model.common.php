@@ -17,7 +17,9 @@
 // @deprecated
 // All function will deprecate and move this class to be base class of all model
 
-class Model {
+class Model {}
+
+class CommonModel extends Model {
 
 	public static function member_menu() {
 		if (!i()->ok) {
@@ -87,34 +89,6 @@ class Model {
 		$dbs=mydb::select($stmt,':taggroup',$taggroup,':process',$process);
 		$result=array();
 		foreach ($dbs->items as $rs) $result[$rs->catkey]=$fullDesc?$rs:$rs->name;
-		return $result;
-	}
-
-	public static function get_category_by_group($taggroup, $key = 'tid', $options = '{}') {
-		$defaults = '{debug: false}';
-		$options = sg_json_decode($options, $defaults);
-		$debug = $options->debug;
-
-		mydb::where('tg.`taggroup` = :taggroup',':taggroup',$taggroup);
-		if ($options->condition) mydb::where($options->condition);
-		$stmt = "SELECT
-						  tg.`$key` `catkey`
-						, tg.`name`
-						, p.`name` `parentName`
-						FROM %tag% tg
-							LEFT JOIN %tag% p ON p.`taggroup` = :taggroup AND p.`catid` = tg.`catparent`
-						%WHERE%
-						ORDER BY tg.`weight` ASC, tg.`$key` ASC;";
-		$dbs=mydb::select($stmt);
-
-		$result=array();
-		foreach ($dbs->items as $rs) {
-			if (empty($rs->parentName)) $result[$rs->name]=array();
-		}
-		foreach ($dbs->items as $rs) {
-			if (empty($rs->parentName)) continue;
-			$result[$rs->parentName][$rs->catkey]=$rs->name;
-		}
 		return $result;
 	}
 
@@ -214,7 +188,7 @@ class Model {
 				$tree[] = $term;
 
 				if ($children[$vid][$child]) {
-				  $tree = array_merge($tree, (array)model::get_taxonomy_tree($vid, $child, $depth, $max_depth));
+				  $tree = array_merge($tree, (array)CommonModel::get_taxonomy_tree($vid, $child, $depth, $max_depth));
 				}
 			  }
 			}
@@ -241,8 +215,8 @@ class Model {
 			$message=$to;
 			$module=$title;
 			switch (strtoupper($module)) {
-				case 'PHPMAILER' :  $mail_result=model::sendmail_by_PHPMailer($message); break;
-				default :  $mail_result=model::sendmail_by_SMTP($message); break;
+				case 'PHPMAILER' :  $mail_result=CommonModel::sendmail_by_PHPMailer($message); break;
+				default :  $mail_result=CommonModel::sendmail_by_SMTP($message); break;
 			}
 			return $mail_result;
 		} else {
@@ -275,7 +249,7 @@ sg_text2html($topic->post->body).'
 					$to=trim($to);
 					if (empty($to)) continue;
 					$mail->to=$to;
-					$mail->result.=model::sendmail($mail).'<br /><br />';
+					$mail->result.=CommonModel::sendmail($mail).'<br /><br />';
 				}
 			return $mail;
 		}
@@ -432,7 +406,7 @@ sg_text2html($topic->post->body).'
 			$rs->property = sg_json_decode($rs->property, cfg('topic.property'));
 
 			$rs->photo = mydb::select('SELECT * FROM %'.($rs->_archive?'archive_':'').'topic_files% WHERE `tpid`='.$rs->tpid.' AND `cid`=0 AND `type`="photo" ORDER BY fid');
-			foreach ($rs->photo->items as $key=>$photo) $rs->photo->items[$key]=object_merge($rs->photo->items[$key],model::get_photo_property($photo->file));
+			foreach ($rs->photo->items as $key=>$photo) $rs->photo->items[$key]=object_merge($rs->photo->items[$key],CommonModel::get_photo_property($photo->file));
 
 			if (cfg('topic.video.allow')) {
 				$rs->video=mydb::select('SELECT f.*,u.username FROM %topic_files% f LEFT JOIN %users% u ON u.uid=f.uid WHERE tpid=:tpid AND type="movie" LIMIT 1',':tpid',$tpid);
@@ -468,14 +442,6 @@ sg_text2html($topic->post->body).'
 			}
 		}
 		return $rs;
-	}
-
-	public static function get_blog_topic_by_id($tpid=NULL) {
-		$topic=model::get_topic_by_id($tpid);
-		if ($topic->_empty) return $topic;
-		$topic->blog=mydb::select('SELECT * FROM %blog% WHERE bid='.$topic->bid.' LIMIT 1');
-		$topic->blogname=$topic->blog->name;
-		return $topic;
 	}
 
 	public static function get_category_tag($cid) {
@@ -558,7 +524,7 @@ sg_text2html($topic->post->body).'
 		// check query condition
 		if ($para->tpid) $where[] = 't.`tpid` = '.$para->tpid;
 		if ($para->org) $where[] = 't.`orgid` IN ( '.$para->org.' )';
-		if ($para->category) $where[] = 'tp.`tid` in ('.model::get_category_tag($para->category).')';
+		if ($para->category) $where[] = 'tp.`tid` in ('.CommonModel::get_category_tag($para->category).')';
 		if ($para->tag) $where[] = 'tp.`tid` IN ('.$para->tag.')';
 		if ($para->type) $where[] = 't.`type` IN ("'.implode('","',explode(',',$para->type)).'")';
 		if ($para->user) $where[] = 't.`uid` IN ('.$para->user.')';
@@ -590,7 +556,7 @@ sg_text2html($topic->post->body).'
 			if ($para->field->photo) {
 				$result->photo = mydb::select('SELECT `file` FROM %topic_files% WHERE `tpid` = :tpid AND (`cid` IS NULL OR `cid` = 0) AND `type` = "photo"', ':tpid', $topics->tpid);
 				foreach ($result->photo->items as $key=>$photo) {
-					$result->photo->items[$key]=model::get_photo_property('upload/pics/'.$photo->file);
+					$result->photo->items[$key]=CommonModel::get_photo_property('upload/pics/'.$photo->file);
 				}
 			}
 		} else {
@@ -622,101 +588,10 @@ sg_text2html($topic->post->body).'
 						$result->items[$photo->tpid]->photo = (Object) ['_num_rows' => 0, 'items' => []];
 					}
 					$result->items[$photo->tpid]->photo->_num_rows++;
-					$result->items[$photo->tpid]->photo->items[] = model::get_photo_property('upload/pics/'.$photo->file);
+					$result->items[$photo->tpid]->photo->items[] = CommonModel::get_photo_property('upload/pics/'.$photo->file);
 				}
 			}
 		}
-		return $result;
-	}
-
-	public static function explode_record($group,$topics) {
-		if (preg_match('/(.*)=(.*)/',$group,$out)) {
-			$group_by_key=$out[1];
-			$group_request=explode(',',$out[2]);
-		} else {
-			return false;
-		}
-
-		foreach ($group_request as $group_name) $result[$group_name]=new record_set();
-		foreach ($topics->items as $key=>$rs) {
-			if (isset($rs->{$group_by_key}) && in_array($rs->{$group_by_key},$group_request)) {
-				$result[$rs->{$group_by_key}]->appen($rs,$key);
-			}
-		}
-		return $result;
-	}
-
-	public static function save_upload_photo($upload,$folder=null,$simulate=false) {
-		$result->error=false;
-		$result->complete=false;
-		$result->process[]='paper_model::save_upload_photo '.($simulate?'<strong>simulation</strong> ':'').'request';
-
-		if (!is_uploaded_file($upload->tmp_name)) $result->error[]='No upload file';
-		if ($upload->error) $result->error[]='upload file error';
-		if (empty($upload->tmp_name)) $result->error[]='Invalid temporary name';
-		if ($upload->size<=0) $result->error[]='empty file size';
-		if (!in_array($upload->type,cfg('photo.file_type'))) $result->error[]='Invalid file format';
-
-		if ($result->error) return $result;
-
-
-		if (empty($folder)) $folder=cfg('upload.folder').i()->username.'/';
-
-		$result->process[]='Start saving upload file <em>'.$upload->name.'</em> to folder <em>'.$folder.'</em>';
-
-		// if sender is admin , do not resize picture file
-		if ( !user_access('administer contents') &&
-			($upload->size > cfg('photo.max_file_size')*1024) ) {
-			sg_photo_resize($upload->tmp_name,cfg('photo.resize.width'),NULL,NULL,true,cfg('photo.resize.quality'));
-			$result->process[]='Resize photo file to '.cfg('photo.resize.width').' pixel';
-		}
-
-		$filename = sg_valid_filename($upload->name);
-		$ext = sg_file_extension($filename);
-		$filename = substr($filename,0,strrpos($filename,'.'));
-		if (empty($filename)) $filename = 'pic_';
-
-		$pic_index = 1;
-		$upload_filename = $folder.$filename.'.'.$ext;
-		$is_copynewfile = true;
-		if (file_exists($upload_filename)) {
-			// check duplicate file
-			$old_filesize = filesize($upload_filename);
-			$upload_filesize = filesize($upload->tmp_name);
-			$result->process[]='Check file size of old file '.$old_filesize.' bytes and new file '.$upload_filesize.' bytes';
-			if ($upload_filesize != $old_filesize) {
-				while (file_exists($upload_filename)) {
-					$new_filename = $filename.'_'.sprintf('%04d',$pic_index);
-					$upload_filename = $upload_folder.$new_filename.'.'.$ext;
-					$pic_index++;
-				}
-				$result->process[]='Set upload file to new name <em>'.$new_filename.'.'.$ext.'</em>';
-			} else $is_copynewfile = false;
-		}
-
-		$filename = basename($upload_filename);
-		$result->save->file=$filename;
-		$result->save->location=$upload_filename;
-		if ( $is_copynewfile ) {
-			$result->process[]='Save upload file to <em>'.$upload_filename.'</em>';
-			if (!$simulate) {
-				if (!file_exists($folder)) {
-					mkdir($folder);
-					if (cfg('upload.folder.chmod')) chmod($folder,cfg('upload.folder.chmod'));
-				}
-				if (copy($upload->tmp_name, $upload_filename)) {
-					// change mode to config->upload.file.chmod
-					if (cfg('upload.file.chmod')) chmod($upload_filename,cfg('upload.file.chmod'));
-					$result->save->type='new';
-				} else $result->error[]='Save upload error';
-			}
-		} else {
-			$result->process[]='Upload file <em>'.$upload_filename.'</em> is same old file , no need to save new file';
-			$result->save->type='same';
-		}
-
-		$result->complete=true;
-		$result->process[]='module::__save_upload_photo_file complete';
 		return $result;
 	}
 
@@ -857,7 +732,7 @@ sg_text2html($topic->post->body).'
 			$to=trim($to);
 			if (empty($to)) continue;
 			$mail->to=$to;
-			$mail->result.=model::sendmail($mail).'<br /><br />';
+			$mail->result.=CommonModel::sendmail($mail).'<br /><br />';
 		}
 		return $mail;
 	}

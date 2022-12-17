@@ -198,11 +198,11 @@ sg_text2html($topicInfo->info->body).'
 </body>
 </html>
 ';
-		model::sendmail($mail);
+		CommonModel::sendmail($mail);
 	}
 
 	// save delete log
-	model::watch_log('paper','Paper delete','Paper/'.$tpid.' was delete');
+	CommonModel::watch_log('paper','Paper delete','Paper/'.$tpid.' was delete');
 
 	// delete was complete
 	$result->complete=true;

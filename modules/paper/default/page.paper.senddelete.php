@@ -68,7 +68,7 @@ function paper_senddelete($self, $tpid) {
 
 			R::Model('watchdog.log', 'paper', 'Send delete paper', 'Paper : '.$tpid.' : '.$topicInfo->title.'<br />'.$post->detail);
 
-			//model::sendmail($mail);
+			//CommonModel::sendmail($mail);
 			//$ret .= print_o($mail,'$mail');
 
 			$ret .= message('success','ส่งข้อความแจ้งลบหัวข้อที่ไม่เหมาะสมเรียบร้อย');

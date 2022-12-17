@@ -26,12 +26,12 @@ class CalendarRoomReport extends Page {
 		<label for="to">ถึง</label>
 		<input type="text" id="to" name="to" class="form-text sg-datepicker" value="'.$to.'" />';
 		$ret.='<label>ห้องประชุม : </label><select name="roomid" id="roomid" class="form-select"><option value="">ทุกห้อง</option><optgroup label="เลือกห้องประชุม">';
-		foreach (model::get_taxonomy_tree($roomProperty['roomvid']) as $term) {
+		foreach (CommonModel::get_taxonomy_tree($roomProperty['roomvid']) as $term) {
 			$ret.='<option value="'.$term->tid.'"'.($term->tid==$roomid?' selected="selected"':'').'>'.$term->name.'</option>';
 		}
 		$ret.='</optgroup></select>';
 		$ret.='<label>หน่วยงาน : </label><select name="orgname" id="orgname" class="form-select"><option value="">ทุกหน่วยงาน</option><optgroup label="เลือกหน่วยงาน">';
-		foreach (model::get_taxonomy_tree(cfg('calendar.room.vid.org')) as $term) {
+		foreach (CommonModel::get_taxonomy_tree(cfg('calendar.room.vid.org')) as $term) {
 			$ret.='<option value="'.$term->name.'"'.($term->name==$orgname?' selected="selected"':'').'>'.$term->name.'</option>';
 		}
 		$ret.='</optgroup></select>';

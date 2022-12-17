@@ -1,14 +1,14 @@
 <?php
 function admin_content_type_edit($self,$type_id) {
 	$type=(object)post('type',_TRIM);
-	$type_db=model::get_topic_type($type_id);
+	$type_db=CommonModel::get_topic_type($type_id);
 
 	if ($type->name) {
 		if (empty($type->name)) $error[]='Name field is required.';
 		if (empty($type->type)) $error[]='Type field is required.';
 		if (empty($type->title_label)) $error[]='Title field label field is required.';
 		$type->topic_options=(object)$type->topic_options;
-		if ($type->type && $type->type!=$type_db->type && model::get_topic_type($type->type)) $error[]='Type name <b>'.$type->type.'</b> is inused.';
+		if ($type->type && $type->type!=$type_db->type && CommonModel::get_topic_type($type->type)) $error[]='Type name <b>'.$type->type.'</b> is inused.';
 		if ($error) {
 			$message=message('error',$error);
 		} else {

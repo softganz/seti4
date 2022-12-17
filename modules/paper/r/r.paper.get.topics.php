@@ -146,7 +146,7 @@ function r_paper_get_topics($conditions, $options = '{}') {
 	foreach ($topics->items as $key=>$topic) {
 		$topic_list[] = $topic->tpid;
 		$topic->summary = sg_summary_text($topic->body);
-			$topic->profile_picture = model::user_photo($topic->username);
+			$topic->profile_picture = CommonModel::user_photo($topic->username);
 		$result->items[$topic->tpid]=$topic;
 	}
 	if ($isFetchPhoto && $topic_list) {
@@ -163,7 +163,7 @@ function r_paper_get_topics($conditions, $options = '{}') {
 		$photosDbs = mydb::select($stmt, ':tpidList', 'SET:'.implode(',',$topic_list));
 
 		foreach ($photosDbs->items as $photo) {
-			$result->items[$photo->tpid]->photo = object_merge_recursive($photo, model::get_photo_property($photo->file));
+			$result->items[$photo->tpid]->photo = object_merge_recursive($photo, CommonModel::get_photo_property($photo->file));
 		}
 	}
 	if ($debug) debugMsg($result,'$result');

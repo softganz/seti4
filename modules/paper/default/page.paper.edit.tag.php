@@ -40,7 +40,7 @@ function paper_edit_tag($self, $topicInfo) {
 	if ($para->tag) {
 		$oldtags=mydb::select('SELECT tp.tid,tp.vid,v.type FROM %tag_topic% tp LEFT JOIN %vocabulary_types% v ON v.vid=tp.vid WHERE tp.tpid=:tpid',':tpid',$topic->tpid);
 
-		$add_tag=model::get_taxonomy($para->tag);
+		$add_tag=CommonModel::get_taxonomy($para->tag);
 		mydb::query('INSERT INTO %tag_topic% (`tpid`,`vid`,`tid`) VALUES (:tpid, :vid, :tid)',':tpid',$topic->tpid,':vid',$add_tag->vid,':tid',$para->tag);
 		if (mydb()->affected_rows==1) {
 			$topic->tags[]=(object)array('tid'=>$para->tag,'name'=>$add_tag->name);
@@ -95,7 +95,7 @@ function __paper_edit_tag_current($topicInfo) {
 function __paper_edit_tag_list_vocab($topicInfo, $vocabId = NULL) {
 	$tpid = $topicInfo->tpid;
 
-	$vocabs = model::get_vocabulary();
+	$vocabs = CommonModel::get_vocabulary();
 
 	if (count($vocabs->items) == 1) $vocabId = reset($vocabs->items)->vid;
 	$ret .= '<h3>Unused tags</h3>';
@@ -110,7 +110,7 @@ function __paper_edit_tag_list_vocab($topicInfo, $vocabId = NULL) {
 									);
 
 		if (isset($vocabId) && $vocabId == $vocab->vid) {
-			$tree = model::get_taxonomy_tree($vocabId);
+			$tree = CommonModel::get_taxonomy_tree($vocabId);
 			foreach ($tree as $term) {
 				if ($term->process==-1) continue;
 				if (isset($topicInfo->tags[$term->tid])) continue;

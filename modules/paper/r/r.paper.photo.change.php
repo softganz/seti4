@@ -32,7 +32,7 @@ function r_paper_photo_change($fileId, $photo) {
 				&& is_file($result->upload->save->_location)
 				&& $fileCount = mydb::select('SELECT COUNT(*) `total` FROM %topic_files% WHERE `fid` != :fid AND `file` = :file AND `type` = "photo" LIMIT 1', ':fid', $fileId, ':file', $oldFile)->total <= 0) {
 				$result->process[] = 'Delete old photo file <em>'.$result->upload->save->_file.'</em>';
-				$oldFileProp = model::get_photo_property($oldFile);
+				$oldFileProp = CommonModel::get_photo_property($oldFile);
 				//debugMsg($oldFileProp,'$oldFileProp');
 				unlink($oldFileProp->_file);
 			}
@@ -44,7 +44,7 @@ function r_paper_photo_change($fileId, $photo) {
 			$result->query[] = mydb()->_query;
 			if (mydb()->_error) $result->error[] = 'Query error';
 
-			$result->file = model::get_photo_property($result->upload->save->_file);
+			$result->file = CommonModel::get_photo_property($result->upload->save->_file);
 			$result->complete = true;
 
 		} else {

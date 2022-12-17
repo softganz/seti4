@@ -1,7 +1,7 @@
 <?php
 function admin_content_taxonomy_list($self,$vid) {
-	$vocab = model::get_vocabulary($vid);
-	$tree = model::get_taxonomy_tree($vid);
+	$vocab = CommonModel::get_vocabulary($vid);
+	$tree = CommonModel::get_taxonomy_tree($vid);
 
 	$ret .= '<div id="tabs-wrapper" class="clear-block"><h2 class="with-tabs">Tags in <em>'.$vocab->name.'</em></h2>
 <ul class="tabs primary">

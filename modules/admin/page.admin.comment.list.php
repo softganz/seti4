@@ -106,7 +106,7 @@ function admin_comment_list($self) {
 			'<a href="'.url('paper/'.$rs->tpid,NULL,$rs->cid?'comment-'.$rs->cid:NULL).'" title="'.htmlspecialchars($rs->title).'" target="_blank">'.SG\getFirst($rs->cid,$rs->tpid).'</a>',
 			$deleteBtn,
 			sg_text2html($rs->comment),
-			$rs->uid ? '<a class="sg-action" href="'.url('profile/'.$rs->uid).'" data-rel="box" data-width="640"><img class="profile-photo" src="'.model::user_photo($rs->username).'" style="width: 24px; height: 24px;" />'.$rs->name.($rs->userStatus != 'enable' ? ' ('.$rs->userStatus.')' : '').'</a>' : $rs->name,
+			$rs->uid ? '<a class="sg-action" href="'.url('profile/'.$rs->uid).'" data-rel="box" data-width="640"><img class="profile-photo" src="'.CommonModel::user_photo($rs->username).'" style="width: 24px; height: 24px;" />'.$rs->name.($rs->userStatus != 'enable' ? ' ('.$rs->userStatus.')' : '').'</a>' : $rs->name,
 			$rs->timestamp
 		);
 	}
