@@ -140,7 +140,7 @@ function paper_edit_photo_add($self, $topicInfo) {
 			$ret.=message('error',$result->error);
 		} else {
 			$ret.=notify('Delete photo complete : Photo file <em>'.$result->deleted->name.'</em> has been deleted.');
-			$topic=paper_CommonModel::get_topic_by_id($topic->tpid);
+			$topic=paper_BasicModel::get_topic_by_id($topic->tpid);
 		}
 
 		if (user_access('upload photo')) $ret.=paper_edit::__edit_photo_add($topic,$para);

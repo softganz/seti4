@@ -29,7 +29,7 @@ function widget_signform() {
 	$ret = '';
 
 	$ret .= '<a href="'.url('my').'">'
-			. (i()->ok ? '<img class="profile-photo" src="'.CommonModel::user_photo(i()->username).'" width="32" height="32" />' : '<i class="icon -material">person</i>')
+			. (i()->ok ? '<img class="profile-photo" src="'.BasicModel::user_photo(i()->username).'" width="32" height="32" />' : '<i class="icon -material">person</i>')
 			. '<span>'.(i()->ok ? '<strong>'.i()->name.'</strong>' : tr('Member zone','มุมสมาชิก')).'</span>'
 			. '</a>';
 

@@ -138,12 +138,12 @@ sg_text2html($topic->body).'
 </body>
 </html>
 ';
-		CommonModel::sendmail($mail);
+		BasicModel::sendmail($mail);
 	}
 	*/
 
 	// save delete log
-	CommonModel::watch_log('paper','Paper delete','Paper/'.$topic->tpid.' was delete');
+	BasicModel::watch_log('paper','Paper delete','Paper/'.$topic->tpid.' was delete');
 
 	// delete was complete
 	$result->complete=true;

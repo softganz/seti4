@@ -56,7 +56,7 @@ class CalendarRoomNew extends Page {
 								'require' => true,
 								'options' => (function() {
 									$roomProperty = property('calendar.room');
-									$tree = CommonModel::get_taxonomy_tree($roomProperty['roomvid']);
+									$tree = BasicModel::get_taxonomy_tree($roomProperty['roomvid']);
 									$options = [];
 									foreach ($tree as $term) {
 										$options[$term->tid]=$term->name;
@@ -122,7 +122,7 @@ class CalendarRoomNew extends Page {
 								'require' => true,
 								'value' => $data->org_name,
 								'options' => (function() {
-									$tree = CommonModel::get_taxonomy_tree(cfg('calendar.room.vid.org'));
+									$tree = BasicModel::get_taxonomy_tree(cfg('calendar.room.vid.org'));
 									$options = ['' => '==เลือกหน่วยงาน=='];
 									foreach ($tree as $term) {
 										$options[$term->name] = $term->name;

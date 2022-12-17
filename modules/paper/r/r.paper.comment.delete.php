@@ -92,7 +92,7 @@ function r_paper_comment_delete($commentId, $options = '{}') {
 
 
 
-		CommonModel::watch_log('paper','Paper comment delete','Delete comment id '.$delete->id.' of <a href="'.url('paper/'.$delete->tpid).'">paper/'.$delete->tpid.'</a>');
+		BasicModel::watch_log('paper','Paper comment delete','Delete comment id '.$delete->id.' of <a href="'.url('paper/'.$delete->tpid).'">paper/'.$delete->tpid.'</a>');
 
 		/*
 		// get last post date
@@ -150,7 +150,7 @@ sg_text2html($comment->comment).'
 </body>
 </html>
 ';
-		CommonModel::sendmail($mail);
+		BasicModel::sendmail($mail);
 	}
 
 	$result->complete = true;

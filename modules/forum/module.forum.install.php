@@ -15,7 +15,7 @@ function module_project_install() {
 	$content->locked=1;
 	$content->publish='publish';
 	$content->comment=2;
-	CommonModel::create_content_type($content);
+	BasicModel::create_content_type($content);
 
 	/*
 	$stmt = 'INSERT INTO %topic_types%

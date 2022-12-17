@@ -50,7 +50,7 @@ class ProfileView extends Page {
 					'<div class="sg-view -co-2">'
 					. '<div class="-sg-view -sg-paddingnorm">'
 					. '<div class="my-profile-wrapper">'
-					. '<div class="-photo"><img src="'.CommonModel::user_photo($userInfo->username).'" width="100%" height="100%" /></a></div>'
+					. '<div class="-photo"><img src="'.BasicModel::user_photo($userInfo->username).'" width="100%" height="100%" /></a></div>'
 					. '<div class="-name">'.$userInfo->name.'</div>'
 					. (user_access('administer users') ? '<div class="-sg-text-center">ชื่อที่ใช้ในการเข้าระบบ : <strong><a href="'.url('admin/user/edit/'.$userInfo->uid).'">'.$userInfo->username.'</a></strong></div>':'')
 					. '</div>'

@@ -85,7 +85,7 @@ class PaperModel {
 			foreach ($tags->items as $tag) $rs->tags[]=(object)array('tid'=>$tag->tid,'name'=>$tag->name,'vid'=>$tag->vid,'vocab_name'=>$tag->vocab_name,'description'=>$tag->description?$tag->description:null);
 
 			$rs->photo = mydb::select('SELECT * FROM %'.($rs->_archive?'archive_':'').'topic_files% WHERE `tpid`='.$rs->tpid.' AND `cid`=0 AND `type`="photo" ORDER BY fid');
-			foreach ($rs->photo->items as $key=>$photo) $rs->photo->items[$key]=object_merge($rs->photo->items[$key],CommonModel::get_photo_property($photo->file));
+			foreach ($rs->photo->items as $key=>$photo) $rs->photo->items[$key]=object_merge($rs->photo->items[$key],BasicModel::get_photo_property($photo->file));
 
 			if (cfg('topic.video.allow')) {
 				$rs->video=mydb::select('SELECT f.*,u.username FROM %topic_files% f LEFT JOIN %users% u ON u.uid=f.uid WHERE tpid=:tpid AND type="movie" LIMIT 1',':tpid',$tpid);
@@ -198,8 +198,8 @@ class PaperModel {
 		foreach ($topics->items as $key=>$topic) {
 			$topic_list[]=$topic->tpid;
 			$topic->summary=sg_summary_text($topic->body);
-			//			if ($topic->photo) $topic->photo=CommonModel::get_photo_property($topic->photo);
- 			$topic->profile_picture=CommonModel::user_photo($topic->username);
+			//			if ($topic->photo) $topic->photo=BasicModel::get_photo_property($topic->photo);
+ 			$topic->profile_picture=BasicModel::user_photo($topic->username);
 			//			if ($topic->profile_picture ) $topic->profile_picture = cfg('url').'upload/member/'.$topic->profile_picture;
 			$result->items[$topic->tpid]=$topic;
 		}
@@ -209,7 +209,7 @@ class PaperModel {
 			//			echo mydb()->_query;
 			//			print_o($photos,'$photos',1);
 			foreach ($photos->items as $photo) {
-				$result->items[$photo->tpid]->photo=CommonModel::get_photo_property($photo->file);
+				$result->items[$photo->tpid]->photo=BasicModel::get_photo_property($photo->file);
 			}
 		}
 		//		print_o($topic_list,'$topic_list',1);
@@ -280,7 +280,7 @@ class PaperModel {
 		$result->query[]=mydb()->_query;
 
 		foreach ($photos->items as $item) {
-			$photo=CommonModel::get_photo_property($item->file);
+			$photo=BasicModel::get_photo_property($item->file);
 			$result->process[]='Start delete file <em>'.$photo->_file.'</em>';
 			if (file_exists($photo->_file) and is_file($photo->_file)) {
 				$is_inused=mydb::select('SELECT * FROM %topic_files% WHERE `file`=:file AND fid!=:fid AND `type`="photo" LIMIT 1',':file',$item->file,':fid',$item->fid)->fid;

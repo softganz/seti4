@@ -58,7 +58,7 @@ function view_paper_relatetopic($topicInfo) {
 		foreach (mydb::select($stmt)->items as $ref_body_rs) {
 			$ref_dbs->body[$ref_body_rs->tpid] = $ref_body_rs;
 			if ($ref_body_rs->photo) {
-				$ref_dbs->body[$ref_body_rs->tpid]->photo = CommonModel::get_photo_property($ref_body_rs->photo);
+				$ref_dbs->body[$ref_body_rs->tpid]->photo = BasicModel::get_photo_property($ref_body_rs->photo);
 			}
 		}
 	}

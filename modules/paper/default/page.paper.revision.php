@@ -11,7 +11,7 @@ $debug = true;
 
 function paper_revision($self, $tpid = NULL, $revid = NULL) {
 	if ($revid) {
-		$topic = paper_CommonModel::get_topic_by_id($tpid,NULL,$revid);
+		$topic = paper_BasicModel::get_topic_by_id($tpid,NULL,$revid);
 		$topic->reply=0;
 		unset($topic->comment);
 		//$ret .= print_o($topic, '$tpic');
@@ -21,7 +21,7 @@ function paper_revision($self, $tpid = NULL, $revid = NULL) {
 		return $ret;
 	}
 
-	$topic = paper_CommonModel::get_topic_by_id($tpid);
+	$topic = paper_BasicModel::get_topic_by_id($tpid);
 
 	$stmt = 'SELECT r.revid,r.timestamp , u.name
 							FROM %topic_revisions% r

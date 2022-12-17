@@ -13,7 +13,7 @@ $debug = true;
 function view_paper_comment_render($commentInfo = NULL) {
 	if ($commentInfo->photos) {
 		foreach (explode(',',$commentInfo->photos) as $photo) {
-			$photo=CommonModel::get_photo_property($photo);
+			$photo=BasicModel::get_photo_property($photo);
 			$photo->description='Photo : '.$commentInfo->photo.' , '.$photo->_size->width.'x'.$photo->_size->height.' pixel '.number_format($photo->_filesize).' bytes';
 
 			$ret .= '<div class="photo photo-'.($photo->_size->width>$photo->_size->height?'wide':'tall').'">'._NL;

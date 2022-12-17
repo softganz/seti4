@@ -98,8 +98,8 @@ e-mail : '.$register->email.'</p>
 
 <p>Web Team.</p>';
 
-					CommonModel::sendmail($mail);
-					//CommonModel::sendmail($mail,'PHPMailer');
+					BasicModel::sendmail($mail);
+					//BasicModel::sendmail($mail,'PHPMailer');
 					$ret .= message('status','Member register complete');
 					$ret .= '<p>ได้ทำการส่งอี-เมล์ไปที่ <strong>'.$register->email.'</strong> เรียบร้อย ให้ท่านเปิดอ่านอีเมล์และคลิกยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</p><p>หากท่านไม่ได้รับอีเมล์ กรุณาตรวจสอบในพื้นที่ของ <strong>Junk mail</strong> ด้วย</p>';
 					return $ret;

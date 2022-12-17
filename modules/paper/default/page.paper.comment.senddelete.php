@@ -61,7 +61,7 @@ function paper_comment_senddelete($self, $cid) {
 
 			R::Model('watchdog.log', 'paper', 'Send delete comment', 'Paper id : '.$commentInfo->tpid.' : Comment id '.$commentInfo->cid.' : '.$commentInfo->title.'<br />'.$post->detail);
 
-			//CommonModel::sendmail($mail);
+			//BasicModel::sendmail($mail);
 			//$ret .= $mailTitle.$mailMessage;
 			//$ret .= print_o($mail,'$mail');
 

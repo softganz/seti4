@@ -19,7 +19,7 @@ function user_email_confirm($self) {
 	$self->theme->title='User registration confirm';
 
 	user_menu('home','home',url());
-	CommonModel::member_menu();
+	BasicModel::member_menu();
 	$self->theme->navigator=user_menu();
 
 	if (empty($confirmCode)) $error[]='Invalid register confirm code';

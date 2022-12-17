@@ -91,7 +91,7 @@ function paper_comment_post($self, $topicInfo) {
 		//debugMsg(mydb()->_query);
 
 		$post_id = mydb()->insert_id;
-		CommonModel::watch_log('paper','Paper comment post','<a href="'.url('paper/'.$tpid.'#comment-'.$post_id).'">paper/'.$tpid.'comment-#'.$post_id.'</a>:'.$topicInfo->title);
+		BasicModel::watch_log('paper','Paper comment post','<a href="'.url('paper/'.$tpid.'#comment-'.$post_id).'">paper/'.$tpid.'comment-#'.$post_id.'</a>:'.$topicInfo->title);
 	}
 
 	// Update topic comments
@@ -149,7 +149,7 @@ sg_text2html($comment->comment).'
 </body>
 </html>
 ';
-	//CommonModel::sendmail($mail);
+	//BasicModel::sendmail($mail);
 
 	$ret .= message('status','Comment post complete');
 

@@ -11,7 +11,7 @@ function view_admin_taxonomy_form($tag=NULL,$vocab=array(),$message=NULL) {
 
 	if ($vocab->hierarchy) {
 		$options[0]='&lt;root&gt;';
-		$tree = CommonModel::get_taxonomy_tree($vocab->vid);
+		$tree = BasicModel::get_taxonomy_tree($vocab->vid);
 		//$ret.=print_o($tree,'$tree');
 		foreach ($tree as $term) {
 			if ($term->tid==$tag->tid) continue;

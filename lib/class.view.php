@@ -84,7 +84,7 @@ class View {
 
 		if ($para->model) {
 			$model=$para->model;
-			$topics = CommonModel::$model($para);
+			$topics = BasicModel::$model($para);
 		}
 		if ($topics->_type=='record') $topics=mydb::convert_record_to_recordset($topics);
 		if ($topics->_empty) return;

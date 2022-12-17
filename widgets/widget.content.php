@@ -115,7 +115,7 @@ global $today;
 
 	if ($para->{'data-model'}) {
 		$model = $para->{'data-model'};
-		$topics = CommonModel::$model($para);
+		$topics = BasicModel::$model($para);
 	}
 	// debugMsg('$model = '.$model);
 	// debugMsg($para, '$para');

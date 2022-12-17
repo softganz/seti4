@@ -21,13 +21,13 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 	$topic = (Object) [
 		'tid' => isset($tid) ? $tid : NULL,
 		// get type information
-		'type' => CommonModel::get_topic_type($type),
+		'type' => BasicModel::get_topic_type($type),
 		'tag' => NULL,
 		'post' => (Object) [],
 	];
 
 	// get tag information
-	if ($tid) $topic->tag = CommonModel::get_taxonomy($tid);
+	if ($tid) $topic->tag = BasicModel::get_taxonomy($tid);
 
 	// class name for node module
 	$moduleName = $topic->type->module;
@@ -36,11 +36,11 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 	if (!isset($type)) {
 		user_menu('home',tr('home'),url());
 		user_menu('contents','contents',url('contents'));
-		CommonModel::member_menu();
+		BasicModel::member_menu();
 		if (user_access('administer papers')) user_menu('post','Create new topic',url('paper/post'));
 		$self->theme->navigator = user_menu();
 
-		$types = CommonModel::get_topic_type();
+		$types = BasicModel::get_topic_type();
 		$self->theme->title = 'Create content</h2>';
 		$is_type_post = false;
 		$type_str = '<h3>Choose the appropriate item from the list :</h3>'._NL.'<dl>'._NL;
@@ -122,14 +122,14 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 		} else {
 			R::On($moduleName.'.paper.post.save', $self,$topic,$form,$result);
 
-			CommonModel::watch_log('paper','Paper post','<a href="'.url('paper/'.$topic->tpid).'">paper/'.$topic->tpid.'</a>:'.$topic->post->title);
+			BasicModel::watch_log('paper','Paper post','<a href="'.url('paper/'.$topic->tpid).'">paper/'.$topic->tpid.'</a>:'.$topic->post->title);
 
 			/*
 			if (_ON_HOST && cfg('alert.email')) {
-				$mail = CommonModel::send_alert_on_new_post($self,$topic);
+				$mail = BasicModel::send_alert_on_new_post($self,$topic);
 			}
 			if (_ON_HOST && cfg('alert.twitter')) {
-				$twitter = CommonModel::twitter_send(cfg('api.twitter.user'),$topic->post->title,cfg('domain').url('paper/'.$topic->tpid),null);
+				$twitter = BasicModel::twitter_send(cfg('api.twitter.user'),$topic->post->title,cfg('domain').url('paper/'.$topic->tpid),null);
 			}
 			*/
 
@@ -179,7 +179,7 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 
 	if (debug('method')) $ret .= print_o($topic,'$topic').print_o($form,'$form');
 
-	CommonModel::member_menu();
+	BasicModel::member_menu();
 
 	$self->theme->navigator = user_menu();
 

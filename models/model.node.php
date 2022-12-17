@@ -84,7 +84,7 @@ class NodeModel {
 		$result->process[]='NodeModel::save_topic '.($simulate?'<strong>simulation</strong> ':'').'request';
 
 		// Get node type on wmpty
-		if (!$topic->type->type) $topic->type = CommonModel::get_topic_type($topic->post->type);
+		if (!$topic->type->type) $topic->type = BasicModel::get_topic_type($topic->post->type);
 
 		if (sg_invalid_poster_name($topic->post->poster)) $error[]= 'Duplicate poster name';
 		if (!i()->ok && !sg_valid_daykey(5,$_POST['daykey'])) $error[]='Invalid Anti-spam word';
@@ -273,7 +273,7 @@ class NodeModel {
 					$tag_name=trim($tag_name);
 					$tag_db = mydb::select('SELECT tid FROM %tag% WHERE `vid` = :vid AND `name` = :name LIMIT 1', ':vid', $vid, ':name', $tag_name)->tid;
 					$result->process[] = mydb()->_query;
-					$tid =  $tag_db ? $tag_db : CommonModel::add_taxonomy($vid,$tag_name);
+					$tid =  $tag_db ? $tag_db : BasicModel::add_taxonomy($vid,$tag_name);
 					$topic_tag[$tid] = $tpid .' , '.$vid.' , '. $tid;
 				}
 			}
@@ -533,7 +533,7 @@ class NodeModel {
 		$result->process[] = mydb()->_query;
 
 		// save delete log
-		CommonModel::watch_log('paper','Paper delete','paper/'.$tpid.' - '.$result->data->title.' was delete');
+		BasicModel::watch_log('paper','Paper delete','paper/'.$tpid.' - '.$result->data->title.' was delete');
 
 		// delete was complete
 		$result->complete = true;

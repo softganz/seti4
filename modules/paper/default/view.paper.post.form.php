@@ -261,7 +261,7 @@ function _vid($topic) {
 	);
 
 	foreach ($vocabs->items as $vocab) {
-		$vocab = CommonModel::get_vocabulary($vocab->vid);
+		$vocab = BasicModel::get_vocabulary($vocab->vid);
 		if ($vocab->tags) {
 			$form = [
 				'label' => $vocab->name,
@@ -297,7 +297,7 @@ function _vid($topic) {
 			if ($vocab->help) $form['description'] = $vocab->help;
 			if ($vocab->required == 0) $form['options'][0] = '&lt;none&gt;';
 			$form['default'] = $topic->post->taxonomy[$vocab->vid];
-			$tree = CommonModel::get_taxonomy_tree($vocab->vid);
+			$tree = BasicModel::get_taxonomy_tree($vocab->vid);
 			foreach ($tree as $term) {
 				if ($term->depth == 0) unset($optgroup);
 				if ($term->process == -1) {

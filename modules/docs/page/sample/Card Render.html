@@ -15,7 +15,7 @@
 	$ret .= '<div class="header">'
 			. '<span>'
 			. $posterUrl
-			. '<img class="poster-photo" src="'.CommonModel::user_photo($visitInfo->username).'" width="32" height="32" alt="" />'
+			. '<img class="poster-photo" src="'.BasicModel::user_photo($visitInfo->username).'" width="32" height="32" alt="" />'
 			. '<span class="poster-name">'.$visitInfo->name.'</a> '
 			. '<span class="-visit-patient">'
 			. ($visitInfo->service ? ' {tr:'.$visitInfo->service.'}' : '')

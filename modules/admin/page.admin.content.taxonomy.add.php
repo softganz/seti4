@@ -2,7 +2,7 @@
 function admin_content_taxonomy_add($self,$vid) {
 	$tag=(object)post('tag');
 	$parent=SG\getFirst($tag->parent,array());
-	$vocab=CommonModel::get_vocabulary($vid);
+	$vocab=BasicModel::get_vocabulary($vid);
 
 	$simulate=false;
 	if ($_POST) {

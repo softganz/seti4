@@ -19,7 +19,7 @@
 
 class Model {}
 
-class CommonModel extends Model {
+class BasicModel extends Model {
 
 	public static function member_menu() {
 		if (!i()->ok) {
@@ -188,7 +188,7 @@ class CommonModel extends Model {
 				$tree[] = $term;
 
 				if ($children[$vid][$child]) {
-				  $tree = array_merge($tree, (array)CommonModel::get_taxonomy_tree($vid, $child, $depth, $max_depth));
+				  $tree = array_merge($tree, (array)BasicModel::get_taxonomy_tree($vid, $child, $depth, $max_depth));
 				}
 			  }
 			}
@@ -215,8 +215,8 @@ class CommonModel extends Model {
 			$message=$to;
 			$module=$title;
 			switch (strtoupper($module)) {
-				case 'PHPMAILER' :  $mail_result=CommonModel::sendmail_by_PHPMailer($message); break;
-				default :  $mail_result=CommonModel::sendmail_by_SMTP($message); break;
+				case 'PHPMAILER' :  $mail_result=BasicModel::sendmail_by_PHPMailer($message); break;
+				default :  $mail_result=BasicModel::sendmail_by_SMTP($message); break;
 			}
 			return $mail_result;
 		} else {
@@ -249,7 +249,7 @@ sg_text2html($topic->post->body).'
 					$to=trim($to);
 					if (empty($to)) continue;
 					$mail->to=$to;
-					$mail->result.=CommonModel::sendmail($mail).'<br /><br />';
+					$mail->result.=BasicModel::sendmail($mail).'<br /><br />';
 				}
 			return $mail;
 		}
@@ -406,7 +406,7 @@ sg_text2html($topic->post->body).'
 			$rs->property = sg_json_decode($rs->property, cfg('topic.property'));
 
 			$rs->photo = mydb::select('SELECT * FROM %'.($rs->_archive?'archive_':'').'topic_files% WHERE `tpid`='.$rs->tpid.' AND `cid`=0 AND `type`="photo" ORDER BY fid');
-			foreach ($rs->photo->items as $key=>$photo) $rs->photo->items[$key]=object_merge($rs->photo->items[$key],CommonModel::get_photo_property($photo->file));
+			foreach ($rs->photo->items as $key=>$photo) $rs->photo->items[$key]=object_merge($rs->photo->items[$key],BasicModel::get_photo_property($photo->file));
 
 			if (cfg('topic.video.allow')) {
 				$rs->video=mydb::select('SELECT f.*,u.username FROM %topic_files% f LEFT JOIN %users% u ON u.uid=f.uid WHERE tpid=:tpid AND type="movie" LIMIT 1',':tpid',$tpid);
@@ -524,7 +524,7 @@ sg_text2html($topic->post->body).'
 		// check query condition
 		if ($para->tpid) $where[] = 't.`tpid` = '.$para->tpid;
 		if ($para->org) $where[] = 't.`orgid` IN ( '.$para->org.' )';
-		if ($para->category) $where[] = 'tp.`tid` in ('.CommonModel::get_category_tag($para->category).')';
+		if ($para->category) $where[] = 'tp.`tid` in ('.BasicModel::get_category_tag($para->category).')';
 		if ($para->tag) $where[] = 'tp.`tid` IN ('.$para->tag.')';
 		if ($para->type) $where[] = 't.`type` IN ("'.implode('","',explode(',',$para->type)).'")';
 		if ($para->user) $where[] = 't.`uid` IN ('.$para->user.')';
@@ -556,7 +556,7 @@ sg_text2html($topic->post->body).'
 			if ($para->field->photo) {
 				$result->photo = mydb::select('SELECT `file` FROM %topic_files% WHERE `tpid` = :tpid AND (`cid` IS NULL OR `cid` = 0) AND `type` = "photo"', ':tpid', $topics->tpid);
 				foreach ($result->photo->items as $key=>$photo) {
-					$result->photo->items[$key]=CommonModel::get_photo_property('upload/pics/'.$photo->file);
+					$result->photo->items[$key]=BasicModel::get_photo_property('upload/pics/'.$photo->file);
 				}
 			}
 		} else {
@@ -588,7 +588,7 @@ sg_text2html($topic->post->body).'
 						$result->items[$photo->tpid]->photo = (Object) ['_num_rows' => 0, 'items' => []];
 					}
 					$result->items[$photo->tpid]->photo->_num_rows++;
-					$result->items[$photo->tpid]->photo->items[] = CommonModel::get_photo_property('upload/pics/'.$photo->file);
+					$result->items[$photo->tpid]->photo->items[] = BasicModel::get_photo_property('upload/pics/'.$photo->file);
 				}
 			}
 		}
@@ -732,7 +732,7 @@ sg_text2html($topic->post->body).'
 			$to=trim($to);
 			if (empty($to)) continue;
 			$mail->to=$to;
-			$mail->result.=CommonModel::sendmail($mail).'<br /><br />';
+			$mail->result.=BasicModel::sendmail($mail).'<br /><br />';
 		}
 		return $mail;
 	}

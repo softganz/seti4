@@ -13,7 +13,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 	event_tricker('paper.view.init',$self,$topicInfo,$para);
 
 	$topicInfo = is_object($tpid) ? $tpid : R::Model('paper.get',$tpid);
-	//paper_CommonModel::get_topic_by_id($tpid);//R::Model('paper.get',$tpid,$para);
+	//paper_BasicModel::get_topic_by_id($tpid);//R::Model('paper.get',$tpid,$para);
 	$tpid = $topicInfo->tpid;
 	$body = (Object) [];
 
@@ -237,7 +237,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 	if (isset($topicInfo->tags[0])) user_menu('tag',$topicInfo->tags[0]->name,url('tags/'.$topicInfo->tags[0]->tid));
 	user_menu('paper_id',$tpid,url('paper/'.$tpid));
 
-	CommonModel::member_menu();
+	BasicModel::member_menu();
 
 
 
@@ -355,7 +355,7 @@ class XPaperView extends Page {
 
 
 		$topicInfo = is_object($tpid) ? $tpid : R::Model('paper.get',$tpid);
-		//paper_CommonModel::get_topic_by_id($tpid);//R::Model('paper.get',$tpid,$para);
+		//paper_BasicModel::get_topic_by_id($tpid);//R::Model('paper.get',$tpid,$para);
 		$tpid = $topicInfo->tpid;
 
 		$isAdminPaper = user_access('administer contents,administer papers');
@@ -569,7 +569,7 @@ class XPaperView extends Page {
 		if (isset($topicInfo->tags[0])) user_menu('tag',$topicInfo->tags[0]->name,url('tags/'.$topicInfo->tags[0]->tid));
 		user_menu('paper_id',$tpid,url('paper/'.$tpid));
 
-		CommonModel::member_menu();
+		BasicModel::member_menu();
 
 
 

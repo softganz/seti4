@@ -89,7 +89,7 @@ class PaperInfoApi extends Page {
 
 				/*
 				if ($uploads) {
-					$topic=paper_CommonModel::get_topic_by_id($topic->tpid);
+					$topic=paper_BasicModel::get_topic_by_id($topic->tpid);
 					$ret.=notify('Upload photo file complete :<ul><li>'.implode('</li><li>',$uploads).'</li></ul>');
 				}
 				*/
@@ -288,7 +288,7 @@ class PaperInfoApi extends Page {
 				}
 			}
 
-			CommonModel::watch_log('paper','Paper comment edit','Edit comment id '.$tranId.' of <a href="'.url('paper/'.$tpid.'#comment-'.$tranId).'">paper/'.$tpid.'</a>');
+			BasicModel::watch_log('paper','Paper comment edit','Edit comment id '.$tranId.' of <a href="'.url('paper/'.$tpid.'#comment-'.$tranId).'">paper/'.$tpid.'</a>');
 			// if ($_SERVER['HTTP_REFERER']) location($_SERVER['HTTP_REFERER']); else location('paper/'.$tpid);
 
 			break;

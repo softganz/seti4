@@ -59,7 +59,7 @@ class UserApi extends PageApi {
 
 		// debugMsg($dbs, '$dbs');
 		foreach ($dbs->items as $rs) {
-			$desc = '<img src="'.CommonModel::user_photo($rs->username).'" width="24" height="24" />'
+			$desc = '<img src="'.BasicModel::user_photo($rs->username).'" width="24" height="24" />'
 				.$rs->name
 				.($isAdmin ? '<span class="email">('.$rs->username.($rs->email ? ' : '.$rs->email : '').')</span>' : '');
 

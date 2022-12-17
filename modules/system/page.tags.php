@@ -134,7 +134,7 @@ function tags($self, $tagIdList = NULL) {
 		$ret .= '<header class="header"><h3>#'.$tagIdList.'</h3></header>';
 	}
 
-	CommonModel::member_menu();
+	BasicModel::member_menu();
 	$self->theme->navigator=user_menu();
 	return $ret;
 }

@@ -19,7 +19,7 @@ function paper_edit_etc($self, $topicInfo) {
 
 	$ret = '<header class="header -box"><nav class="nav -back"><a class="" href="'.url('paper/'.$tpid.'/edit').'"><i class="icon -material">arrow_back</i></a></nav><h3>แก้ไขรายละเอียดอื่น ๆ</h3></header>';
 
-	$type = CommonModel::get_topic_type($topicInfo->info->type);
+	$type = BasicModel::get_topic_type($topicInfo->info->type);
 
 	$form = new Form([
 		'variable' => 'topic',

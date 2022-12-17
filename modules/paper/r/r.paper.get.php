@@ -165,7 +165,7 @@ function r_paper_get($conditions, $options = '{}') {
 					-- {key: "fid"}';
 	$result->photos = mydb::select($stmt, ':tpid', $tpid)->items;
 	foreach ($result->photos as $key => $photo) {
-		$result->photos[$key] = object_merge($result->photos[$key],CommonModel::get_photo_property($photo->file));
+		$result->photos[$key] = object_merge($result->photos[$key],BasicModel::get_photo_property($photo->file));
 	}
 
 

@@ -71,7 +71,7 @@ function view_paper_edit_editcomment($topicInfo, $commentId) {
 		}
 
 
-		CommonModel::watch_log('paper','Paper comment edit','Edit comment id '.$comment->cid.' of <a href="'.url('paper/'.$comment->tpid.'#comment-'.$comment->cid).'">paper/'.$comment->tpid.'</a>');
+		BasicModel::watch_log('paper','Paper comment edit','Edit comment id '.$comment->cid.' of <a href="'.url('paper/'.$comment->tpid.'#comment-'.$comment->cid).'">paper/'.$comment->tpid.'</a>');
 
 		$comment = PaperModel::get_comment_by_id($commentId);
 		$ret .= R::View('paper.comment.render', $comment);

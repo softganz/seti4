@@ -26,7 +26,7 @@ function paper_upcomming($self) {
 		if (user_access('administer contents,administer papers')) user_menu('paper','paper',url('paper'));
 		if ($topics->forum->fid && cfg('member.menu.paper.forum')) user_menu('forum',$topics->forum->forum,url('paper/forum/'.$topics->forum->fid));
 		if ($topics->forum->cid) user_menu('category',$topics->forum->category,url('paper/category/'.$topics->forum->cid));
-		CommonModel::member_menu();
+		BasicModel::member_menu();
 		if ($topics->forum->cid && ($topics->forum->public==1 ||
 			($topics->forum->public==2 && i()->ok) ||
 			user_access('administer contents,administer papers,create '.$topics->forum->fid.' paper'))) {

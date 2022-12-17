@@ -50,7 +50,7 @@ function paper_edit_detail($self, $topicInfo) {
 
 	$ret = '<header class="header -box">'._HEADER_BACK.'<h3>แก้ไขรายละเอียด</h3></header>';
 
-	$type = CommonModel::get_topic_type($topicInfo->info->type);
+	$type = BasicModel::get_topic_type($topicInfo->info->type);
 
 	$form = new Form([
 		'variable' => 'topic',
