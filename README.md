@@ -30,3 +30,6 @@ Forder description
 
 seti4/core/modules is for system modules
 seti4/modules is for user modules
+
+History
+- @2022-12-17 Change model class from model => BasicModel and other module_model => ModuleModel
