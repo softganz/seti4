@@ -12,14 +12,16 @@ function view_stats_hits_per_day($year=null,$month=null) {
 
 	$max_hits = 0;
 	$max_users = 0;
+	$hits_count = 0;
+	$users_count = 0;
 
 	foreach ( $dbs->items as $rs ) {
 		$max_hits = $rs->hits > $max_hits ? $rs->hits : $max_hits;
 		$max_users = $rs->users > $max_users ? $rs->users : $max_users;
+		$hits_count = $hits_count+$rs->hits;
+		$users_count = $users_count+$rs->users;
 	}
 
-	$hits_count = 0;
-	$users_count = 0;
 	$is_view_log = user_access('administer contents,administer watchdogs');
 
 	$tables = new Table([
@@ -33,14 +35,14 @@ function view_stats_hits_per_day($year=null,$month=null) {
 			'Member',
 		],
 		'children' => array_map(
-			function($rs) use($is_view_log, $hits_count, $users_count, $max_hits) {
-				$hits_count = $hits_count+$rs->hits;
-				$users_count = $users_count+$rs->users;
+			function($rs) use($is_view_log, $max_hits) {
 				if ( $max_hits > 0 ) $hit_width = round($rs->hits*200/$max_hits);
 				if ( $max_hits > 0 ) $user_width = round($rs->users*200/$max_hits);
 
 				return [
-					($is_view_log?'<a href="'.url('stats/list',array('date'=>$rs->log_date)).'">':'').$rs->log_date.($is_view_log?'</a>':''),
+					($is_view_log ? '<a href="'.url('stats/list', ['date' => $rs->log_date]).'">' : '')
+					. $rs->log_date
+					. ($is_view_log ? '</a>' : ''),
 					'<div class="hits-item -hit" style="width:'.$hit_width.'px;"></div><div class="hits-item -user" style="width:'.$user_width.'px;"></div>',
 					number_format($rs->hits),
 					number_format($rs->users),
