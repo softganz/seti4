@@ -36,18 +36,22 @@ function widget_project() {
 	$projectId = SG\getFirst($para->{'data-projectId'}, $para->{'data-projectid'});
 	$projectSet = SG\getFirst($para->{'data-set'});
 
+	mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
 	mydb::where('t.`status` IN ( :status )', ':status', [_PUBLISH, _LOCK]);
 	// mydb::where('(t.`status` = :publish OR t.`status` = :lock)', ':publish', _PUBLISH, ':lock', _LOCK);
-	// mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
+
 	if ($projectId) {
-		mydb::where('p.`tpid` IN ( :projectId )', ':projectId', 'SET:'.$projectId);
+		// mydb::where('p.`tpid` IN ( :projectId )', ':projectId', 'SET:'.$projectId);
+		mydb::where('tr.`tpid` IN ( :projectId )', ':projectId', 'SET:'.$projectId);
 	}
 
 	if ($projectSet) {
-		mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$projectSet);
+		// mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$projectSet);
+		mydb::where('(t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$projectSet);
 	}
 
 	mydb::value('$LIMIT$', 'LIMIT '.$para->{"data-limit"});
+
 	$dbs = mydb::select(
 		'SELECT
 		action.`trid`, action.`calid`, action.`tpid`
@@ -58,12 +62,13 @@ function widget_project() {
 		, action.`created`
 		, GROUP_CONCAT(DISTINCT f.`file`) photos
 		FROM (
-			SELECT *
+			SELECT tr.*
 				, tr.`text4` `outputOutcome`, tr.`text2` `actionDetail`
 			FROM %project_tr% tr
-			WHERE tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")
+				LEFT JOIN %topic% t ON t.`tpid` = tr.`tpid`
+			%WHERE%
 			ORDER BY tr.`trid` DESC
-			LIMIT 100
+			$LIMIT$
 		) action
 			LEFT JOIN %topic% t ON t.`tpid` = action.`tpid`
 			LEFT JOIN %project% p ON p.`tpid` = t.`tpid`
@@ -71,9 +76,8 @@ function widget_project() {
 			LEFT JOIN %topic_files% f ON f.`tpid` = action.`tpid`
 				AND f.`gallery` = action.`gallery` AND f.`type` = "photo"
 				AND (f.`tagname` IS NULL OR f.`tagname` LIKE "project,action")
-		%WHERE%
 		GROUP BY `trid`
-		$LIMIT$'
+		'
 	);
 	// if (i()->username == 'softganz') {
 	// 	debugMsg($para, '$para');
