@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2022-11-20
-* Version :: 3
+* Modify  :: 2022-12-26
+* Version :: 4
 */
 
 global $R;
@@ -256,7 +256,8 @@ if (_AJAX) {
 }
 
 // Hit counter and store counter/online
-if (!_AJAX && mydb::table_exists('%counter_log%')) CounterModel::hit();
+$logCounter = !(_AJAX || post('logCounter') === 'no') && mydb::table_exists('%counter_log%');
+if ($logCounter) CounterModel::hit();
 $R->counter = cfg('counter');
 
 set_theme();

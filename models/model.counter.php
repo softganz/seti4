@@ -12,7 +12,7 @@ $debug = true;
 
 class CounterModel {
 	public static function hit() {
-		//debugMsg('COUNTER HIT');
+		// debugMsg('COUNTER HIT');
 		$today = today();
 
 		$counter = cfg('counter');
@@ -52,7 +52,8 @@ class CounterModel {
 
 		// Create user online table if table not exists
 		if (mydb()->_error) {
-			$stmt = 'CREATE TABLE %users_online% (
+			mydb::query(
+				'CREATE TABLE %users_online% (
 					`keyid` varchar(100) NOT NULL,
 					`uid` int(11) DEFAULT NULL,
 					`name` varchar(255) DEFAULT NULL,
@@ -66,8 +67,8 @@ class CounterModel {
 					KEY `uid` (`uid`),
 					KEY `coming` (`coming`),
 					KEY `access` (`access`)
-				);';
-			mydb::query($stmt);
+				);'
+			);
 			//debugMsg(mydb()->_query);
 		}
 
@@ -85,24 +86,27 @@ class CounterModel {
 		// update user hit count
 		if ( i()->ok ) mydb::query('UPDATE %users% SET hits = hits + 1 WHERE uid = :uid LIMIT 1',':uid',$user_id);
 
-		$online = new stdClass;
-		$online->keyid = $onlinekey;
-		$online->host = NULL;
-		$online->coming = NULL;
+		$online = (Object) [
+			'keyid' => $onlinekey,
+			'host' => NULL,
+			'coming' => NULL,
+			'ip' => $real_ip,
+			'uid' => $user_id,
+			'name' => $user_name,
+			'access' => $today->time,
+			'browser' => NULL,
+		];
 		if ( $new_user ) {
 			$host = gethostbyaddr($real_ip);
 			if ( $host === $real_ip ) $host = 'unknown';
 			$online->host = $host;
 			$online->coming = $today->time;
 		}
-		$online->ip = $real_ip;
-		$online->uid = $user_id;
-		$online->name = $user_name;
 		$online->hits++;
-		$online->access = $today->time;
 		list($online->browser) = str_replace('"', '', explode(' ',$browser));
 
-		$stmt = 'INSERT INTO %users_online%
+		mydb::query(
+			'INSERT INTO %users_online%
 				(`keyid`, `uid`, `name`, `coming`, `access`, `ip`, `host`, `browser`)
 				VALUES
 				(:keyid, :uid, :name, :coming, :access, :ip, :host, :browser)
@@ -111,9 +115,9 @@ class CounterModel {
 				, `name` = :name
 				, `hits` = `hits` + 1
 				, `access` = :access
-				, `browser` = :browser';
-
-		mydb::query($stmt, $online);
+				, `browser` = :browser',
+			$online
+		);
 		//debugMsg(mydb()->_query);
 
 		//--- add/update online user information
@@ -174,7 +178,7 @@ class CounterModel {
 	*/
 
 	public static function addLog($date, $userId, $newUser) {
-		$debug = false;i()->username == 'softganz';
+		$debug = false; //i()->username == 'softganz';
 
 		// Not insert log on counter_log is table lock
 		$isCounterTableLock = mydb::table_is_lock('%counter_log%');
