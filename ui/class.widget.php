@@ -175,12 +175,13 @@ class Widget extends WidgetBase {
 	function _renderChildContainerStart($childrenKey, $args = [], $childrenValue = []) {
 		$childTagName = SG\getFirst($this->childTagName, $this->childContainer['tagName']);
 		return $childTagName ? '<'.$childTagName
-		. ' class="'.($this->childContainer['class'] ? $this->childContainer['class']: '')
-		. ($this->itemClass ? ' '.$this->itemClass : '')
-		. (!is_numeric($childrenKey) ? ' -'.$childrenKey : '')
-		. ($args['class'] ? ' '.trim($args['class']) : '').'"'
-		. '>'
-		: '';
+			. ' id="'.($args['id'] ? $args['id'] : '').'"'
+			. ' class="'.($this->childContainer['class'] ? $this->childContainer['class']: '')
+			. ($this->itemClass ? ' '.$this->itemClass : '')
+			. (!is_numeric($childrenKey) ? ' -'.$childrenKey : '')
+			. ($args['class'] ? ' '.trim($args['class']) : '').'"'
+			. '>'
+			: '';
 	}
 
 	// @override
