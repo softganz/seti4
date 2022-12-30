@@ -685,7 +685,7 @@ class ProfilePhoto extends Widget {
 	var $version = '0.01';
 	var $username;
 
-	function __construct($username, $args = []) {
+	function __construct($username = NULL, $args = []) {
 		$this->username = $username;
 		parent::__construct($args);
 	}
