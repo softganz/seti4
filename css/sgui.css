@@ -141,6 +141,7 @@
 	.widget-column.-sg-text-ceter>* {text-align: center;}
 
 .widget-profilephoto {width: 32px; height: 32px; margin: 0; line-height: 32px; display: inline-block; border-radius: 50%; overflow: hidden; border: 2px #eee solid; vertical-align: middle;}
+	.widget-profilephoto.-size-small {width: 24px; height: 24px; display: block; }
 	.widget-profilephoto.-size-big {margin: 0px auto 32px; width: 196px; height: 196px; display: block; }
 
 .widget-album {list-style-type: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-start; width: initial !important;}
