@@ -29,8 +29,13 @@ class Album extends Widget {
 	// Container for each child of children
 	// @override
 	function _renderChildContainerStart($childrenKey, $args = [], $childrenValue = []) {
-		$args['class'] = $childrenValue['class'];
-		$args['id'] = $childrenValue['id'];
+		if (is_object($childrenValue)) {
+			$args['class'] = $childrenValue->class;
+			$args['id'] = $childrenValue->id;
+		} else {
+			$args['class'] = $childrenValue['class'];
+			$args['id'] = $childrenValue['id'];
+		}
 		return parent::_renderChildContainerStart($childrenKey, $args, $childrenValue);
 	}
 
