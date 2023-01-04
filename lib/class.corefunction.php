@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2022-12-26
-* Version :: 4
+* Modify  :: 2023-01-03
+* Version :: 5
 */
 
 global $R;
@@ -702,7 +702,10 @@ class SgCore {
 
 				$paths[] = 'modules/'.$module.'/template/'.$template;
 				if ($subModule) {
-					if (isset($request[2]) && is_string($request[2])) $paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
+					$paths[] = 'modules/'.$module.'/'.$subModule.'/api';
+					if (isset($request[2]) && is_string($request[2])) {
+						$paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
+					}
 					$paths[] = 'modules/'.$module.'/'.$subModule;
 				}
 				$paths[] = 'modules/'.$module.'/api';
