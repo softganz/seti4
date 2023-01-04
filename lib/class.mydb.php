@@ -19,6 +19,8 @@
 * shotcut to 	call $GLOBALS['mydb']
 */
 
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 function mydb() {return R()->myDb;}
 
 class MyDbResult {
@@ -318,9 +320,11 @@ class MyDb {
 				$sqlStmt->_prepare = true;
 			}
 		} catch(Exception $exception) {
+			// print_r($exception);
 			$sqlStmt->_errno = $exception->getCode();
 			$sqlStmt->_error_msg = $exception->getMessage();
-			// debugMsg(print_r($exception,1);
+			// debugMsg('SQL PREPARE EXCEPTION');
+			// debugMsg(print_r($exception,1));
 			// debugMsg($sqlStmt, '$sqlStmtEXCEPTION');
 		}
 
