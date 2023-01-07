@@ -2,8 +2,8 @@
 /**
 * Widget  :: Album
 * Created :: 2022-10-09
-* Modify  :: 2022-10-09
-* Version :: 1
+* Modify  :: 2023-01-07
+* Version :: 2
 *
 * @param Array $args
 * @return Widget
@@ -39,30 +39,10 @@ class Album extends Widget {
 		return parent::_renderChildContainerStart($childrenKey, $args, $childrenValue);
 	}
 
-	function _renderChildContainerStart1($childrenKey, $args = [], $childrenValue = []) {
-		debugMsg($childrenValue,'$childrenValue');
-		$childTagName = SG\getFirst($this->childTagName, $this->childContainer['tagName']);
-		return $childTagName ? '<'.$childTagName
-		. ' class="'.($this->childContainer['class'] ? $this->childContainer['class']: '')
-		. ($this->itemClass ? ' '.$this->itemClass : '')
-		. (!is_numeric($childrenKey) ? ' -'.$childrenKey : '')
-		. ($args['class'] ? ' '.trim($args['class']) : '').'"'
-		. '>'
-		: '';
-	}
-
-	function _renderChildContainerStartX($stepIndex, $args = [], $childrenValue = []) {
-		$stepIndex++;
-		return '<'.$this->childContainer['tagName'].' '
-			. 'class="ui-item -step-'.$stepIndex.($this->childContainer['class'] ? $this->childContainer['class'] : '').($stepIndex == $this->currentStep ? ' -current-step' : '').(isset($this->activeStep[$stepIndex]) && $this->activeStep[$stepIndex] ? ' -active' : '').'" '
-			. '>';
-	}
-
 	function _renderEachChildWidget($key, $widget) {
-		// debugMsg($widget, '$widget');
 		if (is_object($widget)) return widget::_renderEachChildWidget($key, $widget);
 
-		$imageTag = '<img class="photoitem" src="'.$widget['img'].'" />';
+		$imageTag = '<img class="photoitem -photo" src="'.$widget['img'].'" />';
 		$ret = '';
 		if ($widget['link']) {
 			$widget['link']->text = $imageTag;
@@ -82,44 +62,11 @@ class Album extends Widget {
 		return $ret;
 	}
 
-	// function _renderChildren($childrens = [], $args = []) {
-	// 	return parent::_renderChildren();
-	// }
-
 	function build() {
 		if ($this->upload) {
 			$this->children = array_replace_recursive(['upload' => &$this->upload], $this->children);
 		}
 		return parent::build();
 	}
-	// function _renderChildren($childrens = [], $args = []) {
-	// 	$ret = '';
-	// 	foreach ($this->children as $key => $value) {
-	// 		if (is_array($value)) {
-	// 			$child = (Object) $value;
-	// 		} else if (is_object($value)) {
-	// 			$child = $value;
-	// 		} else {
-	// 			$child = (Object) ['text' => $value, 'options' => NULL];
-	// 		}
-
-	// 		// Convert options to object
-	// 		$options = is_string($child->options) ? SG\json_decode($child->options): (Object) $child->options;
-
-	// 		$uiItemClass = $this->uiItemClass.($options->class ? ' '.$options->class : '');
-	// 		if (in_array($child->text, array('-','<sep>'))) {
-	// 			$uiItemClass .= ' -sep';
-	// 			$child->text = '<hr size="1" />';
-	// 		}
-	// 		$options->class = $uiItemClass;
-
-	// 		$uiItemTag = $this->wrapperType[$this->tagName];
-	// 		$ret .= $uiItemTag ? '<'.$uiItemTag.' '.sg_implode_attr($options).'>' : '';
-	// 		$ret .= $child->text;
-	// 		$ret .= $uiItemTag ? '</'.$uiItemTag.'>' : '';
-	// 		$ret .= _NL;
-	// 	}
-	// 	return $ret;
-	// }
-} // End of class Ui
+} // End of class Album
 ?>
