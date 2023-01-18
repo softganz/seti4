@@ -424,11 +424,11 @@ class SgCore {
 			}
 		}
 
-		if (debug('template')) {
-			echo '<br />load template <b>'.$filename.'</b>'.($ext_folder?' width extension folder '.$ext_folder:'');
-			echo $result ? ' found <b>'.$result.'</b><br />' : ' <font color=red>not found</font><br />';
-			print_o($theme_folder,'$theme_folder',1);
-		}
+		// if (debug('template')) {
+		// 	echo '<br />load template <b>'.$filename.'</b>'.($ext_folder?' width extension folder '.$ext_folder:'');
+		// 	echo $result ? ' found <b>'.$result.'</b><br />' : ' <font color=red>not found</font><br />';
+		// 	print_o($theme_folder,'$theme_folder',1);
+		// }
 		return $result;
 	}
 
