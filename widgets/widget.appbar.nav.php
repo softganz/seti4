@@ -10,8 +10,6 @@
 * @usage new AppBarNavWidget([])
 */
 
-$debug = true;
-
 class AppBarNavWidget extends Widget {
 	var $configName;
 	var $userSigned = false;
@@ -32,10 +30,10 @@ class AppBarNavWidget extends Widget {
 
 					list($module, $navName) = explode('.', $this->configName);
 					$navConfig = cfg($module)->{$navName};
-					$menuItems = $navConfig->navigator;
+					$menuItems = $navConfig->appBar->navigatorMenu;
 
 					// Show button in follow navigator config
-					foreach (explode(',', $navConfig->navigatorUse) as $navKey) {
+					foreach (explode(',', $navConfig->appBar->navigatorMenuEnable) as $navKey) {
 						$menuItem = $menuItems->{$navKey};
 						// if ($menuItem->access) {
 						// 	if (!defined($menuItem->access)) continue;
