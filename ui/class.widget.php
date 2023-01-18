@@ -491,8 +491,9 @@ class Icon extends Widget {
 }
 
 class ExpandButton extends Widget {
+	var $icon = 'expand_less';
 	function toString() {
-		return '<a class="sg-expand btn -link -no-print" href="javascript:void(0)"><i class="icon -material">expand_less</i></a>';
+		return '<a class="sg-expand btn -link -no-print" href="javascript:void(0)"><i class="icon -material">'.$this->icon.'</i></a>';
 	}
 }
 
