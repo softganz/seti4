@@ -47,27 +47,27 @@ class PersonModel {
 			, CONCAT(X(g.`latlng`),",",Y(g.`latlng`)) latlng, X(g.`latlng`) lat, Y(g.`latlng`) lnt
 			, uc.`name` `created_by`, p.`created` `created_date`
 			, p.`modify`, p.`umodify`, um.`name` `modify_by`
-		FROM %db_person% p
-			LEFT JOIN %users% uc ON p.`uid`=uc.`uid`
-			LEFT JOIN %users% um ON p.`umodify`=um.`uid`
-			LEFT JOIN %co_educate% coe ON coe.`edu_code`=p.`educate`
-			LEFT JOIN %co_occu% cooc ON cooc.`occu_code`=p.`occupa`
-			LEFT JOIN %tag% com ON com.`taggroup`="mstatus" AND p.`mstatus`=com.`catid`
+			FROM %db_person% p
+				LEFT JOIN %users% uc ON p.`uid`=uc.`uid`
+				LEFT JOIN %users% um ON p.`umodify`=um.`uid`
+				LEFT JOIN %co_educate% coe ON coe.`edu_code`=p.`educate`
+				LEFT JOIN %co_occu% cooc ON cooc.`occu_code`=p.`occupa`
+				LEFT JOIN %tag% com ON com.`taggroup`="mstatus" AND p.`mstatus`=com.`catid`
 
-			LEFT JOIN %co_province% copv ON p.`changwat`=copv.`provid`
-			LEFT JOIN %co_district% codist ON codist.`distid`=CONCAT(p.`changwat`,p.`ampur`)
-			LEFT JOIN %co_subdistrict% cosub ON cosub.`subdistid`=CONCAT(p.`changwat`,p.`ampur`,p.`tambon`)
-			LEFT JOIN %co_village% covi ON covi.`villid`=CONCAT(p.`changwat`,p.`ampur`,p.`tambon`,IF(LENGTH(p.`village`)=1,CONCAT("0",p.`village`),p.`village`))
+				LEFT JOIN %co_province% copv ON p.`changwat`=copv.`provid`
+				LEFT JOIN %co_district% codist ON codist.`distid`=CONCAT(p.`changwat`,p.`ampur`)
+				LEFT JOIN %co_subdistrict% cosub ON cosub.`subdistid`=CONCAT(p.`changwat`,p.`ampur`,p.`tambon`)
+				LEFT JOIN %co_village% covi ON covi.`villid`=CONCAT(p.`changwat`,p.`ampur`,p.`tambon`,IF(LENGTH(p.`village`)=1,CONCAT("0",p.`village`),p.`village`))
 
-			LEFT JOIN %co_province% rcopv ON p.`rchangwat`=rcopv.`provid`
-			LEFT JOIN %co_district% rcodist ON rcodist.`distid`=CONCAT(p.`rchangwat`,p.`rampur`)
-			LEFT JOIN %co_subdistrict% rcosub ON rcosub.`subdistid`=CONCAT(p.`rchangwat`,p.`rampur`,p.`rtambon`)
-			LEFT JOIN %co_village% rcovi ON rcovi.`villid`=CONCAT(p.`rchangwat`, p.`rampur`, p.`rtambon`, IF(LENGTH(p.`rvillage`)=1, CONCAT("0", p.`rvillage`), p.`rvillage`))
+				LEFT JOIN %co_province% rcopv ON p.`rchangwat`=rcopv.`provid`
+				LEFT JOIN %co_district% rcodist ON rcodist.`distid`=CONCAT(p.`rchangwat`,p.`rampur`)
+				LEFT JOIN %co_subdistrict% rcosub ON rcosub.`subdistid`=CONCAT(p.`rchangwat`,p.`rampur`,p.`rtambon`)
+				LEFT JOIN %co_village% rcovi ON rcovi.`villid`=CONCAT(p.`rchangwat`, p.`rampur`, p.`rtambon`, IF(LENGTH(p.`rvillage`)=1, CONCAT("0", p.`rvillage`), p.`rvillage`))
 
-			LEFT JOIN %gis% g ON p.`gis`=g.`gis`
-		WHERE p.`psnId` = :id LIMIT 1',
-		[':id' => $id]
-	);
+				LEFT JOIN %gis% g ON p.`gis`=g.`gis`
+			WHERE p.`psnId` = :id LIMIT 1',
+			[':id' => $id]
+		);
 
 		//debugMsg(mydb()->_query);
 
