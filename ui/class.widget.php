@@ -823,8 +823,8 @@ class Page extends PageBase {
 
 	function build() {
 		return new Scaffold([
-			'appBar' => new AppBar(['title' => 'Web Page']),
-			'body' => new Widget(['child' => 'This page is underconstruction.']),
+			'appBar' => method_exists($this, 'appBar') ? $this->appBar() : new AppBar(['title' => 'Web Page']),
+			'body' => method_exists($this, 'body') ? $this->body() : new Widget(['child' => 'This page is underconstruction.']),
 		]);
 	}
 } // End of class Page
