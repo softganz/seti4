@@ -75,7 +75,7 @@ function r_doc_upload($docFiles, $data = NULL, $options = '{}') {
 
 		$docData = (Object) [
 			'fid' => empty($data->fid) ? NULL : $data->fid,
-			'tpid' => $data->tpid,
+			'tpid' => SG\getFirst($data->nodeId, $data->tpid),
 			'cid' => empty($data->cid) ? NULL : $data->cid,
 			'type' => 'doc',
 			'title' => empty($data->title) ? $postFile['name'] : $data->title,
@@ -100,7 +100,8 @@ function r_doc_upload($docFiles, $data = NULL, $options = '{}') {
 				}
 			}
 
-			$stmt = 'INSERT INTO %topic_files%
+			mydb::query(
+				'INSERT INTO %topic_files%
 				(
 					`fid`
 				, `tpid`
@@ -128,8 +129,9 @@ function r_doc_upload($docFiles, $data = NULL, $options = '{}') {
 				, :timestamp
 				, :ip
 				) ON DUPLICATE KEY UPDATE
-				`file` = :file';
-			mydb::query($stmt, $docData);
+				`file` = :file',
+				$docData
+			);
 			if (empty($docData->fid)) $fid = $docData->fid = mydb()->insert_id;
 
 			$result->_query[] = mydb()->_query;
