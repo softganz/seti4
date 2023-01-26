@@ -69,7 +69,7 @@ function widget_project() {
 			%WHERE%
 			ORDER BY tr.`trid` DESC
 			$LIMIT$
-		) action
+		) `action`
 			LEFT JOIN %topic% t ON t.`tpid` = action.`tpid`
 			LEFT JOIN %project% p ON p.`tpid` = t.`tpid`
 			LEFT JOIN %calendar% c ON c.`tpid` = action.`tpid` AND c.`id` = action.`calid`
@@ -77,11 +77,13 @@ function widget_project() {
 				AND f.`gallery` = action.`gallery` AND f.`type` = "photo"
 				AND (f.`tagname` IS NULL OR f.`tagname` LIKE "project,action")
 		GROUP BY `trid`
+		ORDER BY `trid` DESC
 		'
 	);
 	// if (i()->username == 'softganz') {
-	// 	debugMsg($para, '$para');
+		// debugMsg($para, '$para');
 		// debugMsg(mydb()->_query);
+		// debugMsg($dbs, '$dbs');
 	// }
 
 	// return [$para->{"data-limit"}, $para];
