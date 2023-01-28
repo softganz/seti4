@@ -9,10 +9,10 @@
 * @param String $action
 * @return String
 *
-* @usage admin/api/user/{userId}/{action}
+* @usage api/admin/user/{userId}/{action}
 */
 
-class AdminApiUser extends PageApi {
+class AdminUserApi extends PageApi {
 	var $userId;
 	var $action;
 
@@ -29,10 +29,10 @@ class AdminApiUser extends PageApi {
 	*/
 	function block() {
 		if (!$this->userId || !SG\confirm()) {
-			return new ErrorMessage([
+			return [
 				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
 				'ข้อมูลไม่ครบถ้วน',
-			]);
+			];
 		}
 
 		$status = $this->userInfo->status == 'block' ? 'enable' : 'block';
@@ -53,7 +53,7 @@ class AdminApiUser extends PageApi {
 
 		R::model('watchdog.log','Admin','User '.($status == 'block' ? 'Block' : 'Active'),'User '.$uid.' ('.$this->userInfo->username.') was '.($status == 'block' ? 'blocked' : 'active').'.', i()->uid, $uid);
 
-		return notify('User '.$username.' was '.($status == 'block' ? 'blocked' : 'active').'.');
+		return 'User '.$username.' was '.($status == 'block' ? 'blocked' : 'active').'.';
 	}
 
 	/**

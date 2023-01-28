@@ -96,7 +96,7 @@ class StatsOnline extends Page {
 									date(($current_date != date('Y-m-d',$rs->access) ? 'Y-m-d ' : '').'H:i:s',$rs->access),
 									$rs->hits,
 									$rs->browser.' '.$rs->host,
-									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('admin/api/ip.ban', ['ip' => $full_ip]).'" data-rel="notify" data-title="BAN IP" data-confirm="ต้องการ BAN IP นี้ไม่ให้เข้าใช้งานระบบ กรุณายืนยัน?"><i class="icon -material">block</i></a>' : '',
+									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('api/admin/ip.ban', ['ip' => $full_ip]).'" data-rel="notify" data-title="BAN IP" data-confirm="ต้องการ BAN IP นี้ไม่ให้เข้าใช้งานระบบ กรุณายืนยัน?"><i class="icon -material">block</i></a>' : '',
 								];
 							},
 							CounterModel::onlineUsers(['type' => $this->onlineType])
