@@ -1,68 +1,91 @@
 <?php
-// change user access control
-function admin_user_access($self) {
-	if (!user_access('administer access control')) return message('error','access denied');
+/**
+* Admin   :: User Access Setting
+* Created :: 2016-11-08
+* Modify  :: 2023-01-28
+* Version :: 2
+*
+* @return Widget
+*
+* @usage admin/user/access
+*/
 
-	$roles=cfg('roles');
-	if (post('access')) {
-		$access = post('access');
-		foreach ($roles as $role_name=>$role_perm) {
-			if (isset($access[$role_name])) {
-				asort($access[$role_name]);
-				$roles->$role_name=implode(',',$access[$role_name]);
-			} else {
-				$roles->$role_name='';
-			}
-		}
-		cfg_db('roles',$roles);
-		$ret .= 'บันทึกการเปลี่ยนแปลงเรียบร้อย.';
-		return $ret;
+class AdminUserAccess extends Page {
+	function build() {
+		if (!user_access('administer access control')) return message('error','access denied');
+
+		$roles = (Array) cfg('roles');
+		unset($roles['admin']);
+
+		$perms = (Array) cfg('perm');
+		ksort($perms);
+
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'User Management &gt; Access control',
+				'trailing' => '<form id="search" class="search-box" method="get" action="'.url('admin/user/list').'" name="memberlist" role="search">'
+					. '<input type="hidden" name="sid" id="sid" /><input id="search-box" class="sg-autocomplete" type="text" name="q" size="20" value="'.$_GET['q'].'" data-query="'.url('admin/get/username').'" data-altfld="sid" data-callback="submit" placeholder="Username or Name or Email"><button><i class="icon -material">search</i></button>'
+					. '</form>',
+				'navigator' => 	R::View('admin.default.nav'),
+			]), // AppBar
+
+			'body' => new Widget([
+				'children' => [
+					'สิทธิ์การใช้งานเป็นการกำหนดเพื่อสิทธิ์ให้แก่สมาชิกของแต่ละบทบาทในการเข้าถึงเว็บไซท์ สามารถกำหนดสิทธิ์ให้แต่ละบทบาทสามารถทำอะไรได้บ้าง ถ้าสมาชิกมีหลายบทบาท สิทธิ์ที่ได้รับก็จะเป็นการรวมสิทธิ์ของทุกบทบาทที่เป็นอยู่',
+					new Form([
+						'action' => url('api/admin/save.useraccess'),
+						'class' => 'sg-form',
+						'rel' => 'notify',
+						'children' => array_map(
+							// Each module
+							function($perm, $perm_value) use($roles) {
+								return new Card([
+									'children' => [
+										new ListTile([
+											'title' => $perm.' module',
+											'leading' => new Icon('stars'),
+										]),
+
+										// Each permission of module
+										new ScrollView([
+											'child' => new Table([
+												'class' => 'admin-user-access -center -nowrap',
+												'thead' => ['permission -left' => 'Permission'] + array_keys($roles),
+												'children' => array_map(
+													function($permName) use($roles) {
+														$permName = trim($permName);
+														return ['perm -sg-text-left' => $permName] +
+															array_map(
+																function($role_name, $role_perm) use($permName) {
+																	return '<input type="checkbox" name=access['.$role_name.'][] value="'.$permName.'" '.(in_array($permName, explode(',', $role_perm)) ? 'checked="checked"' : '').' />';
+																},
+																array_keys($roles), $roles
+															);
+													},
+													explode(',', $perm_value)
+												), // children
+											]), // Table
+										]), // ScrollView
+
+										// Save button
+										new Container([
+											'class' => '-sg-text-right -sg-paddingnorm',
+											'child' => '<button class="btn -primary" type="submit"><i class="icon -material">done_all</i><span>Save permissions</span></button>',
+										]), // Container
+										// new DebugMsg($perm_value),
+									],
+								]);
+							},
+							array_keys($perms), $perms
+						), // children
+					]), // Form
+
+					'<style type="text/css">
+					.admin-user-access .perm {text-align: left !Important; font-weight: bold;}
+					</style>',
+				], // children
+			]), // Widget
+		]);
 	}
-
-	$ret .= sg_client_convert('<h3>Access control</h3>
-	<div class="help">สิทธิ์การใช้งานเป็นการกำหนดเพื่อสิทธิ์ให้แก่สมาชิกของแต่ละบทบาทในการเข้าถึงเว็บไซท์ สามารถกำหนดสิทธิ์ให้แต่ละบทบาทสามารถทำอะไรได้บ้าง ถ้าสมาชิกมีหลายบทบาท สิทธิ์ที่ได้รับก็จะเป็นการรวมสิทธิ์ของทุกบทบาทที่เป็นอยู่</div>');
-
-
-
-	unset($roles->admin);
-	$perms=(array)cfg('perm');
-	ksort($perms);
-	$perms=(object)$perms;
-	$roles_count=count((array)$roles);
-	$ret .= '<form class="sg-form" method="post" action="'.url(q()).'" data-rel="notify" >';
-
-
-	$tables = new Table([
-		'showHeader' => false,
-		'thead' => ['permission -nowrap' => 'Permission'],
-	]);
-
-	foreach ($roles as $role_name=>$role_perm) {
-		$tables->thead['center -'.$role_name]=$role_name;
-		$roles->$role_name=explode(',',$role_perm);
-		array_walk($roles->$role_name, function($elem) {return trim($elem);});
-	}
-
-	foreach($perms as $perm => $perm_value) {
-		$tables->rows[] = ['<th colspan="'.($roles_count+1).'">'.$perm.' module</th>'];
-		$tables->rows[]='<header>';
-		$no=0;
-		$perm_lists=explode(',',$perm_value);
-		array_walk($perm_lists, function($elem) {return trim($elem);});
-		asort($perm_lists);
-		foreach ($perm_lists as $perm_item) {
-			unset($row);
-			$perm_item=trim($perm_item);
-			$row[]=$perm_item;
-			foreach ($roles as $role_name=>$role_perm) {
-				$row[]='<input type="checkbox" name=access['.$role_name.'][] value="'.$perm_item.'" '.(in_array($perm_item,$roles->$role_name)?'checked="checked"':'').' />';
-			}
-			$tables->rows[]=$row;
-		}
-		$tables->rows[]=array('<td colspan="'.($roles_count+1).'" align="right"><div class="form-item"><button class="btn -primary" type="submit"><i class="icon -material">done_all</i><span>Save permissions</span></button></td>');
-	}
-	$ret.=$tables->build();
-	$ret.='</form>';
-	return $ret;
 }
 ?>
