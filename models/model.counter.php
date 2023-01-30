@@ -8,8 +8,6 @@
 * @usage CounterModel::function($conditions, $options)
 */
 
-$debug = true;
-
 class CounterModel {
 	public static function hit() {
 		// debugMsg('COUNTER HIT');
