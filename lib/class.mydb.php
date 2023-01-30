@@ -174,7 +174,7 @@ class MyDb {
 	* @param Array $args
 	* @return String
 	*/
-	public function prepare_stmt($myDb, $stmt, $args = Array()) {
+	public static function prepare_stmt($myDb, $stmt, $args = Array()) {
 		if (empty($myDb)) $myDb = mydb();
 
 		//print_o($args,'prepare_stmt $args',1);
