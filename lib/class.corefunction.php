@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2023-01-03
-* Version :: 5
+* Modify  :: 2023-01-29
+* Version :: 6
 */
 
 global $R;
