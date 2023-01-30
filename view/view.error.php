@@ -1,7 +1,7 @@
 <?php
 $debug=false;
 
-function view_error($code,$ext_msg) {
+function view_error($code, $ext_msg = NULL) {
 	// static $message=array();
 
 	$message['class_not_exists']='Request class not exists.';
@@ -32,7 +32,6 @@ function view_error($code,$ext_msg) {
 
 	if (array_key_exists($code,$message)) return $message[$code];
 
-	//$ret='Error code = '.$code;
 	return $ret;
 }
 ?>

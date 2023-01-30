@@ -8,6 +8,13 @@
 
 global $R;
 
+if (preg_match('/^\(([a-z].*)\)\//', $request, $out)) {
+	$request = preg_replace('/^\([a-z].*\)\//', '', $request);
+	cfg('template', $out[1]);
+	// debugMsg($out, '$out');
+	// debugMsg($request);
+}
+
 $R = new R();
 $R->request = $request;
 
@@ -118,7 +125,6 @@ define('_API', isset($_REQUEST['api']));
 q($R->request);
 
 $R->timer = new Timer();
-
 
 // Clear module folder don't exists
 $old_error = error_reporting(0);
@@ -256,7 +262,7 @@ if (_AJAX) {
 }
 
 // Hit counter and store counter/online
-$logCounter = !(_AJAX || post('logCounter') === 'no') && mydb::table_exists('%counter_log%');
+$logCounter = !(post('logCounter') === 'no') && mydb::table_exists('%counter_log%');
 if ($logCounter) CounterModel::hit();
 $R->counter = cfg('counter');
 
@@ -1189,16 +1195,15 @@ class SgCore {
 	static function processController($loadTemplate = true, $pageTemplate = NULL) {
 		global $page,$request_time,$request_process_time;
 		$request = R()->request;
-		$method_result = '';
-		$request_result = '';
+		$requestResult = '';
 		$isLoadHomePage = false;
 		$requestFilePrefix = 'page';
 		$isDebugProcess = debug('process');
 
 		if ($isDebugProcess) $process_debug = 'process debug of <b>'.$request.'</b> request<br />'._NL;
 
-		if (isset($GLOBALS['message'])) $request_result .= $GLOBALS['message'];
-		if (cfg('web.readonly')) $request_result .= message('status',cfg('web.readonly_message'));
+		if (isset($GLOBALS['message'])) $requestResult .= $GLOBALS['message'];
+		if (cfg('web.readonly')) $requestResult .= message('status',cfg('web.readonly_message'));
 
 		R()->timer->start($request);
 
@@ -1216,7 +1221,7 @@ class SgCore {
 			if (empty($home)) {
 				ob_start();
 				SgCore::loadTemplate('home');
-				$request_result .= ob_get_contents();
+				$requestResult .= ob_get_contents();
 				ob_end_clean();
 				$request = '';
 			} else {
@@ -1274,11 +1279,11 @@ class SgCore {
 				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 			}
 
-			// Build Widget Class to String
 			if (is_object($pageResultWidget) && method_exists($pageResultWidget, 'build')) {
-				// print_o($pageResultWidget,'$pageResultWidget',1);
+				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
-				$request_result = $pageResultWidget->build();
+				$requestResult = $pageResultWidget->build();
+
 				// Create App Bar
 				if ($pageResultWidget->appBar) {
 					if (is_object($pageResultWidget->appBar) && method_exists($pageResultWidget->appBar, 'build')) {
@@ -1301,58 +1306,57 @@ class SgCore {
 					$exeClass->floatingActionButton = $pageResultWidget->floatingActionButton;
 				}
 			} else if (is_array($pageResultWidget) || is_object($pageResultWidget)) {
-				$request_result = $pageResultWidget;
+				// Result is array or object
+				$requestResult = $pageResultWidget;
 			} else {
 				// Result is String, join
-				$request_result .= $pageResultWidget;
+				$requestResult .= $pageResultWidget;
 			}
 
 			// Generate result by content type
-			if (cfg('Content-Type') == 'text/xml') {
-				die(process_widget($request_result));
-			} else if (!_AJAX && is_array($request_result) && isset($request_result['location'])) {
-				location($body['location']);
-				die;
-			} else if (_AJAX || is_array($request_result) || is_object($request_result)) {
-				// print_o($request_result, '$request_result',1);
+			if (cfg('Content-Type') == 'text/xml') die(process_widget($requestResult));
+			if (!_AJAX && is_array($requestResult) && isset($requestResult['location'])) location($body['location']);
+ 			if (_HTML && (is_array($requestResult) || is_object($requestResult))) die(process_widget(print_o($requestResult,'$requestResult')));
+			if (_HTML) die(process_widget($requestResult));
 
+			if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
 				// Check error result
-				$ajaxError = (Object) ['responseCode' => NULL, 'text' => NULL];
-				if (is_object($pageResultWidget) && $pageResultWidget->widgetName === 'ErrorMessage' && $pageResultWidget->responseCode) {
-					$ajaxError->responseCode = $pageResultWidget->responseCode;
-					$ajaxError->text = $pageResultWidget->text;
-				} else if (is_object($request_result) && $request_result->responseCode) {
-					$ajaxError->responseCode = $request_result->responseCode;
-					$ajaxError->text = $request_result->text;
-				} else if (is_array($request_result) && $request_result['responseCode']) {
-					$ajaxError->responseCode = $request_result['responseCode'];
-					$ajaxError->text = $request_result['text'];
-				}
-				// Send error with json
-				if ($ajaxError->responseCode) {
-					sendHeader('application/json');
-					http_response_code($ajaxError->responseCode);
-					die(SG\json_encode($ajaxError));
+				$ajaxResult = [];
+				if (is_object($pageResultWidget) && $pageResultWidget->widgetName === 'ErrorMessage') {
+					if ($pageResultWidget->responseCode) $ajaxResult['responseCode'] = $pageResultWidget->responseCode;
+					if ($pageResultWidget->text) $ajaxResult['text'] = $pageResultWidget->text;
+				} else if (is_object($requestResult)) {
+					if ($requestResult->responseCode) $ajaxResult['responseCode'] = $requestResult->responseCode;
+					if ($requestResult->text) $ajaxResult['text'] = $requestResult->text;
+					$ajaxResult = $ajaxResult + (Array) $requestResult;
+				} else if (is_array($requestResult)) {
+					if ($requestResult['responseCode']) $ajaxResult['responseCode'] = $requestResult['responseCode'];
+					if ($requestResult['text']) $ajaxResult['text'] = $requestResult['text'];
+					$ajaxResult = $ajaxResult + $requestResult;
 				}
 
-				if (is_array($request_result) || is_object($request_result)) {
+				// Send error with json
+				if ($ajaxResult['responseCode']) {
 					sendHeader('application/json');
-					$request_result = SG\json_encode($request_result);
+					http_response_code($ajaxResult['responseCode']);
+					die(SG\json_encode($ajaxResult));
+				}
+
+				if (is_array($requestResult) || is_object($requestResult)) {
+					sendHeader('application/json');
+					$requestResult = SG\json_encode($requestResult);
 				}
 
 				// Show AppBar as Box Header
 				if (is_object($pageResultWidget->appBar) && $pageResultWidget->appBar->boxHeader && method_exists($pageResultWidget->appBar, 'build')) {
 					$pageResultWidget->appBar->showInBox = true;
-					$request_result = $pageResultWidget->appBar->build() . $request_result;
+					$requestResult = $pageResultWidget->appBar->build() . $requestResult;
 				}
 
-				die(debugMsg().process_widget($request_result));
-			} else if (_HTML && (is_array($request_result) || is_object($request_result))) {
-				die(process_widget(print_o($request_result,'$request_result')));
-			} else if (_HTML) {
-				die(process_widget($request_result));
+				die(debugMsg().process_widget($requestResult));
 			}
 		} else {
+			// Page not found
 			http_response_code(_HTTP_ERROR_NOT_FOUND);
 			R::Model('watchdog.log','system','Page not found');
 			// Set header to no found and noacrchive when url address is load function page
@@ -1360,7 +1364,7 @@ class SgCore {
 				header('HTTP/1.0 404 Not Found');
 				head('<meta name="robots" content="noarchive" />');
 			}
-			$request_result .= '<div class="pagenotfound">
+			$requestResult .= '<div class="pagenotfound">
 			<h1>Not Found</h1>
 			<p>ขออภัย ไม่มีหน้าเว็บนี้อยู่ในระบบ</p><p>The requested URL <b>'.$_SERVER['REQUEST_URI'].'</b> was not found on this server.</p>'
 			. (user_access('access debugging program') ? '<p><strong> Load file detail</strong><br />'.print_o($menuArgs,'$request').'<br />File : <strong>'.$mainFolder.$pageFile.'</strong><br />Routine : <strong>function '.$retFunc.'()</strong></p>' : '')
@@ -1370,8 +1374,8 @@ class SgCore {
 		}
 
 		// Start Render Page, result is string
-		$request_result = R::View('render.page',$exeClass,$request_result);
-		$request_result = process_widget($request_result);
+		$requestResult = R::View('render.page',$exeClass,$requestResult);
+		$requestResult = process_widget($requestResult);
 
 		R()->timer->stop($request);
 
@@ -1384,7 +1388,7 @@ class SgCore {
 		$request_process_time = $GLOBALS['request_process_time']+R()->timer->get($request);
 		if (debug('timer')) debugMsg('Request process time : '.$request_process_time.' ms.'.print_o($request_time));
 
-		if (debug('html')) debugMsg(htmlview($request_result,'html tag'));
+		if (debug('html')) debugMsg(htmlview($requestResult,'html tag'));
 		if (debug('config')) {
 			$cfg = cfg();
 			array_walk_recursive($cfg, '__htmlspecialchars');
@@ -1394,8 +1398,8 @@ class SgCore {
 
 		if ($pageTemplate) $page = $pageTemplate;
 		else if (empty($page)) $page = 'index';
-		if ($loadTemplate) echo SgCore::processIndex($page, $request_result);
-		return $request_result;
+		if ($loadTemplate) echo SgCore::processIndex($page, $requestResult);
+		return $requestResult;
 	}
 
 	/**
@@ -2508,9 +2512,29 @@ function htmlview($html, $title = NULL, $line_no = true) {
  *
  * @return String
  */
-function error($code = NULL, $ext_msg = NULL) {
-	$ret=R::View('error',$code,$ext_msg);
-	return $ret;
+function error($code, String $message) {
+	if (strtolower($message) === 'access denied') {
+		R::Model('watchdog.log', NULL, 'Access denied');
+	}
+	if (_AJAX) return ['responseCode' => $code, 'text' => $message];
+	return new ErrorMessage(['responseCode' => $code, 'text' => $message]);
+}
+
+/**
+ * Return success value
+ * @param String/Array/Object $message
+ * @return Array
+ */
+function success($message) {
+	$result = [
+		'responseCode' => _HTTP_OK,
+	];
+	if (is_object($message) || is_array($message)) {
+		$result = array_merge_recursive($result, (Array) $message);
+	} else {
+		$result['text'] = $message;
+	}
+	return $result;
 }
 
 /**
@@ -2524,12 +2548,10 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 	if (is_array($type)) {
 		$args = $type;
 		unset($type);
-		// echo 'ARRAY';
 	} else {
 		$args = ['type' => $type, 'text' => $text, 'module' => $module, 'options' => $options];
 	}
-	// print_r($args);
-	// print_o($args,'$args',1);
+
 	$responseCode = SG\getFirst($args['code'], $args['responseCode']);
 	if ($responseCode) http_response_code($responseCode);
 
@@ -2559,7 +2581,8 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 			break;
 		}
 		$key = tr(trim($key));
-		if (empty($description)) $description = error($key);
+		if (empty($description)) $description = R::View('error', $key);
+
 		$errmsg .= '<dt>'.$key.'</dt>'._NL;
 		if ($description) $errmsg .= '<dd>'.$description .'</dd>'._NL;
 	}
