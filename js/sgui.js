@@ -2822,7 +2822,7 @@ var sgDrawMap = function(thisMap, options = {}) {
 	var updateUrl = settings.updateUrl
 	var is_point = settings.pin.lat ? true : false
 	var currentInfoText = ""
-	var dragText = (settings.drag == "map" ? "เลื่อนแผนที่" : "ลากหมุด") + "เพื่อเปลี่ยนตำแหน่ง"
+	var dragText = updateUrl ? ((settings.drag == "map" ? "เลื่อนแผนที่" : "ลากหมุด") + "เพื่อเปลี่ยนตำแหน่ง") : ''
 	var dragNotifyTime = 20000
 	var zoomChange = false
 
@@ -2834,7 +2834,7 @@ var sgDrawMap = function(thisMap, options = {}) {
 
 	if (settings.dropPin) {
 		if (is_point) notify(dragText, dragNotifyTime)
-		else if (!is_point) notify("คลิกบนแผนที่ตรงตำแหน่งที่ต้องการวางหมุด",20000)
+		else if (!is_point && settings.updateUrl) notify("คลิกบนแผนที่ตรงตำแหน่งที่ต้องการวางหมุด",20000)
 	} else {
 		is_point = true
 	}
@@ -2850,6 +2850,7 @@ var sgDrawMap = function(thisMap, options = {}) {
 		//disableDoubleClickZoom: false,
 
 		click: function(event) {
+			if (!settings.updateUrl) return
 			if (is_point) return
 
 			notify(dragText, dragNotifyTime)
@@ -2948,21 +2949,11 @@ var sgDrawMap = function(thisMap, options = {}) {
 					.removeClass("-active")
 					.addClass(mapActive)
 			}
-			notify("บันทึกเรียบร้อย"+data, 3000)
-			//console.log(data)
 			}).fail(function(response) {
-				// console.log('sg-action FAIL');
-				// console.log(response)
-				let errorMsg = 'ERROR : '
-				if (response.responseJSON.text) {
-					errorMsg += response.responseJSON.text+' ('+response.status+')'
-				} else {
-					errorMsg += response.statusText+' ('+response.status+')'
-				}
-				notify(errorMsg)
+				notify(response.responseJSON.text, 3000)
 			})
-			.done(function() {
-				// console.log('sg-action COMPLETE');
+			.done(function(data) {
+				notify(data.text, 3000)
 				sgActionDone(settings.done, null, latLng)
 			})
 	}
@@ -3027,7 +3018,7 @@ var sgDrawMap = function(thisMap, options = {}) {
 		return $map.addMarker({
 			lat: marker.lat,
 			lng: marker.lng,
-			draggable: settings.drag == 'map' ? false : true,
+			draggable: settings.updateUrl ? (settings.drag == 'map' ? false : true) : false,
 			infoWindow: {title: settings.pin.title, content: currentInfoText},
 			dragend: function(event) {
 				updateLocationValue(event.latLng.lat(), event.latLng.lng())
