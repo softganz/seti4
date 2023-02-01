@@ -562,7 +562,8 @@ class NodeModel {
 				WHERE `tpid` = :tpid
 				) a
 				LEFT JOIN %users% u ON u.`uid` = a.`uid`
-			GROUP BY `uid`;
+			GROUP BY `uid`
+			ORDER BY FIELD(`membership`,"ADMIN","MANAGER","TRAINER","OWNER","FOLLOWER","COMMENTATOR","VIEWER","REGULAR MEMBER", "DELETED", "") ASC, CONVERT(`name` USING tis620) ASC;
 			-- {key: "uid"}',
 			[':tpid' => $tpid]
 		)->items;
