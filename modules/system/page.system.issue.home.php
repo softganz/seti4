@@ -39,6 +39,9 @@ class SystemIssueHome extends Page {
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => $dbs->_num_rows.' Issues Report',
+				'trailing' => new Row([
+					'children' => ['<a class="sg-action btn" href="'.url('system/issue').'" data-rel="#main"><i class="icon -material">refresh</i></a>'], // children
+				]), // Row
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
