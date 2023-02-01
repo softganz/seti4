@@ -603,7 +603,7 @@ $SCREENS
 	.inline-edit-view.-text {display: inline-block; padding: 0px 8px;}
 	.inline-edit-view.-textarea {padding: 5px 8px;}
 	.inline-edit-view.-primary {font-weight: bold;}
-	.inline-edit-view.-fill {display: block;}
+	.inline-edit-view.-fill:not('-hidden'); {display: block;}
 
 
 	.sg-inline-edit .inline-edit-field>span, .inline-edit .inline-edit-field>span {border-bottom: 1px dotted #ccc; cursor: text;}
