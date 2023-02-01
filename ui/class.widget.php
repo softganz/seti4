@@ -678,7 +678,7 @@ class ListItem extends Widget {
 
 		return $ret;
 	}
-} // End of class List
+} // End of class ListItem
 
 
 class ProfilePhoto extends Widget {
@@ -701,7 +701,7 @@ class ProfilePhoto extends Widget {
 		);
 		return '<img '.sg_implode_attr($attribute).' />';
 	}
-}
+} // End of class ProfilePhoto
 
 
 
