@@ -1,8 +1,9 @@
 <?php
 /**
-* Widget :: Node Share
-* Created 2021-12-17
-* Modify 	2021-12-18
+* Widget  :: Node Share
+* Created :: 2021-12-17
+* Modify 	:: 2023-02-02
+* Version :: 2
 *
 * @param Array $args
 * @return Widget
@@ -10,10 +11,7 @@
 * @usage new NodeShareWidget([])
 */
 
-$debug = true;
-
 class NodeShareWidget extends Widget {
-	// var $tagName = 'div';
 	var $copyLink;
 	var $shareMember;
 	var $members;
