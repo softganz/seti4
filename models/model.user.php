@@ -39,7 +39,7 @@ class UserModel {
 		else if ($conditions->email) mydb::where('`email` = :email');
 		else return NULL;
 
-		$result = mydb::select('SELECT * FROM %users% u %WHERE% LIMIT 1', $conditions);
+		$result = mydb::select('SELECT u.`uid` `userId`, u.* FROM %users% u %WHERE% LIMIT 1', $conditions);
 
 		if ($debug) debugMsg(mydb()->_query);
 
@@ -121,12 +121,13 @@ class UserModel {
 			$user->userRoles = $user->roles->role;
 		}
 
-		$stmt = 'INSERT INTO %users%
+		mydb::query(
+			'INSERT INTO %users%
 			( `username` , `password` , `name` , `roles`, `phone` , `email` , `real_name`, `last_name`, `status` , `datein` , `about`, `organization`, `admin_remark` )
 			VALUES
-			( :username , :encryptPassword , :name , :userRoles, :phone , :email , :realName, :lastName, "enable" , :datein , "", :organization, :admin_remark )';
-
-		mydb::query($stmt, $user);
+			( :username , :encryptPassword , :name , :userRoles, :phone , :email , :realName, :lastName, "enable" , :datein , "", :organization, :admin_remark )',
+			$user
+		);
 
 		if (mydb()->_error) {
 			$result->complete = false;
@@ -135,9 +136,9 @@ class UserModel {
 			return $result;
 		}
 
-		$result->uid = $user->uid = mydb()->insert_id;
+		$result->userId = $result->uid = $user->uid = mydb()->insert_id;
 		$result->password = $user->encryptPassword;
-		$result->process[] = mydb()->_query;
+		if ($debug) $result->process[] = mydb()->_query;
 		$result->complete = true;
 
 		if ($user->roles) {
@@ -157,7 +158,7 @@ class UserModel {
 					':created' => date('U'),
 				]
 			);
-			$result->process[] = mydb()->_query;
+			if ($debug) $result->process[] = mydb()->_query;
 		}
 
 		event_tricker('user.create_user',$self,$user,$form,$result);
