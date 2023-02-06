@@ -35,12 +35,13 @@ class NodeModel {
 		return $result;
 	}
 
-	public static function items($conditions, $options = '{}') {
-		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
-		$debug = $options->debug;
+	public static function items($conditions) {
+		$defaults = '{debug: false, items: 10}';
 
-		$result = NULL;
+		$result = (Object) [
+			'count' => 0,
+			'items' => [],
+		];
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
 			$conditions = SG\json_decode($conditions);
@@ -52,9 +53,223 @@ class NodeModel {
 			$conditions = (Object) ['id' => $conditions];
 		}
 
+		$options = SG\json_decode($conditions->options, $defaults);
+		$debug = $options->debug;
+		if ($debug) {
+			debugMsg($conditions, '$conditions');
+		}
+
 		// TODO: Code for get items
 
+		if (!$conditions->type) $conditions->type = 'story';
+		mydb::where('t.`status` IN (2,5)'); // Publish,Lock
+		mydb::where('t.`type` = :type', ':type', $conditions->type);
+		if ($conditions->tag) mydb::where('tg.`tid` IN ( :tag )', ':tag', 'SET:'.$conditions->tag);
+
+		mydb::value('$ORDER$', 'ORDER BY t.`tpid` DESC');
+		mydb::value('$LIMIT$', 'LIMIT '.$options->items);
+
+		$result->items = mydb::select(
+			'SELECT DISTINCT
+			t.`tpid`, t.`title` , t.`status`
+			, t.`uid` `userId` , u.`username`, IFNULL(t.`poster`, u.`name`) `ownerName`
+			, t.`promote` , t.`sticky` , t.`comment`
+			, t.`created` , t.`view` , t.`last_view` , t.`reply` , t.`last_reply` , t.`ip`
+			, GROUP_CONCAT(tn.`name`) `tagName`
+			, NULL `photos`
+			, r.`body`
+			FROM %topic% AS t
+				LEFT JOIN %topic_revisions% AS r ON r.`revid` = t.`revid`
+				LEFT JOIN %users% u ON u.`uid` = t.`uid`
+				LEFT JOIN %tag_topic% tg ON tg.`tpid` = t.`tpid`
+				LEFT JOIN %tag% tn ON tn.`tid` = tg.`tid`
+			%WHERE%
+			GROUP BY `tpid`
+			$ORDER$
+			$LIMIT$;'
+		)->items;
+
+		foreach ($result->items as $key => $value) {
+			$value->body = sg_summary_text($value->body);
+			$result->items[$key] = $value;
+			$topicIdList[] = $value->tpid;
+		}
+
+		// debugMsg(mydb()->_query);
+
+		$result->count = count($result->items);
+
+		if ($result->count) {
+			$photos = mydb::select(
+				'SELECT `fid`, `cover`, `tpid`,`file`
+				FROM %topic_files%
+				WHERE `tpid` in ( :tpid )
+					AND (`cid` IS NULL OR `cid` = 0)
+					AND `type` = "photo"
+				ORDER BY `cover` DESC, `fid` ASC;
+				-- {group: "tpid"}',
+				[':tpid' => 'SET:'.implode(',',$topicIdList)]
+			)->items;
+
+			// debugMsg($photos,'$photos');
+
+			foreach ($result->items as $key => $value) {
+				$photo = $photos[$value->tpid];
+				// debugMsg($value, '$value');
+				// debugMsg($photo, 'photo');
+				if (empty($photo)) continue;
+				$result->items[$key]->photos = ['file' => $photo[0]->file];
+			// 	if (!isset($result->items[$photo->tpid]->photo)) {
+			// 		$result->items[$photo->tpid]->photo = (Object) ['_num_rows' => 0, 'items' => []];
+			// 	}
+			// 	$result->items[$photo->tpid]->photo->_num_rows++;
+			// 	$result->items[$photo->tpid]->photo->items[] = BasicModel::get_photo_property('upload/pics/'.$photo->file);
+			}
+		}
+
+
+		// debugMsg($result, '$result');
+
+		// if ($para->org) $where[] = 't.`orgid` IN ( '.$para->org.' )';
+		// if ($para->category) $where[] = 'tp.`tid` in ('.BasicModel::get_category_tag($para->category).')';
+		// if ($para->tag) $where[] = 'tp.`tid` IN ('.$para->tag.')';
+		// if ($para->type) $where[] = 't.`type` IN ("'.implode('","',explode(',',$para->type)).'")';
+		// if ($para->user) $where[] = 't.`uid` IN ('.$para->user.')';
+		// if ($para->sticky) $where[] = 't.sticky='.$para->sticky;
+		// if ($para->condition) $where[] = $para->condition;
+		// if (!user_access('administer contents,administer papers')) $where[] = 'status in ('._PUBLISH.','._LOCK.')';
+
+		// if ($para->havephoto) $having[] = '`photofile` IS NOT NULL';
+		// if ($allTagList) $having[] = '`allTagList` = "'.$allTagList.'"';
+
+		// if ($where) {
+		// 	$where='('.implode(') AND (',$where).')';
+		// 	$sql_cmd .= ' WHERE '.$where;
+		// }
+		// $sql_cmd.='		GROUP BY t.`tpid`';
+		// if ($having) $sql_cmd.='		HAVING '.implode(' AND ', $having);
+		// $sql_cmd .= ' ORDER BY '.$para->order.' '.$para->sort.' LIMIT '.$para->limit;
+
 		return $result;
+
+		$args=func_get_args();
+		if (is_numeric($args[0])) {
+			$tpid=array_shift($args);
+			$para=para($args,'$tpid='.$tpid,'order=`t`.`tpid`','sort=DESC','limit=1','field=topic,body,photo');
+		} else {
+			$para=para($args,'order=tpid','sort=DESC','limit=10','field=topic');
+		}
+
+		// Convert widget parameter to old parameter
+		if ($para->{'data-tpid'}) $para->tpid = $para->{'data-tpid'};
+		if ($para->{'data-org'}) $para->org = $para->{'data-org'};
+		if ($para->{'data-type'}) $para->type = $para->{'data-type'};
+		if ($para->{'data-tag'}) {
+			$para->tag = $para->{'data-tag'};
+			if (strpos($para->tag, '+')) {
+				$para->tag = str_replace('+', ',', $para->tag);
+				$allTagList = $para->tag;
+			}
+		}
+		if ($para->{'data-category'}) $para->category = $para->{'data-category'};
+		if ($para->{'data-user'}) $para->user = $para->{'data-user'};
+		if ($para->{'data-sticky'}) $para->sticky = $para->{'data-sticky'};
+		if ($para->{'data-condition'}) $para->condition = $para->{'data-condition'};
+
+		if ($para->{'data-limit'}) $para->limit = $para->{'data-limit'};
+		if ($para->{'data-sort'}) $para->sort = $para->{'data-sort'};
+		if ($para->{'data-order-by'}) $para->order = $para->{'data-order-by'};
+		if ($para->{'data-field'}) $para->field = $para->{'data-field'};
+		if ($para->{'data-havephoto'}) $para->havephoto = $para->{'data-havephoto'};
+
+		$para->field = option($para->field);
+
+		if ($para->debug) debugMsg($para,'$para');
+
+		$sql_cmd  = 'SELECT DISTINCT
+			t.`tpid` , t.`status` , t.`uid` , t.`poster` , t.`title` , t.`promote` , t.`sticky` , t.`comment`
+			, t.`created` , t.`view` , t.`last_view` , t.`reply` , t.`last_reply` , t.`ip` ';
+		if ($para->field->body) $sql_cmd .= ' , r.`body` , r.`property` ';
+		if ($para->havephoto) $sql_cmd .= '		, f.`file` `photofile` ';
+		if ($allTagList) $sql_cmd .= '	, GROUP_CONCAT(tp.`tid` ORDER BY `tid`) `allTagList` ';
+
+		$sql_cmd .= ' FROM %topic% AS t ';
+
+
+		if ($para->field->body) $sql_cmd .= '   LEFT JOIN %topic_revisions% AS r ON r.revid=t.revid';
+		if ($para->category || $para->tag) $sql_cmd .= '  LEFT JOIN %tag_topic% tp ON tp.tpid=t.tpid ';
+		if ($para->havephoto) $sql_cmd .= '		LEFT JOIN %topic_files% f ON f.`tpid`=t.`tpid` AND (`cid` IS NULL OR `cid` = 0) AND f.`type`="photo"';
+		// check query condition
+		if ($para->tpid) $where[] = 't.`tpid` = '.$para->tpid;
+		if ($para->org) $where[] = 't.`orgid` IN ( '.$para->org.' )';
+		if ($para->category) $where[] = 'tp.`tid` in ('.BasicModel::get_category_tag($para->category).')';
+		if ($para->tag) $where[] = 'tp.`tid` IN ('.$para->tag.')';
+		if ($para->type) $where[] = 't.`type` IN ("'.implode('","',explode(',',$para->type)).'")';
+		if ($para->user) $where[] = 't.`uid` IN ('.$para->user.')';
+		if ($para->sticky) $where[] = 't.sticky='.$para->sticky;
+		if ($para->condition) $where[] = $para->condition;
+		if (!user_access('administer contents,administer papers')) $where[] = 'status in ('._PUBLISH.','._LOCK.')';
+
+		if ($para->havephoto) $having[] = '`photofile` IS NOT NULL';
+		if ($allTagList) $having[] = '`allTagList` = "'.$allTagList.'"';
+
+		if ($where) {
+			$where='('.implode(') AND (',$where).')';
+			$sql_cmd .= ' WHERE '.$where;
+		}
+		$sql_cmd.='		GROUP BY t.`tpid`';
+		if ($having) $sql_cmd.='		HAVING '.implode(' AND ', $having);
+		$sql_cmd .= ' ORDER BY '.$para->order.' '.$para->sort.' LIMIT '.$para->limit;
+
+		$topics = mydb::select($sql_cmd);
+		// debugMsg(mydb()->_query);
+
+		if ($para->debug) debugMsg($topics,'$topics');
+
+		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i',$sql_cmd)) {
+			if (!$topics->_num_rows) return $topics;
+			$result=$topics;
+			$result->property=sg_json_decode($topics->property);
+			$result->summary=sg_summary_text($topics->body);
+			if ($para->field->photo) {
+				$result->photo = mydb::select('SELECT `file` FROM %topic_files% WHERE `tpid` = :tpid AND (`cid` IS NULL OR `cid` = 0) AND `type` = "photo"', ':tpid', $topics->tpid);
+				foreach ($result->photo->items as $key=>$photo) {
+					$result->photo->items[$key]=BasicModel::get_photo_property('upload/pics/'.$photo->file);
+				}
+			}
+		} else {
+			$topic_list=array();
+			$result=sg_clone($topics);
+
+			unset($result->items);
+			foreach ($topics->items as $rs) {
+				$rs->property = sg_json_decode($rs->property);
+				if (!$rs->poster) $rs->poster=$rs->owner_name;
+				$rs->summary=sg_summary_text($rs->body);
+				$topic_list[]=$rs->tpid;
+				$result->items[$rs->tpid]=$rs;
+			}
+			if ($para->field->photo && $topic_list) {
+				$stmt = 'SELECT `fid`, `cover`, `tpid`,`file`
+					FROM %topic_files%
+					WHERE `tpid` in ( :tpid )
+						AND (`cid` IS NULL OR `cid` = 0)
+						AND `type` = "photo"
+					ORDER BY `cover` DESC, `fid` ASC';
+
+				$photos = mydb::select($stmt, ':tpid', 'SET:'.implode(',',$topic_list));
+
+				// debugMsg($photos,'$photos');
+
+				foreach ($photos->items as $photo) {
+					if (!isset($result->items[$photo->tpid]->photo)) {
+						$result->items[$photo->tpid]->photo = (Object) ['_num_rows' => 0, 'items' => []];
+					}
+					$result->items[$photo->tpid]->photo->_num_rows++;
+					$result->items[$photo->tpid]->photo->items[] = BasicModel::get_photo_property('upload/pics/'.$photo->file);
+				}
+			}
+		}
 	}
 
 	/**
