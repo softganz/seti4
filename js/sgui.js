@@ -660,8 +660,10 @@ function sgWebViewDomProcess(id) {
 					window.location = callback
 				}
 			})
-			.done(function() {
-				// console.log('sg-action COMPLETE');
+			.done(function(response) {
+				// console.log('sg-action DONE');
+				// console.log(response)
+				if (response.responseCode && response.text) notify(response.text, 3000)
 				sgActionDone(linkData.done, $this, doneResult)
 			})
 			.fail(function(response) {
@@ -669,11 +671,12 @@ function sgWebViewDomProcess(id) {
 				// console.log(response)
 				let errorMsg = 'ERROR : '
 				if (response.responseJSON.text) {
-					errorMsg += response.responseJSON.text+' ('+response.status+')'
+					errorMsg += response.responseJSON.text
 				} else {
-					errorMsg += response.statusText+' ('+response.status+')'
+					errorMsg += response.statusText
 				}
-				notify(errorMsg)
+				errorMsg += ' ('+response.status+')'
+				notify(errorMsg, 3000)
 			});
 
 			// console.log('sg-action done')
