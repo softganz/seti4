@@ -927,8 +927,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				}
 			}, $this.data('dataType') == undefined ? null : $this.data('dataType')
 		).fail(function(response) {
-			// console.log('sg-form FAIL')
-			// console.log(response)
 			let errorMsg = 'ERROR : '
 			if (response.responseJSON.text) {
 				errorMsg += response.responseJSON.text+' ('+response.status+')'
@@ -939,8 +937,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			if (debugSG) console.log(response)
 			return false
 		}).done(function(response) {
-			// console.log('sg-form COMPLETE')
-			// console.log(response)
+			if (response.responseCode && response.text) notify(response.text, 3000)
 			sgActionDone($this.data('done'), $this, doneResult);
 		})
 	}
@@ -1245,17 +1242,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					debug ? 300000 : 5000);
 
 			}, settings.result)
-			.fail(function(data) {
+			.fail(function(response) {
 				notify('ERROR ON POSTING. Please Contact Admin.');
-				// console.log(data)
-			}).done(function(data) {
+				// console.log(response)
+			}).done(function(response) {
 				// Process callback function
 				var callbackFunction =  settings.callback ? settings.callback : $this.data('callback')
 
 				if (debugSG) console.log("CALLBACK ON COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
 					if (typeof window[callbackFunction] === 'function') {
-						window[callbackFunction]($this,data,$parent);
+						window[callbackFunction]($this,response,$parent);
 					} else if (settings.callbackType == 'silent') {
 						$.get(callbackFunction, function() {})
 					} else {
@@ -1264,7 +1261,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				}
 
 				// Process action done
-				if (settings.done) sgActionDone(settings.done, $this, data);
+				if (settings.done) sgActionDone(settings.done, $this, response);
 				console.log('$.sgInlineEdit DONE!!!')
 			});
 		}
