@@ -72,8 +72,8 @@ public static function get_daykey($index,$generate=false){
 }
 
 public static function exist_daykey($index,$key){
-	$day_key=mydb::select("SELECT id FROM %block_daykey% WHERE key$index='$key';");
-	$exist=$day_key->_num_rows?true:false;
+	$day_key = mydb::select("SELECT `id` FROM %block_daykey% WHERE `key$index`='$key';");
+	$exist = $day_key->_num_rows ? true : false;
 	return $exist;
 }
 

@@ -311,7 +311,6 @@ class ListTile extends Widget {
 	var $title;
 	var $subtitle;
 	var $trailing;
-	var $crossAxisAlignment = 'start';
 
 	function __construct($args = []) {
 		parent::__construct($args);

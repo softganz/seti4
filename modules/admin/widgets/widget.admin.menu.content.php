@@ -17,7 +17,21 @@ class AdminMenuContentWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
+							'title' => 'Category',
+							'leading' => new Icon('category'),
+							'trailing' => new Button([
+								'type' => 'normal',
+								'href' => url('admin/category'),
+								'text' => 'View Content',
+							]),
+							'subtitle' => 'View, edit, and delete category.',
+						]),
+					], // children
+				]), // Card
+
+				new Card([
+					'children' => [
+						new ListTile([
 							'title' => 'Comments',
 							'leading' => new Icon('comment'),
 							'trailing' => new Button([

@@ -16,31 +16,6 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
-							'title' => 'Clear user online',
-							'leading' => new Icon('people'),
-							'trailing' => '<a class="btn" href="'.url('admin/config/online').'">Clear user online</a>',
-							'subtitle' => 'Remove all user online item from database.',
-						]),
-					], // children
-				]),
-
-				new Card([
-					'children' => [
-						new ListTile([
-							'crossAxisAlignment' => 'start',
-							'title' => 'Clear empty session',
-							'leading' => new Icon('groups'),
-							'trailing' => '<a class="btn" href="'.url('admin/config/session/clear').'">Clear empty session</a>',
-							'subtitle' => 'Remove all empty from database.',
-						]),
-					], // children
-				]),
-
-				new Card([
-					'children' => [
-						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'App Agent',
 							'leading' => new Icon(R()->appAgent ? 'android' : 'web'),
 							'trailing' => R()->appAgent ? '<a class="btn" class="sg-action" href="'.url('',array('setting:app' => '{}')).'" data-rel="none" data-done="reload">Mobile App</a>' : '<a class="sg-action btn" href="'.url('',array('setting:app' => '{OS:%22Android%22,ver:%220.20.0%22,type:%22App%22,dev:%22Softganz%22}')).'" data-rel="none" data-done="reload">Web App</a>',
@@ -52,15 +27,10 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'title' => 'Developer Mode',
-							'leading' => new Icon('javascript'),
-							'trailing' => new Row([
-								'children' => [
-									$_SESSION['devMode'] ? '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'clear']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -green">toggle_on</i><span>ON</span></a>' : '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'yes']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -gray">toggle_off</i><span>OFF</span></a>',
-									// '<a class="btn" href="'.url('admin/config',['devMode' => 'clear']).'"><i class="icon -material">cancel</i><span>CLEAR</span></a>',
-								]
-							]), // Row
-							'subtitle' => 'Developer Mode is '.($_SESSION['devMode'] ? 'ON' : 'OFF'),
+							'title' => 'Clear empty session',
+							'leading' => new Icon('groups'),
+							'trailing' => '<a class="btn" href="'.url('admin/config/session/clear').'">Clear empty session</a>',
+							'subtitle' => 'Remove all empty from database.',
 						]),
 					], // children
 				]),
@@ -68,9 +38,8 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'Clear day key',
-							'leading' => new Icon(''),
+							'leading' => new Icon('keys'),
 							'trailing' => new Row([
 								'child' => '<a class="sg-action btn" href="'.url('admin/config/daykey/clear').'" data-rel="none" data-title="Clear" data-confirm="Clear daykey?">Clear daykey</a>'
 							]),
@@ -82,7 +51,33 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
+							'title' => 'Clear user online',
+							'leading' => new Icon('people'),
+							'trailing' => '<a class="btn" href="'.url('admin/config/online').'">Clear user online</a>',
+							'subtitle' => 'Remove all user online item from database.',
+						]),
+					], // children
+				]),
+
+				new Card([
+					'children' => [
+						new ListTile([
+							'title' => 'Developer JS Mode',
+							'leading' => new Icon('javascript'),
+							'trailing' => new Row([
+								'children' => [
+									$_SESSION['devMode'] ? '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'clear']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -green">toggle_on</i><span>ON</span></a>' : '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'yes']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -gray">toggle_off</i><span>OFF</span></a>',
+									// '<a class="btn" href="'.url('admin/config',['devMode' => 'clear']).'"><i class="icon -material">cancel</i><span>CLEAR</span></a>',
+								]
+							]), // Row
+							'subtitle' => 'Developer JS Mode is '.($_SESSION['devMode'] ? 'ON' : 'OFF'),
+						]),
+					], // children
+				]),
+
+				new Card([
+					'children' => [
+						new ListTile([
 							'title' => 'Re-build counter',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
@@ -96,7 +91,6 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'DB variable list',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
@@ -110,7 +104,6 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'Server information',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
@@ -124,7 +117,6 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'View configuration',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
@@ -138,7 +130,6 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'View cookies value',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
@@ -152,7 +143,6 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'View db variable',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
@@ -166,7 +156,6 @@ class AdminMenuConfigWidget extends Widget {
 				new Card([
 					'children' => [
 						new ListTile([
-							'crossAxisAlignment' => 'start',
 							'title' => 'View session value',
 							'leading' => new Icon(''),
 							'trailing' => new Row([

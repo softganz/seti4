@@ -102,13 +102,19 @@ function admin_comment_list($self) {
 				$deleteBtn = '';
 			}
 		}
-		$tables->rows[] = array(
-			'<a href="'.url('paper/'.$rs->tpid,NULL,$rs->cid?'comment-'.$rs->cid:NULL).'" title="'.htmlspecialchars($rs->title).'" target="_blank">'.SG\getFirst($rs->cid,$rs->tpid).'</a>',
+		$nodeUrl = '';
+		if ($rs->type === 'project') {
+			$nodeUrl = url('project/'.$rs->tpid);
+		} else {
+			$nodeUrl = url('paper/'.$rs->tpid,NULL,$rs->cid?'comment-'.$rs->cid:NULL);
+		}
+		$tables->rows[] = [
+			'<a href="'.$nodeUrl.'" title="'.htmlspecialchars($rs->title).'" target="_blank">'.SG\getFirst($rs->cid,$rs->tpid).'</a>',
 			$deleteBtn,
 			sg_text2html($rs->comment),
 			$rs->uid ? '<a class="sg-action" href="'.url('profile/'.$rs->uid).'" data-rel="box" data-width="640"><img class="profile-photo" src="'.BasicModel::user_photo($rs->username).'" style="width: 24px; height: 24px;" />'.$rs->name.($rs->userStatus != 'enable' ? ' ('.$rs->userStatus.')' : '').'</a>' : $rs->name,
 			$rs->timestamp
-		);
+		];
 	}
 
 	$ret .= $tables->build();

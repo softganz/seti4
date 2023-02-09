@@ -76,6 +76,7 @@ class Form extends Widget {
 		if ($this->action) {
 			$ret .= _NL.'<!-- sg-form -->'._NL;
 			if (isset($this->leading)) $ret .= $this->leading;
+			unset($this->config->data['rel']);
 			$formStr = '<form id="'.$this->id.'" '
 				. 'class="form '.($this->class ? $this->class.' ':'').($this->readonly ? '-readonly' : '').'" '
 				. 'method="'.$formMethod.'" '
@@ -84,6 +85,7 @@ class Form extends Widget {
 				. (isset($formCheckValid) && $formCheckValid ? 'data-checkvalid="true" ' : '')
 				. (isset($this->attribute) ? ' '.(is_array($this->attribute) ? sg_implode_attr($this->attribute) : $this->attribute) : '')
 				. (isset($this->config->attr) ? ' '.(is_array($this->config->attr) ? sg_implode_attr($this->config->attr) : $this->config->attr) : '')
+				// . ($this->rel ? ' data-rel="'.$this->rel.'"' : '')
 				. (isset($this->config->data) ? ' '.(is_array($this->config->data) ? sg_implode_attr($this->config->data) : $this->config->data) : '')
 				. ($this->style ? ' style="'.$this->style.'"' : '')
 				. ($this->onSubmit ? 'onSubmit = \'return '.$this->onSubmit.'(event)\'' : '')
