@@ -809,7 +809,7 @@ class PageBase extends WidgetBase {
 	}
 
 	// Test function
-	function foo() {return 'foo';}
+	function foo() {return get_parent_class($this) === 'PageApi' ? success('Foo'.(post('msg') ? ' with '.post('msg') : '')) : 'Foo'.(post('msg') ? ' with '.post('msg') : '');}
 } // End of class PageBase
 
 class Page extends PageBase {
@@ -842,10 +842,7 @@ class PageApi extends PageBase {
 		if (method_exists($this, $this->actionMethod) && ($reflection = new ReflectionMethod($this, $this->actionMethod)) && $reflection->isPublic()) {
 			return $this->{$this->actionMethod}();
 		} else {
-			return new ErrorMessage([
-				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
-				'text' => 'Action not found!!!'
-			]);
+			return error(_HTTP_ERROR_BAD_REQUEST, 'Action not found!!!');
 		}
 	}
 } // End of class PageApi
