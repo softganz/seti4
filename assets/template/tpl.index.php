@@ -62,6 +62,13 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 if (cfg('tracking') && _ON_HOST) {
 	foreach (cfg('tracking') as $tracker=>$track_id) {
 		switch ($tracker) {
+			case 'GA4': echo '<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
+new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
+"https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,"script","dataLayer","GTM-PSQLWGS");</script>
+<!-- End Google Tag Manager -->'._NL._NL;break;
 			case 'google' : echo '<!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id='.$track_id.'"></script>
 <script>
