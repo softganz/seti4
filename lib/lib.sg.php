@@ -719,13 +719,18 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 	if ( $autoSave ) {
 		$result = false;
 		if ($srcWidth >= $dstWidth && $srcHeight >= $dstHeight) {
-			if (($srcType == "image/jpeg" or $srcType == "image/pjpeg") and function_exists("imagecreatefromjpeg"))
-				$handle = @imagecreatefromjpeg($srcFile);
-			else if ($srcType == "image/png" and function_exists("imagecreatefrompng"))
-				$handle = @imagecreatefrompng($srcFile);
-			else if ($srcType == "image/gif" and function_exists("imagecreatefromgif") )
-				$handle = @imagecreatefromgif($srcFile);
-			else return false;
+			try {
+				if (($srcType == "image/jpeg" or $srcType == "image/pjpeg") and function_exists("imagecreatefromjpeg"))
+					$handle = @imagecreatefromjpeg($srcFile);
+				else if ($srcType == "image/png" and function_exists("imagecreatefrompng"))
+					$handle = @imagecreatefrompng($srcFile);
+				else if ($srcType == "image/gif" and function_exists("imagecreatefromgif") )
+					$handle = @imagecreatefromgif($srcFile);
+				else return false;
+			} catch (Exception $e) {
+				BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['srcFile' => $srcFile,'size' => $srcSize]));
+				return false;
+			}
 			if (!$handle) return false;
 
 			if ( !function_exists("imagecopyresampled") or !function_exists("imagejpeg") ) return false;
