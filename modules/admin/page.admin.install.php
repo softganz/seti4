@@ -585,7 +585,7 @@ function __admin_install_create_table($prefix=null) {
 		);';
 
 	$query->session='CREATE TABLE IF NOT EXISTS %session% (
-		`sess_id` varchar(255) NOT NULL,
+		`sess_id` varchar(200) NOT NULL,
 		`user` varchar(30) DEFAULT NULL,
 		`sess_start` datetime NOT NULL,
 		`expire` INT NOT NULL DEFAULT 0,
@@ -654,6 +654,7 @@ function __admin_install_create_table($prefix=null) {
 	// create table with prefix
 	foreach ($query as $table=>$sql_cmd) {
 		if (!mydb::table_exists($table)) {
+			debugMsg($sql_cmd);
 			mydb::query($sql_cmd);
 			$result->query[]=mydb()->_query;
 			if (mydb()->_error) {
