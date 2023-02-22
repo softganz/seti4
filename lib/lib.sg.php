@@ -717,8 +717,10 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 
 	if ( $dstWidth and empty($dstHeight) ) $dstHeight = round((double)($srcHeight*$dstWidth / $srcWidth));
 	if ( $autoSave ) {
+		// debugMsg('SAVE @'.date('H:i:s').' to '.$dstFile);
 		$result = false;
 		if ($srcWidth >= $dstWidth && $srcHeight >= $dstHeight) {
+			BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
 			try {
 				if (($srcType == "image/jpeg" or $srcType == "image/pjpeg") and function_exists("imagecreatefromjpeg"))
 					$handle = @imagecreatefromjpeg($srcFile);
@@ -728,7 +730,7 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 					$handle = @imagecreatefromgif($srcFile);
 				else return false;
 			} catch (Exception $e) {
-				BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['srcFile' => $srcFile,'size' => $srcSize]));
+				BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['error' => 'YES', 'imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
 				return false;
 			}
 			if (!$handle) return false;
