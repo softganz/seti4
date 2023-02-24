@@ -2470,22 +2470,26 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 * Using <div class="sg-chart" data-chart-type="bar" data-options='{}'><h3>Chart Title</h3><table><tbody><tr><td>..</td><td>..</td></tr>...</tbody></table></div>
 */
 function drawChart(chartDom) {
-	var $container = $(chartDom);
-	var chartId = $container.attr("id");
-	var chartTitle = $container.find("h3").text();
-	var chartType = $container.data("chartType");
-	var $chartTable = $(chartDom).find("table");
-	var chartData = [];
-	var chartColumn = [];
-	var options = {};
-	var chartDataObj = {}
+	let $container = $(chartDom)
+	let chartId = $container.attr("id")
+	let chartTitle = $container.find("h3").text()
+	let chartType = $container.data("chartType")
+	let $chartTable = $(chartDom).find("table")
+	let $chartNav = $(chartDom).find(".widget-nav")
+	let chartData = []
+	let chartColumn = []
+	let options = {}
+	let chartDataObj = {}
+	let chartContainer = document.getElementById(chartId)
+	let chartWidget = null
 
-	if (chartType == undefined) chartType="col"
+	if (chartType == undefined) chartType = "col"
 
 	console.log('::SG-CHART ' + chartType + ' of ' + chartId)
 	// console.log('Chart Title : '+chartTitle+' Chart Type : '+chartType)
+	if ($chartNav.length) console.log($chartNav)
 
-	var defaults = {
+	let defaults = {
 		pointSize: 4,
 		allowHtml: true,
 		pieHole: 0.4,
@@ -2510,7 +2514,7 @@ function drawChart(chartDom) {
 			1:{targetAxisIndex:1},
 		}
 	}
-	var options = $.extend(defaults, $container.data('options'));
+	options = $.extend(defaults, $container.data('options'));
 	//console.log(defaults);
 	// console.log('data-options', $container.data('options'))
 
@@ -2518,13 +2522,13 @@ function drawChart(chartDom) {
 
 	} else {
 		$.each($chartTable.find('tbody>tr'),function(i,eachRow){
-			var $row = $(this)
+			let $row = $(this)
 			// console.log($row.text())
-			var rowData = []
+			let rowData = []
 			$.each($row.find('td'),function(j,eachCol){
-				var $col = $(this)
-				var colKey = $col.attr('class').split(':')
-				var colValue
+				let $col = $(this)
+				let colKey = $col.attr('class').split(':')
+				let colValue
 				if (i == 0) {
 					chartColumn.push([colKey[0],colKey[1],colKey[2]==undefined?'':colKey[2]])
 				}
@@ -2585,9 +2589,8 @@ function drawChart(chartDom) {
 				})
 				data = google.visualization.arrayToDataTable(guageData)
 				// data.addColumn('งบประมาณ', 15080)
-					// console.log(chartColumn[i])
-					// 	data.addColumn(chartColumn[i][1],chartColumn[i][2])
-
+				// console.log(chartColumn[i])
+				// 	data.addColumn(chartColumn[i][1],chartColumn[i][2])
 			} else {
 				data = new google.visualization.DataTable();
 				$.each(chartColumn, function(i) {
@@ -2603,48 +2606,53 @@ function drawChart(chartDom) {
 			// console.log('Options : ',options)
 			// Add chart rows
 
-			// var data = google.visualization.arrayToDataTable([
+			// let data = google.visualization.arrayToDataTable([
 			// 	['Label', 'Value'],
 			// 	['งบประมาณ', 15080],
 			// 	['รายจ่าย', 12000],
 			// ]);
 		}
 
-		var chartContainer=document.getElementById(chartId)
-		var chart
-		if (chartType=="line") {
-			// chart = new google.visualization.LineChart(chartContainer);
-			chart = new google.charts.Line(chartContainer)
-		} else if (chartType=="bar") {
-			chart = new google.visualization.BarChart(chartContainer);
-		} else if (chartType=="col") {
-			chart = new google.visualization.ColumnChart(chartContainer);
-		} else if (chartType=="pie") {
-			chart = new google.visualization.PieChart(chartContainer);
-		} else if (chartType=="combo") {
-			chart = new google.visualization.ComboChart(chartContainer);
-		} else if (chartType=="guage") {
-			chart = new google.visualization.Gauge(chartContainer);
+		if (chartType === 'line') {
+			chartWidget = new google.charts.Line(chartContainer)
+		} else if (chartType === 'bar') {
+			chartWidget = new google.visualization.BarChart(chartContainer);
+		} else if (chartType === 'col') {
+			chartWidget = new google.visualization.ColumnChart(chartContainer);
+		} else if (chartType === 'pie') {
+			chartWidget = new google.visualization.PieChart(chartContainer);
+		} else if (chartType === 'combo') {
+			chartWidget = new google.visualization.ComboChart(chartContainer);
+		} else if (chartType === 'guage') {
+			chartWidget = new google.visualization.Gauge(chartContainer);
 		}
 
 		if ($container.data('callback')) {
 			let callback = $container.data('callback')
-			// google.visualization.events.addListener(chart, "ready", window[callbackFunction](chart));
+			// google.visualization.events.addListener(chartWidget, "ready", window[callbackFunction](chartWidget));
 			if (callback && typeof window[callback] === 'function') {
 				let callbackFunction = window[callback]
-				google.visualization.events.addListener(chart, "ready", callbackFunction);
+				google.visualization.events.addListener(chartWidget, "ready", callbackFunction);
 			}
 			// window[doneTarget]()
 		}
 
 		if ($container.data("image")) {
-			google.visualization.events.addListener(chart, 'ready', function () {
-				var imgUri = chart.getImageURI();
+			google.visualization.events.addListener(chartWidget, 'ready', function () {
+				let imgUri = chartWidget.getImageURI();
 				// do something with the image URI, like:
 				document.getElementById($container.data("image")).src = imgUri;
 			});
 		}
-		chart.draw(data, options);
+		chartWidget.draw(data, options);
+
+		if ($chartNav.length) {
+			let a = document.createElement('span')
+			a.innerHTML = $chartNav.prop('outerHTML')
+			chartContainer.prepend(a)
+			// chartContainer.before($('<div>').html($chartNav.html()))
+			console.log($chartNav.html())
+		}
 	}
 }
 
@@ -2656,132 +2664,6 @@ $(document).ready(function() {
 
 
 
-// Province change
-$(document).on('change','.sg-changwat',function() {
-	var $this=$(this)
-	var $form=$this.closest('form');
-	var $changwat=$form.find('.sg-changwat');
-	var $ampur=$form.find('.sg-ampur');
-	var $tambon=$form.find('.sg-tambon');
-	var $village=$form.find('.sg-village');
-	var altField = $this.data('altfld')
-
-	console.log('Get Ampur of ' + $this.val())
-	if ($this.val()=='') {
-		$ampur.val("").hide();
-	} else {
-		$ampur.val("");
-	}
-	$tambon.val("").hide();
-	if ($village.length) $village.val("").hide()
-	if ($ampur.length) $ampur[0].options.length = 1;
-	if ($tambon.length) $tambon[0].options.length = 1;
-	if ($village.length) $village[0].options.length = 1;
-
-	if (altField) {
-		$form.find(altField).val($this.val())
-	}
-
-	$.get(url+'api/ampur',{q:$this.val()}, function(data) {
-		if (data.length) $ampur.show(); else $ampur.hide()
-		for (var i = 0; i < data.length; i++) {
-			$ampur.append(
-				$("<option></option>")
-				.text(data[i].label)
-				.val(data[i].ampur)
-			);
-		};
-	},'json')
-	if ($this.data('change') == 'submit') $form.submit();
-	//$this.closest('form').submit()
-});
-
-// Ampur change
-$(document).on('change','.sg-ampur', function() {
-	var $this = $(this);
-	var $form = $this.closest('form');
-	var $changwat = $form.find('.sg-changwat');
-	var $ampur = $form.find('.sg-ampur');
-	var $tambon = $form.find('.sg-tambon');
-	var $village = $form.find('.sg-village');
-	var altField = $this.data('altfld')
-
-	console.log('Get Tambon of ' + $this.val())
-
-	if ($this.val()=='') {
-		$tambon.val("").hide();
-	} else {
-		$tambon.val("");
-	}
-	$village.val("").hide()
-	if ($tambon.length) $tambon[0].options.length = 1;
-	if ($village.length) $village[0].options.length = 1;
-
-	if (altField) {
-		$form.find(altField).val($changwat.val()+$this.val())
-	}
-
-	$.get(url+'api/tambon',{q:$changwat.val()+$ampur.val()}, function(data) {
-		if (data.length) $tambon.show(); else $tambon.hide()
-		for (var i = 0; i < data.length; i++) {
-			$tambon.append(
-				$("<option></option>")
-				.text(data[i].label)
-				.val(data[i].tambon)
-			);
-		};
-	},'json')
-	if ($this.data('change') == 'submit') $form.submit();
-});
-
-// Tambon change
-$(document).on('change','.sg-tambon', function() {
-	let $this = $(this)
-	let $form = $this.closest('form');
-	let $changwat = $form.find('.sg-changwat');
-	let $ampur = $form.find('.sg-ampur');
-	let $tambon = $form.find('.sg-tambon');
-	let $village = $form.find('.sg-village');
-	let altField = $this.data('altfld')
-
-	if (altField) {
-		console.log('tambon altfld = ' + altField)
-		$form.find(altField).val($changwat.val()+$ampur.val()+$this.val())
-	}
-	if (!$village.length) return;
-
-	console.log('Get Village of ' + $this.val())
-	if ($this.val()=='') {
-		$village.val("").hide();
-	} else {
-		$village.val("").show()
-	}
-	if ($village.length) $village[0].options.length = 1;
-	$.get(url+'api/village',{q:$changwat.val()+$ampur.val()+$tambon.val()}, function(data) {
-		for (let i = 0; i < data.length; i++) {
-			$village.append(
-				$("<option></option>")
-				.text(data[i].label)
-				.val(data[i].village)
-			);
-		};
-	},'json')
-	if ($this.data('change') == 'submit') $form.submit();
-});
-
-// Village cgange
-$(document).on('change','.sg-village', function() {
-	var $this=$(this)
-	var $form=$this.closest('form');
-	var $changwat=$form.find('.sg-changwat');
-	var $ampur=$form.find('.sg-ampur');
-	var $tambon=$form.find('.sg-tambon');
-	var $village=$form.find('.sg-village');
-
-	if ($changwat.data('altfld')) $($changwat.data('altfld')).val($changwat.val()+$ampur.val()+$tambon.val()+$this.val());
-
-	if ($this.data('change') == 'submit') $form.submit();
-});
 
 
 
@@ -2792,7 +2674,7 @@ $(document).on('change','.sg-village', function() {
 * Written by Panumas Nontapan
 * https://softganz.com
 */
-var sgDrawMap = function(thisMap, options = {}) {
+let sgDrawMap = function(thisMap, options = {}) {
 	var defaults = {
 		gisDigit: 14,
 		zoom: 9,
@@ -3115,3 +2997,133 @@ var sgDrawMap = function(thisMap, options = {}) {
 		settings: settings,
 	}
 }
+
+
+
+
+// Province change
+$(document).on('change','.sg-changwat',function() {
+	var $this=$(this)
+	var $form=$this.closest('form');
+	var $changwat=$form.find('.sg-changwat');
+	var $ampur=$form.find('.sg-ampur');
+	var $tambon=$form.find('.sg-tambon');
+	var $village=$form.find('.sg-village');
+	var altField = $this.data('altfld')
+
+	console.log('Get Ampur of ' + $this.val())
+	if ($this.val()=='') {
+		$ampur.val("").hide();
+	} else {
+		$ampur.val("");
+	}
+	$tambon.val("").hide();
+	if ($village.length) $village.val("").hide()
+	if ($ampur.length) $ampur[0].options.length = 1;
+	if ($tambon.length) $tambon[0].options.length = 1;
+	if ($village.length) $village[0].options.length = 1;
+
+	if (altField) {
+		$form.find(altField).val($this.val())
+	}
+
+	$.get(url+'api/ampur',{q:$this.val()}, function(data) {
+		if (data.length) $ampur.show(); else $ampur.hide()
+		for (var i = 0; i < data.length; i++) {
+			$ampur.append(
+				$("<option></option>")
+				.text(data[i].label)
+				.val(data[i].ampur)
+			);
+		};
+	},'json')
+	if ($this.data('change') == 'submit') $form.submit();
+	//$this.closest('form').submit()
+});
+
+// Ampur change
+$(document).on('change','.sg-ampur', function() {
+	var $this = $(this);
+	var $form = $this.closest('form');
+	var $changwat = $form.find('.sg-changwat');
+	var $ampur = $form.find('.sg-ampur');
+	var $tambon = $form.find('.sg-tambon');
+	var $village = $form.find('.sg-village');
+	var altField = $this.data('altfld')
+
+	console.log('Get Tambon of ' + $this.val())
+
+	if ($this.val()=='') {
+		$tambon.val("").hide();
+	} else {
+		$tambon.val("");
+	}
+	$village.val("").hide()
+	if ($tambon.length) $tambon[0].options.length = 1;
+	if ($village.length) $village[0].options.length = 1;
+
+	if (altField) {
+		$form.find(altField).val($changwat.val()+$this.val())
+	}
+
+	$.get(url+'api/tambon',{q:$changwat.val()+$ampur.val()}, function(data) {
+		if (data.length) $tambon.show(); else $tambon.hide()
+		for (var i = 0; i < data.length; i++) {
+			$tambon.append(
+				$("<option></option>")
+				.text(data[i].label)
+				.val(data[i].tambon)
+			);
+		};
+	},'json')
+	if ($this.data('change') == 'submit') $form.submit();
+});
+
+// Tambon change
+$(document).on('change','.sg-tambon', function() {
+	let $this = $(this)
+	let $form = $this.closest('form');
+	let $changwat = $form.find('.sg-changwat');
+	let $ampur = $form.find('.sg-ampur');
+	let $tambon = $form.find('.sg-tambon');
+	let $village = $form.find('.sg-village');
+	let altField = $this.data('altfld')
+
+	if (altField) {
+		console.log('tambon altfld = ' + altField)
+		$form.find(altField).val($changwat.val()+$ampur.val()+$this.val())
+	}
+	if (!$village.length) return;
+
+	console.log('Get Village of ' + $this.val())
+	if ($this.val()=='') {
+		$village.val("").hide();
+	} else {
+		$village.val("").show()
+	}
+	if ($village.length) $village[0].options.length = 1;
+	$.get(url+'api/village',{q:$changwat.val()+$ampur.val()+$tambon.val()}, function(data) {
+		for (let i = 0; i < data.length; i++) {
+			$village.append(
+				$("<option></option>")
+				.text(data[i].label)
+				.val(data[i].village)
+			);
+		};
+	},'json')
+	if ($this.data('change') == 'submit') $form.submit();
+});
+
+// Village cgange
+$(document).on('change','.sg-village', function() {
+	var $this=$(this)
+	var $form=$this.closest('form');
+	var $changwat=$form.find('.sg-changwat');
+	var $ampur=$form.find('.sg-ampur');
+	var $tambon=$form.find('.sg-tambon');
+	var $village=$form.find('.sg-village');
+
+	if ($changwat.data('altfld')) $($changwat.data('altfld')).val($changwat.val()+$ampur.val()+$tambon.val()+$this.val());
+
+	if ($this.data('change') == 'submit') $form.submit();
+});
