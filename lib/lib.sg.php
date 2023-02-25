@@ -721,6 +721,14 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 		$result = false;
 		if ($srcWidth >= $dstWidth && $srcHeight >= $dstHeight) {
 			BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
+
+			// Copy file that size over 6MB to upload/error folder
+			if ($srcSize > 6000000) {
+				$tmpDescFile = 'upload/error/'.basename($srcFile);
+				// debugMsg($tmpDescFile);
+				copy($srcFile, $tmpDescFile);
+			}
+
 			try {
 				if (($srcType == "image/jpeg" or $srcType == "image/pjpeg") and function_exists("imagecreatefromjpeg"))
 					$handle = @imagecreatefromjpeg($srcFile);
