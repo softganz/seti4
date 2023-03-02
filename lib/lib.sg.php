@@ -720,6 +720,7 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 		// debugMsg('SAVE @'.date('H:i:s').' to '.$dstFile);
 		$result = false;
 		if ($srcWidth >= $dstWidth && $srcHeight >= $dstHeight) {
+			// ini_set('memory_limit', '1024MB');
 			BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
 
 			// Copy file that size over 6MB to upload/error folder
