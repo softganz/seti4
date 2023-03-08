@@ -13,10 +13,10 @@
 	.page.-nav>* {flex: 0;}
 
 	.page.-nav>.nav.-main {order: -1; align-items: center; height: 48px; margin: 0; display: flex; flex-wrap: nowrap; justify-content: flex-end; z-index: 1100; flex: 1;}
-		.page.-nav>.nav.-main>.menu.-pulldown>li>a {overflow: hidden;}
-		.page.-nav>.nav.-main:not(.-owner)>.menu.-main>li {font-weight: normal;}
-		.page.-nav>.nav.-main>.menu>li>a {padding: 0 8px; white-space: nowrap;}
-		.page.-nav>.nav.-main>.menu ul {min-width: 240px; font-weight: normal;}
+		.page.-nav>.nav.-main>ul.-pulldown>li>a {overflow: hidden;}
+		.page.-nav>.nav.-main:not(.-owner)>ul.-main>li {font-weight: normal;}
+		.page.-nav>.nav.-main>ul>li>a {padding: 0 8px; white-space: nowrap;}
+		.page.-nav>.nav.-main>ul ul {min-width: 240px; font-weight: normal;}
 
 		.page.-nav>.nav.sg-responsivemenu>.sg-navtoggle {box-shadow: none; background-color: transparent; margin-right: 16px; padding: 0; border-radius: 50%; width: 32px; height: 32px; align-items: center;}
 		.page.-nav>.nav.sg-responsivemenu>ul {display: none;}
@@ -58,20 +58,13 @@
 		.page.-nav .-signup {white-space: nowrap;}
 
 
-/*.page.-nav>.sg-responsivemenu>.menu {display: none;}
-	.page.-nav>.sg-responsivemenu.-active>.menu {display: block; height: auto; position: absolute; background-color: #f5f5f5; left: 0; right: 0;}
-	.page.-nav>.sg-responsivemenu.-active>.menu>li {display: block;}
-	.page.-nav>.nav>ul>li>a {color: #333;}
-	.page.-nav>.nav>ul>li>ul a {color: #333;}
-*/
-
 @media (min-width: 43.75em) { /* 700/16 = 43.75 @responsive menu */
 	.page.-nav>.nav.sg-responsivemenu>ul {display: block;}
 	.page.-nav>.nav.-main {justify-content: flex-start;}
 	.page.-nav>.nav.-main.-owner {height: 45px;}
 	.page.-nav>.nav.-search {display: block;}
 	.page.-nav>.nav.-search .search-box {margin-left: auto;}
-	.page.-nav>.nav.-main>.menu.-main {display: flex; position: relative;}
+	.page.-nav>.nav.-main>ul.-main {display: flex; position: relative;}
 	.page.-nav>.nav.-main .sg-navtoggle {display: none;}
 
 	.module-home .ribbon {width:24px; position: absolute; border: none; background: transparent; top: 58px; left: 4px; z-index: 1000;}
