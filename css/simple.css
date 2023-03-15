@@ -1037,10 +1037,11 @@ $SCREENS
 	.nav.-app-menu {margin: 16px 8px; background-color: #fff; border-radius: 8px; display: flex; flex-wrap: wrap;}
 		.nav.-app-menu>ul {display: flex; flex-wrap: wrap; justify-content: flex-start;}
 		.nav.-app-menu p {padding: 16px 8px;}
-		.nav.-app-menu>.widget-listtile {flex: 1 0 100%; padding: 2px; margin: 0; border-radius: 8px;}
+		.nav.-app-menu>.widget-listtile {flex: 1 0 100%; margin: 0; border-radius: 8px; align-items: center;}
+		.nav.-app-menu>.widget-listtile>.-title {font-size: 1.6rem;}
 		.nav.-app-menu .header {flex: 1 0 100%; padding: 2px; margin: 0; border-radius: 8px;}
-		.nav.-app-menu .header>h3 {padding: 8px; margin: 0; height: auto; line-height: unset;}
-		.nav.-app-menu .-item, .nav.-app-menu .ui-item {margin: 8px; flex: 0 0 auto; text-align: center; background-color: #f5fff3; box-shadow: 0 0 0 1px #ccf3cc inset; border-radius: 8px; position: relative; overflow: hidden;}
+		.nav.-app-menu h3 {padding: 8px; margin: 0; height: auto; line-height: unset;}
+		.nav.-app-menu .-item, .nav.-app-menu .ui-item {margin: 8px; min-width: 84px; flex: 0 0 auto; text-align: center; background-color: #f5fff3; box-shadow: 0 0 0 1px #ccf3cc inset; border-radius: 8px; position: relative; overflow: hidden;}
 		.nav.-app-menu .-item:hover, .nav.-app-menu .ui-item:hover {background-color: #dfffd8;}
 		.nav.-app-menu .-item>a, .nav.-app-menu .ui-item>a {height: calc(100% - 16px); padding: 8px; display: block;}
 		.nav.-app-menu .-item>a>.icon, .nav.-app-menu .ui-item>a>.icon {display: block; margin: 0 auto 6px; color: green; width: 32px; height: 32px; font-size: 32px; border-radius: 50%; padding: 6px;}
