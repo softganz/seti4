@@ -156,6 +156,7 @@ class PersonModel {
 	// }
 
 	public static function save($data, $options = '{}') {
+		$data = (Object) $data;
 		$defaults = '{debug: false}';
 		$options = SG\json_decode($options, $defaults);
 		$debug = $options->debug;
