@@ -350,66 +350,89 @@ class Form extends Widget {
 		if (!isset($formElement->display)) $formElement->display='-block';
 		$itemIndex = 0;
 
-		foreach ($formElement->options as $option_key => $option_value) {
-			if (is_null($option_value)) continue;
+		foreach ($formElement->options as $optionKey => $optionValue) {
+			if (is_null($optionValue)) continue;
 			$itemIndex++;
-			if (is_array($option_value) || is_object($option_value)) {
-				//debugMsg('$option_key = '.$option_key);
-				//debugMsg($option_value, '$option_value');
-				$ret.='<span class="options-group"><span class="options-group-label">'.$option_key.'</span>'._NL;
-				//$ret .= $this->_renderRadio($option_key, $tag_id, $formElement, $option_value['key'], $option_value['label']);
+			if (is_array($optionValue) || is_object($optionValue)) {
+				$optionValue = (Array) $optionValue;
+				//debugMsg('$optionKey = '.$optionKey);
+				// debugMsg($optionValue, '$optionValue');
+				// $ret .= print_o($optionValue, '$optionValue');
+				// if (is_array($optionValue)) debugMsg($optionValue['name']);
 
-				foreach ($option_value as $option_key=>$option_value) {
-					//$ret .= '	<option value="'.$option_key.'"'.(in_array($option_key,$formElement->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$option_value.'</option>'._NL;
-					$ret .= '<label class="option -'.$formElement->display.'" >';
+				$ret.='<span class="options-group">'._NL;
+				//$ret .= $this->_renderRadio($optionKey, $tag_id, $formElement, $optionValue['key'], $optionValue['label']);
+
+				if ($optionValue['name']) {
+					// Option format is [['name' => 'xxx','label'=>'xxx','value'=>'xxx'],...]
+					$ret .= '<abbr class="'.$formElement->type.'"><label class="option -'.$formElement->display.'" >';
 					$ret .= '<input'
-						. ($this->readonly || $formElement->readonly ? ' readonly="readonly"':'')
-						. ' name="'.$name.($formElement->multiple ? '['.$option_key.']' : '').'"'
-						. ' value="'.$option_key.'"';
-					if (is_array($formElement->value)) {
-						$option_value_key=array_keys($formElement->value);
-						$ret .= in_array($option_key,array_intersect(array_keys($formElement->options),$formElement->value)) ? ' checked="checked"':'';
-
-						//debugMsg('Array option_key='.$option_key.'<br />');
-						//debugMsg($formElement->options, '$formElement->options');
-						//debugMsg('option_value_key='.print_o($formElement->value,'$formElement->value').'<br />');
-					} else {
-						//echo 'Else option_key='.$option_key.'<br />';
-						$ret .= $option_key == $formElement->value ? ' checked="checked"':'';
-					}
+						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"':'')
+						. ' name="'.$optionValue['name'].'"'
+						. ' value="'.$optionValue['value'].'"';
+					$ret .= is_null($formElement->value[$optionValue['name']]) ? '' : ' checked="checked"';
 					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
 						. ' type="'.$formElement->type.'"'
-						. ($formElement->attribute?' '.$formElement->attribute:'')
+						. ($formElement->attribute ? ' '.$formElement->attribute : '')
 						. ' /> ';
-					$ret .= $option_value;
+					$ret .= $optionValue['label'];
+					$ret .= '</label></abbr>'._NL;
+					// $ret .= print_o($formElement->value, '$formElement->value');
+				} else {
+					// Option format is ['value'=>'label',...]
+					$ret .= '<span class="options-group-label">'.$optionKey.'</span>';
+					foreach ($optionValue as $itemOptionKey => $itemOptionValue) {
+						//$ret .= '	<option value="'.$itemOptionKey.'"'.(in_array($itemOptionKey,$formElement->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$itemOptionValue.'</option>'._NL;
+						$ret .= 'A<label class="option -'.$formElement->display.'" >';
+						$ret .= '<input'
+							. ($this->readonly || $formElement->readonly ? ' readonly="readonly"':'')
+							. ' name="'.$name.($formElement->multiple ? '['.$itemOptionKey.']' : '').'"'
+							. ' value="'.$itemOptionKey.'"';
+						if (is_array($formElement->value)) {
+							$itemOptionValue_key=array_keys($formElement->value);
+							$ret .= in_array($itemOptionKey,array_intersect(array_keys($formElement->options),$formElement->value)) ? ' checked="checked"':'';
 
-					$ret .= '</label>'._NL;
+							//debugMsg('Array option_key='.$itemOptionKey.'<br />');
+							//debugMsg($formElement->options, '$formElement->options');
+							//debugMsg('option_value_key='.print_o($formElement->value,'$formElement->value').'<br />');
+						} else {
+							//echo 'Else option_key='.$itemOptionKey.'<br />';
+							$ret .= $itemOptionKey == $formElement->value ? ' checked="checked"':'';
+						}
+						$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
+							. ' type="'.$formElement->type.'"'
+							. ($formElement->attribute?' '.$formElement->attribute:'')
+							. ' /> ';
+						$ret .= $itemOptionValue;
+
+						$ret .= '</label>'._NL;
+					}
 				}
 				$ret.='</span>'._NL;
 			} else {
-				//$ret .= $this->_renderRadio($fieldKey, $tag_id, $formElement, $option_key, $option_value);
+				//$ret .= $this->_renderRadio($fieldKey, $tag_id, $formElement, $optionKey, $optionValue);
 				if ($formElement->separate) {
-					$name = $formElement->name ? $formElement->name.$option_key : ($this->variable ? $this->variable.'['.$fieldKey.$option_key.']' : $fieldKey);
+					$name = $formElement->name ? $formElement->name.$optionKey : ($this->variable ? $this->variable.'['.$fieldKey.$optionKey.']' : $fieldKey);
 				}
 
 				if ($formElement->config->capsule) {
 					$ret .= '<'.$formElement->config->capsule->tag.' class="'.$formElement->config->capsule->class.'">';
 				}
-				$ret .= '		<label class="option'.($formElement->display ? ' '.$formElement->display : '').'">';
-				if (substr($option_value, 0, 6) == '&nbsp;') {
+				$ret .= '<abbr class="'.$formElement->type.'"><label class="option'.($formElement->display ? ' '.$formElement->display : '').'">';
+				if (substr($optionValue, 0, 6) == '&nbsp;') {
 					// Show label only
 				} else {
-					if (preg_match('/^\s/', $option_value)) {
+					if (preg_match('/^\s/', $optionValue)) {
 						$ret .= '&nbsp;&nbsp;&nbsp;&nbsp;';
 					}
 					$ret .= '<input id="'.$tag_id.'-'.$itemIndex.'"'
 						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"' : '')
-						. ' name="'.$name.($formElement->multiple ? '['.$option_key.']' : '').'"'
-						. ' value="'.$option_key.'"';
+						. ' name="'.($formElement->namePrefix ? $formElement->namePrefix.$optionKey : '').$name.($formElement->multiple ? '['.$optionKey.']' : '').'"'
+						. ' value="'.$optionKey.'"';
 					if (is_array($formElement->value)) {
-						$option_value_key = array_keys($formElement->value);
-						$ret .= in_array($option_key, array_intersect(array_keys($formElement->options), $formElement->value)) ? ' checked="checked"':'';
-					} else if (isset($formElement->value) && $option_key == $formElement->value) {
+						$optionValue_key = array_keys($formElement->value);
+						$ret .= in_array($optionKey, array_intersect(array_keys($formElement->options), $formElement->value)) ? ' checked="checked"':'';
+					} else if (isset($formElement->value) && $optionKey == $formElement->value) {
 						$ret .= ' checked="checked"';
 					}
 					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'"'
@@ -418,8 +441,8 @@ class Form extends Widget {
 						. $this->onElementEvent('onChange', $formElement->onChange)
 						. ' /> ';
 				}
-				$ret .= $option_value;
-				$ret .= '</label>'._NL;
+				$ret .= $optionValue;
+				$ret .= '</label></abbr>'._NL;
 				if ($formElement->config->capsule) {
 					$ret .= '</'.$formElement->config->capsule->tag.'>';
 				}
@@ -586,19 +609,19 @@ class Form extends Widget {
 		else if (in_array(substr($year_from,0,1),array('-','+'))) $year_from = date('Y')+$year_from;
 		if (empty($year_no)) $year_no = 5;
 
-		$ret = '<select id="'.$tag_id.'-date" class="form-select" name="'.$name.'[date]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
+		$ret = '<select id="'.$tag_id.'-date" class="form-select'.($formElement->class ? ' '.$formElement->class : '').'" name="'.$name.'[date]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
 		$ret .= '<option value="">'.($formElement->year->type=='BC'?'วันที่':'Date').'</option>'._NL;
 		for ($i = 1; $i <= 31; $i++) {
 			$ret .= '<option value="'.sprintf('%02d',$i).'"'.($formElement->value->date==$i?' selected':'').'>'.sprintf('%02d',$i).'</option>'._NL;
 		}
 		$ret .= '</select>'._NL;
-		$ret .= '<select id="'.$tag_id.'-month" class="form-select" name="'.$name.'[month]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
+		$ret .= '<select id="'.$tag_id.'-month" class="form-select'.($formElement->class ? ' '.$formElement->class : '').'" name="'.$name.'[month]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
 		$ret .= '<option value="">'.($formElement->year->type=='BC'?'เดือน':'Month').'</option>'._NL;
 		for ($i = 1; $i <= 12; $i++) {
 			$ret .= '<option value="'.sprintf('%02d',$i).'"'.($formElement->value->month==$i?' selected':'').'>'.sprintf('%02d',$i).'-'.($formElement->year->type=='BC'?$months['BC'][$i-1]:$months['DC'][$i-1]).'</option>'._NL;
 		}
 		$ret .= '</select>'._NL;
-		$ret .= '<select id="'.$tag_id.'-year" class="form-select" name="'.$name.'[year]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
+		$ret .= '<select id="'.$tag_id.'-year" class="form-select'.($formElement->class ? ' '.$formElement->class : '').'" name="'.$name.'[year]" '.($this->readonly || $formElement->readonly?'readonly="readonly" disabled="disabled" ':'').'>'._NL;
 		$ret .= '<option value="">'.($formElement->year->type=='BC'?'ปี พ.ศ.':'Year').'</option>'._NL;
 		if ($year_sort == 'DESC') {
 			for ($i = $year_from; $i > $year_from-$year_no; $i--) {
