@@ -434,6 +434,7 @@ class Button extends Widget {
 
 		$attribute = array_replace_recursive([
 			'href' => $this->href,
+			'id' => $this->id,
 			'class' => trim(
 				'widget-'.strtolower($this->widgetName).(empty($this->type) ? '' : ' btn')
 				. ($this->type ? ' -'.$this->type : '')
