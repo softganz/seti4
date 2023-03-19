@@ -790,9 +790,9 @@ $SCREENS
 		.form-password.-highlight,
 		.form-select.-highlight {font-size: 1.2em;}
 
-		.form-item abbr.checkbox {display: block; position: relative; padding: 8px;}
-		.form-item abbr.checkbox:hover {background-color: #eee;}
-		.form-item abbr.checkbox label>input[type="radio"]+.icon {position: absolute; right: 8px; top: calc(50% - 12px); z-index: 1;}
+		.form-item abbr {display: block; position: relative; padding: 8px;}
+		.form-item abbr:hover {background-color: #eee;}
+		.form-item abbr label>input[type="radio"]+.icon {position: absolute; right: 8px; top: calc(50% - 12px); z-index: 1;}
 
 		.form-item>.form-group {width: 100%; position: relative; display: inline-flex; flex-wrap: nowrap; box-shadow: 0 0 0 1px #ccc inset; border-radius: 3px; padding: 1px;}
 		.form-item>.form-group>* {margin: 0; border: none; box-shadow: none; border-radius: 0;}
