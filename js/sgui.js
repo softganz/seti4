@@ -2421,7 +2421,7 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 	}
 	$form.ajaxForm({
 		success: function(data) {
-			// console.log('Inline upload file complete.', data);
+			console.log('Inline upload file complete.', data);
 			if (isAndroidWebViewReady) Android.showToast('อัพโหลดไฟล์เรียบร้อบ')
 			if (target) {
 				if ($form.data('append')) {
