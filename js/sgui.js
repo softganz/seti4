@@ -3130,15 +3130,21 @@ $(document).on('change','.sg-village', function() {
 
 // Sort table column
 $(document).on('click', '.widget-table>thead>tr>th[class^="-sort-"]', function(event) {
+	// notify('Sorting...', 100)
 	let tableId = $(this).closest('table').attr('id')
 	// console.log(tableId)
 	if (!tableId) return
 	let thIndex = $(this).prevAll().length
 	// if ($)
 	// console.log(thIndex)
+	// console.log('START')
 	sortTable(tableId, thIndex)
+	// .then(function(){console.log("COMPLETE")})
+	// console.log('END')
+	// notify('')
 
 	function sortTable(id, n) {
+	// console.log('FUNCTION START')
 		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
 		table = document.getElementById(id);
 		switching = true;
@@ -3193,5 +3199,6 @@ $(document).on('click', '.widget-table>thead>tr>th[class^="-sort-"]', function(e
 				}
 			}
 		}
+		// console.log('FUNCTION END')
 	}
 });
