@@ -1,16 +1,16 @@
 <?php
 /**
-* Model :: User Information
-* Created 2021-07-22
-* Modify  2021-07-22
+* Model   :: User Information
+* Created :: 2021-07-22
+* Modify  :: 2023-03-31
+* Version :: 2
 *
 * @param Int $userId
 * @return Object
 *
 * @usage new UserModel($userId)
+* @usage UserModel::function($conditions, $options)
 */
-
-$debug = true;
 
 class UserModel {
 	var $userId;
@@ -166,6 +166,29 @@ class UserModel {
 		$result->process[] = 'UserModel::create() => create complete';
 
 		return $result;
+	}
+
+	public static function changeUserName($oldUsername, $newUsername) {
+		if (empty($oldUsername) || empty($newUsername)) return false;
+		if ($oldUsername === $newUsername) return false;
+		if (file_exists('file/'.$newUsername)) return false;
+
+		$newUserInfo = UserModel::get(['username' => $newUsername]);
+		if ($newUserInfo->userId) return false;
+
+		mydb::query(
+			'UPDATE %users% SET `username` = :newUsername WHERE `username` = :oldUsername',
+			[
+				':oldUsername' => $oldUsername,
+				':newUsername' => $newUsername,
+			]
+		);
+		if (!mydb()->_error) {
+			$oldFolder = 'file/'.$oldUsername;
+			$newFolder = 'file/'.$newUsername;
+
+			if (file_exists('file/'.$oldUsername)) rename($oldFolder, $newFolder);
+		}
 	}
 
 	// delete user information

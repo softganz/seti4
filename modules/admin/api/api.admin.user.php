@@ -149,6 +149,9 @@ class AdminUserApi extends PageApi {
 			);
 		}
 
+		// Change username
+		if ($data->username != $this->userInfo->username) UserModel::changeUserName($this->userInfo->username, $data->username);
+
 		mydb::query(mydb::create_update_cmd('%users%', (Array) $data,' uid = '.$this->userId.' LIMIT 1'));
 
 		return message('บันทึกเรียบร้อย');
