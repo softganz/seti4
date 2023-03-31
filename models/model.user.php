@@ -34,12 +34,12 @@ class UserModel {
 			$conditions = (Object) ['id' => $id];
 		}
 
-		if ($id) mydb::where('`uid` = :id');
-		else if ($conditions->username) mydb::where('`username` = :username');
-		else if ($conditions->email) mydb::where('`email` = :email');
+		if ($id) mydb::where('`uid` = :userId', ':userId', $id);
+		else if ($conditions->username) mydb::where('`username` = :username', ':username', $conditions->username);
+		else if ($conditions->email) mydb::where('`email` = :email', ':email', $conditions->email);
 		else return NULL;
 
-		$result = mydb::select('SELECT u.`uid` `userId`, u.* FROM %users% u %WHERE% LIMIT 1', $conditions);
+		$result = mydb::select('SELECT u.`uid` `userId`, u.* FROM %users% u %WHERE% LIMIT 1');
 
 		if ($debug) debugMsg(mydb()->_query);
 

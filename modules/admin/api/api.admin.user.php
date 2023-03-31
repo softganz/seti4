@@ -12,6 +12,8 @@
 * @usage api/admin/user/{userId}/{action}
 */
 
+import('model:user.php');
+
 class AdminUserApi extends PageApi {
 	var $userId;
 	var $action;
@@ -59,7 +61,7 @@ class AdminUserApi extends PageApi {
 	/**
 	* Block user and delete all topic
 	*/
-	public function BlockAndDelete() {
+	public function blockAndDelete() {
 		import('model:node.php');
 
 		if (!$this->userId) {
@@ -106,6 +108,50 @@ class AdminUserApi extends PageApi {
 		R::model('watchdog.log','Admin','User Block','User '.$this->userId.' was blocked and delete topics.', i()->uid, $this->userId);
 
 		return 'Blocked and delete '.$dbs->_num_rows.' topics';
+	}
+
+	public function edit() {
+		$data = (Object) post('profile');
+		// debugMsg($data, '$data');
+		// debugMsg($this, '$this');
+
+		// Check duplicate username
+		if ($data->username != $this->userInfo->username) {
+			$newUser = UserModel::get(['username' => $data->username]);
+			if ($newUser->userId) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'Username '.$data->username.' มีผู้อื่นใช้งานแล้ว');
+		}
+
+		if ($data->email && !sg_is_email($data->email)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'กรุณาป้อนอีเมล์ให้ถูกต้องตามรูปแบบ คือ yourname@domain.com');
+
+		if ($data->password) {
+			// Check password length
+			if (strlen($data->password) < 6) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'รหัสผ่านใหม่ต้องตัวอักษรอย่างน้อย 6 อักษร');
+			// Check password same
+			if ($data->password != $data->repassword) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'การป้อนรหัสผ่านใหม่ทั้งสองครั้งไม่ตรงกัน');
+		}
+
+		if ($data->password) {
+			$data->password = sg_encrypt($data->password,cfg('encrypt_key'));
+			unset($data->repassword);
+		} else {
+			unset($data->password,$data->repassword);
+		}
+		$data->roles = implode(',',$data->roles);
+		$oldRoles = mydb::select(
+			'SELECT `roles` FROM %users% WHERE `uid` = :uid LIMIT 1',
+			[':uid' => $this->userId]
+		)->roles;
+		// Delete cache when block or roles change
+		if ($data->status == 'block' || $data->roles != $oldRoles) {
+			mydb::query(
+				'DELETE FROM %cache% WHERE `headers` = :username',
+				[':username' => $this->userInfo->username]
+			);
+		}
+
+		mydb::query(mydb::create_update_cmd('%users%', (Array) $data,' uid = '.$this->userId.' LIMIT 1'));
+
+		return message('บันทึกเรียบร้อย');
 	}
 }
 ?>
