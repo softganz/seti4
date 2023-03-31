@@ -168,6 +168,7 @@ class UserModel {
 		return $result;
 	}
 
+	//TODO: Change value in table cache/session
 	public static function changeUserName($oldUsername, $newUsername) {
 		if (empty($oldUsername) || empty($newUsername)) return false;
 		if ($oldUsername === $newUsername) return false;
@@ -188,6 +189,16 @@ class UserModel {
 			$newFolder = 'file/'.$newUsername;
 
 			if (file_exists('file/'.$oldUsername)) rename($oldFolder, $newFolder);
+
+			// Rename cache
+			mydb::query(
+				'UPDATE %cache% SET `headers` = :newUsername WHERE `headers` = :oldUsername',
+				[
+					':oldUsername' => $oldUsername,
+					':newUsername' => $newUsername,
+				]
+			);
+			// debugMsg(mydb()->_query);
 		}
 	}
 
