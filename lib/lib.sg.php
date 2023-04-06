@@ -420,27 +420,6 @@ function sg_summary_text($str=NULL,$length=0) {
 	return $result;
 }
 
-function sg_add_page_url($url,$page) {
-	if (empty($page)) {
-		$result=$url;
-		if (preg_match('/page\/[0-9]*/',$url)) $result=preg_replace('/page\/[0-9]*/','',$url);
-		if (preg_match('/\/\?/',$result)) $result=preg_replace('/\/\?/','?',$result);
-		if (substr($result,-1)==='/') $result=substr($result,0,-1);
-	} else {
-		if (preg_match('/page\/[0-9]*/',$url)) {
-			$result=preg_replace('/page\/[0-9]*/','page/'.$page,$url);
-		/*
-		} else if (preg_match('/\?/',$url)) {
-		echo $url.' [here '.$page.'] <br />';
-			$result=preg_replace('/\?/','/page/'.$page.'?',$url);
-		*/
-		} else {
-			$result=$url.'/page/'.$page;
-		}
-	}
-	return $result;
-}
-
 /**
 * Change newline to <LI> tag
 * @param String $para

@@ -6,14 +6,15 @@
 * @return String
 */
 
-$debug = true;
-
 /**
  * Draw paper content
  *
  * @param Object $topicInfo
  * @return Object $body
  */
+
+import('widget:comment.render.php');
+
 function view_paper_content_prepare($topicInfo, $options = '{}') {
 	// Prepare body text by input_format condition
 	$topicInfo->info->body=str_replace('<!--break-->','',$topicInfo->info->body);
@@ -259,7 +260,8 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 		$body->comment = '<div class="paper -comment web-comment">';
 		// Show reply
 		if ($topicInfo->info->reply) {
-			$body->comment .= R::View('paper.comment.draw',$topicInfo,NULL,$archive);
+			$body->comment .= (new CommentRenderWidget(['node' => $topicInfo, 'options' => $options, 'archive' => $archive]))->build()->build();
+			// R::View('paper.comment.draw',$topicInfo,$options,$archive);
 			if ($showAd && isset($GLOBALS['ad']->comment_after)) $body->comment .= '<div id="ad-comment_after" class="ads">'.$GLOBALS['ad']->comment_after.'</div>';
 		}
 

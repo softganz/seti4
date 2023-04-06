@@ -1,8 +1,9 @@
 <?php
 /**
-* Paper Page Controller
-* Created 2018-06-04
-* Modify  2019-06-01
+* Paper   :: Page Controller
+* Created :: 2018-06-04
+* Modify  :: 2023-04-06
+* Version :: 1
 *
 * @param Int $tpid
 * @param String $action
@@ -10,8 +11,6 @@
 *
 * @usage paper[/{id}/{action}]
 */
-
-$debug = true;
 
 class Paper extends Page {
 	var $tpid;

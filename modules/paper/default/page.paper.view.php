@@ -9,7 +9,10 @@
 */
 
 function paper_view($self, $tpid = NULL, $action = NULL) {
-	$para = para(func_get_args(),2);
+	$para = (Object) [
+		'commentPage' => post('page'),
+	];
+
 	event_tricker('paper.view.init',$self,$topicInfo,$para);
 
 	$topicInfo = is_object($tpid) ? $tpid : R::Model('paper.get',$tpid);
@@ -292,7 +295,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 	if ($topicInfo->info->module) R::Manifest($topicInfo->info->module);
 
 	// Prepare paper content
-	$body = object_merge($body, R::View('paper.content.prepare', $topicInfo));
+	$body = object_merge($body, R::View('paper.content.prepare', $topicInfo, $para));
 
 
 

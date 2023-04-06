@@ -292,13 +292,6 @@ class View {
 	}
 
 	/**
-	* Draw comment : Redirect to view.paper.comment.draw
-	*/
-	public static function draw_comment($topic=NULL,$para=NULL,$archive=false,$thread=NULL,$header=NULL) {
-		return R::View('paper.comment.draw',$topic,$para,$archive,$thread,$header);
-	}
-
-	/**
 	 * List topic div style
 	 *
 	 * @param Object $topics

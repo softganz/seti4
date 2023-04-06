@@ -1282,8 +1282,10 @@ $SCREENS
 		.paper.-comment .comment .photo-wide {width:400px;}
 		.paper.-comment .comment .photo-tall {width:350px;}
 
-		.comment_page span {margin:0 1px;padding:0 5px;background:#FF953F;}
-		.comment_page a,.comment_page strong {margin:0 1px;padding:0 5px;background:#FFE59F;}
+		.comment_page {display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 0;}
+		.comment_page span {background:#FF953F;}
+		.comment_page a, .comment_page strong {background:#FFE59F;}
+		.comment_page>a, .comment_page>strong, .comment_page>span {padding: 4px 8px; border-radius: 4px;}
 
 		#comment-list>tbody>tr>td img {width:200px;}
 		#comment-list>tbody>tr>td img.emotion {width:auto;}
