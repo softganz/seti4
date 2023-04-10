@@ -3,42 +3,43 @@
 * Paper   :: Page Controller
 * Created :: 2018-06-04
 * Modify  :: 2023-04-06
-* Version :: 1
+* Version :: 2
 *
-* @param Int $tpid
+* @param Int $nodeId
 * @param String $action
-* @return String
+* @return Widget
 *
 * @usage paper[/{id}/{action}]
 */
 
-class Paper extends Page {
-	var $tpid;
-	var $action;
-	var $_args = [];
+import('model:node.php');
 
-	function __construct($tpid = NULL, $action = NULL) {
-		parent::__construct();
-		$this->tpid = $tpid;
-		$this->action = $action;
-		$this->_args = func_get_args();
+class Paper extends PageController {
+	var $nodeId;
+	var $action;
+
+	function __construct($nodeId = NULL, $action = NULL) {
+		if (empty($nodeId) && empty($action)) $action = 'home';
+		else if ($nodeId && empty($action)) $action = 'view';
+
+		parent::__construct([
+			'nodeId' => $nodeId,
+			'action' => 'paper.'.$action,
+			'args' => func_get_args(),
+			'info' => is_numeric($nodeId) ? PaperModel::get($nodeId, '{initTemplate: true}') : NULL,
+		]);
 	}
 
 	function build() {
-		if (empty($this->action) && empty($this->tpid)) $this->action = 'home';
-		if ($this->tpid && empty($this->action)) $this->action = 'view';
+		// debugMsg('Id '.$this->nodeId.' Action = '.$this->action.' TranId = '.$this->tranId);
 
-		$topicInfo = $this->tpid && is_numeric($this->tpid) ? R::Model('paper.get', $this->tpid, '{initTemplate: true}') : NULL;
-		if (empty($topicInfo)) $topicInfo = $this->tpid;
-		$argIndex = 2; // Start argument
+		// $isAccess = $mainInfo->RIGHT & _IS_ACCESS;
 
-		// debugMsg('PAGE PAPER Topic = '.$this->tpid.' , Action = '.$this->action.' , ArgIndex = '.$argIndex.' , Arg = '.$this->args[$argIndex]);
-		// debugMsg($this->args, '$args');
+		// if (!$isAccess) {
+		// return new ErrorMessage(['responseCode' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'access denied']);
+		// }
 
-		return R::PageWidget(
-			'paper.'.$this->action,
-			[-1 => $topicInfo] + array_slice($this->_args, $argIndex)
-		);
+		return parent::build();
 	}
 }
 ?>

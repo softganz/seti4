@@ -177,4 +177,3 @@ class CommentRenderWidget extends Widget {
 	}
 }
 ?>
-?>
