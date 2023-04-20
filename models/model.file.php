@@ -190,16 +190,17 @@ class FileModel {
 
 			$ext = strtolower(sg_file_extension($postFile['name']));
 			//$ret.='ext='.$ext;
-			if (!in_array($ext, array('jpg', 'jpeg', 'png', 'pdf'))) {
+			if (!in_array($ext, array('jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'))) {
 				$result->error[] = 'Upload error : Invalid File Type ('.$postFile['name'].')<br />';
 				continue;
 			}
 
-			// Upload photo
-			if ($ext == 'pdf') {
+			if (in_array($ext, ['pdf', 'doc', 'docx'])) {
+				// Upload document file
 				$uploadFolder = cfg('paper.upload.document.folder');
 				$upload = new classFile($postFile, $uploadFolder);
 			} else {
+				// Upload image file
 				$upload = new classFile($postFile, $uploadFolder, cfg('photo.file_type'));
 				if (!$upload->valid_format()) {
 					$result->error[] = 'Upload error : Invalid photo format ('.$postFile['name'].')';
