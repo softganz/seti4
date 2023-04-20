@@ -340,6 +340,9 @@
 [class^="widget-"].-cross-axis-center {align-items: center;}
 [class^="widget-"].-cross-axis-end {align-items: flex-end;}
 
+.widget-button {}
+	.widget-button>span>em {font-weight: normal; font-size: 1.2rem; font-style: normal; display: block;}
+
 .widget-floatingactionbutton {position: fixed; right: 16px; bottom: 16px; z-index: 1000; display: flex; flex-wrap: wrap;}
 	.widget-floatingactionbutton>* {flex: 1 0 100%; text-align: right; margin-top: 8px;}
 	.widget-floatingactionbutton:hover>.-item>a {display: inline-block;}
