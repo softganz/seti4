@@ -1,22 +1,17 @@
 <?php
 /**
-* Model :: File Model
-* Created 2021-12-21
-* Modify  2021-12-21
+* Model   :: File Model
+* Created :: 2021-12-21
+* Modify  :: 2023-04-20
+* Version :: 3
 *
-* @param Int $fileId
 * @return Object
 *
-* @usage new FileModel($fileId)
+* @usage new FileModel()
+* @usage FileModel::method()
 */
 
 class FileModel {
-	var $fileId;
-
-	function __construct($fileId = NULL) {
-		$this->fileId = $fileId;
-	}
-
 	public static function get($fileId, $options = '{}') {
 		$defaults = '{debug: false}';
 		$options = SG\json_decode($options, $defaults);
@@ -276,7 +271,7 @@ class FileModel {
 					$picsData
 				);
 
-				if (empty($picsData->fid)) $fid = $picsData->fid = mydb()->insert_id;
+				if (empty($picsData->fid)) $fileId = $picsData->fid = mydb()->insert_id;
 
 				$result->_query[] = mydb()->_query;
 
@@ -285,7 +280,7 @@ class FileModel {
 					$picsData->photo = $photo = BasicModel::get_photo_property($upload->filename);
 
 					if ($data->link == 'href') {
-						$uploadUrl = url('project/'.$data->tpid.'/info.photo/'.$fid);
+						$uploadUrl = url('project/'.$data->tpid.'/info.photo/'.$fileId);
 						$linkInfo .= '<a class="sg-action" data-rel="box" href="'.$uploadUrl.'" data-width="840" data-height="80%">';
 					} else {
 						$uploadUrl = $photo->_url;
@@ -298,7 +293,7 @@ class FileModel {
 
 					$ui = new Ui('span');
 					if ($deleteUrl) {
-						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
 					}
 					$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 				} else {
@@ -309,7 +304,7 @@ class FileModel {
 						. '</a>';
 					$ui = new Ui('span');
 					if ($deleteUrl) {
-						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fid).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
 					}
 					$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 				}
@@ -320,12 +315,12 @@ class FileModel {
 			} else {
 				$result->error[] = 'Upload error : Cannot save upload file ('.$postFile['name'].')<br />';
 			}
-			$result->link .= $linkInfo.'</li><li id="photo-'.$fid.'" class="ui-item -hover-parent">';
+			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -hover-parent">';
 		}
 
 
 		if ($result->link)
-			$result->link = rtrim($result->link,'</li><li id="photo-'.$fid.'" class="ui-item -hover-parent">');
+			$result->link = rtrim($result->link,'</li><li id="photo-'.$fileId.'" class="ui-item -hover-parent">');
 
 		$result->photofile = $photoFiles;
 		$result->uploadfile = $uploadPhotoFiles;
@@ -333,13 +328,13 @@ class FileModel {
 	}
 
 	/**
-	* Delete photo
+	* Delete File
 	*
-	* @param Integer $fid - file id
+	* @param Int $fileId
 	* @param Object $options
 	* @return String
 	*/
-	public static function delete($fid, $options = '{}') {
+	public static function delete($fileId, $options = '{}') {
 		$defaults = '{debug: false, deleteRecord: true, deleteFile: true}';
 		$options = SG\json_decode($options, $defaults);
 		$debug = $options->debug;
@@ -353,7 +348,7 @@ class FileModel {
 
 		$rs = mydb::select(
 			'SELECT * FROM %topic_files% f WHERE f.`fid` = :fid LIMIT 1',
-			[':fid' => $fid]
+			[':fid' => $fileId]
 		);
 
 		$result->_query[] = mydb()->_query;
@@ -362,7 +357,7 @@ class FileModel {
 			if ($rs->type == 'photo') {
 				if ($options->deleteRecord) {
 					$stmt = 'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1';
-					mydb::query($stmt, ':fid', $fid);
+					mydb::query($stmt, ':fid', $fileId);
 					$result->_query[] = mydb()->_query;
 				}
 
@@ -382,7 +377,7 @@ class FileModel {
 			} else if ($rs->type == 'doc') {
 				if ($options->deleteRecord) {
 					$stmt = 'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1';
-					mydb::query($stmt, ':fid', $fid);
+					mydb::query($stmt, ':fid', $fileId);
 					$result->_query[] = mydb()->_query;
 				}
 
@@ -397,7 +392,7 @@ class FileModel {
 		return $result;
 	}
 
-	public static function photoProperty($file, $folder = null) {
+	public static function photoProperty($file, $folder = NULL) {
 		if (is_object($file)) {
 			$property = $file;
 		} else if (is_string($file)) {
@@ -454,7 +449,7 @@ class FileModel {
 		return $property;
 	}
 
-	public static function docProperty($file, $folder = null) {
+	public static function docProperty($file, $folder = NULL) {
 		$subFolder = 'forum/';
 		if (is_object($file)) {
 			$property = $file;
