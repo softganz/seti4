@@ -419,6 +419,7 @@ class Button extends Widget {
 	var $icon;
 	var $iconPosition = 'left'; // left,right,top,bottom
 	var $variable;
+	var $description;
 
 	function __construct($args = [], $variable = NULL) {
 		parent::__construct($args);
@@ -436,7 +437,8 @@ class Button extends Widget {
 			'href' => $this->href,
 			'id' => $this->id,
 			'class' => trim(
-				'widget-'.strtolower($this->widgetName).(empty($this->type) ? '' : ' btn')
+				'widget-'.strtolower($this->widgetName)
+				. (empty($this->type) ? '' : ' btn')
 				. ($this->type ? ' -'.$this->type : '')
 				. ($this->class ? ' '.$this->class : '')
 			),
@@ -446,6 +448,7 @@ class Button extends Widget {
 			'data-done' => SG\getFirst($this->done),
 			'target' => SG\getFirst($this->target),
 			'onClick' => $this->onClick ? $this->onClick : NULL,
+			'style' => $this->style,
 		], (Array) $this->attribute);
 
 		if (is_null($attribute['href'])) {
@@ -456,7 +459,7 @@ class Button extends Widget {
 
 		$button = '<a '.sg_implode_attr($attribute).'>'
 			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
-			. ($this->text ? '<span>'.$this->text.'</span>' : '')
+			. ($this->text ? '<span class="-label">' . $this->text . ($this->description ? '<em class="-desc">'.$this->description.'</em>' : '') . '</span>' : '')
 			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
 			. '</a>';
 		return $button;
