@@ -84,16 +84,24 @@ function __admin_install_set_default_config() {
 	$cfgWebHomepage=cfg('web.homepage');
 	$cfgNavigator=cfg('navigator');
 	if (empty($cfgWebHomepage)) cfg_db('web.homepage','paper');
-	if (empty($cfgNavigator)) cfg_db('navigator','<nav class="nav -main sg-responsivemenu">
+	if (empty($cfgNavigator)) cfg_db('navigator','<div class="page -nav">
+<nav class="nav -owner">
+<h2 class="-header">Owner Menu</h2>
+<ul class="menu -pulldown">
+<li class="-profile -left-side"><div class="widget signform" data-option-replace="yes" data-paper="story:ส่งข่าว-บทความ-วีดีโอ"></div></li>
+<?php echo i()->ok ? \'<li class="-signout"><a href="{url:signout}"><i class="icon -material">logout</i><span>Sign Out</span></a>\' : \'<li class="-signup"><a href="{url:user/register}"><span>Sign Up</span></a>\';?></li>
+</ul>
+</nav>
+<nav class="nav -main sg-responsivemenu">
 <h2 class="-header">Menu</h2>
 <ul class="menu -main">
 <li><a href="{url:/}">Home</a></li>
 <li><a href="{url:sitemap}">Site map</a></li>
 <li><a href="{url:contact}">Contact</a></li>
 <li><a href="{url:aboutus}">About us</a></li>
-<li><div class="widget signform" data-option-replace="yes" data-paper="story:ส่งข่าว-บทความ"></div></li>
 </ul>
-</nav>');
+</nav>
+</div><!-- page -nav -->');
 	return ;
 }
 
