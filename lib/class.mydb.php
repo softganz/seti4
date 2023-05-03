@@ -174,7 +174,7 @@ class MyDb {
 	* @param Array $args
 	* @return String
 	*/
-	public static function prepare_stmt($myDb, $stmt, $args = Array()) {
+	public static function prepare_stmt($myDb, $stmt, $args = []) {
 		if (empty($myDb)) $myDb = mydb();
 
 		//print_o($args,'prepare_stmt $args',1);
@@ -195,12 +195,12 @@ class MyDb {
 
 
 		// Convert and merge array & object parameter to args_array
-		foreach ($args as $k=>$ar) {
-			if (is_null($k)) continue;
-			//echo $k.'='.(is_array($ar) || is_object($ar)?print_o($ar,'$ar'):$ar).'<br />';
-			if (is_array($ar)) $args_array=array_merge_recursive($args_array,$ar);
-			if (is_object($ar)) $args_array=array_merge_recursive($args_array,(array)$ar);
-			if (is_array($ar) || is_object($ar)) unset($args[$k]);
+		foreach ($args as $argKey => $argValue) {
+			if (is_null($argKey)) continue;
+			//echo $argKey.'='.(is_array($argValue) || is_object($argValue)?print_o($argValue,'$argValue'):$argValue).'<br />';
+			if (is_array($argValue)) $args_array = array_merge_recursive($args_array, $argValue);
+			if (is_object($argValue)) $args_array = array_merge_recursive($args_array, (Array) $argValue);
+			if (is_array($argValue) || is_object($argValue)) unset($args[$argKey]);
 		}
 
 		// reset array key to zero
@@ -213,9 +213,9 @@ class MyDb {
 		}
 		unset($args_array);
 
-		$args_num=count($args);
+		$args_num = count($args);
 
-		//print_o($args,'$args',1);
+		// debugMsg($args,'$queryArgs');
 
 		// replace %table_name% with table_prefix and table_name
 		//$db_prefix=cfg('db.prefix');
@@ -233,6 +233,7 @@ class MyDb {
 				if (isset($args[$i]) && isset($args[$i+1])) {
 					$key = $args[$i];
 					$value = $args[$i+1];
+					// debugMsg('$key = '.$key);
 
 					if (is_null($value)) $value = "NULL";
 					else if (is_string($value) && substr($key,0,1) == '$') $value = $value;
@@ -243,6 +244,12 @@ class MyDb {
 						foreach (explode(',',substr($value,11)) as $v) $values[] = '"'.mydb()->escape($v).'"';
 						$value = implode(',', $values);
 						//$value = implode(',', array_walk(explode(',',substr($value,11))),create_function('&$elem','$elem = mydb()->escape($elem);'));
+					} else if (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key, $out)) {
+						// JSON Object
+						// debugMsg($out, '$out');
+						// debugMsg($value, '$value');
+						$value = mydb::jsonObjectString($value);
+						// debugMsg('$vars['.$key.'] = '.$vars[$key]);
 					} else if (is_string($value)) $value = '"'.mydb()->escape($value).'"';
 					else if (is_bool($value)) $value = $value ? 1 : 0;
 					else if (is_numeric($value)) $value = $value;
@@ -259,7 +266,7 @@ class MyDb {
 				}
 			}
 		}
-
+		if ($debug) debugMsg($vars, '$vars');
 		$vark = array_keys($vars);
 
 		// Replace %WHERE% with implode of $this->_wheres
@@ -277,6 +284,29 @@ class MyDb {
 		$stmt = strpos($stmt,'%')===false ? $stmt : preg_replace_callback('/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i', '__mydb_db_replace' ,$stmt); // return ' '.db($m[1])
 
 		return $stmt;
+	}
+
+	public static function jsonObjectString($value, $key = NULL) {
+		// debugMsg($value, 'JSON Value');
+		$jsonString = '';
+		if ($key) $jsonString .= '"'.$key.'" , ';
+		$jsonString .= 'JSON_OBJECT(';
+		foreach ((Array) $value as $jsonKey => $jsonValue) {
+			// debugMsg('KEY '.$jsonKey.' = '.$jsonValue);
+			if (is_array($jsonValue)) {
+				// debugMsg($jsonValue, '$jsonValue');
+				$jsonString .= mydb::jsonObjectString($jsonValue, $jsonKey).' , ';
+				// return $jsonString;
+			} else if (is_object($jsonValue)) {
+				$jsonString .= mydb::jsonObjectString($jsonValue, $jsonKey).' , ';
+			} else {
+				$jsonString .= '"'.$jsonKey.'" , "'.$jsonValue.'" ,';
+				// debugMsg($jsonString);
+			}
+		}
+		$jsonString = rtrim($jsonString, ' , ');
+		$jsonString .= ')';
+		return $jsonString;
 	}
 
 	/**
@@ -304,7 +334,7 @@ class MyDb {
 		if ($isExtDb) unset($prepareArgs[0]);
 
 		//debugMsg('Prepare :: '.$stmt);
-		//debugMsg('With '.print_o($prepareArgs,'$prepareArgs'));
+		// debugMsg('With '.print_o($prepareArgs,'$prepareArgs'));
 
 		$replaceStmt = mydb::prepare_stmt($myDb, $stmt, $prepareArgs);
 
