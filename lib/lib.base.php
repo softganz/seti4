@@ -293,7 +293,32 @@ function json_encode($input) {
 	}
 }
 
+/**
+ * @param $value
+ * @return mixed
+ */
+function escapeJsonString($value) { # list from www.json.org: (\b backspace, \f formfeed)
+	$escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
+	$replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
+	$result = str_replace($escapers, $replacements, $value);
+	return $result;
+}
 
+function json_escape($value) {
+	$escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
+	$replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
+	$escapers = ['"'];
+	$replacements = ['\"'];
+	// $result = str_replace($escapers, $replacements, $value);
+	if (is_array($value)) {
+		foreach ((Array) $value as $key => $item) {
+			$value[$key] = json_escape($item);
+		}
+		return $value;
+	} else {
+		return str_replace($escapers, $replacements, $value);
+	}
+}
 
 function confirm() {
 	return strtoupper(post('confirm')) == strtoupper(_CONFIRM_VALUE);
