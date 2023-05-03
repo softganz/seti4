@@ -266,7 +266,7 @@ $SCREENS
 	.loading {width:120px; height:20px; margin:5px; padding:3px; position:absolute; text-align:center; background:#fff url(https://softganz.com/library/img/loading.gif) no-repeat 10px 5px; border:1px green solid; border-radius:10px;	}
 
 	/* Class look like bootstrap4 */
-	.btn {margin: 0px; padding: 6px; font-size: 1em; font-weight: normal; line-height: 24px; color: #666; border: none; border-radius: 18px; box-shadow: 0px 0px 0px 1px #d2d2d2 inset; display: inline-block; background-color: #eee; cursor: pointer; text-align: center; white-space: nowrap;}
+	.btn {margin: 0px; padding: 6px; font-size: 1em; font-weight: normal; line-height: 24px; color: #666; border: none; border-radius: 18px; box-shadow: 0px 0px 0px 1px #d2d2d2 inset; display: inline-flex; background-color: #eee; cursor: pointer; text-align: center; white-space: nowrap;}
 		.btn:hover {color: #555; background-color: #f0f0f0;}
 		.btn.-sg-16 {padding: 0;}
 		.btn.-sg-24 {padding: 0;}
