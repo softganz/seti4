@@ -355,22 +355,53 @@ class R {
 		return $ret;
 	}
 
-	public static function PageWidget($packageName, $args = []) {
-		list($className, $found, $fileName, $resourceType) = SgCore::loadResourceFile('page.'.$packageName);
-		if ($found && class_exists($className) && method_exists($className, 'build')) {
-			// Found page widget
-			return (new $className(...$args))->build();
+	public static function PageWidget($pageName, $args = []) {
+		$buildMethod = 'build'; // Default build method
+		$reservedMethod = ['rightToBuild'];
+
+		// Specific build method using :method at end of action
+		if (preg_match('/([\w].*):([\w].*)$/', $pageName, $out)) {
+			$pageName = $out[1];
+			$buildMethod = $out[2];
+		}
+
+		list($className, $found, $fileName, $resourceType) = SgCore::loadResourceFile('page.'.$pageName);
+
+		if ($found && class_exists($className) && method_exists($className, $buildMethod)) {
+			// Found page widget then build method
+			$pageResult = new $className(...$args);
+
+			if ($buildMethod === 'build') {
+				// If using standard build method, have 2 way for check right
+				// 1. From rightToBuild method
+				// 2. Check right from internal build method
+				// and return error if not right
+				if (method_exists($pageResult, 'rightToBuild')) {
+					$error = $pageResult->rightToBuild();
+					if (is_object($error)) return $error;
+				}
+			} else {
+				// Other using specific build method that not in reservedMethod
+				// Must have rightToBuild method and result is not error
+				if (!method_exists($pageResult, 'rightToBuild')) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+				$error = $pageResult->rightToBuild();
+				if (is_object($error)) return $error;
+			}
+			// Build widget, if not in reservedMethod and buildMethod is public
+			if (
+					!in_array($buildMethod, $reservedMethod)
+			    && ($reflection = new ReflectionMethod($pageResult, $buildMethod))
+			    && $reflection->isPublic()
+			  ) {
+				return $pageResult->{$buildMethod}();
+			}
 		} else if ($found && function_exists($className)) {
 			// Found page function version, function name = className
 			array_unshift($args, new Module());
 			$ret = $className(...$args);
 			return new Widget(['exeClass' => $args[0], 'child' => $ret]);
-		} else {
-			return new ErrorMessage([
-				'responseCode' => _HTTP_ERROR_NOT_FOUND,
-				'text' => 'PAGE NOT FOUND',
-			]);
 		}
+		return error(_HTTP_ERROR_NOT_FOUND, 'PAGE NOT FOUND');
 	}
 
 	public static function On($eventName) {
@@ -1280,6 +1311,7 @@ class SgCore {
 			}
 
 			if (is_object($pageResultWidget) && method_exists($pageResultWidget, 'build')) {
+				// debugMsg($pageResultWidget, '$pageResultWidget');
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
 				$requestResult = $pageResultWidget->build();
@@ -2447,12 +2479,13 @@ function menu($path = NULL, $title = NULL, $module = NULL, $method = NULL, $arg 
  * @return relocation to new url address
  */
 function location($url = NULL, $get = NULL, $frement = NULL, $str = NULL) {
-	//	echo $url;
 	//	if (_AJAX) return $str;
+	// echo '$url = '.$url.'</br />';
 	if (!preg_match('/^(http:\/\/|https:\/\/|ftp:\/\/)/i',$url)) {
 		// $url=cfg('domain').url($url,$get,$frement); // Not use cfg('domain') if bug , uncomment this line
-		$url=url($url,$get,$frement);
+		$url = url($url, $get, $frement);
 	}
+	// echo $url;
 	header('Location: '.$url);
 	die;
 }
