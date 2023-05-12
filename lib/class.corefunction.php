@@ -1035,25 +1035,25 @@ class SgCore {
 		// Create self object
 		// debugMsg('$module = '.$module);
 		if (class_exists($module)) {
-			$exeClass = new $module($module);
-			$exeClass->module = $module;
+			$pageClass = new $module($module);
+			$pageClass->module = $module;
 		} else {
-			$exeClass = new Module($module);
-			$exeClass->module = $module;
+			$pageClass = new Module($module);
+			$pageClass->module = $module;
 			cfg('page_id', $module);
 		}
 
-		R::Module($module.'.init', $exeClass);
+		R::Module($module.'.init', $pageClass);
 
 		$options = SG\json_decode($menu['options']);
-		$verify = $options->verify ? R::Model($options->verify,$exeClass) : true;
+		$verify = $options->verify ? R::Model($options->verify,$pageClass) : true;
 
 		if ($verify === false) {
-			return [$exeClass, true, message('error', 'Access denied', NULL)];
+			return [$pageClass, true, message('error', 'Access denied', NULL)];
 		} else if (is_string($verify)) {
-			return [$exeClass, true, $verify];
+			return [$pageClass, true, $verify];
 		} else if ($is_auth === false) {
-			return [$exeClass, true, message('error', 'Access denied', NULL, $options->signform)];
+			return [$pageClass, true, message('error', 'Access denied', NULL, $options->signform)];
 		}
 
 		$menuArgs = array_merge([$module], is_array($menu['call']['arg']) ? $menu['call']['arg'] : [] );
@@ -1090,16 +1090,18 @@ class SgCore {
 		} while (!$found && count($funcName) >= 1);
 
 		if ($found && class_exists($retClass) && method_exists($retClass, 'build')) {
-			$ret = (new $retClass(...$funcArg))->build();
-			if ($ret->exeClass) {
-				$exeClass = $ret->exeClass;
-				$exeClass->module = $module;
+			$pageBuildWidget = (new $retClass(...$funcArg))->build();
+			if ($pageBuildWidget->exeClass) {
+				$pageClass = $pageBuildWidget->exeClass;
+				$pageClass->module = $module;
 			}
 		} else if ($found && function_exists($retClass)) {
-			$ret = $retClass(...array_merge([$exeClass], $funcArg));
-		} else $ret = NULL;
+			$pageBuildWidget = $retClass(...array_merge([$pageClass], $funcArg));
+		} else {
+			$pageBuildWidget = NULL;
+		}
 
-		return [$exeClass, $found, $ret];
+		return [$pageClass, $found, $pageBuildWidget];
 	}
 
 	static function processIndex($page = 'index', $text = NULL) {
@@ -1294,12 +1296,12 @@ class SgCore {
 		// Load Page On Request
 		if ($manifest[1] && $menu) { // This is a core version 4
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 <b>'.$request.'</b><br />';
-			// list($exeClass, $found, $pageResultWidget) = SgCore::processMenu($menu);
+			// list($pageClass, $found, $pageBuildWidget) = SgCore::processMenu($menu);
 		} else { // Page no manifest
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
-			// list($exeClass, $found, $pageResultWidget) = SgCore::processMenu($menu);
+			// list($pageClass, $found, $pageBuildWidget) = SgCore::processMenu($menu);
 		}
-		list($exeClass, $found, $pageResultWidget) = SgCore::processMenu($menu, $requestFilePrefix);
+		list($pageClass, $found, $pageBuildWidget) = SgCore::processMenu($menu, $requestFilePrefix);
 
 		// Set page id to home
 		if ($isLoadHomePage) cfg('page_id','home');
@@ -1310,39 +1312,39 @@ class SgCore {
 				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 			}
 
-			if (is_object($pageResultWidget) && method_exists($pageResultWidget, 'build')) {
-				// debugMsg($pageResultWidget, '$pageResultWidget');
+			if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
+				// debugMsg($pageBuildWidget, '$pageBuildWidget');
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
-				$requestResult = $pageResultWidget->build();
+				$requestResult = $pageBuildWidget->build();
 
 				// Create App Bar
-				if ($pageResultWidget->appBar) {
-					if (is_object($pageResultWidget->appBar) && method_exists($pageResultWidget->appBar, 'build')) {
-						if ($pageResultWidget->appBar->removeOnApp && is_object(R()->appAgent)) {
+				if ($pageBuildWidget->appBar) {
+					if (is_object($pageBuildWidget->appBar) && method_exists($pageBuildWidget->appBar, 'build')) {
+						if ($pageBuildWidget->appBar->removeOnApp && is_object(R()->appAgent)) {
 							// don't show appBar
 						} else {
-							$exeClass->appBarText = $pageResultWidget->appBar->build();
+							$pageClass->appBarText = $pageBuildWidget->appBar->build();
 						}
-					} else if (is_object($pageResultWidget->appBar->title)) {
-						$exeClass->theme->toolbar = $pageResultWidget->appBar->title;
-						$exeClass->theme->title = $pageResultWidget->appBar->title;
+					} else if (is_object($pageBuildWidget->appBar->title)) {
+						$pageClass->theme->toolbar = $pageBuildWidget->appBar->title;
+						$pageClass->theme->title = $pageBuildWidget->appBar->title;
 					} else {
-						$exeClass->theme->title = $pageResultWidget->appBar->title;
+						$pageClass->theme->title = $pageBuildWidget->appBar->title;
 					}
-					$exeClass->appBar = $pageResultWidget->appBar;
-					$exeClass->sideBar = $pageResultWidget->sideBar;
+					$pageClass->appBar = $pageBuildWidget->appBar;
+					$pageClass->sideBar = $pageBuildWidget->sideBar;
 				}
 
-				if ($pageResultWidget->floatingActionButton) {
-					$exeClass->floatingActionButton = $pageResultWidget->floatingActionButton;
+				if ($pageBuildWidget->floatingActionButton) {
+					$pageClass->floatingActionButton = $pageBuildWidget->floatingActionButton;
 				}
-			} else if (is_array($pageResultWidget) || is_object($pageResultWidget)) {
+			} else if (is_array($pageBuildWidget) || is_object($pageBuildWidget)) {
 				// Result is array or object
-				$requestResult = $pageResultWidget;
+				$requestResult = $pageBuildWidget;
 			} else {
 				// Result is String, join
-				$requestResult .= $pageResultWidget;
+				$requestResult .= $pageBuildWidget;
 			}
 
 			// Generate result by content type
@@ -1354,9 +1356,9 @@ class SgCore {
 			if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
 				// Check error result
 				$ajaxResult = [];
-				if (is_object($pageResultWidget) && $pageResultWidget->widgetName === 'ErrorMessage') {
-					if ($pageResultWidget->responseCode) $ajaxResult['responseCode'] = $pageResultWidget->responseCode;
-					if ($pageResultWidget->text) $ajaxResult['text'] = $pageResultWidget->text;
+				if (is_object($pageBuildWidget) && $pageBuildWidget->widgetName === 'ErrorMessage') {
+					if ($pageBuildWidget->responseCode) $ajaxResult['responseCode'] = $pageBuildWidget->responseCode;
+					if ($pageBuildWidget->text) $ajaxResult['text'] = $pageBuildWidget->text;
 				} else if (is_object($requestResult)) {
 					if ($requestResult->responseCode) $ajaxResult['responseCode'] = $requestResult->responseCode;
 					if ($requestResult->text) $ajaxResult['text'] = $requestResult->text;
@@ -1380,9 +1382,9 @@ class SgCore {
 				}
 
 				// Show AppBar as Box Header
-				if (is_object($pageResultWidget->appBar) && $pageResultWidget->appBar->boxHeader && method_exists($pageResultWidget->appBar, 'build')) {
-					$pageResultWidget->appBar->showInBox = true;
-					$requestResult = $pageResultWidget->appBar->build() . $requestResult;
+				if (is_object($pageBuildWidget->appBar) && $pageBuildWidget->appBar->boxHeader && method_exists($pageBuildWidget->appBar, 'build')) {
+					$pageBuildWidget->appBar->showInBox = true;
+					$requestResult = $pageBuildWidget->appBar->build() . $requestResult;
 				}
 
 				die(debugMsg().process_widget($requestResult));
@@ -1406,7 +1408,7 @@ class SgCore {
 		}
 
 		// Start Render Page, result is string
-		$requestResult = R::View('render.page',$exeClass,$requestResult);
+		$requestResult = R::View('render.page',$pageClass,$requestResult);
 		$requestResult = process_widget($requestResult);
 
 		R()->timer->stop($request);
@@ -1528,7 +1530,6 @@ function load_resource($packageName) {
 		if (class_exists($funcName)) {
 			$debugStr .= '<span style="color:green;">Execute class <b>'.$funcName.'()</b> complete.</span>';
 
-			//$args = array_merge([$exeClass], $funcArg);
 			// debugMsg($args, '$args_resource');
 			// if ($resourceType == 'page') array_shift($args);
 			// debugMsg($args, '$args_resource');
@@ -1544,7 +1545,6 @@ function load_resource($packageName) {
 				$ret = 'No Build Method on '.get_class($instance);
 			}
 			//debugMsg('Result is '.(is_string($ret) ? $ret : 'Object'));
-			//debugMsg($exeClass, '$exeClass');
 			// $ret = (new $funcName())->build();
 		} else if (function_exists($funcName)) {
 			$debugStr .= '<span style="color:green;">Execute function <b>'.$funcName.'()</b> complete.</span>';
