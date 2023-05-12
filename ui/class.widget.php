@@ -782,6 +782,7 @@ class AppBar extends Widget {
 			. '</h2>'._NL
 			. ($this->trailing ? '<div class="-trailing -no-print">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
 			. ($this->navigator && ($navigatorResult = $this->_renderNavigator()) ? '<nav class="-nav -no-print">'.$navigatorResult.'</nav>' : '')
+			. ($this->children || $this->child ? '<div class="-children">'.$this->_renderChildren().'</div>' : '')
 			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class AppBar
