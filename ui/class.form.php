@@ -431,7 +431,7 @@ class Form extends Widget {
 						. ' value="'.$optionKey.'"';
 					if (is_array($formElement->value)) {
 						$optionValue_key = array_keys($formElement->value);
-						$ret .= in_array($optionKey, array_intersect(array_keys($formElement->options), $formElement->value)) ? ' checked="checked"':'';
+						$ret .= in_array($optionKey, array_intersect(array_keys((Array) $formElement->options), (Array) $formElement->value)) ? ' checked="checked"':'';
 					} else if (isset($formElement->value) && $optionKey == $formElement->value) {
 						$ret .= ' checked="checked"';
 					}
