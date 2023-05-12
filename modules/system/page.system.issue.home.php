@@ -40,7 +40,10 @@ class SystemIssueHome extends Page {
 			'appBar' => new AppBar([
 				'title' => $dbs->_num_rows.' Issues Report',
 				'trailing' => new Row([
-					'children' => ['<a class="sg-action btn" href="'.url('system/issue').'" data-rel="#main"><i class="icon -material">refresh</i></a>'], // children
+					'children' => [
+						'<a class="sg-action btn" href="'.url('api/system/issue.close/*').'" data-rel="notify" data-done="reload" data-title="ล้างรายการ" data-confirm="ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?"><i class="icon -material">done_all</i></a>',
+						'<a class="sg-action btn" href="'.url('system/issue').'" data-rel="#main"><i class="icon -material">refresh</i></a>'
+					], // children
 				]), // Row
 			]), // AppBar
 			'body' => new Widget([

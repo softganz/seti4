@@ -43,15 +43,13 @@ class SystemApi extends PageApi {
 		if (!$this->right->admin) return $this->_accessDenied();
 
 		if ($issueId = $this->tranId) {
+			if ($issueId === '*') mydb::where('`status` = :draft', ':draft', _START);
+			else mydb::where('`issueId` = :issueId', ':issueId', $issueId);
 			mydb::query(
 				'UPDATE %system_issue%
 				SET `status` = :status
-				WHERE `issueId` = :issueId
-				LIMIT 1',
-				[
-					':issueId' => $issueId,
-					':status' => _COMPLETE,
-				]
+				%WHERE%',
+				[':status' => _COMPLETE]
 			);
 		}
 	}
