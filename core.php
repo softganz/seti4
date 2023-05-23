@@ -1,13 +1,13 @@
 <?php
 /**
- * Core is a first file for process each request
+ * Core is a first file for each process request
  *
  * @package core
- * @version 4
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
- * @created 2006-12-16
- * @modify  2022-12-17
+ * @created :: 2006-12-16
+ * @modify  :: 2023-05-23
+ * @version :: 5
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +44,10 @@ define('_CORE_FUNCTION_FILE', _CORE_FOLDER.'/core/lib/class.corefunction.php');
 if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name', 'Seti');
-cfg('core.version.major', 4);
-cfg('core.version.code', 11);
+cfg('core.version.major', 5);
+cfg('core.version.code', 12);
 cfg('core.version', '4.2.04');
-cfg('core.release', '2022-12-03');
+cfg('core.release', '2023-05-23');
 cfg('core.location', ini_get('include_path'));
 cfg('core.folder', _CORE_FOLDER);
 cfg('core.config', _CONFIG_FILE);
@@ -351,6 +351,7 @@ function sgFatalError($code, $description, $file, $line) {
 	$accessDebug = function_exists('user_access') ? user_access('access debugging program') : NULL;
 	$isAdmin = $userId == 1 || $accessDebug;
 	$reportFileName = $file;
+	$debugMsg = debugMsg();
 
 	if (!$isAdmin) {
 		$reportFileName = basename($file);
@@ -373,24 +374,18 @@ function sgFatalError($code, $description, $file, $line) {
 	if (!in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
 		$result = SG\api([
 			'url' => 'https://softganz.com/system/issue/new',
-			// 'url' => 'http://localhost/seti/softganz.com/system/issue/new',
 			'method' => 'post',
 			'postField' => $reportData,
-			'returnTransfer' => true,
+			'returnTransfer' => false,
 			'result' => 'json',
 		]);
 	}
 
 	$msg = 'There is error in <b>'.$reportFileName.'</b> '
 		. 'line <b>'.$line.'</b>. '
-		. 'Please '
-		// . '<a href="https://www.softganz.com/system/issue/new?file='.$reportFileName.'&line='.$line.'&date='.$reportData['date'].'user='.$userId.'&url='.$errorUrl.'" target="_blank">'
-		. 'report to webmaster.'
-		// . '</a>'
+		. 'Please report to webmaster.'
 		. ($isAdmin ? '<br /><br />'.$reportData['description'] : '');
 
-	$msgHelp = '';
-	$debugMsg = debugMsg();
 
 	return '<html><head><title>Fatal error</title></head>
 	<body>
@@ -400,9 +395,8 @@ function sgFatalError($code, $description, $file, $line) {
 		<td width="80%">
 			<div style="border: 1px solid rgb(210, 210, 210); border-radius: 8px; background-color: rgb(241, 241, 241); padding: 30px;">
 			<h1>Fatal error'.($isAdmin ? '<span style="font-size: 0.6em;"> @PHP Version '.phpversion().'</span>' : '').'</h1>
-			<p>The requested URL <b>'.$errorUrl.'</b> was error.</p>
+			<p>The requested URL <b>'.$reportData['url'].'</b> was error.</p>
 			<p>'.$msg.'</p>'
-			. ($msgHelp ? '<p><font color="gray">'.$msgHelp.'</font></p>' : '')
 			. '<hr>
 			<address>copyright <a href="http://'.$_SERVER['HTTP_HOST'].'">'.$_SERVER['HTTP_HOST'].'</a> Allright reserved.</address>
 			</div>
