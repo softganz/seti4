@@ -376,7 +376,7 @@ function sgFatalError($code, $description, $file, $line) {
 			'url' => 'https://softganz.com/system/issue/new',
 			'method' => 'post',
 			'postField' => $reportData,
-			'returnTransfer' => false,
+			'returnTransfer' => true,
 			'result' => 'json',
 		]);
 	}
