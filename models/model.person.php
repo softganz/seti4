@@ -166,10 +166,13 @@ class PersonModel {
 		];
 
 		if (empty($data->psnId)) $data->psnId = NULL;
+		if (property_exists($data, 'prename')) $data->preName = $data->prename;
+		if (property_exists($data, 'firstname')) $data->preName = $data->firstname;
+		if (property_exists($data, 'lastname')) $data->preName = $data->lastname;
 
-		if(property_exists($data, 'prename')) $updateFields[] = '`prename` = :prename';
-		if(property_exists($data, 'firstname')) $updateFields[] = '`name` = :firstname';
-		if(property_exists($data, 'lastname')) $updateFields[] = '`lname` = :lastname';
+		if(property_exists($data, 'preName')) $updateFields[] = '`preName` = :preName';
+		if(property_exists($data, 'firstName')) $updateFields[] = '`name` = :firstName';
+		if(property_exists($data, 'lastName')) $updateFields[] = '`lname` = :lastName';
 		if(property_exists($data, 'cid')) $updateFields[] = '`cid` = :cid';
 		if(property_exists($data, 'sex')) $updateFields[] = '`sex` = :sex';
 		if(property_exists($data, 'birth')) $updateFields[] = '`birth` = :birth';
@@ -238,7 +241,7 @@ class PersonModel {
 		$stmt = 'INSERT INTO %db_person%
 			(
 				  `psnId`
-				, `uid`, `cid`, `prename`, `name`, `lname`, `sex`
+				, `uid`, `cid`, `preName`, `name`, `lname`, `sex`
 				, `birth`, `religion`
 				, `areacode`, `hrareacode`
 				, `house`, `village`, `tambon`, `ampur`, `changwat`, `zip`
@@ -248,7 +251,7 @@ class PersonModel {
 				, `created`, `userid`
 			) VALUES (
 				  :psnId
-				, :uid, :cid, :prename, :firstname, :lastname, :sex
+				, :uid, :cid, :preName, :firstName, :lastName, :sex
 				, :birth, :religion
 				, :areacode, :hrareacode
 				, :house, :village, :tambon, :ampur, :changwat, :zip
