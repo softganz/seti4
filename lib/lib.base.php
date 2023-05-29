@@ -108,8 +108,8 @@ function debugMsg($msg = NULL, $varname = NULL) {
 function getFirst() {
 	for ( $i = 0; $i < func_num_args(); $i++ ) {
 		$value = func_get_arg($i);
-		if (!(is_null(func_get_arg($i)) || func_get_arg($i) === '')) {
-			return func_get_arg($i);
+		if (!(is_null($value) || $value === '')) {
+			return $value;
 		}
 	}
 	return NULL;
