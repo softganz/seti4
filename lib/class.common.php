@@ -280,19 +280,26 @@ class Session {
 		$end = date('Y-m-d H:i:s',time()-$ttl);
 		mydb::query('DELETE FROM %session% WHERE sess_last_acc < :end',':end',$end);
 
-		$watch->date = 'func.NOW()';
-		$watch->uid = SG\getFirst(i()->uid,'func.NULL');
-		$watch->ip = ip2long(i()->ip);
-		$watch->module = 'session';
-		$watch->keyword = 'gc';
-		$watch->message = 'gc was execute';
-		$watch->url = preg_match('/IIS/i',$_SERVER['SERVER_SOFTWARE'])?$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']:$_SERVER['REQUEST_URI'];
-		$watch->referer = $_SERVER['HTTP_REFERER'];
-		$watch->browser = $_SERVER['HTTP_USER_AGENT'];
+		$watch = (Object) [
+			'date' => 'func.NOW()',
+			'uid' => SG\getFirst(i()->uid,'func.NULL'),
+			'ip' => ip2long(i()->ip),
+			'module' => 'session',
+			'keyword' => 'gc',
+			'message' => 'gc was execute',
+			'url' => preg_match('/IIS/i',$_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'],
+			'referer' => $_SERVER['HTTP_REFERER'],
+			'browser' => $_SERVER['HTTP_USER_AGENT'],
+		];
 
-		$stmt = 'INSERT INTO %watchdog% ( `date` , `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser` ) VALUES (:date, :uid, :ip, :module, :keyword, :message, :url, :referer, :browser );';
 		mydb()->_watchlog = false;
-		mydb::query($stmt,$watch);
+		mydb::query(
+			'INSERT INTO %watchdog%
+			( `date` , `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser` )
+			VALUES
+			(:date, :uid, :ip, :module, :keyword, :message, :url, :referer, :browser );',
+			$watch
+		);
 
 	//	echo 'end '.$end.' '.mydb()->_query;die;
 		return true;
