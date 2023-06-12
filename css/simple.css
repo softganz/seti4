@@ -38,6 +38,7 @@ pre {tab-size: 1;}
 .-block {display: block;}
 .-clearfix::after {content: ""; display: block; clear: both;}
 .-nowrap {white-space: nowrap !important;}
+.-sep {height: 1px; opacity: 0.50; background-color: #e9e9e9; border: none; padding: 0; margin: 0;}
 
 
 .row {}
@@ -829,6 +830,7 @@ $SCREENS
 		.form-item>.rate-percent input {display: block; margin:0 auto;}
 
 		.options-group {display: block;}
+		.options-group>.options-group {padding-left: 16px;}
 		.options-group-label {display: block; font-weight: bold;}
 		.option.-inline {display: inline;}
 
@@ -1385,6 +1387,9 @@ $SCREENS
 		.form-report label:not(.-hidden) {display: inline-block;}
 		.form-report .form-text
 		, .form-report .form-select {border-radius: 32px; max-width: 100px;}
+		.form-report .form-item>.form-group {border-radius: 32px;}
+		.form-report .form-item>.form-group>*:first-child {border-radius: 32px 0 0 32px;}
+		.form-report .form-item>.form-group>*:last-child {border-radius: 0 32px 32px 0;}
 
 	.admin-panel {}
 		.admin-panel.-home>.widget-column {padding-left: 16px;}

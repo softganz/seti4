@@ -18,7 +18,7 @@
 		.page.-nav>.nav.-main>ul>li>a {padding: 0 8px; white-space: nowrap;}
 		.page.-nav>.nav.-main>ul ul {min-width: 240px; font-weight: normal;}
 
-		.page.-nav>.nav.sg-responsivemenu>.sg-navtoggle {box-shadow: none; background-color: transparent; margin-right: 16px; padding: 0; border-radius: 50%; width: 32px; height: 32px; align-items: center;}
+		.page.-nav>.nav.sg-responsivemenu>.sg-navtoggle {box-shadow: none; background-color: transparent; margin-right: 16px; padding: 0; border-radius: 50%; width: 32px; height: 32px; align-items: center; justify-content: center;}
 		.page.-nav>.nav.sg-responsivemenu>ul {display: none;}
 		.page.-nav>.nav.sg-responsivemenu.-active>ul {height: auto; display: block; position: absolute; top: 48px; left: 0; right: 0; background-color: #000;}
 		.page.-nav>.nav.sg-responsivemenu.-active>ul>li {float: none;}
