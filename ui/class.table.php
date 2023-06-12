@@ -77,8 +77,10 @@ class Table extends Widget {
 		}
 
 		// Create table header
-		if (!isset($this->thead) && isset($this->header))
+		if (!isset($this->thead) && isset($this->header)) {
 			$this->thead = $this->header;
+		}
+
 		if (isset($this->thead) && is_string($this->thead)) {
 			$headerTag = $this->thead;
 			$headerTag = str_replace(
@@ -89,16 +91,26 @@ class Table extends Widget {
 		} else if (isset($this->thead) && is_array($this->thead)) {
 			$colNo = 1;
 			$headerTag = '<tr class="header">';
-			foreach ($this->thead as $thkey => $th) {
-				if (is_null($th)) continue;
-				$thkey = is_numeric($thkey) ? $colNo : $thkey;
+			foreach ($this->thead as $thKey => $thValue) {
+				if (is_null($thValue)) continue;
+
+				$thKey = is_numeric($thKey) ? $colNo : $thKey;
+
 				if (!$colgroups) {
-					$headerkey[$colNo] = is_numeric($thkey) ? 'col-'.$thkey : $thkey;
+					$headerkey[$colNo] = is_numeric($thKey) ? 'col-'.$thKey : $thKey;
 				}
-				if (substr($th,0,4) == '<th ') {
-					$headerTag .= $th;
+
+				if (is_array($thValue) || is_object($thValue)) {
+					$headerTag .= '<th'
+						. ' class="header-'.$thKey.($thValue['class'] ? ' '.$thValue['class'] : '').'"'
+						. ($thValue['style'] ? ' style="'.$thValue['style'].'"' : '')
+						. '>'
+						. $thValue['text']
+						. '</th>';
+				} else if (preg_match('/^<th /i', $thValue)) {
+					$headerTag .= $thValue;
 				} else {
-					$headerTag .= '<th class="header-'.$thkey.'">'.$th.'</th>';
+					$headerTag .= '<th class="header-'.$thKey.'">'.$thValue.'</th>';
 				}
 				++$colNo;
 			}
