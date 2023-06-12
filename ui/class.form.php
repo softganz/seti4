@@ -345,6 +345,98 @@ class Form extends Widget {
 	}
 
 	function _renderRadioCheckbox($tag_id, $name, $formElement) {
+		static $itemIndex = 0;
+		$ret = '';
+		if (!isset($formElement->display)) $formElement->display = '-block';
+		// $ret .= print_o($formElement, '$formElement');
+		// $ret .= print_o($formElement->options, '$formElement->options');
+
+		foreach ($formElement->options as $optionKey => $optionValue) {
+			if (is_null($optionValue)) continue;
+			// $ret .= '[key='.$optionKey.']';
+			// $ret .= '[value='.(is_object($optionValue) ? print_o($optionValue, '$optionValue') : $optionValue).']<br />';
+
+			if (is_array($optionValue) || is_object($optionValue)) {
+				$optionValue = (Array) $optionValue;
+
+				$ret .= '<span class="options-group"><span class="options-group-label">'.$optionKey.':</span>'._NL;
+
+				if ($optionValue['name']) {
+					// Option format is [['name' => 'xxx','label'=>'xxx','value'=>'xxx'],...]
+					$itemIndex++;
+					$ret .= '<abbr class="'.$formElement->type.'"><label class="option -'.$formElement->display.'" >';
+					$ret .= '<input'
+						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"':'')
+						. ' name="'.$optionValue['name'].'"'
+						. ' value="'.$optionValue['value'].'"';
+					$ret .= is_null($formElement->value[$optionValue['name']]) ? '' : ' checked="checked"';
+					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
+						. ' type="'.$formElement->type.'"'
+						. ($formElement->attribute ? ' '.$formElement->attribute : '')
+						. ' /> ';
+					$ret .= $optionValue['label'];
+					$ret .= '</label></abbr>'._NL;
+				} else {
+					// Option format is ['value'=>'label',...]
+					$itemFormElement = clone $formElement;
+					$itemFormElement->options = $optionValue;
+					$ret .= $this->_renderRadioCheckbox(
+						$tag_id,
+						$name,
+						$itemFormElement
+					);
+				}
+				$ret.='</span>'._NL;
+			} else {
+				// option value is string
+				if ($formElement->separate) {
+					$name = $formElement->name ? $formElement->name.$optionKey : ($this->variable ? $this->variable.'['.$fieldKey.$optionKey.']' : $fieldKey);
+				}
+
+				if ($formElement->config->capsule) {
+					$ret .= '<'.$formElement->config->capsule->tag.' class="'.$formElement->config->capsule->class.'">';
+				}
+				if (preg_match('/^(LABEL\:)(.*)/', $optionValue, $out)) {
+					$ret .= '<div>'.$out[2].'</div>';
+				} else if (preg_match('/^SEPARATOR$/', $optionValue)) {
+					$ret .= '<hr class="-sep" />';
+				} else if (substr($optionValue, 0, 6) == '&nbsp;') {
+					// Show label only
+					$ret .= '<div>'.$optionValue.'</div>';
+				} else {
+					$itemIndex++;
+					$ret .= '<abbr class="'.$formElement->type.'"><label class="option'.($formElement->display ? ' '.$formElement->display : '').'">';
+					if (preg_match('/^\s/', $optionValue)) {
+						$ret .= '&nbsp;&nbsp;&nbsp;&nbsp;';
+					}
+					$ret .= '<input id="'.$tag_id.'-'.$itemIndex.'"'
+						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"' : '')
+						. ' name="'.($formElement->namePrefix ? $formElement->namePrefix.$optionKey : '').$name.($formElement->multiple ? '['.$optionKey.']' : '').'"'
+						. ' value="'.$optionKey.'"';
+					if (is_array($formElement->value)) {
+						$optionValue_key = array_keys($formElement->value);
+						$ret .= in_array($optionKey, array_intersect(array_keys((Array) $formElement->options), (Array) $formElement->value)) ? ' checked="checked"':'';
+					} else if (isset($formElement->value) && $optionKey == $formElement->value) {
+						$ret .= ' checked="checked"';
+					}
+					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'"'
+						. ' type="'.$formElement->type.'"'
+						. ($formElement->attribute ? ' '.$formElement->attribute:'')
+						. $this->onElementEvent('onChange', $formElement->onChange)
+						. ' /> ';
+					$ret .= '<span>'.$optionValue.'</span>';
+					$ret .= '</label></abbr>'._NL;
+				}
+				// $ret .= 'STRING:'.$optionValue;
+				if ($formElement->config->capsule) {
+					$ret .= '</'.$formElement->config->capsule->tag.'>';
+				}
+			}
+		}
+		return $ret;
+	}
+
+	function _renderRadioCheckbox_v2($tag_id, $name, $formElement) {
 		$ret = '';
 		// if (!is_array($formElement->value)) $formElement->value=(array)$formElement->value;
 		if (!isset($formElement->display)) $formElement->display='-block';
@@ -452,7 +544,7 @@ class Form extends Widget {
 	}
 
 	// Method _renderRadioNew not used/ not test
-	function _renderRadioNew($fieldKey, $tag_id, $formElement, $option_key, $option_value) {
+	function _renderRadioCheckbox_v1($fieldKey, $tag_id, $formElement, $option_key, $option_value) {
 		$ret = '';
 		if ($formElement->separate) {
 			$name = $formElement->name ? $formElement->name.$option_key : ($this->variable ? $this->variable.'['.$fieldKey.$option_key.']' : $fieldKey);
@@ -490,6 +582,76 @@ class Form extends Widget {
 
 	function _renderSelect($tag_id, $name, $formElement) {
 		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
+		$ret = '	<select '
+			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" ' : '').' '
+			. ($formElement->multiple ? 'multiple="multiple" ' : '').($formElement->size?'size="'.$formElement->size.'" ':'')
+			. ' name="'.$name.'" id="'.$tag_id.'" '
+			. 'class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require' : '').($this->readonly || $formElement->readonly ? ' -disabled' : '').'"'
+			. $this->onElementEvent('onChange', $formElement->onChange)
+			. ($formElement->style ? 'style="'.$formElement->style.'"' : '')
+			. ($formElement->attribute ? ' '.$formElement->attribute : '')
+			. '>'._NL;
+
+		if (is_string($formElement->options) && preg_match('/^\</', $formElement->options)) {
+			// Option is HTML Tag
+			$ret .= $formElement->options;
+			unset($formElement->options);
+		} else if (is_string($formElement->options)) {
+			// Option is string and contain ,
+			$selectOptions = [];
+			foreach (explode(',', $formElement->options) as $eachOption) {
+				if (preg_match('/(.*)\=\>(.*)/', $eachOption, $out)) {
+					// Option format key=value
+					$selectOptions[strtoupper(trim($out[1])) === 'NULL' ? '' : trim($out[1])] = trim($out[2]);
+				} else if (preg_match('/^([0-9\-]+)\.\.([0-9\-]+)/', $eachOption, $out)) {
+					// Option format 1..10
+					for ($i = $out[1]; $i<=$out[2]; $i++) {
+						$selectOptions[$i] = $i;
+					}
+				} else {
+					$selectOptions[$eachOption] = $eachOption;
+				}
+			}
+			$formElement->options = $selectOptions;
+		}
+		if ($formElement->options) $ret .= $this->_renderSelectOption($formElement->options, $formElement->value);
+		$ret .= '	</select>';
+		return $ret;
+	}
+
+	private function _renderSelectOption($options, $inputValue) {
+		$ret = '';
+		foreach ($options as $optionKey => $optionValue) {
+			if (is_object($optionValue)) $optionValue = (Array) $optionValue;
+			if (is_array($optionValue) && array_key_exists('label', $optionValue)) {
+				// Option is array has key label : [1=>"label", attr=>["data-key"=>"data-key-value",...]]
+				$ret .= '	<option '
+					. 'value="'.$optionKey.'"'
+					. (in_array($optionKey,$inputValue) ? ' selected="selected"' : '')
+					. ($optionValue['attr'] ? ' '.sg_implode_attr($optionValue['attr']) : '')
+					. '>'
+					. $optionValue['label']
+					. '</option>'._NL;
+			} else if (is_array($optionValue)) {
+				// Option is array, then make option group
+				$ret .= '	<optgroup label="'.$optionKey.'">'._NL;
+				$ret .= $this->_renderSelectOption($optionValue, $inputValue);
+				$ret .= '	</optgroup>'._NL;
+			} else if (preg_match('/^LABEL\:/', $optionValue)) {
+				// do nothing
+			} else if (preg_match('/^SEPARATOR$/', $optionValue)) {
+				// Option is seperatpr
+				$ret .= '<option class="-sep" disabled="disabled" style="height: 1px; display: block;">---</option>';
+			} else {
+				// Option is string
+				$ret .= '	<option value="'.$optionKey.'"'.(in_array($optionKey,$inputValue)?' selected="selected"':'').'>'.$optionValue.'</option>'._NL;
+			}
+		}
+		return $ret;
+	}
+
+	function _renderSelect_v1($tag_id, $name, $formElement) {
+		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
 		$selectStr = '	<select '
 			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" ' : '').' '
 			. ($formElement->multiple ? 'multiple="multiple" ' : '').($formElement->size?'size="'.$formElement->size.'" ':'')
@@ -523,30 +685,32 @@ class Form extends Widget {
 			$formElement->options = $selectOptions;
 		}
 
-		foreach ($formElement->options as $option_key => $option_value) {
-			if (is_object($option_value)) $option_value = (Array) $option_value;
-			if (is_array($option_value) && array_key_exists('label', $option_value)) {
+		foreach ($formElement->options as $optionKey => $optionValue) {
+			if (is_object($optionValue)) $optionValue = (Array) $optionValue;
+			if (is_array($optionValue) && array_key_exists('label', $optionValue)) {
 				// Option is array has key label : [1=>"label", attr=>["data-key"=>"data-key-value",...]]
 				$selectStr .= '	<option '
-					. 'value="'.$option_key.'"'
-					. (in_array($option_key,$formElement->value)?' selected="selected"':'')
-					. ($option_value['attr'] ? ' '.sg_implode_attr($option_value['attr']) : '')
+					. 'value="'.$optionKey.'"'
+					. (in_array($optionKey,$formElement->value)?' selected="selected"':'')
+					. ($optionValue['attr'] ? ' '.sg_implode_attr($optionValue['attr']) : '')
 					. '>'
-					. $option_value['label']
+					. $optionValue['label']
 					. '</option>'._NL;
-			} else if (is_array($option_value)) {
+			} else if (is_array($optionValue)) {
 				// Option is array, then make option group
-				$selectStr .= '	<optgroup label="'.$option_key.'">'._NL;
-				foreach ($option_value as $option_key=>$option_value) {
-					$selectStr .= '	<option value="'.$option_key.'"'.(in_array($option_key,$formElement->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$option_value.'</option>'._NL;
+				$selectStr .= '	<optgroup label="'.$optionKey.'">'._NL;
+				foreach ($optionValue as $optionKey=>$optionValue) {
+					$selectStr .= '	<option value="'.$optionKey.'"'.(in_array($optionKey,$formElement->value)?' selected="selected"':'').'>&nbsp;&nbsp;'.$optionValue.'</option>'._NL;
 				}
 				$selectStr .= '	</optgroup>'._NL;
-			} else if (substr($option_key,0,3) === 'sep') {
+			} else if (preg_match('/^LABEL\:/', $optionValue)) {
+				// do nothing
+			} else if (preg_match('/^SEPARATOR/', $optionValue) || substr($optionKey,0,3) === 'sep') {
 				// Option is seperatpr
-				$selectStr .= '<option disabled="disabled">'.$option_value.'</option>';
+				$selectStr .= '<option class="separater" disabled="disabled">'.$optionValue.'</option>';
 			} else {
 				// Option is string
-				$selectStr .= '	<option value="'.$option_key.'"'.(in_array($option_key,$formElement->value)?' selected="selected"':'').'>'.$option_value.'</option>'._NL;
+				$selectStr .= '	<option value="'.$optionKey.'"'.(in_array($optionKey,$formElement->value)?' selected="selected"':'').'>'.$optionValue.'</option>'._NL;
 			}
 		}
 		$selectStr .= '	</select>';
