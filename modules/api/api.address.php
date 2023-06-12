@@ -38,7 +38,7 @@ class AddressApi extends PageApi {
 
 		$house = $addressOut['house'].($addressOut['village']?' ม.'.$addressOut['village']:'');
 
-		//print_o($addressOut,'$addressOut',1);
+		// debugMsg($addressOut,'$addressOut');
 
 		/*
 		if (preg_match('/(.*)(ตำบล|ต\.)(.*)/',$this->addressText,$address)) {
@@ -79,7 +79,7 @@ class AddressApi extends PageApi {
 					, NULL
 					, NULL
 					, `provid`
-					, `provname`
+					, `provname` `changwatName`
 				FROM %co_province%
 				WHERE `provname` LIKE :q
 				-- Select ampur
@@ -90,9 +90,9 @@ class AddressApi extends PageApi {
 					, NULL
 					, NULL
 					, `distid`
-					, `distname`
+					, `distname` `ampurName`
 					, `provid`
-					, `provname`
+					, `provname` `changwatName`
 				FROM %co_district% co
 					LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(co.`distid`,2)
 				WHERE `distname` LIKE :q AND RIGHT(`distname`,1) != "*"
@@ -102,11 +102,11 @@ class AddressApi extends PageApi {
 					3 `is_tambon`
 					, `subdistid`
 					, SUBSTRING(`subdistid`, 5, 2) `tambonId`
-					, `subdistname`
+					, `subdistname` `tambonName`
 					, SUBSTRING(`distid`, 3, 2) `ampurId`
-					, `distname`
+					, `distname` `ampurName`
 					, `provid` `changwatId`
-					, `provname`
+					, `provname` `changwatName`
 				FROM %co_subdistrict% co
 					LEFT JOIN %co_district% cod ON cod.`distid` = LEFT(co.`subdistid`,4)
 					LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(co.`subdistid`,2)
@@ -129,7 +129,7 @@ class AddressApi extends PageApi {
 		// debugMsg($dbs,'$dbs');
 		foreach ($dbs->items as $rs) {
 			$address = SG\implode_address(['house' => $house] + (Array) $rs);
-			$label = $address;//SG\implode_address($rs);// $house.' ตำบล'.$rs->subdistname.' อำเภอ'.$rs->distname.' จังหวัด'.$rs->provname;
+			$label = $address;//SG\implode_address($rs);// $house.' ตำบล'.$rs->tambonName.' อำเภอ'.$rs->distname.' จังหวัด'.$rs->changwatName;
 			$areacode = $rs->areacode
 				. (strlen($rs->areacode) == 6 && $addressOut['village'] != '' ? str_pad($addressOut['village'], 2, '0', STR_PAD_LEFT) : '');
 			$result[] = [
@@ -139,9 +139,9 @@ class AddressApi extends PageApi {
 				'changwatId' => $rs->changwatId,
 				'ampurId' => $rs->ampurId,
 				'tambonId' => $rs->tambonId,
-				'changwatName' => htmlspecialchars($rs->provname),
-				'ampurName' => htmlspecialchars($rs->distname),
-				'tambonName' => htmlspecialchars($rs->subdistname),
+				'changwatName' => htmlspecialchars($rs->changwatName),
+				'ampurName' => htmlspecialchars($rs->ampurName),
+				'tambonName' => htmlspecialchars($rs->tambonName),
 				'zip' => $addressOut['zip'],
 			];
 		}
@@ -151,6 +151,8 @@ class AddressApi extends PageApi {
 			$result[] = ['value' => 'query','label' => $dbs->_query];
 			$result[] = ['value' => 'num_rows','label' => 'Result is '.$dbs->_num_rows.' row(s).'];
 			$result[] = ['value' => 'tambon','label' => $searchText];
+			$result['addressOut'] = $addressOut;
+
 			foreach ($address as $k => $v) {
 				$result[] = ['value' => 'out['.$k.']','label' => $k.'='.$v];
 			}
