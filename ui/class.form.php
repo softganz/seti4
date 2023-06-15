@@ -9,6 +9,15 @@
 * @usage new Form([])
 ********************************************/
 
+/*
+	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, leading, rel, done, attribute, width, height, style, onSubmit, onFormSubmit, description, footer, trailing
+	Form Children:
+		- Array
+		- Text
+		- Widget
+		- (Object) [Attribute, Array]
+		- Array[Array]
+*/
 class Form extends Widget {
 	var $widgetName = 'Form';
 	var $tagName = 'form';
@@ -54,7 +63,7 @@ class Form extends Widget {
 	function renderForm($returnType = 'text') {
 		if (empty($this->children)) {
 			foreach ($this as $fieldKey => $value) {
-				if (is_null($value) || in_array($fieldKey,['id','class','method','action','variable','readonly','config','widgetName','tagName','children','header','leading','enctype'])) continue;
+				if (is_null($value) || in_array($fieldKey, ['id','class','method','action','variable','readonly','config','widgetName','tagName','children','header','leading','enctype'])) continue;
 				$this->children[$fieldKey] = $value;
 				unset($this->{$fieldKey});
 			}
@@ -77,19 +86,19 @@ class Form extends Widget {
 			$ret .= _NL.'<!-- sg-form -->'._NL;
 			if (isset($this->leading)) $ret .= $this->leading;
 			unset($this->config->data['rel']);
-			$formStr = '<form id="'.$this->id.'" '
-				. 'class="form '.($this->class ? $this->class.' ':'').($this->readonly ? '-readonly' : '').'" '
-				. 'method="'.$formMethod.'" '
-				. ($formEncrypt ? 'enctype="multipart/form-data" ' : '')
-				. 'action="'.$formAction.'" '
-				. (isset($formCheckValid) && $formCheckValid ? 'data-checkvalid="true" ' : '')
+			$formStr = '<form id="'.$this->id.'"'
+				. ' class="form '.($this->class ? $this->class.' ':'').($this->readonly ? '-readonly' : '').'"'
+				. ' method="'.$formMethod.'"'
+				. ($formEncrypt ? ' enctype="multipart/form-data"' : '')
+				. ' action="'.$formAction.'"'
+				. (isset($formCheckValid) && $formCheckValid ? ' data-checkvalid="true"' : '')
 				. (isset($this->attribute) ? ' '.(is_array($this->attribute) ? sg_implode_attr($this->attribute) : $this->attribute) : '')
 				. (isset($this->config->attr) ? ' '.(is_array($this->config->attr) ? sg_implode_attr($this->config->attr) : $this->config->attr) : '')
 				// . ($this->rel ? ' data-rel="'.$this->rel.'"' : '')
 				. (isset($this->config->data) ? ' '.(is_array($this->config->data) ? sg_implode_attr($this->config->data) : $this->config->data) : '')
 				. ($this->style ? ' style="'.$this->style.'"' : '')
-				. ($this->onSubmit ? 'onSubmit = \'return '.$this->onSubmit.'(event)\'' : '')
-				. ($this->onFormSubmit ? 'data-onformsubmit = \''.$this->onFormSubmit.'\'' : '')
+				. ($this->onSubmit ? ' onSubmit = \'return '.$this->onSubmit.'(event)\'' : '')
+				. ($this->onFormSubmit ? ' data-onformsubmit = \''.$this->onFormSubmit.'\'' : '')
 				. ' >';
 
 			$ret .= $formStr._NL._NL;
@@ -126,6 +135,14 @@ class Form extends Widget {
 				}
 			} else if (is_object($formElement)) {
 				// Form element is array and has key children
+				// $ret .= print_o($formElement, '$formElement');
+				$type = $formElement->type;
+				if ($type == 'fieldset') {
+					$ret .= '<div class="form-item -fieldset '.$formElement->class.'"><label>'.$formElement->label.'</label>';
+				}
+
+				unset($formElement->type, $formElement->label, $formElement->class);
+
 				foreach ($formElement as $groupKey => $groupItem) {
 					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
 						// Item is widget
@@ -136,6 +153,9 @@ class Form extends Widget {
 						$formArray[$tag_id] = $renderChildrenResult;
 						$ret .= $renderChildrenResult;
 					}
+				}
+				if ($type == 'fieldset') {
+					$ret .= '</div>';
 				}
 			} else if (is_array($formElement) && array_key_exists('children', $formElement)) {
 				// @deprecated
@@ -205,16 +225,6 @@ class Form extends Widget {
 
 		$isFormGroup = preg_match('/-group/', $formElement->container['class']);
 
-		// if ($formElement->container['type']) {
-		// 	switch ($formElement->container['type']) {
-		// 		case 'fieldset' :
-		// 			$ret .= '<fieldset class="'.($formElement->container['collapsible']?'collapsible':'').'">'._NL;
-		// 			if ($formElement->container['legend']) $ret .= '<legend>'.$formElement->container['legend'].'</legend>'._NL;
-		// 			break;
-		// 	}
-		// 	if ($formElement->container['collapsible']) $ret.='<div id="'.$tag_id.'" style="display: none; height: auto;" class="fieldset-wrapper">'._NL;
-		// }
-
 		$containerClass = $formElement->containerclass;
 		if ($formElement->container) {
 			if ($formElement->container['class']) {
@@ -266,10 +276,6 @@ class Form extends Widget {
 		if ($formElement->description) $ret .= _NL.'<div class="description">'.$formElement->description.'</div>';
 		$ret .= _NL.'</div>';
 
-		// if ($formElement->container['type']) {
-		// 	if ($formElement->container['collapsible']) $ret.=_NL.'</div>';
-		// 	$ret .= _NL.'</'.$formElement->container['type'].'>';
-		// }
 		$ret .= _NL._NL;
 		return [$tag_id, $ret];
 	}
@@ -436,6 +442,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
+	// Method _renderRadioCheckbox_v2 not used/ not test
 	function _renderRadioCheckbox_v2($tag_id, $name, $formElement) {
 		$ret = '';
 		// if (!is_array($formElement->value)) $formElement->value=(array)$formElement->value;
@@ -543,7 +550,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	// Method _renderRadioNew not used/ not test
+	// Method _renderRadioCheckbox_v1 not used/ not test
 	function _renderRadioCheckbox_v1($fieldKey, $tag_id, $formElement, $option_key, $option_value) {
 		$ret = '';
 		if ($formElement->separate) {
@@ -650,6 +657,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
+// Method _renderSelect_v1 not used/ not test
 	function _renderSelect_v1($tag_id, $name, $formElement) {
 		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
 		$selectStr = '	<select '
