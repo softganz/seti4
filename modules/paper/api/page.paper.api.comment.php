@@ -45,7 +45,7 @@ class PaperApiComment extends Page {
 
 		switch ($this->action) {
 			case 'delete':
-				if (SG\confirm()) {
+				if (\SG\confirm()) {
 					$ret .= 'Comment deleted';
 					$result = R::Model('paper.comment.delete',$commentId);
 				}

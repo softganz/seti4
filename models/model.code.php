@@ -10,11 +10,11 @@
 class ChangwatModel {
 	public static function items($conditions = NULL, $options = '{}') {
 		$defaults = '{debug: false, result: "record", zone: "changwat", selectText: null}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) {
 			//
 		} else if (is_array($conditions)) {

@@ -372,7 +372,7 @@ function sgFatalError($code, $description, $file, $line) {
 	];
 
 	if (!in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
-		$result = SG\api([
+		$result = \SG\api([
 			'url' => 'https://softganz.com/system/issue/new',
 			'method' => 'post',
 			'postField' => $reportData,

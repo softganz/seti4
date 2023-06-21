@@ -404,7 +404,7 @@ class MyDb {
 			}
 			//debugMsg($args,'$args_after');
 
-			$options = SG\json_decode($optionPara, $optionDefault);
+			$options = \SG\json_decode($optionPara, $optionDefault);
 
 			$prepareStmt = call_user_func_array([$myDb, 'prepare'], $prepareArgs);
 
@@ -562,7 +562,7 @@ class MyDb {
 			$optionPara = str_replace("'",'"',$matches[2]);
 		}
 
-		$options = SG\json_decode($optionPara,$optionDefault);
+		$options = \SG\json_decode($optionPara,$optionDefault);
 
 		if (empty($options->key)) unset($options->key);
 		if ($options->debug) $debug = $options->debug;
@@ -1082,7 +1082,7 @@ class MyDb {
 
 	public static function printTable($dbs, $options = '{}') {
 		$defaults = '{class: ""}';
-		$options = SG\json_decode($options,$defaults);
+		$options = \SG\json_decode($options,$defaults);
 
 		if (is_array($dbs->items))
 			foreach(reset($dbs->items) as $key => $value) $thead[] = $key;

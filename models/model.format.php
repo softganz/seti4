@@ -46,7 +46,7 @@ class FormatModel {
 
 		$resetNoOnNextPeriod = $docInfo->resetOnPeriod;
 
-		$docFormat = SG\getFirst($docInfo->format,strtoupper($docFormat));
+		$docFormat = \SG\getFirst($docInfo->format,strtoupper($docFormat));
 
 		// If no docnum of shopid, create and call nextno again
 		if (!$docInfo->format) {
@@ -158,7 +158,7 @@ class FormatModel {
 				':docName' => $value->name,
 				':docFormat' => $value->format,
 				':lastNo' => $value->lastNo,
-				':resetOnPeriod' => SG\getFirst($value->reset,0),
+				':resetOnPeriod' => \SG\getFirst($value->reset,0),
 			]
 		);
 	}

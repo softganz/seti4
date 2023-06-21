@@ -3,7 +3,7 @@ function admin_site_module_remove($self,$module) {
 	$self->theme->title='Site Modules';
 	$ret .= '<div class="help">Remove site modules</div>';
 
-	if (SG\confirm() && $module) {
+	if (\SG\confirm() && $module) {
 		$perm=cfg('perm');
 		$remove_perm=$perm->{$module};
 		unset($perm->{$module});

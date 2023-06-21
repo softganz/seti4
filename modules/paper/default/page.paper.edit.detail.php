@@ -82,8 +82,8 @@ function paper_edit_detail($self, $topicInfo) {
 			$topicInfo->photos ? (function($topicInfo) {
 				$photo_list = _NL.'<div id="edit-topic-body-control-photo" class="editor" title="edit-detail-body">';
 				foreach ($topicInfo->photos as $photo) {
-					$photo_title = tr('Photo name').' : '.SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
-					$photo_desc = tr('Photo Description').' : '.SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
+					$photo_title = tr('Photo name').' : '.\SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
+					$photo_desc = tr('Photo Description').' : '.\SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
 					if ($topicInfo->property->input_format == 'markdown') {
 						$onclick = 'editor.insert("![ '.$photo_desc.' ]('.$photo->_url.' \"'.$photo_title.'\" '.(cfg('topic.photo.detail.class')?' class=\"'.cfg('topic.photo.detail.class').'\"':'').')");return false';
 					} else {
@@ -103,7 +103,7 @@ function paper_edit_detail($self, $topicInfo) {
 				if ($docs->_num_rows) {
 					$doc_list .= _NL.'<div id="edit-topic-body-control-docs" class="editor" title="edit-detail-body">';
 					foreach ($docs->items as $doc) {
-						$docDesc = preg_replace('/[\"\']/','','"'.SG\getFirst($doc->title,$doc->file).'"');
+						$docDesc = preg_replace('/[\"\']/','','"'.\SG\getFirst($doc->title,$doc->file).'"');
 						$docUrl = cfg('files.log') ? url('files/'.$doc->fid) : cfg('url').'upload/forum/'.sg_urlencode($doc->file);
 						if ($topicInfo->property->input_format == 'markdown') {
 							$onclick = 'editor.insert("['.$docDesc.']('.$docUrl.')");return false';

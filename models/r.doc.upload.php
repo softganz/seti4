@@ -19,8 +19,8 @@ function r_doc_upload($docFiles, $data = NULL, $options = '{}') {
 	];
 
 	$uploadFolder = cfg('paper.upload.document.folder');
-	$docPrename = SG\getFirst($data->prename, 'paper_'.$data->tpid.'_');
-	$docFilenameLength = SG\getFirst($options->fileNameLength, 30);
+	$docPrename = \SG\getFirst($data->prename, 'paper_'.$data->tpid.'_');
+	$docFilenameLength = \SG\getFirst($options->fileNameLength, 30);
 	$isUploadSingleFile = true;
 
 	$deleteurl = $data->deleteurl;
@@ -75,7 +75,7 @@ function r_doc_upload($docFiles, $data = NULL, $options = '{}') {
 
 		$docData = (Object) [
 			'fid' => empty($data->fid) ? NULL : $data->fid,
-			'tpid' => SG\getFirst($data->nodeId, $data->tpid),
+			'tpid' => \SG\getFirst($data->nodeId, $data->tpid),
 			'cid' => empty($data->cid) ? NULL : $data->cid,
 			'type' => 'doc',
 			'title' => empty($data->title) ? $postFile['name'] : $data->title,

@@ -16,7 +16,7 @@ class RssCounter extends Page {
 		$timer = new Timer();
 		$timer->start(0);
 
-		$day = SG\getFirst($para->day, 7);
+		$day = \SG\getFirst($para->day, 7);
 
 		$counter = cfg('counter');
 

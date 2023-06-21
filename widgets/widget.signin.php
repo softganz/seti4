@@ -25,7 +25,7 @@ class SignInWidget extends Widget {
 
 	function build() {
 		return new Form([
-				'action' => SG\getFirst($this->returnUrl, url(q())),
+				'action' => \SG\getFirst($this->returnUrl, url(q())),
 				'id' => $this->id ? $this->id : 'signin-'.uniqid(),
 				'class' => 'widget-signin signform'.($this->class ? ' '.$this->class : ''),
 				'rel' => 'none',

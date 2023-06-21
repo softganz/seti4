@@ -18,6 +18,7 @@
 		- (Object) [Attribute, Array]
 		- Array[Array]
 */
+
 class Form extends Widget {
 	var $widgetName = 'Form';
 	var $tagName = 'form';
@@ -74,13 +75,13 @@ class Form extends Widget {
 		$formArray = [];
 
 		$this->config = is_array($this->config) ? (Object) $this->config : $this->config;
-		$this->readonly = SG\getFirst($this->config->readonly, $this->readonly);
-		$formVariable = $this->variable = SG\getFirst($this->variable, $this->config->variable);
-		$formEncrypt = $this->enctype = SG\getFirst($this->enctype, $this->config->enctype);
-		$formMethod = $this->method = SG\getFirst($this->config->method, $this->method);
-		$formAction = $this->action = SG\getFirst($this->action, $this->config->action);
-		$formCheckValid = SG\getFirst($this->checkValid, $this->data['data-checkValid'], $this->data['data-checkvalid']);
-		$formTitle = SG\getFirst($this->title, $this->config->title);
+		$this->readonly = \SG\getFirst($this->config->readonly, $this->readonly);
+		$formVariable = $this->variable = \SG\getFirst($this->variable, $this->config->variable);
+		$formEncrypt = $this->enctype = \SG\getFirst($this->enctype, $this->config->enctype);
+		$formMethod = $this->method = \SG\getFirst($this->config->method, $this->method);
+		$formAction = $this->action = \SG\getFirst($this->action, $this->config->action);
+		$formCheckValid = \SG\getFirst($this->checkValid, $this->data['data-checkValid'], $this->data['data-checkvalid']);
+		$formTitle = \SG\getFirst($this->title, $this->config->title);
 
 		if ($this->action) {
 			$ret .= _NL.'<!-- sg-form -->'._NL;
@@ -138,12 +139,13 @@ class Form extends Widget {
 				// $ret .= print_o($formElement, '$formElement');
 				$type = $formElement->type;
 				if ($type == 'fieldset') {
-					$ret .= '<div class="form-item -fieldset '.$formElement->class.'"><label>'.$formElement->label.'</label>';
+					$ret .= '<div class="form-item -fieldset '.$formElement->class.'">'
+						. ($formElement->label ? '<label>'.$formElement->label.'</label>' : '');
 				}
 
 				unset($formElement->type, $formElement->label, $formElement->class);
 
-				foreach ($formElement as $groupKey => $groupItem) {
+				foreach (\SG\getFirst($formElement->children) as $groupKey => $groupItem) {
 					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
 						// Item is widget
 						$ret .= $groupItem->build();
@@ -201,7 +203,7 @@ class Form extends Widget {
 		$containerClass = '';
 
 		if ($formElement->config) {
-			$formElement->config = SG\json_decode($formElement->config);
+			$formElement->config = \SG\json_decode($formElement->config);
 		}
 
 		if ($formElement->id) {
@@ -220,7 +222,7 @@ class Form extends Widget {
 		if (isset($formElement->container) && is_object($formElement->container)) {
 			$formElement->container = (Array) $formElement->container;
 		} else if (isset($formElement->container) && is_string($formElement->container) && substr($formElement->container,0,1) == '{') {
-			$formElement->container = (Array) SG\json_decode($formElement->container);
+			$formElement->container = (Array) \SG\json_decode($formElement->container);
 		}
 
 		$isFormGroup = preg_match('/-group/', $formElement->container['class']);
@@ -248,7 +250,7 @@ class Form extends Widget {
 
 		// Item attribute from key attribute, if not define use key attr
 		// Implode attribute to string
-		$formElement->attribute = SG\getFirst($formElement->attribute, $formElement->attr, []);
+		$formElement->attribute = \SG\getFirst($formElement->attribute, $formElement->attr, []);
 		if ($formElement->attribute && (is_array($formElement->attribute) || is_object($formElement->attribute))) {
 			$formElement->attribute = sg_implode_attr($formElement->attribute);
 		}
@@ -350,6 +352,13 @@ class Form extends Widget {
 		return $ret;
 	}
 
+	/*
+	* Options format:
+	* 	[key1 => value1, key2 => value2, groupObject, groupArray, ...]
+	* 		groupArray: [['key' => 'xxx', value'=>'xxx'], ...]
+	*			groupObject: [[key1 => value1], [key2 => value2], ...]
+	* Option value format: LABEL:, SEPARATOR, &nbsp;, space, tab
+	*/
 	function _renderRadioCheckbox($tag_id, $name, $formElement) {
 		static $itemIndex = 0;
 		$ret = '';
@@ -365,25 +374,34 @@ class Form extends Widget {
 			if (is_array($optionValue) || is_object($optionValue)) {
 				$optionValue = (Array) $optionValue;
 
-				$ret .= '<span class="options-group"><span class="options-group-label">'.$optionKey.':</span>'._NL;
-
-				if ($optionValue['name']) {
-					// Option format is [['name' => 'xxx','label'=>'xxx','value'=>'xxx'],...]
-					$itemIndex++;
-					$ret .= '<abbr class="'.$formElement->type.'"><label class="option -'.$formElement->display.'" >';
-					$ret .= '<input'
-						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"':'')
-						. ' name="'.$optionValue['name'].'"'
-						. ' value="'.$optionValue['value'].'"';
-					$ret .= is_null($formElement->value[$optionValue['name']]) ? '' : ' checked="checked"';
-					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
-						. ' type="'.$formElement->type.'"'
-						. ($formElement->attribute ? ' '.$formElement->attribute : '')
-						. ' /> ';
-					$ret .= $optionValue['label'];
-					$ret .= '</label></abbr>'._NL;
+				if (isset($optionValue['key'])) {
+					// Option format is [['key' => 'xxx', value'=>'xxx'],...]
+					$itemFormElement = clone $formElement;
+					$itemFormElement->options = [$optionValue['key'] => $optionValue['value']];
+					$ret .= $this->_renderRadioCheckbox(
+						$tag_id,
+						$name,
+						$itemFormElement
+					);
+				// } else if ($optionValue['name']) {
+				// 	// @deprecated
+				// 	// Option format is [['name' => 'xxx','label'=>'xxx','value'=>'xxx'],...]
+				// 	$itemIndex++;
+				// 	$ret .= '<abbr class="'.$formElement->type.'"><label class="option -'.$formElement->display.'" >';
+				// 	$ret .= '<input'
+				// 		. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"':'')
+				// 		. ' name="'.$optionValue['name'].'"'
+				// 		. ' value="'.$optionValue['value'].'"';
+				// 	$ret .= is_null($formElement->value[$optionValue['name']]) ? '' : ' checked="checked"';
+				// 	$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
+				// 		. ' type="'.$formElement->type.'"'
+				// 		. ($formElement->attribute ? ' '.$formElement->attribute : '')
+				// 		. ' /> ';
+				// 	$ret .= $optionValue['label'];
+				// 	$ret .= '</label></abbr>'._NL;
 				} else {
 					// Option format is ['value'=>'label',...]
+					$ret .= '<span class="options-group"><span class="options-group-label">'.$optionKey.':</span>'._NL;
 					$itemFormElement = clone $formElement;
 					$itemFormElement->options = $optionValue;
 					$ret .= $this->_renderRadioCheckbox(
@@ -391,8 +409,8 @@ class Form extends Widget {
 						$name,
 						$itemFormElement
 					);
+					$ret .= '</span>'._NL;
 				}
-				$ret.='</span>'._NL;
 			} else {
 				// option value is string
 				if ($formElement->separate) {
@@ -406,16 +424,16 @@ class Form extends Widget {
 					$ret .= '<div>'.$out[2].'</div>';
 				} else if (preg_match('/^SEPARATOR$/', $optionValue)) {
 					$ret .= '<hr class="-sep" />';
-				} else if (substr($optionValue, 0, 6) == '&nbsp;') {
+				} else if (preg_match('/^(\&nbsp\;)(.*)/', $optionValue, $out)) {
 					// Show label only
-					$ret .= '<div>'.$optionValue.'</div>';
+					$ret .= '<div>'.$out[2].'</div>';
 				} else {
 					$itemIndex++;
 					$ret .= '<abbr class="'.$formElement->type.'"><label class="option'.($formElement->display ? ' '.$formElement->display : '').'">';
 					if (preg_match('/^\s/', $optionValue)) {
 						$ret .= '&nbsp;&nbsp;&nbsp;&nbsp;';
 					}
-					$ret .= '<input id="'.$tag_id.'-'.$itemIndex.'"'
+					$ret .= '<input id="'.$tag_id.'-'.$optionKey.'"'
 						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"' : '')
 						. ' name="'.($formElement->namePrefix ? $formElement->namePrefix.$optionKey : '').$name.($formElement->multiple ? '['.$optionKey.']' : '').'"'
 						. ' value="'.$optionKey.'"';
@@ -630,11 +648,12 @@ class Form extends Widget {
 		$ret = '';
 		foreach ($options as $optionKey => $optionValue) {
 			if (is_object($optionValue)) $optionValue = (Array) $optionValue;
+
 			if (is_array($optionValue) && array_key_exists('label', $optionValue)) {
 				// Option is array has key label : [1=>"label", attr=>["data-key"=>"data-key-value",...]]
-				$ret .= '	<option '
-					. 'value="'.$optionKey.'"'
-					. (in_array($optionKey,$inputValue) ? ' selected="selected"' : '')
+				$ret .= '	<option'
+					. ' value="'.$optionKey.'"'
+					. (in_array($optionKey, $inputValue) ? ' selected="selected"' : '')
 					. ($optionValue['attr'] ? ' '.sg_implode_attr($optionValue['attr']) : '')
 					. '>'
 					. $optionValue['label']
@@ -651,7 +670,7 @@ class Form extends Widget {
 				$ret .= '<option class="-sep" disabled="disabled" style="height: 1px; display: block;">---</option>';
 			} else {
 				// Option is string
-				$ret .= '	<option value="'.$optionKey.'"'.(in_array($optionKey,$inputValue)?' selected="selected"':'').'>'.$optionValue.'</option>'._NL;
+				$ret .= '	<option value="'.$optionKey.'"'.(in_array($optionKey, $inputValue) ? ' selected="selected"' : '').'>'.$optionValue.'</option>'._NL;
 			}
 		}
 		return $ret;
@@ -739,7 +758,7 @@ class Form extends Widget {
 
 	function _renderButton($tag_id, $name, $formElement) {
 		if (empty($formElement->items) && !empty($formElement->value)) {
-			$ret .= '	<button type="submit" '.(empty($formElement->name) ? '' : 'name="'.$name.'"').' class="btn '.SG\getFirst($formElement->class, '-primary').'" value="'.htmlspecialchars(strip_tags($formElement->value)).'" '.($this->readonly || $formElement->readonly ? 'disabled="disabled" ' : '').'>'.SG\getFirst($formElement->text, $formElement->value).'</button> ';
+			$ret .= '	<button type="submit" '.(empty($formElement->name) ? '' : 'name="'.$name.'"').' class="btn '.\SG\getFirst($formElement->class, '-primary').'" value="'.htmlspecialchars(strip_tags($formElement->value)).'" '.($this->readonly || $formElement->readonly ? 'disabled="disabled" ' : '').'>'.\SG\getFirst($formElement->text, $formElement->value).'</button> ';
 		} else if (is_array($formElement->items) && !empty($formElement->items['value'])) {
 			$ret .= '	<button'.(isset($formElement->items['type'])?' type="'.$formElement->items['type'].'"':'').' name="'.(isset($formElement->items['name'])?$formElement->items['name']:$name).'" class="btn'.($formElement->items['class']?' '.$formElement->items['class']:'').'" value="'.htmlspecialchars(strip_tags($formElement->items['value'])).'" '.($this->readonly || $formElement->readonly?'disabled="disabled" ':'').'>'.$formElement->items['value'].'</button> ';
 		} else {
@@ -751,9 +770,9 @@ class Form extends Widget {
 				} else {
 					$ret .= '	<button'
 						. (isset($button['type'])?' type="'.$button['type'].'"':'')
-						. ' name="'.SG\getFirst($button['name'],is_string($key) ? $key : $name).'" '
+						. ' name="'.\SG\getFirst($button['name'],is_string($key) ? $key : $name).'" '
 						. 'class="btn'.($button['class']?' '.$button['class']:'').'" '
-						. 'value="'.SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'" '
+						. 'value="'.\SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'" '
 						. ($this->readonly || $formElement->readonly?'disabled="disabled" ':'').'>'
 						. $button['value']
 						. '</button> ';
@@ -810,9 +829,9 @@ class Form extends Widget {
 
 	function _renderTime($tag_id, $name, $formElement) {
 		$times = [];
-		$start_time = SG\getFirst($formElement->start, 0);
-		$end_time = SG\getFirst($formElement->end ,24);
-		$step_time = SG\getFirst($formElement->step, 15);
+		$start_time = \SG\getFirst($formElement->start, 0);
+		$end_time = \SG\getFirst($formElement->end ,24);
+		$step_time = \SG\getFirst($formElement->step, 15);
 		for ($hr = $start_time; $hr < $end_time; $hr++) {
 			for ($min = 0; $min < 60; $min += $step_time) {
 				$times[] = sprintf('%02d',$hr).':'.sprintf('%02d',$min);
@@ -827,9 +846,9 @@ class Form extends Widget {
 	}
 
 	function _renderHour($tag_id, $name, $formElement) {
-		$start_time = SG\getFirst($formElement->start, 0);
-		$end_time = SG\getFirst($formElement->end, 24);
-		$step_time = SG\getFirst($formElement->step, 15);
+		$start_time = \SG\getFirst($formElement->start, 0);
+		$end_time = \SG\getFirst($formElement->end, 24);
+		$step_time = \SG\getFirst($formElement->step, 15);
 		$ret = '<select id="'.$tag_id.'" class="form-select" name="'.$name.'[hour]">'._NL;
 		for ($hr = $start_time; $hr < $end_time; $hr++) {
 			$ret .= '<option value="'.sprintf('%02d',$hr).'"'.($hr == $formElement->value->hour?' selected="selected"':'').'>'.sprintf('%02d',$hr).'</option>';

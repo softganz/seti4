@@ -74,7 +74,7 @@ class BasicModel extends Model {
 			if (!$result->_empty) {
 				if (!$debug) mydb::clearProp($result);
 				$types[$tid] = $result;
-				$types[$tid]->topic_options = SG\getFirst(cfg('topic_options_'.$tid),NULL);
+				$types[$tid]->topic_options = \SG\getFirst(cfg('topic_options_'.$tid),NULL);
 			}
 		}
 		return $types[$tid];
@@ -377,7 +377,7 @@ sg_text2html($topic->post->body).'
 		if (module_install('voteit')) $sql_cmd.=do_class_method('voteit','get_topic_by_condition','fields',$para,$tpid);
 
 		$sql_cmd .= '  FROM %topic% t
-								LEFT JOIN %topic_revisions% r ON r.revid='.SG\getFirst($revid,'t.revid ').'
+								LEFT JOIN %topic_revisions% r ON r.revid='.\SG\getFirst($revid,'t.revid ').'
 								LEFT JOIN %users% u ON t.uid=u.uid
 								LEFT JOIN %topic_types% ty ON ty.type=t.type ';
 
@@ -601,15 +601,15 @@ sg_text2html($topic->post->body).'
 
 		$watch = (Object) [
 			'date' => 'func.NOW()',
-			'uid' => SG\getFirst($uid, i()->uid),
+			'uid' => \SG\getFirst($uid, i()->uid),
 			'ip' => ip2long(GetEnv('REMOTE_ADDR')),
-			'module' => SG\getFirst($module),
+			'module' => \SG\getFirst($module),
 			'keyword' => $keyword,
 			'keyid' => $keyid,
 			'fldname' => $fldname,
-			'message' => SG\getFirst($message),
+			'message' => \SG\getFirst($message),
 			'url' => preg_match('/IIS/i',$_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'],
-			'referer' => SG\getFirst($_SERVER['HTTP_REFERER']),
+			'referer' => \SG\getFirst($_SERVER['HTTP_REFERER']),
 			'browser' => $_SERVER['HTTP_USER_AGENT'],
 		];
 

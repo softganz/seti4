@@ -249,7 +249,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 
 		if (doneTarget == '') doneTarget = '#main';
 
-		//console.log(doneItem, doneExplode)
+		console.log(doneItem, doneExplode)
 		//console.log('doneType = ',doneType, 'doneAction = ',doneAction)
 		//console.log('doneTarget = ',doneTarget)
 		// console.log(data)
@@ -329,11 +329,11 @@ function sgActionDone(doneData, $this, data, options = {}) {
 				break
 
 			case 'load':
-				// console.log('DONE TARGET = ' + doneTarget)
+				console.log('DONE TARGET = ' + doneTarget)
 				var $ele = sgFindTargetElement(doneTarget, $this)
 				var loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($ele.data('url') ? $ele.data('url') : document.URL)
 				if (loadUrl && ($ele.length || doneTarget == 'none')) {
-					// console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
+					console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
 					// loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
 
 					$.post(loadUrl,function(html){

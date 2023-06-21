@@ -22,7 +22,7 @@ function calendar_new($self, $calId = NULL) {
 	}
 
 	if (!(Array) $calInfo) {
-		$calInfo->from_date = $calInfo->to_date = SG\getFirst($post->d, date('Y-m-d'));
+		$calInfo->from_date = $calInfo->to_date = \SG\getFirst($post->d, date('Y-m-d'));
 		$calInfo->tpid = $post->tpid;
 	}
 

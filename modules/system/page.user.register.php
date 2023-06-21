@@ -125,7 +125,7 @@ e-mail : '.$register->email.'</p>
 					break;
 			}
 			R()->user = UserModel::signInProcess($register->username,$register->repassword);
-			$retLoc=SG\getFirst($register->ret,'profile/'.$register->uid);
+			$retLoc = SG\getFirst($register->ret,'profile/'.$register->uid);
 			location($retLoc);
 			return $ret;
 		}

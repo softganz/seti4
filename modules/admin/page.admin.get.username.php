@@ -9,10 +9,10 @@
  */
 function admin_get_username($self,$q='',$n=NULL,$p=NULL) {
 	sendheader('text/html');
-	$q=SG\getFirst($q,trim(post('q')));
-	$n=intval(SG\getFirst($item,post('n'),20));
-	$p=intval(SG\getFirst($p,post('p'),1));
-	$retType=SG\getFirst(post('r'),'u');
+	$q = SG\getFirst($q,trim(post('q')));
+	$n=intval(\SG\getFirst($item,post('n'),20));
+	$p=intval(\SG\getFirst($p,post('p'),1));
+	$retType = SG\getFirst(post('r'),'u');
 	if (empty($q)) return '[]';
 	
 	$stmt='SELECT `uid`, `username`, `name`, `email`, `datein`

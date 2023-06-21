@@ -42,7 +42,7 @@ function paper_senddelete($self, $tpid) {
 				</head>
 				<body>
 				<h2><a href="'.cfg('domain').url('paper/'.$topicInfo->tpid).'" target=_blank><strong>'.$topicInfo->title.'</strong></a></h2>'
-				. '<p>Submit by <strong>'.SG\getFirst($topicInfo->info->owner, $topicInfo->info->poster)
+				. '<p>Submit by <strong>'.\SG\getFirst($topicInfo->info->owner, $topicInfo->info->poster)
 				. ($topicInfo->uid ? '('.$topicInfo->uid.')' : '')
 				. '</strong> '
 				. ' on <strong>'.$topicInfo->info->created.'</strong> | ip : '.GetEnv('REMOTE_ADDR')
@@ -99,7 +99,7 @@ function paper_senddelete($self, $tpid) {
 						'label' => tr('Sender').(i()->ok ? ' (you are member)':''),
 						'class' => '-fill',
 						'require' => true,
-						'value' => SG\getFirst($post->sender,i()->name),
+						'value' => \SG\getFirst($post->sender,i()->name),
 					)
 				);
 

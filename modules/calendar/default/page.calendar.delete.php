@@ -32,7 +32,7 @@ function calendar_delete($self, $calId) {
 		$ret .= message('error','Calendar item not found');
 	} else if (!$isEdit) {
 		$ret .= message('error','Access denied','calendar');
-	} else if (SG\confirm()) {
+	} else if (\SG\confirm()) {
 		if ($module) 	$form = R::On($module.'.calendar.delete', $calendarInfo, post());
 		mydb::query('DELETE FROM %calendar% WHERE `id` = :caiId LIMIT 1',':caiId',$calId);
 		mydb::clear_autoid('%calendar%');

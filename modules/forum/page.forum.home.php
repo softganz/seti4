@@ -16,7 +16,7 @@ function forum_home($self, $forumId = NULL) {
 
 	$getOrder = post('ord');
 	$getSort = post('sort');
-	$getItems = SG\getFirst(post('items'), $defaultItems);
+	$getItems = \SG\getFirst(post('items'), $defaultItems);
 	$types = BasicModel::get_topic_type($self->content_type);
 
 	$self->theme->header->text = tr($types->name);
@@ -40,8 +40,8 @@ function forum_home($self, $forumId = NULL) {
 	$topicOptions->items = $getItems;
 	$topicOptions->debug = false;
 	$topicOptions->page = post('page');
-	$topicOptions->order = SG\getFirst($orderFieldList[$getOrder], $orderFieldList['default']);
-	$topicOptions->sort = SG\getFirst($sortList[$getSort], $sortList['d'] );
+	$topicOptions->order = \SG\getFirst($orderFieldList[$getOrder], $orderFieldList['default']);
+	$topicOptions->sort = \SG\getFirst($sortList[$getSort], $sortList['d'] );
 	$topicOptions->pagePara = array();
 	$topicOptions->pagePara['ord'] = $getOrder;
 	$topicOptions->pagePara['sort'] = $getSort;

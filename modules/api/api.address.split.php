@@ -17,7 +17,7 @@ class AddressSplitApi extends PageApi {
 	function __construct() {
 		parent::__construct([
 			'address' => post('address'),
-			'type' => SG\getFirst(post('type'), 'long'),
+			'type' => \SG\getFirst(post('type'), 'long'),
 		]);
 	}
 
@@ -27,13 +27,13 @@ class AddressSplitApi extends PageApi {
 		$result = (Object) [
 			'newAddress' => '',
 			'areaCode' => '',
-			'address' => SG\explode_address($this->address),
+			'address' => \SG\explode_address($this->address),
 			'src' => [
 				'address' => $this->address,
 				'type' => $this->type,
 			],
 		];
-		$result->newAddress = SG\implode_address($result->address, $this->type);
+		$result->newAddress = \SG\implode_address($result->address, $this->type);
 		$result->areaCode = $result->address['areaCode'];
 		// debugMsg($result, '$result');
 		return $result;

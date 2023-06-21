@@ -32,19 +32,19 @@ function r_calendar_create($data, $options = '{}') {
 	$data->to_date = sg_date($data->to_date, 'Y-m-d');
 	if ($data->from_date > $data->to_date) $result->_invalid[] = 'วันที่เริ่มต้น หรือ วันที่สิ้นสุดผิดพลาด';
 
-	$data->from_time = SG\getFirst($data->from_time);
-	$data->to_time = SG\getFirst($data->to_time);
+	$data->from_time = \SG\getFirst($data->from_time);
+	$data->to_time = \SG\getFirst($data->to_time);
 
-	$data->tpid = SG\getFirst($data->tpid);
-	$data->category = SG\getFirst($data->category);
-	$data->reminder = SG\getFirst($data->reminder,'no');
-	$data->repeat = SG\getFirst($data->repeat,'no');
+	$data->tpid = \SG\getFirst($data->tpid);
+	$data->category = \SG\getFirst($data->category);
+	$data->reminder = \SG\getFirst($data->reminder,'no');
+	$data->repeat = \SG\getFirst($data->repeat,'no');
 
-	$address = SG\explode_address($data->location, $data->areacode);
-	$data->changwat = SG\getFirst($address['changwatCode'],' ');
-	$data->ampur = SG\getFirst($address['ampurCode'],' ');
-	$data->tambon = SG\getFirst($address['tambonCode'],' ');
-	$data->village = SG\getFirst($address['villageCode'],' ');
+	$address = \SG\explode_address($data->location, $data->areacode);
+	$data->changwat = \SG\getFirst($address['changwatCode'],' ');
+	$data->ampur = \SG\getFirst($address['ampurCode'],' ');
+	$data->tambon = \SG\getFirst($address['tambonCode'],' ');
+	$data->village = \SG\getFirst($address['villageCode'],' ');
 
 	$data->ip = ip2long(GetEnv('REMOTE_ADDR'));
 	$data->created_date = date('Y-m-d H:i:s');

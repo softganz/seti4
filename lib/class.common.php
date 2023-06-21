@@ -282,7 +282,7 @@ class Session {
 
 		$watch = (Object) [
 			'date' => 'func.NOW()',
-			'uid' => SG\getFirst(i()->uid,'func.NULL'),
+			'uid' => \SG\getFirst(i()->uid,'func.NULL'),
 			'ip' => ip2long(i()->ip),
 			'module' => 'session',
 			'keyword' => 'gc',
@@ -422,7 +422,7 @@ class Arrays {
 ********************************************/
 class Cache {
 	public static function add($cid, $data, $expire, $headers) {
-		$data = SG\json_encode($data);
+		$data = \SG\json_encode($data);
 		mydb::query(
 			'INSERT INTO %cache%
 			(`cid`, `data`, `expire`, `created`, `headers`)
@@ -445,7 +445,7 @@ class Cache {
 		$result = mydb::select('SELECT * FROM %cache% c WHERE c.`cid` = :cid LIMIT 1', [':cid' => $cid]);
 		if ($result->count()) {
 			mydb::clearProp($result);
-			$result->data = preg_match('/^{/', $result->data) ? SG\json_decode($result->data) : unserialize($result->data);
+			$result->data = preg_match('/^{/', $result->data) ? \SG\json_decode($result->data) : unserialize($result->data);
 			$result->data->token = $result->data->session;
 			$result->remain = $result->expire - time();
 		}

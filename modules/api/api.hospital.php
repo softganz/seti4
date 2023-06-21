@@ -17,9 +17,9 @@ class HospitalApi extends PageApi {
 
 	function __construct() {
 		parent::__construct([
-			'queryText' => SG\getFirst(post('q')),
-			'page' => SG\getFirst(post('page'), post('p'), 1),
-			'items' => SG\getFirst(post('item'), post('n'), 50),
+			'queryText' => \SG\getFirst(post('q')),
+			'page' => \SG\getFirst(post('page'), post('p'), 1),
+			'items' => \SG\getFirst(post('item'), post('n'), 50),
 		]);
 	}
 

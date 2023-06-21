@@ -62,7 +62,7 @@ class ViewRenderPage extends Widget {
 
 
 		// Get Scaffold SideBar from property sideBar
-		$sideBar = SG\getFirst($self->sideBar, $self->theme->sidebar);
+		$sideBar = \SG\getFirst($self->sideBar, $self->theme->sidebar);
 		// print_o($sideBar, '$sideBar', 1);
 		// echo 'SIDEBAR = '.$sideBar;
 

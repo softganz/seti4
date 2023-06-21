@@ -17,7 +17,7 @@ class PaperAdminRepairRevision extends Page {
 		$isDupRevision = mydb::select('SELECT COUNT(*) `dupCount` FROM %topic_revisions% GROUP BY `tpid` HAVING `dupCount` > 1');
 		if ($isDupRevision->count() > 0) return message('notify', 'มีการใช้งาน Revision ในระบบ ไม่สามารถเรียบลำดับใหม่ได้');
 
-		if (SG\confirm()) return $this->_startRepair();
+		if (\SG\confirm()) return $this->_startRepair();
 
 		return new Scaffold([
 			'appBar' => new AppBar([

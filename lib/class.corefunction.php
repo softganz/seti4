@@ -8,11 +8,13 @@
 
 global $R;
 
-if (preg_match('/^\(([a-z].*)\)\//', $request, $out)) {
-	$request = preg_replace('/^\([a-z].*\)\//', '', $request);
+// Extract template from request url using url format (template)/module/path
+if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
+	$request = $out[2];
 	cfg('template', $out[1]);
+	// debugMsg('$template = '.cfg('template'));
+	// debugMsg('$request = '.$request);
 	// debugMsg($out, '$out');
-	// debugMsg($request);
 }
 
 $R = new R();
@@ -242,7 +244,7 @@ $R->user = UserModel::checkLogin();
 if ($R->user->signInResult) {
 	sendHeader('application/json');
 	http_response_code($R->user->ok ? _HTTP_OK :_HTTP_ERROR_UNAUTHORIZED);
-	die(SG\json_encode($R->user));
+	die(\SG\json_encode($R->user));
 } else if ($R->user->signInErrorMessage) {
 	$R->message->signInErrorInSignForm = $R->user->signInErrorMessage;
 }
@@ -359,8 +361,8 @@ class R {
 		$buildMethod = 'build'; // Default build method
 		$reservedMethod = ['rightToBuild'];
 
-		// Specific build method using :method at end of action
-		if (preg_match('/([\w].*):([\w].*)$/', $pageName, $out)) {
+		// Specific build method using _MS_ method at end of action
+		if (preg_match('/([\w].*)['._MS_.']([\w].*)$/', $pageName, $out)) {
 			$pageName = $out[1];
 			$buildMethod = $out[2];
 		}
@@ -370,6 +372,11 @@ class R {
 		if ($found && class_exists($className) && method_exists($className, $buildMethod)) {
 			// Found page widget then build method
 			$pageResult = new $className(...$args);
+
+			// Try to use namespace in template but not work
+			// $pageResult = new PPI\ProjectJoinList(...$args);
+			// use PPI\ProjectJoinList as MyClass;
+			// $pageResult = new MyClass(...$args);
 
 			if ($buildMethod === 'build') {
 				// If using standard build method, have 2 way for check right
@@ -387,12 +394,18 @@ class R {
 				$error = $pageResult->rightToBuild();
 				if (is_object($error)) return $error;
 			}
+
+			// TODO: Extensions
+			// require_once('extensions/ppi/page.project.join.list.php');
+
 			// Build widget, if not in reservedMethod and buildMethod is public
 			if (
 					!in_array($buildMethod, $reservedMethod)
 			    && ($reflection = new ReflectionMethod($pageResult, $buildMethod))
 			    && $reflection->isPublic()
 			  ) {
+				// $pageResult->extension();
+
 				return $pageResult->{$buildMethod}();
 			}
 		} else if ($found && function_exists($className)) {
@@ -507,7 +520,7 @@ class SgCore {
 						// Merge json config file to current config
 						// Module json config file was load after database, so it less important than database
 						// Current cfg($module) is config from file conf.???.php and config from table variable
-						$jsonValue = SG\json_decode($jsonString, cfg($module));
+						$jsonValue = \SG\json_decode($jsonString, cfg($module));
 
 						// if (i()->username == 'softganz') {
 						// 	debugMsg('LOAD JSON : '.$each_config_file);
@@ -532,7 +545,7 @@ class SgCore {
 			if (is_array($configValue)) {
 				cfg($configKey,$configValue);
 			} else if (is_string($configValue) && preg_match('/^\{/', trim($configValue))) {
-				$jsonValue = SG\json_decode($configValue, cfg($configKey));
+				$jsonValue = \SG\json_decode($configValue, cfg($configKey));
 				//debugMsg($jsonValue, '$jsonValue['.$configKey.']');
 				if (isset($jsonValue) && is_object($jsonValue)) {
 					cfg($configKey, $jsonValue);
@@ -979,7 +992,7 @@ class SgCore {
 		$widget_result = trim($widget_result);
 
 		if (!empty($para->{'data-header'}) && !in_array(strtolower($para->{'option-header'}), ['0','no'])) {
-			$header = '<h2>'.($para->{'data-header-url'}?'<a href="'.$para->{'data-header-url'}.'">':'').'<span>'.SG\getFirst($para->{'data-header'},$para->id).'</span>'.($para->{'data-header-url'}?'</a>':'').'</h2>'._NL;
+			$header = '<h2>'.($para->{'data-header-url'}?'<a href="'.$para->{'data-header-url'}.'">':'').'<span>'.\SG\getFirst($para->{'data-header'},$para->id).'</span>'.($para->{'data-header-url'}?'</a>':'').'</h2>'._NL;
 		}
 
 		if (trim($para->{'data-option-replace'}) == 'yes') {
@@ -1045,7 +1058,7 @@ class SgCore {
 
 		R::Module($module.'.init', $pageClass);
 
-		$options = SG\json_decode($menu['options']);
+		$options = \SG\json_decode($menu['options']);
 		$verify = $options->verify ? R::Model($options->verify,$pageClass) : true;
 
 		if ($verify === false) {
@@ -1202,7 +1215,7 @@ class SgCore {
 
 		if (isset($_GET['setting:app'])) {
 			if (($getSettingApp = $_GET['setting:app']) && $getSettingApp != '{}') {
-				$setting->app = SG\json_decode($getSettingApp);
+				$setting->app = \SG\json_decode($getSettingApp);
 			} else {
 				unset($setting->app);
 			}
@@ -1373,12 +1386,12 @@ class SgCore {
 				if ($ajaxResult['responseCode']) {
 					sendHeader('application/json');
 					http_response_code($ajaxResult['responseCode']);
-					die(SG\json_encode($ajaxResult));
+					die(\SG\json_encode($ajaxResult));
 				}
 
 				if (is_array($requestResult) || is_object($requestResult)) {
 					sendHeader('application/json');
-					$requestResult = SG\json_encode($requestResult);
+					$requestResult = \SG\json_encode($requestResult);
 				}
 
 				// Show AppBar as Box Header
@@ -1718,7 +1731,7 @@ function i($key = NULL, $value = NULL) {
 	if ($key === 'R') {
 		// print_o(get_caller(__FUNCTION__),'$caller',1);
 		// print_o($value, '$value',1);
-		// $i = (Object) ['a' => 'aaaa'];//$GLOBALS['user']; //SG\getFirst(R()->user,(Object)[]);
+		// $i = (Object) ['a' => 'aaaa'];//$GLOBALS['user']; //\SG\getFirst(R()->user,(Object)[]);
 		// $i = &$GLOBALS['R']->user;//value;
 		// $i = $R->user;
 		// print_o(R()->user,'(i)R()->user',1);
@@ -2585,7 +2598,7 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 		$args = ['type' => $type, 'text' => $text, 'module' => $module, 'options' => $options];
 	}
 
-	$responseCode = SG\getFirst($args['code'], $args['responseCode']);
+	$responseCode = \SG\getFirst($args['code'], $args['responseCode']);
 	if ($responseCode) http_response_code($responseCode);
 
 	if (is_string($args['text'])) $args['text'] = [$args['text']];

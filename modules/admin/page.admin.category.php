@@ -27,16 +27,16 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 		case 'save':
 			if (post('name')) {
 				$data = new stdClass();
-				$data->tid = SG\getFirst($data->tid,post('tid'));
+				$data->tid = \SG\getFirst($data->tid,post('tid'));
 				$data->taggroup = post('taggroup');
 				$data->name = post('name');
 				$data->catid = post('catid');
-				$data->process = SG\getFirst(post('process'), NULL);
+				$data->process = \SG\getFirst(post('process'), NULL);
 				if (empty($data->catid)) {
 					$data->catid = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$data->taggroup)->lastid + 1;
 					$rs = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$data->taggroup);
 				}
-				$data->catparent = SG\getFirst(post('parent'),NULL);
+				$data->catparent = \SG\getFirst(post('parent'),NULL);
 				if ($data->catparent == 'remove') $data->catparent = NULL;
 				$data->weight = post('weight');
 
@@ -116,16 +116,16 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 		case 'create':
 			if (post('name')) {
 				$data = new stdClass();
-				$data->tid = SG\getFirst($data->tid,post('tid'));
+				$data->tid = \SG\getFirst($data->tid,post('tid'));
 				$data->taggroup = $taggroup;
 				$data->name = post('name');
 				$data->catid = post('catid');
-				$data->process = SG\getFirst(post('process'), NULL);
+				$data->process = \SG\getFirst(post('process'), NULL);
 				if (empty($data->catid)) {
 					$data->catid = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$taggroup)->lastid + 1;
 					$rs = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$taggroup);
 				}
-				$data->catparent = SG\getFirst(post('parent'),NULL);
+				$data->catparent = \SG\getFirst(post('parent'),NULL);
 				if ($data->catparent == 'remove') $data->catparent = NULL;
 				$data->weight = post('weight');
 
@@ -235,7 +235,7 @@ function __admin_category_form($taggroup, $data = NULL) {
 			'label' => 'Weight',
 			'class' => '-fill',
 			'options' => '-127..128',
-			'value' => SG\getFirst($data->weight,0),
+			'value' => \SG\getFirst($data->weight,0),
 		)
 	);
 

@@ -53,7 +53,7 @@ class View {
 		}
 
 		$para=para($args,'url=paper/$tpid','limit=5');
-		$dateformat=SG\getFirst($para->dateformat,cfg('dateformat'));
+		$dateformat = SG\getFirst($para->dateformat,cfg('dateformat'));
 
 		$patterns = (Object) [
 			'short' => (Object) [
@@ -130,10 +130,10 @@ class View {
 		if ($para->header && $pattern->{'list-style'}=='div') $ret .= '<h3 class="header">'.$para->header.'</h3>'._NL;
 
 		list($last_date)=explode(' ',$topics->items[0]->created);
-		$start=SG\getFirst($para->start,1);
-		$count=SG\getFirst($para->count,$topics->_num_rows);
+		$start = SG\getFirst($para->start,1);
+		$count = SG\getFirst($para->count,$topics->_num_rows);
 		$no=0;
-		$debug=SG\getFirst($para->debug=='eval',debug('eval'));
+		$debug = SG\getFirst($para->debug=='eval',debug('eval'));
 		/* generate each item */
 		foreach ($topics->items as $topic) {
 			$no++;
@@ -283,8 +283,8 @@ class View {
 	 */
 	public static function photo_slide($id,$w,$h,$imgfile,$para=NULL) {
 		$ret = '<div'.($id?' id="'.$id.'"':'').' class="slide" style="'.($w?'width:'.$w.'px;':'').($h?'height:'.$h.'px;':'').'">'._NL
-					.'	<object type="application/x-shockwave-flash" data="https://softganz.com/library/imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.SG\getFirst($w,'100%').'" height="'.SG\getFirst($h,'100%').'">'._NL
-					.'	<param name="movie" value="https://softganz.com/library/imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.SG\getFirst($w,'100%').'" height="'.SG\getFirst($h,'100%').'" />'._NL
+					.'	<object type="application/x-shockwave-flash" data="https://softganz.com/library/imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.\SG\getFirst($w,'100%').'" height="'.\SG\getFirst($h,'100%').'">'._NL
+					.'	<param name="movie" value="https://softganz.com/library/imagerotator.swf?file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" width="'.\SG\getFirst($w,'100%').'" height="'.\SG\getFirst($h,'100%').'" />'._NL
 					.'	<embed src="https://softganz.com/library/imagerotator.swf" width="100%" height="100%" flashvars="file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" style="width:100%;height:100%;" />'._NL
 					.'	</object>'._NL
 					.'</div>';
@@ -404,7 +404,7 @@ class View {
 		$hot=15;
 		$veryhot=25;
 
-		$order=SG\getFirst($para->order,'tpid');
+		$order = SG\getFirst($para->order,'tpid');
 		$sort=in_array($para->sort,array('asc','desc'))?$para->sort:'desc';
 
 		$request=q();
@@ -470,7 +470,7 @@ class View {
 			$ret .= '<td class="timestamp">'.($topic->reply?sg_date($topic->last_reply,cfg('dateformat')):'').'</td>'._NL;
 			$ret .= '</tr>'._NL;
 
-			$comment_page_items=SG\getFirst(cfg('comment.items'),20);
+			$comment_page_items = SG\getFirst(cfg('comment.items'),20);
 			if ($topic->comments>1 && ($page_count=ceil($topic->comments/$comment_page_items))>1) {
 				$page_str = '<span>Page</span>';
 				for ($i=1;$i<=$page_count;$i++) {
@@ -502,7 +502,7 @@ class View {
 		foreach ($topics->items as $topic) {
 			$photo_str=$para->photo && $topic->photo?'<img class="'.$para->photo.'" src="'.$topic->photo->_url.'" alt="" />':'';
 			$ret .= '<li><a class="title" href="'.url('paper/'.$topic->tpid).'">'.($para->photo && $photo_str ? $photo_str : '').$topic->title.'</a>';
-			$ret .= '<span class="poster"> by '.SG\getFirst($topic->poster,$topic->owner).'</span>';
+			$ret .= '<span class="poster"> by '.\SG\getFirst($topic->poster,$topic->owner).'</span>';
 			$ret .= '<span class="time_stamp">@'.sg_date($topic->created,cfg('dateformat')).'</span>';
 			$ret .= '<span class="stat"> | '.$topic->view.' reads'.($topic->reply?' | <strong>'.$topic->reply.'</strong> comment(s)':'').'</span>';
 			if ($para->option->detail) $ret .= _NL.'<p class="summary">'.$topic->summary.'</p>'._NL;
@@ -552,7 +552,7 @@ class View {
 	 * @return String
 	 */
 	public static function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'text', $data = [], $emptytext = '...') {
-		return SG\inlineEdit($fld, $text, $is_edit, $input_type, $data, $emptytext);
+		return \SG\inlineEdit($fld, $text, $is_edit, $input_type, $data, $emptytext);
 	}
 
 	/**
@@ -579,11 +579,11 @@ class View {
 			if (is_array($text)) {
 				$ret.='<ul>'._NL;
 				foreach ($text as $k=>$v) {
-					$ret.='<li><span fld="'.$k.':'.$fld.'" input-type="'.$input_type.'" '._NL.'data="'.htmlspecialchars(json_encode($data)).'" data-value="'.htmlspecialchars($v).'">'.SG\getFirst(trim($v),$emptytext).'</span></li>'._NL;
+					$ret.='<li><span fld="'.$k.':'.$fld.'" input-type="'.$input_type.'" '._NL.'data="'.htmlspecialchars(json_encode($data)).'" data-value="'.htmlspecialchars($v).'">'.\SG\getFirst(trim($v),$emptytext).'</span></li>'._NL;
 				}
 				$ret.='</ul>'._NL;
 			} else {
-				$ret.='<span '.$attr.' input-type="'.$input_type.'"'.($data?' data="'.htmlspecialchars(json_encode($data)).'"':'').' data-value="'.htmlspecialchars($text).'">'.SG\getFirst(trim($text),$emptytext).'</span>';
+				$ret.='<span '.$attr.' input-type="'.$input_type.'"'.($data?' data="'.htmlspecialchars(json_encode($data)).'"':'').' data-value="'.htmlspecialchars($text).'">'.\SG\getFirst(trim($text),$emptytext).'</span>';
 			}
 		} else {
 			if (is_array($text)) {

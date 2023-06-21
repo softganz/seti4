@@ -62,7 +62,7 @@ function tags($self, $tagIdList = NULL) {
 			if (!$tag_description) $tag_description=$tag->description;
 		}
 		if ($tagDbs->_num_rows==1) {
-			$para->{'list-style'}=SG\getFirst($tagDbs->items[0]->liststyle,$para->{'list-style'});
+			$para->{'list-style'}= \SG\getFirst($tagDbs->items[0]->liststyle,$para->{'list-style'});
 			$para->{'list-class'}=$tagDbs->items[0]->listclass;
 			// Show all child tags
 			if ($tagDbs->items[0]->process==1) {
@@ -73,10 +73,10 @@ function tags($self, $tagIdList = NULL) {
 			}
 		}
 
-		$self->theme->title=$self->theme->header->text=SG\getFirst(implode(' , ',$tag_name),'Tags');
+		$self->theme->title=$self->theme->header->text = SG\getFirst(implode(' , ',$tag_name),'Tags');
 
 		// show page description
-		$description=SG\getFirst($tag_description,$topic->type_description);
+		$description = SG\getFirst($tag_description,$topic->type_description);
 		if ($description) {
 			ob_start();
 			eval ('?>'.$description);

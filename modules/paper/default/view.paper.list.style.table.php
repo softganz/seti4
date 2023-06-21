@@ -21,7 +21,7 @@ function view_paper_list_style_table($self, $topics, $para) {
 	$hot = 15;
 	$veryhot = 25;
 
-	$getOrder = SG\getFirst(post('ord'),'tpid');
+	$getOrder = \SG\getFirst(post('ord'),'tpid');
 	$sort = in_array(strtoupper($para->sort),array('ASC','DESC')) ? $para->sort : NULL;
 
 	$urlRequest = q();
@@ -92,7 +92,7 @@ function view_paper_list_style_table($self, $topics, $para) {
 		$ret .= '<td class="timestamp">'.($topic->reply?sg_date($topic->last_reply,cfg('dateformat')):'').'</td>'._NL;
 		$ret .= '</tr>'._NL;
 
-		$comment_page_items=SG\getFirst(cfg('comment.items'),20);
+		$comment_page_items = SG\getFirst(cfg('comment.items'),20);
 		if ($topic->comments>1 && ($page_count=ceil($topic->comments/$comment_page_items))>1) {
 			$page_str = '<span>Page</span>';
 			for ($i=1;$i<=$page_count;$i++) {

@@ -23,7 +23,7 @@ function r_paper_get_topics($conditions, $options = '{}') {
 	}
 
 	if ($options->page < 1) $options->page = 1;
-	$items = SG\getFirst($options->items,10);
+	$items = \SG\getFirst($options->items,10);
 	$getFields = explode(',',$options->field);
 	$sort = in_array($options->sort,array('ASC','DESC')) ? $options->sort : 'DESC';
 
@@ -101,7 +101,7 @@ function r_paper_get_topics($conditions, $options = '{}') {
 	mydb::value('$JOIN$', implode(_NL.'			', $join), false);
 	mydb::value('$GROUP BY$', 'GROUP BY t.`tpid`');
 	mydb::value('$HAVING$', $having ? 'HAVING '.implode(' AND ', $having).' ' : '', false);
-	mydb::value('$ORDER BY$', 'ORDER BY '.SG\getFirst($options->order,'t.`tpid`').' '.SG\getFirst($sort,'DESC'), false);
+	mydb::value('$ORDER BY$', 'ORDER BY '.\SG\getFirst($options->order,'t.`tpid`').' '.\SG\getFirst($sort,'DESC'), false);
 
 
 	$stmt = 'SELECT SQL_CALC_FOUND_ROWS

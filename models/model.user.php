@@ -22,11 +22,11 @@ class UserModel {
 
 	public static function get($conditions, $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) ;
 		else if (is_array($conditions)) $conditions = (object) $conditions;
 		else {
@@ -53,11 +53,11 @@ class UserModel {
 
 	public static function create($user, $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		if (is_object($user)) ; // Do nothing
-		else if (is_string($user) && preg_match('/^{/',$user)) $user = SG\json_decode($user);
+		else if (is_string($user) && preg_match('/^{/',$user)) $user = \SG\json_decode($user);
 		else if (is_array($user)) $user = (Object) $user;
 		else $user = (Object) [];
 
@@ -110,9 +110,9 @@ class UserModel {
 		if (empty($user->phone)) $user->phone = '';
 		if (empty($user->email)) $user->email = '';
 		if (empty($user->organization)) $user->organization = '';
-		$user->realName = SG\getFirst($user->name, $user->realName);
-		$user->lastName = SG\getFirst($user->lastName);
-		$user->admin_remark = SG\getFirst($user->admin_remark);
+		$user->realName = \SG\getFirst($user->name, $user->realName);
+		$user->lastName = \SG\getFirst($user->lastName);
+		$user->admin_remark = \SG\getFirst($user->admin_remark);
 
 		$user->userRoles = '';
 		if ($user->roles && is_string($user->roles)) {
@@ -277,7 +277,7 @@ class UserModel {
 		return $result;
 	}
 
-	public static function signInProcess($username = NULL, $password = NULL, $cookielength = false) {
+	public static function signInProcess($username = NULL, $password = NULL, $cookielength = NULL) {
 		$rs = mydb::select('SELECT * FROM %users% u WHERE `username` = :username LIMIT 1', [':username' => $username]);
 
 		//TODO: Bug ตอนลงทะเบียนสมาชิกใหม่ จะไม่สามารถดึงค่าจากฐานข้อมูลผ่าน function ได้
@@ -374,7 +374,7 @@ class UserModel {
 		if (empty($user->email) || empty($user->name)) return false;
 
 		do {
-			$username = $user->prefix.SG\uniqid(20);
+			$username = $user->prefix.\SG\uniqid(20);
 		} while (UserModel::get(['username' => $username]));
 
 		$createUserResult = UserModel::create([

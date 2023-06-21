@@ -12,9 +12,9 @@
 $debug = true;
 
 function admin_comment_list($self) {
-	$getItems = SG\getFirst(post('item'),100);
-	$getPage = SG\getFirst(post('p'),1);
-	$getSearch = SG\getFirst(post('s'),'');
+	$getItems = \SG\getFirst(post('item'),100);
+	$getPage = \SG\getFirst(post('p'),1);
+	$getSearch = \SG\getFirst(post('s'),'');
 	$getNoConfirm = post('noconfirm');
 
 	$isEdit = user_access('administer comments');
@@ -109,7 +109,7 @@ function admin_comment_list($self) {
 			$nodeUrl = url('paper/'.$rs->tpid,NULL,$rs->cid?'comment-'.$rs->cid:NULL);
 		}
 		$tables->rows[] = [
-			'<a href="'.$nodeUrl.'" title="'.htmlspecialchars($rs->title).'" target="_blank">'.SG\getFirst($rs->cid,$rs->tpid).'</a>',
+			'<a href="'.$nodeUrl.'" title="'.htmlspecialchars($rs->title).'" target="_blank">'.\SG\getFirst($rs->cid,$rs->tpid).'</a>',
 			$deleteBtn,
 			sg_text2html($rs->comment),
 			$rs->uid ? '<a class="sg-action" href="'.url('profile/'.$rs->uid).'" data-rel="box" data-width="640"><img class="profile-photo" src="'.BasicModel::user_photo($rs->username).'" style="width: 24px; height: 24px;" />'.$rs->name.($rs->userStatus != 'enable' ? ' ('.$rs->userStatus.')' : '').'</a>' : $rs->name,

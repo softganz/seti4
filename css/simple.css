@@ -53,7 +53,7 @@ pre {tab-size: 1;}
 .container>.row>.col {display: block;}
 
 
-
+.-cursor-pointer {cursor: pointer;}
 
 
 .-sg-clearfix::after {clear: both; content: " "; display: table;}

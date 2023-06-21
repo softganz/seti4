@@ -23,13 +23,18 @@ class PersonModel {
 
 		$rs = mydb::select(
 			'SELECT
-			  p.`psnId`, p.`cid`, p.`uid`, p.`prename`, p.`name`, p.`lname`, p.`nickname`
+			  p.`psnId`, p.`cid`, p.`uid`
+			, p.`preName`
+			, p.`name` `firstName`
+			, p.`lname` `lastName`
+			, p.`prename`, p.`name`, p.`lname`, p.`nickname`
 			, p.`sex`, p.`birth`
 			, p.`phone`, p.`email`
 			, p.`occupa`, cooc.`occu_desc`, p.`aptitude`, p.`interest`
 			, p.`mstatus`, com.`name` `mstatus_desc`
 			, p.`race`, p.`nation`, p.`religion`
 			, p.`educate`, coe.`edu_desc`
+			, p.`areacode`
 			, p.`commune`
 			, p.`house`, p.`village`, p.`tambon`, p.`ampur`, p.`changwat`
 			, IFNULL(cosub.`subdistname`,p.`t_tambon`) subdistname
@@ -76,8 +81,8 @@ class PersonModel {
 
 		if (!$debug) mydb::clearProp($rs);
 
-		$rs->realname=trim($rs->name.' '.$rs->lname);
-		$rs->fullname=trim($rs->prename.' '.$rs->name.' '.$rs->lname);
+		$rs->realname = trim($rs->name.' '.$rs->lname);
+		$rs->fullName = $rs->fullname = trim($rs->prename.' '.$rs->name.' '.$rs->lname);
 
 		$rs->address=trim($rs->house.($rs->soi?' ซอย'.$rs->soi:'').($rs->road?' ถนน'.$rs->road:'').($rs->village?' หมู่ที่ '.$rs->village:'').($rs->villname?' บ้าน'.$rs->villname:'').($rs->subdistname?' ตำบล'.$rs->subdistname:'').($rs->distname?' อำเภอ'.$rs->distname:'').($rs->provname?' จังหวัด'.$rs->provname:'').($rs->zip?' รหัสไปรษณีย์ '.$rs->zip:''));
 		$rs->raddress=trim($rs->rhouse.($rs->rvillage?' หมู่ที่ '.$rs->rvillage:'').($rs->rvillname?' บ้าน'.$rs->rvillname:'').($rs->rsubdistname?' ตำบล'.$rs->rsubdistname:'').($rs->rdistname?' อำเภอ'.$rs->rdistname:'').($rs->rprovname?' จังหวัด'.$rs->rprovname:'').($rs->rzip?' รหัสไปรษณีย์ '.$rs->rzip:''));
@@ -137,11 +142,11 @@ class PersonModel {
 
 	// public static function items($conditions, $options = '{}') {
 	// 	$defaults = '{debug: false}';
-	// 	$options = SG\json_decode($options, $defaults);
+	// 	$options = \SG\json_decode($options, $defaults);
 	// 	$debug = $options->debug;
 
 	// 	if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-	// 		$conditions = SG\json_decode($conditions);
+	// 		$conditions = \SG\json_decode($conditions);
 	// 	} else if (is_object($conditions)) {
 	// 		//
 	// 	} else if (is_array($conditions)) {
@@ -158,7 +163,7 @@ class PersonModel {
 	public static function save($data, $options = '{}') {
 		$data = (Object) $data;
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = (Object) [
@@ -194,12 +199,12 @@ class PersonModel {
 
 		if (empty($data->religion)) $data->religion = NULL;
 
-		$data->email = SG\getFirst($data->email);
-		$data->areacode = SG\getFirst($data->areacode);
-		$data->hrareacode = SG\getFirst($data->hrareacode);
+		$data->email = \SG\getFirst($data->email);
+		$data->areacode = \SG\getFirst($data->areacode);
+		$data->hrareacode = \SG\getFirst($data->hrareacode);
 
 		if ($data->address) {
-			$addrList = SG\explode_address($data->address,$data->areacode);
+			$addrList = \SG\explode_address($data->address,$data->areacode);
 			$result->address = $addrList;
 			if ($addrList['house']) $data->house = $addrList['house'];
 			if ($addrList['village']) $data->village = $addrList['village'];
@@ -232,11 +237,11 @@ class PersonModel {
 
 		if (empty($data->graduated)) $data->graduated = '';
 		if (empty($data->faculty)) $data->faculty = '';
-		$data->userid = SG\getFirst($data->userid);
+		$data->userid = \SG\getFirst($data->userid);
 
-		$data->uid = SG\getFirst($data->uid, i()->uid, NULL);
+		$data->uid = \SG\getFirst($data->uid, i()->uid, NULL);
 		$data->created = date('U');
-		$data->userId = SG\getFirst($data->userId, NULL);
+		$data->userId = \SG\getFirst($data->userId, NULL);
 
 		$stmt = 'INSERT INTO %db_person%
 			(

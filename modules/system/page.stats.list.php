@@ -13,12 +13,12 @@
 $debug = true;
 
 function stats_list($self) {
-	$getId = SG\getFirst(post('id'),0);
+	$getId = \SG\getFirst(post('id'),0);
 	$getIp = post('ip');
 	$getUser = post('user');
 	$getDate = post('date');
-	$items = intval(SG\getFirst(post('items'),100));
-	$page = intval(SG\getFirst(post('page'),1));
+	$items = intval(\SG\getFirst(post('items'),100));
+	$page = intval(\SG\getFirst(post('page'),1));
 	$getEid = post('eid');
 	$getIncludeBot = post('bot');
 
@@ -58,7 +58,7 @@ function stats_list($self) {
 			mydb::where('l.`id` >= :id', ':id', $startId);
 			mydb::value('$LIMIT$', 'LIMIT '.$items);
 		//} else {
-		//	$minId = SG\getFirst($getEid,$rs->minid);
+		//	$minId = \SG\getFirst($getEid,$rs->minid);
 		//	$startId = $minId + (($page - 1) * $items);
 		//	mydb::value('$LIMIT$', 'LIMIT '.$items);
 		//}

@@ -17,7 +17,7 @@ class ProfileView extends Page {
 	var $userInfo;
 
 	function __construct($userId) {
-		$this->userId = SG\getFirst($userId, post('uid'));
+		$this->userId = \SG\getFirst($userId, post('uid'));
 		$this->userInfo = R::Model('user.get',$this->userId);
 	}
 

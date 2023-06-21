@@ -19,11 +19,11 @@ class UserApi extends PageApi {
 
 	function __construct() {
 		parent::__construct([
-			'queryText' => SG\getFirst(post('q')),
+			'queryText' => \SG\getFirst(post('q')),
 			'username' => post('username'),
 			'email' => post('email'),
-			'page' => SG\getFirst(post('page'), post('p'), 1),
-			'items' => SG\getFirst(post('item'), post('n'), 10),
+			'page' => \SG\getFirst(post('page'), post('p'), 1),
+			'items' => \SG\getFirst(post('item'), post('n'), 10),
 		]);
 	}
 

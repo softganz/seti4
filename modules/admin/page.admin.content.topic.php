@@ -1,7 +1,7 @@
 <?php
 function admin_content_topic($self) {
 	$para=para(func_get_args());
-	$day=SG\getFirst($_GET['day'],7);
+	$day = SG\getFirst($_GET['day'],7);
 
 	$from_date=date('Y-m-d 00:00:00', strtotime('-'.$day.' days'));
 

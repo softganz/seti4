@@ -23,8 +23,8 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 	];
 
 	$uploadFolder = cfg('paper.upload.photo.folder');
-	$photoPrename = SG\getFirst($data->prename, 'paper_'.$data->tpid.'_');
-	$photoFilenameLength = SG\getFirst($options->fileNameLength, 30);
+	$photoPrename = \SG\getFirst($data->prename, 'paper_'.$data->tpid.'_');
+	$photoFilenameLength = \SG\getFirst($options->fileNameLength, 30);
 	$isUploadSingleFile = true;
 
 	$deleteurl = $data->deleteurl;
@@ -93,13 +93,13 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 		$picsData->tpid = empty($data->tpid) ? NULL : $data->tpid;
 		$picsData->cid = empty($data->cid) ? NULL : $data->cid;
 		$picsData->type = $ext == 'pdf' ? 'doc' : 'photo';
-		$picsData->title = SG\getFirst($data->title, $postFile['name']);
+		$picsData->title = \SG\getFirst($data->title, $postFile['name']);
 		$picsData->tagname = empty($data->tagname) ? NULL : $data->tagname;
 
-		$picsData->orgid = SG\getFirst($data->orgId, $data->orgid);
-		$picsData->uid = SG\getFirst($data->uid,i()->uid);
+		$picsData->orgid = \SG\getFirst($data->orgId, $data->orgid);
+		$picsData->uid = \SG\getFirst($data->uid,i()->uid);
 		$picsData->file = $photo_upload;
-		$picsData->refid = SG\getFirst($data->refId, $data->refid);
+		$picsData->refid = \SG\getFirst($data->refId, $data->refid);
 		$picsData->description = $data->description;
 		$picsData->timestamp = 'func.NOW()';
 		$picsData->ip = ip2long(GetEnv('REMOTE_ADDR'));

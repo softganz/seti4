@@ -91,7 +91,7 @@ function admin_category_form($self, $tagInfo = NULL) {
 			'label' => 'Weight',
 			'class' => '-fill',
 			'options' => '-127..128',
-			'value' => SG\getFirst($tagInfo->weight,0),
+			'value' => \SG\getFirst($tagInfo->weight,0),
 		)
 	);
 

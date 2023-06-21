@@ -14,7 +14,7 @@
 class FileModel {
 	public static function get($fileId, $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		if ($debug) debugMsg(mydb()->_query);
@@ -150,11 +150,11 @@ class FileModel {
 		];
 
 		$uploadFolder = cfg('paper.upload.photo.folder');
-		$photoPrename = SG\getFirst($data->prename, 'paper_'.$data->tpid.'_');
-		$photoFilenameLength = SG\getFirst($options->fileNameLength, 30);
+		$photoPrename = \SG\getFirst($data->prename, 'paper_'.$data->tpid.'_');
+		$photoFilenameLength = \SG\getFirst($options->fileNameLength, 30);
 		$isUploadSingleFile = true;
 
-		$deleteUrl = SG\getFirst($data->deleteUrl, $data->deleteurl);
+		$deleteUrl = \SG\getFirst($data->deleteUrl, $data->deleteurl);
 		//$ret='Upload photo of orgid '.$orgid.' tagName='.$tagName.' photoPrename '.$photoPrename.'<br />';
 
 
@@ -215,18 +215,18 @@ class FileModel {
 			$photo_upload = $upload->filename;
 
 			$picsData = (Object) [
-				'fid' => SG\getFirst($data->fid),
-				'nodeId' => SG\getFirst($data->nodeId, $data->tpid),
-				'tpid' => SG\getFirst($data->nodeId, $data->tpid),
-				'cid' => SG\getFirst($data->cid),
+				'fid' => \SG\getFirst($data->fid),
+				'nodeId' => \SG\getFirst($data->nodeId, $data->tpid),
+				'tpid' => \SG\getFirst($data->nodeId, $data->tpid),
+				'cid' => \SG\getFirst($data->cid),
 				'type' => $ext == 'pdf' ? 'doc' : 'photo',
-				'title' => SG\getFirst($data->title, $postFile['name']),
-				'tagName' => SG\getFirst($data->tagName, $data->tagname),
-				'orgId' => SG\getFirst($data->orgId, $data->orgid),
-				'uid' => SG\getFirst($data->uid,i()->uid),
+				'title' => \SG\getFirst($data->title, $postFile['name']),
+				'tagName' => \SG\getFirst($data->tagName, $data->tagname),
+				'orgId' => \SG\getFirst($data->orgId, $data->orgid),
+				'uid' => \SG\getFirst($data->uid,i()->uid),
 				'file' => $photo_upload,
-				'refId' => SG\getFirst($data->refId, $data->refid),
-				'description' => SG\getFirst($data->description),
+				'refId' => \SG\getFirst($data->refId, $data->refid),
+				'description' => \SG\getFirst($data->description),
 				'timestamp' => 'func.NOW()',
 				'ip' => ip2long(GetEnv('REMOTE_ADDR')),
 			];
@@ -336,7 +336,7 @@ class FileModel {
 	*/
 	public static function delete($fileId, $options = '{}') {
 		$defaults = '{debug: false, deleteRecord: true, deleteFile: true}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = (Object) [

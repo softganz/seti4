@@ -41,7 +41,7 @@ class Report extends Widget {
 	function _render_checkbox($items, $typeValue) {
 		$ret = '';
 		foreach ($items as $selKey => $selVal) {
-			$inputType = SG\getFirst($typeValue['type'], 'checkbox');
+			$inputType = \SG\getFirst($typeValue['type'], 'checkbox');
 			$selItem = (Object) [];
 			if (is_string($selVal)) {
 				$selItem->label = $selVal;
@@ -53,7 +53,7 @@ class Report extends Widget {
 				continue;
 			}
 
-			$filter = SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $typeValue['filter']);
+			$filter = \SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $typeValue['filter']);
 
 			$ret .= '		<abbr class="'.(preg_match('/^\t/', $selItem->label) ? '-level-2' : '').'">'
 				. '<label>'

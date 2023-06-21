@@ -42,10 +42,10 @@ function paper_list($self) {
 	$self->theme->class='content-paper';
 
 	if ($para->tag) $self->theme->class.=' paper-tag-'.$para->tag;
-	if ($para->forum||$topics->forum->fid) $self->theme->class.=' paper-forum-'.SG\getFirst($para->forum,$topics->forum->fid);
-	if ($para->category||$topics->forum->cid) $self->theme->class.=' paper-category-'.SG\getFirst($para->category,$topics->forum->cid);
+	if ($para->forum||$topics->forum->fid) $self->theme->class.=' paper-forum-'.\SG\getFirst($para->forum,$topics->forum->fid);
+	if ($para->category||$topics->forum->cid) $self->theme->class.=' paper-category-'.\SG\getFirst($para->category,$topics->forum->cid);
 	if (!$para->option->no_header) {
-		$self->theme->header->text=SG\getFirst($topics->forum->category,$topics->forum->forum,'Topic list');
+		$self->theme->header->text = SG\getFirst($topics->forum->category,$topics->forum->forum,'Topic list');
 		if ($topics->forum->description) $self->theme->header->description=$topics->forum->description;
 	}
 	if (!$para->option->no_menu) {

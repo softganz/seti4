@@ -16,7 +16,7 @@ class AdminUserLogasName extends Page {
 	var $username;
 
 	function __construct($username = NULL) {
-		$this->username = SG\getFirst(post('logasusername'), $username);
+		$this->username = \SG\getFirst(post('logasusername'), $username);
 	}
 
 	function build() {

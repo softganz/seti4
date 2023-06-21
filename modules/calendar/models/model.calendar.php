@@ -18,7 +18,7 @@ class CalendarModel {
 
 	public static function get($id, $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = mydb::select(
@@ -32,11 +32,11 @@ class CalendarModel {
 
 	// public static function items($conditions, $options = '{}') {
 	// 	$defaults = '{debug: false}';
-	// 	$options = SG\json_decode($options, $defaults);
+	// 	$options = \SG\json_decode($options, $defaults);
 	// 	$debug = $options->debug;
 
 	// 	if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-	// 		$conditions = SG\json_decode($conditions);
+	// 		$conditions = \SG\json_decode($conditions);
 	// 	} else if (is_object($conditions)) {
 	// 		//
 	// 	} else if (is_array($conditions)) {

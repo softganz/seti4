@@ -48,7 +48,7 @@ class Dropbox extends Widget {
 
 		$text = $this->_renderChildren();
 
-		// $options = SG\json_decode($options,isset($this) ? $this->options : NULL, Dropbox::$defaultOption);
+		// $options = \SG\json_decode($options,isset($this) ? $this->options : NULL, Dropbox::$defaultOption);
 		if ($this->position == 'left') $this->class .= ' leftside';
 		else if ($this->position == 'center') $this->class .= ' -center';
 		else $this->class .= ' rightside';
@@ -59,7 +59,7 @@ class Dropbox extends Widget {
 			. '<i class="icon -'.($this->icon ? $this->icon : 'material').'">'.($this->iconText).'</i>'
 			. '</a>';
 
-		$dropLink = SG\getFirst($this->link, $defaultLink);
+		$dropLink = \SG\getFirst($this->link, $defaultLink);
 
 		$ret = _NL.'<!-- Start of widget-dropbox -->'._NL
 			. '<span class="widget-dropbox sg-dropbox '.$this->type.' '.$this->class.'" data-type="'.$this->type.'"'.($this->url ? ' data-url="'.$this->url.'"' : '').'>'._NL

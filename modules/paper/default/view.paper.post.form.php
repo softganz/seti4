@@ -122,7 +122,7 @@ function view_paper_post_form($topic) {
 					'class' => '-fill',
 					'require' => true,
 					'readonly' => i()->ok && !cfg('member.name_alias'),
-					'value' => SG\getFirst($topic->post->poster,i()->name),
+					'value' => \SG\getFirst($topic->post->poster,i()->name),
 				],
 				'email' => !i()->ok ? [
 					'type' => 'text',
@@ -273,7 +273,7 @@ function _vid($topic) {
 				'maxlength' => 255,
 				'autocomplete' => 'OFF',
 				'value' => $topic->post->taxonomy['tags'][$vocab->vid],
-				'description' => SG\getFirst($vocab->help,'A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc."'),
+				'description' => \SG\getFirst($vocab->help,'A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc."'),
 				'description' => '<script type="text/javascript">
 					var options_xml = {
 						script:"'.url('api/tags/'.$vocab->vid,'').'",
@@ -312,7 +312,7 @@ function _vid($topic) {
 					}
 				}
 			}
-			$form['value'] = SG\getFirst($topic->post->taxonomy[$vocab->vid],$topic->tid);
+			$form['value'] = \SG\getFirst($topic->post->taxonomy[$vocab->vid],$topic->tid);
 			$fields['children'][$vid] = $form;
 		}
 	}

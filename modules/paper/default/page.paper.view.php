@@ -115,9 +115,9 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 	}
 	if ($topicInfo->info->category) $self->theme->class .= ' paper-category-'.$topicInfo->info->category;
 
-	// debugMsg('AAA = '.SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum));
-	// $self->theme->header->text = SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum,' ');
-	$description = SG\getFirst($topicInfo->tags[0]->description,$topicInfo->info->type_description);
+	// debugMsg('AAA = '.\SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum));
+	// $self->theme->header->text = \SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum,' ');
+	$description = \SG\getFirst($topicInfo->tags[0]->description,$topicInfo->info->type_description);
 	if ($description) {
 		ob_start();
 		eval ('?>'.$description);
@@ -128,7 +128,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 
 	// set user request comment sort order
 	if (array_key_exists('change_comment_order',$_GET)) {
-		$comment_order = SG\getFirst($_COOKIE['corder'],cfg('comment.order')) == 'ASC' ? 'DESC' : 'ASC';
+		$comment_order = \SG\getFirst($_COOKIE['corder'],cfg('comment.order')) == 'ASC' ? 'DESC' : 'ASC';
 		setcookie('corder',$comment_order,time()+60*60*24*365*10, cfg('cookie.path'),cfg('cookie.domain'));
 		cfg('comment.order',$comment_order);
 	}
@@ -448,8 +448,8 @@ class XPaperView extends Page {
 		}
 		if ($topicInfo->info->category) $self->theme->class .= ' paper-category-'.$topicInfo->info->category;
 
-		$self->theme->header->text = SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum);
-		$description = SG\getFirst($topicInfo->tags[0]->description,$topicInfo->info->type_description);
+		$self->theme->header->text = \SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum);
+		$description = \SG\getFirst($topicInfo->tags[0]->description,$topicInfo->info->type_description);
 		if ($description) {
 			ob_start();
 			eval ('?>'.$description);
@@ -460,7 +460,7 @@ class XPaperView extends Page {
 
 		// set user request comment sort order
 		if (array_key_exists('change_comment_order',$_GET)) {
-			$comment_order = SG\getFirst($_COOKIE['corder'],cfg('comment.order')) == 'ASC' ? 'DESC' : 'ASC';
+			$comment_order = \SG\getFirst($_COOKIE['corder'],cfg('comment.order')) == 'ASC' ? 'DESC' : 'ASC';
 			setcookie('corder',$comment_order,time()+60*60*24*365*10, cfg('cookie.path'),cfg('cookie.domain'));
 			cfg('comment.order',$comment_order);
 		}

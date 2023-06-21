@@ -21,14 +21,14 @@ class Toolbar extends Widget {
 		$this->self = $self;
 		$this->title = $title;
 		$this->class = 'sg-toolbar '.($class ? $class : '-main');
-		$this->info = (is_string($info) AND substr($info,0,1) == '{') ? SG\json_decode($info) : $info;
+		$this->info = (is_string($info) AND substr($info,0,1) == '{') ? \SG\json_decode($info) : $info;
 
 		if (is_string($nav)) {
 			$this->nav = $nav;
 			$this->navGroup = R::View($self->module.'.'.$nav.'.nav', $info, $options);
 			$this->config->class .= ' -'.$self->module.'-'.str_replace('.', '-', $nav);
 		}
-		$this->options = SG\json_decode($options);
+		$this->options = \SG\json_decode($options);
 
 		$this->self->theme->title = $title;
 		$self->theme->toolbar = $this;

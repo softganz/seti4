@@ -23,8 +23,8 @@ function calendar_home($self, $action = NULL) {
 	$ret = '';
 
 	if (substr($action,0,1) == '*') $post->get = $action;
-	$year = SG\getFirst($post->year, $year);
-	$month = SG\getFirst($post->month, $month);
+	$year = \SG\getFirst($post->year, $year);
+	$month = \SG\getFirst($post->month, $month);
 	$hash = post('hash');
 
 	head('<meta name="robots" content="noindex,nofollow">');

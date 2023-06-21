@@ -17,9 +17,9 @@ class AddressApi extends PageApi {
 
 	function __construct() {
 		parent::__construct([
-			'addressText' => SG\getFirst(post('q')),
-			'page' => SG\getFirst(post('page'), post('p'), 1),
-			'items' => SG\getFirst(post('item'), post('n'), 50)
+			'addressText' => \SG\getFirst(post('q')),
+			'page' => \SG\getFirst(post('page'), post('p'), 1),
+			'items' => \SG\getFirst(post('item'), post('n'), 50)
 		]);
 	}
 
@@ -28,9 +28,9 @@ class AddressApi extends PageApi {
 
 		if (empty($this->addressText)) return $result;
 
-		$addressOut = SG\explode_address($this->addressText);
+		$addressOut = \SG\explode_address($this->addressText);
 
-		$searchText = SG\getFirst($addressOut['tambon'],$addressOut['ampur'],$addressOut['changwat'], $this->addressText);
+		$searchText = \SG\getFirst($addressOut['tambon'],$addressOut['ampur'],$addressOut['changwat'], $this->addressText);
 
 		// debugMsg('$searchText = '.$searchText);
 
@@ -128,8 +128,8 @@ class AddressApi extends PageApi {
 		// debugMsg($address,'$address');
 		// debugMsg($dbs,'$dbs');
 		foreach ($dbs->items as $rs) {
-			$address = SG\implode_address(['house' => $house] + (Array) $rs);
-			$label = $address;//SG\implode_address($rs);// $house.' ตำบล'.$rs->tambonName.' อำเภอ'.$rs->distname.' จังหวัด'.$rs->changwatName;
+			$address = \SG\implode_address(['house' => $house] + (Array) $rs);
+			$label = $address;//\SG\implode_address($rs);// $house.' ตำบล'.$rs->tambonName.' อำเภอ'.$rs->distname.' จังหวัด'.$rs->changwatName;
 			$areacode = $rs->areacode
 				. (strlen($rs->areacode) == 6 && $addressOut['village'] != '' ? str_pad($addressOut['village'], 2, '0', STR_PAD_LEFT) : '');
 			$result[] = [

@@ -33,8 +33,8 @@ class CommentRenderWidget extends Widget {
 		if ($topic->comments) {
 			$result =$topic->comments;
 		} else {
-			$page = SG\getFirst($options->commentPage,2);
-			$page_items=SG\getFirst(cfg('comment.items'),20);
+			$page = \SG\getFirst($options->commentPage,2);
+			$page_items = SG\getFirst(cfg('comment.items'),20);
 			$comment_count = mydb::select('SELECT COUNT(*) `amt` FROM %'.($archive?'archive_topic_comments':'topic_comments').'% WHERE `tpid`=:tpid LIMIT 1',':tpid',$tpid)->amt;
 			$page_count=ceil($comment_count/$page_items);
 			if (!isset($options->commentPage) && cfg('comment.page')=='first') {

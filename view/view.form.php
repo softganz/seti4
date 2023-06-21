@@ -28,7 +28,7 @@ function view_form($formId=NULL,$form=NULL,$name=NULL,$returnType='text') {
 	if ($config->title) $ret .= '<h3 class="title">'.$config->title.'</h3>'._NL;
 	if ($config->description) $ret .= '<div class="description">'.$config->description.'</div>';
 	if ($config->container=='fieldset') {
-		$ret .= '<fieldset id="'.SG\getFirst($config->id,$name).'" class="'.($config->class?$config->class.' ':'').($config->collapsible?'collapsible':'').'">'._NL;
+		$ret .= '<fieldset id="'.\SG\getFirst($config->id,$name).'" class="'.($config->class?$config->class.' ':'').($config->collapsible?'collapsible':'').'">'._NL;
 		if ($config->label) $ret .= '<legend>'.$config->label.'</legend>'._NL;
 		if ($config->collapsible) $ret.='<div id="'.$name.'" style="display: none; height: auto;" class="fieldset-wrapper">'._NL;
 	}
@@ -302,9 +302,9 @@ function view_form($formId=NULL,$form=NULL,$name=NULL,$returnType='text') {
 						} else {
 							$ret .= '	<button'
 								. (isset($button['type'])?' type="'.$button['type'].'"':'')
-								. ' name="'.SG\getFirst($button['name'],is_string($key) ? $key : $name).'" '
+								. ' name="'.\SG\getFirst($button['name'],is_string($key) ? $key : $name).'" '
 								. 'class="btn'.($button['class']?' '.$button['class']:'').'" '
-								. 'value="'.SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'" '
+								. 'value="'.\SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'" '
 								. ($isReadOnly || $item->readonly?'disabled="disabled" ':'').'>'
 								. $button['value']
 								. '</button> ';
@@ -348,9 +348,9 @@ function view_form($formId=NULL,$form=NULL,$name=NULL,$returnType='text') {
 
 			case 'time' :
 				unset($times);
-				$start_time=SG\getFirst($item->start,0);
-				$end_time=SG\getFirst($item->end,24);
-				$step_time=SG\getFirst($item->step,15);
+				$start_time = SG\getFirst($item->start,0);
+				$end_time = SG\getFirst($item->end,24);
+				$step_time = SG\getFirst($item->step,15);
 				for ($hr=$start_time;$hr<$end_time;$hr++) {
 					for ($min=0;$min<60;$min+=$step_time) {
 						$times[]=sprintf('%02d',$hr).':'.sprintf('%02d',$min);
@@ -363,9 +363,9 @@ function view_form($formId=NULL,$form=NULL,$name=NULL,$returnType='text') {
 
 			case 'hour' :
 				unset($times);
-				$start_time=SG\getFirst($item->start,0);
-				$end_time=SG\getFirst($item->end,24);
-				$step_time=SG\getFirst($item->step,15);
+				$start_time = SG\getFirst($item->start,0);
+				$end_time = SG\getFirst($item->end,24);
+				$step_time = SG\getFirst($item->step,15);
 				for ($hr=$start_time;$hr<$end_time;$hr++) {
 					for ($min=0;$min<60;$min+=$step_time) {
 						$times[]=sprintf('%02d',$hr).':'.sprintf('%02d',$min);

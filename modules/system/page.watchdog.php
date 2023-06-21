@@ -8,7 +8,7 @@ function watchdog($self, $watchId = NULL, $action = NULL) {
 		switch ($action) {
 			case 'delete' :
 				$ret = 'DELETED';
-				if ($isAdmin && $watchId && SG\confirm()) {
+				if ($isAdmin && $watchId && \SG\confirm()) {
 					$stmt = 'DELETE FROM %watchdog% WHERE `wid` = :wid LIMIT 1';
 					mydb::query($stmt, ':wid', $watchId);
 					//$ret .= mydb()->_query;

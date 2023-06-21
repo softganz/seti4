@@ -121,7 +121,7 @@ function admin_config_edit($self) {
 				'label'=>'Variable value : '.$name.' ( Type is "'.gettype($value).'" ): ',
 				'class'=>'-fill',
 				'rows'=>10,
-				'value'=>SG\getFirst($newValue,$value)
+				'value'=>\SG\getFirst($newValue,$value)
 				)
 		);
 	}

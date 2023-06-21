@@ -392,7 +392,7 @@ class BigData {
 			'fldname' => $fldName,
 			'flddata' => $fldData,
 			'created' => date('U'),
-			'ucreated' => SG\getFirst(i()->uid,'func.NULL'),
+			'ucreated' => \SG\getFirst(i()->uid,'func.NULL'),
 		];
 
 		mydb::query(
@@ -422,13 +422,13 @@ class BigData {
 
 	public static function get($conditions) {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = (Object) ['count' => 0, 'items' => []];
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) {
 			//
 		} else if (is_array($conditions)) {
@@ -456,20 +456,20 @@ class BigData {
 		);
 
 		$result->id = $result->info->autoId;
-		if ($result->info->type === 'JSON') $result->data = SG\json_decode($result->info->data);
+		if ($result->info->type === 'JSON') $result->data = \SG\json_decode($result->info->data);
 		$result->info = mydb::clearProp($result->info);
 		return $result;
 	}
 
 	public static function items($conditions, $options = '{}') {
 		$defaults = '{debug: false, start: 0, items: 50, order: "b.`bigId`", sort: "DESC"}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = (Object) ['count' => 0, 'items' => []];
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) {
 			//
 		} else if (is_array($conditions)) {
@@ -509,7 +509,7 @@ class BigData {
 		$result = (Object) [];
 
 		if (is_string($data) && preg_match('/^{/',$data)) {
-			$data = SG\json_decode($data);
+			$data = \SG\json_decode($data);
 		} else if (is_object($data)) {
 			// Do nothing
 		} else if (is_array($data)) {
@@ -518,16 +518,16 @@ class BigData {
 
 		if ($debug) debugMsg($data, '$data');
 
-		$data->autoId = SG\getFirst($data->autoId);
-		$data->keyName = SG\getFirst($data->keyName);
-		$data->keyId = SG\getFirst($data->keyId);
-		$data->field = SG\getFirst($data->field);
-		$data->type = SG\getFirst($data->type);
-		$data->ref = SG\getFirst($data->ref);
+		$data->autoId = \SG\getFirst($data->autoId);
+		$data->keyName = \SG\getFirst($data->keyName);
+		$data->keyId = \SG\getFirst($data->keyId);
+		$data->field = \SG\getFirst($data->field);
+		$data->type = \SG\getFirst($data->type);
+		$data->ref = \SG\getFirst($data->ref);
 		if ($data->type === 'JSON') {
-			$data->data = SG\json_encode($data->data);
+			$data->data = \SG\json_encode($data->data);
 		}	else {
-			$data->data = SG\getFirst($data->data);
+			$data->data = \SG\getFirst($data->data);
 		}
 		$data->created = $data->modified = date('U');
 		$data->owner = $data->umodified = i()->uid;

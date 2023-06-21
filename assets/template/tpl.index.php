@@ -104,7 +104,7 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 if (cfg('web.header')===false) {
 	;
 } else {
-	$navigator = SG\getFirst(cfg('navigator.'.q(0).'.'.q(1)),cfg('navigator.'.q(0)),cfg('navigator'));
+	$navigator = \SG\getFirst(cfg('navigator.'.q(0).'.'.q(1)),cfg('navigator.'.q(0)),cfg('navigator'));
 	echo '<div id="header-wrapper" class="page -header">
 	<div class="wrapper">
 	<header>

@@ -12,7 +12,7 @@ $debug = false;
 
 function view_signform($options = '{}') {
 	$defaults = '{debug: false, id: "signin-'.uniqid().'", class: "signform", time: 10080, showTime: true, showInfo: true, showGuide: true, showRegist: true, rel: null, signret: null, done: "", regRel: "#main"}';
-	$options = SG\json_decode($options, $defaults);
+	$options = \SG\json_decode($options, $defaults);
 	$debug = $options->debug;
 
 	$elementClass = 'member-zone'.($options->class ? ' '.$options->class : '');
@@ -60,7 +60,7 @@ function view_signform($options = '{}') {
 	// Show signin form
 	$form = new Form([
 		'variable' => 'signin',
-		'action' => SG\getFirst($options->action, url(q()), $_SERVER['HTTP_REFERER'], _URL),
+		'action' => \SG\getFirst($options->action, url(q()), $_SERVER['HTTP_REFERER'], _URL),
 		'id' => $options->id ? $options->id : 'signin',
 		'class' => $options->class,
 		'rel' => $options->rel ? $options->rel : NULL,
@@ -76,7 +76,7 @@ function view_signform($options = '{}') {
 				'placeholder' => 'Username or E-mail',
 				'maxlength' => 50,
 				'autocomplete' => 'off',
-				'value' => SG\getFirst($options->username,post('user_u')),
+				'value' => \SG\getFirst($options->username,post('user_u')),
 				'container' => '{class: "-label-in"}',
 			],
 			'password' => [
@@ -85,7 +85,7 @@ function view_signform($options = '{}') {
 				'id'  =>  'password-'.uniqid(),
 				'label' => tr('Password'),
 				'class' => '-password -fill',
-				'value' => SG\getFirst($options->password,post('user_p')),
+				'value' => \SG\getFirst($options->password,post('user_p')),
 				'placeholder' => 'Password',
 				'maxlength' => cfg('member.password.maxlength'),
 				'container' => '{class: "-label-in"}',
@@ -101,7 +101,7 @@ function view_signform($options = '{}') {
 					'43200' => '1 '.tr('Month'),
 					'-1' => tr('Forever'),
 				],
-				'value' => SG\getFirst($options->time,-1)
+				'value' => \SG\getFirst($options->time,-1)
 			],
 			'submit' => [
 				'type' => 'button',

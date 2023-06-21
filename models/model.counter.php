@@ -25,7 +25,7 @@ class CounterModel {
 
 		if (!$is_counter_ok) return false;
 
-		$real_ip = SG\getFirst(getenv('REMOTE_ADDR'),'0');
+		$real_ip = \SG\getFirst(getenv('REMOTE_ADDR'),'0');
 		$ip = ip2long($real_ip);
 		$browser = addslashes($_SERVER['HTTP_USER_AGENT']);
 		$new_user = false;

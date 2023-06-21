@@ -238,7 +238,7 @@ function sg_generate_nextfile($folder, $name, $ext, $digit = 20) {
 		$name = strToLower($prefix.chr(rand(65,90)).time());
 	}
 	do {
-		$result = $folder.substr($name.SG\uniqid().SG\uniqid(), 0, $digit).'.'.$ext;
+		$result = $folder.substr($name.\SG\uniqid().\SG\uniqid(), 0, $digit).'.'.$ext;
 	} while (file_exists($result));
 	return $result;
 }
@@ -700,7 +700,7 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 		$result = false;
 		if ($srcWidth >= $dstWidth && $srcHeight >= $dstHeight) {
 			// ini_set('memory_limit', '1024MB');
-			BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
+			BasicModel::watch_log('system', 'Photo Resize', \SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
 
 			// Copy file that size over 6MB to upload/error folder
 			if ($srcSize > 6000000) {
@@ -718,7 +718,7 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 					$handle = @imagecreatefromgif($srcFile);
 				else return false;
 			} catch (Exception $e) {
-				BasicModel::watch_log('system', 'Photo Resize', SG\json_encode(['error' => 'YES', 'imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
+				BasicModel::watch_log('system', 'Photo Resize', \SG\json_encode(['error' => 'YES', 'imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
 				return false;
 			}
 			if (!$handle) return false;
@@ -906,7 +906,7 @@ function sg_dropbox($ui, $options = '{}') {
 		. '<i class="icon -'.($options->icon ? $options->icon : 'material').'">'.($options->iconText).'</i>'
 		. '</a>';
 
-	$dropLink = SG\getFirst($options->link, $defaultLink);
+	$dropLink = \SG\getFirst($options->link, $defaultLink);
 
 	$ret .= '<span class="sg-dropbox '.$options->type.' '.$options->class.'" data-type="'.$options->type.'"'.($options->url ? ' data-url="'.$options->url.'"' : '').'>'
 		. $dropLink

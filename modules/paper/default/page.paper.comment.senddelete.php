@@ -41,7 +41,7 @@ function paper_comment_senddelete($self, $cid) {
 			</head>
 			<body>
 			<h2><a href="'.cfg('domain').url('paper/'.$commentInfo->tpid,null,'comment-'.$commentInfo->cid).'" target=_blank><strong>'.$commentInfo->title.'</strong></a></h2>
-			<p>Submit by <strong>'.SG\getFirst($commentInfo->owner,$commentInfo->name).($commentInfo->uid?'('.$commentInfo->uid.')':'').'</strong> on <strong>'.$commentInfo->timestamp.'</strong> ip : '.GetEnv('REMOTE_ADDR').' | paper id : <strong><a href="'.cfg('domain').url('paper/'.$commentInfo->tpid).'" target=_blank>'.$commentInfo->tpid.'</a></strong> comment id : <strong><a href="'.cfg('domain').url('paper/'.$commentInfo->tpid,null,'comment-'.$commentInfo->cid).'" target=_blank>'.$commentInfo->cid.'</a></strong><p>
+			<p>Submit by <strong>'.\SG\getFirst($commentInfo->owner,$commentInfo->name).($commentInfo->uid?'('.$commentInfo->uid.')':'').'</strong> on <strong>'.$commentInfo->timestamp.'</strong> ip : '.GetEnv('REMOTE_ADDR').' | paper id : <strong><a href="'.cfg('domain').url('paper/'.$commentInfo->tpid).'" target=_blank>'.$commentInfo->tpid.'</a></strong> comment id : <strong><a href="'.cfg('domain').url('paper/'.$commentInfo->tpid,null,'comment-'.$commentInfo->cid).'" target=_blank>'.$commentInfo->cid.'</a></strong><p>
 			<hr size=1>
 			<h3>แจ้งโดย : '.$post->sender.' &lt;'.$post->email.'&gt;</h3>
 			<h3>ความไม่เหมาะสมของเนื้อหา</h3><p>'.$post->detail.'<p><h3><strong>ข้อความ</strong></h3>'.
@@ -94,7 +94,7 @@ function paper_comment_senddelete($self, $cid) {
 						'label' => tr('Sender').(i()->ok ? ' (You are member)':''),
 						'class' => '-fill',
 						'require' => true,
-						'value' => SG\getFirst($post->sender,i()->name),
+						'value' => \SG\getFirst($post->sender,i()->name),
 					)
 				);
 

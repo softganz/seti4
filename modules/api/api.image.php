@@ -17,9 +17,9 @@ class ImageApi extends PageApi {
 
 	function __construct() {
 		parent::__construct([
-			'queryText' => SG\getFirst(post('q')),
-			'page' => SG\getFirst(post('page'), post('p'), 1),
-			'items' => SG\getFirst(post('item'), post('n'), 50),
+			'queryText' => \SG\getFirst(post('q')),
+			'page' => \SG\getFirst(post('page'), post('p'), 1),
+			'items' => \SG\getFirst(post('item'), post('n'), 50),
 		]);
 	}
 
@@ -52,8 +52,8 @@ function api_image() {
 	}
 
 	$srcTypes = NULL;
-	$dstWidth = SG\getFirst($para->w,$srcTypes[0]);
-	$dstHeight = SG\getFirst($para->h,$srcTypes[1]);
+	$dstWidth = \SG\getFirst($para->w,$srcTypes[0]);
+	$dstHeight = \SG\getFirst($para->h,$srcTypes[1]);
 	$quality = $para->q;
 	
 	if ( file_exists($src_file) and is_file($src_file) ) $srcTypes = getimagesize($src_file);
@@ -73,10 +73,10 @@ function api_image() {
 
 	if ( $debug ) print_o($srcTypes,'$srcTypes',1);
 
-	$dstWidth = SG\getFirst($para->w,$srcTypes[0]);
-	$dstHeight = SG\getFirst($para->h,$srcTypes[1]);
+	$dstWidth = \SG\getFirst($para->w,$srcTypes[0]);
+	$dstHeight = \SG\getFirst($para->h,$srcTypes[1]);
 	$srcType = $srcTypes['mime'];
-	$dstType = SG\getFirst($para->dsttype,'jpg');
+	$dstType = \SG\getFirst($para->dsttype,'jpg');
 	
 	if ( $debug ) echo 'destination type is <em>'.$dstType.'</em><br />';
 

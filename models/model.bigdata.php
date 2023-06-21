@@ -66,9 +66,9 @@ class BigDataModel {
 
 		$oldData = $bigId ? mydb::select('SELECT `fldData` FROM %bigdata% WHERE `bigId` = :bigId LIMIT 1', [':bigId' => $bigId])->fldData : (Object) [];
 
-		$oldData = SG\json_decode($oldData);
+		$oldData = \SG\json_decode($oldData);
 
-		$updateData = SG\json_decode($data, $oldData);
+		$updateData = \SG\json_decode($data, $oldData);
 
 		mydb::query(
 			'INSERT INTO %bigdata%
@@ -87,7 +87,7 @@ class BigDataModel {
 				':fldName' => $fldName,
 				':fldType' => 'JSON',
 				':fldRef' => $fldRef,
-				':fldData' => SG\json_encode($updateData),
+				':fldData' => \SG\json_encode($updateData),
 				':created' => date('U'),
 				':ucreated' => i()->uid,
 				':modified' => date('U'),
@@ -112,13 +112,13 @@ class BigDataModel {
 				. ' LIMIT 1',
 				[':keyName' => $keyName, ':fldName' => $fldName, ':keyId' => $keyId, ':fldRef' => $fldRef]
 			)->fldData;
-			return SG\json_decode($jsonData);
+			return \SG\json_decode($jsonData);
 		}
 	}
 
 	// public static function get($id, $options = '{}') {
 	// 	$defaults = '{debug: false}';
-	// 	$options = SG\json_decode($options, $defaults);
+	// 	$options = \SG\json_decode($options, $defaults);
 	// 	$debug = $options->debug;
 
 	// 	$result = NULL;
@@ -138,13 +138,13 @@ class BigDataModel {
 	*/
 	public static function items($conditions, $options = '{}') {
 		$defaults = '{debug: false, key: null, value: null}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		if ($options->debug) debugMsg($options, '$options');
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) {
 			//
 		} else if (is_array($conditions)) {

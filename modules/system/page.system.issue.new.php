@@ -36,7 +36,7 @@ class SystemIssueNew extends Page {
 	}
 
 	function build() {
-		// $api = SG\api([
+		// $api = \SG\api([
 		// 	'url' => 'https://localfund.happynetwork.org/api/ampur/90',
 		// 	'result' => 'text',
 		// ]);

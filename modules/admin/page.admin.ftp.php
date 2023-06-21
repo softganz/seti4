@@ -28,20 +28,20 @@ function admin_ftp($self) {
 	$rServer=$_POST['rs'];
 	$rName=$_POST['rn'];
 	$rPass=$_POST['rp'];
-	$rFolder = SG\getFirst($_POST['rf'],'.');
+	$rFolder = \SG\getFirst($_POST['rf'],'.');
 	$rcd = $_POST['rcd'];
 	$remoteSelectFolder=$_POST['rsfolder'];
 	$remoteSelectFile=$_POST['rsfile'];
-	$rPort=SG\getFirst($_POST['rport'],21);
+	$rPort = SG\getFirst($_POST['rport'],21);
 
 	$lServer=$_POST['ls'];
 	$lName=$_POST['ln'];
 	$lPass=$_POST['lp'];
-	$lFolder = SG\getFirst($_POST['lf'],'.');
+	$lFolder = \SG\getFirst($_POST['lf'],'.');
 	$lcd = $_POST['lcd'];
 	$localSelectFolder=$_POST['lsfolder'];
 	$localSelectFile=$_POST['lsfile'];
-	$lPort=SG\getFirst($_POST['lport'],21);
+	$lPort = SG\getFirst($_POST['lport'],21);
 
 	$simulate=$_POST['simulate'] ? true:false;
 

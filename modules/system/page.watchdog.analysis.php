@@ -14,8 +14,8 @@ $debug = true;
 function watchdog_analysis($self) {
 	$module = post('module');
 	$keyword = post('keyword');
-	$days = intval(SG\getFirst(post('d'),30));
-	$items = SG\getFirst(post('items'),1000);
+	$days = intval(\SG\getFirst(post('d'),30));
+	$items = \SG\getFirst(post('items'),1000);
 	$ret = '';
 
 	$self->theme->title = 'Watchdog Anlysis';

@@ -84,7 +84,7 @@ class CalendarRoomNew extends Page {
 											$times[]=sprintf('%02d',$hr).':'.sprintf('%02d',$min);
 										}
 									}
-									$value = '<input type="text" name="room[checkin]" id="edit-calendar-from_date" maxlength="10" class="form-text form-date require sg-datepicker" style="width:80px;" value="'.htmlspecialchars(SG\getFirst($data->checkin,date('d/m/Y'))).'"> เวลา <select class="form-select" name="room[from_time]" id="edit-calendar-from_time">';
+									$value = '<input type="text" name="room[checkin]" id="edit-calendar-from_date" maxlength="10" class="form-text form-date require sg-datepicker" style="width:80px;" value="'.htmlspecialchars(\SG\getFirst($data->checkin,date('d/m/Y'))).'"> เวลา <select class="form-select" name="room[from_time]" id="edit-calendar-from_time">';
 									foreach ($times as $time) $value.='<option value="'.$time.'"'.($time==$data->from_time?' selected="selected"':'').'>'.$time.'</option>';
 									$value.='</select>
 									ถึง <select class="form-select" name="room[to_time]" id="edit-calendar-to_time">';
@@ -129,7 +129,7 @@ class CalendarRoomNew extends Page {
 									}
 									return $options;
 								})(),
-								'posttext' => ' หรือ <input maxlength="50" size="30" name="room[org_name_etc]" id="edit-room-org_name_etc" class="form-text" type="text" value="'.htmlspecialchars(SG\getFirst($data->org_name_etc,in_array($data->org_name,$form->org_name->options) ? NULL : $data->org_name)).'" placeholder="ระบุชื่อชื่อหน่วยงาน" />',
+								'posttext' => ' หรือ <input maxlength="50" size="30" name="room[org_name_etc]" id="edit-room-org_name_etc" class="form-text" type="text" value="'.htmlspecialchars(\SG\getFirst($data->org_name_etc,in_array($data->org_name,$form->org_name->options) ? NULL : $data->org_name)).'" placeholder="ระบุชื่อชื่อหน่วยงาน" />',
 							]
 							:
 							[

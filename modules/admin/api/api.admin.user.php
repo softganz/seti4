@@ -30,7 +30,7 @@ class AdminUserApi extends PageApi {
 	* Block/UnBlock User
 	*/
 	function block() {
-		if (!$this->userId || !SG\confirm()) {
+		if (!$this->userId || !\SG\confirm()) {
 			return [
 				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
 				'ข้อมูลไม่ครบถ้วน',
@@ -69,7 +69,7 @@ class AdminUserApi extends PageApi {
 				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
 				'text' => 'ไม่มีข้อมูลสมาชิก',
 			]);
-		} else if (!SG\confirm()) {
+		} else if (!\SG\confirm()) {
 			return new ErrorMessage([
 				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
 				'text' => 'กรุณายืนยัน',

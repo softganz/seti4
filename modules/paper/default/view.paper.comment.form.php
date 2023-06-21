@@ -38,7 +38,7 @@ function view_paper_comment_form($topicInfo) {
 
 	if ($_GET['quote']) {
 		$quote = PaperModel::get_comment_by_id($_GET['quote']);
-		$comment->comment = '[quote author='.SG\getFirst($quote->name,$quote->owner).' link=paper/'.$quote->tpid.'#comment-10831 date='.sg_date($quote->timestamp,'U').']'._NL;
+		$comment->comment = '[quote author='.\SG\getFirst($quote->name,$quote->owner).' link=paper/'.$quote->tpid.'#comment-10831 date='.sg_date($quote->timestamp,'U').']'._NL;
 		$comment->comment .= trim(strip_tags(sg_text2html($quote->comment),'<p><ul><ol><li>,<strong><em><u>'))._NL;
 		$comment->comment .= '[/quote]'._NL._NL;
 	}
@@ -83,7 +83,7 @@ function view_paper_comment_form($topicInfo) {
 				'class' => '-fill',
 				'require' => true,
 				'readonly' => i()->ok && !cfg('member.name_alias'),
-				'value' => SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
+				'value' => \SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
 			],
 
 			'mail' => !i()->ok ? [
@@ -91,7 +91,7 @@ function view_paper_comment_form($topicInfo) {
 				'label' => tr('E-mail'),
 				'class' => '-fill',
 				'require' => cfg('comment.require.mail'),
-				'value' => SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
+				'value' => \SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
 				'description' => 'The content of this field is kept private and will not be shown publicly. This mail use for contact via email when someone want to contact you.',
 			] : NULL,
 			'homepage' => !i()->ok ? [
@@ -99,7 +99,7 @@ function view_paper_comment_form($topicInfo) {
 				'label' => tr('Homepage'),
 				'class' => '-fill',
 				'require' => cfg('comment.require.homepage'),
-				'value' => SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
+				'value' => \SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
 			] : NULL,
 
 
@@ -131,7 +131,7 @@ function view_paper_comment_form($topicInfo) {
 			// 			'class' => '-fill',
 			// 			'require' => true,
 			// 			'readonly' => i()->ok && !cfg('member.name_alias'),
-			// 			'value' => SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
+			// 			'value' => \SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
 			// 		];
 
 			// 		if (!i()->ok) {
@@ -140,7 +140,7 @@ function view_paper_comment_form($topicInfo) {
 			// 				'label' => tr('E-mail'),
 			// 				'class' => '-fill',
 			// 				'require' => cfg('comment.require.mail'),
-			// 				'value' => SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
+			// 				'value' => \SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
 			// 				'description' => 'The content of this field is kept private and will not be shown publicly. This mail use for contact via email when someone want to contact you.',
 			// 			];
 
@@ -149,7 +149,7 @@ function view_paper_comment_form($topicInfo) {
 			// 				'label' => tr('Homepage'),
 			// 				'class' => '-fill',
 			// 				'require' => cfg('comment.require.homepage'),
-			// 				'value' => SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
+			// 				'value' => \SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
 			// 			];
 			// 		}
 			// 	} else {
@@ -205,7 +205,7 @@ function view_paper_comment_form($topicInfo) {
 	// 				'class' => '-fill',
 	// 				'require' => true,
 	// 				'readonly' => i()->ok && !cfg('member.name_alias'),
-	// 				'value' => SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
+	// 				'value' => \SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
 	// 			)
 	// 		);
 
@@ -217,7 +217,7 @@ function view_paper_comment_form($topicInfo) {
 	// 					'label' => tr('E-mail'),
 	// 					'class' => '-fill',
 	// 					'require' => cfg('comment.require.mail'),
-	// 					'value' => SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
+	// 					'value' => \SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
 	// 					'description' => 'The content of this field is kept private and will not be shown publicly. This mail use for contact via email when someone want to contact you.',
 	// 				)
 	// 			);
@@ -229,7 +229,7 @@ function view_paper_comment_form($topicInfo) {
 	// 					'label' => tr('Homepage'),
 	// 					'class' => '-fill',
 	// 					'require' => cfg('comment.require.homepage'),
-	// 					'value' => SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
+	// 					'value' => \SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
 	// 				)
 	// 			);
 	// 	}

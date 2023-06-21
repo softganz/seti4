@@ -36,8 +36,8 @@ function contents($self, $contentNameList = NULL) {
 		//content('type',$contentNameList);
 
 		$self->theme->class='content-paper';
-		$self->theme->class.=' paper-content-'.SG\getFirst($contentNameList);
-		$self->theme->header->text=SG\getFirst($types->name);
+		$self->theme->class.=' paper-content-'.\SG\getFirst($contentNameList);
+		$self->theme->header->text = SG\getFirst($types->name);
 		if ($types->description) {
 			ob_start();
 			eval ('?>'.$types->description);

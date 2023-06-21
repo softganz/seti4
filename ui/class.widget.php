@@ -20,6 +20,12 @@ class WidgetBase {
 			$this->{$argKey} = $argValue;
 		}
 	}
+
+	function extension() {
+		// debugMsg('get_class = '.get_class($this));
+		// debugMsg(get_class_methods($this), '$methid');
+		// \EXTENSION\PPI\ProjectJoinList::test2();
+	}
 }
 
 class Widget extends WidgetBase {
@@ -94,7 +100,7 @@ class Widget extends WidgetBase {
 	}
 
 	function header($str, $attr = '{}', $options = '{}') {
-		$this->header = (Object) array('text' => $str, 'attr' => SG\json_decode($attr), 'options' => SG\json_decode($options));
+		$this->header = (Object) array('text' => $str, 'attr' => \SG\json_decode($attr), 'options' => \SG\json_decode($options));
 	}
 
 	function children($value = NULL) {
@@ -113,10 +119,10 @@ class Widget extends WidgetBase {
 			}
 		} else if (is_object($widget)) {
 			// Build General Object
-			$result .= SG\json_encode($widget);
+			$result .= \SG\json_encode($widget);
 		} else if (is_array($widget)) {
 			// Build Array
-			$result .= SG\json_encode($widget);
+			$result .= \SG\json_encode($widget);
 		} else if (is_string($widget) && $widget === '<sep>') {
 			// Build Seperator
 			$result = '<hr class="separator" size="0" />';
@@ -173,7 +179,7 @@ class Widget extends WidgetBase {
 	// Container for each child of children
 	// @override
 	function _renderChildContainerStart($childrenKey, $args = [], $childrenValue = []) {
-		$childTagName = SG\getFirst($this->childTagName, $this->childContainer['tagName']);
+		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
 		return $childTagName ? '<'.$childTagName
 			. ' id="'.($args['id'] ? $args['id'] : '').'"'
 			. ' class="'.($this->childContainer['class'] ? $this->childContainer['class']: '')
@@ -186,7 +192,7 @@ class Widget extends WidgetBase {
 
 	// @override
 	function _renderChildContainerEnd() {
-		$childTagName = SG\getFirst($this->childTagName, $this->childContainer['tagName']);
+		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
 		return $this->childContainer ? '</'.$childTagName.'>' : '';
 	}
 
@@ -442,11 +448,11 @@ class Button extends Widget {
 				. ($this->type ? ' -'.$this->type : '')
 				. ($this->class ? ' '.$this->class : '')
 			),
-			'title' => SG\getFirst($this->title),
-			'data-rel' => SG\getFirst($this->rel),
-			'data-before' => SG\getFirst($this->before),
-			'data-done' => SG\getFirst($this->done),
-			'target' => SG\getFirst($this->target),
+			'title' => \SG\getFirst($this->title),
+			'data-rel' => \SG\getFirst($this->rel),
+			'data-before' => \SG\getFirst($this->before),
+			'data-done' => \SG\getFirst($this->done),
+			'target' => \SG\getFirst($this->target),
 			'onClick' => $this->onClick ? $this->onClick : NULL,
 			'style' => $this->style,
 		], (Array) $this->attribute);
@@ -484,7 +490,7 @@ class Icon extends Widget {
 		$attribute = array_replace_recursive(
 			$this->attribute,
 			[
-				'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.SG\getFirst($this->class))
+				'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.\SG\getFirst($this->class))
 			]
 		);
 		return '<i '.sg_implode_attr($attribute).'>'
@@ -515,7 +521,7 @@ class InlineEdit extends Widget {
 	}
 
 	function _render() {
-		// SG\inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'text', $data = [], $emptytext = '...')
+		// \SG\inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'text', $data = [], $emptytext = '...')
 		$fld = [];
 		if ($this->label) $fld['label'] = $this->label;
 		if (!is_null($this->group)) $fld['group'] = $this->group;
@@ -537,7 +543,7 @@ class InlineEdit extends Widget {
 		if ($this->inputClass) $fld['options']['class'] = $this->inputClass;
 		$fld['container']->class = 'widget-inlineedit'.($this->class ? ' '.$this->class : '');
 
-		$ret = SG\inlineEdit($fld, $this->text, $this->editMode, $this->type, $this->selectOptions, $this->emptyText);
+		$ret = \SG\inlineEdit($fld, $this->text, $this->editMode, $this->type, $this->selectOptions, $this->emptyText);
 		// debugMsg($fld, '$fld');
 		return $ret;
 	}
@@ -601,7 +607,7 @@ class ListItem extends Widget {
 			}
 
 			// Convert options to object
-			$options = is_string($child->options) ? SG\json_decode($child->options): (Object) $child->options;
+			$options = is_string($child->options) ? \SG\json_decode($child->options): (Object) $child->options;
 
 			$uiItemClass = $this->uiItemClass.($options->class ? ' '.$options->class : '');
 			if (in_array($child->text, array('-','<sep>'))) {
@@ -671,7 +677,7 @@ class ListItem extends Widget {
 		}
 
 		if ($this->container) {
-			$container = SG\json_decode($this->container);
+			$container = \SG\json_decode($this->container);
 			$containerTag = $this->config->nav ? 'nav' : $container->tag;
 			unset($container->tag);
 			$containerAttr = sg_implode_attr($container);
@@ -698,7 +704,7 @@ class ProfilePhoto extends Widget {
 		$attribute = array_replace_recursive(
 			$this->attribute,
 			[
-				'class' => trim('widget-'.strtolower($this->widgetName).' '.SG\getFirst($this->class)).($this->size ? ' -size-'.$this->size : ''),
+				'class' => trim('widget-'.strtolower($this->widgetName).' '.\SG\getFirst($this->class)).($this->size ? ' -size-'.$this->size : ''),
 				'src' => UserModel::profilePhoto($this->username),
 			]
 		);

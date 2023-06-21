@@ -14,7 +14,7 @@ $debug = true;
 
 function r_category_get($conditions, $key = 'tid', $options = '{}') {
 	$defaults = '{debug: false, result: "default", fullValue : false, order: "tg.`weight` ASC, tg.`$KEY$` ASC", selectText: ""}';
-	$options = SG\json_decode($options, $defaults);
+	$options = \SG\json_decode($options, $defaults);
 	$debug = $options->debug;
 
 	$result = NULL;

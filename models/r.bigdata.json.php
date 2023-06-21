@@ -32,14 +32,14 @@ function r_bigdata_json($action, $keyName, $keyId, $fldName, $dataGroup = NULL, 
 	$result->_query[] = mydb()->_query;
 
 	if ($action == 'get') {
-		return SG\json_decode($currentData->flddata);
+		return \SG\json_decode($currentData->flddata);
 	} else if ($action == 'delete' && $currentData->bigid) {
 		mydb::query('DELETE FROM %bigdata% WHERE `bigid` = :bigid LIMIT 1', ':bigid', $currentData->bigid);
 		return true;
 	}
 
 	$data->bigid = $currentData->bigid;
-	$data->flddata = SG\json_decode($currentData->flddata);
+	$data->flddata = \SG\json_decode($currentData->flddata);
 	$data->created = $data->modified = date('U');
 	$data->ucreated = $data->umodified = i()->uid;
 
@@ -56,7 +56,7 @@ function r_bigdata_json($action, $keyName, $keyId, $fldName, $dataGroup = NULL, 
 			$data->flddata->{$dataKey} = $dataValue;
 		}
 	}
-	$data->flddata = SG\json_encode($data->flddata);
+	$data->flddata = \SG\json_encode($data->flddata);
 
 	$stmt = 'INSERT INTO %bigdata%
 		(`bigid`, `keyname`, `keyid`, `fldname`, `fldtype`, `flddata`, `created`, `ucreated`)

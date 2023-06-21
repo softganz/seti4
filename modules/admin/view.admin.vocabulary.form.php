@@ -122,7 +122,7 @@ function view_admin_vocabulary_form($vocab=array(),$message=NULL) {
 					'type'=>'select',
 					'label'=>'Weight:',
 					'options'=>$optionsWeight,
-					'value'=>SG\getFirst($vocab->weight,0),
+					'value'=>\SG\getFirst($vocab->weight,0),
 					'description'=>'Vocabularies are displayed in ascending order by weight.'
 					)
 				);

@@ -12,7 +12,7 @@
 
 class AdminConfigSessionClear extends Page {
 	function build() {
-		if (SG\confirm()) return $this->clearEmptySession();
+		if (\SG\confirm()) return $this->clearEmptySession();
 
 		return new Scaffold([
 			'appBar' => new AppBar([

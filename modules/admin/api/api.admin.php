@@ -30,13 +30,13 @@ class AdminApi extends PageApi {
 
 		$banIpList = cfg('ban.ip');
 		if (!is_object($banIpList)) $banIpList = (Object) [];
-		$banTime = SG\getFirst(post('time'), cfg('ban.time'), 1*24*60); // Ban time in minute
+		$banTime = \SG\getFirst(post('time'), cfg('ban.time'), 1*24*60); // Ban time in minute
 		$banIpList->{$ip} = (Object) [
 			'start' => date('Y-m-d H:i:s'),
 			'end' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +'.$banTime.' minutes')),
 		];
 		$ret .= 'BAN IP '.$ip;
-		cfg_db('ban.ip', SG\json_encode($banIpList));
+		cfg_db('ban.ip', \SG\json_encode($banIpList));
 		return 'IP was banded.';
 	}
 

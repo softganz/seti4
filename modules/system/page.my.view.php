@@ -28,7 +28,7 @@ class MyView extends Page {
 						if (empty($url)) return NULL;
 						return [
 							++$no,
-							'<a href="'.url($url).'">'.SG\getFirst($rs->title,'???').'</a>',
+							'<a href="'.url($url).'">'.\SG\getFirst($rs->title,'???').'</a>',
 							sg_date($rs->dateact, 'd/m/Y'),
 						];
 					},

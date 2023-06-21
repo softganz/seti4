@@ -24,9 +24,9 @@ class AdminUserList extends Page {
 		$this->search = post('q');
 		$this->uid = post('sid');
 
-		$this->order = SG\getFirst(post('order'),'uid');
-		$this->items = SG\getFirst(post('items'), 100);
-		$this->page = SG\getFirst(post('page'), 1);
+		$this->order = \SG\getFirst(post('order'),'uid');
+		$this->items = \SG\getFirst(post('items'), 100);
+		$this->page = \SG\getFirst(post('page'), 1);
 	}
 
 	function build() {

@@ -31,10 +31,10 @@
  */
 function widget_project() {
 	$para = para(func_get_args(),'data-limit=5','data-show-style=ul','data-show-photo-width=100','data-show-photo-height=80');
-	$dateformat = SG\getFirst($para->{'data-show-dateformat'},cfg('dateformat'));
+	$dateformat = \SG\getFirst($para->{'data-show-dateformat'},cfg('dateformat'));
 
-	$projectId = SG\getFirst($para->{'data-projectId'}, $para->{'data-projectid'});
-	$projectSet = SG\getFirst($para->{'data-set'});
+	$projectId = \SG\getFirst($para->{'data-projectId'}, $para->{'data-projectid'});
+	$projectSet = \SG\getFirst($para->{'data-set'});
 
 	mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
 	mydb::where('t.`status` IN ( :status )', ':status', [_PUBLISH, _LOCK]);

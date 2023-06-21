@@ -1,7 +1,7 @@
 <?php
 // delete user information
 function admin_user_delete($self,$uid) {
-	if (SG\confirm()) {
+	if (\SG\confirm()) {
 		$rs = R::Model('user.get', $uid);
 
 		$uid = $rs->uid;

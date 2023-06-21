@@ -15,7 +15,7 @@ class AmpurApi extends PageApi {
 
 	function __construct() {
 		parent::__construct([
-			'changwat' => SG\getFirst(post('changwat'), post('q')),
+			'changwat' => \SG\getFirst(post('changwat'), post('q')),
 		]);
 	}
 

@@ -76,10 +76,10 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 	}
 
 	// set header text
-	$self->theme->header->text = SG\getFirst($topic->type->name);
+	$self->theme->header->text = \SG\getFirst($topic->type->name);
 
 	// set header description
-	$type_description = SG\getFirst($topic->tag->description,$topic->type->description);
+	$type_description = \SG\getFirst($topic->tag->description,$topic->type->description);
 	$self->theme->header->description = do_php($type_description);
 
 	// set page title

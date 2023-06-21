@@ -52,13 +52,13 @@ class Ui extends Widget {
 				$options = $value[1];
 				$this->children[$key] = (Object) [
 					'text' => $value[0],
-					'options' => is_string($options) ? SG\json_decode($options): (object) $options
+					'options' => is_string($options) ? \SG\json_decode($options): (object) $options
 				];
 			}
 		} else if ($link) {
 			$this->children[] = (Object) [
 				'text' => $link,
-				'options' => is_string($options) ? SG\json_decode($options): (Object) $options
+				'options' => is_string($options) ? \SG\json_decode($options): (Object) $options
 			];
 		}
 		return $this;
@@ -80,7 +80,7 @@ class Ui extends Widget {
 			}
 
 			// Convert options to object
-			$options = is_string($child->options) ? SG\json_decode($child->options): (Object) $child->options;
+			$options = is_string($child->options) ? \SG\json_decode($child->options): (Object) $child->options;
 
 			$uiItemClass = $this->uiItemClass.($options->class ? ' '.$options->class : '');
 			if (in_array($child->text, array('-','<sep>'))) {
@@ -150,7 +150,7 @@ class Ui extends Widget {
 		}
 
 		if ($this->container) {
-			$container = SG\json_decode($this->container);
+			$container = \SG\json_decode($this->container);
 			$containerTag = $this->config->nav ? 'nav' : $container->tag;
 			unset($container->tag);
 			$containerAttr = sg_implode_attr($container);

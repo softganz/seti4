@@ -79,7 +79,7 @@ function view_admin_taxonomy_form($tag=NULL,$vocab=array(),$message=NULL) {
 							'type'=>'select',
 							'label'=>'Weight:',
 							'options'=>$optionsWeight,
-							'value'=>SG\getFirst($tag->weight,0),
+							'value'=>\SG\getFirst($tag->weight,0),
 							'description'=>'Tags are displayed in ascending order by weight.</a>.'
 							)
 						);

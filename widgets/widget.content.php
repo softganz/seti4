@@ -62,7 +62,7 @@ global $today;
 			$para->{'show-'.$showKey}=$showValue;
 		}
 	}
-	$dateformat=($para->{'show-dateformat'}?'':'@').SG\getFirst($para->{'show-dateformat'},cfg('dateformat'));
+	$dateformat=($para->{'show-dateformat'}?'':'@').\SG\getFirst($para->{'show-dateformat'},cfg('dateformat'));
 
 	$patterns = (Object) [
 		'short' => (Object) [],
@@ -163,10 +163,10 @@ global $today;
 	if ($pattern->{'show-style'}!='div') $ret .= '<'.$pattern->{'show-style'}.'>'._NL;
 
 	list($last_date)=explode(' ',$topics->items[0]->created);
-	$start=SG\getFirst($para->{'show-start'},1);
-	$count=SG\getFirst($para->{'show-count'},$topics->_num_rows);
+	$start = SG\getFirst($para->{'show-start'},1);
+	$count = SG\getFirst($para->{'show-count'},$topics->_num_rows);
 	$no=0;
-	$debug=SG\getFirst($para->{'option-debug'}=='eval',debug('eval'));
+	$debug = SG\getFirst($para->{'option-debug'}=='eval',debug('eval'));
 	if ($para->{'data-field'}=='body,photo' && empty($para->{'show-photo'})) $para->{'show-photo'}='image';
 	if ($para->{'show-photo'}) list($para->{'show-photo'},$showPhotoOption)=explode(',',$para->{'show-photo'});
 
@@ -212,7 +212,7 @@ global $today;
 		$ret .= '<a href="'.$topic->_url.'"'.($pattern->{'show-style'}=='div'?' title="'.htmlspecialchars($topic->title).'"':'').'>';
 
 		$ret .= $para->{'show-style'}=='short'&&$para->{'show-photo'}&&$topic->photo?$topic->photo:'';
-		if ($showTitle=SG\getFirst($para->{'show-title'},$pattern->{'show-title'})) {
+		if ($showTitle = SG\getFirst($para->{'show-title'},$pattern->{'show-title'})) {
 			// generate each topic title
 			$old_error=error_reporting();
 			$show= preg_replace('/\$([a-zA-Z0-9_]*)/','$topic->\\1',$showTitle);
@@ -246,7 +246,7 @@ global $today;
 	}
 
 	if ($pattern->{'show-style'}!='div') $ret .= '</'.$pattern->{'show-style'}.'><!--end of widget-item -->'._NL;
-	$showReadAll=SG\getFirst($para->{'data-show-readall'},$para->{'data-cfg-readall'},$para->{'show-readall'});
+	$showReadAll = SG\getFirst($para->{'data-show-readall'},$para->{'data-cfg-readall'},$para->{'show-readall'});
 	if ($showReadAll) {
 		$readAllitems=explode(',',$showReadAll);
 		if (count($readAllitems)==1) {

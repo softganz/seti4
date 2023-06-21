@@ -1,9 +1,9 @@
 <?php
 function admin_log_clear($self) {
 	set_time_limit(0);
-	$itemToClear = SG\getFirst(post('i'),100000);
-	$deleteStep = SG\getFirst(post('s'),10000);
-	$waitTimeSec = SG\getFirst(post('w'),20);
+	$itemToClear = \SG\getFirst(post('i'),100000);
+	$deleteStep = \SG\getFirst(post('s'),10000);
+	$waitTimeSec = \SG\getFirst(post('w'),20);
 
 	$ret=_NL.'<h2>CLEAR COUNTER LOG. <span id="statustext"></span> <span id="waittime">0</span> sec.</h2>'._NL;
 	$rs=mydb::select('SELECT MIN(`id`) firstID , MAX(`id`) lastID, MIN(`log_date`) firstLogDate FROM %counter_log% LIMIT 1');

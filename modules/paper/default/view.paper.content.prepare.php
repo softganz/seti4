@@ -69,7 +69,7 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 	if ($topicInfo->property->option->timestamp) {
 		$body->timestamp = '<div class="timestamp">';
 		$body->timestamp .= 'by <span class="poster'.($topicInfo->uid==i()->uid?' owner':'').'">';
-		$body->timestamp .= $topicInfo->uid && user_access('access user profiles')?'<a href="'.url('profile/'.$topicInfo->uid).'" title="view poster profile" data-hovercard="'.url('hovercard/uid/'.$topicInfo->uid).'">'.SG\getFirst($topicInfo->info->poster,$topicInfo->info->owner).'</a>' : SG\getFirst($topicInfo->info->poster,$topicInfo->info->owner);
+		$body->timestamp .= $topicInfo->uid && user_access('access user profiles')?'<a href="'.url('profile/'.$topicInfo->uid).'" title="view poster profile" data-hovercard="'.url('hovercard/uid/'.$topicInfo->uid).'">'.\SG\getFirst($topicInfo->info->poster,$topicInfo->info->owner).'</a>' : \SG\getFirst($topicInfo->info->poster,$topicInfo->info->owner);
 		$body->timestamp .= '</span> ';
 		$body->timestamp .= '<span class="timestamp">@'.sg_date($topicInfo->info->created,cfg('dateformat')).'</span>';
 		$body->timestamp .= '<span class="ip"> ( IP : '.(user_access('administer contents,administer '.$topicInfo->info->type.' content') ? '<a href="'.url('paper/list', ['ip' => long2ip($topicInfo->info->ip)]).'">'.long2ip($topicInfo->info->ip).'</a>' : sg_sub_ip($topicInfo->info->ip)).' )</span>';
@@ -170,9 +170,9 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 				. '<ol>';
 			foreach ($docs->items as $doc) {
 				if (cfg('files.log')) {
-					$body->detail .= '<li><a href="'.url('files/'.$doc->fid).'">'.SG\getFirst($doc->title,$doc->file).' - '.tr('Download').'</a></li>';
+					$body->detail .= '<li><a href="'.url('files/'.$doc->fid).'">'.\SG\getFirst($doc->title,$doc->file).' - '.tr('Download').'</a></li>';
 				} else {
-					$body->detail .= '<li><a href="'.cfg('url').'upload/forum/'.sg_urlencode($doc->file).'" target=_blank>'.SG\getFirst($doc->title,$doc->file).' - '.tr('Download').'</a></li>';
+					$body->detail .= '<li><a href="'.cfg('url').'upload/forum/'.sg_urlencode($doc->file).'" target=_blank>'.\SG\getFirst($doc->title,$doc->file).' - '.tr('Download').'</a></li>';
 				}
 			}
 			$body->detail .= '</ol></div>';

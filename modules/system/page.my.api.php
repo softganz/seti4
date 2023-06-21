@@ -18,7 +18,7 @@ class MyApi extends Page {
 	var $tranId;
 
 	function __construct($action, $tranId = NULL) {
-		$this->userId = SG\getFirst(post('userId'), i()->uid);
+		$this->userId = \SG\getFirst(post('userId'), i()->uid);
 		$this->action = $action;
 		$this->tranId = $tranId;
 		$this->right = (Object) [

@@ -155,7 +155,7 @@ function Send_by_SMTP($mailto,$title,$message,$emulate=false) {
 	$date = date( 'r' ,time());
 	$phpversion = phpversion();
 	$boundary = md5( time() );
-	$encoding=strtoupper(SG\getFirst($this->encoding,cfg('client.characterset')));
+	$encoding=strtoupper(\SG\getFirst($this->encoding,cfg('client.characterset')));
 	$title=strip_tags($title);
 
 	$headers = 'From: "'.$this->FromName().'" <'.$this->FromEMail().'>'."\r\n";
@@ -189,7 +189,7 @@ function sendHTMLemail3($HTML,$from,$to,$subject) {
 }
 
 function sendHTMLemail($to,$subject,$HTML,$from) {
-	$from=SG\getFirst($form,'"นายหมี" <alert@softganz.com>');
+	$from = SG\getFirst($form,'"นายหมี" <alert@softganz.com>');
 	$from = 'From: '.$from;
 	$strHeader = "Content-type: text/html; charset=UTF-8\n";
 	//	$strHeader = 'From: "'.$this->FromName().'" <'.$this->FromEMail().'>'."\r\n";

@@ -75,11 +75,11 @@ function widget_signform() {
 		//			$ret.='$_GET[action]='.$_GET['action'].' , $para->actiion='.$para->action.' , _URL='._URL.' , HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 
 		$form = new Form([
-			'action' => SG\getFirst(url(q())),
+			'action' => \SG\getFirst(url(q())),
 			'id' => $para->id ? $para->id : 'signin-'.uniqid(),
 			'class' => $para->class,
-			// $form->config->action=SG\getFirst($_GET['action'],$para->action,url(q()),$_SERVER['HTTP_REFERER']);
-			// $form->config->action=SG\getFirst($_GET['action'],$para->action,_URL,$_SERVER['HTTP_REFERER']);
+			// $form->config->action = SG\getFirst($_GET['action'],$para->action,url(q()),$_SERVER['HTTP_REFERER']);
+			// $form->config->action = SG\getFirst($_GET['action'],$para->action,_URL,$_SERVER['HTTP_REFERER']);
 			'children' => [
 				'username' => [
 					'name' => 'username',
@@ -114,7 +114,7 @@ function widget_signform() {
 						'43200' => '1 '.tr('Month'),
 						'-1' => tr('Forever')
 					),
-					'value' => SG\getFirst($para->cookielength, $_POST['cookielength'], 10080)
+					'value' => \SG\getFirst($para->cookielength, $_POST['cookielength'], 10080)
 				],
 				'signin' => [
 					'type' => 'button',

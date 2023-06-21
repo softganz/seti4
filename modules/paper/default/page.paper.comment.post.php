@@ -127,7 +127,7 @@ function paper_comment_post($self, $topicInfo) {
 
 	$mail->to=cfg('alert.email');
 	$mail->title='Re: ++'.strip_tags($topicInfo->title).' : '.$topicInfo->tags[0]->name;
-	$mail->name=SG\getFirst(i()->name,$comment->name);
+	$mail->name = SG\getFirst(i()->name,$comment->name);
 	$mail->from='alert@'.cfg('domain.short');
 	if (cfg('alert.cc')) $mail->cc=cfg('alert.cc');
 	if (cfg('alert.bcc')) $mail->bcc=cfg('alert.bcc');

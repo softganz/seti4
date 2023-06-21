@@ -24,11 +24,11 @@ function admin_content_vocabulary_edit($self,$vid) {
 			$message=message('error',$error);
 		} else {
 			// update vocabulary
-			$vocab->hierarchy=SG\getFirst($vocab->hierarchy,0);
-			$vocab->relations=SG\getFirst($vocab->relations,0);
-			$vocab->tags=SG\getFirst($vocab->tags,0);
-			$vocab->multiple=SG\getFirst($vocab->multiple,0);
-			$vocab->required=SG\getFirst($vocab->required,0);
+			$vocab->hierarchy = SG\getFirst($vocab->hierarchy,0);
+			$vocab->relations = SG\getFirst($vocab->relations,0);
+			$vocab->tags = SG\getFirst($vocab->tags,0);
+			$vocab->multiple = SG\getFirst($vocab->multiple,0);
+			$vocab->required = SG\getFirst($vocab->required,0);
 			$vocab->vid=$vid;
 			$stmt='UPDATE %vocabulary% SET
 							  `name`=:name, `description`=:description

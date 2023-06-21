@@ -14,7 +14,7 @@ $debug = true;
 
 function admin_log_cache($self) {
 	// Data model
-	$order = SG\getFirst(post('o'),'expire');
+	$order = \SG\getFirst(post('o'),'expire');
 	$clearCaches = post('cid');
 	$showData = post('data');
 

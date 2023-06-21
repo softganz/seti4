@@ -204,8 +204,8 @@ function object_merge_recursive() {
 	//$flag = is_numeric($args[count($args) - 1]) ? array_pop($args) : 0;
 	$firstArg = array_shift($args);
 	$result = is_object($firstArg) ? clone $firstArg : $firstArg;
-	if (debug()) debugMsg($firstArg, 'SG\ObjectMerge $firstArg');
-	if (debug()) debugMsg($args,'SG\ObjectMerge $args');
+	if (debug()) debugMsg($firstArg, '\SG\ObjectMerge $firstArg');
+	if (debug()) debugMsg($args,'\SG\ObjectMerge $args');
 
 	foreach ($args as $arg) {
 		if (gettype($arg) == 'NULL') continue;
@@ -245,7 +245,7 @@ function object_merge_recursive() {
 * @param Mixed $arg1[,$arg2,...]
 * @return Object
 * Last arg is default value
-* Eg. SG\json_decode($option2,$option1,$default)
+* Eg. \SG\json_decode($option2,$option1,$default)
 */
 function json_decode($json, $default = '{}') {
 	$regex = '/(,|\{)[ \t\n]*(\w+)[ ]*:[ ]*/';
@@ -253,7 +253,7 @@ function json_decode($json, $default = '{}') {
 	// Last argument is default, so reverse argument to process last argument first
 	$args = array_reverse(func_get_args());
 
-	if (debug()) debugMsg($args,'SG\json_decode $args');
+	if (debug()) debugMsg($args,'\SG\json_decode $args');
 
 	foreach ($args as $i=>$json) {
 		//debugMsg('parameter = '.$json);
@@ -263,9 +263,9 @@ function json_decode($json, $default = '{}') {
 		else if (is_object($json)) ;
 		else if (is_string($json) && in_array(substr($json,0,1), array('{','['))) {
 			$json = preg_replace($regex,'$1"$2":',$json);
-			if (debug()) debugMsg('SG\json_decode $jsonString = '.$json);
+			if (debug()) debugMsg('\SG\json_decode $jsonString = '.$json);
 			$json = \json_decode($json);
-			if (debug()) debugMsg($json, 'SG\json_decode $jsonObject');
+			if (debug()) debugMsg($json, '\SG\json_decode $jsonObject');
 		} else if (is_string($json) && substr($json,0,1) == 'O') {
 			$json = unserialize($json);
 		} else {
@@ -281,8 +281,6 @@ function json_decode($json, $default = '{}') {
 	return $result;
 }
 
-
-
 function json_encode($input) {
 	if (defined('JSON_UNESCAPED_UNICODE')) {
 		return \json_encode($input,JSON_UNESCAPED_UNICODE+JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES);
@@ -291,6 +289,30 @@ function json_encode($input) {
 			return mb_convert_encoding(pack('H*', $matches[1]), 'UTF-8', 'UTF-16');
 		}, \json_encode($input));
 	}
+}
+
+function isJson($string) {
+	json_decode($string);
+	return json_last_error() === JSON_ERROR_NONE;
+
+			if (empty($config)) {
+			// Delete on empty
+			mydb::query(
+				'DELETE FROM %property% WHERE `module` = "PROJECT" AND `name` = "SETTING" AND `propId` = :projectId LIMIT 1',
+				[':projectId' => $this->projectId]
+			);
+		} else if (preg_match('/^[\[\{]/', $config)) {
+			// Check JSON Valid
+			$configDecode = json_decode($config);
+			if (empty($configDecode)) {
+				return ['responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'รูปแบบของ JSON ไม่ถูกต้อง'];
+			} else {
+				// JSON Valid then save
+				property($propertyKey, \SG\json_encode($configDecode));
+			}
+		} else {
+			return ['responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'รูปแบบของ JSON ไม่ถูกต้อง'];
+		}
 }
 
 /**
@@ -695,7 +717,7 @@ function implode_address($rs, $type = 'long') {
 */
 function paramToObject($param) {
 	if (is_string($param) && preg_match('/^{/',$param)) {
-		$param = SG\json_decode($param);
+		$param = \SG\json_decode($param);
 	} else if (is_object($param)) {
 		// Do nothing
 	} else if (is_array($param)) {

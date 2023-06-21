@@ -89,10 +89,10 @@ function calendar_room($self, $resvId = NULL, $action = NULL, $tranId = NULL) {
 					//preg_match($this->date_format,$post->checkin,$from_date);
 
 					$post->checkin=sprintf('%04d',$from_date[3]).'-'.sprintf('%02d',$from_date[2]).'-'.sprintf('%02d',$from_date[1]);
-					$post->calid=SG\getFirst($post->calid,'func.NULL');
-					$post->uid=SG\getFirst(i()->uid,'func.NULL');
-					$post->org_name=SG\getFirst($post->org_name,$post->org_name_etc);
-					$post->equipment=SG\getFirst(implode(',',$post->equipment),'func.NULL');
+					$post->calid = SG\getFirst($post->calid,'func.NULL');
+					$post->uid = SG\getFirst(i()->uid,'func.NULL');
+					$post->org_name = SG\getFirst($post->org_name,$post->org_name_etc);
+					$post->equipment = SG\getFirst(implode(',',$post->equipment),'func.NULL');
 					$post->created=date('U');
 
 					$stmt='INSERT INTO %calendar_room%

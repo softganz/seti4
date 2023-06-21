@@ -47,7 +47,7 @@ class QrcodeUrl extends Page {
 					]),
 					$this->url ? new Container([
 						'class' => 'qrcode-result',
-						'child' => SG\qrcode($this->url,'{width: 512, height: 512, domain: false, imgWidth: "200px", imgHeight: "200px"}'),
+						'child' => \SG\qrcode($this->url,'{width: 512, height: 512, domain: false, imgWidth: "200px", imgHeight: "200px"}'),
 						]) : NULL,
 					'<style type="text/css">
 					.qrcode-result {text-align: center;}

@@ -15,7 +15,7 @@ class NodeModel {
 
 	public static function get($id, $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = (Object) ['nodeId' => NULL, 'title' => '', 'info' => NULL];
@@ -44,7 +44,7 @@ class NodeModel {
 		];
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) {
 			//
 		} else if (is_array($conditions)) {
@@ -53,7 +53,7 @@ class NodeModel {
 			$conditions = (Object) ['id' => $conditions];
 		}
 
-		$options = SG\json_decode($conditions->options, $defaults);
+		$options = \SG\json_decode($conditions->options, $defaults);
 		$debug = $options->debug;
 		if ($debug) {
 			debugMsg($conditions, '$conditions');
@@ -328,7 +328,7 @@ class NodeModel {
 
 			$upload_folder=cfg('paper.upload.document.folder');
 			$document->_property=sg_explode_filename($upload_folder.$document->name,'doc');
-			$document->title = SG\getFirst($topic->post->document_title,sg_explode_filename($upload_folder.$document->name)->basename);
+			$document->title = \SG\getFirst($topic->post->document_title,sg_explode_filename($upload_folder.$document->name)->basename);
 			$document->name=$document->_property->name;
 
 			if (cfg('topic.doc.file_ext')) {
@@ -406,7 +406,7 @@ class NodeModel {
 		if ($topic->post->ip=="") $topic->post->ip='func.NULL';
 		$topic->post->uid = i()->uid;
 		if ($topic->post->poster===i()->name) unset($topic->post->poster);
-		$topic->post->comment=SG\getFirst($topic->post->comment,$topic->type->topic_options->comment,_COMMENT_READWRITE);
+		$topic->post->comment = SG\getFirst($topic->post->comment,$topic->type->topic_options->comment,_COMMENT_READWRITE);
 
 		// topic poperty
 		$topic->post->property = (object) $topic->post->property;

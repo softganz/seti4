@@ -36,7 +36,7 @@ class Table extends Widget {
 		$config = $this->config;
 		$colgroups = [];
 		$headerkey = [];
-		$captionStr = SG\getFirst($this->config->caption,$this->caption);
+		$captionStr = \SG\getFirst($this->config->caption,$this->caption);
 
 		// Create table tag
 		$ret = '<table '
@@ -142,7 +142,7 @@ class Table extends Widget {
 				$rowConfig = [];
 				if (is_array($row) && array_key_exists('config', $row)) {
 					$rowConfig = $row['config'];
-					if (is_string($rowConfig)) $rowConfig = (Array) SG\json_decode($rowConfig);
+					if (is_string($rowConfig)) $rowConfig = (Array) \SG\json_decode($rowConfig);
 					unset($row['config']);
 				}
 				if (is_string($row) && strtolower(substr($row,0,3))=='<tr') {

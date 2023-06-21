@@ -102,7 +102,7 @@ class PaperInfoApi extends Page {
 			break;
 
 		case 'photo.delete':
-			if (SG\confirm()) {
+			if (\SG\confirm()) {
 				$result = R::Model('photo.delete', $tranId);
 				$ret .= 'ลบภาพเรียบร้อย';
 				// $ret .= print_o($result,'$result');
@@ -185,8 +185,8 @@ class PaperInfoApi extends Page {
 			$post->option->ads = $post->option->ads ? true : false;
 			$post->option->show_video = $post->option->show_video ? true : false;
 
-			$newProperty = SG\json_decode($post, $topicInfo->property);
-			$data->detail->property = SG\json_encode($newProperty);
+			$newProperty = \SG\json_decode($post, $topicInfo->property);
+			$data->detail->property = \SG\json_encode($newProperty);
 			$result = R::Model('paper.info.update', $topicInfo, $data);
 
 			break;
@@ -294,7 +294,7 @@ class PaperInfoApi extends Page {
 			break;
 
 		case 'comment.delete':
-			if ($tranId && SG\confirm()) {
+			if ($tranId && \SG\confirm()) {
 				$result = R::Model('paper.comment.delete',$tranId);
 				$ret = $result->complete ? new Message(['responseCode' => _HTTP_OK, 'text' => 'Comment deleted.']) : new ErrorMessage(['responseCode' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'มีข้อผิดพลาดในการลบความเห็น']);
 			}

@@ -15,8 +15,8 @@ class CalendarRoomReport extends Page {
 	function build() {
 		$roomProperty = property('calendar.room');
 
-		$from=SG\getFirst($_REQUEST['from'],date('01/01/Y'));
-		$to=SG\getFirst($_REQUEST['to'],date('d/m/Y'));
+		$from = SG\getFirst($_REQUEST['from'],date('01/01/Y'));
+		$to = SG\getFirst($_REQUEST['to'],date('d/m/Y'));
 		$roomid=$_REQUEST['roomid'];
 		$orgname=$_REQUEST['orgname'];
 		$ret.='<form class="form-report" id="report-disease">';

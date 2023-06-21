@@ -34,7 +34,7 @@ class PaperModel {
 		$tpid = $conditions->tpid;
 
 		mydb::where('t.`tpid` = :tpid', ':tpid', $conditions->tpid);
-		mydb::where(NULL, ':revid', SG\getFirst($conditions->revid, 't.revid'));
+		mydb::where(NULL, ':revid', \SG\getFirst($conditions->revid, 't.revid'));
 
 		$stmt = 'SELECT
 				  t.*
@@ -406,7 +406,7 @@ class PaperModel {
 		if (module_install('voteit')) $sql_cmd.=do_class_method('voteit','get_topic_by_condition','fields',$para,$tpid);
 
 		$sql_cmd .= '  FROM %topic% t
-				LEFT JOIN %topic_revisions% r ON r.revid='.SG\getFirst($revid,'t.revid ').'
+				LEFT JOIN %topic_revisions% r ON r.revid='.\SG\getFirst($revid,'t.revid ').'
 				LEFT JOIN %users% u ON t.uid=u.uid
 				LEFT JOIN %topic_types% ty ON ty.type=t.type ';
 
@@ -477,7 +477,7 @@ class PaperModel {
 	}
 
 	public static function get_topic_by_condition($para) {
-		$items=SG\getFirst($para->items,10);
+		$items = SG\getFirst($para->items,10);
 		$field=option($para->field);
 		$sort=in_array($para->sort,array('asc','desc'))?$para->sort:'desc';
 
@@ -529,7 +529,7 @@ class PaperModel {
 		$where_cmd = $where ? '('.implode(') AND (',$where).')' : null;
 
 		$sql_cmd = 'SELECT '.$fld_cmd.' FROM '.$table_cmd.($where_cmd?' WHERE '.$where_cmd:'');
-		$sql_cmd .= ' ORDER BY '.SG\getFirst($para->order,'t.tpid').' '.SG\getFirst($sort,'DESC');
+		$sql_cmd .= ' ORDER BY '.\SG\getFirst($para->order,'t.tpid').' '.\SG\getFirst($sort,'DESC');
 
 		if ($para->limit) {
 			$sql_cmd .= '  LIMIT '.$para->limit;

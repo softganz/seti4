@@ -2,7 +2,7 @@
 function watchdog_list($self) {
 	$para=para(func_get_args(),1);
 
-	$items=SG\getFirst($para->items,100);
+	$items = SG\getFirst($para->items,100);
 
 	//$ret.=print_o($para,'$para');
 

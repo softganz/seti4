@@ -25,9 +25,9 @@ function r_photo_save($upload, $folder = NULL, $options = '{}') {
 
 	$result->process[] = 'Model photo_save '.($is_simulate?'simulation ':'').'request';
 
-	$maxFileSize = SG\getFirst($upload->maxFileSize,cfg('photo.max_file_size'));
-	$resizeWidth = SG\getFirst($upload->resizeWidth,cfg('photo.resize.width'));
-	$resizeQuality = SG\getFirst($upload->resizeQuality,cfg('photo.resize.quality'));
+	$maxFileSize = \SG\getFirst($upload->maxFileSize,cfg('photo.max_file_size'));
+	$resizeWidth = \SG\getFirst($upload->resizeWidth,cfg('photo.resize.width'));
+	$resizeQuality = \SG\getFirst($upload->resizeQuality,cfg('photo.resize.quality'));
 
 	if (empty($folder)) $folder = cfg('paper.upload.photo.folder');
 	$upload->_property = sg_explode_filename($folder.$upload->name,'pic');

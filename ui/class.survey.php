@@ -51,7 +51,7 @@ class Survey extends Widget {
 				$this->children['form']->addText('</div>');
 			}
 		} else if (is_object($inputField)) {
-			$inputType = SG\getFirst($inputField->type,$inputField->tag);
+			$inputType = \SG\getFirst($inputField->type,$inputField->tag);
 			if ($inputType) {
 				$inputOption = NULL;
 

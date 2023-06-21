@@ -16,9 +16,9 @@ function paper_upcomming($self) {
 
 	$self->theme->class='content-paper';
 	if ($para->tag) $self->theme->class.=' paper-tag-'.$para->tag;
-	if ($para->category||$topics->forum->cid) $self->theme->class.=' paper-category-'.SG\getFirst($para->category,$topics->forum->cid);
+	if ($para->category||$topics->forum->cid) $self->theme->class.=' paper-category-'.\SG\getFirst($para->category,$topics->forum->cid);
 	if (!$para->option->no_header) {
-		$self->theme->header->text=SG\getFirst($topics->forum->category,$topics->forum->forum,'Up Comming');
+		$self->theme->header->text = SG\getFirst($topics->forum->category,$topics->forum->forum,'Up Comming');
 		if ($topics->forum->description) $self->theme->header->description=$topics->forum->description;
 	}
 	if (!$para->option->no_menu) {

@@ -14,11 +14,11 @@ class ReactionModel {
 
 	public static function get($conditions = [], $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) {
 			//
 		} else if (is_array($conditions)) {
@@ -56,13 +56,13 @@ class ReactionModel {
 
 	public static function items($conditions, $options = '{}') {
 		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
+		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
 		$result = NULL;
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = SG\json_decode($conditions);
+			$conditions = \SG\json_decode($conditions);
 		} else if (is_object($conditions)) {
 			//
 		} else if (is_array($conditions)) {
@@ -167,7 +167,7 @@ class ReactionModel {
 	}
 
 	public static function user($topicId, $userId = NULL) {
-		$userId = SG\getFirst($userId, i()->uid);
+		$userId = \SG\getFirst($userId, i()->uid);
 		if (empty($userId)) return NULL;
 		return mydb::select(
 			'SELECT DISTINCT
