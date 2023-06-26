@@ -71,6 +71,7 @@ class SignInWidget extends Widget {
 					'signin' => [
 						'type' => 'button',
 						'name' => 'signin',
+						'class' => '-primary -fill',
 						'value' => '<i class="icon -material">login</i><span>'.tr('Sign in').'</span>',
 					],
 					$this->showRegisterButton && user_access('register new member') ? '<a class="btn -link" href="'.url('user/register').'"><i class="icon -material">person_add</i><span>'.tr('Create new account').'</span></a>' : NULL,
