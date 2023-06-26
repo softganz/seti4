@@ -172,8 +172,8 @@ class PersonModel {
 
 		if (empty($data->psnId)) $data->psnId = NULL;
 		if (property_exists($data, 'prename')) $data->preName = $data->prename;
-		if (property_exists($data, 'firstname')) $data->preName = $data->firstname;
-		if (property_exists($data, 'lastname')) $data->preName = $data->lastname;
+		if (property_exists($data, 'firstname')) $data->firstName = $data->firstname;
+		if (property_exists($data, 'lastname')) $data->lastName = $data->lastname;
 
 		if(property_exists($data, 'preName')) $updateFields[] = '`preName` = :preName';
 		if(property_exists($data, 'firstName')) $updateFields[] = '`name` = :firstName';
