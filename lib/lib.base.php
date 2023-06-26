@@ -240,6 +240,9 @@ function object_merge_recursive() {
 }
 
 
+function isWidget($var) {
+	return is_object($var) && method_exists($var, 'build');
+}
 
 /**
 * @param Mixed $arg1[,$arg2,...]
