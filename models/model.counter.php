@@ -37,7 +37,7 @@ class CounterModel {
 			default : $onlinekey = $real_ip; break;
 		}
 
-		//debugmsg('Online Key = '.$onlinekey.' '.$real_ip);
+		//debugMsg('Online Key = '.$onlinekey.' '.$real_ip);
 
 		//--- remove old online user
 		$checked_online_time = $today->time - cfg('counter.online_time') * 60;
