@@ -114,7 +114,15 @@ class Form extends Widget {
 				. '</header>';
 		}
 
-		if ($formTitle) $ret .= '<h3 class="title">'.$formTitle.'</h3>'._NL;
+		// Render form title
+		if ($formTitle) {
+			if (\SG\isWidget($formTitle)) {
+				$ret .= $formTitle->build();
+			} else {
+				$ret .= '<h3 class="title">'.$formTitle.'</h3>'._NL;
+			}
+		}
+
 		if ($this->description) $ret .= '<div class="description">'.$this->description.'</div>';
 
 		foreach ($this->children as $fieldKey => $formElement) {
