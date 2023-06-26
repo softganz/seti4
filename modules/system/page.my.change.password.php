@@ -25,9 +25,7 @@ function my_change_password($self) {
 		if (strlen($post->password) != strlen($post->repassword) || $post->password != $post->repassword) $error[]='การป้อนรหัสผ่านใหม่ทั้งสองครั้งไม่ตรงกัน'; //-- password <> retype
 
 		if ($error) {
-			header('HTTP/1.0 406 Not Acceptable');
-			$ret .= implode(',', $error);
-			return $ret;
+			return error(_HTTP_ERROR_NOT_ACCEPTABLE, implode(',', $error));
 		} else {
 			$newpassword = sg_encrypt($post->password,cfg('encrypt_key'));
 			mydb::query('UPDATE %users% SET password = :password WHERE uid = :uid LIMIT 1', ':password', $newpassword, ':uid' , $userInfo->uid);
