@@ -147,7 +147,7 @@ class Form extends Widget {
 				// $ret .= print_o($formElement, '$formElement');
 				$type = $formElement->type;
 				if ($type == 'fieldset') {
-					$ret .= '<div class="form-item -fieldset '.$formElement->class.'">'
+					$ret .= '<div class="form-item -fieldset '.$formElement->class.($formElement->class).'">'
 						. ($formElement->label ? '<label>'.$formElement->label.'</label>' : '');
 				}
 
@@ -253,8 +253,8 @@ class Form extends Widget {
 		}
 
 		if ($isFormGroup) $ret .= '<span class="form-group">'._NL;
-		if ($formElement->pretext)
-			$ret .= $formElement->pretext;
+
+		$ret .= $this->_renderAttribute(\SG\getFirst($formElement->preText, $formElement->pretext));
 
 		// Item attribute from key attribute, if not define use key attr
 		// Implode attribute to string
@@ -281,13 +281,25 @@ class Form extends Widget {
 			case 'colorpicker' : $ret .= $this->_renderColorPicker($tag_id, $name, $formElement); break;
 		}
 
-		if ($formElement->posttext) $ret .= $formElement->posttext._NL;
+		$ret .= $this->_renderAttribute(\SG\getFirst($formElement->postText, $formElement->posttext));
+
 		if ($isFormGroup) $ret .= '</span><!-- form-group -->'._NL;
 		if ($formElement->description) $ret .= _NL.'<div class="description">'.$formElement->description.'</div>';
 		$ret .= _NL.'</div>';
 
 		$ret .= _NL._NL;
 		return [$tag_id, $ret];
+	}
+
+	private function _renderAttribute($attribute) {
+		if (is_object($attribute) && method_exists($attribute, 'build')) {
+			// Item is widget
+			$ret = $attribute->build();
+		} else {
+			// Item is array or string
+			$ret = $attribute;
+		}
+		return $ret;
 	}
 
 	private function onElementEvent($event, $onChangeValue) {
