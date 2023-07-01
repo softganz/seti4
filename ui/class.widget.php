@@ -804,7 +804,6 @@ class AppBar extends Widget {
 class PageBase extends WidgetBase {
 	var $widgetName = 'PageBase';
 	var $module = NULL;
-	var $debug = false;
 
 	function __construct($args = []) {
 		$this->widgetName = get_class($this);
@@ -812,7 +811,7 @@ class PageBase extends WidgetBase {
 		$this->module = strToLower(preg_split('/(?=[A-Z])/', $this->widgetName, -1, PREG_SPLIT_NO_EMPTY)[0]);
 		$this->version = cfg($this->module.'.version');
 		parent::__construct($args);
-		if ($this->debug) {
+		if (debug('page')) {
 			debugMsg('PAGE CONTROLLER Id = '.$this->qtRef.' , Action = '.$this->action.' , Arg['.$this->argIndex.'] = '.$this->_args[$this->argIndex]);
 			debugMsg($this->_args, '$args');
 			debugMsg($this, '$this');
