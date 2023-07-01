@@ -283,6 +283,8 @@ class MyDb {
 		// Replace %tablename% with db(%tablename%)
 		$stmt = strpos($stmt,'%')===false ? $stmt : preg_replace_callback('/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i', '__mydb_db_replace' ,$stmt); // return ' '.db($m[1])
 
+		$stmt = mydb::jsonVersionConvert($stmt);
+
 		return $stmt;
 	}
 
@@ -300,13 +302,29 @@ class MyDb {
 			} else if (is_object($jsonValue)) {
 				$jsonString .= mydb::jsonObjectString($jsonValue, $jsonKey).' , ';
 			} else {
-				$jsonString .= '"'.$jsonKey.'" , "'.$jsonValue.'" ,';
+				$jsonString .= '"'.$jsonKey.'" , "'.preg_replace('/[\"]/', '', $jsonValue).'" ,';
 				// debugMsg($jsonString);
 			}
 		}
 		$jsonString = rtrim($jsonString, ' , ');
 		$jsonString .= ')';
 		return $jsonString;
+	}
+
+	public static function jsonVersionConvert($stmt) {
+		// Convert --> to JSON_UNQUOTE(JSON_EXTRACT()) in mariadb to mySQL 5.7
+		if (preg_match('/\-\>\>/', $stmt, $out)) {
+			// debugMsg('SRC STMT');
+			// debugMsg($stmt);
+			// debugMsg($out, '$out');
+			// preg_match('/(`\w.*`) \-\>\> ("\$\.\w*\")/', $stmt, $out);
+			// debugMsg($out, '$out');
+
+			$stmt = preg_replace('/(`\w.*`) \-\>\> ("\$\.\w*\")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $stmt);
+			// debugMsg('CONVERT STMT');
+			// debugMsg($stmt);
+		}
+		return $stmt;
 	}
 
 	/**
