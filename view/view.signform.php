@@ -144,9 +144,9 @@ function view_signform($options = '{}') {
 					'<hr />',
 					'ยังไม่ได้เป็นสมาชิก',
 					'<span class="ui-action">'
-					. (user_access('register new member') && $options->showRegist ? '<a class="sg-action btn" href="'.url('user/register', ['ret' => $options->signret, 'rel' => $options->regRel]).'" data-rel="'.$options->regRel.'"><i class="icon -material">person_add</i><span>'.tr('Create new account').'</span></a> ' : '')
+					. (user_access('register new member') && $options->showRegist ? '<a class="sg-action btn -fill" href="'.url('user/register', ['ret' => $options->signret, 'rel' => $options->regRel]).'" data-rel="'.$options->regRel.'"><i class="icon -material">person_add</i><span>'.tr('Create new account').'</span></a> ' : '')
 					. '<div style="height: 16px;"></div>'
-					. '<a class="btn -link" href="javascript:void(0)" onclick="window.location=\''.url('user/password').'\';return false;"><i class="icon -material -gray">restore</i><span>'.tr('Request new password').'?</span></a></span>'._NL,
+					. '<a class="btn -link -fill" href="javascript:void(0)" onclick="window.location=\''.url('user/password').'\';return false;"><i class="icon -material -gray">restore</i><span>'.tr('Request new password').'?</span></a></span>'._NL,
 				], // children
 			]), // Column
 		], // children
