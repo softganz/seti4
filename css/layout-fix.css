@@ -30,7 +30,7 @@
 		.page.-nav>.nav.-owner>*>*>a {padding: 0; margin: 0 4px; border-radius: 16px;}
 		.page.-nav>.nav.-owner>*>*>a>.icon {color: #666;}
 		.page.-nav>.nav.-owner>*>*>a>.icon:only-child {padding: 4px;}
-		.page.-nav>.nav.-owner li.-profile>a {line-height: 24px; max-width: 100px; overflow: hidden; white-space: nowrap; font-weight: bold;}
+		.page.-nav>.nav.-owner li.-profile>a {line-height: 24px; max-width: 110px; overflow: hidden; white-space: nowrap; font-weight: bold;}
 		.page.-nav>.nav.-owner li.-profile>a>.profile-photo {margin: 0;}
 		.page.-nav>.nav.-owner li.-profile>a>.icon {padding: 4px;}
 		.page.-nav>.nav.-owner li.-profile>a>span {display: none; padding: 0 8px 0 4px;}

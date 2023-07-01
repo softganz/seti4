@@ -267,7 +267,7 @@ $SCREENS
 	.loading {width:120px; height:20px; margin:5px; padding:3px; position:absolute; text-align:center; background:#fff url(https://softganz.com/library/img/loading.gif) no-repeat 10px 5px; border:1px green solid; border-radius:10px;	}
 
 	/* Class look like bootstrap4 */
-	.btn {margin: 0px; padding: 6px; font-size: 1em; font-weight: normal; line-height: 24px; color: #666; border: none; border-radius: 18px; box-shadow: 0px 0px 0px 1px #d2d2d2 inset; display: inline-flex; background-color: #eee; cursor: pointer; text-align: center; white-space: nowrap;}
+	.btn {margin: 0px; padding: 6px; font-size: 1em; font-weight: normal; line-height: 24px; color: #666; border: none; border-radius: 18px; display: inline-flex; background-color: #eee; cursor: pointer; justify-content: center; white-space: nowrap;}
 		.btn:hover {color: #555; background-color: #f0f0f0;}
 		.btn.-sg-16 {padding: 0;}
 		.btn.-sg-24 {padding: 0;}
@@ -279,21 +279,21 @@ $SCREENS
 		.btn.-sg-64>.icon {margin-top: 20px;}
 		.btn.-big {padding-top: 16px; padding-bottom: 16px;}
 		.btn.-normal {}
-		.btn.-primary {font-weight: normal; color: #E5F2FF; box-shadow: 0 0 0 1px #2179ff inset; cursor: pointer; background-color: #057BFF;}
-		.btn.-primary:hover {background-color: #1672ff; box-shadow: 0 0 0 1px #1672ff inset;}
+		.btn.-primary {font-weight: normal; color: #E5F2FF; cursor: pointer; background-color: #057BFF;}
+		.btn.-primary:hover {background-color: #1672ff;}
 		.btn.-primary>.icon {opacity: 0.8;}
 		.btn.-primary>.icon.-material {color: #f5f5f5;}
 		.btn.-primary>span {opacity: 0.9;}
 		.btn.-secondary {}
 		.btn.-secondary:hover {}
-		.btn.-success {color: #c5ffc6; background-color: #5FB660; box-shadow: 0 0 0 1px #5BAF5C inset;}
+		.btn.-success {color: #c5ffc6; background-color: #5FB660;}
 		.btn.-success:hover {background-color: #67C768;}
 		.btn.-success>.icon {color: #c5ffc6;}
-		.btn.-info {color: #E5F2FF; background-color: #60C0DC; box-shadow: 0 0 0 1px #55B6D2 inset;}
+		.btn.-info {color: #E5F2FF; background-color: #60C0DC;}
 		.btn.-info:hover {background-color: #65C7E4;}
-		.btn.-warning {color: #FFEEDB; background-color: #EEAC57; box-shadow: 0 0 0 1px #E6A755 inset;}
+		.btn.-warning {color: #FFEEDB; background-color: #EEAC57;}
 		.btn.-warning:hover {background-color: #F9B45A;}
-		.btn.-danger {color: #FFE0E0; background-color: #D75452; box-shadow: 0 0 0 1px #C74F4D inset;}
+		.btn.-danger {color: #FFE0E0; background-color: #D75452;}
 		.btn.-danger:hover {background-color: #E05755;}
 		.btn.-danger>.icon {color: #FFE0E0;}
 		.btn.-link {background-color: transparent; box-shadow: none;}
@@ -453,7 +453,7 @@ $SCREENS
 		tr:hover>td.-hover-parent>.-hover {padding: 4px; display: inline-block; top: 4px; right: 4px; background-color: #ffe9e9; opacity: 0.85;}
 
 
-	button, .button {font-size: 1em; color: #050505; margin-right: 20px; padding: 3px 10px; border-radius: 2px; display: inline-block; background-color: #f0f0f0; box-shadow: 0px 0px 0px 1px #d2d2d2 inset; border:none;}
+	button, .button {font-size: 1em; color: #050505; margin-right: 20px; padding: 3px 10px; border-radius: 2px; display: inline-block; background-color: #f0f0f0; box-shadow: none; border:none;}
 	button:hover, .button:hover {background-color: #e5e5e5;}
 	.button.-save {font-size:1.4em;}
 	.button.-floating {margin:0; padding: 4px 10px; box-shadow: 2px 2px 3px #aaa; font-weight: normal; color: #fff; border: none; cursor: pointer; display: inline-block; background-color:#0065bd;}
@@ -874,8 +874,8 @@ $SCREENS
 		.search-box .form-item {padding: 0; margin: 0;}
 		.search-box .form-item:first-child {flex: 1 0 1%;}
 		.search-box input[type="text"] {width: calc(100% - 16px); height:100%; font-size:1.0em; margin:0; padding:0 8px; border:none; box-shadow: none; display: block; opacity: 0.5; position: relative; top:0; left: 0; right: 0; bottom: 0;}
-		.search-box .button {height:100%; height: calc(100% - 2px); margin: 0; padding: 0 4px; position: absolute; top: 1px; right: 1px; bottom: 1px; color: #300; font-size: 1em; font-weight: normal; background-color:#F0F0F0; border: none; border-left: 1px #ccc solid; border-radius: 0 4px 4px 0; box-shadow: none;}
-		.search-box button {height: calc(100% - 2px); margin: 0; padding: 0 4px; position: absolute; top: 1px; right:1px; bottom: 1px; border: none; background-color: transparent; box-shadow: none; border-radius: 0 4px 4px 0;}
+		.search-box .button {height:100%; height: calc(100% - 2px); margin: 0; padding: 0 4px; position: absolute; top: 1px; right: 1px; bottom: 1px; color: #300; font-size: 1em; font-weight: normal; background-color:#F0F0F0; border: none; border-left: 1px #ccc solid; border-radius: 0 4px 4px 0;}
+		.search-box button {height: calc(100% - 2px); margin: 0; padding: 0 4px; position: absolute; top: 1px; right:1px; bottom: 1px; border: none; background-color: transparent; border-radius: 0 4px 4px 0;}
 
 
 
@@ -982,7 +982,7 @@ $SCREENS
 		.nav.-page .ui-item>.btn {margin-right: 4px;}
 		.nav.-page .ui-item>a:not(.btn) {padding:4px 8px; display: block;}
 		.nav.-page .ui-item>form {margin:0;}
-		.nav.-page .sg-dropbox.-atright>a {width:24px; height:24px; padding: 4px; display: inline-block; background-color: #eee; border-radius: 50%;		box-shadow: 0px 0px 0px 1px #d2d2d2 inset;}
+		.nav.-page .sg-dropbox.-atright>a {width:24px; height:24px; padding: 4px; display: inline-block; background-color: #eee; border-radius: 50%; box-shadow: none;}
 		.nav.-page .sg-dropbox>a:hover {background-color: #eee;}
 		.nav.-page .sg-dropbox>a>.icon:hover {background-color: transparent;}
 		.nav.-page .sg-dropbox .ui-item {display: block;}
@@ -1149,6 +1149,7 @@ $SCREENS
 		.login>.-form {}
 		.login>.-info {}
 		.login>.-form>.form {max-width: 230px; margin: 0 auto; padding: 16px; border-radius: 8px; background-color: #fff;}
+		.login>.-info .btn {border: none;}
 		.login>.-info .btn.-fill {max-width: 260px; margin: 32px auto;}
 		.login>.-form>.form>.ui-action {display: block; text-align: center;}
 		.login .signform .form-item {margin-bottom: 8px; position: relative;}

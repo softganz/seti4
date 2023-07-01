@@ -493,6 +493,11 @@
 	.widget-album>*.-upload>form .btn>span {display: block; flex: 1 0 100%; padding: 0;}
 	.widget-album>*>.-hover {position: absolute; top: 4px; right: 4px;}
 
+.widget-signin {xmax-width: 280px;}
+	.widget-signin>.form-item {margin: 8px auto; padding: 8px;}
+	.widget-signin>.form-item .form-text.-fill, .widget-signin>.form-item .form-password.-fill {padding: 16px 16px 8px; border-radius: 32px; width:  calc(100% - 32px);}
+	.widget-signin .form-item.-label-in>label {margin: 2px 0 0 16px;}
+	.widget-signin .btn.-primary {padding: 16px; border-radius:  32px; box-shadow: none; justify-content: center;}
 
 
 
