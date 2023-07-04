@@ -144,7 +144,6 @@ class Form extends Widget {
 				}
 			} else if (is_object($formElement)) {
 				// Form element is array and has key children
-				// $ret .= print_o($formElement, '$formElement');
 				$type = $formElement->type;
 				if ($type == 'fieldset') {
 					$ret .= '<div class="form-item -fieldset '.$formElement->class.($formElement->class).'">'
@@ -153,7 +152,7 @@ class Form extends Widget {
 
 				unset($formElement->type, $formElement->label, $formElement->class);
 
-				foreach (\SG\getFirst($formElement->children) as $groupKey => $groupItem) {
+				foreach ($formElement->children as $groupKey => $groupItem) {
 					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
 						// Item is widget
 						$ret .= $groupItem->build();
