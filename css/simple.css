@@ -1522,6 +1522,8 @@ $SCREENS
 
 			#cboxContent .login {width: auto; margin: 0; border: none; background-color: transparent;}
 
+	#cboxLoadedContent .widget-appbar>.-title {background-color: transparent;}
+	#cboxLoadedContent .widget-appbar>.-leading {background-color: transparent;}
 
 	#colorbox.-full
 	, #colorbox.-full #cboxWrapper
