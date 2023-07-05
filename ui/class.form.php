@@ -1,13 +1,15 @@
 <?php
-/********************************************
-* Class :: Form version 2.0
-* Form class for create Form
+/**
+* Form    :: Form Widget
+* Created :: 2020-10-01
+* Modify  :: 2023-07-05
+* Version :: 21
 *
-* Created 2020-10-01
-* Modify  2021-08-23
+* @param Array $args
+* @return Widget
 *
-* @usage new Form([])
-********************************************/
+* @usage new Form($args)
+*/
 
 /*
 	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, leading, rel, done, attribute, width, height, style, onSubmit, onFormSubmit, description, footer, trailing
