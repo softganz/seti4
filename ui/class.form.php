@@ -1,6 +1,6 @@
 <?php
 /**
-* Form    :: Form Widget
+* Widget  :: Form Widget
 * Created :: 2020-10-01
 * Modify  :: 2023-07-05
 * Version :: 21
@@ -8,11 +8,11 @@
 * @param Array $args
 * @return Widget
 *
-* @usage new Form($args)
+* @usage new Form([key => value,...])
 */
 
 /*
-	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, leading, rel, done, attribute, width, height, style, onSubmit, onFormSubmit, description, footer, trailing
+	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, leading, rel, done, children, width, height, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
 	Form Children:
 		- Array
 		- Text

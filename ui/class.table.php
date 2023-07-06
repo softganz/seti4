@@ -1,13 +1,15 @@
 <?php
-/********************************************
-* Widget :: Table
-* Table widget for create table
+/**
+* Widget  :: Table Widget
+* Created :: 2020-10-01
+* Modify  :: 2023-07-05
+* Version :: 2
 *
-* Created 2020-10-01
-* Modify  2022-04-03
+* @param Array $args
+* @return Widget
 *
-* @usage new Table([key => value])
-********************************************/
+* @usage new Table([key => value,...])
+*/
 
 class Table extends Widget {
 	var $config = [];
