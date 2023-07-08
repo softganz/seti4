@@ -631,6 +631,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`wid`),
 		KEY `uid` (`uid`),
 		KEY `ip` (`ip`),
+		KEY `date` (`date`),
 		KEY `module` (`module`),
 		KEY `keyword` (`keyword`),
 		KEY `keyid` (`keyid`),
