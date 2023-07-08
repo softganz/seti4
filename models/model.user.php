@@ -482,9 +482,13 @@ class UserModel {
 			$username = $_POST['username'];
 			$password = $_POST['password'];
 			$remember = $_POST['remember'];
-			$cookielength = $_POST['cookielength'];
+			$cookielength = $_POST['cookielength'] ? intval($_POST['cookielength']) : NULL;
 			// echo '$username = '.$username.' $password = '.$password;
-			//if ($username=='softganz') die($username);
+			// print_r($_POST);
+			// if ($username=='softganz') die($username);
+
+			if (!is_numeric($cookielength)) return $user;
+
 
 			// check for email signin
 			if (strpos($username,'@')) {
