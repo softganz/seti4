@@ -394,7 +394,7 @@ function __admin_install_create_table($prefix=null) {
 		`name` varchar(255) NOT NULL default "",
 		PRIMARY KEY  (`tsid`),
 		KEY `tid` (`tid`),
-		KEY `name_tid` (`name`,`tid`)
+		KEY `name` (`name`)
 		);';
 
 	$query->tag_topic='CREATE TABLE IF NOT EXISTS %tag_topic% (
