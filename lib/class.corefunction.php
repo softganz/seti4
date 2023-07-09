@@ -1361,12 +1361,16 @@ class SgCore {
 			}
 
 			// Generate result by content type
-			if (cfg('Content-Type') == 'text/xml') die(process_widget($requestResult));
-			if (!_AJAX && is_array($requestResult) && isset($requestResult['location'])) location($body['location']);
- 			if (_HTML && (is_array($requestResult) || is_object($requestResult))) die(process_widget(print_o($requestResult,'$requestResult')));
-			if (_HTML) die(process_widget($requestResult));
-
-			if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
+			if (cfg('Content-Type') == 'text/xml') {
+				die(process_widget($requestResult));
+			} else if (!_AJAX && is_array($requestResult) && isset($requestResult['location'])) {
+				location($body['location']);
+ 			} else if (_HTML && (is_array($requestResult) || is_object($requestResult))) {
+ 				die(process_widget(print_o($requestResult,'$requestResult')));
+			} else if (_HTML) {
+				die(process_widget($requestResult));
+			} else if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
+				// AJAX Call process
 				// Check error result
 				$ajaxResult = [];
 				if (is_object($pageBuildWidget) && $pageBuildWidget->widgetName === 'ErrorMessage') {
