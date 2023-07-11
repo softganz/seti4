@@ -136,7 +136,7 @@ class AdminUserApi extends PageApi {
 		} else {
 			unset($data->password,$data->repassword);
 		}
-		$data->roles = implode(',',$data->roles);
+		$data->roles = implode(',', $data->roles ? $data->roles : []);
 		$oldRoles = mydb::select(
 			'SELECT `roles` FROM %users% WHERE `uid` = :uid LIMIT 1',
 			[':uid' => $this->userId]
