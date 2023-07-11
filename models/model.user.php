@@ -202,6 +202,20 @@ class UserModel {
 		}
 	}
 
+	public static function updatePassword($userId, $password) {
+		$newPassword = sg_encrypt($password,cfg('encrypt_key'));
+		mydb::query(
+			'UPDATE %users%
+			SET `password` = :newPassword
+			WHERE `uid` = :userId
+			LIMIT 1',
+			[
+				':userId' => $userId,
+				':newPassword' => $newPassword
+			]
+		);
+	}
+
 	// delete user information
 	public static function delete($uid) {
 		$rs = UserModel::get($uid);
