@@ -775,14 +775,17 @@ $SCREENS
 		.form-select[disabled] {box-shadow: 0 0 0 1px transparent inset; background-image: none;}
 
 		.form-text.-require,
+		.form-password.-require,
 		.form-select.-require,
 		.form-textarea.-require {box-shadow: 0 0 0 1px #ffd8be inset;}
 
 		.form-text.-require:hover,
+		.form-password.-require:hover,
 		.form-select.-require:hover,
 		.form-textarea.-require:hover {box-shadow: 0 0 0 1px #86b7fe inset;}
 
 		.form-text.-require:focus,
+		.form-password.-require:focus,
 		.form-select.-require:focus,
 		.form-textarea.-require:focus {box-shadow: 0 0 0 1px #86b7fe inset;}
 
