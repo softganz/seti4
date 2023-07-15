@@ -685,12 +685,12 @@ class UserModel {
 			//-- check valid char
 			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$username.'</em></strong> มีอักษรหรือความยาวไม่ตรงตามเงื่อนไข';
 		} else if (mydb::select(
-			'SELECT `username` FROM %users% WHERE `username` = :username LIMIT 1;
-			-- {reset: false}',
-			[':username' => $username]
-		)->username) {
+				'SELECT `username` FROM %users% WHERE `username` = :username LIMIT 1;
+				-- {reset: false}',
+				[':username' => $username]
+			)->username) {
 			//-- duplicate username
-			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$register->username.'</em></strong> มีผู้อื่นใช้ไปแล้ว กรุณาใช้ชื่อใหม่';
+			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$username.'</em></strong> มีผู้อื่นใช้ไปแล้ว กรุณาใช้ชื่อใหม่';
 		}
 		return $result;
 	}
