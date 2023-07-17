@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2023-03-31
-* Version :: 2
+* Modify  :: 2023-07-17
+* Version :: 3
 *
 * @param Int $userId
 * @return Object
