@@ -706,10 +706,6 @@ $SCREENS
 	.form-item {margin: 0; padding: 8px; position: relative;}
 	.form-item.-hidden {display: none;}
 	.form-item.-inlineblock {display: inline-block;}
-	.form-item.-fieldset { border: 1px #ccc solid; margin-top: 32px; padding: 16px; position: relative;}
-
-   	.form-item.-fieldset>label:first-child {display: inline-block; background: #fff; padding: 4px 8px; position: absolute; top: -24px; border: 1px #ccc solid; border-radius: 4px;}
-
 		.form-item>label:not(.-hidden) {margin:5px 0;font-weight:bold;display:block;}
 		.form-item .label--option {padding-left:10px; font-weight: normal; display: inline-block;}
 		.form-item .option {font-weight:normal;}
@@ -775,17 +771,14 @@ $SCREENS
 		.form-select[disabled] {box-shadow: 0 0 0 1px transparent inset; background-image: none;}
 
 		.form-text.-require,
-		.form-password.-require,
 		.form-select.-require,
 		.form-textarea.-require {box-shadow: 0 0 0 1px #ffd8be inset;}
 
 		.form-text.-require:hover,
-		.form-password.-require:hover,
 		.form-select.-require:hover,
 		.form-textarea.-require:hover {box-shadow: 0 0 0 1px #86b7fe inset;}
 
 		.form-text.-require:focus,
-		.form-password.-require:focus,
 		.form-select.-require:focus,
 		.form-textarea.-require:focus {box-shadow: 0 0 0 1px #86b7fe inset;}
 
@@ -835,6 +828,12 @@ $SCREENS
 		.options-group>.options-group {padding-left: 16px;}
 		.options-group-label {display: block; font-weight: bold;}
 		.option.-inline {display: inline;}
+
+	.form-container {padding: 0;}
+	.form-container.-type-column {}
+	.form-container.-type-row {display: flex; flex-wrap: wrap;}
+	.form-container.-type-fieldset {border: 1px #ccc solid; margin: 32px 8px 8px; padding: 8px; position: relative;}
+		.form-container.-type-fieldset>label:first-child {display: inline-block; background: #fff; padding: 4px 8px; position: absolute; top: -24px; border: 1px #ccc solid; border-radius: 4px;}
 
 	.form.-inlineitem .form-item {display: inline-block; vertical-align: top;}
 	.form.-inlineitem .form-item.-hidden {display: none;}
