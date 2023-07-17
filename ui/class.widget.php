@@ -1,17 +1,20 @@
 <?php
-/********************************************
-* Class :: Widget version 1.0
-* Basic Widgets Collection
+/**
+* Widget  :: Basic Widgets Collector
+* Created :: 2020-10-01
+* Modify  :: 2023-07-17
+* Version :: 21
 *
-* Created 2020-10-01
-* Modify  2021-08-23
+* @param Array $args
+* @return Widget
 *
-********************************************/
+* @usage new Widget([key => value,...])
+*/
 
-/********************************************
-* Class :: Widget
+/**
+* Class :: WidgetBase
 * Widget class for base of all widget
-********************************************/
+*/
 class WidgetBase {
 	var $widgetName = 'Widget';
 	var $version;
@@ -244,7 +247,9 @@ class Widget extends WidgetBase {
 } // End of class Widget
 
 
-// Basic Widget
+/**
+* Basic Widget
+*/
 
 class Container extends Widget {
 	var $widgetName = 'Container';
