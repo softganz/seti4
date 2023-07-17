@@ -707,5 +707,12 @@ class UserModel {
 		}
 		return $photo;
 	}
+
+	public static function deleteAccount($userId) {
+		mydb::query(
+			'UPDATE %users% SET `status` = "disable", `admin_remark` = CONCAT(IFNULL(`admin_remark`, ""), "@'.date('Y-m-d H:i:s').' ลบบัญชีโดยเจ้าของ") WHERE `uid` = :userId LIMIT 1',
+			[':userId' => $userId]
+		);
+	}
 }
 ?>

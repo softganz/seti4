@@ -43,5 +43,12 @@ class MyApi extends PageApi {
 
 		return success('New password was change : บันทึกรหัสผ่านใหม่เรียบร้อย');
 	}
+
+	public function accountDelete() {
+		debugMsg(post(), 'post()');
+		if (!\SG\confirm()) return error(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
+		UserModel::deleteAccount(i()->uid);
+		return success('ลบบัญชีเรียบร้อย');
+	}
 }
 ?>
