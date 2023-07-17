@@ -453,7 +453,7 @@ class Button extends Widget {
 			'data-before' => \SG\getFirst($this->before),
 			'data-done' => \SG\getFirst($this->done),
 			'target' => \SG\getFirst($this->target),
-			'onClick' => $this->onClick ? $this->onClick : NULL,
+			// 'onClick' => $this->onClick ? $this->onClick : NULL,
 			'style' => $this->style,
 		], (Array) $this->attribute);
 
@@ -463,7 +463,10 @@ class Button extends Widget {
 			$attribute['href'] = preg_replace('/\{\{projectId\}\}/', $this->variable->projectId, $attribute['href']);
 		}
 
-		$button = '<a '.sg_implode_attr($attribute).'>'
+		$button = '<a '
+			. sg_implode_attr($attribute)
+			. ($this->onClick ? ' onClick=\''.$this->onClick.'\'' : '')
+			. '>'
 			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
 			. ($this->text ? '<span class="-label">' . $this->text . ($this->description ? '<em class="-desc">'.$this->description.'</em>' : '') . '</span>' : '')
 			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
