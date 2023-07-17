@@ -25,7 +25,7 @@ class Form extends Widget {
 	var $widgetName = 'Form';
 	var $tagName = 'form';
 	var $method = 'POST';
-	var $variable;
+	var $variable = NULL;
 	var $readonly = false;
 	var $config;
 	var $leading;
@@ -35,6 +35,7 @@ class Form extends Widget {
 	var $onSubmit;
 	var $onFormSubmit;
 	var $children = [];
+	var $formArray = [];
 
 	function __construct($args = []) {
 		$this->initConfig();
@@ -62,8 +63,8 @@ class Form extends Widget {
 
 	function field($key = NULL) {return $this->children;}
 
-	//TODO:: Move form item to array $formArray
-	function renderForm($returnType = 'text') {
+	//TODO:: Move form item to array $this->formArray
+	function renderForm() {
 		if (empty($this->children)) {
 			foreach ($this as $fieldKey => $value) {
 				if (is_null($value) || in_array($fieldKey, ['id','class','method','action','variable','readonly','config','widgetName','tagName','children','header','leading','enctype'])) continue;
@@ -74,11 +75,9 @@ class Form extends Widget {
 
 		if ($this->debug) debugMsg($this, '$this');
 
-		$formArray = [];
-
 		$this->config = is_array($this->config) ? (Object) $this->config : $this->config;
 		$this->readonly = \SG\getFirst($this->config->readonly, $this->readonly);
-		$formVariable = $this->variable = \SG\getFirst($this->variable, $this->config->variable);
+		$this->variable = \SG\getFirst($this->variable, $this->config->variable);
 		$formEncrypt = $this->enctype = \SG\getFirst($this->enctype, $this->config->enctype);
 		$formMethod = $this->method = \SG\getFirst($this->config->method, $this->method);
 		$formAction = $this->action = \SG\getFirst($this->action, $this->config->action);
@@ -111,7 +110,7 @@ class Form extends Widget {
 
 			$ret .= $formStr._NL._NL;
 
-			$formArray['form'] = $formStr;
+			$this->formArray['form'] = $formStr;
 		}
 
 		if ($this->header->text) {
@@ -132,11 +131,33 @@ class Form extends Widget {
 
 		if ($this->description) $ret .= '<div class="description">'.$this->description.'</div>';
 
-		foreach ($this->children as $fieldKey => $formElement) {
+		$ret .= $this->_renderFormChild($this->children);
+
+		if ($this->footer) $ret .= $this->footer;
+		if ($this->action) $ret .= '</form>'._NL;
+		if (isset($this->trailing)) $ret .= $this->trailing;
+
+		return $ret;
+	}
+
+	function _renderFormChild($childrens) {
+		foreach ($childrens as $fieldKey => $formElement) {
 			if (is_object($formElement) && method_exists($formElement, 'build')) {
 				// Form element is widget
 				$ret .= $formElement->build();
+			} else if (is_object($formElement)) {
+				// Form element is array and has key children
+				$type = $formElement->type;
+				if ($type) {
+					$ret .= '<div class="form-container -type-'.$type.($formElement->class ? ' '.$formElement->class : '').'">'
+						. ($formElement->label ? '<label>'.$formElement->label.'</label>' : '');
+				}
+				$ret .= $this->_renderFormChild($formElement->children);
+				if ($type) {
+					$ret .= '</div>';
+				}
 			} else if (is_array($formElement) AND is_array(reset($formElement))) {
+				// @deprecated
 				// Form element is array and children is array, Render each children as form element
 				foreach ($formElement as $groupKey => $groupItem) {
 					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
@@ -144,34 +165,10 @@ class Form extends Widget {
 						$ret .= $groupItem->build();
 					} else {
 						// Item is array or string
-						list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $groupKey, $groupItem);
-						$formArray[$tag_id] = $renderChildrenResult;
+						list($tag_id, $renderChildrenResult) = $this->_renderChild($groupKey, $groupItem);
+						$this->formArray[$tag_id] = $renderChildrenResult;
 						$ret .= $renderChildrenResult;
 					}
-				}
-			} else if (is_object($formElement)) {
-				// Form element is array and has key children
-				$type = $formElement->type;
-				if ($type == 'fieldset') {
-					$ret .= '<div class="form-item -fieldset '.$formElement->class.($formElement->class).'">'
-						. ($formElement->label ? '<label>'.$formElement->label.'</label>' : '');
-				}
-
-				unset($formElement->type, $formElement->label, $formElement->class);
-
-				foreach ($formElement->children as $groupKey => $groupItem) {
-					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
-						// Item is widget
-						$ret .= $groupItem->build();
-					} else {
-						// Item is array or string
-						list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $groupKey, $groupItem);
-						$formArray[$tag_id] = $renderChildrenResult;
-						$ret .= $renderChildrenResult;
-					}
-				}
-				if ($type == 'fieldset') {
-					$ret .= '</div>';
 				}
 			} else if (is_array($formElement) && array_key_exists('children', $formElement)) {
 				// @deprecated
@@ -182,35 +179,26 @@ class Form extends Widget {
 						$ret .= $groupItem->build();
 					} else {
 						// Item is array or string
-						list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $groupKey, $groupItem);
-						$formArray[$tag_id] = $renderChildrenResult;
+						list($tag_id, $renderChildrenResult) = $this->_renderChild($groupKey, $groupItem);
+						$this->formArray[$tag_id] = $renderChildrenResult;
 						$ret .= $renderChildrenResult;
 					}
 				}
 			} else {
-				list($tag_id, $renderChildrenResult) = $this->_renderChild($formVariable, $fieldKey, $formElement);
-				$formArray[$tag_id] = $renderChildrenResult;
+				list($tag_id, $renderChildrenResult) = $this->_renderChild($fieldKey, $formElement);
+				$this->formArray[$tag_id] = $renderChildrenResult;
 				$ret .= $renderChildrenResult;
 			}
 		}
-
-		if ($this->footer) $ret .= $this->footer;
-		if ($this->action) $ret .= '</form>'._NL;
-		if (isset($this->trailing)) $ret .= $this->trailing;
-
-		return $returnType == 'text' ? $ret : $formArray;
+		return $ret;
 	}
 
-	function _renderChild($formVariable, $fieldKey, $formElement) {
-		if (is_object($formElement) && method_exists($formElement, 'build')) {
-			return $formElement->build();
-		} else if (is_string($formElement)) {
+	function _renderChild($fieldKey, $formElement) {
+		if (is_string($formElement)) {
 			return [NULL, $formElement._NL._NL];
-		} else if (is_array($formElement)) {
-			$formElement = (Object) $formElement;
-		} else {
-			$formElement = (Object) $formElement;
 		}
+
+		$formElement = (Object) $formElement;
 
 		$name = '';
 		$tag_id = '';
@@ -223,14 +211,14 @@ class Form extends Widget {
 		if ($formElement->id) {
 			$tag_id = $formElement->id;
 		} else {
-			$tag_id = $formElement->name ? $formElement->name : ($formVariable ? $formVariable.'-':'').$fieldKey;
+			$tag_id = $formElement->name ? $formElement->name : ($this->variable ? $this->variable.'-':'').$fieldKey;
 			$tag_id = 'edit-'.preg_replace(array('/([\W]+$)+/','/([\W])+/'),array('','-'),$tag_id);
 		}
 
 		$tag_id = strtolower($tag_id);
 
 		if ($formElement->name !== false) {
-			$name = $formElement->name ? $formElement->name : ($formVariable ? $formVariable.'['.$fieldKey.']' : $fieldKey);
+			$name = $formElement->name ? $formElement->name : ($this->variable ? $this->variable.'['.$fieldKey.']' : $fieldKey);
 		}
 
 		if (isset($formElement->container) && is_object($formElement->container)) {
@@ -903,8 +891,8 @@ class Form extends Widget {
 	}
 
 	function get($id = NULL) {
-		$result = $this->renderForm('array');
-		return $id ? $result[$id] : $result;
+		$this->renderForm();
+		return $id ? $this->formArray[$id] : $this->formArray;
 	}
 } // End of class Form
 ?>
