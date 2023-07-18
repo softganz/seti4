@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-07-17
-* Version :: 21
+* Modify  :: 2023-07-18
+* Version :: 22
 *
 * @param Array $args
 * @return Widget
@@ -751,6 +751,7 @@ class AppBar extends Widget {
 	var $widgetName = 'AppBar';
 	var $tagName = 'div';
 	var $title;
+	var $subtitle;
 	var $leading;
 	var $trailing;
 	var $navigator;
@@ -791,9 +792,11 @@ class AppBar extends Widget {
 
 		return $this->_renderWidgetContainerStart()
 			. ($this->leading ? '<div class="-leading">'.$this->_renderEachChildWidget(NULL, $this->leading).'</div>'._NL : '')
-			. '<h2 class="-title">'
+			. '<div class="-title"><h2 class="-title-text">'
 			. ($this->title ? $this->_renderEachChildWidget(NULL, $this->title) : '')
-			. '</h2>'._NL
+			. '</h2>'
+			. ($this->subTitle ? '<div class="-sub-title">'.$this->_renderEachChildWidget(NULL, $this->subTitle).'</div>' : '')
+			. '</div>'._NL
 			. ($this->trailing ? '<div class="-trailing -no-print">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
 			. ($this->navigator && ($navigatorResult = $this->_renderNavigator()) ? '<nav class="-nav -no-print">'.$navigatorResult.'</nav>' : '')
 			. ($this->children || $this->child ? '<div class="-children">'.$this->_renderChildren().'</div>' : '')
