@@ -792,10 +792,10 @@ class AppBar extends Widget {
 
 		return $this->_renderWidgetContainerStart()
 			. ($this->leading ? '<div class="-leading">'.$this->_renderEachChildWidget(NULL, $this->leading).'</div>'._NL : '')
-			. '<div class="-title"><h2 class="-title-text">'
+			. '<div class="-title"><h2 class="-text">'
 			. ($this->title ? $this->_renderEachChildWidget(NULL, $this->title) : '')
 			. '</h2>'
-			. ($this->subTitle ? '<div class="-sub-title">'.$this->_renderEachChildWidget(NULL, $this->subTitle).'</div>' : '')
+			. ($this->subTitle ? '<div class="-sub">'.$this->_renderEachChildWidget(NULL, $this->subTitle).'</div>' : '')
 			. '</div>'._NL
 			. ($this->trailing ? '<div class="-trailing -no-print">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
 			. ($this->navigator && ($navigatorResult = $this->_renderNavigator()) ? '<nav class="-nav -no-print">'.$navigatorResult.'</nav>' : '')
