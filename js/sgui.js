@@ -399,19 +399,19 @@ function sgWebViewDomProcess(id) {
 * <a href="link" data-webview="title">text</a>
 */
 (function($) { // data-webview
-	var version = '0.01'
-	var actionComplete = false
+	let version = '0.01'
+	let actionComplete = false
 
 	$.fn.openWebview = function(event, options = {}) {
-		var $this = $(this)
-		var linkData = $this.data()
-		var location = $this.attr('href')
-		var openType = $this.data('webview')
+		let $this = $(this)
+		let linkData = $this.data()
+		let location = $this.attr('href')
+		let openType = $this.data('webview')
 
 		self.doAction = function() {
 			if (!(isAndroidWebViewReady || isFlutterInAppWebViewReady)) return false
 
-			var webviewData = JSON.stringify(linkData)
+			let webviewData = JSON.stringify(linkData)
 
 			if (openType == 'browser') {
 				if (isFlutterInAppWebViewReady) {
@@ -436,13 +436,14 @@ function sgWebViewDomProcess(id) {
 					Android.useServer(linkData.server)
 				}
 			} else if (openType) {
-				var pattern = /^((http|https|ftp):\/\/)/
+				let pattern = /^((http|https|ftp):\/\/)/
 				linkData.webviewTitle = linkData.webview
 				webviewData = JSON.stringify(linkData)
 				location = pattern.test(location) ? location : document.location.origin + location
 				if (isFlutterInAppWebViewReady) {
-					const args = [location,linkData.webviewTitle,linkData];
-					let r = window.flutter_inappwebview.callHandler("showWebView", ...args);
+					var options = $.extend({"actionBar": true}, $this.data('option'))
+					const args = [location, linkData.webviewTitle, options]
+					let r = window.flutter_inappwebview.callHandler("showWebView", ...args)
 				} else if (isAndroidWebViewReady) {
 					Android.showWebView(location, webviewData)
 				}
@@ -462,7 +463,7 @@ function sgWebViewDomProcess(id) {
 	}
 
 	$(document).on('click', '[data-webview]', function(event) {
-		var actionComplete = $(this).openWebview(event,{}).actionComplete
+		let actionComplete = $(this).openWebview(event,{}).actionComplete
 		if (debugSG) console.log('Mobile App WebView '+version+' result is ', actionComplete)
 		if (actionComplete) {
 			event.stopImmediatePropagation()
