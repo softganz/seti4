@@ -1989,27 +1989,39 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	// check for member
 	if (i()->ok) {
 		// collage all member roles
-		if (!array_key_exists(i()->uid,$member_roles)) {
-			$member_roles[i()->uid]=array_merge($roles['anonymous'],$roles['member']);
-			foreach (i()->roles as $name) if (is_array($roles[$name])) $member_roles[i()->uid]=array_merge($member_roles[i()->uid],$roles[$name]);
-			$roles_user=cfg('roles_user');
-			if (is_array($roles_user) && array_key_exists(i()->uid,$roles_user)) {
-				$member_roles[i()->uid]=array_merge($member_roles[i()->uid],explode(',',$roles_user[i()->uid]));
+		if (!array_key_exists(i()->uid, $member_roles)) {
+			$member_roles[i()->uid] = array_merge($roles['anonymous'], $roles['member']);
+			foreach (i()->roles as $name) {
+				if (is_array($roles[$name])) {
+					$member_roles[i()->uid] = array_merge($member_roles[i()->uid], $roles[$name]);
+				}
 			}
-			$member_roles[i()->uid]=array_unique($member_roles[i()->uid]);
+			$roles_user = cfg('roles_user');
+			if (is_object($roles_user) && array_key_exists(i()->username, (Array) $roles_user)) {
+				$member_roles[i()->uid] = array_merge($member_roles[i()->uid], explode(',', $roles_user->{i()->username}));
+			}
+			$member_roles[i()->uid] = array_unique($member_roles[i()->uid]);
 			asort($member_roles[i()->uid]);
 		}
 
 		if ($debug) echo '$member_roles['.i()->uid.']='.implode(',',$member_roles[i()->uid]).'<br />';
 
 		/* user have permission in roles */
-		if ($debug && $str=implode(',',array_intersect($role,$member_roles[i()->uid]))) echo 'roles permission is <b>'.$str.'</b><br />';
-		if (array_intersect($role,$member_roles[i()->uid])) return true;
+		if ($debug && $str = implode(',',array_intersect($role,$member_roles[i()->uid]))) {
+			echo 'roles permission is <b>'.$str.'</b><br />';
+		}
+		if (array_intersect($role,$member_roles[i()->uid])) {
+			return true;
+		}
 
 		/* check permission of owner content */
 		if ($urole) {
-			if ($debug) echo in_array($urole,$member_roles[i()->uid]) ? 'user role is <b>'.$urole.'</b>'.($uid===i()->uid?' and is owner permission':' but not owner').'<br />':'';
-			if ($uid===i()->uid && in_array($urole,$member_roles[i()->uid])) return true;
+			if ($debug) {
+				echo in_array($urole,$member_roles[i()->uid]) ? 'user role is <b>'.$urole.'</b>'.($uid === i()->uid ? ' and is owner permission':' but not owner').'<br />' : '';
+			}
+			if ($uid === i()->uid && in_array($urole,$member_roles[i()->uid])) {
+				return true;
+			}
 		}
 
 		if ($debug) echo 'no role permission<br />';

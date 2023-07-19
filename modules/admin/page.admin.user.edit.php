@@ -99,7 +99,7 @@ class AdminUserEdit extends Page {
 						})(),
 						'value'=>$this->userInfo->roles,
 						'multiple'=>true,
-						'description'=>'The user receives the combined permissions of the <em>authenticated user</em> role, and all roles selected here. For <a href="'.url('admin/user/access/uid/'.$rs->uid).'">additional authenticated for this user only</a>.',
+						'description'=>'The user receives the combined permissions of the <em>authenticated user</em> role, and all roles selected here. For <a href="'.url('admin/user/access/uid/'.$this->userId).'">additional authenticated for this user only</a>.',
 					],
 					'admin_remark' => [
 						'type'=>'textarea',
