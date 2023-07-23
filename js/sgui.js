@@ -1,6 +1,6 @@
 'use strict'
 
-let sgUiVersion = '4.00.03'
+let sgUiVersion = '4.00.05'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPage = 0
@@ -399,7 +399,7 @@ function sgWebViewDomProcess(id) {
 * <a href="link" data-webview="title">text</a>
 */
 (function($) { // data-webview
-	let version = '0.01'
+	let version = '0.03'
 	let actionComplete = false
 
 	$.fn.openWebview = function(event, options = {}) {
@@ -413,10 +413,21 @@ function sgWebViewDomProcess(id) {
 
 			let webviewData = JSON.stringify(linkData)
 
-			if (openType == 'browser') {
+			if (openType == 'intent') {
 				if (isFlutterInAppWebViewReady) {
-					const args = [location, linkData.webviewTitle, linkData];
-					let r = window.flutter_inappwebview.callHandler("openBrowser", ...args);
+					var options = $.extend({"actionBar": false}, $this.data('options'))
+					const args = [location, linkData.webviewTitle, options]
+					let r = window.flutter_inappwebview.callHandler("openIntent", ...args)
+				} else if (isAndroidWebViewReady) {
+					Android.openBrowser(location, webviewData)
+				}
+			} else if (openType == 'browser') {
+				if (isFlutterInAppWebViewReady) {
+					// const args = [location, linkData.webviewTitle, linkData];
+					// let r = window.flutter_inappwebview.callHandler("openBrowser", ...args);
+					var options = $.extend({"actionBar": false}, $this.data('options'))
+					const args = [location, linkData.webviewTitle, options]
+					let r = window.flutter_inappwebview.callHandler("openBrowser", ...args)
 				} else if (isAndroidWebViewReady) {
 					Android.openBrowser(location, webviewData)
 				}
@@ -441,7 +452,7 @@ function sgWebViewDomProcess(id) {
 				webviewData = JSON.stringify(linkData)
 				location = pattern.test(location) ? location : document.location.origin + location
 				if (isFlutterInAppWebViewReady) {
-					var options = $.extend({"actionBar": true}, $this.data('option'))
+					var options = $.extend({"actionBar": true}, $this.data('options'))
 					const args = [location, linkData.webviewTitle, options]
 					let r = window.flutter_inappwebview.callHandler("showWebView", ...args)
 				} else if (isAndroidWebViewReady) {
