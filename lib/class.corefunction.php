@@ -1096,7 +1096,7 @@ class SgCore {
 			if ($debugLoadfile) {
 				// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
 				// debugMsg($loadResult,'$loadResult');
-				debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
+				debugMsg('<div style="color: green;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
 			}
 
 			array_pop($funcName);
