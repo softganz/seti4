@@ -2036,17 +2036,14 @@ $(document).on('submit', 'form.sg-form', function(event) {
 * sg-tabs :: Softganz tabs
 * written by Panumas Nontapan
 * https://softganz.com
-* Using <div class="sg-tabs"><ul class="tabs">tab click</ul><div>tab container</div></div>
+* Using <div class="widget-tabbar sg-tabs"><ul class="tabs">tab click</ul><div>tab container</div></div>
 */
-$(document).on('click', '.sg-tabs>.ui-tab>.ui-item>a, .sg-tabs>ul.tabs>li>a, .sg-tabs>ul>li>a', function(e) {
+$(document).on('click', '.widget-tabbar>.tabs>li>a, .sg-tabs>.ui-tab>.ui-item>a, .sg-tabs>ul.tabs>li>a, .sg-tabs>ul>li>a', function(e) {
 	var $this = $(this)
 	var $parent = $this.closest('.sg-tabs')
 	var href = $this.attr('href')
 	$this.closest('ul').children('li').removeClass('-active')
 	$this.closest('li').addClass('-active')
-
-	sgTabIdActive = $this.attr("id")
-	//console.log("Tab Active = ",sgTabIdActive)
 
 	if ($this.attr('target') != undefined) return true;
 	if (href == undefined || href == 'javascript:void(0)') {

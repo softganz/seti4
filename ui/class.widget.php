@@ -48,8 +48,9 @@ class Widget extends WidgetBase {
 	function __construct($args = []) {
 		$this->initConfig();
 		foreach ($args as $argKey => $argValue) {
-			if ($argKey === 'config' && is_array($argValue)) $argValue = (Object) $argValue;
-			if ($argKey === 'attribute' && is_array($argValue)) {
+			if ($argKey === 'class') $this->class .= ($this->class ? ' ' : '').$argValue;
+			else if ($argKey === 'config' && is_array($argValue)) $argValue = (Object) $argValue;
+			else if ($argKey === 'attribute' && is_array($argValue)) {
 				$this->attribute = array_replace_recursive($this->attribute, $argValue);
 			} else if ($argKey === 'children') {
 				foreach ($argValue as $childName => $childValue) {
@@ -697,6 +698,35 @@ class ListItem extends Widget {
 	}
 } // End of class ListItem
 
+class TabBar extends Widget {
+	var $widgetName = 'TabBar';
+	var $tagName = 'div';
+	var $class = 'sg-tabs';
+
+	function _renderChildren($childrens = [], $args = []) {
+		$tabItems = '<ul class="tabs">';
+		$tabContent = '';
+		foreach ($this->children as $key => $child) {
+			if (is_array($child)) $child = (Object) $child;
+
+			$tabItems .= '<li'
+				// . ($child->id ? ' id="'.$child->id.'"' : '')
+				. ' class="'.$child->class.($child->active ? ' -active' : '').'"'
+				. '>';
+			$tabItems .= $this->_renderEachChildWidget(NULL, $child->action);
+			$tabItems .= '</li>';
+			// debugMsg($child, '$child');
+
+			$tabContent .= '<div'
+				. ' id="'.$child->id.'"'
+				. ' class="'.($child->active ? '' : '-hidden').'">'
+				. $this->_renderEachChildWidget($key, $child->content)
+				. '</div>';
+		}
+		$tabItems .= '</ul>';
+		return $tabItems.$tabContent;
+	}
+} // End of class TabWidget
 
 class ProfilePhoto extends Widget {
 	var $widgetName = 'ProfilePhoto';
