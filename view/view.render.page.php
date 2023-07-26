@@ -150,7 +150,9 @@ class ViewRenderPage extends Widget {
 					. '<div '
 					. 'id="'.$self->module.'-toolbar" '
 					. 'class="widget-appbar sg-toolbar toolbar -main -'.$self->module
-						. (isset($self->theme->submodule) ? ' -'.$self->theme->submodule : '').'"'
+					. (isset($self->theme->submodule) ? ' -'.$self->theme->submodule : '')
+					. ($self->theme->appBarClass ? ' '.$self->theme->appBarClass : '')
+					. '"'
 					. '>'._NL;
 				if ($self->theme->moduleNav) {
 					$ret .= '<nav class="nav -module -'.$self->module.'">'.$self->theme->moduleNav.'</nav>'._NL;
