@@ -148,8 +148,8 @@ class MyDb {
 		$args = func_get_args();
 		for ($i = 1; $i < count($args); $i = $i + 2) {
 			if (isset($args[$i])) {
-				// Convert array to set of string
-				if (is_array($args[$i+1])) $args[$i+1] = 'SET-STRING:'.implode(', ',$args[$i+1]);
+				// Convert array to set of string if key not :SET
+				if (is_array($args[$i+1])) $args[$i+1] = (preg_match('/^\:SET/i', $args[$i]) ? '' : 'SET-STRING:').implode(', ',$args[$i+1]);
 				$myDb->_values[$args[$i]] = isset($args[$i+1]) ? $args[$i+1] : NULL;
 			}
 		}
@@ -236,6 +236,8 @@ class MyDb {
 					// debugMsg('$key = '.$key);
 
 					if (is_null($value)) $value = "NULL";
+					else if (preg_match('/^(\:SET)(\:.*)/i', $key, $out)) $vars[$out[2]] = mydb::valueOfSet($value);
+					else if (preg_match('/^(\:SET-STRING)(\:.*)/i', $key, $out)) $vars[$out[2]] = mydb::valueOfSetString($value);
 					else if (is_string($value) && substr($key,0,1) == '$') $value = $value;
 					else if (is_string($value) && substr($value,0,5) == 'func.') $value = substr($value,5);
 					else if (is_string($value) && substr($value,0,4) == 'SET:') $value = substr($value,4);
@@ -286,6 +288,22 @@ class MyDb {
 		$stmt = mydb::jsonVersionConvert($stmt);
 
 		return $stmt;
+	}
+
+	public static function valueOfSet($value) {
+		$value = is_array($value) || is_object($value) ? (Array) $value : explode(',', $value);
+		$setValue = [];
+		foreach ($value as $key => $v) $setValue[] = mydb()->escape($v);
+		$result = implode(' , ', $setValue);
+		return $result;
+	}
+
+	public static function valueOfSetString($value) {
+		$value = is_array($value) || is_object($value) ? (Array) $value : explode(',', $value);
+		$setValue = [];
+		foreach ($value as $key => $v) $setValue[] = '"'.mydb()->escape($v).'"';
+		$result = implode(' , ', $setValue);
+		return $result;
 	}
 
 	public static function jsonObjectString($value, $key = NULL) {
