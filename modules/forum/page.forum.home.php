@@ -1,15 +1,18 @@
 <?php
 /**
-* Module Method
-* Created 2020-04-03
-* Modify  2020-04-03
+* Forum   :: Home
+* Created :: 2020-04-03
+* Modify  :: 2023-07-25
+* Version :: 2
 *
 * @param Object $self
 * @param Int $forumId
 * @return String
 */
 
-$debug = true;
+import('model:paper.php');
+
+use \Paper\Model\PaperModel;
 
 function forum_home($self, $forumId = NULL) {
 	$defaultItems = 50;
@@ -24,32 +27,35 @@ function forum_home($self, $forumId = NULL) {
 	$self->theme->class = 'content-paper';
 	$self->theme->class .= ' paper-content-'.$types->type;
 
-	$orderFieldList = array(
+	$orderFieldList = [
 		'default' => '`tpid`',
 		'view' => '`view`',
 		'reply' => '`reply`',
 		'last' => '`last_reply`',
-	);
-	$sortList = array('a' => 'ASC', 'd' => 'DESC');
+	];
+	$sortList = ['a' => 'ASC', 'd' => 'DESC'];
 
-	$topicCondition = new stdClass();
-	$topicCondition->type = 'forum';
-	$topicCondition->tag = $forumId;
+	$topicCondition = [
+		'type' => 'forum',
+		'tags' => $forumId,
+		'options' => [
+			'items' => $getItems,
+			'debug' => false,
+			'page' => post('page'),
+			'order' => \SG\getFirst($orderFieldList[$getOrder], $orderFieldList['default']),
+			'sort' => \SG\getFirst($sortList[$getSort], $sortList['d'] ),
+			'pagePara' => [
+				'ord' => $getOrder,
+				'sort' => $getSort,
+				'items' => $getItems != $defaultItems ? $getItems : NULL,
+			],
+		],
+	];
 
-	$topicOptions = new stdClass();
-	$topicOptions->items = $getItems;
-	$topicOptions->debug = false;
-	$topicOptions->page = post('page');
-	$topicOptions->order = \SG\getFirst($orderFieldList[$getOrder], $orderFieldList['default']);
-	$topicOptions->sort = \SG\getFirst($sortList[$getSort], $sortList['d'] );
-	$topicOptions->pagePara = array();
-	$topicOptions->pagePara['ord'] = $getOrder;
-	$topicOptions->pagePara['sort'] = $getSort;
-	if ($getItems != $defaultItems) $topicOptions->pagePara['items'] = $getItems;
-
-	$displayCondition = new stdClass();
-	if ($getSort) $displayCondition->sort = $getSort;
-	if ($getItems != $defaultItems) $displayCondition->items = $getItems;
+	$displayCondition = (Object) [
+		'sort' => $getSort ? $getSort : NULL,
+		'items' => $getItems != $defaultItems ? $getItems : NULL,
+	];
 
 	if (!user_access('access forums')) return message('error','access denied');
 
@@ -109,7 +115,7 @@ function forum_home($self, $forumId = NULL) {
 
 	$ret .= '<h3>Last post topics</h3>';
 
-	$topics = R::Model('paper.get.topics',$topicCondition, $topicOptions);
+	$topics = PaperModel::items($topicCondition);
 
 	$ret .= R::View('paper.list.style.table', $self, $topics, $displayCondition);
 

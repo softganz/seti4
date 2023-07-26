@@ -1,17 +1,16 @@
 <?php
 /**
-* Module Method
+* Paper   :: Render Paper Content
+* Created :: 2023-07-24
+* Modify  :: 2023-07-24
+* Version :: 1
 *
-* @param
+* @param Object $$topicInfo
+* @param Object $options
 * @return String
+*
+* @usage R::View('paper.content.prepare')
 */
-
-/**
- * Draw paper content
- *
- * @param Object $topicInfo
- * @return Object $body
- */
 
 import('widget:comment.render.php');
 
@@ -106,23 +105,32 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 	//$body->photo .= print_o($topicInfo->photos,'$topicInfo->photos');
 	//debugMsg($topicInfo->info->property);
 	//debugMsg($topicInfo->property, '$topicInfo->property');
+
 	if ($topicInfo->photos && $topicInfo->property->show_photo!='no') {
-		if ($topicInfo->property->show_photo=='slide') {
+		if ($topicInfo->property->show_photo == 'slide') {
 			$body->photo .= _NL.'<!-- show photo -->'._NL;
 			$body->photo .= view::photo_slide('paper-slide',$topicInfo->property->slide_width,$topicInfo->property->slide_height,url('get/photoslide/'.$topicInfo->tpid.'/imagerotator'));
 		} else {
-			$is_single_photo = count($topicInfo->photos)==1 || $topicInfo->property->show_photo=='first';
-			if (is_numeric($topicInfo->property->show_photo)) $topicInfo->property->show_photo=intval($topicInfo->property->show_photo);
-			$no=1;
+			$is_single_photo = count($topicInfo->photos) == 1 || $topicInfo->property->show_photo == 'first';
+			if (is_numeric($topicInfo->property->show_photo)) {
+				$topicInfo->property->show_photo=intval($topicInfo->property->show_photo);
+			}
+
+			$no = 1;
 			$body->photo .= _NL.'<!-- show photo -->'._NL;
-			$body->photo .= '<div class="photo photo-'.($is_single_photo?'single':'multiple').($is_single_photo?(' photo-'.($topicInfo->photos[0]->_size->width>$topicInfo->photos[0]->_size->height?'wide':'tall')):'').'">'._NL;
+			$body->photo .= '<div class="photo photo-'.($is_single_photo?'single':'multiple').($is_single_photo?(' photo-'.($topicInfo->photos[0]->width > $topicInfo->photos[0]->height ? 'wide' : 'tall')):'').'">'._NL;
+
 			if (!$is_single_photo) $body->photo .= '<ul>'._NL;
+
 			foreach ($topicInfo->photos as $photo) {
-				$photo_alt=$photo->pic_photo_file.' , '.$photo->_size->width.'x'.$photo->_size->height.' pixel , '.number_format($photo->_filesize).' bytes.';
+				$photo_alt = $photo->pic_photo_file.' , '.$photo->width.'x'.$photo->height.' pixel , '.number_format($photo->size).' bytes.';
 				if (!$is_single_photo) $body->photo.='<li>'._NL;
-				$body->photo .= '<a href="'.$photo->_src.'" class="sg-action" data-rel="img" data-group="topic">';
-				$body->photo .= '<img class="photo photo-'.($photo->_size->width>$photo->_size->height?'wide':'tall').'" src="'.$photo->_src.'" alt="photo '.$photo_alt.'" ';
-				if ($photo->_size->width<cfg('topic.photo.'.($is_single_photo?'single':'multiple').'.width')) $body->photo.=' style="width:'.$photo->_size->width.'px;"';
+				$body->photo .= '<a href="'.$photo->url.'" class="sg-action" data-rel="img" data-group="topic">';
+				$body->photo .= '<img class="photo photo-'.($photo->width > $photo->height ? 'wide' : 'tall').'" src="'.$photo->url.'" alt="photo '.$photo_alt.'" ';
+
+				if ($photo->width < cfg('topic.photo.'.($is_single_photo ? 'single' : 'multiple').'.width')) {
+					$body->photo .= ' style="width:'.$photo->width.'px;"';
+				}
 				$body->photo .= ' />';
 				$body->photo .= '</a>'._NL;
 				if ($photo->pic_name || $photo->pic_desc) {

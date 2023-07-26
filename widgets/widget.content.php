@@ -40,6 +40,11 @@
  *	@usage widget::content(['para1=value1'[,[para2=value2][para3,value3]...)
  * @example <div class="widget Content" id="id1" data-limit="20" show-style-type="div" data-footer="By SoftGanz" data-sort="ASC"></div>
  */
+
+import('model:paper.php');
+
+use \Paper\Model\PaperModel;
+
 function widget_content() {
 /*
 special parameter
@@ -51,7 +56,7 @@ special parameter
 */
 static $content_list_count=0;
 global $today;
-	$para=para(func_get_args(),'data-model=get_paper','show-url=paper/$tpid','data-limit=5','show-style=div');
+	$para=para(func_get_args(),'data-model=items','show-url=paper/$nodeId','data-limit=5','show-style=div');
 
 	$ret = '';
 
@@ -114,16 +119,26 @@ global $today;
 	$topics = (Object) [];
 
 	if ($para->{'data-model'}) {
+		import('model:paper.php');
 		$model = $para->{'data-model'};
-		$topics = BasicModel::$model($para);
+		$conditions = [
+			'tags' => $para->{'data-tags'},
+			'type' => $para->{'data-type'},
+			'node' => $para->{'data-node'},
+			'options' => [
+				'field' => $para->{'data-field'},
+				'items' => $para->{'data-limit'},
+			],
+		];
+		$topics = PaperModel::$model($conditions);
 	}
 	// debugMsg('$model = '.$model);
 	// debugMsg($para, '$para');
 	// debugMsg($topics->_query);
 	// debugMsg($topics,'$topics');
 
-	if ($topics->_type == 'record') $topics = mydb::convert_record_to_recordset($topics);
-	if ($topics->_empty) return;
+	// if ($topics->_type == 'record') $topics = mydb::convert_record_to_recordset($topics);
+	// if ($topics->_empty) return;
 
 	if (is_string($para->{'show-style'})) $pattern=$patterns->{$para->{'show-style'}};
 	else if (is_object($para->{'show-style'})) $pattern=$para->{'show-style'};
@@ -164,7 +179,7 @@ global $today;
 
 	list($last_date)=explode(' ',$topics->items[0]->created);
 	$start = SG\getFirst($para->{'show-start'},1);
-	$count = SG\getFirst($para->{'show-count'},$topics->_num_rows);
+	$count = SG\getFirst($para->{'show-count'},$topics->count);
 	$no=0;
 	$debug = SG\getFirst($para->{'option-debug'}=='eval',debug('eval'));
 	if ($para->{'data-field'}=='body,photo' && empty($para->{'show-photo'})) $para->{'show-photo'}='image';
@@ -172,6 +187,7 @@ global $today;
 
 	/* generate each item */
 	foreach ($topics->items as $topic) {
+		// debugMsg($topic, '$topic');
 		$no++;
 		if ($no<$start) continue;
 		if ($no>$start+$count-1) break;
@@ -185,14 +201,14 @@ global $today;
 			if ($new->time && $topic_time >= $new->time) $is_new_topic=true;
 			else if ($new->type=='items' && $no<=intval($new->value) ) $is_new_topic=true;
 		}
-
+		// $ret .= print_o($topic, '$topic');
 		if ($para->{'show-photo'}) {
-			if ($topic->photo->_num_rows) {
+			if ($topic->photo) {
 				switch ($para->{'show-photo'}) {
 					case 'image' :
-						$photo=array_shift($topic->photo->items);
-						$topic->photo= '<div class="photo-th"><img class="'.$para->{'show-photo'}.'" src="'._URL.$photo->_src.'" alt="" /></div>';break;
-					case 'slide' : $topic->photo=view::photo_slide(NULL,$para->{'show-photo-width'},$para->{'show-photo-height'},'get/photoslide/'.$topic->tpid.'/imagerotator');break;
+						// $photo=array_shift($topic->photo->items);
+						$topic->photo= '<div class="photo-th"><img class="'.$para->{'show-photo'}.'" src="'.$topic->photo->url.'" alt="" /></div>';break;
+					case 'slide' : $topic->photo=view::photo_slide(NULL,$para->{'show-photo-width'},$para->{'show-photo-height'},'get/photoslide/'.$topic->nodeId.'/imagerotator');break;
 					case 'list' : break;
 				}
 			} else if ($showPhotoOption=='alway') {

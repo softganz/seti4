@@ -13,7 +13,7 @@ function view_paper_edit_hidecomment($topicInfo, $commentId) {
 	//$ret .= '$commentId = '.$commentId.'<br />';
 	$result = R::Model('paper.comment.status.toggle', $commentId);
 
-	$rs = PaperModel::get_comment_by_id($commentId);
+	$rs = PaperModel::getCommentById($commentId);
 
 	$ret .= R::View('paper.comment.render',$rs);
 

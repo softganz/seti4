@@ -1,72 +1,89 @@
 <?php
 /**
-* Module Method
-* Created 2019-01-01
-* Modify  2019-01-01
+* Paper   :: Show Photo Information
+* Created :: 2019-01-01
+* Modify  :: 2023-07-24
+* Version :: 2
 *
-* @param Object $self
-* @param Object $topicInfo
-* @return String
+* @param String $nodeInfo
+* @return Widget
+*
+* @usage paper/{nodeId}/photo
 */
 
-$debug = true;
+class PaperPhoto extends Page {
+	var $nodeId;
+	var $photoId;
+	var $photoInfo;
+	var $right;
+	var $nodeInfo;
 
-function paper_photo($self, $topicInfo, $photoId = NULL) {
-	if (!$topicInfo->tpid) return message('error', 'PARAMETER ERROR');
-
-	$tpid = $topicInfo->tpid;
-
-	$isEdit = $topicInfo->RIGHT & _IS_EDITABLE;
-
-	$photo = $topicInfo->photos[$photoId];
-
-	$ui = new Ui();
-
-	if ($isEdit) {
-		if (user_access('upload photo')) {
-			$ui->add('<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('paper/info/api/'.$tpid.'/photo.change/'.$photo->fid).'" data-rel="refresh" data-done="close"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>');
-		}
-		$ui->add('<a class="sg-action" href="'.url('paper/'.$tpid.'/edit.photo.info/'.$photo->fid).'" data-rel="box" data-width="640" data-height="80%"><i class="icon -material">edit</i><span class="-hidden">{tr:Edit detail}</span></a>');
-
-		$ui->add('<a class="sg-action" href="'.url('paper/info/api/'.$tpid.'/photo.delete/'.$photo->fid).'" data-title="Delete photo!!!!!" data-confirm="Delete photo -> '.htmlspecialchars($photo->file).' <-- !!! Are you sure?" data-rel="notify" data-done="close" data-removeparent="#photo-id-'.$photo->fid.'"><i class="icon -material">delete</i><span class="-hidden">'.tr('Remove').'</span></a>');
+	function __construct($nodeInfo = NULL, $photoId = NULL) {
+		parent::__construct([
+			'nodeId' => $nodeInfo->nodeId,
+			'photoId' => $photoId,
+			'photoInfo' => $photoId ? $nodeInfo->photos[$photoId] : NULL,
+			'nodeInfo' => $nodeInfo,
+			'right' => (Object) [
+				'edit' => $nodeInfo->RIGHT & _IS_EDITABLE,
+			],
+		]);
 	}
 
-	$ret = '<header class="header -box">'._HEADER_BACK.'<h3>PHOTO</h3><nav class="nav">'.$ui->build().'</nav></header>';
+	function build() {
+		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'PARAMETER ERROR');
 
-	$ret .= '<div id="photo-id-'.$photo->fid.'" class="photo-items">';
-	if ($photo->title) $ret .= '<h3>'.$photo->title.'</h3>';
-	$ret .= '<a href="'.$photo->_src.'" target=_blank><img class="photo" src="'.$photo->_src.'" width="100%" /></a>';
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => SG\getFirst($this->photoInfo->title, 'Photo'),
+				'boxHeader' => true,
+				'trailing' => $this->right->edit ? new Nav([
+					'children' => [
+						user_access('upload photo') ? '<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('api/paper/info/'.$this->nodeId.'/photo.change/'.$this->photoInfo->fid).'" data-rel="refresh" data-done="close"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>' : NULL,
+						'<a class="sg-action btn -link" href="'.url('paper/'.$this->nodeId.'/edit.photo.info/'.$this->photoInfo->fid).'" data-rel="box" data-width="640" data-height="80%"><i class="icon -material">edit</i><span class="-hidden">{tr:Edit detail}</span></a>',
+						'<a class="sg-action btn -link" href="'.url('api/paper/info/'.$this->nodeId.'/photo.delete/'.$this->photoInfo->fid).'" data-title="Delete photo!!!!!" data-confirm="Delete photo -> '.htmlspecialchars($this->photoInfo->file).' <-- !!! Are you sure?" data-rel="notify" data-done="close | remove:#photo-id-'.$this->photoInfo->fid.'"><i class="icon -material">delete</i><span class="-hidden">'.tr('Remove').'</span></a>',
+					], // children
+				]) : NULL, // Nav
+			]), // AppBar
+			'body' => new Container([
+				'id' => 'photo-id-'.$this->photoInfo->fid,
+				'class' => 'photo-items',
+				'children' => [
+					'<a href="'.$this->photoInfo->url.'" target=_blank><img class="photo" src="'.$this->photoInfo->url.'" width="100%" /></a>',
+					new ListTile(['title' => 'Photo Property']),
+					'<h4>'.$this->photoInfo->file.' <small>size '.$this->photoInfo->width.'x'.$this->photoInfo->height.' pixel in '.number_format($this->photoInfo->size).' bytes</small></h4>',
 
-	if ($isEdit) {
-		$ret .= '<h4>'.$photo->file.' <small>size '.$photo->_size->width.'x'.$photo->_size->height.' pixel in '.number_format($photo->_filesize).' bytes</small></h4>';
+					$this->right->edit ? new Table([
+						'children' => [
+							[
+								'url short address :',
+								'<input class="form-text -fill" type="text" value="'.$this->photoInfo->url.'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+							],
+							[
+								'url full address :',
+								'<input class="form-text -fill" type="text" value="'.cfg('domain').$this->photoInfo->url.'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+							],
+							[
+								'HTML tag :',
+								'<input class="form-text -fill" type="text" value="'.htmlspecialchars('<img src="'.$this->photoInfo->url.'" alt="'.$this->photoInfo->title.'" />').'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+							],
+							[
+								'bb code :',
+								'<input class="form-text -fill" type="text" value="'.htmlspecialchars('[img]"'.$this->photoInfo->url.'"[/img]').'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+							],
+						], // children
+					]) : NULL, // Table
 
-		$tables = new Table();
-		$tables->rows[] = array(
-				'url short address :',
-				'<input class="form-text -fill" type="text" value="'.$photo->_src.'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-			);
-		$tables->rows[] = array(
-				'url full address :',
-				'<input class="form-text -fill" type="text" value="'.cfg('domain').$photo->_src.'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-			);
-		$tables->rows[] = array(
-				'HTML tag :',
-				'<input class="form-text -fill" type="text" value="'.htmlspecialchars('<img src="'.$photo->_src.'" alt="'.$photo->title.'" />').'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-			);
-		$tables->rows[] = array(
-				'bb code :',
-				'<input class="form-text -fill" type="text" value="'.htmlspecialchars('[img]"'.$photo->_src.'"[/img]').'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-			);
+					// new DebugMsg($this->photoInfo, '$this->photoInfo'),
 
-		$ret .= $tables->build();
+					'<style type="text/css">
+					.photo-items .photo {display: block; margin: 0 auto 16px;}
+					.photo-items .widget-table>tbody>tr>td:first-child {white-space: nowrap; text-align: right;}
+					.photo-items .widget-table>tbody>tr>td:nth-child(2) {width: 100%;}
+					</style>',
+				], // children
+			]), // Container
+		]);
 	}
-	$ret .= '</div><!-- photo-items -->';
-
-	$ret .= '<style type="text/css">
-	.photo-items .photo {display: block; margin: 0 auto 16px;}
-	.photo-items .widget-table>tbody>tr>td:first-child {white-space: nowrap; text-align: right;}
-	.photo-items .widget-table>tbody>tr>td:nth-child(2) {width: 100%;}
-	</style>';
-	return $ret;
 }
 ?>

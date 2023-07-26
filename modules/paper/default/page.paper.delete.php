@@ -43,7 +43,7 @@ class PaperDelete extends Page {
 				'boxHeader' => true,
 			]), // AppBar
 			'body' => new Form([
-				'action' => url('api/paper/update/'.$this->nodeId.'/delete'),
+				'action' => url('api/paper/info/'.$this->nodeId.'/delete'),
 				'class' => 'sg-form -sg-paddingnorm',
 				'rel' => 'notify',
 				'done' => 'close | reload:'.$doneUrl,

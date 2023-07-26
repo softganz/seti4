@@ -34,7 +34,7 @@ class PaperApiComment extends Page {
 
 		$commentId = $this->commentId;
 
-		$commentInfo = PaperModel::get_comment_by_id($commentId);
+		$commentInfo = PaperModel::getCommentById($commentId);
 
 		$isAdmin = user_access('administer contents,administer papers');
 		$isEdit = $isAdmin || (i()->ok && $commentInfo->uid == i()->uid);

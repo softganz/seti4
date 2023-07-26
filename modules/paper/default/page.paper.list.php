@@ -7,7 +7,7 @@
 * @return String
 */
 
-$debug = true;
+import('model:paper.php');
 
 function paper_list($self) {
 	$self->para = $para = sg_json_decode(post(),para(func_get_args(),'field='.cfg('paper.listing.field'),'list-style=div','option=na',1));
@@ -16,15 +16,13 @@ function paper_list($self) {
 
 	event_tricker('paper.listing.init',$self,$topics,$para);
 
-	$options = [
-		'debug' => false,
-		'field' => 'detail,photo',
-		'page' => $getPage,
+	$conditions = [
+		'options' => [
+			'debug' => false,
+			'field' => 'detail,photo',
+			'page' => $getPage,
+		],
 	];
-
-	//$promote = PaperModel::get_topic_by_condition($promote_para);
-
-	//debugMsg($para, '$para');
 
 	$ret .= '<header class="header -box -hidden"><nav class="nav -back"><a class="sg-action" href="javascript:void(0)" data-rel="back"><i class="icon -material">arrow_back</i></a></nav><h3>Paper Listing</h3></header>';
 
@@ -33,9 +31,7 @@ function paper_list($self) {
 		. '<button class="btn -link" type="submit" name="" value=""><i class="icon -material">search</i></button>'
 		. '</form>';
 
-	$topics = R::Model('paper.get.topics',$para, $options);
-
-	//$topics = PaperModel::get_topic_by_condition($para);
+	$topics = PaperModel::items($conditions);
 
 	if (isset($topics->forum)) $GLOBALS['paper']->forum=$topics->forum;
 
@@ -71,17 +67,6 @@ function paper_list($self) {
 
 	if ($para->ip) {
 		$self->theme->title='List topic by ip '.$para->ip;
-	}
-	if ($para->tag && (empty($para->page) || $para->page==1)) {
-		$sticky_para->sticky=_CATEGORY_STICKY;
-		$sticky_para->tag=$para->tag;
-		$sticky_para->field='detail,photo';
-		$sticky_para->limit=cfg('sticky.category.items');
-		$stickys=PaperModel::get_topic_by_condition($sticky_para);
-		foreach ($topics->items as $key=>$topic) if ($topic->sticky==_CATEGORY_STICKY) unset($topics->items[$key]);
-		$topics->items=array_merge($stickys->items,$topics->items);
-		$topics->_num_rows=count($topics->items);
-		$topics->_empty=$topics->_num_rows<=0;
 	}
 
 	if (!$para->option->no_page_top) $ret .= $topics->page->show._NL;

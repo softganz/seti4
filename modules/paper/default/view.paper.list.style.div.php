@@ -1,14 +1,5 @@
 <?php
 /**
-* Module Method
-*
-* @param 
-* @return String
-*/
-
-$debug = true;
-
-/**
  * List topic div style
  *
  * @param Object $topics
@@ -24,7 +15,7 @@ function view_paper_list_style_div($self, $topics, $para) {
 		if ( empty($topic->poster) ) $topic->poster = $topic->owner;
 
 		$ret .= '<div class="topic-list -style-div '.($para->{'list-class'}?$para->{'list-class'}.' ':'').'topic-list-'.$i.'">'._NL;
-		$ret .= '<h3 class="title title-status-'.sg_status_text($topic->status).($topic->sticky==_CATEGORY_STICKY?' sticky':'').'" ><a href="'.url('paper/'.$topic->tpid).'">'.$topic->title.'</a>'.(in_array($topic->status,array(_PUBLISH,_LOCK))?'':' <em>('.sg_status_text($topic->status).')</em>').'</h3>'._NL;
+		$ret .= '<h3 class="title title-status-'.sg_status_text($topic->status).($topic->sticky==_CATEGORY_STICKY?' sticky':'').'" ><a href="'.url('paper/'.$topic->nodeId).'">'.$topic->title.'</a>'.(in_array($topic->status,array(_PUBLISH,_LOCK))?'':' <em>('.sg_status_text($topic->status).')</em>').'</h3>'._NL;
 
 		if (!$para->option->no_owner) {
 			$ret .= '<div class="timestamp'.($topic->sticky==_CATEGORY_STICKY?' sticky':'').'">'.tr('Submitted by').' '.$topic->poster.' on '.sg_date($topic->created,cfg('dateformat'));
@@ -39,8 +30,8 @@ function view_paper_list_style_div($self, $topics, $para) {
 			// topic vote
 			if (module_install('voteit')) $ret.=do_class_method('voteit','node',$topic,$para);
 
-			if ($topic->photo->_exists) {
-				$ret .= '<a href="'.url('paper/'.$topic->tpid).'"><img class="image photo-'.($topic->photo->_size->width>$topic->photo->_size->height?'wide':'tall').'"'.' src="'.$topic->photo->_src.'" alt="'.htmlspecialchars($topic->photo->title).'" /></a>';
+			if ($topic->photo->exists) {
+				$ret .= '<a href="'.url('paper/'.$topic->nodeId).'"><img class="image photo-'.($topic->photo->size->width > $topic->photo->size->height ? 'wide' : 'tall').'"'.' src="'.$topic->photo->url.'" alt="'.htmlspecialchars($topic->photo->title).'" /></a>';
 			}
 			$ret.=preg_match('/<p>/',$topic->summary)?$topic->summary:'<p>'.$topic->summary.'</p>';
 			$ret.='</div>'._NL;
@@ -49,8 +40,8 @@ function view_paper_list_style_div($self, $topics, $para) {
 		if (!$para->option->no_footer) {
 			$ret .= '<div class="footer'.($topic->sticky==_CATEGORY_STICKY?' sticky':'').'">';
 			$ret .= $topic->view.' reads | ';
-			$ret .= ($topic->reply ? '<a href="'.url('paper/'.$topic->tpid).'#comment">'.$topic->reply.' comments</a>':'<a href="'.url('paper/'.$topic->tpid).'#comment">'.tr('add new comment').'</a>').' | ';
-			$ret .= '<a href="'.url('paper/'.$topic->tpid).'">'.tr('read more').' &raquo;</a>';
+			$ret .= ($topic->reply ? '<a href="'.url('paper/'.$topic->nodeId).'#comment">'.$topic->reply.' comments</a>':'<a href="'.url('paper/'.$topic->nodeId).'#comment">'.tr('add new comment').'</a>').' | ';
+			$ret .= '<a href="'.url('paper/'.$topic->nodeId).'">'.tr('read more').' &raquo;</a>';
 			$ret .= '</div>'._NL;
 		}
 		if (isset($GLOBALS['ad']->topic_list) && ++$adsCount<=3) $ret.='<div id="ad-topic_list" class="ads">'.$GLOBALS['ad']->topic_list.'</div>';

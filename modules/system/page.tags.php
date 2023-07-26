@@ -15,6 +15,10 @@
  * ============================================
  */
 
+import('model:paper.php');
+
+use \Paper\Model\PaperModel;
+
 function tags($self, $tagIdList = NULL) {
 	$self->para = $para = para(func_get_args(),'items=10','field='.cfg('paper.listing.field'),'list-style=div',1);
 	page_class('-tags');
@@ -91,25 +95,27 @@ function tags($self, $tagIdList = NULL) {
 		if (empty($tag_name)) {
 			$ret .= message('error','Tag was not define');
 		} else {
-			$options = (Object) [
-				'debug' => false,
-				'field' => 'detail,photo',
-				'page' => post('page'),
+			$conditions = [
+				'tags' => $tagIdList,
+				'options' => [
+					'debug' => false,
+					'field' => 'detail,photo',
+					'page' => post('page'),
+				],
 			];
-			$topics = R::Model('paper.get.topics',$para, $options);
+			$topics = PaperModel::items($conditions);
 
 			// Get Sticky topic on first page of tags
-			if (empty($options->page) || $options->page == 1) {
+			if (empty($conditions->options->page) || $conditions->options->page == 1) {
 				$stickyPara = clone($para);
 				$stickyPara->sticky = _CATEGORY_STICKY;
-				$stickyOption = (Object) [
+				$stickyPara->options = [
 					'field' => 'detail,photo',
 					'limit' => cfg('sticky.category.items'),
 					'debug' => false,
 				];
-				//$stickys=PaperModel::get_topic_by_condition($sticky_para);
-				$stickys = R::Model('paper.get.topics', $stickyPara, $stickyOption);
-				//$ret .= print_o($stickys,'$stickys');
+				$stickys = PaperModel::items($stickyPara);
+				// debugMsg($stickys,'$stickys');
 
 				foreach ($topics->items as $key=>$topic) if ($topic->sticky==_CATEGORY_STICKY) unset($topics->items[$key]);
 				$topics->items=array_merge($stickys->items,$topics->items);
@@ -117,14 +123,27 @@ function tags($self, $tagIdList = NULL) {
 				$topics->_empty=$topics->_num_rows<=0;
 			}
 
-			$ret .= $topics->page->show._NL;
+			$pageCondition = [
+				'items' => $para->items,
+				'page' => post('page'),
+				'total' => $topics->total,
+				'url' => q(),
+				'cleanUrl' => true,
+				'pagePara' => [
+					'page' => post('page'),
+				]
+			] ;
+			// debugMsg($pageCondition, '$pageConfition');
+			$pagenv = PaperModel::pageNavigator($pageCondition);
+			// debugMsg($pagenv, '$pagenv');
+			$ret .= $pagenv->show._NL;
 			switch ($para->{'list-style'}) {
-				case 'table' : $ret .= view::list_style_table($topics,$para);break;
-				case 'ul' : $ret .= view::list_style_ul($topics,$para);break;
-				case 'dl' : $ret .= view::list_style_dl($topics,$para);break;
-				default : $ret .= view::list_style_div($topics,$para);break;
+				case 'table' : $ret .= R::View('paper.list.style.table', $self, $topics, $para);break;
+				case 'ul' : $ret .= R::View('paper.list.style.ul', $self, $topics, $para);break;
+				case 'div' : $ret .= R::View('paper.list.style.div', $self, $topics, $para);break;
+				default : $ret .= R::View('paper.list.style.dl', $self, $topics, $para);break;
 			}
-			$ret .= $topics->page->show._NL;
+			$ret .= $pagenv->show._NL;
 		}
 		if (isset($GLOBALS['ad']->tags_list)) $ret.='<div id="ad-tags_list" class="ads">'.$GLOBALS['ad']->tags_list.'</div>';
 

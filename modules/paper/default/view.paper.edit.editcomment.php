@@ -12,10 +12,10 @@ $debug = true;
 function view_paper_edit_editcomment($topicInfo, $commentId) {
 	load_lib('class.editor.php','lib');
 
-	$comment = PaperModel::get_comment_by_id($commentId);
+	$comment = PaperModel::getCommentById($commentId);
 
 	if (post('cancel')) {
-		$comment = PaperModel::get_comment_by_id($commentId);
+		$comment = PaperModel::getCommentById($commentId);
 		$ret .= R::View('paper.comment.render', $comment);
 		return $ret;
 	} else if (post('comment')) {
@@ -73,7 +73,7 @@ function view_paper_edit_editcomment($topicInfo, $commentId) {
 
 		BasicModel::watch_log('paper','Paper comment edit','Edit comment id '.$comment->cid.' of <a href="'.url('paper/'.$comment->tpid.'#comment-'.$comment->cid).'">paper/'.$comment->tpid.'</a>');
 
-		$comment = PaperModel::get_comment_by_id($commentId);
+		$comment = PaperModel::getCommentById($commentId);
 		$ret .= R::View('paper.comment.render', $comment);
 		return $ret;
 	}

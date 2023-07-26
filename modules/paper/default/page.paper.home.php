@@ -1,8 +1,9 @@
 <?php
 /**
-* Paper Home Page
-* Created 2019-01-01
-* Modify  2019-06-02
+* Paper   :: Home Page
+* Created :: 2019-01-01
+* Modify  :: 2024-07-25
+* Version :: 2
 *
 * @param Object $self
 * @param Int $var
@@ -29,22 +30,24 @@ function paper_home($self) {
 	if ($isFirstPage) {
 		$sticky_para = (Object) [
 			'sticky' => _HOME_STICKY,
-			'field' => 'detail,photo',
-			'order' => 'weight',
-			'sort' => 'asc',
-			'limit' => 10,
 			'option' => option('no_page_bottom,no_menu,no_header,no_package_footer,no_toolbar,no_div'),
+			'options' => [
+				'field' => 'detail,photo',
+				'order' => 'weight',
+				'sort' => 'asc',
+				'limit' => 10,
+			]
 		];
-		$sticky = PaperModel::get_topic_by_condition($sticky_para);
+		$sticky = PaperModel::items($sticky_para);
 	}
 
 	if ($sticky->_num_rows) {
 		$ret .= '<div id="home-sticky" class="sticky">'._NL;
 		switch ($para->{'list-style'}) {
-			case 'table' : $ret .= view::list_style_table($sticky, $para);break;
-			case 'ul' : $ret .= view::list_style_ul($sticky, $para);break;
-			case 'dl' : $ret .= view::list_style_dl($sticky, $para);break;
-			default : $ret .= view::list_style_div($sticky, $para);break;
+			case 'table' : $ret .= R::View('paper.list.style.table', $self, $sticky, $para);break;
+			case 'ul' : $ret .= R::View('paper.list.style.ul', $self, $sticky, $para);break;
+			case 'div' : $ret .= R::View('paper.list.style.div', $self, $sticky, $para);break;
+			default : $ret .= R::View('paper.list.style.dl', $self, $sticky, $para);break;
 		}
 		$ret .= '</div><!--home-sticky-->'._NL;
 	}
@@ -52,22 +55,18 @@ function paper_home($self) {
 	// show topic that mark as promote
 	$promote_para = (Object) [
 		'condition' => 'promote=1',
-		'field' => 'detail,photo',
-		'order' => 'tpid',
-		'sort' => 'desc',
-		'items' => cfg('paper.promote.items'),
 		'option' => option('no_page_bottom,no_menu,no_header,no_package_footer,no_toolbar,no_div'),
+		'options' => (Object) [
+			'debug' => false,
+			'field' => 'body,photo',
+			'order' => 'tpid',
+			'sort' => 'desc',
+			'items' => cfg('paper.promote.items'),
+			'page' => $getPage,
+		]
 	];
 
-	$options = (Object) [
-		'debug' => false,
-		'field' => 'detail,photo',
-		'page' => $getPage,
-	];
-
-	//$promote = PaperModel::get_topic_by_condition($promote_para);
-
-	$promote = R::Model('paper.get.topics',$promote_para, $options);
+	$promote = PaperModel::items($promote_para);
 
 	if ($isFirstPage) {
 		foreach ($promote->items as $key => $item) {
@@ -82,10 +81,10 @@ function paper_home($self) {
 	$ret .= '<div id="home-promote" class="promote">'._NL;
 
 	switch ($para->{'list-style'}) {
-		case 'table' : $ret .= view::list_style_table($promote, $para);break;
-		case 'ul' : $ret .= view::list_style_ul($promote, $para);break;
-		case 'dl' : $ret .= view::list_style_dl($promote, $para);break;
-		default : $ret .= view::list_style_div($promote, $para);break;
+			case 'table' : $ret .= R::View('paper.list.style.table', $self, $promote, $para);break;
+			case 'ul' : $ret .= R::View('paper.list.style.ul', $self, $promote, $para);break;
+			case 'div' : $ret .= R::View('paper.list.style.div', $self, $promote, $para);break;
+			default : $ret .= R::View('paper.list.style.dl', $self, $promote, $para);break;
 	}
 	$ret .= '</div><!--home-promote-->'._NL;
 

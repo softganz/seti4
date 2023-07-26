@@ -24,7 +24,7 @@ function paper_edit_comment($self, $topicInfo, $commentId) {
 
 	$ret = '<h2>Edit comment</h2>';
 
-	$comment = PaperModel::get_comment_by_id($commentId);
+	$comment = PaperModel::getCommentById($commentId);
 
 	$form = new Form([
 		'variable' => 'comment',

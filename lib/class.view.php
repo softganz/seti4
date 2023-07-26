@@ -322,8 +322,8 @@ class View {
 				// topic vote
 				if (module_install('voteit')) $ret.=do_class_method('voteit','node',$topic,$para);
 
-				if ($topic->photo->_exists) {
-					$ret .= '<a href="'.url('paper/'.$topic->tpid).'"><img class="image photo-'.($topic->photo->_size->width>$topic->photo->_size->height?'wide':'tall').'"'.' src="'.$topic->photo->_src.'" alt="'.htmlspecialchars($topic->photo->title).'" /></a>';
+				if ($topic->photo) {
+					$ret .= '<a href="'.url('paper/'.$topic->tpid).'"><img class="image photo-'.($topic->photo->size->width>$topic->photo->size->height?'wide':'tall').'"'.' src="'.$topic->photo->url.'" alt="'.htmlspecialchars($topic->photo->title).'" /></a>';
 				}
 				$ret.=preg_match('/<p>/',$topic->summary)?$topic->summary:'<p>'.$topic->summary.'</p>';
 				$ret.='</div>'._NL;
@@ -372,8 +372,8 @@ class View {
 				// topic vote
 				if (module_install('voteit')) $ret.=do_class_method('voteit','node',$topic,$para);
 
-				if ($topic->photo->_exists) {
-					$ret .= '<img class="image photo-'.($topic->photo->_size->width>$topic->photo->_size->height?'wide':'tall').'"'.' src="'.$topic->photo->_src.'" alt="'.htmlspecialchars($topic->photo->title).'" />';
+				if ($topic->photo->exists) {
+					$ret .= '<img class="image photo-'.($topic->photo->size->width>$topic->photo->size->height?'wide':'tall').'"'.' src="'.$topic->photo->url.'" alt="'.htmlspecialchars($topic->photo->title).'" />';
 				}
 				$topic->summary=str_replace('<!--read more-->',' <a href="'.url('paper/'.$topic->tpid).'">('.tr('read more').'...)</a>',$topic->summary);
 				$ret.=$topic->summary.'</dd>'._NL;
@@ -500,7 +500,7 @@ class View {
 	public static function list_style_ul($topics,$para) {
 		$ret = '<ul '.($para->id?'id="'.$para->id.'" ':'').'class="topic-list -style-ul">'._NL;
 		foreach ($topics->items as $topic) {
-			$photo_str=$para->photo && $topic->photo?'<img class="'.$para->photo.'" src="'.$topic->photo->_url.'" alt="" />':'';
+			$photo_str=$para->photo && $topic->photo?'<img class="'.$para->photo.'" src="'.$topic->photo->url.'" alt="" />':'';
 			$ret .= '<li><a class="title" href="'.url('paper/'.$topic->tpid).'">'.($para->photo && $photo_str ? $photo_str : '').$topic->title.'</a>';
 			$ret .= '<span class="poster"> by '.\SG\getFirst($topic->poster,$topic->owner).'</span>';
 			$ret .= '<span class="time_stamp">@'.sg_date($topic->created,cfg('dateformat')).'</span>';

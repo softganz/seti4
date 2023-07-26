@@ -32,7 +32,7 @@ function paper_edit_docs_add($self, $topicInfo) {
 					'type' => 'file',
 					'size' => 50,
 					'require' => true,
-					'container' => array('class' => 'btn -upload'),
+					'container' => ['class' => 'btn -upload'],
 				)
 			);
 
@@ -40,10 +40,10 @@ function paper_edit_docs_add($self, $topicInfo) {
 
 		if (user_access('administer papers')) {
 			$form->addField(
-					'norename',
+					'noRename',
 					array(
 						'type' => 'checkbox',
-						'options' => array('1' => 'ไม่เปลี่ยนชื่อไฟล์'),
+						'options' => ['1' => 'ไม่เปลี่ยนชื่อไฟล์'],
 					)
 				);
 		}

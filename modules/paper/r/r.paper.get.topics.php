@@ -6,7 +6,7 @@
 * @return Object $options
 */
 
-$debug = true;
+import('model:file.php');
 
 function r_paper_get_topics($conditions, $options = '{}') {
 	$defaults = '{field: null, debug: false, page: 1, items: 10, sort: "DESC"}';
@@ -152,7 +152,7 @@ function r_paper_get_topics($conditions, $options = '{}') {
 	if ($isFetchPhoto && $topic_list) {
 		$stmt = 'SELECT * FROM
 			(
-			SELECT f.`fid`, f.`tpid`, f.`file`, f.`title`
+			SELECT f.`fid` `fileId`, f.`tpid`, f.`file`, f.`title`, f.`folder`
 			FROM %topic_files% f
 			WHERE f.`tpid` IN ( :tpidList ) AND (f.`cid` = 0 OR f.`cid` IS NULL) AND f.`type` = "photo"
 			ORDER BY f.`fid` ASC, f.`tpid` ASC
@@ -163,7 +163,7 @@ function r_paper_get_topics($conditions, $options = '{}') {
 		$photosDbs = mydb::select($stmt, ':tpidList', 'SET:'.implode(',',$topic_list));
 
 		foreach ($photosDbs->items as $photo) {
-			$result->items[$photo->tpid]->photo = object_merge_recursive($photo, BasicModel::get_photo_property($photo->file));
+			$result->items[$photo->tpid]->photo = object_merge_recursive($photo, FileModel::photoProperty($photo->file, $photo->folder));
 		}
 	}
 	if ($debug) debugMsg($result,'$result');

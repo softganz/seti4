@@ -2,17 +2,17 @@
 /**
 * Paper   :: Page Controller
 * Created :: 2018-06-04
-* Modify  :: 2023-04-06
+* Modify  :: 2023-07-25
 * Version :: 2
 *
 * @param Int $nodeId
 * @param String $action
 * @return Widget
 *
-* @usage paper[/{id}/{action}]
+* @usage paper[/{nodeId}/{action}]
 */
 
-import('model:node.php');
+use Paper\Model\PaperModel;
 
 class Paper extends PageController {
 	var $nodeId;

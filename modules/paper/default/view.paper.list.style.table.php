@@ -1,14 +1,5 @@
 <?php
 /**
-* Module Method
-*
-* @param 
-* @return String
-*/
-
-$debug = true;
-
-/**
  * List topic table style
  *
  * @param Object $topics
@@ -72,7 +63,7 @@ function view_paper_list_style_table($self, $topics, $para) {
 		$ret .= '<tr class="'.$item_class.'">'._NL;
 		if ($single_rows_per_item) $ret.='<td class="timestamp">'.sg_date($topic->created,cfg('dateformat')).'</td>';
 		$ret .= '<td '.($single_rows_per_item?'':'colspan="'.($allcols).'" ').'class="title title-status-'.sg_status_text($topic->status).' title-status-'.($topic->reply>$veryhot?'veryhot':($topic->reply>$hot?'hot':'normal')).'" >';
-		$ret .= '<a href="'.url('paper/'.$topic->tpid).'">'.$topic->title.'</a>'.(in_array($topic->status,array(_PUBLISH,_LOCK))?'':' <em>('.sg_status_text($topic->status).')</em>').'</td>';
+		$ret .= '<a href="'.url('paper/'.$topic->nodeId).'">'.$topic->title.'</a>'.(in_array($topic->status,array(_PUBLISH,_LOCK))?'':' <em>('.sg_status_text($topic->status).')</em>').'</td>';
 		if (!$single_rows_per_item) {
 			$ret.='</tr>'._NL;
 //				if ($topic->pagenv) $ret .= '<tr class="'.$item_class.'"><td colspan="'.($allcols-1).'">'.$topic->pagenv.'</td></tr>';
@@ -96,9 +87,9 @@ function view_paper_list_style_table($self, $topics, $para) {
 		if ($topic->comments>1 && ($page_count=ceil($topic->comments/$comment_page_items))>1) {
 			$page_str = '<span>Page</span>';
 			for ($i=1;$i<=$page_count;$i++) {
-				$page_str .= '<a href="'.url('paper/'.$topic->tpid.'/page/'.$i).'">'.$i.' </a>';
+				$page_str .= '<a href="'.url('paper/'.$topic->nodeId.'/page/'.$i).'">'.$i.' </a>';
 			}
-			$page_str .= '<a href="'.url('paper/'.$topic->tpid.'/page/'.$page_count).'">last &raquo;</a>';
+			$page_str .= '<a href="'.url('paper/'.$topic->nodeId.'/page/'.$page_count).'">last &raquo;</a>';
 			$page_str = trim($page_str);
 			$ret.='<tr class="'.$item_class.' comment_page">';
 			$ret.=($single_rows_per_item?'<td></td><td colspan="2">':'<td>').$page_str.'</td>';

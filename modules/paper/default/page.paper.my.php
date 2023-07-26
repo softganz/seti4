@@ -1,22 +1,32 @@
 <?php
 /**
-* Paper :: My Paper
-* Created 2021-01-01
-* Modify  2021-06-18
+* Paper   :: My Paper
+* Created :: 2021-01-01
+* Modify  :: 2023-07-25
+* Version :: 2
 *
 * @return Widet
 *
 * @usage paper/my
 */
 
-$debug = true;
+import('model:paper.php');
 
 class PaperMy extends Page {
+	var $year;
+	var $user;
+	var $q;
+	var $page;
 	var $isAdminPaper = false;
 	var $pageShow;
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct() {
+		parent::__construct([
+			'year' => post('year'),
+			'user' => post('user'),
+			'q' => post('q'),
+			'page' => post('page')
+		]);
 		$this->isAdminPaper = is_admin('paper');
 		// debugMsg($this,'$this');
 	}
@@ -77,7 +87,7 @@ class PaperMy extends Page {
 			'child' => new Container([
 				'id' => 'paper-my',
 				'children' => [
-					$this->_paperList(),
+					$this->paperListWidget(),
 					$this->pageShow,
 					$isCreatePaper ? new FloatingActionButton(['children' => ['<a class="sg-action btn -floating" href="'.url('paper/post/story').'" data-rel="box" data-width="full"><i class="icon -material">add</i><span>Create New</span></a>']]) : NULL,
 				], // children
@@ -85,42 +95,44 @@ class PaperMy extends Page {
 		]);
 	}
 
-	function _paperList() {
-		$tables = new Table([
+	function paperListWidget() {
+		return new Table([
 			'thead' => ['Title', 'Date', '', 'Edit', 'status -center' => '', ''],
-			'rows' => (function() {
+			'children' => (function() {
 				$statusList = [_DRAFT => 'DRAFT', _PUBLISH => 'PUBLISH', _BLOCK => 'BLOCK', _LOCK => 'LOCK'];
 				$rows = [];
 
-				$condition = (Object) ['type' => 'story'];
-				$options = (Object) ['items' => 50];
+				$condition = (Object) [
+					'type' => 'story',
+					'year' => $this->year,
+					'user' => $this->user,
+					'q' => $this->q,
+					'options' => ['items' => 1000, 'page' => $this->page]
+				];
 				if (is_admin('paper')) {
-					if (post('user')) $condition->user = post('user');
+					if ($this->user) $condition->user = $this->user;
 				} else {
 					$condition->user = i()->uid;
 				}
-				if (post('year')) $condition->year = post('year');
-				if (post('q')) $condition->q = post('q');
-				if (post('page')) $options->page = post('page');
 
-				$dbs = R::Model('paper.get.topics', $condition, $options);
+				$dbs = PaperModel::items($condition);
 				// debugMsg($dbs, '$dbs');
 
 				foreach ($dbs->items as $rs) {
 					$rows[] = [
-						'<a href="'.url('paper/'.$rs->tpid).'" target="_blank">'.$rs->title.'</a><br />'
-						. '<em><small>By '.$rs->owner.'</small></em>',
+						'<a href="'.url('paper/'.$rs->nodeId).'" target="_blank">'.$rs->title.'</a><br />'
+						. '<em><small>By '.$rs->ownerName.'</small></em>',
 						sg_date($rs->created, 'd/m/ปป'),
-						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->tpid.'/edit.photo').'" data-rel="box" data-width="full"><i class="icon -material">photo</i></a>',
-						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->tpid.'/edit.detail').'" data-rel="box" data-width="full"><i class="icon -material">edit</i></a>',
-						'<a class="sg-action btn'.($rs->status == _PUBLISH ? ' -success' : '').'" href="'.url('paper/'.$rs->tpid.'/edit.main').'" data-rel="box" data-width="full">'.$statusList[$rs->status].'</a>',
+						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->nodeId.'/edit.photo').'" data-rel="box" data-width="full"><i class="icon -material">photo</i></a>',
+						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->nodeId.'/edit.detail').'" data-rel="box" data-width="full"><i class="icon -material">edit</i></a>',
+						'<a class="sg-action btn'.($rs->status == _PUBLISH ? ' -success' : '').'" href="'.url('paper/'.$rs->nodeId.'/edit.main').'" data-rel="box" data-width="full">'.$statusList[$rs->status].'</a>',
 						(new DropBox([
 							// 'debug' => true,
 							'position' => 'left',
 							'children' => [
-								$this->isAdminPaper ? '<a class="sg-action" href="'.url('paper/'.$rs->tpid.'/edit.tag').'" data-rel="box" data-width="full"><i class="icon -material">category</i><span>จัดการหมวด</span></a>' : NULL,
+								$this->isAdminPaper ? '<a class="sg-action" href="'.url('paper/'.$rs->nodeId.'/edit.tag').'" data-rel="box" data-width="full"><i class="icon -material">category</i><span>จัดการหมวด</span></a>' : NULL,
 								'<hr size="1" />',
-								'<a class="sg-action" href="'.url('paper/'.$rs->tpid.'/delete').'" data-rel="none" data-title="ลบหัวข้อ" data-confirm="ต้องกการลบหัวข้อนี้ (รวมทั้งภาพและเอกสารประกอบ) กรุณายืนยัน?" data-done="remove:parent tr"><i class="icon -material">delete</i><span>ลบหัวข้อ</span></a>',
+								'<a class="sg-action" href="'.url('paper/'.$rs->nodeId.'/delete').'" data-rel="none" data-title="ลบหัวข้อ" data-confirm="ต้องกการลบหัวข้อนี้ (รวมทั้งภาพและเอกสารประกอบ) กรุณายืนยัน?" data-done="remove:parent tr"><i class="icon -material">delete</i><span>ลบหัวข้อ</span></a>',
 							],
 						]))->build(),
 					];
@@ -129,7 +141,6 @@ class PaperMy extends Page {
 				return $rows;
 			})(),
 		]);
-		return $tables;
 	}
 }
 ?>

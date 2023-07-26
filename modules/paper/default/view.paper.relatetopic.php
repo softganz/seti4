@@ -1,13 +1,15 @@
 <?php
 /**
-* View Relate Topic
-* Created 2019-06-05
-* Modify  2019-06-05
+* Paper.  :: View Relate Topic
+* Created :: 2019-06-05
+* Modify  :: 2023-07-25
+* Version :: 2
 *
-* @param 
+* @param Object $topicInfo
 * @return String
 */
 
+import('mode:file.php');
 import('model:ad.php');
 
 function view_paper_relatetopic($topicInfo) {
@@ -24,18 +26,18 @@ function view_paper_relatetopic($topicInfo) {
 	mydb::where('tg.`tid` IN ( :reftag)', ':reftag', 'SET:'.$reftag);
 	mydb::value('$LIMIT$', 'LIMIT '.cfg('topic.relate.items'));
 
-	$stmt = 'SELECT DISTINCT
-					  tg.`tpid`
-					, t.`title`
-					, t.`status`
-					, t.`created`
-				FROM %topic% t
-					LEFT JOIN %tag_topic% tg USING(`tpid`)
-				%WHERE%
-				ORDER BY tg.`tpid` DESC
-				$LIMIT$';
-
-	$ref_dbs = mydb::select($stmt);
+	$ref_dbs = mydb::select(
+		'SELECT DISTINCT
+			  tg.`tpid`
+			, t.`title`
+			, t.`status`
+			, t.`created`
+		FROM %topic% t
+			LEFT JOIN %tag_topic% tg USING(`tpid`)
+		%WHERE%
+		ORDER BY tg.`tpid` DESC
+		$LIMIT$'
+	);
 	//debugMsg($ref_dbs);
 
 	if ($ref_dbs->_empty) return NULL;
@@ -51,14 +53,24 @@ function view_paper_relatetopic($topicInfo) {
 	}
 
 	if (cfg('topic.relate.detail.length') && $ref_dbs->tpid) {
-		$stmt = 'SELECT r.`tpid`,LEFT(r.`body`,'.cfg('topic.relate.detail.length').') body,(SELECT f.`file` FROM %topic_files% f WHERE f.tpid=r.tpid LIMIT 1) photo
-					FROM %topic_revisions% r
-					WHERE r.tpid IN ('.implode(',',$ref_dbs->tpid).')';
+		$relateTopics = mydb::select(
+			'SELECT
+			r.`tpid`
+			, LEFT(r.`body`, :bodyLength) `body`,
+			(SELECT CONCAT(f.`folder`, "|", f.`file`) FROM %topic_files% f WHERE f.`tpid` = r.`tpid` LIMIT 1) `photo`
+			FROM %topic_revisions% r
+			WHERE r.`tpid` IN ( :nodeList )',
+			[
+				':bodyLength' => intval(cfg('topic.relate.detail.length')),
+				':SET:nodeList' => $ref_dbs->tpid
+			]
+		);
 
-		foreach (mydb::select($stmt)->items as $ref_body_rs) {
+		foreach ($relateTopics->items as $ref_body_rs) {
 			$ref_dbs->body[$ref_body_rs->tpid] = $ref_body_rs;
 			if ($ref_body_rs->photo) {
-				$ref_dbs->body[$ref_body_rs->tpid]->photo = BasicModel::get_photo_property($ref_body_rs->photo);
+				list($folder, $photo) = explode('|', $ref_body_rs->photo);
+				$ref_dbs->body[$ref_body_rs->tpid]->photo = FileModel::photoProperty($photo, $folder);
 			}
 		}
 	}
@@ -73,7 +85,7 @@ function view_paper_relatetopic($topicInfo) {
 	$no=0;
 	foreach ($ref_dbs->items as $ref_rs) {
 		$ret .='<li><a href="'.url(($topicInfo->_relate_url?$topicInfo->_relate_url:'paper').'/'.$ref_rs->tpid).'">';
-		$ret .=(cfg('topic.relate.detail.length') && $ref_dbs->body[$ref_rs->tpid]->photo?'<img src="'.$ref_dbs->body[$ref_rs->tpid]->photo->_url.'" width="140" />':'');
+		$ret .=(cfg('topic.relate.detail.length') && $ref_dbs->body[$ref_rs->tpid]->photo?'<img src="'.$ref_dbs->body[$ref_rs->tpid]->photo->url.'" width="140" />':'');
 		$ret .='<span class="title">'.$ref_rs->title.'</span>';
 		$ret .=(cfg('topic.relate.detail.length')?'<span class="detail">'.strip_tags(sg_text2html(strip_tags($ref_dbs->body[$ref_rs->tpid]->body))).'</span>':'');
 		$ret .='</a> ';

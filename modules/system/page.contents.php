@@ -1,42 +1,64 @@
 <?php
 /**
- * tags class for topic listing by tags
- *
- * @package tags
- * @version 1.30.0
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2008-07-19
- * @modify 2013-10-06
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- */
+* Contents:: List Of Content
+* Created :: 2008-07-19
+* Modify  :: 2023-07-25
+* Version :: 2
+*
+* @param String $contentTypes
+* @return Widget
+*
+* @usage contents/{type}
+*/
 
-function contents($self, $contentNameList = NULL) {
-		$self->para=$para=para(func_get_args(),'field='.cfg('paper.listing.field'),'list-style=div');
-		$para->type=$contentNameList;
-		$types=BasicModel::get_topic_type($contentNameList);
+import('model:paper.php');
+import('widget:paper.list.php');
+
+use Paper\Model\PaperModel;
+use Paper\Widget\PaperListWidget;
+
+class Contents extends Page {
+	var $contentTypes;
+	var $listStyle;
+	var $page = 1;
+	var $items = 10;
+	var $order = 'nodeId';
+
+	private const ITEMS = 10;
+	private const ORDERBY = 'nodeId';
+
+	function __construct($contentTypes = NULL) {
+		parent::__construct([
+			'contentTypes' => $contentTypes,
+			'listStyle' => \SG\getFirst(post('listStyle'), $this->listStyle),
+			'page' => \SG\getFirst(post('page'), $this->page),
+			'items' => \SG\getFirst(post('items'), self::ITEMS),
+			'order' => \SG\getFirst(post('order'), $this->order),
+		]);
+		// debugMsg($this, '$this');
+	}
+
+	function build() {
+		$types = BasicModel::get_topic_type($this->contentTypes);
 
 		event_tricker('paper.listing.init',$self,$topics,$para);
 
-		//$topics = R::Model('paper.get.topics',$para);
-
-		$options = (Object) [
-			'debug' => false,
-			'field' => 'detail,photo',
-			'page' => post('page'),
+		$conditions = [
+			'type' => $this->contentTypes,
+			'options' => [
+				'debug' => false,
+				'field' => 'detail,photo',
+				'page' => $this->page,
+				'items' => $this->items,
+				'order' => $this->order,
+			],
 		];
 
-		$topics = R::Model('paper.get.topics',$para, $options);
+		$topics = PaperModel::items($conditions);
 
-		//debugMsg($topics,'$topics');
-		//content('type',$contentNameList);
-
+		/*
 		$self->theme->class='content-paper';
-		$self->theme->class.=' paper-content-'.\SG\getFirst($contentNameList);
+		$self->theme->class.=' paper-content-'.\SG\getFirst($this->types);
 		$self->theme->header->text = SG\getFirst($types->name);
 		if ($types->description) {
 			ob_start();
@@ -55,35 +77,65 @@ function contents($self, $contentNameList = NULL) {
 			user_menu('new','Create new topic',url('paper/post/forum/'.$topics->forum->fid));
 		}
 
-		$self->theme->navigator=user_menu();
+		// $self->theme->navigator=user_menu();
+		*/
+
 		head('<meta name="robots" content="noindex,nofollow">');
 
 		event_tricker('paper.listing.start',$self,$topics,$para);
 
-		if ($para->category && (empty($para->page) || $para->page==1)) {
-			$sticky_para->sticky=_CATEGORY_STICKY;
-			$sticky_para->category=$para->category;
-			$sticky_para->limit=cfg('sticky.category.items');
-			$stickys=PaperModel::get_topic_by_condition($sticky_para);
-			foreach ($topics->items as $key=>$topic) if ($topic->sticky==_CATEGORY_STICKY) unset($topics->items[$key]);
-			$topics->items=array_merge($stickys->items,$topics->items);
-			$topics->_num_rows=count($topics->items);
-			$topics->_empty=$topics->_num_rows<=0;
-		}
+		// if ($para->category && (empty($para->page) || $para->page==1)) {
+		// 	$sticky_para = (Object) [
+		// 		'sticky' => _CATEGORY_STICKY,
+		// 		'type' => $para->category,
+		// 		'limit' => cfg('sticky.category.items'),
+		// 	];
+		// 	$stickys = PaperModel::items($sticky_para);
+		// 	foreach ($topics->items as $key=>$topic) {
+		// 		if ($topic->sticky==_CATEGORY_STICKY) unset($topics->items[$key]);
+		// 	}
+		// 	$topics->items=array_merge($stickys->items,$topics->items);
+		// 	$topics->_num_rows=count($topics->items);
+		// 	$topics->_empty=$topics->_num_rows<=0;
+		// }
 
-		$ret .= $topics->page->show._NL;
-		switch ($para->{'list-style'}) {
-			case 'table' : $ret .= view::list_style_table($topics,$para);break;
-			case 'ul' : $ret .= view::list_style_ul($topics,$para);break;
-			case 'dl' : $ret .= view::list_style_dl($topics,$para);break;
-			default : $ret .= view::list_style_div($topics,$para);break;
-		}
+		$pageCondition = [
+			'items' => $para->items,
+			'page' => $this->page,
+			'total' => $topics->total,
+			'url' => q(),
+			'cleanUrl' => true,
+			'pagePara' => [
+				'page' => $this->page,
+				'items' => $this->items == self::ITEMS ? NULL : $this->items,
+				'order' => $this->order == self::ORDERBY ? NULL : $this->items,
+				'listStyle' => $this->listStyle,
+			]
+		] ;
+		// debugMsg($pageCondition, '$pageConfition');
 
-		if (!$para->option->no_page && $topics->page->show) $ret .= $topics->page->show._NL;
-
+		$pagenv = PaperModel::pageNavigator($pageCondition);
 
 		event_tricker('paper.listing.complete',$self,$topics,$para);
-		if (debug('method')) $ret.=print_o($para,'$para').print_o($topics,'$topics');
-	return $ret;
+
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'Contents',
+			]), // AppBar
+			'body' => new Widget([
+				'children' => [
+					$pagenv->show,
+					new PaperListWidget([
+						'listStyle' => $this->listStyle,
+						'url' => q(),
+						'order' => $this->order,
+						'headerSortParameter' => ['listStyle' => $this->listStyle, 'page' => $this->page, 'items' => $this->items],
+						'children' => $topics->items,
+					]),
+					!$para->option->no_page && $topics->page->show ? $pagenv->show : NULL,
+				], // children
+			]), // Widget
+		]);
+	}
 }
 ?>

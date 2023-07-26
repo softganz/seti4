@@ -534,6 +534,7 @@ function __admin_install_create_table($prefix=null) {
 		`refid` int(10) unsigned NULL DEFAULT NULL,
 		`type` enum("photo","doc","movie","audio") DEFAULT NULL,
 		`tagname` VARCHAR(50) NULL DEFAULT NULL,
+		`folder` VARCHAR(50) NULL DEFAULT NULL,
 		`cover` ENUM("Yes") NULL DEFAULT NULL,
 		`gallery` int(10) unsigned DEFAULT NULL,
 		`file` varchar(200) DEFAULT NULL,

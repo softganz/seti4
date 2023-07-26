@@ -1,8 +1,9 @@
 <?php
 /**
-* Paper :: Information API
-* Created 2021-11-22
-* Modify  2021-11-22
+* Paper   :: Information API
+* Created :: 2021-11-22
+* Modify  :: 2023-07-24
+* Version :: 2
 *
 * @param Int $topicId
 * @param String $action
@@ -12,7 +13,8 @@
 * @usage paper/info/api/{id}/{action}[/{tranId}]
 */
 
-$debug = true;
+// @deprecated
+// use api/paper/info
 
 class PaperInfoApi extends Page {
 	var $topicId;
@@ -53,74 +55,6 @@ class PaperInfoApi extends Page {
 
 	$ret = '';
 	switch ($this->action) {
-		case 'photo.add':
-			if (post('upload')) {
-				$is_simulate = debug('simulate');
-				$desc = (Object) post('info',_TRIM+_STRIPTAG);
-				$desc->tpid = $topicInfo->tpid;
-				$desc->type = 'photo';
-
-				$options = new stdClass;
-				$options->debug = false;
-				if ($desc->norename) $options->useSourceFilename = true;
-
-				//$ret .= print_o($desc,'$desc');
-
-				$result = R::Model('photo.upload', $_FILES['photo'], $desc, $options);
-
-				//$topicInfo = R::Model('paper.get', $topicInfo->tpid);
-				//$ret .= R::Page('paper.edit.photo', NULL, $topicInfo);
-				//$ret .= print_o($result,'$result');
-				/*
-				$uploads = array();
-				foreach ($photos as $photo) {
-					if (is_uploaded_file($photo->tmp_name)) {
-						$result = R::Model('photo.save',$photo);
-						if ($result->complete && $result->save->_file) {
-							$uploads[]=$desc->file=$result->save->_file;
-							$stmt = mydb::create_insert_cmd('%topic_files%',$desc);
-							//$ret.='$stmt='.$stmt.'<br />';
-							mydb::query($stmt,$desc);
-							//$ret.='_query='.mydb()->_query.'<br />';
-						}
-					}
-				}
-				*/
-
-				/*
-				if ($uploads) {
-					$topic=paper_BasicModel::get_topic_by_id($topic->tpid);
-					$ret.=notify('Upload photo file complete :<ul><li>'.implode('</li><li>',$uploads).'</li></ul>');
-				}
-				*/
-			}
-			//$ret .= print_o($_FILES, '$_FILES');
-			//$ret .= print_o(post(), 'post()');
-
-			location('paper/'.$tpid.'/edit.photo');
-
-			break;
-
-		case 'photo.delete':
-			if (\SG\confirm()) {
-				$result = R::Model('photo.delete', $tranId);
-				$ret .= 'ลบภาพเรียบร้อย';
-				// $ret .= print_o($result,'$result');
-			}
-			break;
-
-		case 'photo.change':
-			if (is_uploaded_file($_FILES['photo']['tmp_name'])) {
-				$result = R::Model('paper.photo.change', $tranId, $_FILES['photo']);
-				if ($result->complete) {
-					$ret .= R::Page('paper.edit.photo',NULL, $topicInfo, $tranId);
-					// '<img src="'.$result->file->_url.'"  height="100" />';
-				} else {
-					$ret .= '<ul><li>'.implode('</li><li>', $result->error).'</li></ul>';
-				}
-			}
-			break;
-
 		case 'doc.upload':
 			if (post('upload')) {
 				$is_simulate = debug('simulate');
@@ -130,7 +64,7 @@ class PaperInfoApi extends Page {
 
 				$options = new stdClass;
 				$options->debug = false;
-				if ($desc->norename) $options->useSourceFilename = true;
+				if ($desc->noRename) $options->useSourceFilename = true;
 
 				//$ret .= print_o($desc,'$desc');
 
