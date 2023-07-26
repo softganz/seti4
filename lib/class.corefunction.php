@@ -278,7 +278,27 @@ i()->am;
 // End of core process
 
 
+function sg_autoloader($class) {
+	if (preg_match('/\\\\/', $class)) {
+		$class = end(explode('\\', $class));
+	}
+	$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
+	$endName = strToLower(end($pieces));
+	switch ($endName) {
+		case 'model': array_pop($pieces); $import = 'model:'.implode('.', $pieces).'.php'; break;
+		case 'widget': array_pop($pieces); $import = 'widget:'.implode('.', $pieces).'.php'; break;
+	}
+	$import = strToLower($import);
 
+	if (debug('auto')) {
+		debugMsg('AUTOLOAD '.$class.' '.($import ? 'TO <b style="color: green">'.$import.'</b>' : 'not load.'));
+		// debugMsg($pieces, '$pieces');
+	}
+
+	if ($import) import($import);
+}
+
+spl_autoload_register('sg_autoloader');
 
 /*************************************************************
 * Core class and function library for core process
@@ -804,7 +824,10 @@ class SgCore {
 
 		// Load module configuration file in json format
 		if (!in_array($module, $loadCfg)) {
-			$cfgPaths = [$coreFolder.'/modules/'.$module, $coreFolder.'/core', '.'];
+			$cfgPaths = [$coreFolder.'/modules/'.$module];
+			if (file_exists($coreFolder.'/core/modules/'.$module)) $cfgPaths[] = $coreFolder.'/core/modules/'.$module;
+			$cfgPaths[] = $coreFolder.'/system';
+			$cfgPaths[] = '.';
 			$cfgFile = 'conf.'.$module.'.json';
 			// debugMsg($cfgPaths,'$cfgPaths');
 			foreach ($cfgPaths as $path) {
