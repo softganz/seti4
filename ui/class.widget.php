@@ -859,8 +859,11 @@ class PageBase extends WidgetBase {
 		}
 	}
 
-	// Test function
+	// Test function return Array in PageApi or text in other
 	function foo() {return get_parent_class($this) === 'PageApi' ? success('Foo'.(post('msg') ? ' with '.post('msg') : '')) : 'Foo'.(post('msg') ? ' with '.post('msg') : '');}
+
+	// Test function return text
+	function fooText() {return 'Foo'.(post('msg') ? ' with '.post('msg') : '');}
 } // End of class PageBase
 
 class Page extends PageBase {
