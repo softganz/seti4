@@ -1,8 +1,9 @@
 <?php
 /**
-* Model :: Description
-* Created 2021-09-30
-* Modify 	2021-09-30
+* Model.  :: Node Model
+* Created :: 2021-09-30
+* Modify 	:: 2023-07-25
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -13,7 +14,7 @@
 
 class NodeModel {
 
-	public static function get($id, $options = '{}') {
+	public static function get($id) {
 		$defaults = '{debug: false}';
 		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
@@ -36,6 +37,129 @@ class NodeModel {
 	}
 
 	public static function items($conditions) {
+		$conditions = (Object) $conditions;
+		$defaults = '{debug: false, order: "nodeId", sort: "DESC", items: 10, page: 1, field: "body"}';
+		$options = \SG\json_decode($conditions->options, $defaults);
+		$debug = $options->debug;
+		unset($conditions->options);
+
+		if (empty($options->page)) $options->page = 1;
+		if ($conditions->type === '*') unset($conditions->type);
+		else if (!$conditions->type) $conditions->type = 'story';
+
+		$fields = explode(',', $options->field);
+		$orderList = [
+			'nodeId' => '`nodeId`',
+			'title' => '`topic`.`title`',
+			'read' => '`topic`.`view`',
+			'reply' => '`topic`.`reply`',
+			'answer' => '`topic`.`comment`',
+			'view' => '`topic`.`last_view`',
+			'lastComment' => '`topic`.`last_reply`',
+		];
+
+		$orderBy = \SG\getFirst($orderList[$options->order], $orderList['nodeId']);
+		$sortBy = strtoupper($options->sort) === 'DESC' ? 'DESC' : 'ASC';
+		$page = intval($options->page);
+		$items = intval($options->items);
+
+		if ($items) {
+			$limit = 'LIMIT '.(($page - 1) * $items).','.$items;
+		} else {
+			$limit = 'LIMIT 10';
+			// $total_items=mydb::select('SELECT COUNT(*) `total` FROM '.$table_cmd.($where_cmd?' WHERE '.$where_cmd:'').' LIMIT 1')->total;
+			// $count_query=mydb()->_query;
+			// $pagenv = new PageNavigator($items,$para->page,$total_items,q());
+			// $sql_cmd .= '  LIMIT '.($pagenv->FirstItem()<0 ? 0 : $pagenv->FirstItem()).','.$items;
+		}
+
+		$result = (Object) [
+			'count' => 0,
+			'total' => 0,
+			'items' => [],
+		];
+
+		// debugMsg($conditions, '$conditions');
+		// debugMsg($options, '$options');
+
+		// if ($conditions->category) {
+		// 	$tags=db_query_one_column('SELECT tid FROM %tag_synonym% WHERE name="'.$conditions->category.'"');
+		// 	$where[]='tg.tid in ('.implode(',',$tags).')';
+		// }
+
+		// Field
+		$fld_cmd = '`topic`.`tpid` `nodeId`, `topic`.`title`, `topic`.`access`, `topic`.`status`, `topic`.`view`, `topic`.`last_view` `lastView`, `topic`.`comment`, `topic`.`reply`, `topic`.`last_reply` `lastReply`, `topic`.`created`'._NL;
+		$fld_cmd .= '  , `user`.`username`, `user`.`name` `ownerName` '._NL;
+		if (in_array('detail', $fields)) $fld_cmd .= '    , `revision`.`format` , `revision`.`body` , `revision`.`property` , `revision`.`email` , `revision`.`homepage`'._NL;
+		if (in_array('comment', $fields)) $fld_cmd .= ' ,(SELECT COUNT(*) FROM %topic_comments% `comment` WHERE `comment`.`tpid` = `topic`.`tpid`) comments'._NL;
+
+		// Join table
+		$joins[] = '  LEFT JOIN %users% `user` ON `topic`.`uid` = `user`.`uid` '._NL;
+		if (in_array('detail', $fields)) $joins[] = '  LEFT JOIN %topic_revisions% `revision` on `revision`.`revid` = `topic`.`revid` '._NL;
+		if ($conditions->tags || $conditions->category) $joins[] = '  LEFT JOIN %tag_topic% `tag_topic` ON `tag_topic`.`tpid` = `topic`.`tpid` '._NL;
+		if ($conditions->category) $joins[] = '  LEFT JOIN %tag% `category` ON `category`.tid = `tag_topic`.`tid` '._NL;
+
+		// Condition
+		if ($conditions->type) mydb::where('`topic`.`type` IN ( :type )', ':SET-STRING:type', $conditions->type);
+		if ($conditions->tags) \mydb::where('`tag_topic`.`tid` in ( :tags )', ':SET:tags', $conditions->tags);
+		if ($conditions->sticky) \mydb::where('`topic`.`sticky` = :sticky', ':sticky', $conditions->sticky);
+		if ($conditions->user) \mydb::where('`topic`.`uid` = :userId', ':userId', $conditions->user);
+		if ($conditions->ip) \mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
+		if ($conditions->year) \mydb::where('YEAR(`topic`.`created`) = :year', ':year', $conditions->year);
+		if (i()->ok) {
+			if (!user_access('administer contents,administer papers')) \mydb::where('(`topic`.`status` in ('._PUBLISH.','._LOCK.') || (`topic`.`status` in ('._DRAFT.','._WAITING.') AND `topic`.`uid` = '.i()->uid.'))');
+		} else {
+			\mydb::where('`topic`.`status` in ('._PUBLISH.','._LOCK.')');
+		}
+		if ($conditions->condition) \mydb::where($conditions->condition);
+
+		\mydb::value('$JOINS$', implode($joins), false);
+		\mydb::value('$ORDER$', 'ORDER BY '.$orderBy.' '.$sortBy);
+		\mydb::value('$LIMIT$', $limit, false);
+
+		$sql_cmd = 'SELECT SQL_CALC_FOUND_ROWS
+			'.$fld_cmd.'
+			FROM %topic% `topic`
+			$JOINS$
+			%WHERE%
+			$ORDER$
+			$LIMIT$;
+			-- {key: "nodeId"}';
+
+		$dbs = \mydb::select($sql_cmd);
+
+		// debugMsg($sql_cmd);
+		// debugMsg(mydb()->_query);
+		// debugMsg($dbs, '$dbs');
+
+		$result->items = $dbs->items;
+		$result->count = count($result->items);
+		$result->total = $dbs->_found_rows;
+
+
+		$nodeList = [];
+		foreach ($result->items as $nodeId => $topic) {
+			$nodeList[] = $topic->nodeId;
+			if (in_array('detail', $fields)) $result->items[$nodeId]->summary = sg_summary_text($topic->body);
+		}
+		if (in_array('photo', $fields) && $nodeList) {
+			$photoList = mydb::select(
+				'SELECT `fid` `fileId`, `tpid` `nodeId`, `file`, `folder`
+				FROM %topic_files%
+				WHERE `tpid` IN ( :nodeList ) AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "photo" AND `tagName` IS NULL
+				GROUP BY `tpid`
+				ORDER BY `tpid` ASC',
+				[':nodeList' => 'SET:'.implode(',',$nodeList)]
+			)->items;
+			foreach ($photoList as $photo) {
+				$result->items[$photo->nodeId]->photo = FileModel::photoProperty($photo->file, $photo->folder);
+			}
+		}
+		// debugMsg($result, '$result');
+		return $result;
+	}
+
+	public static function items_v1($conditions) {
 		$defaults = '{debug: false, items: 10}';
 
 		$result = (Object) [
@@ -115,15 +239,8 @@ class NodeModel {
 
 			foreach ($result->items as $key => $value) {
 				$photo = $photos[$value->tpid];
-				// debugMsg($value, '$value');
-				// debugMsg($photo, 'photo');
 				if (empty($photo)) continue;
 				$result->items[$key]->photos = ['file' => $photo[0]->file];
-			// 	if (!isset($result->items[$photo->tpid]->photo)) {
-			// 		$result->items[$photo->tpid]->photo = (Object) ['_num_rows' => 0, 'items' => []];
-			// 	}
-			// 	$result->items[$photo->tpid]->photo->_num_rows++;
-			// 	$result->items[$photo->tpid]->photo->items[] = BasicModel::get_photo_property('upload/pics/'.$photo->file);
 			}
 		}
 
@@ -151,125 +268,6 @@ class NodeModel {
 		// $sql_cmd .= ' ORDER BY '.$para->order.' '.$para->sort.' LIMIT '.$para->limit;
 
 		return $result;
-
-		$args=func_get_args();
-		if (is_numeric($args[0])) {
-			$tpid=array_shift($args);
-			$para=para($args,'$tpid='.$tpid,'order=`t`.`tpid`','sort=DESC','limit=1','field=topic,body,photo');
-		} else {
-			$para=para($args,'order=tpid','sort=DESC','limit=10','field=topic');
-		}
-
-		// Convert widget parameter to old parameter
-		if ($para->{'data-tpid'}) $para->tpid = $para->{'data-tpid'};
-		if ($para->{'data-org'}) $para->org = $para->{'data-org'};
-		if ($para->{'data-type'}) $para->type = $para->{'data-type'};
-		if ($para->{'data-tag'}) {
-			$para->tag = $para->{'data-tag'};
-			if (strpos($para->tag, '+')) {
-				$para->tag = str_replace('+', ',', $para->tag);
-				$allTagList = $para->tag;
-			}
-		}
-		if ($para->{'data-category'}) $para->category = $para->{'data-category'};
-		if ($para->{'data-user'}) $para->user = $para->{'data-user'};
-		if ($para->{'data-sticky'}) $para->sticky = $para->{'data-sticky'};
-		if ($para->{'data-condition'}) $para->condition = $para->{'data-condition'};
-
-		if ($para->{'data-limit'}) $para->limit = $para->{'data-limit'};
-		if ($para->{'data-sort'}) $para->sort = $para->{'data-sort'};
-		if ($para->{'data-order-by'}) $para->order = $para->{'data-order-by'};
-		if ($para->{'data-field'}) $para->field = $para->{'data-field'};
-		if ($para->{'data-havephoto'}) $para->havephoto = $para->{'data-havephoto'};
-
-		$para->field = option($para->field);
-
-		if ($para->debug) debugMsg($para,'$para');
-
-		$sql_cmd  = 'SELECT DISTINCT
-			t.`tpid` , t.`status` , t.`uid` , t.`poster` , t.`title` , t.`promote` , t.`sticky` , t.`comment`
-			, t.`created` , t.`view` , t.`last_view` , t.`reply` , t.`last_reply` , t.`ip` ';
-		if ($para->field->body) $sql_cmd .= ' , r.`body` , r.`property` ';
-		if ($para->havephoto) $sql_cmd .= '		, f.`file` `photofile` ';
-		if ($allTagList) $sql_cmd .= '	, GROUP_CONCAT(tp.`tid` ORDER BY `tid`) `allTagList` ';
-
-		$sql_cmd .= ' FROM %topic% AS t ';
-
-
-		if ($para->field->body) $sql_cmd .= '   LEFT JOIN %topic_revisions% AS r ON r.revid=t.revid';
-		if ($para->category || $para->tag) $sql_cmd .= '  LEFT JOIN %tag_topic% tp ON tp.tpid=t.tpid ';
-		if ($para->havephoto) $sql_cmd .= '		LEFT JOIN %topic_files% f ON f.`tpid`=t.`tpid` AND (`cid` IS NULL OR `cid` = 0) AND f.`type`="photo"';
-		// check query condition
-		if ($para->tpid) $where[] = 't.`tpid` = '.$para->tpid;
-		if ($para->org) $where[] = 't.`orgid` IN ( '.$para->org.' )';
-		if ($para->category) $where[] = 'tp.`tid` in ('.BasicModel::get_category_tag($para->category).')';
-		if ($para->tag) $where[] = 'tp.`tid` IN ('.$para->tag.')';
-		if ($para->type) $where[] = 't.`type` IN ("'.implode('","',explode(',',$para->type)).'")';
-		if ($para->user) $where[] = 't.`uid` IN ('.$para->user.')';
-		if ($para->sticky) $where[] = 't.sticky='.$para->sticky;
-		if ($para->condition) $where[] = $para->condition;
-		if (!user_access('administer contents,administer papers')) $where[] = 'status in ('._PUBLISH.','._LOCK.')';
-
-		if ($para->havephoto) $having[] = '`photofile` IS NOT NULL';
-		if ($allTagList) $having[] = '`allTagList` = "'.$allTagList.'"';
-
-		if ($where) {
-			$where='('.implode(') AND (',$where).')';
-			$sql_cmd .= ' WHERE '.$where;
-		}
-		$sql_cmd.='		GROUP BY t.`tpid`';
-		if ($having) $sql_cmd.='		HAVING '.implode(' AND ', $having);
-		$sql_cmd .= ' ORDER BY '.$para->order.' '.$para->sort.' LIMIT '.$para->limit;
-
-		$topics = mydb::select($sql_cmd);
-		// debugMsg(mydb()->_query);
-
-		if ($para->debug) debugMsg($topics,'$topics');
-
-		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i',$sql_cmd)) {
-			if (!$topics->_num_rows) return $topics;
-			$result=$topics;
-			$result->property=sg_json_decode($topics->property);
-			$result->summary=sg_summary_text($topics->body);
-			if ($para->field->photo) {
-				$result->photo = mydb::select('SELECT `file` FROM %topic_files% WHERE `tpid` = :tpid AND (`cid` IS NULL OR `cid` = 0) AND `type` = "photo"', ':tpid', $topics->tpid);
-				foreach ($result->photo->items as $key=>$photo) {
-					$result->photo->items[$key]=BasicModel::get_photo_property('upload/pics/'.$photo->file);
-				}
-			}
-		} else {
-			$topic_list=array();
-			$result=sg_clone($topics);
-
-			unset($result->items);
-			foreach ($topics->items as $rs) {
-				$rs->property = sg_json_decode($rs->property);
-				if (!$rs->poster) $rs->poster=$rs->owner_name;
-				$rs->summary=sg_summary_text($rs->body);
-				$topic_list[]=$rs->tpid;
-				$result->items[$rs->tpid]=$rs;
-			}
-			if ($para->field->photo && $topic_list) {
-				$stmt = 'SELECT `fid`, `cover`, `tpid`,`file`
-					FROM %topic_files%
-					WHERE `tpid` in ( :tpid )
-						AND (`cid` IS NULL OR `cid` = 0)
-						AND `type` = "photo"
-					ORDER BY `cover` DESC, `fid` ASC';
-
-				$photos = mydb::select($stmt, ':tpid', 'SET:'.implode(',',$topic_list));
-
-				// debugMsg($photos,'$photos');
-
-				foreach ($photos->items as $photo) {
-					if (!isset($result->items[$photo->tpid]->photo)) {
-						$result->items[$photo->tpid]->photo = (Object) ['_num_rows' => 0, 'items' => []];
-					}
-					$result->items[$photo->tpid]->photo->_num_rows++;
-					$result->items[$photo->tpid]->photo->items[] = BasicModel::get_photo_property('upload/pics/'.$photo->file);
-				}
-			}
-		}
 	}
 
 	/**
@@ -443,11 +441,11 @@ class NodeModel {
 		$result->process[]=mydb()->_query;
 
 		if (mydb()->_error) $error['topic']='Error on create topic query command'.(user_access('access debugging program')?'<br />'.mydb()->_error:'');
-		$tpid = $topic->tpid = $topic->post->tpid = mydb()->insert_id;
-		$result->tpid = $tpid;
+		$nodeId = $topic->tpid = $topic->post->tpid = mydb()->insert_id;
+		$result->tpid = $nodeId;
 
 		if ( $simulate ) {
-			$tpid = $topic->tpid = $topic->post->tpid = db_query_one_cell('SELECT MAX(tpid)+1 from %topic%');
+			$nodeId = $topic->tpid = $topic->post->tpid = db_query_one_cell('SELECT MAX(tpid)+1 from %topic%');
 		}
 
 		// save detail into revision and update revision in topic
@@ -461,7 +459,7 @@ class NodeModel {
 			$revid=mydb()->insert_id;
 
 			// update revision id into reference topic
-			$sql_cmd = 'UPDATE %topic% SET revid='.$revid.' WHERE tpid='.$tpid.' LIMIT 1';
+			$sql_cmd = 'UPDATE %topic% SET revid='.$revid.' WHERE tpid='.$nodeId.' LIMIT 1';
 			mydb::query($sql_cmd);
 			$result->process[]=mydb()->_query;
 		}
@@ -477,8 +475,8 @@ class NodeModel {
 
 			foreach ($taxonomy as $vid=>$tids) {
 				if (is_array($tids)) {
-					foreach ($tids as $tid) if (!empty($tid)) $topic_tag[$tid]=$tpid .' , '.$vid.' , '. $tid;
-				} else if (!empty($tids)) $topic_tag[$tids]=$tpid .' , '.$vid.' , '. $tids;
+					foreach ($tids as $tid) if (!empty($tid)) $topic_tag[$tid]=$nodeId .' , '.$vid.' , '. $tid;
+				} else if (!empty($tids)) $topic_tag[$tids]=$nodeId .' , '.$vid.' , '. $tids;
 			}
 
 
@@ -489,7 +487,7 @@ class NodeModel {
 					$tag_db = mydb::select('SELECT tid FROM %tag% WHERE `vid` = :vid AND `name` = :name LIMIT 1', ':vid', $vid, ':name', $tag_name)->tid;
 					$result->process[] = mydb()->_query;
 					$tid =  $tag_db ? $tag_db : BasicModel::add_taxonomy($vid,$tag_name);
-					$topic_tag[$tid] = $tpid .' , '.$vid.' , '. $tid;
+					$topic_tag[$tid] = $nodeId .' , '.$vid.' , '. $tid;
 				}
 			}
 
@@ -509,7 +507,7 @@ class NodeModel {
 		// Save upload photo to folder and add to table
 		if (user_access('upload photo') && !$error) {
 			$desc=(object)post('topic[photo_desc]',_TRIM+_STRIPTAG);
-			$desc->tpid=$tpid;
+			$desc->tpid=$nodeId;
 			$desc->cid=0;
 			$desc->type='photo';
 			$desc->timestamp='func.NOW()';
@@ -549,7 +547,7 @@ class NodeModel {
 				if (copy($document->tmp_name,$document->_property->location)) {
 					if (cfg('upload.file.chmod')) chmod($document->dest,cfg('upload.file.chmod'));
 				}
-				$document->tpid = $tpid;
+				$document->tpid = $nodeId;
 				$document->cid = 0;
 				$document->type = 'doc';
 				$document->description = $topic->post->document_description;
@@ -569,7 +567,7 @@ class NodeModel {
 				if (copy($video->tmp_name,$video->_property->location)) {
 					if (cfg('upload.file.chmod')) chmod($video->_property->location,cfg('upload.file.chmod'));
 				}
-				$video->tpid = $tpid;
+				$video->tpid = $nodeId;
 				$video->cid = 0;
 				$video->type = 'movie';
 				$video->title = $topic->post->document_title;
@@ -599,11 +597,11 @@ class NodeModel {
 	/**
 	* Node Delete
 	*
-	* @param Object $tpid
+	* @param Object $nodeId
 	* @return Object $options
 	*/
 
-	public static function delete($tpid, $options = '{}') {
+	public static function delete($nodeId) {
 		$defaults = '{debug: false, simulate: false}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
@@ -620,14 +618,14 @@ class NodeModel {
 			'SELECT * FROM %topic%
 			WHERE `tpid` = :tpid LIMIT 1;
 			-- {fieldOnly: true}',
-			[ ':tpid' => $tpid]
+			[ ':tpid' => $nodeId]
 		);
 
 		// delete topic
 		$result->process[]='Delete paper topic and re-autoindex';
 		mydb::query(
 			'DELETE FROM %topic% WHERE `tpid` = :tpid LIMIT 1',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
@@ -635,7 +633,7 @@ class NodeModel {
 		$result->process[] = 'Delete paper detail';
 		mydb::query(
 			'DELETE FROM %topic_revisions% WHERE `tpid` = :tpid LIMIT 1',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
@@ -643,25 +641,25 @@ class NodeModel {
 		$result->process[] = 'Delete Tag Topic';
 		mydb::query(
 			'DELETE FROM %tag_topic% WHERE `tpid` = :tpid',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
 		mydb::query(
 			'DELETE FROM %topic_user% WHERE `tpid` = :tpid',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
 		mydb::query(
 			'DELETE FROM %topic_parent% WHERE `tpid` = :tpid',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
 		mydb::query(
 			'DELETE FROM %reaction% WHERE `action` LIKE "TOPIC.%" AND `refid` = :tpid',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
@@ -669,7 +667,7 @@ class NodeModel {
 		$result->process[] = 'Delete topic property';
 		mydb::query(
 			'DELETE FROM %property% WHERE `module` = "paper" AND `propid` = :tpid',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
@@ -677,13 +675,13 @@ class NodeModel {
 		$result->process[] = 'Start delete all photo';
 		$photoDbs = mydb::select(
 			'SELECT * FROM %topic_files% WHERE tpid = :tpid AND `type` = "photo"',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
 		mydb::query(
 			'DELETE FROM %topic_files% WHERE tpid = :tpid AND `type` = "photo"',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
@@ -707,13 +705,13 @@ class NodeModel {
 		$result->process[] = 'Delete document';
 		$docDbs = mydb::select(
 			'SELECT `file` FROM %topic_files% WHERE tpid = :tpid AND `type` = "doc"',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
 		mydb::query(
 			'DELETE FROM %topic_files% WHERE tpid = :tpid AND `type` = "doc"',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
@@ -728,7 +726,7 @@ class NodeModel {
 		if ($topic->video->file) {
 			$result->process[]='Delete video';
 			$stmt = 'DELETE FROM %topic_files% WHERE `tpid` = :tpid AND `type`="movie"';
-			mydb::query($stmt, ':tpid', $tpid);
+			mydb::query($stmt, ':tpid', $nodeId);
 			$result->process[]=mydb()->_query;
 
 			if ($topic->video->_location && file_exists($topic->video->_location) && is_file($topic->video->_location)) {
@@ -743,12 +741,12 @@ class NodeModel {
 
 		mydb::query(
 			'DELETE FROM %topic_comments% WHERE tpid = :tpid',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		);
 		$result->process[] = mydb()->_query;
 
 		// save delete log
-		BasicModel::watch_log('paper','Paper delete','paper/'.$tpid.' - '.$result->data->title.' was delete');
+		BasicModel::watch_log('paper','Paper delete','paper/'.$nodeId.' - '.$result->data->title.' was delete');
 
 		// delete was complete
 		$result->complete = true;
@@ -762,7 +760,7 @@ class NodeModel {
 		return $result;
 	}
 
-	public static function member($tpid) {
+	public static function member($nodeId) {
 		return mydb::select(
 			'SELECT a.`uid`, UPPER(a.`membership`) `membership`
 			, u.`username`, u.`name`, u.`email`
@@ -780,8 +778,27 @@ class NodeModel {
 			GROUP BY `uid`
 			ORDER BY FIELD(`membership`,"ADMIN","MANAGER","TRAINER","OWNER","FOLLOWER","COMMENTATOR","VIEWER","REGULAR MEMBER", "DELETED", "") ASC, CONVERT(u.`name` USING tis620) ASC;
 			-- {key: "uid"}',
-			[':tpid' => $tpid]
+			[':tpid' => $nodeId]
 		)->items;
+	}
+
+	public static function pageNavigator($conditions) {
+		$conditions = (Object) $conditions;
+		// $pagePara = is_array($options->pagePara) ? $options->pagePara : array();
+		// if ($conditions->year) $pagePara['year'] = $conditions->year;
+		// if ($conditions->user) $pagePara['user'] = $conditions->user;
+		// if ($conditions->changwat) $pagePara['prov'] = $conditions->changwat;
+		// if ($condition->q) $pagePara['q'] = $conditions->q;
+		// $pagePara['page'] = $options->page;
+		$pagenv = new PageNavigator(
+			$conditions->items,
+			$conditions->page,
+			$conditions->total,
+			$conditions->url,
+			$conditions->cleanUrl,
+			$conditions->pagePara,
+		);
+		return $pagenv;
 	}
 }
 ?>
