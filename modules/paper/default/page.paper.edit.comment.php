@@ -9,7 +9,7 @@
 * @return String
 */
 
-$debug = true;
+use Paper\Model\PaperModel;
 
 function paper_edit_comment($self, $topicInfo, $commentId) {
 	if (!$topicInfo->tpid) return message('error', 'PARAMETER ERROR');

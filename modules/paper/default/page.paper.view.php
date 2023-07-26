@@ -15,8 +15,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 
 	event_tricker('paper.view.init',$self,$topicInfo,$para);
 
-	$topicInfo = is_object($tpid) ? $tpid : R::Model('paper.get',$tpid);
-	//paper_BasicModel::get_topic_by_id($tpid);//R::Model('paper.get',$tpid,$para);
+	$topicInfo = is_object($tpid) ? $tpid : PaperModel::get($tpid);
 	$tpid = $topicInfo->tpid;
 	$body = (Object) [];
 
@@ -357,8 +356,7 @@ class XPaperView extends Page {
 		event_tricker('paper.view.init',$self,$topicInfo,$para);
 
 
-		$topicInfo = is_object($tpid) ? $tpid : R::Model('paper.get',$tpid);
-		//paper_BasicModel::get_topic_by_id($tpid);//R::Model('paper.get',$tpid,$para);
+		$topicInfo = is_object($tpid) ? $tpid : PaperModel::get($tpid);
 		$tpid = $topicInfo->tpid;
 
 		$isAdminPaper = user_access('administer contents,administer papers');

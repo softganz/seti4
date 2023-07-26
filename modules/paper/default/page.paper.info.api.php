@@ -16,6 +16,8 @@
 // @deprecated
 // use api/paper/info
 
+use Paper\Model\PaperModel;
+
 class PaperInfoApi extends Page {
 	var $topicId;
 	var $action;
@@ -26,7 +28,7 @@ class PaperInfoApi extends Page {
 		$this->topicId = $topicId;
 		$this->action = $action;
 		$this->tranId = $tranId;
-		$this->topicInfo = R::Model('paper.get', $this->topicId, '{initTemplate: true}');
+		$this->topicInfo = PaperModel::get($this->topicId, '{initTemplate: true}');
 	}
 
 	function build() {
@@ -70,7 +72,6 @@ class PaperInfoApi extends Page {
 
 				$result = R::Model('doc.upload', $_FILES['doc'], $desc, $options);
 
-				//$topicInfo = R::Model('paper.get', $topicInfo->tpid);
 				location('paper/'.$tpid.'/edit.docs');
 
 				//$ret .= print_o($result,'$result');

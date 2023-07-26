@@ -1,13 +1,120 @@
 <?php
 /**
+* Paper   :: Topics List Page
+* Created :: 2019-01-01
+* Modify  :: 2023-07-26
+* Version :: 3
+*
+* @return Widget
+*
+* @usage paper/list
+*/
+
+use Paper\Model\PaperModel;
+use Paper\Widget\PaperListWidget;
+
+class PaperList extends Page {
+	var $tags;
+	var $searchText;
+	var $listStyle;
+	var $page;
+	var $items;
+	var $order;
+
+	private const LISTSTYLE = 'div';
+	private const PAGE = 1;
+	private const ITEMS = 10;
+	private const ORDERBY = 'nodeId';
+
+	function __construct() {
+		parent::__construct([
+			'tags' => post('tags'),
+			'searchText' => post('q'),
+			'listStyle' => \SG\getFirst(post('listStyle'), self::LISTSTYLE),
+			'page' => \SG\getFirst(post('page'), self::PAGE),
+			'items' => \SG\getFirst(post('items'), self::ITEMS),
+			'order' => \SG\getFirst(post('order'), self::ORDERBY),
+		]);
+		// debugMsg($this, '$this');
+	}
+
+	function build() {
+		head('<meta name="robots" content="noindex,nofollow">');
+
+		// event_tricker('paper.listing.init',$self,$topics,$para);
+
+		$topics = PaperModel::items([
+			'tags' => $this->tags,
+			'searchText' => $this->searchText,
+			'options' => [
+				'debug' => false,
+				'field' => 'detail,photo',
+				'page' => $this->page,
+				'items' => $this->items,
+				'order' => $this->order,
+			],
+		]);
+		// debugMsg($topics->debug, '$debug');
+
+
+		event_tricker('paper.listing.start',$self,$topics,$para);
+
+		$pageCondition = [
+			'items' => $this->items,
+			'page' => $this->page,
+			'total' => $topics->total,
+			'url' => q(),
+			'cleanUrl' => true,
+			'pagePara' => [
+				'tags' => $this->tags,
+				'page' => $this->page,
+				'items' => $this->items == self::ITEMS ? NULL : $this->items,
+				'order' => $this->order == self::ORDERBY ? NULL : $this->items,
+				'listStyle' => $this->listStyle == self::LISTSTYLE ? NULL : $this->listStyle,
+			]
+		];
+
+		$pagenv = PaperModel::pageNavigator($pageCondition);
+
+		// event_tricker('paper.listing.complete',$self,$topics,$para);
+
+		return new Scaffold([
+			'appBar' => NULL, // AppBar
+			'body' => new Container([
+				'id' => 'content-paper',
+				'class' => 'content-paper -style-'.$this->listStyle,
+				'children' => [
+					'<form class="search-box" method="get" action="'.url('paper/list').'" style="flex: 1">'
+					. '<input type="text" class="form-text -fill" name="q" value="'.htmlspecialchars(post('q')).'" placeholder="ป้อนหัวข้อที่ต้องการค้นหา" />'
+					// . '<button class="btn -link" type="submit" name="" value=""><i class="icon -material">search</i></button>'
+					. '</form>',
+					$pagenv->show,
+					new PaperListWidget([
+						'listStyle' => $this->listStyle,
+						'url' => q(),
+						'order' => $this->order,
+						'headerSortParameter' => ['listStyle' => $this->listStyle, 'page' => $this->page, 'items' => $this->items],
+						'children' => $topics->items,
+					]),
+					$pagenv->show,
+				], // children
+			]), // Container
+		]);
+	}
+}
+
+
+
+
+// Unused code
+
+/**
 * Module Method
 *
 * @param Object $self
 * @param Int $var
 * @return String
 */
-
-import('model:paper.php');
 
 function paper_list($self) {
 	$self->para = $para = sg_json_decode(post(),para(func_get_args(),'field='.cfg('paper.listing.field'),'list-style=div','option=na',1));
@@ -70,15 +177,6 @@ function paper_list($self) {
 	}
 
 	if (!$para->option->no_page_top) $ret .= $topics->page->show._NL;
-
-	//$ret .= print_o($topics,'$topics');
-
-	switch ($para->{'list-style'}) {
-		case 'table' : $ret .= R::View('paper.list.style.table', $self, $topics, $para);break;
-		case 'ul' : $ret .= R::View('paper.list.style.ul', $self, $topics, $para);break;
-		case 'div' : $ret .= R::View('paper.list.style.div', $self, $topics, $para);break;
-		default : $ret .= R::View('paper.list.style.dl', $self, $topics, $para);break;
-	}
 
 
 	if (!$para->option->no_page_bottom) $ret .= $topics->page->show._NL;

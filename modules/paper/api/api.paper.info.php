@@ -16,8 +16,8 @@
 import('model:file.php');
 import('widget:paper.list.php');
 
-use \Paper\Model\PaperModel;
-use \Paper\Widget\PaperListWidget;
+use Paper\Model\PaperModel;
+use Paper\Widget\PaperListWidget;
 
 class PaperInfoApi extends PageApi {
 	var $nodeId;

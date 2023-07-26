@@ -47,6 +47,16 @@ class NodeModel {
 		if ($conditions->type === '*') unset($conditions->type);
 		else if (!$conditions->type) $conditions->type = 'story';
 
+		$result = (Object) [
+			'count' => 0,
+			'total' => 0,
+			'items' => [],
+			'debug' => [],
+		];
+
+		$result->debug['CONDITIONS'] = $conditions;
+		$result->debug['OPTIONS'] = $options;
+
 		$fields = explode(',', $options->field);
 		$orderList = [
 			'nodeId' => '`nodeId`',
@@ -72,12 +82,6 @@ class NodeModel {
 			// $pagenv = new PageNavigator($items,$para->page,$total_items,q());
 			// $sql_cmd .= '  LIMIT '.($pagenv->FirstItem()<0 ? 0 : $pagenv->FirstItem()).','.$items;
 		}
-
-		$result = (Object) [
-			'count' => 0,
-			'total' => 0,
-			'items' => [],
-		];
 
 		// debugMsg($conditions, '$conditions');
 		// debugMsg($options, '$options');
@@ -106,6 +110,7 @@ class NodeModel {
 		if ($conditions->user) \mydb::where('`topic`.`uid` = :userId', ':userId', $conditions->user);
 		if ($conditions->ip) \mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
 		if ($conditions->year) \mydb::where('YEAR(`topic`.`created`) = :year', ':year', $conditions->year);
+		if ($conditions->searchText) \mydb::where('`topic`.`title` LIKE :searchText', ':searchText', '%'.$conditions->searchText.'%');
 		if (i()->ok) {
 			if (!user_access('administer contents,administer papers')) \mydb::where('(`topic`.`status` in ('._PUBLISH.','._LOCK.') || (`topic`.`status` in ('._DRAFT.','._WAITING.') AND `topic`.`uid` = '.i()->uid.'))');
 		} else {
@@ -128,9 +133,7 @@ class NodeModel {
 
 		$dbs = \mydb::select($sql_cmd);
 
-		// debugMsg($sql_cmd);
-		// debugMsg(mydb()->_query);
-		// debugMsg($dbs, '$dbs');
+		$result->debug['ITEMS'] = mydb()->_query;
 
 		$result->items = $dbs->items;
 		$result->count = count($result->items);
@@ -151,11 +154,15 @@ class NodeModel {
 				ORDER BY `tpid` ASC',
 				[':nodeList' => 'SET:'.implode(',',$nodeList)]
 			)->items;
+
+			$result->debug['PHOTOS'] = mydb()->_query;
+
 			foreach ($photoList as $photo) {
 				$result->items[$photo->nodeId]->photo = FileModel::photoProperty($photo->file, $photo->folder);
 			}
 		}
-		// debugMsg($result, '$result');
+		if (!$debug) unset($result->debug);
+
 		return $result;
 	}
 

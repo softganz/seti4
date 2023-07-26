@@ -2,7 +2,7 @@
 /**
 * Forum   :: Home
 * Created :: 2020-04-03
-* Modify  :: 2023-07-25
+* Modify  :: 2023-07-26
 * Version :: 2
 *
 * @param Object $self
@@ -10,14 +10,15 @@
 * @return String
 */
 
-import('model:paper.php');
-
-use \Paper\Model\PaperModel;
+use Paper\Model\PaperModel;
+use Paper\Widget\PaperListWidget;
 
 function forum_home($self, $forumId = NULL) {
 	$defaultItems = 50;
 
-	$getOrder = post('ord');
+	$page = post('page');
+	$listStyle = 'table';
+	$getOrder = post('order');
 	$getSort = post('sort');
 	$getItems = \SG\getFirst(post('items'), $defaultItems);
 	$types = BasicModel::get_topic_type($self->content_type);
@@ -41,9 +42,8 @@ function forum_home($self, $forumId = NULL) {
 		'options' => [
 			'items' => $getItems,
 			'debug' => false,
-			'page' => post('page'),
-			'order' => \SG\getFirst($orderFieldList[$getOrder], $orderFieldList['default']),
-			'sort' => \SG\getFirst($sortList[$getSort], $sortList['d'] ),
+			'page' => $page,
+			'order' => $getOrder,
 			'pagePara' => [
 				'ord' => $getOrder,
 				'sort' => $getSort,
@@ -117,7 +117,16 @@ function forum_home($self, $forumId = NULL) {
 
 	$topics = PaperModel::items($topicCondition);
 
-	$ret .= R::View('paper.list.style.table', $self, $topics, $displayCondition);
+	$ret .= (new PaperListWidget([
+		'id' => 'home-promote',
+		'class' => 'promote',
+		'listStyle' => $listStyle,
+		'url' => q(),
+		'order' => $getOrder,
+		'headerSortParameter' => ['listStyle' => $listStyle, 'page' => $page, 'items' => $getItems],
+		'children' => $topics->items,
+	]))->build();
+
 
 	$ret .= $topics->page->show._NL;
 

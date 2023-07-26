@@ -43,7 +43,7 @@
 
 import('model:paper.php');
 
-use \Paper\Model\PaperModel;
+use Paper\Model\PaperModel;
 
 function widget_content() {
 /*

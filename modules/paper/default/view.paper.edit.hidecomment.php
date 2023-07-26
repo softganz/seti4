@@ -7,7 +7,7 @@
 * @return String
 */
 
-$debug = true;
+use Paper\Model\PaperModel;
 
 function view_paper_edit_hidecomment($topicInfo, $commentId) {
 	//$ret .= '$commentId = '.$commentId.'<br />';

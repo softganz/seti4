@@ -17,11 +17,12 @@ namespace Paper\Widget;
 import('model:paper.php');
 
 class PaperListWidget extends \Widget {
+	var $widgetName = 'PaperList';
+	var $tagName = 'div';
 	var $listStyle = 'div';
 	var $url;
 
-	function build() {
-		debugMsg(\Paper\Model\PaperModel::get(1), 'topic1');
+	function _renderChildren($childrens = [], $args = []) {
 		switch ($this->listStyle) {
 			case 'table': return $this->listStyleTable(); break;
 			case 'dl': return $this->listStyleDl(); break;
@@ -70,7 +71,6 @@ class PaperListWidget extends \Widget {
 			}
 			if (isset($GLOBALS['ad']->topic_list) && ++$adsCount<=3) $ret.='<div id="ad-topic_list" class="ads">'.$GLOBALS['ad']->topic_list.'</div>';
 			$ret .= '</div><!--topic-list-->'._NL;
-			$ret .= '<div class="items-end topic-list-'.$i.'-end"></div>'._NL._NL;
 
 		}
 		return $ret;
@@ -142,7 +142,7 @@ class PaperListWidget extends \Widget {
 			$ret .= '<td class="timestamp">'.($topic->reply?sg_date($topic->lastReply,cfg('dateformat')):'').'</td>'._NL;
 			$ret .= '</tr>'._NL;
 
-			$comment_page_items = SG\getFirst(cfg('comment.items'),20);
+			$comment_page_items = \SG\getFirst(cfg('comment.items'),20);
 			if ($topic->comments>1 && ($page_count=ceil($topic->comments/$comment_page_items))>1) {
 				$page_str = '<span>Page</span>';
 				for ($i=1;$i<=$page_count;$i++) {

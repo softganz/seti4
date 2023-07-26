@@ -11,35 +11,36 @@
 * @usage contents/{type}
 */
 
-import('model:paper.php');
-import('widget:paper.list.php');
-
 use Paper\Model\PaperModel;
 use Paper\Widget\PaperListWidget;
 
 class Contents extends Page {
 	var $contentTypes;
 	var $listStyle;
-	var $page = 1;
-	var $items = 10;
-	var $order = 'nodeId';
+	var $page;
+	var $items;
+	var $order;
 
+	private const LISTSTYLE = 'div';
+	private const PAGE = 1;
 	private const ITEMS = 10;
 	private const ORDERBY = 'nodeId';
 
 	function __construct($contentTypes = NULL) {
 		parent::__construct([
 			'contentTypes' => $contentTypes,
-			'listStyle' => \SG\getFirst(post('listStyle'), $this->listStyle),
-			'page' => \SG\getFirst(post('page'), $this->page),
+			'listStyle' => \SG\getFirst(post('listStyle'), self::LISTSTYLE),
+			'page' => \SG\getFirst(post('page'), self::PAGE),
 			'items' => \SG\getFirst(post('items'), self::ITEMS),
-			'order' => \SG\getFirst(post('order'), $this->order),
+			'order' => \SG\getFirst(post('order'), self::ORDERBY),
 		]);
 		// debugMsg($this, '$this');
 	}
 
 	function build() {
-		$types = BasicModel::get_topic_type($this->contentTypes);
+		head('<meta name="robots" content="noindex,nofollow">');
+
+		// $types = BasicModel::get_topic_type($this->contentTypes);
 
 		event_tricker('paper.listing.init',$self,$topics,$para);
 
@@ -80,7 +81,6 @@ class Contents extends Page {
 		// $self->theme->navigator=user_menu();
 		*/
 
-		head('<meta name="robots" content="noindex,nofollow">');
 
 		event_tricker('paper.listing.start',$self,$topics,$para);
 
@@ -100,7 +100,7 @@ class Contents extends Page {
 		// }
 
 		$pageCondition = [
-			'items' => $para->items,
+			'items' => $this->items,
 			'page' => $this->page,
 			'total' => $topics->total,
 			'url' => q(),
@@ -109,9 +109,9 @@ class Contents extends Page {
 				'page' => $this->page,
 				'items' => $this->items == self::ITEMS ? NULL : $this->items,
 				'order' => $this->order == self::ORDERBY ? NULL : $this->items,
-				'listStyle' => $this->listStyle,
+				'listStyle' => $this->listStyle == self::LISTSTYLE ? NULL : $this->listStyle,
 			]
-		] ;
+		];
 		// debugMsg($pageCondition, '$pageConfition');
 
 		$pagenv = PaperModel::pageNavigator($pageCondition);
@@ -132,7 +132,7 @@ class Contents extends Page {
 						'headerSortParameter' => ['listStyle' => $this->listStyle, 'page' => $this->page, 'items' => $this->items],
 						'children' => $topics->items,
 					]),
-					!$para->option->no_page && $topics->page->show ? $pagenv->show : NULL,
+					$pagenv->show,
 				], // children
 			]), // Widget
 		]);

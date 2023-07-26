@@ -10,7 +10,7 @@
 * @usage paper/my
 */
 
-import('model:paper.php');
+use Paper\Model\PaperModel;
 
 class PaperMy extends Page {
 	var $year;

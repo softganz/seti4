@@ -7,7 +7,7 @@
 * @return String
 */
 
-$debug = true;
+use Paper\Model\PaperModel;
 
 function paper_senddelete($self, $tpid) {
 	$self->theme->title = 'แจ้งลบหัวข้อที่ไม่เหมาะสม';
@@ -23,7 +23,7 @@ function paper_senddelete($self, $tpid) {
 
 
 		if (!$error) {
-			$topicInfo = R::Model('paper.get', $tpid);
+			$topicInfo = PaperModel::get($tpid);
 
 			if (load_lib('class.mail.php', 'lib')) {
 				$mail = new Mail();

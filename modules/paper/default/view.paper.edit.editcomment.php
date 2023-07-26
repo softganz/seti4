@@ -7,7 +7,7 @@
 * @return String
 */
 
-$debug = true;
+use Paper\Model\PaperModel;
 
 function view_paper_edit_editcomment($topicInfo, $commentId) {
 	load_lib('class.editor.php','lib');

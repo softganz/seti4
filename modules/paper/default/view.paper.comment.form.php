@@ -6,7 +6,7 @@
 * @return String
 */
 
-$debug = true;
+use Paper\Model\PaperModel;
 
 function view_paper_comment_form($topicInfo) {
 	$tpid = $topicInfo->tpid;
