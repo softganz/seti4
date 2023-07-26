@@ -31,6 +31,7 @@ class FileModel {
 			, f.`refId`
 			, f.`type`
 			, f.`tagName`
+			, f.`folder`
 			, f.`cover`
 			, f.`gallery`
 			, f.`file` `fileName`
@@ -55,9 +56,10 @@ class FileModel {
 		$result = (Object) [
 			'fileId' => $rs->id,
 			'fileName' => $rs->fileName,
+			'folder' => $rs->folder,
 			'title' => $rs->title,
 			'info' => mydb::clearProp($rs),
-			'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName) : NULL),
+			'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName, $rs->folder) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName, $rs->folder) : NULL),
 		];
 
 		return $result;
@@ -140,6 +142,8 @@ class FileModel {
 
 		$useSourceFilename = $options->useSourceFilename;
 
+		$data->nodeId = \SG\getFirst($data->nodeId, $data->tpid);
+
 		$result = (Object) [
 			'link' => NULL,
 			'photofile' => NULL,
@@ -149,8 +153,7 @@ class FileModel {
 			'_query' => [],
 		];
 
-		$uploadFolder = cfg('paper.upload.photo.folder');
-		$photoPrename = \SG\getFirst($data->prename, 'paper_'.$data->tpid.'_');
+		$photoPrename = \SG\getFirst($data->prename, 'paper_'.$data->nodeId.'_');
 		$photoFilenameLength = \SG\getFirst($options->fileNameLength, 30);
 		$isUploadSingleFile = true;
 
@@ -176,6 +179,8 @@ class FileModel {
 
 		//$ret.=print_o(post(),'post').print_o($uploadPhotoFiles,'$uploadPhotoFiles');
 
+		$docExtension = ['pdf', 'doc', 'docx'];
+		$photoExtension = ['jpg', 'jpeg', 'png'];
 		foreach ($uploadPhotoFiles as $postFile) {
 			//debugMsg($postFile,'$postFile');
 			if (!is_uploaded_file($postFile['tmp_name'])) {
@@ -184,18 +189,24 @@ class FileModel {
 			}
 
 			$ext = strtolower(sg_file_extension($postFile['name']));
-			//$ret.='ext='.$ext;
-			if (!in_array($ext, array('jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'))) {
+
+			if (!in_array($ext, $docExtension) && !in_array($ext, $photoExtension)) {
 				$result->error[] = 'Upload error : Invalid File Type ('.$postFile['name'].')<br />';
 				continue;
 			}
 
-			if (in_array($ext, ['pdf', 'doc', 'docx'])) {
+			// Create folder if not exists
+			if ($data->folder && !(file_exists($data->folder) && !is_file($data->folder))) {
+				mkdir($data->folder);
+			}
+
+			if (in_array($ext, $docExtension)) {
 				// Upload document file
-				$uploadFolder = cfg('paper.upload.document.folder');
+				$uploadFolder = SG\getFirst($data->folder, cfg('paper.upload.document.folder'));
 				$upload = new classFile($postFile, $uploadFolder);
-			} else {
+			} else if (in_array($ext, $photoExtension)) {
 				// Upload image file
+				$uploadFolder = SG\getFirst($data->folder, cfg('paper.upload.photo.folder'));
 				$upload = new classFile($postFile, $uploadFolder, cfg('photo.file_type'));
 				if (!$upload->valid_format()) {
 					$result->error[] = 'Upload error : Invalid photo format ('.$postFile['name'].')';
@@ -215,13 +226,14 @@ class FileModel {
 			$photo_upload = $upload->filename;
 
 			$picsData = (Object) [
-				'fid' => \SG\getFirst($data->fid),
-				'nodeId' => \SG\getFirst($data->nodeId, $data->tpid),
-				'tpid' => \SG\getFirst($data->nodeId, $data->tpid),
+				'fileId' => \SG\getFirst($data->fileId, $data->fid),
+				'nodeId' => $data->nodeId,
+				'tpid' => $data->nodeId,
 				'cid' => \SG\getFirst($data->cid),
-				'type' => $ext == 'pdf' ? 'doc' : 'photo',
+				'type' => in_array($ext, $docExtension) ? 'doc' : 'photo',
 				'title' => \SG\getFirst($data->title, $postFile['name']),
 				'tagName' => \SG\getFirst($data->tagName, $data->tagname),
+				'folder' => \SG\getFirst($data->folder),
 				'orgId' => \SG\getFirst($data->orgId, $data->orgid),
 				'uid' => \SG\getFirst($data->uid,i()->uid),
 				'file' => $photo_upload,
@@ -229,6 +241,7 @@ class FileModel {
 				'description' => \SG\getFirst($data->description),
 				'timestamp' => 'func.NOW()',
 				'ip' => ip2long(GetEnv('REMOTE_ADDR')),
+				'link' => NULL,
 			];
 
 			$linkInfo = '';
@@ -239,55 +252,39 @@ class FileModel {
 				mydb::query(
 					'INSERT INTO %topic_files%
 					(
-						`fid`
-					, `tpid`
-					, `cid`
-					, `type`
-					, `orgId`
-					, `uid`
-					, `refId`
+						`fid`, `tpid`, `cid`, `type`, `orgId`, `uid`, `refId`
 					, `tagName`
-					, `file`
-					, `title`
-					, `description`
-					, `timestamp`
-					, `ip`
+					, `folder`, `file`
+					, `title`, `description`
+					, `timestamp`, `ip`
 					) VALUES (
-					  :fid
-					, :nodeId
-					, :cid
-					, :type
-					, :orgId
-					, :uid
-					, :refId
+					  :fileId, :nodeId, :cid, :type, :orgId, :uid, :refId
 					, :tagName
-					, :file
-					, :title
-					, :description
-					, :timestamp
-					, :ip
+					, :folder, :file
+					, :title, :description
+					, :timestamp, :ip
 					) ON DUPLICATE KEY UPDATE
 					`file` = :file',
 					$picsData
 				);
 
-				if (empty($picsData->fid)) $fileId = $picsData->fid = mydb()->insert_id;
+				if (empty($picsData->fileId)) $fileId = $picsData->fileId = mydb()->insert_id;
 
 				$result->_query[] = mydb()->_query;
 
 
 				if ($picsData->type == 'photo') {
-					$picsData->photo = $photo = BasicModel::get_photo_property($upload->filename);
+					$picsData->photo = $photo = FileModel::photoProperty($upload->filename, $data->folder);
 
 					if ($data->link == 'href') {
-						$uploadUrl = url('project/'.$data->tpid.'/info.photo/'.$fileId);
+						$uploadUrl = url('project/'.$data->nodeId.'/info.photo/'.$fileId);
 						$linkInfo .= '<a class="sg-action" data-rel="box" href="'.$uploadUrl.'" data-width="840" data-height="80%">';
 					} else {
-						$uploadUrl = $photo->_url;
-						$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="'.$photo->_url.'" title="">';
+						$uploadUrl = $photo->url;
+						$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="'.$photo->url.'" title="">';
 					}
 
-					$linkInfo .= '<img class="photoitem" src="'.$photo->_url.'" alt="" width="100%" />';
+					$linkInfo .= '<img class="photoitem" src="'.$photo->url.'" alt="" width="100%" />';
 					$linkInfo .= '</a>';
 					if ($options->showDetail) $linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
 
@@ -345,54 +342,62 @@ class FileModel {
 			'_query' => [],
 		];
 
+		$fileInfo = FileModel::get($fileId);
+		// debugMsg($fileInfo, '$fileInfo');
 
-		$rs = mydb::select(
-			'SELECT * FROM %topic_files% f WHERE f.`fid` = :fid LIMIT 1',
-			[':fid' => $fileId]
-		);
+		if (empty($fileInfo->fileId)) return (Object) ['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'msg' => 'File not found'];
 
-		$result->_query[] = mydb()->_query;
-
-		if ($rs->file) {
-			if ($rs->type == 'photo') {
-				if ($options->deleteRecord) {
-					$stmt = 'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1';
-					mydb::query($stmt, ':fid', $fileId);
-					$result->_query[] = mydb()->_query;
-				}
-
-				$filename = cfg('folder.abs').cfg('upload_folder').'pics/'.$rs->file;
-
-				if ($options->deleteFile && file_exists($filename) and is_file($filename)) {
-					$stmt = 'SELECT COUNT(*) `total` FROM %topic_files% WHERE `file` = :file AND `fid` != :fid LIMIT 1';
-					$is_photo_inused = mydb::select($stmt, $rs)->total;
-					$result->_query[] = mydb()->_query;
-
-					$result->photoInused = $is_photo_inused;
-					if (!$is_photo_inused) unlink($filename);
-					$result->msg = $is_photo_inused?'ภาพถูกใช้โดยคนอื่น':'ลบภาพเรียบร้อยแล้ว';
-				}
-
-				BasicModel::watch_log('photo', 'remove photo', 'Photo id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')');
-			} else if ($rs->type == 'doc') {
-				if ($options->deleteRecord) {
-					$stmt = 'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1';
-					mydb::query($stmt, ':fid', $fileId);
-					$result->_query[] = mydb()->_query;
-				}
-
-				$filename = cfg('paper.upload.document.folder').$rs->file;
-				if ($options->deleteFile && file_exists($filename) and is_file($filename)) {
-					unlink($filename);
-				}
-
-				BasicModel::watch_log('photo', 'remove doc', 'File id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')');
+		if ($fileInfo->info->type == 'photo') {
+			// Delete file record
+			if ($options->deleteRecord) {
+				mydb::query('DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1', [':fid' => $fileId]);
+				$result->_query[] = mydb()->_query;
 			}
+
+			// Delete photo file
+			if ($options->deleteFile && $fileInfo->property->exists) {
+				$result->photoInused = !empty(FileModel::getFileInUse($fileId, $fileInfo->fileName, $fileInfo->folder));
+				if (!$result->photoInused) unlink($fileInfo->property->name);
+				$result->msg = $result->photoInused ? 'ภาพถูกใช้โดยคนอื่น' : 'ลบภาพเรียบร้อยแล้ว';
+			}
+
+			BasicModel::watch_log('photo', 'remove photo', 'Photo id '.$fileId.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')');
+		} else if ($fileInfo->info->type == 'doc') {
+			if ($options->deleteRecord) {
+				$stmt = 'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1';
+				mydb::query($stmt, ':fid', $fileId);
+				$result->_query[] = mydb()->_query;
+			}
+
+			$filename = cfg('paper.upload.document.folder').$fileInfo->info->file;
+			if ($options->deleteFile && file_exists($filename) and is_file($filename)) {
+				unlink($filename);
+			}
+
+			BasicModel::watch_log('photo', 'remove doc', 'File id '.$fileInfo->info->fid.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')');
 		}
 		return $result;
 	}
 
+	public static function getFileInUse($fileId = NULL, $fileName, $folder) {
+		\mydb::where('`file` = :fileName', ':fileName', $fileName);
+		if ($folder) {
+			\mydb::where('`folder` = :folder', ':folder', $folder);
+		} else {
+			\mydb::where('`folder` IS NULL');
+		}
+		if ($fileId) \mydb::where('`fid` != :fileId', ':fileId', $fileId);
+		return \mydb::select(
+			'SELECT `fid`, `tpid` `nodeId`, `folder`, `file`
+			FROM %topic_files%
+			%WHERE%;
+			-- {key: "fid"}'
+		)->items;
+	}
+
 	public static function photoProperty($file, $folder = NULL) {
+		$folder = preg_replace('/\/$/', '', $folder);
+
 		if (is_object($file)) {
 			$property = $file;
 		} else if (is_string($file)) {
@@ -434,11 +439,11 @@ class FileModel {
 			$property->name = cfg('upload.folder').$folder.'/'.sg_tis620_file($fileName);
 		} else {
 			$property->src = _URL.cfg('upload_folder').'pics/'.$folderName.sg_urlencode($fileName);
-			$property->name = $photo_location = cfg('folder.abs').cfg('upload_folder').'pics/'.$folderName.$fileName;
+			$property->name = cfg('folder.abs').cfg('upload_folder').'pics/'.$folderName.$fileName;
 		}
 
 		if (file_exists($property->name)) {
-			$property->size = filesize($photo_location);
+			$property->size = filesize($property->name);
 			if (!isset($property->url)) $property->url=cfg('url.abs').cfg('upload_folder').'pics/'.$folderName.sg_urlencode($fileName);
 			$size = getimagesize($property->name);
 			$property->exists = true;
