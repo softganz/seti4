@@ -2,22 +2,18 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-07-23
-* Version :: 1
+* Modify  :: 2023-07-26
+* Version :: 2
 *
 * @param Int $nodeId
 * @param String $action
 * @param Int $tranId
 * @return Array/Object
 *
-* @usage module/api/{id}/{action}[/{tranId}]
+* @usage paper/info/api/{nodeId}/{action}[/{tranId}]
 */
 
-import('model:file.php');
-import('widget:paper.list.php');
-
 use Paper\Model\PaperModel;
-use Paper\Widget\PaperListWidget;
 
 class PaperInfoApi extends PageApi {
 	var $nodeId;
@@ -40,7 +36,6 @@ class PaperInfoApi extends PageApi {
 	}
 
 	function build() {
-		return new PaperListWidget([]);
 		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'PROCESS ERROR');
 		else if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 

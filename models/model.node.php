@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2023-07-25
-* Version :: 2
+* Modify 	:: 2023-07-26
+* Version :: 3
 *
 * @param Array $args
 * @return Object
@@ -803,7 +803,7 @@ class NodeModel {
 			$conditions->total,
 			$conditions->url,
 			$conditions->cleanUrl,
-			$conditions->pagePara,
+			$conditions->pagePara
 		);
 		return $pagenv;
 	}

@@ -1,13 +1,14 @@
 <?php
 /**
-* Node :: Review Form
-* Created 2021-09-30
-* Modify  2021-09-30
+* Node    :: Review Form
+* Created :: 2021-09-30
+* Modify  :: 2023-07-26
+* Version :: 2
 *
-* @param String $arg1
+* @param Object $nodeInfo
 * @return Widget
 *
-* @usage node/{id}/review
+* @usage node/{nodeId}/review
 */
 
 $debug = true;
@@ -37,7 +38,7 @@ class NodeReview extends Page {
 			'body' => new Widget([
 				'children' => [
 					new Form([
-						'action' => url('node/api/'.$this->nodeId.'/review.save'),
+						'action' => url('api/node/info/'.$this->nodeId.'/review.save'),
 						'id' => 'node-review',
 						'class' => 'sg-form -node-review',
 						'checkValid' => true,
