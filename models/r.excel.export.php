@@ -1,6 +1,6 @@
 <?php
 function r_excel_export($tables,$filename,$options='{}') {
-	$defaults='{debug:false,cleanTag:true}';
+	$defaults='{debug: false, cleanTag: true, convertLeadingZero: true}';
 	$options=sg_json_decode($options,$defaults);
 	$debug=$options->debug;
 
@@ -46,7 +46,8 @@ function r_excel_export($tables,$filename,$options='{}') {
 */
 function __r_setValueType(&$str) {
 	//$str=gettype($str).$str;
-	if (gettype($str)=='string' && substr($str,0,1)=='0') $str='="'.$str.'"';
+	// if (gettype($str)=='string' && substr($str,0,1)=='0') $str='="'.$str.'"';
+	// if (gettype($str) == 'string' && substr($str,0,1) == '0') $str = '\''.$str;
 }
 
 function __r_excel_export_GetHeader() {
