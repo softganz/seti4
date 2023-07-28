@@ -338,7 +338,9 @@ class MyDb {
 			// preg_match('/(`\w.*`) \-\>\> ("\$\.\w*\")/', $stmt, $out);
 			// debugMsg($out, '$out');
 
-			$stmt = preg_replace('/(`\w.*`) \-\>\> ("\$\.\w*\")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $stmt);
+			// Convert format from `table`.`field` ->> "$.jsonKey" to JSON_UNQUOTE(JSON_EXTRACT())
+			$stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.\w*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $stmt);
+			// $stmt = preg_replace('/(`dos`\.`information`) \-\>\> ("\$\.\w*\")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $stmt);
 			// debugMsg('CONVERT STMT');
 			// debugMsg($stmt);
 		}
