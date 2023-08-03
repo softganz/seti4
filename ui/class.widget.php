@@ -384,8 +384,8 @@ class DebugMsg extends Widget {
 
 	function build() {
 		if (is_object($this->msg) || is_array($this->msg)) {
-			if (function_exists('print_o')) {
-				$this->msg = print_o($this->msg, $this->varName);
+			if (function_exists('\SG\print_o')) {
+				$this->msg = \SG\print_o($this->msg, $this->varName);
 			} else {
 				$this->msg = print_r($this->msg,1);
 			}
