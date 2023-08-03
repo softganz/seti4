@@ -79,7 +79,6 @@ class MyDb {
 	 * @param String $dbUri
 	 */
 	function __construct($dbUri = NULL) {
-		if (empty($dbUri)) $dbUri = cfg('db');
 		if (is_string($dbUri)) {
 			$this->dbUri = $dbUri;
 			preg_match('/(mysql)\:\/\/([^:]*)\:([^@]*)\@([^\/]*)\/(.*)/i',$dbUri,$out);
