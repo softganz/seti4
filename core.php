@@ -38,21 +38,22 @@ if (array_key_exists('core', $_COOKIE)) {
 	}
 }
 
-define('_CORE_FOLDER', $coreFolder);
-define('_CORE_MODULE_FOLDER', _CORE_FOLDER.'/core/modules');
-define('_CORE_FUNCTION_FILE', _CORE_FOLDER.'/core/lib/class.corefunction.php');
+define('_CORE_FOLDER',          $coreFolder);
+define('_CORE_CONTROLLER_FILE', _CORE_FOLDER.'/core/lib/class.core.controller.php');
+define('_CORE_LIB_FILE',        _CORE_FOLDER.'/core/lib/class.core.function.php');
+define('_CORE_INIT_FILE',       _CORE_FOLDER.'/core/lib/class.core.init.php');
+define('_CORE_MODULE_FOLDER',   _CORE_FOLDER.'/core/modules');
+
 if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
-cfg('core.version.name', 'Seti');
-cfg('core.version.major', 5);
-cfg('core.version.code', 12);
-cfg('core.version', '4.2.05');
-cfg('core.release', '2023-06-28');
-cfg('core.location', ini_get('include_path'));
-cfg('core.folder', _CORE_FOLDER);
-cfg('core.config', _CONFIG_FILE);
-
-// echo _CORE_FOLDER.'<br />'._CORE_FUNCTION_FILE.'<br />';
+cfg('core.version.name',        'Seti');
+cfg('core.version.major',       4);
+cfg('core.version.code',        13);
+cfg('core.version',             '4.2.06');
+cfg('core.release',             '2023-08-01');
+cfg('core.location',            ini_get('include_path'));
+cfg('core.folder',              _CORE_FOLDER);
+cfg('core.config',              _CONFIG_FILE);
 
 // Current version will compare with version.install for upgrade database table
 cfg('core.version.install', '4.0');
@@ -64,13 +65,12 @@ if (!cfg('domain.short')) cfg('domain.short', $_SERVER['HTTP_HOST']);
 cfg('folder.abs', dirname(isset($_SERVER['PATH_TRANSLATED']) ? $_SERVER['PATH_TRANSLATED'] : $_SERVER['SCRIPT_FILENAME']).'/');
 cfg('url', in_array(dirname($_SERVER['PHP_SELF']), ['/','\\']) ? '/' : dirname($_SERVER['PHP_SELF']).'/');
 
-define('_DOMAIN', cfg('domain'));
-define('_DOMAIN_SHORT', cfg('domain.short'));
-define('_ON_LOCAL', cfg('domain.short') == 'localhost');
-define('_ON_HOST', cfg('domain.short') != 'localhost');
-define('_URL', cfg('url'));
-define('_url', cfg('url'));
-// debugMsg(_URL);
+define('_DOMAIN',              cfg('domain'));
+define('_DOMAIN_SHORT',        cfg('domain.short'));
+define('_ON_LOCAL',            cfg('domain.short') == 'localhost');
+define('_ON_HOST',             cfg('domain.short') != 'localhost');
+define('_URL',                 cfg('url'));
+define('_url',                 cfg('url'));
 
 // set to the user defined error handler
 set_error_handler('sgErrorHandler');
@@ -80,18 +80,20 @@ register_shutdown_function('sgShutdown');
 //echo 'error_reporting()='.error_reporting().'('.E_ALL.')'.'<br />';
 //trigger_error("This is a test of trigger error", E_USER_WARNING);
 
-unset($include_path,$coreFolder,$setCore);
+unset($include_path, $coreFolder, $setCore);
 
 $request = requestString();
 
 $ext = strtolower(substr($request,strrpos($request,'.')+1));
 
-if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js','css']) && basename($request) != 'theme.css')) {
+if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && basename($request) != 'theme.css')) {
 	die(loadJS($request,$ext));
-} else if (in_array($ext, ['ico','jpg','gif','png','htm','html','php','xml','pdf','doc','swf'])) {
+} else if (in_array($ext, ['ico', 'jpg', 'gif', 'png', 'htm', 'html', 'php', 'xml', 'pdf', 'doc', 'swf'])) {
 	die(fileNotFound());
-} else if (file_exists(_CORE_FUNCTION_FILE)) {
-	require(_CORE_FUNCTION_FILE);
+} else if (file_exists(_CORE_CONTROLLER_FILE)) {
+	require(_CORE_CONTROLLER_FILE);
+	if (file_exists(_CORE_LIB_FILE)) require(_CORE_LIB_FILE);
+	if (file_exists(_CORE_INIT_FILE)) require(_CORE_INIT_FILE);
 } else {
 	die('SORRY!!!! Core Function Not Exists.');
 }
@@ -272,7 +274,7 @@ function debugMsg($msg = NULL, $varname = NULL) {
  */
 function sgErrorHandler($code, $description, $file = null, $line = null, $context = null) {
 	$displayErrors = strtolower(ini_get("display_errors"));
-	//echo '<p>Debug Error: code : '.$code.' display '.$displayErrors.' : ['.$code.'] : '.$description.' in [' . $file . ', line ' . $line . ']'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code).'</p>';
+	// echo '<p>Debug Error: code : '.$code.' display '.$displayErrors.' : ['.$code.'] : '.$description.' in [' . $file . ', line ' . $line . ']'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code).'</p>';
 	error_reporting(0);
 
 	$description = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
@@ -384,6 +386,7 @@ function sgFatalError($code, $description, $file, $line) {
 	$msg = 'There is error in <b>'.$reportFileName.'</b> '
 		. 'line <b>'.$line.'</b>. '
 		. 'Please report to webmaster.'
+		// . $description
 		. ($isAdmin ? '<br /><br />'.$reportData['description'] : '');
 
 

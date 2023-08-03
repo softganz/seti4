@@ -1,0 +1,7 @@
+{
+	"autoLoader" : {
+		"items" : {
+			"DB": "lib/class.db.php"
+		}
+	}
+}
