@@ -47,7 +47,6 @@ foreach ($includeFileList as $file) load_lib($file);
 
 
 
-
 SgCore::processSetting($R);
 
 $httpDomain = str_ireplace('www.', '', parse_url(cfg('domain'), PHP_URL_HOST));
@@ -119,16 +118,16 @@ if ($callFromApp) page_class('-app'));
 $ret .= cfg('page_class');
 */
 
-define('_HOST', $httpDomain);
+define('_HOST',    $httpDomain);
 define('_REFERER', $httpReferer);
 define('_CALL_FROM_APP', $callFromApp ? $R->appAgent->type : false);
-define('_AJAX', ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest' && $httpDomain==$httpReferer))
+define('_AJAX',    ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH']=='XMLHttpRequest' && $httpDomain==$httpReferer))
 	|| preg_match('/^ajax\//i',$request)
 	|| isset($_GET['ajax']));
-define('_HTML', isset($_REQUEST['html']));
-define('_API', isset($_REQUEST['api']));
+define('_HTML',    isset($_REQUEST['html']));
+define('_API',     isset($_REQUEST['api']));
 
-//die(_AJAX?'AJAX Call':'Normal call');
+// die(_AJAX?'AJAX Call':'Normal call');
 // echo (_AJAX?'AJAX Call':'Normal call').'<br />';
 
 q($R->request);
@@ -161,13 +160,6 @@ $R->myDb = new MyDb(cfg('db'));
 $R->DB = new \Softganz\DB([
 	'connection' => [
 		'uri' => cfg('db'),
-		// 'uri' => [
-		// 	'type' => 'mysql',
-		// 	'user' => 'softganz',
-		// 	'password' => 'sqlsgnz2010',
-		// 	'host' => 'localhost',
-		// 	'database' => 'imedcare',
-		// ],
 		'characterSetClient' => cfg('db.character_set_client'),
 		'characterSetConnection' => cfg('db.character_set_connection'),
 		'collationConnection' => cfg('db.collation_connection'),
@@ -180,9 +172,6 @@ if (!$R->myDb->status) {
 	set_theme();
 	die(SgCore::processIndex('index', message('error','OOOPS!!! Database connection error')));
 }
-
-// Not use class MySql anymore
-// if (class_exists('MySql')) $R->mysql = new MySql();
 
 // Load config variable from table
 SgCore::loadConfig(cfg_db());
