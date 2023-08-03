@@ -52,7 +52,6 @@ function view_calendar_create_month($data) {
 			}
 		}
 	}
-	if (debug('sql')) echo db_query_cmd();
 
 	return $result;
 }

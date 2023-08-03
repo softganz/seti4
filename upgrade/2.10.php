@@ -2,10 +2,7 @@
 $version='2.10';
 
 // Add timestamp key to topic comment
-//if (!db_is_key_exists('%topic_comments%','timestamp')) {
 	mydb::query('ALTER TABLE %topic_comments% ADD INDEX ( `timestamp` )  ');
-	//$result[$version][]=array('Add key timestamp of topic comment '.db_affectedrows().' row(s) effect.', mydb()->_query, mydb()->_error, mydb()->_error_no);
-//}
 
 // Add tag property to tag
 mydb::query('ALTER TABLE %tag% ADD `liststyle` VARCHAR( 10 ) NULL DEFAULT NULL AFTER `weight`  ');

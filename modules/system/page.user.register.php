@@ -36,7 +36,6 @@ function user_register($self) {
 		if (!preg_match(cfg('member.username.format'),$register->username)) $error[]='ชื่อสมาชิก (Username) <strong><em>'.$register->username.'</em></strong> มีอักษรหรือความยาวไม่ตรงตามเงื่อนไข'; //-- check valid char
 
 		if (mydb::count_rows('%users%', '`username` = "'.mydb::escape($register->username).'"'))
-			//db_count('%users%','username="'.$register->username.'"') )
 			$error[]='ชื่อสมาชิก (Username) <strong><em>'.$register->username.'</em></strong> มีผู้อื่นใช้ไปแล้ว'; //-- duplicate username
 
 		if ($register->password=='') $error[]='กรุณาระบุ รหัสผ่าน (Password)'; //-- fill password
