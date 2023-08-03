@@ -225,7 +225,7 @@ class Session {
 		$debug = false;
 
 		// NOTES : If user mydb::query , cannot use :sess_id, :data
-		$mydb = new MyDb();
+		$mydb = new MyDb(cfg('db'));
 
 		if ($debug) echo 'Session write of '.$sess_id.'<br />data = '.$data.'<br />';
 
@@ -270,13 +270,13 @@ class Session {
 	}
 
 	public function destroy($sess_id) {
-		$GLOBALS['R']->myDb = new MyDb();
+		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
 		mydb::query('DELETE FROM %session% WHERE sess_id = :id LIMIT 1',':id',$sess_id);
 		return true;
 	}
 
 	public function gc($ttl = 86400) {
-		$GLOBALS['R']->myDb = new MyDb();
+		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
 		$end = date('Y-m-d H:i:s',time()-$ttl);
 		mydb::query('DELETE FROM %session% WHERE sess_last_acc < :end',':end',$end);
 
