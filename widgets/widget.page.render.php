@@ -1,15 +1,18 @@
 <?php
 /**
- * Theme module display
- *
- * @param Object $self
- * @param String $body
- * @return String
- */
+* Widget  :: Page Render Widget
+* Created :: 2023-0-01
+* Modify  :: 2023-07-28
+* Version :: 2
+*
+* @param Object $self
+* @param String $body
+* @return String
+*
+* @usage new PageRenderWidget($self, $body)
+*/
 
-$debugLoadResource = false;
-
-class ViewRenderPage extends Widget {
+class PageRenderWidget extends Widget {
 	var $self;
 	var $body;
 
