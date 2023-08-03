@@ -54,30 +54,31 @@ function debugStop() { debug(false); }
 function print_o() {
 	$echo = false;
 	$inline = false;
-	$args=func_get_args();
+	$args = func_get_args();
 	if (empty($args)) return;
 
 	$ret = '';
 
-	$last_arg=$args[count($args)-1];
+	$last_arg = $args[count($args) - 1];
 	if ($last_arg === 1 || $last_arg === true) {
 		$echo = true;
 		array_pop($args);
-		}
+	}
 	if ($last_arg === 2) {
 		$inline = true;
 		array_pop($args);
-		}
+	}
 	foreach ($args as $key => $value) {
 		if (is_string($value)) continue;
 		$next_value = isset($args[$key+1]) ? $args[$key + 1] : NULL;
 		$title = is_string($next_value) ? $next_value : '';
+		$varTitle = '<b>'.$title.(is_object($value) ? ' ['.get_class($value).']' : '').'</b>';
 		if ($echo) {
-			echo '<em>'.$title.'</em>';
-			echo Arrays::value($value,$title);
+			echo $varTitle;
+			echo Arrays::value($value, $title);
 		} else {
-			$ret .= '<em>'.$title.'</em>';
-			$ret .= Arrays::value($value, $title, array('class' => $inline ? '-inline' : ''));
+			$ret .= $varTitle;
+			$ret .= Arrays::value($value, $title, ['class' => $inline ? '-inline' : '']);
 		}
 		unset($title);
 	}
@@ -735,15 +736,16 @@ function paramToObject($param) {
 
 
 class Arrays {
-	static function value($arr=array(),$name='', $options = array()) {
-		if ($name && is_object($arr)) {$prefix='->';$suffix='';}
-		else if ($name && is_array($arr)) {$prefix='[';$suffix=']';}
-		else $prefix=$suffix='';
+	static function value($arr = [], $name = '', $options = []) {
+		if ($name && is_object($arr)) {$prefix = '->'; $suffix = '';}
+		else if ($name && is_array($arr)) {$prefix = '['; $suffix = ']';}
+		else $prefix = $suffix = '';
+
 		$result = '<ul class="array-value '.(isset($options['class']) ? $options['class'] : '').'" style="margin:0 0 0 15px;padding:0px;">'._NL;
 		if ( is_object($arr) || (is_array($arr) and count($arr) > 0) ) {
 			foreach ( $arr as $key=>$value ) {
 				$vtype = GetType($value);
-				$result .= '<li><span style="color:#ff9a56">'.$name.$prefix.$key.$suffix.'</font> <font color=gray>['.$vtype.']</font> : ';
+				$result .= '<li><span style="color:#ff9a56">'.$name.$prefix.$key.$suffix.'</font> <font color=gray>['.(is_object($value) ? get_class($value).' ' : '').$vtype.']</font> : ';
 				switch ($vtype) {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
 					case 'array' : $result .= Arrays::value($value,$name.$prefix.$key.$suffix); break;
@@ -752,8 +754,11 @@ class Arrays {
 				}
 				$result .= '</li>'._NL;
 			}
-		} else $result .= '<li>(empty)</li>'._NL;
+		} else {
+			$result .= '<li>(empty)</li>'._NL;
+		}
 		$result .= '</ul>'._NL;
+
 		return $result;
 	}
 }
