@@ -10,18 +10,20 @@
 * @usage module/{id}/method
 */
 
-$debug = true;
-
 class PaperEdit extends Page {
 	var $tpid;
 	var $topicInfo;
 
 	function __construct($topicInfo = NULL) {
-		$this->tpid = $topicInfo->tpid;
-		$this->topicInfo = $topicInfo;
+		parent::__construct([
+			'tpid' => $topicInfo->tpid,
+			'topicInfo' => $topicInfo,
+		]);
 	}
 
 	function build() {
+		if (empty($this->tpid)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => $this->topicInfo->title,

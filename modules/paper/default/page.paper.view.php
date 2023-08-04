@@ -8,6 +8,8 @@
 * @return String
 */
 
+use Paper\Model\PaperModel;
+
 function paper_view($self, $tpid = NULL, $action = NULL) {
 	$para = (Object) [
 		'commentPage' => post('page'),
@@ -17,6 +19,9 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 
 	$topicInfo = is_object($tpid) ? $tpid : PaperModel::get($tpid);
 	$tpid = $topicInfo->tpid;
+
+	if (empty($tpid)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+
 	$body = (Object) [];
 
 	$isAdminPaper = user_access('administer contents,administer papers');
