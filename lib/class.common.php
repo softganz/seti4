@@ -201,7 +201,7 @@ class Timer {
 *
 * REMARK :: TO DEBUG SIGN IN SESSION, REMOVE CLASS form.signform in library-xx.xx.js
 ********************************************/
-class Session {
+class Session implements SessionHandlerInterface {
 
 	public function __construct() {}
 
@@ -301,7 +301,8 @@ class Session {
 			$watch
 		);
 
-	//	echo 'end '.$end.' '.mydb()->_query;die;
+		// echo 'end '.$end.' '.mydb()->_query;die;
+		return true;
 		return true;
 	}
 }
