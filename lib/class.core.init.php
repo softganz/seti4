@@ -219,22 +219,12 @@ if (!cfg('upload.url')) cfg('upload.url', cfg('url').cfg('upload').'/');
 
 SgCore::setLang();
 
+// set the cache expire to 1 minutes
+// session_cache_expire(1);
+// echo session_cache_expire();
+
 // Start session handler register using database
-$session = new Session();
-session_set_save_handler(
-	[$session, 'open'],
-	[$session, 'close'],
-	[$session, 'read'],
-	[$session, 'write'],
-	[$session, 'destroy'],
-	[$session, 'gc']
-);
-
-/* set the cache expire to 30 minutes */
-//session_cache_expire(1);
-//ini_set("session.gc_maxlifetime", "10");
-//$cache_expire = session_cache_expire();
-
+session_set_save_handler(new Session(), true);
 session_start();
 
 // Set JS Min file, ?jsMin=no/yes/clear
@@ -301,21 +291,23 @@ function sg_autoloader($class) {
 		if (debug('auto')) {
 			debugMsg('AUTOLOAD '.$class.' from <b style="color: green">'.$registerFileList[$class].'</b>');
 		}
-	} else {
-		$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
-		$endName = strToLower(end($pieces));
-		switch ($endName) {
-			case 'model': array_pop($pieces); $import = 'model:'.implode('.', $pieces).'.php'; break;
-			case 'widget': array_pop($pieces); $import = 'widget:'.implode('.', $pieces).'.php'; break;
-		}
-		$import = strToLower($import);
-
-		if (debug('auto')) {
-			debugMsg('AUTOLOAD '.$class.' '.($import ? 'TO <b style="color: green">'.$import.'</b>' : 'not load.'));
-			// debugMsg($pieces, '$pieces');
-		}
-
-		if ($import) import($import);
+		return;
 	}
+
+	$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
+	$endName = strToLower(end($pieces));
+
+	switch ($endName) {
+		case 'model': array_pop($pieces); $import = 'model:'.implode('.', $pieces).'.php'; break;
+		case 'widget': array_pop($pieces); $import = 'widget:'.implode('.', $pieces).'.php'; break;
+	}
+	$import = strToLower($import);
+
+	if (debug('auto')) {
+		debugMsg('AUTOLOAD '.$class.' '.($import ? 'TO <b style="color: green">'.$import.'</b>' : 'not load.'));
+		// debugMsg($pieces, '$pieces');
+	}
+
+	if ($import) import($import);
 }
 ?>
