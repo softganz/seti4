@@ -2,21 +2,29 @@
 /**
 * Admin   :: Clear Empty Session in Database
 * Created :: 2021-10-10
-* Modify  :: 2023-02-09
-* Version :: 2
+* Modify  :: 2023-08-05
+* Version :: 3
 *
 * @return Widget
 *
 * @usage admin/config/session/clear
 */
 
+use Softganz\DB;
+
 class AdminConfigSessionClear extends Page {
 	function build() {
 		if (\SG\confirm()) return $this->clearEmptySession();
 
+		$totals = DB::select([
+			'SELECT COUNT(IF(`user` != "", 1, NULL)) `users`, COUNT(*) `totals`
+			FROM %session%
+			LIMIT 1'
+		]);
+
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Clear Empty Session',
+				'title' => 'Clear Empty Session ('.$totals->users.'/'.$totals->totals.')',
 				'navigator' => 	R::View('admin.default.nav'),
 			]),
 			'body' => new Widget([
