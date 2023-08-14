@@ -308,7 +308,7 @@
 	.ui-statusbar .ui-item .status.-process-5.-active {background-color: green;}
 	.ui-statusbar .ui-item .status>.icon {margin-top: 12px; color: grey;}
 	.ui-statusbar .ui-item .status.-active>.icon {color: #fff;}
-	.nav>.ui-statusbar {margin-bottom: 24px;}
+	.nav>.ui-statusbar {margin: 8px 0 32px;}
 /* @end */
 
 
