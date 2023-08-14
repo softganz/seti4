@@ -3138,22 +3138,132 @@ $(document).on('change','.sg-village', function() {
 });
 
 // Sort table column
-$(document).on('click', '.widget-table>thead>tr>th[class^="-sort-"]', function(event) {
-	// notify('Sorting...', 100)
+$(document).on('click', '.widget-table>thead>tr>th[class*="-sort-"]', function(event) {
+	notify('Sorting!!! Please wait...', 100)
+	console.log('TABLE SORT START')
+
+	$(this).closest('thead').find('th').removeClass('-order')
+	$(this).addClass('-order')
 	let tableId = $(this).closest('table').attr('id')
 	// console.log(tableId)
 	if (!tableId) return
 	let thIndex = $(this).prevAll().length
-	// if ($)
+
+	// $(this).closest('table').find('th').removeClass('order').removeClass('order-active');
+	// $(this).addClass('order');
+
 	// console.log(thIndex)
 	// console.log('START')
-	sortTable(tableId, thIndex)
+	// sortTable(tableId, thIndex)
 	// .then(function(){console.log("COMPLETE")})
 	// console.log('END')
 	// notify('')
 
+
+	// column_sort(tableId, thIndex)
+	// function column_sort() {
+	//     getCellValue = (tr, idx) => $(tr).find('td').eq( idx ).text();
+
+	//     comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+	//         v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+	//         )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+	//     table = $(this).closest('table')[0];
+	//     tbody = $(table).find('tbody')[0];
+
+	//     elm = $(this)[0];
+	//     children = elm.parentNode.children;
+	//     Array.from(tbody.querySelectorAll('tr')).sort( comparer(
+	//         Array.from(children).indexOf(elm), table.asc = !table.asc))
+	//         .forEach(tr => tbody.appendChild(tr) );
+	// }
+
+	// sortTable3()
+
+	function sortTable3() {
+		console.log('TABLE SORT')
+		const styleSheet = document.createElement('style')
+		styleSheet.innerHTML = `
+			.order-inactive span {
+				visibility:hidden;
+			}
+			.order-inactive:hover span {
+				visibility:visible;
+			}
+			.order-active span {
+				visibility: visible;
+			}
+		`
+		document.head.appendChild(styleSheet)
+
+		// document.querySelectorAll('th.order').forEach(th_elem => {
+		//     let asc=true
+		//     const index = Array.from(th_elem.parentNode.children).indexOf(th_elem)
+		//     th_elem.addEventListener('click', (e) => {
+		//         const arr = [... th_elem.closest("table").querySelectorAll('tbody tr')]
+		//         arr.sort( (a, b) => {
+		//             const a_val = a.children[index].innerText
+		//             const b_val = b.children[index].innerText
+		//             return (asc) ? a_val.localeCompare(b_val) : b_val.localeCompare(a_val)
+		//         })
+		//         arr.forEach(elem => {
+		//             th_elem.closest("table").querySelector("tbody").appendChild(elem)
+		//         })
+		//         asc = !asc
+		//     })
+		// })
+		// document.querySelectorAll('th.order').forEach(th_elem => {
+		// 	let asc = true
+		// 	const span_elem = document.createElement('span')
+		// 	span_elem.style = "font-size:0.8rem; margin-left:0.5rem"
+		// 	span_elem.innerHTML = "▼"
+		// 	th_elem.appendChild(span_elem)
+		// 	th_elem.classList.add('order-inactive')
+
+		// 	const index = Array.from(th_elem.parentNode.children).indexOf(th_elem)
+		// 	console.log('SORT INDEX ',index)
+		// 	th_elem.addEventListener('click', (e) => {
+		// 		document.querySelectorAll('th.order').forEach(elem => {
+		// 			elem.classList.remove('order-active')
+		// 			elem.classList.add('order-inactive')
+		// 		})
+		// 		th_elem.classList.remove('order-inactive')
+		// 		th_elem.classList.add('order-active')
+
+		// 		if (!asc) {
+		// 			th_elem.querySelector('span').innerHTML = '▲'
+		// 		} else {
+		// 			th_elem.querySelector('span').innerHTML = '▼'
+		// 		}
+		// 		const arr = Array.from(th_elem.closest("table").querySelectorAll('tbody tr'))
+		// 		// const arr = Array.from(th_elem.closest("table").querySelectorAll('tbody tr')).slice(1)
+		// 		arr.sort((a, b) => {
+		// 			const a_val = a.children[index].innerText
+		// 			const b_val = b.children[index].innerText
+		// 			return (asc) ? a_val.localeCompare(b_val) : b_val.localeCompare(a_val)
+		// 		})
+		// 		arr.forEach(elem => {
+		// 			th_elem.closest("table").querySelector("tbody").appendChild(elem)
+		// 		})
+		// 		asc = !asc
+		// 	})
+		// })
+	}
+
+	function sortTable1(table_id, sortColumn){
+		var tableData = document.getElementById(table_id).getElementsByTagName('tbody').item(0);
+		var rowData = tableData.getElementsByTagName('tr');
+		for(var i = 0; i < rowData.length - 1; i++){
+			for(var j = 0; j < rowData.length - (i + 1); j++){
+				if(Number(rowData.item(j).getElementsByTagName('td').item(sortColumn).innerHTML.replace(/[^0-9\.]+/g, "")) < Number(rowData.item(j+1).getElementsByTagName('td').item(sortColumn).innerHTML.replace(/[^0-9\.]+/g, ""))){
+					tableData.insertBefore(rowData.item(j+1),rowData.item(j));
+				}
+			}
+		}
+	}
+
 	function sortTable(id, n) {
-	// console.log('FUNCTION START')
+		console.log('FUNCTION SORT START')
 		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
 		table = document.getElementById(id);
 		switching = true;
@@ -3191,6 +3301,7 @@ $(document).on('click', '.widget-table>thead>tr>th[class^="-sort-"]', function(e
 						break;
 					}
 				}
+				console.log('FORLOOP END', rows.length)
 			}
 			if (shouldSwitch) {
 				/*If a switch has been marked, make the switch
@@ -3207,7 +3318,10 @@ $(document).on('click', '.widget-table>thead>tr>th[class^="-sort-"]', function(e
 					switching = true;
 				}
 			}
+			console.log('FUNCTION sortTable END')
+			// notify('')
 		}
-		// console.log('FUNCTION END')
+		console.log('FUNCTION SORT END')
 	}
+	console.log('TABLE SORT END')
 });
