@@ -59,6 +59,7 @@ function calendar($self, $calId = NULL, $action = NULL, $tranId = NULL) {
 			break;
 
 		default:
+			$args = func_get_args();
 			$argIndex = 3; // Start argument
 
 			//debugMsg('PAGE CALENDAR calId = '.$calId.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.func_get_arg($argIndex));
@@ -68,11 +69,11 @@ function calendar($self, $calId = NULL, $action = NULL, $tranId = NULL) {
 				'calendar.'.$action,
 				$self,
 				$calInfo,
-				func_get_arg($argIndex),
-				func_get_arg($argIndex+1),
-				func_get_arg($argIndex+2),
-				func_get_arg($argIndex+3),
-				func_get_arg($argIndex+4)
+				$args[$argIndex],
+				$args[$argIndex+1],
+				$args[$argIndex+2],
+				$args[$argIndex+3],
+				$args[$argIndex+4]
 			);
 
 			if (is_null($ret)) $ret = 'ERROR : PAGE NOT FOUND';
