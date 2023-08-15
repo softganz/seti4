@@ -29,7 +29,7 @@ class WidgetBase {
 		// debugMsg(get_class_methods($this), '$methid');
 		// \EXTENSION\PPI\ProjectJoinList::test2();
 	}
-}
+} // End of class WidgetBase
 
 class Widget extends WidgetBase {
 	var $widgetName = 'Widget';
@@ -506,14 +506,14 @@ class Icon extends Widget {
 			. $this->icon
 			. '</i>';
 	}
-}
+} // End of class Icon
 
 class ExpandButton extends Widget {
 	var $icon = 'expand_less';
 	function toString() {
 		return '<a class="sg-expand btn -link -no-print" href="javascript:void(0)"><i class="icon -material">'.$this->icon.'</i></a>';
 	}
-}
+} // End of class ExpandButton
 
 class InlineEdit extends Widget {
 	var $widgetName = 'InlineEdit';
