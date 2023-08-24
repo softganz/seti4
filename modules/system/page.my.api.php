@@ -49,7 +49,7 @@ class MyApi extends Page {
 				} else if (!sg_is_email($profile->email)) {
 					$error[]='กรุณาป้อนอีเมล์ให้ถูกต้องตามรูปแบบ คือ yourname@domain.com';
 				} else if ($profile->email && mydb::select('SELECT `uid` FROM %users% WHERE `email` = :email AND `uid` != :uid LIMIT 1',':email', $profile->email, ':uid', $this->userInfo->uid)->uid ) {
-					$error[]='อีเมล์ <strong><em>'.$profile->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password/get').'">ท่านจำรหัสผ่านไม่ได้</a>'; //-- duplicate email
+					$error[]='อีเมล์ <strong><em>'.$profile->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password').'">ท่านจำรหัสผ่านไม่ได้</a>'; //-- duplicate email
 				}
 				if (sg_invalid_poster_name($profile->name)) {
 					$error[]='Duplicate name : มีผู้อื่นใช้ชื่อ <em>'.$profile->name.'</em> ไปแล้ว กรุณาเปลี่ยนเป็นชื่ออื่น';

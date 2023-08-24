@@ -52,7 +52,7 @@ function user_register($self) {
 
 		if ($register->email && !sg_is_email($register->email)) $error[]='อีเมล์ (E-mail) ไม่ถูกต้อง'; //-- invalid email
 
-		if ($register->email && mydb::count_rows('%users%','email="'.mydb::escape($register->email).'"') ) $error[]='อีเมล์ <strong><em>'.$register->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password/get').'">ท่านจำรหัสผ่านไม่ได้</a>'; //-- duplicate email
+		if ($register->email && mydb::count_rows('%users%','email="'.mydb::escape($register->email).'"') ) $error[]='อีเมล์ <strong><em>'.$register->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password').'">ท่านจำรหัสผ่านไม่ได้</a>'; //-- duplicate email
 
 		if ($register->step==2 && !sg_valid_daykey(5,$_POST['daykey'])) $error[]='Invalid Anti-spam word';
 		// start saving new account
