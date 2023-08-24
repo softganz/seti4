@@ -1,6 +1,6 @@
 'use strict'
 
-let sgUiVersion = '4.00.05'
+let sgUiVersion = '4.00.06'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPage = 0
