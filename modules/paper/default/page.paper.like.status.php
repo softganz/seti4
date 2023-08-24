@@ -38,7 +38,7 @@ function paper_like_status($self, $tpid) {
 	$bookmarkTotals = mydb::select(
 		'SELECT COUNT(*) `totals`
 		FROM %reaction%
-		WHERE `refid` = :tpid AND `action` = :bokmark LIMIT 1',
+		WHERE `refid` = :tpid AND `action` = :bookmark LIMIT 1',
 		[ ':tpid' => $tpid, ':bookmark' => $BOOKMARK]
 	)->totals;
 
