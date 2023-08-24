@@ -43,7 +43,7 @@ class FileModel {
 			, f.`last_view` `lastViewDate`
 			, f.`reply` `replyCount`
 			, f.`download` `downloadCount`
-			, f.`last_doanload` `lastDownloadDate`
+			, f.`last_download` `lastDownloadDate`
 			, f.`timeStamp`
 			, f.`ip`
 			FROM %topic_files% f
@@ -119,7 +119,7 @@ class FileModel {
 			, f.`last_view` `lastViewDate`
 			, f.`reply` `replyCount`
 			, f.`download` `downloadCount`
-			, f.`last_doanload` `lastDownloadDate`
+			, f.`last_download` `lastDownloadDate`
 			, f.`timeStamp`
 			, f.`ip`
 			FROM %topic_files% f
