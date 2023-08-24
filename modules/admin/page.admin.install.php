@@ -547,7 +547,7 @@ function __admin_install_create_table($prefix=null) {
 		`reply` smallint(5) unsigned NOT NULL DEFAULT 0,
 		`last_reply` datetime DEFAULT NULL,
 		`download` int(10) unsigned NOT NULL DEFAULT 0,
-		`last_doanload` datetime DEFAULT NULL,
+		`last_download` datetime DEFAULT NULL,
 		`timestamp` datetime DEFAULT NULL,
 		`ip` bigint(20) NOT NULL DEFAULT 0,
 		PRIMARY KEY  (`fid`),
