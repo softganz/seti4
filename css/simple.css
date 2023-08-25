@@ -81,6 +81,7 @@ pre {tab-size: 1;}
 .-sg-inline-block {display: inline-block;}
 .-sg-nowrap {white-space: nowrap !important;}
 .-sg-line-through {text-decoration: line-through !important;}
+.-sg-child-padding-norm>* {padding: 8px !important;}
 .-sg-child-padding-more>* {padding: 16px !important;}
 
 
