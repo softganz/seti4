@@ -27,23 +27,70 @@ class PaperListWidget extends \Widget {
 			case 'table': return $this->listStyleTable(); break;
 			case 'dl': return $this->listStyleDl(); break;
 			case 'ul': return $this->listStyleUl(); break;
-			default: return $this->listStyleDiv(); break;
+			default: return ($this->listStyleDiv())->build(); break;
 		}
 	}
 
 	function listStyleDiv() {
-		$i=$adsCount=0;
+		$i = $adsCount = 0;
+		return new \Widget([
+			'children' => array_map(
+				function($topic) {
+					return new \Card([
+						'class' => 'topic-list -style-div',
+						'children' => [
+							// Show title
+							new \ListTile(['title' => '<a href="'.url('paper/'.$topic->nodeId).'">'.$topic->title.'</a>', 'titleTag' => 'h2']),
+
+							// Show timestamp
+							new \Container([
+								'class' => 'timestamp'.($topic->sticky == _CATEGORY_STICKY?' sticky':''),
+								'child' => tr('Submitted by').' '.$topic->ownerName.' on '.sg_date($topic->created,cfg('dateformat'))
+									. ($topic->tag ? ' Tags: '.$topic->tag : ''),
+							]), // Container
+
+							// Show content
+							new \Container([
+								'class' => 'summary',
+								'children' => [
+									$topic->photo->exists ? '<a href="'.url('paper/'.$topic->nodeId).'"><img class="image photo-'.($topic->photo->size->width > $topic->photo->size->height ? 'wide' : 'tall').'"'.' src="'.$topic->photo->url.'" alt="'.htmlspecialchars($topic->photo->title).'" /></a>' : NULL,
+									preg_match('/<p>/',$topic->summary)?$topic->summary:'<p>'.$topic->summary.'</p>',
+								], // children
+							]), // Container
+
+							// Show footer
+							new \Container([
+								'class' => 'footer',
+								'children' => [
+									$topic->view.' reads | ',
+									($topic->reply ? '<a href="'.url('paper/'.$topic->nodeId).'#comment">'.$topic->reply.' comments</a>' : '<a href="'.url('paper/'.$topic->nodeId).'#comment">'.tr('add new comment').'</a>'),
+									' | ',
+									'<a href="'.url('paper/'.$topic->nodeId).'">'.tr('read more').' <i class="icon -material -sg-16">navigate_next</i></a>',
+								], // children
+							]), // Container
+
+						isset($GLOBALS['ad']->topic_list) && ++$adsCount <= 3 ? '<div id="ad-topic_list" class="ads">'.$GLOBALS['ad']->topic_list.'</div>' : NULL,
+
+						], // children
+					]);
+				},
+				$this->children
+			),
+		]);
+	}
+
+	function listStyleDivV1() {
+		$i = $adsCount = 0;
 		foreach ($this->children as $topic ) {
 			++$i;
 			if (isset($self)) event_tricker('paper.listing.item',$self,$topic,$para);
 			if (empty($topic)) continue;
-			if ( empty($topic->poster) ) $topic->poster = $topic->owner;
 
 			$ret .= '<div class="topic-list -style-div '.($para->{'list-class'}?$para->{'list-class'}.' ':'').'topic-list-'.$i.'">'._NL;
 			$ret .= '<h3 class="title title-status-'.sg_status_text($topic->status).($topic->sticky==_CATEGORY_STICKY?' sticky':'').'" ><a href="'.url('paper/'.$topic->nodeId).'">'.$topic->title.'</a>'.(in_array($topic->status,array(_PUBLISH,_LOCK))?'':' <em>('.sg_status_text($topic->status).')</em>').'</h3>'._NL;
 
 			if (!$para->option->no_owner) {
-				$ret .= '<div class="timestamp'.($topic->sticky==_CATEGORY_STICKY?' sticky':'').'">'.tr('Submitted by').' '.$topic->poster.' on '.sg_date($topic->created,cfg('dateformat'));
+				$ret .= '<div class="timestamp'.($topic->sticky==_CATEGORY_STICKY?' sticky':'').'">'.tr('Submitted by').' '.$topic->ownerName.' on '.sg_date($topic->created,cfg('dateformat'));
 				if ($topic->tag) $ret .= ' Tags: '.$topic->tag;
 				$ret .= '</div>'._NL;
 			}
