@@ -319,6 +319,7 @@ class FloatingActionButton extends Widget {
 class ListTile extends Widget {
 	var $widgetName = 'ListTile';
 	var $tagName = 'div';
+	var $titleTag = 'span';
 	var $leading;
 	var $title;
 	var $subtitle;
@@ -333,7 +334,7 @@ class ListTile extends Widget {
 		return $this->_renderWidgetContainerStart()
 			. ($this->leading ? '<div class="-leading">'.$this->_renderEachChildWidget(NULL, $this->leading).'</div>'._NL : '')
 			. '<div class="-title">'
-			. ($this->title ? '<span class="-title-text">'.$this->_renderEachChildWidget(NULL, $this->title).'</span>' : '')
+			. ($this->title ? '<'.$this->titleTag.' class="-title-text">'.$this->_renderEachChildWidget(NULL, $this->title).'</'.$this->titleTag.'>' : '')
 			. ($this->subtitle ? '<span class="-subtitle-text">'.$this->_renderEachChildWidget(NULL, $this->subtitle).'</span>' : '')
 			. '</div>'._NL
 			. ($this->trailing ? '<div class="-trailing">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
