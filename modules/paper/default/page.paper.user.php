@@ -1,22 +1,22 @@
 <?php
 /**
-* Module Method
+* Paper   :: List Paper of user
+* Created :: 2023-08-27
+* Modify  :: 2023-08-27
+* Version :: 1
 *
-* @param Object $self
-* @param Int $var
-* @return String
+* @param Int $userId
+* @return Widget
+*
+* @usage paper/user/{userId}
 */
 
-$debug = true;
+import('page:paper.list.php');
 
-function paper_user($self, $uid = NULL) {
-	$para = para(func_get_args(),2);
-
-	$ret = '';
-
-	if (\SG\getFirstInt($uid)) {
-		$ret .= R::Page('paper.list', $self, 'user',$uid, 'page',$para->page);
+class PaperUser extends PaperList {
+	function __construct($userId = NULL) {
+		parent::__construct();
+		$this->userId = $userId;
 	}
-	return $ret;
 }
 ?>

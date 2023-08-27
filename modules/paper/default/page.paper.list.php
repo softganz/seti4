@@ -14,6 +14,7 @@ use Paper\Model\PaperModel;
 use Paper\Widget\PaperListWidget;
 
 class PaperList extends Page {
+	var $userId;
 	var $tags;
 	var $searchText;
 	var $listStyle;
@@ -44,6 +45,7 @@ class PaperList extends Page {
 		// event_tricker('paper.listing.init',$self,$topics,$para);
 
 		$topics = PaperModel::items([
+			'user' => $this->userId,
 			'tags' => $this->tags,
 			'searchText' => $this->searchText,
 			'options' => [
