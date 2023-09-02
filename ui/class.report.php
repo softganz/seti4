@@ -42,6 +42,7 @@ class Report extends Widget {
 		$ret = '';
 		foreach ($items as $selKey => $selVal) {
 			$inputType = \SG\getFirst($typeValue['type'], 'checkbox');
+			$inputTypeMultiple = $inputType === 'checkbox';
 			$selItem = (Object) [];
 			if (is_string($selVal)) {
 				$selItem->label = $selVal;
@@ -61,7 +62,7 @@ class Report extends Widget {
 				. 'id="'.$filter.'_'.$selKey.'" '
 				. 'class="-checkbox-'.$filter.' -filter-checkbox" '
 				. 'type="'.$inputType.'" '
-				. 'name="'.$filter.'[]" '
+				. 'name="'.$filter.($inputTypeMultiple ? '[]' : '').'" '
 				. 'value="'.$selKey.'" '.sg_implode_attr($selItem->attr).' '
 				. '/>'
 				. '<span>'.$selItem->label.'</span>'
@@ -103,7 +104,7 @@ class Report extends Widget {
 
 		$ret = '<div '._NL
 			. ($this->id ? '	id="'.$this->id.'"'._NL : '')
-			. ' class="'.$this->config->class.'"'._NL
+			. ' class="widget-report '.$this->config->class.'"'._NL
 			. ' data-query="'.$this->queryUrl.'"'._NL
 			. ' data-options=\'{"dataType":"'.$this->config->dataType.'"}\'';
 		foreach ($this->config->data as $key => $value) {
