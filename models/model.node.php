@@ -88,7 +88,7 @@ class NodeModel {
 
 		// if ($conditions->category) {
 		// 	$tags=db_query_one_column('SELECT tid FROM %tag_synonym% WHERE name="'.$conditions->category.'"');
-		// 	$where[]='tg.tid in ('.implode(',',$tags).')';
+		// 	$where[]='tg.tid IN ('.implode(',',$tags).')';
 		// }
 
 		// Field
@@ -105,16 +105,16 @@ class NodeModel {
 
 		// Condition
 		if ($conditions->type) mydb::where('`topic`.`type` IN ( :type )', ':SET-STRING:type', $conditions->type);
-		if ($conditions->tags) \mydb::where('`tag_topic`.`tid` in ( :tags )', ':SET:tags', $conditions->tags);
+		if ($conditions->tags) \mydb::where('`tag_topic`.`tid` IN ( :tags )', ':SET:tags', $conditions->tags);
 		if ($conditions->sticky) \mydb::where('`topic`.`sticky` = :sticky', ':sticky', $conditions->sticky);
 		if ($conditions->user) \mydb::where('`topic`.`uid` = :userId', ':userId', $conditions->user);
 		if ($conditions->ip) \mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
 		if ($conditions->year) \mydb::where('YEAR(`topic`.`created`) = :year', ':year', $conditions->year);
 		if ($conditions->searchText) \mydb::where('`topic`.`title` LIKE :searchText', ':searchText', '%'.$conditions->searchText.'%');
 		if (i()->ok) {
-			if (!user_access('administer contents,administer papers')) \mydb::where('(`topic`.`status` in ('._PUBLISH.','._LOCK.') || (`topic`.`status` in ('._DRAFT.','._WAITING.') AND `topic`.`uid` = '.i()->uid.'))');
+			if (!user_access('administer contents,administer papers')) \mydb::where('(`topic`.`status` IN ('._PUBLISH.','._LOCK.') || (`topic`.`status` IN ('._DRAFT.','._WAITING.') AND `topic`.`uid` = '.i()->uid.'))');
 		} else {
-			\mydb::where('`topic`.`status` in ('._PUBLISH.','._LOCK.')');
+			\mydb::where('`topic`.`status` IN ('._PUBLISH.','._LOCK.')');
 		}
 		if ($conditions->condition) \mydb::where($conditions->condition);
 
@@ -234,7 +234,7 @@ class NodeModel {
 			$photos = mydb::select(
 				'SELECT `fid`, `cover`, `tpid`,`file`
 				FROM %topic_files%
-				WHERE `tpid` in ( :tpid )
+				WHERE `tpid` IN ( :tpid )
 					AND (`cid` IS NULL OR `cid` = 0)
 					AND `type` = "photo"
 				ORDER BY `cover` DESC, `fid` ASC;
@@ -255,13 +255,13 @@ class NodeModel {
 		// debugMsg($result, '$result');
 
 		// if ($para->org) $where[] = 't.`orgid` IN ( '.$para->org.' )';
-		// if ($para->category) $where[] = 'tp.`tid` in ('.BasicModel::get_category_tag($para->category).')';
+		// if ($para->category) $where[] = 'tp.`tid` IN ('.BasicModel::get_category_tag($para->category).')';
 		// if ($para->tag) $where[] = 'tp.`tid` IN ('.$para->tag.')';
 		// if ($para->type) $where[] = 't.`type` IN ("'.implode('","',explode(',',$para->type)).'")';
 		// if ($para->user) $where[] = 't.`uid` IN ('.$para->user.')';
 		// if ($para->sticky) $where[] = 't.sticky='.$para->sticky;
 		// if ($para->condition) $where[] = $para->condition;
-		// if (!user_access('administer contents,administer papers')) $where[] = 'status in ('._PUBLISH.','._LOCK.')';
+		// if (!user_access('administer contents,administer papers')) $where[] = 'status IN ('._PUBLISH.','._LOCK.')';
 
 		// if ($para->havephoto) $having[] = '`photofile` IS NOT NULL';
 		// if ($allTagList) $having[] = '`allTagList` = "'.$allTagList.'"';
