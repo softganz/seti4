@@ -1530,6 +1530,7 @@ $SCREENS
 	#cboxLoadedContent .widget-appbar>.-title {background-color: transparent;}
 	#cboxLoadedContent .widget-appbar>.-leading {background-color: transparent;}
 
+	#colorbox.-full {margin: 0 auto;}
 	#colorbox.-full
 	, #colorbox.-full #cboxWrapper
 	, #colorbox.-full #cboxContent
@@ -1545,6 +1546,8 @@ $SCREENS
 		#colorbox.-transparent .widget-card {border-radius: 8px;}
 		#colorbox.-transparent .widget-table:last-child {border-radius: 8px;}
 		#colorbox.-transparent .widget-table tr:last-child>td {border-bottom: none;}
+
+	#cboxOverlay {max-width: none !important;}
 
 	.colorbox.-map #cboxLoadedContent {padding: 0;}
 
