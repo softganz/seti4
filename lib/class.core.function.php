@@ -221,7 +221,7 @@ function process_install_module($module) {
 		$ret = false;
 	} else {
 		// Add Permission
-		$perm = cfg('perm');
+		$perm = cfg('perm') ? cfg('perm') : (Object) [];
 		$modulePerm = cfg($module.'.permission');
 		$modulePermExtend = R::Module($module.'.permission');
 		if ($modulePermExtend) $modulePerm .= ($modulePerm ? ',':'').$modulePermExtend;
