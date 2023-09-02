@@ -763,90 +763,6 @@ class SgCore {
 		}
 	}
 
-	/**
-	* Do module method from request menu item
-	* @param Array $menu
-	* @return String
-	*/
-	static function processMenu($menu, $prefix = 'page') {
-		$module = $menu['call']['module'];
-		$auth_code = $menu['access'];
-		$is_auth = user_access($auth_code);
-		$debugLoadfile = debug('load');
-
-		// Create self object
-		// debugMsg('$module = '.$module);
-		if (class_exists($module)) {
-			$pageClass = new $module($module);
-			$pageClass->module = $module;
-		} else {
-			$pageClass = new Module($module);
-			$pageClass->module = $module;
-			cfg('page_id', $module);
-		}
-
-		R::Module($module.'.init', $pageClass);
-
-		$options = \SG\json_decode($menu['options']);
-		$verify = $options->verify ? R::Model($options->verify,$pageClass) : true;
-
-		if ($verify === false) {
-			return [$pageClass, true, message('error', 'Access denied', NULL)];
-		} else if (is_string($verify)) {
-			return [$pageClass, true, $verify];
-		} else if ($is_auth === false) {
-			return [$pageClass, true, message('error', 'Access denied', NULL, $options->signform)];
-		}
-
-		$menuArgs = array_merge([$module], is_array($menu['call']['arg']) ? $menu['call']['arg'] : [] );
-
-		// Load request from package function file page.package.method[.method].php
-		$funcName = $funcArg = [];
-		foreach ($menuArgs as $value) {
-			if (is_numeric($value) || $value == '*' || preg_match('/^[0-9]/', $value)) break;
-			$funcName[] = $value;
-		}
-
-		$found = false;
-
-		do {
-			$funcArg = array_slice($menuArgs, count($funcName));
-			$pageFile = $prefix.'.'.implode('.', $funcName);
-
-
-			if ($debugLoadfile) {
-				debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in SgCore::processMenu()</div>');
-				// debugMsg($funcName,'$funcName');
-				// debugMsg($funcArg,'$funcArg');
-			}
-
-			$loadResult = list($retClass, $found, $filename) = SgCore::loadResourceFile($pageFile);
-
-			if ($debugLoadfile) {
-				// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
-				// debugMsg($loadResult,'$loadResult');
-				debugMsg('<div style="color: green;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
-			}
-
-			array_pop($funcName);
-		} while (!$found && count($funcName) >= 1);
-
-		if ($found && class_exists($retClass) && method_exists($retClass, 'build')) {
-			$pageBuildWidget = (new $retClass(...$funcArg))->build();
-			// debugMsg($pageBuildWidget, '$pageBuildWidget');
-			if ($pageBuildWidget->exeClass) {
-				$pageClass = $pageBuildWidget->exeClass;
-				$pageClass->module = $module;
-			}
-		} else if ($found && function_exists($retClass)) {
-			$pageBuildWidget = $retClass(...array_merge([$pageClass], $funcArg));
-		} else {
-			$pageBuildWidget = NULL;
-		}
-
-		return [$pageClass, $found, $pageBuildWidget];
-	}
-
 	static function processIndex($page = 'index', $text = NULL) {
 		global $request_result;
 		$request_result = $text;
@@ -965,6 +881,92 @@ class SgCore {
 	}
 
 	/**
+	* Do module method from request menu item
+	* @param Array $menu
+	* @return String
+	*/
+	static function processMenu($menu, $prefix = 'page') {
+		$module = $menu['call']['module'];
+		$auth_code = $menu['access'];
+		$is_auth = user_access($auth_code);
+		$debugLoadfile = debug('load');
+
+		// Create self object
+		// debugMsg('$module = '.$module);
+		if (class_exists($module)) {
+			$pageClass = new $module($module);
+			$pageClass->module = $module;
+		} else {
+			$pageClass = new Module($module);
+			$pageClass->module = $module;
+			cfg('page_id', $module);
+		}
+
+		R::Module($module.'.init', $pageClass);
+
+		$options = \SG\json_decode($menu['options']);
+		$verify = $options->verify ? R::Model($options->verify,$pageClass) : true;
+
+		if ($verify === false) {
+			return [$pageClass, true, message('error', 'Access denied', NULL)];
+		} else if (is_string($verify)) {
+			return [$pageClass, true, $verify];
+		} else if ($is_auth === false) {
+			return [$pageClass, true, message('error', 'Access denied', NULL, $options->signform)];
+		}
+
+		$menuArgs = array_merge([$module], is_array($menu['call']['arg']) ? $menu['call']['arg'] : [] );
+
+		// Load request from package function file page.package.method[.method].php
+		$funcName = $funcArg = [];
+		foreach ($menuArgs as $value) {
+			if (is_numeric($value) || $value == '*' || preg_match('/^[0-9]/', $value)) break;
+			$funcName[] = $value;
+		}
+
+		$found = false;
+
+		do {
+			$funcArg = array_slice($menuArgs, count($funcName));
+			$pageFile = $prefix.'.'.implode('.', $funcName);
+
+
+			if ($debugLoadfile) {
+				debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in SgCore::processMenu()</div>');
+				// debugMsg($funcName,'$funcName');
+				// debugMsg($funcArg,'$funcArg');
+			}
+
+			$loadResult = list($retClass, $found, $filename) = SgCore::loadResourceFile($pageFile);
+
+			if ($debugLoadfile) {
+				// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
+				// debugMsg($loadResult,'$loadResult');
+				debugMsg('<div style="color: green;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
+			}
+
+			array_pop($funcName);
+		} while (!$found && count($funcName) >= 1);
+
+		if ($found && class_exists($retClass) && method_exists($retClass, 'build')) {
+			$pageClassWidget = new $retClass(...$funcArg);
+			$pageBuildWidget = $pageClassWidget->build();
+			// debugMsg($pageClassWidget, '$pageClassWidget');
+			// debugMsg($pageBuildWidget, '$pageBuildWidget');
+			if ($pageBuildWidget->exeClass) {
+				$pageClass = $pageBuildWidget->exeClass;
+				$pageClass->module = $module;
+			}
+		} else if ($found && function_exists($retClass)) {
+			$pageBuildWidget = $retClass(...array_merge([$pageClass], $funcArg));
+		} else {
+			$pageBuildWidget = NULL;
+		}
+
+		return [$pageClass, $found, $pageBuildWidget, $pageClassWidget];
+	}
+
+	/**
 	 * Do request process from url address and return result in string
 	 * @return String
 	 */
@@ -1044,7 +1046,7 @@ class SgCore {
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 			// list($pageClass, $found, $pageBuildWidget) = SgCore::processMenu($menu);
 		}
-		list($pageClass, $found, $pageBuildWidget) = SgCore::processMenu($menu, $requestFilePrefix);
+		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = SgCore::processMenu($menu, $requestFilePrefix);
 
 		// Set page id to home
 		if ($isLoadHomePage) cfg('page_id','home');
@@ -1059,7 +1061,18 @@ class SgCore {
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
-				$requestResult = $pageBuildWidget->build();
+
+				$buildMethod = 'build'; // Default build method
+				$reservedMethod = ['rightToBuild'];
+				// debugMsg($pageClassWidget, '$pageClassWidget');
+				// debugMsg($pageBuildWidget, '$pageBuildWidget');
+				if (method_exists($pageClassWidget, 'rightToBuild')) {
+					$error = $pageClassWidget->rightToBuild();
+					if (is_object($error)) $requestResult = (Object) ['responseCode' => $error->responseCode, 'text' => $error->text];
+					else $requestResult = $pageBuildWidget->build();
+				} else {
+					$requestResult = $pageBuildWidget->build();
+				}
 
 				// Create App Bar
 				if ($pageBuildWidget->appBar) {
