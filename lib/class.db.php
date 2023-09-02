@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2023-07-31
-* Version :: 1
+* Modify  :: 2023-08-31
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -33,9 +33,22 @@ class JsonDataModel extends DataModel {
 	}
 }
 
+class DBResult {
+	private $DB;
+
+	function __construct($args = []) {
+		foreach ($args as $key => $value) $this->{$key} = $value;
+	}
+
+	public function DB($db = NULL) {
+		if (isset($db)) $this->DB = $db;
+		return $this->DB;
+	}
+}
+
 /**
 * Array Arguments:
-* statment
+* statment   :: String without key
 * connection :: String | Array
 * var        :: Object | Array
 * where      :: Array of Array
@@ -89,17 +102,26 @@ class DB {
 
 	// Call by static method
 	public static function select(Array $args) {
-		$result = new DB($args);
-		$result->selectResult();
+		$select = new DB($args);
+		$select->selectResult();
 
-		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $result->stmt())) {
-			if ($result->items) {
-				$rs = reset($result->items);
-				foreach ($rs as $key => $value) $result->{$key} = $value;
-			}
-			unset($result->items, $result->count);
+		if ($select->errorMsg) {
+			$select->setDebugMessage('PREPARE', $select->stmt.'; <span style="color:red;">-- ERROR :: '.$select->errorMsg.'</font>');
+			return new DBResult(['errorMsg' => $select->errorMsg, 'DB' => $select]);
 		}
 
+		// debugMsg($select, '$select');
+		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $select->stmt())) {
+			$result = new DBResult(reset($select->items)); // + ['DB' => $select]]);
+			$result->DB($select);
+		} else {
+			$result = new DBResult(['count' => $select->count, 'items' => $select->items, 'DB' => $select]);
+		}
+
+		if ($select->options->sum) $result->sum = $select->options->sum;
+
+		// debugMsg($select->errorMsg);
+		// debugMsg($select->errors, 'error');
 		return $result;
 	}
 
@@ -364,6 +386,8 @@ class DB {
 				$value = substr($value,5);
 			} else if (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key, $out)) {
 				$value = $this->jsonObjectString($value);
+			} else if (is_object($value) && get_class($value) === 'Softganz\JsonDataModel') {
+				$value = $this->jsonObjectString($value->args);
 			} else if (is_object($value) && get_class($value) === 'Softganz\SetDataModel') {
 				$value = $this->valueOfSet($value);
 			} else if (is_string($value)) {
@@ -447,6 +471,8 @@ class DB {
 
 	private function logError($module, $method, $stmt, $code, $message) {
 		$this->errors[] = (Object) ['code' => $code, 'message' => $message];
+		$this->errorMsg = $message;
+
 		$errorMessage = '<span style="color: red">ERROR::'.$code.'::'.$message.'</span>';
 		$this->setDebugMessage(NULL, $errorMessage);
 
