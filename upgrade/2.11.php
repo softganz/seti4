@@ -10,7 +10,7 @@ if (!mydb::columns('topic','email')) {
 
 if (!mydb::columns('topic_files','download')) {
 	mydb::query('ALTER TABLE %topic_files% ADD `download` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `last_reply` ,
-							ADD `last_download` INT NULL DEFAULT NULL AFTER `download` ');
+							ADD `last_download` datetime NULL DEFAULT NULL AFTER `download` ');
 	$result[$version][]=array('Add download and last_download to topic_files.', mydb()->_query, mydb()->_error, mydb()->_error_no);
 }
 
