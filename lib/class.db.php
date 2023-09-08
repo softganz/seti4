@@ -73,7 +73,9 @@ class DB {
 	public $count = 0;
 	public $items = [];
 
-	function __construct(Array $args = []) {
+	function __construct($args = NULL) {
+		$args = is_string($args) ? [0 => $args] : (Array) $args;
+
 		if ($args['connection']) {
 			$this->createDbConnection($args['connection']);
 		} else if (function_exists('R')) {
@@ -82,7 +84,6 @@ class DB {
 		}
 
 		if (!$this->status) return;
-
 		$this->srcStmt = trim($args[0]);
 		unset($args[0]);
 		$this->args = $args;
@@ -101,7 +102,7 @@ class DB {
 	}
 
 	// Call by static method
-	public static function select(Array $args) {
+	public static function select($args) {
 		$select = new DB($args);
 		$select->selectResult();
 
@@ -111,7 +112,7 @@ class DB {
 		}
 
 		// debugMsg($select, '$select');
-		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $select->stmt())) {
+		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $select->stmt)) {
 			$result = new DBResult(reset($select->items)); // + ['DB' => $select]]);
 			$result->DB($select);
 		} else {
@@ -125,7 +126,7 @@ class DB {
 		return $result;
 	}
 
-	public static function query(Array $args) {
+	public static function query($args) {
 		$result = new DB($args);
 		$result->queryResult();
 		unset($result->items, $result->count);
@@ -158,16 +159,20 @@ class DB {
 		$this->setDebugMessage('PREPARE', $this->stmt);
 		$this->setDebugMessage('VAR', $this->args['var']);
 
+		$start = microtime(true);
 		try {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
 			$this->logError('mydb', 'select', $this->stmt, $queryError[1], $queryError[2]);
+			$this->updateLastQueryStmt($this->stmt());
 
 			return false;
 		}
 
 		// Select complete
+		$end = microtime(true);
+		$this->updateLastQueryStmt($this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start]));
 		$this->queryItems($this->stmt);
 		if (function_exists('R')) R()->DB->queryItems($this->stmt);
 
@@ -188,16 +193,20 @@ class DB {
 		$this->setDebugMessage('QUERY', $this->stmt);
 		$this->setDebugMessage('VAR', $this->args['var']);
 
+		$start = microtime(true);
 		try {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
 			$this->logError('mydb', 'query', $this->stmt, $queryError[1], $queryError[2]);
+			$this->updateLastQueryStmt($this->stmt(), $queryError);
 
 			return false;
 		}
 
 		// Query complete
+		$end = microtime(true);
+		$this->updateLastQueryStmt($this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start]));
 		$this->queryItems($this->stmt);
 		if (function_exists('R')) R()->DB->queryItems($this->stmt);
 
@@ -246,7 +255,19 @@ class DB {
 
 	function PDO() {return $this->PDO;}
 
-	function stmt() {return $this->stmt;}
+	function stmt($addMessage = []) {
+		$stmt = $this->stmt;
+		if ($this->errorMsg) {
+			$stmt .= '; <span style="color:red;">-- ERROR :: '.$this->errorMsg.'</span>';
+		} else {
+			$stmt .= '; <span style="color:green">-- '
+				. (isset($addMessage['rowCount']) ? '<b>'.number_format($addMessage['rowCount']).'</b> affected rows' : '')
+				. (isset($addMessage['time']) ? ' in <b>'.number_format($addMessage['time'] * 1000, 2).'</b> ms' : '')
+				. '</span>';
+		}
+		$stmt .= '.';
+		return $stmt;
+	}
 
 	function sum($key) {if ($this->options->sum) return $this->options->sum->{$key};}
 
@@ -304,6 +325,7 @@ class DB {
 				\PDO::ATTR_EMULATE_PREPARES   => false, // turn off emulation mode for "real" prepared statements
 				\PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION, //turn on errors in the form of exceptions
 				\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC, //make the default fetch be an associative array
+				\PDO::MYSQL_ATTR_FOUND_ROWS		=> true
 			];
 			$this->PDO = new \PDO($dsn, $connection['user'], $connection['password'], $pdoOptions);
 			// $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -553,6 +575,10 @@ class DB {
 		$jsonString = rtrim($jsonString, ' , ');
 		$jsonString .= ')';
 		return $jsonString;
+	}
+
+	private function updateLastQueryStmt($stmt, $error = NULL) {
+		if (function_exists('mydb')) mydb()->_query = $stmt;
 	}
 
 }
