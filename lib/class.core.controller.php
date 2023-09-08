@@ -1057,8 +1057,7 @@ class SgCore {
 				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 			}
 
-			if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
-				// debugMsg($pageBuildWidget, '$pageBuildWidget');
+			if (is_object($pageClassWidget) && method_exists($pageClassWidget, 'build')) {
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
 
@@ -1066,12 +1065,18 @@ class SgCore {
 				$reservedMethod = ['rightToBuild'];
 				// debugMsg($pageClassWidget, '$pageClassWidget');
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
+
+				// Check right to build widget
 				if (method_exists($pageClassWidget, 'rightToBuild')) {
 					$error = $pageClassWidget->rightToBuild();
-					if (is_object($error)) $requestResult = (Object) ['responseCode' => $error->responseCode, 'text' => $error->text];
-					else $requestResult = $pageBuildWidget->build();
-				} else {
+					if (is_object($error)) $pageBuildWidget = $error;
+				}
+
+				// Build request result
+				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
 					$requestResult = $pageBuildWidget->build();
+				} else {
+					$requestResult = $pageBuildWidget;
 				}
 
 				// Create App Bar
@@ -1148,6 +1153,8 @@ class SgCore {
 				}
 
 				die(debugMsg().process_widget($requestResult));
+			} else {
+				//
 			}
 		} else {
 			// Page not found

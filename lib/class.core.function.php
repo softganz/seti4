@@ -1114,13 +1114,13 @@ function error($code, String $message) {
  * @return Array
  */
 function success($message) {
-	$result = [
-		'responseCode' => _HTTP_OK,
-	];
 	if (is_object($message) || is_array($message)) {
-		$result = array_merge_recursive($result, (Array) $message);
+		$result = new Message((Object) $message);
 	} else {
-		$result['text'] = $message;
+		$result = new Message([
+			'responseCode' => _HTTP_OK,
+			'text' => $message,
+		]);
 	}
 	return $result;
 }

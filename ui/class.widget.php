@@ -400,15 +400,16 @@ class DebugMsg extends Widget {
 	}
 } // End of class DebugMsg
 
-class Message extends Widget {
-	var $widgetName = 'Message';
-	var $tagName = 'div';
+class Message extends WidgetBase {
 	var $responseCode;
-	var $type;
 	var $text;
+	function __construct($args = []) {
+		parent::__construct($args);
+		unset($this->widgetName, $this->version);
+	}
 
 	// @override
-	function toString() {
+	function build() {
 		if ($this->responseCode) http_response_code($this->responseCode);
 		return $this->text;
 	}
