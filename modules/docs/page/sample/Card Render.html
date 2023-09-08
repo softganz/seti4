@@ -77,7 +77,7 @@
 					. '</span>'
 					. '<nav class="nav -icons -hover">'
 					. ($isEdit ? '<a class="sg-action" href="'.url('imed/visit/'.$visitInfo->psnid.'/need.form/'.$visitInfo->seq, array('id'=>$rs->needid)).'" data-rel="box" data-width="640"><i class="icon -material -gray">edit</i></a>' : '')
-					. ($isEdit ? '<a class="sg-action" href="'.url('imed/api/visit/'.$visitInfo->psnid.'/need.delete/'.$visitInfo->seq, array('id'=>$rs->needid)).'" data-rel="none" data-removeparent="li" data-title="ลบความต้องการ" data-confirm="ต้องการลบความต้องการ กรุณายืนยัน?"><i class="icon -material -gray">cancel</i></a>' : '')
+					. ($isEdit ? '<a class="sg-action" href="'.url('api/imed/visit/'.$visitInfo->psnid.'/need.delete/'.$visitInfo->seq, ['id' => $rs->needid]).'" data-rel="none" data-removeparent="li" data-title="ลบความต้องการ" data-confirm="ต้องการลบความต้องการ กรุณายืนยัน?"><i class="icon -material -gray">cancel</i></a>' : '')
 					. '</nav>'
 					. ($rs->detail ? '<p>('.nl2br($rs->detail).')</p>' : '')
 					. '</div>'
