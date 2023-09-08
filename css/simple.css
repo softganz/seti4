@@ -604,7 +604,6 @@ $SCREENS
 	.inline-edit-field.-incomplete {color:#999;}
 
 	.inline-edit-view.-text {display: inline-block; padding: 0px 8px;}
-	.inline-edit-view.-textarea {padding: 5px 8px;}
 	.inline-edit-view.-primary {font-weight: bold;}
 	.inline-edit-view.-fill:not('-hidden'); {display: block;}
 
