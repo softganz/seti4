@@ -1905,7 +1905,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				$("#graphtype").val($this.val())
 			}
 
-			notify('LOADING')
+			// notify('LOADING')
+
+			let outputOpacity = $(".report-output").css("opacity")
+
+			$(".report-output").css("opacity", 0.5)
+
+			// console.log("API Parameter :: " + $form.serialize());
 			$.post(
 				queryUrl,
 				$form.serialize(),
@@ -1918,6 +1924,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			).fail(function(data) {
 				notify('ERROR ON POSTING')
 			}).done(function(data) {
+				$(".report-output").css("opacity", outputOpacity)
 				if (debugSG && data.debug) console.log('DONE WITH data = ',data)
 				//if (debugSG) console.log('DONE WITH data = ',data)
 				// Process callback function
