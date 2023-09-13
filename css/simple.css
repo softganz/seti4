@@ -608,7 +608,8 @@ $SCREENS
 	.inline-edit-view.-fill:not('-hidden'); {display: block;}
 
 
-	.sg-inline-edit .inline-edit-field>span, .inline-edit .inline-edit-field>span {border-bottom: 1px dotted #ccc; cursor: text;}
+	.sg-inline-edit .inline-edit-field>span,
+	.inline-edit .inline-edit-field>span {border-bottom: 1px dotted #ccc; cursor: text;}
 	.sg-inline-edit .inline-edit-field>span:hover,
 	.inline-edit .inline-edit-field>span:hover {background-color: #ffffcc; box-shadow: 0 0 0 1px #ffb685 inset;}
 
@@ -634,6 +635,9 @@ $SCREENS
 
 
 	.inline-edit-field.-hidden {display: none;}
+	.inline-edit-field.-warning, .inline-edit-view.-warning {color: blue;}
+	.inline-edit-field.-error {color: red; background-color: #fdd;}
+	.inline-edit-field.-error>span:hover {background-color: #ffe4e4;}
 
 
 	input[type="checkbox"].inline-edit-field,
