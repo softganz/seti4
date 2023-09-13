@@ -1626,7 +1626,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 		*/
 	});
-
 })(jQuery);
 
 /*
@@ -1923,10 +1922,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				settings.dataType
 			).fail(function(data) {
 				notify('ERROR ON POSTING')
+				// console.log('DONE WITH data = ',data)
 			}).done(function(data) {
 				$(".report-output").css("opacity", outputOpacity)
 				if (debugSG && data.debug) console.log('DONE WITH data = ',data)
-				//if (debugSG) console.log('DONE WITH data = ',data)
+				// if (debugSG) console.log('DONE WITH data = ',data)
 				// Process callback function
 				//console.log("CALLBACK = ", callback)
 				if (callback && typeof window[callback] === 'function') {
