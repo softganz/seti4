@@ -31,6 +31,6 @@
 	$pageNav = new PageNavigator($getItemPerPage, $getPage, $dbs->_found_rows, q(), false, $pagePara);
 	$itemNo = $pageNav ? $pageNav->FirstItem() : 0;
 
-	$ret .= '<div class="pagenv">'.$pageNav->show().'</div>'._NL;
+	$ret .= '<div class="pagenv">'.$pageNav->build().'</div>'._NL;
 ?>
 </code>

@@ -10,7 +10,7 @@
 		$dropUi->add('<a class="sg-action" href="'.url('imed/api/visit/'.$visitInfo->psnid.'/delete/'.$visitInfo->seq).'" title="ลบรายการบันทึกนี้ทิ้ง" data-rel="notify" data-title="ลบรายการบันทึก" data-confirm="ลบรายการบันทึกนี้ทิ้ง กรุณายืนยัน?" data-removeparent="div.imed-my-note>.ui-item"><i class="icon -material">delete</i><span>ลบบันทึกเยี่ยมบ้าน</span></a>');
 	}
 
-	if ($dropUi->show()) $headerUi->add(sg_dropbox($dropUi->show()));
+	if ($dropUi->build()) $headerUi->add(sg_dropbox($dropUi->build()));
 
 	$ret .= '<div class="header">'
 			. '<span>'
@@ -27,7 +27,7 @@
 			. ($visitInfo->timedata == $visitInfo->created ? sg_date($visitInfo->timedata,'ว ดด ปปปป H:i').' น.' : sg_date($visitInfo->timedata,'ว ดด ปปปป')). ' '
 			. ($isAdmin ? 'on '.$visitInfo->appsrc.'@'.sg_date($visitInfo->created,'H:i') : '')
 			. '</span>'._NL;
-	$ret .= '<nav class="nav -header -sg-text-right">'.$headerUi->show().'</nav>';
+	$ret .= '<nav class="nav -header -sg-text-right">'.$headerUi->build().'</nav>';
 	$ret .= '</div><!-- header -->';
 
 
@@ -53,7 +53,7 @@
 			if ($isEdit) {
 				$ui=new Ui('span','iconset -hover');
 				$ui->add('<a class="sg-action noprint" href="'.url('imed/api/visit/'.$visitInfo->psnid.'/photo.delete/'.$visitInfo->seq, array('f'=>$fid)).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="none" data-removeparent="li"><i class="icon -material">cancel</i></a>');
-				$ret.=$ui->show();
+				$ret.=$ui->build();
 			}
 			$ret.='</li>';
 		}
@@ -85,7 +85,7 @@
 			);
 		}
 		if ($dbs->count() % 2) $ui->add('&nbsp;', '{class: "-empty"}');
-		$ret .= '<div>'.$ui->show().'</div>';
+		$ret .= '<div>'.$ui->build().'</div>';
 		//$ret .= print_o($dbs,'$dbs');
 	}
 
@@ -107,9 +107,9 @@
 
 	$dropUi = new Ui();
 
-	if ($dropUi->count()) $cardUi->add(sg_dropbox($dropUi->show()));
+	if ($dropUi->count()) $cardUi->add(sg_dropbox($dropUi->build()));
 
-	if ($cardUi->count()) $ret .= '<nav class="nav -card">'.$cardUi->show().'</nav>';
+	if ($cardUi->count()) $ret .= '<nav class="nav -card">'.$cardUi->build().'</nav>';
 
 }
 ?>
