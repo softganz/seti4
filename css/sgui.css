@@ -178,7 +178,7 @@
 	.sg-dropbox.hover:hover .sg-dropbox--wrapper {display: block;}
 	.sg-dropbox.click .sg-dropbox--wrapper {margin-top: 4px;}
 	.sg-dropbox.leftside .sg-dropbox--wrapper {right:6px; left:auto;}
-	.sg-dropbox>a {display: block; padding: 6px; color:#ccc; border-radius: 50%; box-shadow: none; border: none;}
+	.sg-dropbox>a {display: block; padding: 6px; color:#ccc; border-radius: 50%; box-shadow: none; border: none;}
 	.sg-dropbox>a:hover {color:#999; background-color: #eee;}
 	.sg-dropbox.-atright>a {}
 	.sg-dropbox .sg-dropbox--wrapper { padding:11px 0 8px; display: none; position: absolute; z-index:100; left:-10px; right:auto;}
