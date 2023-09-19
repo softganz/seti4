@@ -616,7 +616,8 @@ function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
 	if (substr($q,0,2)==='//') ; // do nothing
 	else if (substr($q,0,1)==='/') $q=substr($q,1);
 
-	$url = preg_match('/^(\/\/|http:\/\//|https:\/\//)',$q) ? '' : cfg('url');
+	$url = preg_match('/^(\/\/|http\:\/\/|https\:\/\/)/', $q, $out) ? '' : cfg('url');
+
 	if (cfg('clean_url')) {
 		$ret .= isset($q)?$q:cfg('clean_url_home');
 		if ( isset($get) ) $ret .= '?'.$get;
@@ -627,8 +628,7 @@ function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
 	if ($frement) $ret .= '#'.$frement;
 	//	echo 'url alias of '.$ret.' = '.url_alias($ret)->system.'<br >';
 	if ($url_alias = url_alias_of_system($ret)) $ret = $url_alias->system;
-	//	echo 'url ret='.$ret.'<br />';
-	$ret=cfg('url.domain').(cfg('url.domain')?'':$url).$ret;
+	$ret = cfg('url.domain').(cfg('url.domain') ? '' : $url) . $ret;
 	return $ret;
 }
 
