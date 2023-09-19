@@ -24,11 +24,13 @@ class ChangwatModel {
 		}
 
 		$result = [];
+		if ($conditions->idLike) mydb::where('`provId` LIKE :idLike', ':idLike', $conditions->idLike.'%');
 		if ($options->selectText) $result[-1] = $options->selectText;
 
 		$changwatList = mydb::select(
 			'SELECT `provid`, `provname`
 			FROM %co_province%
+			%WHERE%
 			ORDER BY CONVERT(`provname` USING tis620) ASC'
 		)->items;
 
