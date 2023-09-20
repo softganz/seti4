@@ -1,8 +1,7 @@
 <?php
 function profile($self,$uid=NULL) {
 	R::View('profile.toolbar',$self);
-
-	if (is_numeric($uid)) return R::Page('profile.view',$uid);
+	if (is_numeric($uid)) location('profile/view/'.$uid);// return R::PageWidget('profile.view',[$uid]);
 
 	if (!user_access('access user profiles')) return message('error','Access denied');
 
