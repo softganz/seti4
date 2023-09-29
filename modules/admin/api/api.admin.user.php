@@ -2,8 +2,8 @@
 /**
 * Admin   :: Admin User API
 * Created :: 2022-10-22
-* Modify  :: 2022-10-22
-* Version :: 1
+* Modify  :: 2023-09-29
+* Version :: 2
 *
 * @param Int $userId
 * @param String $action
@@ -133,6 +133,8 @@ class AdminUserApi extends PageApi {
 		if ($data->password) {
 			$data->password = sg_encrypt($data->password,cfg('encrypt_key'));
 			unset($data->repassword);
+
+			BasicModel::watch_log('user','Password change by admin','User '.$this->userInfo->username.' ('.$this->userId.') was change password by admin');
 		} else {
 			unset($data->password,$data->repassword);
 		}

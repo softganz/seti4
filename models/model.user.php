@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2023-07-17
-* Version :: 3
+* Modify  :: 2023-09-29
+* Version :: 4
 *
 * @param Int $userId
 * @return Object
@@ -214,6 +214,10 @@ class UserModel {
 				':newPassword' => $newPassword
 			]
 		);
+
+		$userName = mydb::select('SELECT `username` FROM %users% WHERE `uid` = :userId LIMIT 1', [':userId' => $userId])->username;
+
+		BasicModel::watch_log('user','Password change','User '.$userName.' ('.$userId.') was change password');
 	}
 
 	// delete user information
