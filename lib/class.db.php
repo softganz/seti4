@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2023-08-31
-* Version :: 2
+* Modify  :: 2023-09-29
+* Version :: 3
 *
 * @param Array $args
 * @return Object
@@ -28,6 +28,12 @@ class SetDataModel extends DataModel {
 }
 
 class JsonDataModel extends DataModel {
+	function __construct(Array $args) {
+		$this->args = $args;
+	}
+}
+
+class JsonArrayDataModel extends DataModel {
 	function __construct(Array $args) {
 		$this->args = $args;
 	}
@@ -410,6 +416,8 @@ class DB {
 				$value = $this->jsonObjectString($value);
 			} else if (is_object($value) && get_class($value) === 'Softganz\JsonDataModel') {
 				$value = $this->jsonObjectString($value->args);
+			} else if (is_object($value) && get_class($value) === 'Softganz\JsonArrayDataModel') {
+				$value = $this->jsonArrayString($value->args);
 			} else if (is_object($value) && get_class($value) === 'Softganz\SetDataModel') {
 				$value = $this->valueOfSet($value);
 			} else if (is_string($value)) {
@@ -473,7 +481,13 @@ class DB {
 
 	private function replaceTable() {
 		// Replace %tablename% with db(%tablename%)
-		$this->stmt = preg_replace_callback('/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i', function($m) {return ' '.$this->db($m[1]);} ,$this->stmt);
+		$this->stmt = preg_replace_callback(
+			'/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i',
+			function($m) {
+				return ' '.$this->db($m[1]);
+			} ,
+			$this->stmt
+		);
 	}
 
 	private function valueOfSet($object) {
@@ -519,8 +533,11 @@ class DB {
 		static $items = [];
 		static $src = [];
 
-		$tablePrefix = function_exists('cfg') ? cfg('db.prefix'): '';
+		if (empty($items) && function_exists('db')) $items = db();
+
+		$tablePrefix = function_exists('cfg') ? cfg('db.prefix') : '';
 		$ret=NULL;
+
 		if (isset($key) && isset($new_value)) {
 			$src[$key]=$new_value;
 			$tablename=(isset($db)?'`'.$db.'`.':''); // Set database name
@@ -544,9 +561,9 @@ class DB {
 			if (preg_match('/\`([a-zA-Z0-9_].*)\`/',$key,$out)) {
 				$ret=$key;
 			} else if (preg_match('/\%([a-zA-Z0-9_].*)\%/',$key,$out)) {
-				$ret=array_key_exists($out[1],$items)?$items[$out[1]]:'`'.$tablePrefix.$out[1].'`';
+				$ret = array_key_exists($out[1],$items) ? $items[$out[1]] : '`'.$tablePrefix.$out[1].'`';
 			} else {
-				$ret=array_key_exists($key,$items)?$items[$key]:'`'.$tablePrefix.$key.'`';
+				$ret = array_key_exists($key,$items) ? $items[$key] : '`'.$tablePrefix.$key.'`';
 			}
 		} else {
 			$ret=$items;
@@ -573,6 +590,22 @@ class DB {
 			}
 		}
 		$jsonString = rtrim($jsonString, ' , ');
+		$jsonString .= ')';
+		return $jsonString;
+	}
+
+	private function jsonArrayString($value, $key = NULL) {
+		// debugMsg($value, 'JSON Value');
+		$jsonString = '';
+		if ($key) $jsonString .= '"'.$key.'" , ';
+		$jsonString .= 'JSON_ARRAY('
+			. '"'.implode('","', (Array) $value).'"';
+		// foreach ((Array) $value as $jsonKey => $jsonValue) {
+		// 	// debugMsg('KEY '.$jsonKey.' = '.$jsonValue);
+		// 	$jsonString .= '"'.$jsonKey.'" , "'.preg_replace('/[\"]/', '', $jsonValue).'" ,';
+		// 	// debugMsg($jsonString);
+		// }
+		// $jsonString = rtrim($jsonString, ' , ');
 		$jsonString .= ')';
 		return $jsonString;
 	}
