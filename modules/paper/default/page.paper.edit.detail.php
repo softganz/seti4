@@ -1,8 +1,9 @@
 <?php
 /**
-* Paper Edit Detail
-* Created 2019-06-01
-* Modify  2019-06-01
+* Paper   :: Edit Detail
+* Created :: 2019-06-01
+* Modify  :: 2023-10-06
+* Version :: 2
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -58,7 +59,6 @@ function paper_edit_detail($self, $topicInfo) {
 		'class' => 'sg-form',
 		'checkValid' => true,
 		'rel' => 'notify',
-		'done' => 'load | close',
 		'children' => [
 			'title' => $type->has_title ? [
 				'type' => 'text',
