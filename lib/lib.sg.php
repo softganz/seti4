@@ -158,7 +158,7 @@ function sg_require_input($field=NULL,$require=NULL) {
 
 function sg_valid_daykey($keyno,$key) {
 	if (empty($key)) return false;
-	return poison::exist_daykey($keyno,$key);
+	return Poison::existDayKey($keyno,$key);
 }
 
 function sg_is_email($mail=NULL) {

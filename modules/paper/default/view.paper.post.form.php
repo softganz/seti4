@@ -45,7 +45,7 @@ function view_paper_post_form($topic) {
 				'size' => 10,
 				'require' => true,
 				'value' => post('daykey'),
-				'posttext' => ' &laquo; <em class="spamword">'.poison::get_daykey(5,true).'</em>',
+				'posttext' => ' &laquo; <em class="spamword">'.Poison::getDayKey(5,true).'</em>',
 				'description' => 'หากท่านไม่ได้เป็นสมาชิก ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
 			] : NULL,
 

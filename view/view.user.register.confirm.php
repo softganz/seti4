@@ -47,7 +47,7 @@ function view_user_register_confirm($register=array()) {
 							'label'=>'Anti-spam word',
 							'size'=>10,
 							'require'=>true,
-							'pretext'=>'<em class="spamword">'.poison::get_daykey(5,true).'</em> ',
+							'pretext'=>'<em class="spamword">'.Poison::getDayKey(5,true).'</em> ',
 							'description'=>'ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง'
 							)
 						);

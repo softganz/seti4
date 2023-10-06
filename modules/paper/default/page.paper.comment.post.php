@@ -1,8 +1,9 @@
 <?php
 /**
 * Paper save post comment
-* Created 2019-06-05
-* Modify  2019-06-05
+* Created :: 2019-06-05
+* Modify  :: 2023-10-04
+* Version :: 2
 *
 * @param Object $self
 * @param Int $tpid
@@ -44,7 +45,7 @@ function paper_comment_post($self, $topicInfo) {
 	if (!user_access('upload photo') && preg_match('/\[img\]|<img|\&lt\;img|\!\[.*?\]/i',$comment->comment)) $error[] = 'ขออภัย ท่านไม่มีสิทธิ์ในการส่งภาพ';
 	if ($field_missing) $error[]='Input incomplete : กรุณาป้อนรายละเอียดต่อไปนี้ให้ครบถ้วน<ul><li>'.implode('</li><li>',$field_missing).'</li></ul>';
 
-	if (!i()->ok && !poison::exist_daykey(5,$_POST['daykey'])) $error[]='Invalid Anti-spam word';
+	if (!i()->ok && !sg_valid_daykey(5, post('daykey'))) $error[]='Invalid Anti-spam word';
 
 	if (sg::is_spam_word($comment)) $error[]='มีข้อความที่ไม่เหมาะสมอยู่ในสิ่งที่ป้อนมา';
 

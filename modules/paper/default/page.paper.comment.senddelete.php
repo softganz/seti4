@@ -116,7 +116,7 @@ function paper_comment_senddelete($self, $cid) {
 							'size' => 10,
 							'require' => true,
 							'value' => $_POST['daykey'],
-							'posttext' => ' &laquo; <em class="spamword">'.poison::get_daykey(5,true).'</em>',
+							'posttext' => ' &laquo; <em class="spamword">'.Poison::getDayKey(5,true).'</em>',
 							'description' => 'ป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
 						)
 					);

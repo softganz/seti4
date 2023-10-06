@@ -1,6 +1,9 @@
 <?php
 /**
 * View Paper Comment Form
+* Created :: 2019-06-05
+* Modify  :: 2023-10-04
+* Version :: 2
 *
 * @param Object $topicInfo
 * @return String
@@ -68,7 +71,7 @@ function view_paper_comment_form($topicInfo) {
 				'require' => true,
 				'posttext' => (function() {
 					$daykey_text = '<span class="daykey-0" style="display:none;">'.rand(1,9).'</span>';
-					$dkeys = poison::get_daykey(5,true);
+					$dkeys = Poison::getDayKey(5,true);
 					for ($i = 0; $i < strlen($dkeys); $i++) {
 						$daykey_text .= '<span class="daykey-'.($i+1).'">'.$dkeys[$i].'</span>';
 					}
@@ -101,163 +104,6 @@ function view_paper_comment_form($topicInfo) {
 				'require' => cfg('comment.require.homepage'),
 				'value' => \SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
 			] : NULL,
-
-
-			// (function($comment) {
-			// 	$children = [];
-			// 	if (user_access('post comments')) {
-			// 		if (!i()->ok) {
-			// 			$children['daykey'] = [
-			// 				'name' => 'daykey',
-			// 				'type' => 'text',
-			// 				'label' => tr('Anti-spam word'),
-			// 				'size' => 10,
-			// 				'require' => true,
-			// 				'posttext' => (function() {
-			// 					$daykey_text='<span class="daykey-0" style="display:none;">'.rand(1,9).'</span>';
-			// 					$dkeys=poison::get_daykey(5,true);
-			// 					for ($i=0;$i<strlen($dkeys);$i++) {
-			// 						$daykey_text.='<span class="daykey-'.($i+1).'">'.$dkeys[$i].'</span>';
-			// 					}
-			// 					return ' &laquo; <em class="spamword">'.$daykey_text.'</em>';
-			// 				})(),
-			// 				'description' => 'หากท่านไม่ได้เป็นสมาชิก ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
-			// 			];
-			// 		}
-
-			// 		$children['name'] = [
-			// 			'type' => 'text',
-			// 			'label' => tr('Your name').':'.(i()->ok?' ('.tr('Your are member').')':''),
-			// 			'class' => '-fill',
-			// 			'require' => true,
-			// 			'readonly' => i()->ok && !cfg('member.name_alias'),
-			// 			'value' => \SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
-			// 		];
-
-			// 		if (!i()->ok) {
-			// 			$children['mail'] = [
-			// 				'type' => 'text',
-			// 				'label' => tr('E-mail'),
-			// 				'class' => '-fill',
-			// 				'require' => cfg('comment.require.mail'),
-			// 				'value' => \SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
-			// 				'description' => 'The content of this field is kept private and will not be shown publicly. This mail use for contact via email when someone want to contact you.',
-			// 			];
-
-			// 			$children['homepage'] = [
-			// 				'type' => 'text',
-			// 				'label' => tr('Homepage'),
-			// 				'class' => '-fill',
-			// 				'require' => cfg('comment.require.homepage'),
-			// 				'value' => \SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
-			// 			];
-			// 		}
-			// 	} else {
-			// 		$children['username'] = [
-			// 			'name' => 'username',
-			// 			'type' => 'text',
-			// 			'label' => tr('Username'),
-			// 			'size' => 15,
-			// 			'require' => true,
-			// 		];
-
-			// 		$children['password'] = [
-			// 			'name' => 'password',
-			// 			'type' => 'password',
-			// 			'label' => tr('Password'),
-			// 			'size' => 15,
-			// 			'require' => true,
-			// 			'description' => 'กรุณาป้อน Username / Password ที่ท่านได้ลงทะเบียนไว้กับเว็บไซท์แห่งนี้ หรือ <a href="'.url('user/register').'">สมัครเป็นสมาชิกของเว็บไซท์</a>',
-			// 		];
-			// 	}
-			// 	debugMsg($children, '$children');
-			// 	return ['children' => $children];
-			// })($comment),
-
-	// if (user_access('post comments')) {
-	// 	if (!i()->ok) {
-	// 		$form->addField(
-	// 			,
-	// 			[
-	// 				'name' => 'daykey',
-	// 				'type' => 'text',
-	// 				'label' => tr('Anti-spam word'),
-	// 				'size' => 10,
-	// 				'require' => true,
-	// 				'posttext' => (function() {
-	// 					$daykey_text='<span class="daykey-0" style="display:none;">'.rand(1,9).'</span>';
-	// 					$dkeys=poison::get_daykey(5,true);
-	// 					for ($i=0;$i<strlen($dkeys);$i++) {
-	// 						$daykey_text.='<span class="daykey-'.($i+1).'">'.$dkeys[$i].'</span>';
-	// 					}
-	// 					return ' &laquo; <em class="spamword">'.$daykey_text.'</em>';
-	// 				})(),
-	// 				'description' => 'หากท่านไม่ได้เป็นสมาชิก ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
-	// 			]
-	// 		);
-	// 	}
-
-	// 	$form->addField(
-	// 			'name',
-	// 			array(
-	// 				'type' => 'text',
-	// 				'label' => tr('Your name').':'.(i()->ok?' ('.tr('Your are member').')':''),
-	// 				'class' => '-fill',
-	// 				'require' => true,
-	// 				'readonly' => i()->ok && !cfg('member.name_alias'),
-	// 				'value' => \SG\getFirst($comment->name,i()->name,$_COOKIE['sg']['name']),
-	// 			)
-	// 		);
-
-	// 	if (!i()->ok) {
-	// 		$form->addField(
-	// 				'mail',
-	// 				array(
-	// 					'type' => 'text',
-	// 					'label' => tr('E-mail'),
-	// 					'class' => '-fill',
-	// 					'require' => cfg('comment.require.mail'),
-	// 					'value' => \SG\getFirst($comment->mail,$_COOKIE['sg']['mail']),
-	// 					'description' => 'The content of this field is kept private and will not be shown publicly. This mail use for contact via email when someone want to contact you.',
-	// 				)
-	// 			);
-
-	// 		$form->addField(
-	// 				'homepage',
-	// 				array(
-	// 					'type' => 'text',
-	// 					'label' => tr('Homepage'),
-	// 					'class' => '-fill',
-	// 					'require' => cfg('comment.require.homepage'),
-	// 					'value' => \SG\getFirst($comment->homepage,$_COOKIE['sg']['homepage']),
-	// 				)
-	// 			);
-	// 	}
-
-	// } else {
-	// 	$form->addField(
-	// 			'username',
-	// 			array(
-	// 				'name' => 'username',
-	// 				'type' => 'text',
-	// 				'label' => tr('Username'),
-	// 				'size' => 15,
-	// 				'require' => true,
-	// 			)
-	// 		);
-
-	// 	$form->addField(
-	// 			'password',
-	// 			array(
-	// 				'name' => 'password',
-	// 				'type' => 'password',
-	// 				'label' => tr('Password'),
-	// 				'size' => 15,
-	// 				'require' => true,
-	// 				'description' => 'กรุณาป้อน Username / Password ที่ท่านได้ลงทะเบียนไว้กับเว็บไซท์แห่งนี้ หรือ <a href="'.url('user/register').'">สมัครเป็นสมาชิกของเว็บไซท์</a>',
-	// 			)
-	// 		);
-	// }
 			'comment' => [
 				'type' => 'textarea',
 				'label' => tr('Comment'),
