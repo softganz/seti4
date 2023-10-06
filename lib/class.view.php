@@ -84,10 +84,10 @@ class View {
 
 		if ($para->model) {
 			$model=$para->model;
-			$topics = BasicModel::$model($para);
+			$topics = NodeModel::$model($para);
 		}
 		if ($topics->_type=='record') $topics=mydb::convert_record_to_recordset($topics);
-		if ($topics->_empty) return;
+		if (empty($topics->items)) return;
 
 		if (is_string($para->{'list-style'})) $pattern=$patterns->{$para->{'list-style'}};
 		else if (is_object($para->{'list-style'})) $pattern=$para->{'list-style'};
