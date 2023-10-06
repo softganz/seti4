@@ -158,7 +158,7 @@ function __admin_install_create_table($prefix=null) {
 
 
 	$query->cache='CREATE TABLE IF NOT EXISTS %cache% (
-		`cid` varchar(255) NOT NULL default "",
+		`cid` varchar(200) NOT NULL default "",
 		`data` text,
 		`expire` int(11) NOT NULL default 0,
 		`created` int(11) NOT NULL default 0,
