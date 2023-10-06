@@ -2370,7 +2370,6 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 			var callback = $this.data('callback');
 			if (callback) {
 				if (callback == 'submit') {
-					//$this.closest('form').triger('submit');
 					$(this).closest("form").trigger("submit");
 				} else if (typeof window[callback] === 'function') {
 					 window[callback]($this, ui);
