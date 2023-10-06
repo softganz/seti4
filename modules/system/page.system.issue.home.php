@@ -21,6 +21,8 @@ class SystemIssueHome extends Page {
 		]);
 	}
 	function build() {
+		head('googlead','<script></script>');
+
 		if (!$this->right->access) {
 			return new ErrorMessage([
 				'responseCode' => _HTTP_ERROR_FORBIDDEN,
@@ -32,7 +34,8 @@ class SystemIssueHome extends Page {
 			'SELECT *
 			FROM %system_issue%
 			WHERE `status` != :complete
-			ORDER BY `issueId` DESC',
+			ORDER BY `issueId` DESC
+			LIMIT 1000',
 			[':complete' => _COMPLETE]
 		);
 
