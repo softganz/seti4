@@ -873,11 +873,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					$.post(retUrl, function(html) {
 						sgUpdateData(html, relTarget,$this)
 						notify()
-						sgActionDone($this.data('done'), $this, html);
+						sgActionDone($this.data('done'), $this, html)
 					})
 				} else {
 					sgUpdateData(html, relTarget,$this)
-					sgActionDone($this.data('done'), $this, html);
+					console.log(html)
+					console.log($this)
+					sgActionDone($this.data('done'), $this, html)
 				}
 				if (relTarget != 'notify') notify()
 				$this.replaceWith($this.clone(true))
