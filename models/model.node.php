@@ -38,7 +38,7 @@ class NodeModel {
 
 	public static function items($conditions) {
 		$conditions = (Object) $conditions;
-		$defaults = '{debug: false, order: "nodeId", sort: "DESC", items: 10, page: 1, field: "body"}';
+		$defaults = '{debug: false, order: "nodeId", sort: "DESC", items: 10, page: 1, field: "detail"}';
 		$options = \SG\json_decode($conditions->options, $defaults);
 		$debug = $options->debug;
 		unset($conditions->options);
@@ -46,6 +46,10 @@ class NodeModel {
 		if (empty($options->page)) $options->page = 1;
 		if ($conditions->type === '*') unset($conditions->type);
 		else if (!$conditions->type) $conditions->type = 'story';
+		if ($conditions->tag) {
+			$conditions->tags = $conditions->tag;
+			unset($conditions->tag);
+		}
 
 		$result = (Object) [
 			'count' => 0,
@@ -58,6 +62,10 @@ class NodeModel {
 		$result->debug['OPTIONS'] = $options;
 
 		$fields = explode(',', $options->field);
+		if (in_array('body', $fields)) {
+			$fields[] = 'detail';
+		}
+
 		$orderList = [
 			'nodeId' => '`nodeId`',
 			'title' => '`topic`.`title`',

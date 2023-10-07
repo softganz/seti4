@@ -19,7 +19,7 @@
  * @param Argument list in many format
  * @param String id
  * @param String data-show                   Example data-show="style=div;photo=image;"
-  * @param String show-url									Example ibuy/$tpid												Default=paper/$tpid
+ * @param String show-url									Example ibuy/$tpid												Default=paper/$tpid
  * @param String show-style								Value = div,short,reply,shortview,detail		Default = div
  * @param String show-style-value
  * @param String show-style-title
@@ -122,7 +122,7 @@ global $today;
 		import('model:paper.php');
 		$model = $para->{'data-model'};
 		$conditions = [
-			'tags' => $para->{'data-tags'},
+			'tags' => SG\getFirst($para->{'data-tags'}, $para->{'data-tag'}),
 			'type' => $para->{'data-type'},
 			'node' => $para->{'data-node'},
 			'options' => [
