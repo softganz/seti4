@@ -2369,15 +2369,16 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 
 
 			// Process call back
-			var callback = $this.data('callback');
+			let callback = $this.data('callback');
 			if (callback) {
 				if (callback == 'submit') {
 					$(this).closest("form").trigger("submit");
 				} else if (typeof window[callback] === 'function') {
 					 window[callback]($this, ui);
 				} else {
-					var url = callback + '/' + ui.item.value
-					window.location = url;
+					let urlSep = callback.match(/\?/i) ? '' : '/'
+					let url = callback + urlSep + ui.item.value
+					window.location = url
 				}
 			}
 
@@ -3185,78 +3186,6 @@ $(document).on('click', '.widget-table>thead>tr>th[class*="-sort-"]', function(e
 	//         Array.from(children).indexOf(elm), table.asc = !table.asc))
 	//         .forEach(tr => tbody.appendChild(tr) );
 	// }
-
-	// sortTable3()
-
-	function sortTable3() {
-		console.log('TABLE SORT')
-		const styleSheet = document.createElement('style')
-		styleSheet.innerHTML = `
-			.order-inactive span {
-				visibility:hidden;
-			}
-			.order-inactive:hover span {
-				visibility:visible;
-			}
-			.order-active span {
-				visibility: visible;
-			}
-		`
-		document.head.appendChild(styleSheet)
-
-		// document.querySelectorAll('th.order').forEach(th_elem => {
-		//     let asc=true
-		//     const index = Array.from(th_elem.parentNode.children).indexOf(th_elem)
-		//     th_elem.addEventListener('click', (e) => {
-		//         const arr = [... th_elem.closest("table").querySelectorAll('tbody tr')]
-		//         arr.sort( (a, b) => {
-		//             const a_val = a.children[index].innerText
-		//             const b_val = b.children[index].innerText
-		//             return (asc) ? a_val.localeCompare(b_val) : b_val.localeCompare(a_val)
-		//         })
-		//         arr.forEach(elem => {
-		//             th_elem.closest("table").querySelector("tbody").appendChild(elem)
-		//         })
-		//         asc = !asc
-		//     })
-		// })
-		// document.querySelectorAll('th.order').forEach(th_elem => {
-		// 	let asc = true
-		// 	const span_elem = document.createElement('span')
-		// 	span_elem.style = "font-size:0.8rem; margin-left:0.5rem"
-		// 	span_elem.innerHTML = "▼"
-		// 	th_elem.appendChild(span_elem)
-		// 	th_elem.classList.add('order-inactive')
-
-		// 	const index = Array.from(th_elem.parentNode.children).indexOf(th_elem)
-		// 	console.log('SORT INDEX ',index)
-		// 	th_elem.addEventListener('click', (e) => {
-		// 		document.querySelectorAll('th.order').forEach(elem => {
-		// 			elem.classList.remove('order-active')
-		// 			elem.classList.add('order-inactive')
-		// 		})
-		// 		th_elem.classList.remove('order-inactive')
-		// 		th_elem.classList.add('order-active')
-
-		// 		if (!asc) {
-		// 			th_elem.querySelector('span').innerHTML = '▲'
-		// 		} else {
-		// 			th_elem.querySelector('span').innerHTML = '▼'
-		// 		}
-		// 		const arr = Array.from(th_elem.closest("table").querySelectorAll('tbody tr'))
-		// 		// const arr = Array.from(th_elem.closest("table").querySelectorAll('tbody tr')).slice(1)
-		// 		arr.sort((a, b) => {
-		// 			const a_val = a.children[index].innerText
-		// 			const b_val = b.children[index].innerText
-		// 			return (asc) ? a_val.localeCompare(b_val) : b_val.localeCompare(a_val)
-		// 		})
-		// 		arr.forEach(elem => {
-		// 			th_elem.closest("table").querySelector("tbody").appendChild(elem)
-		// 		})
-		// 		asc = !asc
-		// 	})
-		// })
-	}
 
 	function sortTable1(table_id, sortColumn){
 		var tableData = document.getElementById(table_id).getElementsByTagName('tbody').item(0);
