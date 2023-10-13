@@ -123,11 +123,12 @@ global $today;
 		$model = $para->{'data-model'};
 		$conditions = [
 			'tags' => SG\getFirst($para->{'data-tags'}, $para->{'data-tag'}),
-			'type' => $para->{'data-type'},
-			'node' => $para->{'data-node'},
+			'type' => SG\getFirst($para->{'data-type'}, '*'),
+			'sticky' => $para->{'data-sticky'},
+			'nodeId' => SG\getFirst($para->{'data-node'}, $para->{'data-tpid'}),
 			'options' => [
 				'field' => $para->{'data-field'},
-				'items' => $para->{'data-limit'},
+				'items' => $para->{'data-limit'} == 1 ? '01' : $para->{'data-limit'},
 			],
 		];
 		$topics = PaperModel::$model($conditions);
@@ -135,10 +136,12 @@ global $today;
 	// debugMsg('$model = '.$model);
 	// debugMsg($para, '$para');
 	// debugMsg($topics->_query);
+	// debugMsg($conditions, '$conditions');
 	// debugMsg($topics,'$topics');
 
 	// if ($topics->_type == 'record') $topics = mydb::convert_record_to_recordset($topics);
 	// if ($topics->_empty) return;
+	// debugMsg($topics,'$topics');
 
 	if (is_string($para->{'show-style'})) $pattern=$patterns->{$para->{'show-style'}};
 	else if (is_object($para->{'show-style'})) $pattern=$para->{'show-style'};
@@ -182,7 +185,7 @@ global $today;
 	$count = SG\getFirst($para->{'show-count'},$topics->count);
 	$no=0;
 	$debug = SG\getFirst($para->{'option-debug'}=='eval',debug('eval'));
-	if ($para->{'data-field'}=='body,photo' && empty($para->{'show-photo'})) $para->{'show-photo'}='image';
+	if (preg_match('/photo/', $para->{'data-field'}) && empty($para->{'show-photo'})) $para->{'show-photo'}='image';
 	if ($para->{'show-photo'}) list($para->{'show-photo'},$showPhotoOption)=explode(',',$para->{'show-photo'});
 
 	/* generate each item */
@@ -222,7 +225,7 @@ global $today;
 			case 'ul' : $ret .= '<li>';break;
 			case 'div' : $ret .= '<div id="'.$para->id.'-'.$no.'" class="widget-item widget-item-'.$no.'">';break;
 		}
-
+		// $ret .= print_o($topic, '$topic');
 		/* generate each topic title */
 		if ($pattern->header) $ret.='<'.$pattern->header.'>';
 		$ret .= '<a href="'.$topic->_url.'"'.($pattern->{'show-style'}=='div'?' title="'.htmlspecialchars($topic->title).'"':'').'>';
@@ -262,7 +265,9 @@ global $today;
 	}
 
 	if ($pattern->{'show-style'}!='div') $ret .= '</'.$pattern->{'show-style'}.'><!--end of widget-item -->'._NL;
+
 	$showReadAll = SG\getFirst($para->{'data-show-readall'},$para->{'data-cfg-readall'},$para->{'show-readall'});
+	$ret .= 'READ ALL '.$showReadAll;
 	if ($showReadAll) {
 		$readAllitems=explode(',',$showReadAll);
 		if (count($readAllitems)==1) {

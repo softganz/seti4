@@ -77,6 +77,7 @@ class Tags extends Page {
 
 		$topics = PaperModel::items([
 			'tags' => $this->tagIdList,
+			'type' => '*',
 			'options' => [
 				'debug' => false,
 				'field' => 'detail,photo',
