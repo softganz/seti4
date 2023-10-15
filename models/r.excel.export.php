@@ -30,8 +30,7 @@ function r_excel_export($tables,$filename,$options='{}') {
 		array_walk($row, '__r_setValueType');
 		array_walk($row, 'sg_cleanXlsSepString');
 		array_walk($row, 'strip_tags');
-		//$ret.=implode("\t", array_values($row)) . "\n";
-		$ret.='<tr><td>'.implode('</td><td class="text">', $row).'</td></tr>';
+		$ret.='<tr><td>'.implode('</td><td class="text">', (Array) $row).'</td></tr>';
 	}
 	//if ($options->cleanTag) $ret=strip_tags($ret);
 
