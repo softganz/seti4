@@ -298,8 +298,14 @@ function sg_autoloader($class) {
 	$endName = strToLower(end($pieces));
 
 	switch ($endName) {
-		case 'model': array_pop($pieces); $import = 'model:'.implode('.', $pieces).'.php'; break;
-		case 'widget': array_pop($pieces); $import = 'widget:'.implode('.', $pieces).'.php'; break;
+		case 'model':
+			array_pop($pieces);
+			$import = 'model:'.implode('.', $pieces).'.php';
+			break;
+		case 'widget':
+			array_pop($pieces);
+			$import = 'widget:'.implode('.', $pieces).'.php';
+			break;
 	}
 	$import = strToLower($import);
 
