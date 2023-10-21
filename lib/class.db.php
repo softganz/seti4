@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2023-09-29
-* Version :: 3
+* Modify  :: 2023-10-21
+* Version :: 4
 *
 * @param Array $args
 * @return Object
@@ -39,7 +39,20 @@ class JsonArrayDataModel extends DataModel {
 	}
 }
 
-class DBResult {
+class DbSelect {
+	private $DB;
+
+	function __construct($args = []) {
+		foreach ($args as $key => $value) $this->{$key} = $value;
+	}
+
+	public function DB($db = NULL) {
+		if (isset($db)) $this->DB = $db;
+		return $this->DB;
+	}
+}
+
+class DbQuery {
 	private $DB;
 
 	function __construct($args = []) {
@@ -114,15 +127,15 @@ class DB {
 
 		if ($select->errorMsg) {
 			$select->setDebugMessage('PREPARE', $select->stmt.'; <span style="color:red;">-- ERROR :: '.$select->errorMsg.'</font>');
-			return new DBResult(['errorMsg' => $select->errorMsg, 'DB' => $select]);
+			return new DbSelect(['errorMsg' => $select->errorMsg, 'DB' => $select]);
 		}
 
 		// debugMsg($select, '$select');
 		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $select->stmt)) {
-			$result = new DBResult(reset($select->items)); // + ['DB' => $select]]);
+			$result = new DbSelect(reset($select->items)); // + ['DB' => $select]]);
 			$result->DB($select);
 		} else {
-			$result = new DBResult(['count' => $select->count, 'items' => $select->items, 'DB' => $select]);
+			$result = new DbSelect(['count' => $select->count, 'items' => $select->items, 'DB' => $select]);
 		}
 
 		if ($select->options->sum) $result->sum = $select->options->sum;
@@ -133,10 +146,16 @@ class DB {
 	}
 
 	public static function query($args) {
-		$result = new DB($args);
-		$result->queryResult();
-		unset($result->items, $result->count);
+		$queryResult = new DB($args);
+		$queryResult->queryResult();
+		unset($queryResult->items, $queryResult->count);
+		$result = new DbQuery([
+			'query' => mydb()->_query,
+			'DB' => $queryResult
+		]);
+
 		return $result;
+		return $queryResult;
 	}
 
 
