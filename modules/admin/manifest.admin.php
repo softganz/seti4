@@ -21,4 +21,5 @@ cfg('admin.release','2021-09-17');
 menu('admin/install','Admin Install Site Database','admin','__controller',1,true,'static');
 menu('admin','Admin menu','admin','__controller',1,'access administrator pages','static');
 
+head('googlead','<script></script>');
 ?>
