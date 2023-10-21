@@ -1564,6 +1564,10 @@ $SCREENS
 	.module.-app-theme-dark .my-profile-wrapper {background-color: #333; color: #eee;}
 		.module.-app-theme-dark .my-profile-wrapper>.-upload .icon {color: #eee;}
 
+@media (prefers-color-scheme: dark) {
+	.notify-main {color: #333;}
+}
+
 
 
 	@media (min-width:30em){    /* 480/16 = 30 */
