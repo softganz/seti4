@@ -164,7 +164,7 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 			'edit_detail',
 			'รายละเอียด',
 			url('paper/'.$tpid.'/edit.detail'),
-			'{"class": "sg-action", "data-rel": "box"}'
+			'{"class": "sg-action", "data-rel": "box", "data-width": "full"}'
 		);
 
 		if (user_access('upload photo'))
@@ -495,7 +495,7 @@ class XPaperView extends Page {
 				'edit_detail',
 				'รายละเอียด',
 				url('paper/'.$tpid.'/edit.detail'),
-				'{"class": "sg-action", "data-rel": "box"}'
+				'{"class": "sg-action", "data-rel": "box", "data-width": "full"}'
 			);
 
 			if (user_access('upload photo'))
