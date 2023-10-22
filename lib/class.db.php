@@ -50,6 +50,7 @@ class DbSelect {
 		if (isset($db)) $this->DB = $db;
 		return $this->DB;
 	}
+
 }
 
 class DbQuery {
@@ -63,6 +64,10 @@ class DbQuery {
 		if (isset($db)) $this->DB = $db;
 		return $this->DB;
 	}
+
+	public function insertId() {return $this->DB->lastInsertId();}
+	public function error() {return $this->DB->errors();}
+	public function errorMsg() {return $this->DB->errorMsg();}
 }
 
 /**
@@ -272,7 +277,7 @@ class DB {
 		return $result;
 	}
 
-	function lastInsertId() {return $this->PDO->lastInsertId();}
+	function lastInsertId() {return intval($this->PDO->lastInsertId());}
 
 	function args() {return $this->args;}
 
