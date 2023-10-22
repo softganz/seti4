@@ -58,10 +58,11 @@ class SystemIssueHome extends Page {
 								return new Card([
 									'children' => [
 										new ListTile([
-											'title' => $item->host.$item->path.($item->query ? '?'.$item->query : ''),
-											'leading' => $item->issueId,
-											'subtitle' => ($item->reportBy ? 'By : '.$item->reportBy : NULL)
-												. (' @'.$item->reportDate),
+											'crossAxisAlignment' => 'center',
+											'title' => $item->host,
+											// 'leading' => $item->issueId,
+											// 'subtitle' => ($item->reportBy ? 'By : '.$item->reportBy : NULL)
+												// . (' @'.$item->reportDate),
 											'trailing' => new Nav([
 												'children' => [
 													new Button([
@@ -92,10 +93,13 @@ class SystemIssueHome extends Page {
 										]), // ListTile
 										new ScrollView([
 											'child' => new Column([
-												'class' => '-sg-paddingnorm',
+												'class' => '-sg-paddingnorm -nowrap',
 												'children' => [
-													'referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
-													'agent : '.$item->agent,
+													'<b>Link : '.$item->host.$item->path.($item->query ? '?'.$item->query : '').'</b>',
+													$item->reportBy ? 'By : '.$item->reportBy : NULL,
+													'Date : '.$item->reportDate,
+													'Referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
+													'Agent : '.$item->agent,
 												]
 											]), // Column
 										]), // ScrollView
