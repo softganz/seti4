@@ -1,7 +1,7 @@
 /* Page Layout */
 .page.-page {margin: 0 auto; padding: 0;}
 
-.page.-header {height: 48px; width: 100%; margin: 0 auto; padding: 0; z-index: 1000; opacity: 0.9; position: fixed;}
+.page.-header {height: 48px; width: 100%; margin: 0 auto; padding: 0; z-index: 1000; opacity: 0.9; position: fixed; top: 0;}
 	.page.-header>.wrapper {display: flex; flex-wrap: wrap; margin: 0 auto;}
 	.page.-header header {width: 48px; height: 48px; margin: 0; overflow: hidden; background: transparent none 0 0 no-repeat; text-indent: -999em;}
 	.page.-header h1 {margin: 0; padding: 0;}
