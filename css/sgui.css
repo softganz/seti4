@@ -399,6 +399,7 @@
 	.widget-appbar>.-trailing .widget-row>.-item>.btn {box-shadow: none; margin: 0 4px;}
 	.widget-appbar>.-trailing .widget-dropbox>a {background-color: transparent; box-shadow: none;}
 	.widget-appbar>.-trailing .widget-dropbox>a:hover {background-color: #fff; opacity: 0.5;}
+	.widget-appbar>.-children {flex: 1 0 100%;}
 	.widget-appbar .form-report {background-color: transparent; box-shadow: none; margin: 0; padding: 0;}
 
 	.box-page>.widget-appbar>.-trailing {right: 38px;}
