@@ -1652,7 +1652,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		if ($icon.text() == 'expand_less') {
 			$icon.text('expand_more')
 		} else if ($icon.text() == 'expand_more') {
-			$icon.text('expand_less')
+			$icon.text('chevron_right')
+		} else if ($icon.text() == 'chevron_right') {
+			$icon.text('expand_more')
 		}
 	})
 })(jQuery);
