@@ -250,7 +250,7 @@ if ($R->user->signInResult) {
 	$R->message->signInErrorInSignForm = $R->user->signInErrorMessage;
 }
 
-$R->user->admin = user_access('access administrator pages');
+if (is_object($R->user)) $R->user->admin = user_access('access administrator pages');
 
 // Check site status
 if (cfg('web.status') == 0 && !$R->user->admin) {
