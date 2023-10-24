@@ -65,7 +65,7 @@ class DbQuery {
 		return $this->DB;
 	}
 
-	public function insertId() {return $this->DB->lastInsertId();}
+	public function insertId() {return $this->DB->insertId();}
 	public function error() {return $this->DB->errors();}
 	public function errorMsg() {return $this->DB->errorMsg();}
 }
@@ -277,7 +277,7 @@ class DB {
 		return $result;
 	}
 
-	function lastInsertId() {return intval($this->PDO->lastInsertId());}
+	function insertId() {return intval($this->PDO->lastInsertId());}
 
 	function args() {return $this->args;}
 
