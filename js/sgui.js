@@ -962,6 +962,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	var inputCount = $input.length
 	if(event.keyCode == 13) {
 		event.preventDefault()
+		console.log($input.attr('onEnter'))
+		if ($input.attr('onEnter') == 'submit') {
+			$input.closest('form').submit()
+			return false
+		}
 		var nextIndex = $input.index(this) + 1
 		if(nextIndex < inputCount)
 			$input[nextIndex].focus()
