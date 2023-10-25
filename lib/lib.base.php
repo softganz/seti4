@@ -15,8 +15,9 @@
 * the Free Software Foundation; either version 2 of the License.
 * ============================================
 
---- Created 2019-12-08
---- Modify  2020-07-29
+Created :: 2019-12-08
+Modify  :: 2023-10-25
+Version :: 2
 */
 
 namespace SG;
@@ -420,13 +421,16 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 	if (is_null($fld['min-value'])) unset($fld['min-value']);
 	if (is_null($fld['max-value'])) unset($fld['max-value']);
 
-	$ret .= '<span class="inline-edit-item'.($container->class ? ' '.$container->class : '').($input_type ? ' -'.$input_type : '').'"'.($container->id ? ' id="'.$container->id.'"' : '').'>';
+	$ret .= '<span'
+		.' class="inline-edit-item'.($container->class ? ' '.$container->class : '').($input_type ? ' -'.$input_type : '').'"'
+		. ($container->id ? ' id="'.$container->id.'"' : '')
+		. ($fld['updateUrl'] ? ' data-update-url="'.$fld['updateUrl'].'"' : '')
+		. '>';
 	if ($fld['label']) $ret .= '<label class="inline-edit-label">' . $fld['label'] . '</label>';
 
 
 	$class = getFirst($fld['class'],$dataOptions->class);
 	if ($dataOptions->class) unset($fld['class']);
-
 
 	if ($is_edit) {
 
