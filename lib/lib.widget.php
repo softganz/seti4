@@ -21,7 +21,7 @@ $includeModelList = [
 	'model.code.php',
 ];
 
-foreach ($includeModelList as $file) load_lib($file, 'model');
+foreach ($includeModelList as $file) load_lib($file, 'models');
 
 $includeUiList = [
 	'class.widget.php',
