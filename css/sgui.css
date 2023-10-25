@@ -471,6 +471,7 @@
 	.widget-table td .form-item {margin: 0; padding: 0;}
 	.widget-table.-info>tbody>tr>td:first-child {white-space: nowrap; text-align: right;}
 	.widget-table.-info>tbody>tr>td:nth-child(2) {width: 100%;}
+	.widget-table.-sg-child-vertical-align-middle>tbody>tr>td {vertical-align: middle;}
 
 .widget-inlineedit {display: block;}
 	.widget-inlineedit.-hots>label {font-weight: bold;}
