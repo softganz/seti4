@@ -111,35 +111,9 @@ class Widget extends WidgetBase {
 		$this->children[] = $value;
 	}
 
-	function _renderEachChildWidget($key, $widget) {
-		$result = '';
-		if (is_object($widget) && method_exists($widget, 'build')) {
-			// Build Widget
-			$buildResult = $widget->build();
-			if (is_object($buildResult) && method_exists($buildResult, 'build')) {
-				$result .= $buildResult->build();
-			} else {
-				$result .= $buildResult;
-			}
-		} else if (is_object($widget)) {
-			// Build General Object
-			$result .= \SG\json_encode($widget);
-		} else if (is_array($widget)) {
-			// Build Array
-			$result .= \SG\json_encode($widget);
-		} else if (is_string($widget) && $widget === '<sep>') {
-			// Build Seperator
-			$result = '<hr class="separator" size="0" />';
-		} else {
-			// Build Text
-			$result .= $widget;
-		}
-		return $result;
-	}
-
 	// Container of widget
 	// @override
-	function _renderWidgetContainerStart() {
+	function _renderWidgetContainerStart($callbackFunction = NULL) {
 		return $this->tagName ?
 			'<'.$this->tagName.' '
 			. ($this->id ? ' id="'.$this->id.'" ' : '')
@@ -157,6 +131,7 @@ class Widget extends WidgetBase {
 			. ($this->style ? ' style="'.$this->style.'" ' : '')
 			. ($this->attribute && is_array($this->attribute) ? ' '.sg_implode_attr($this->attribute) : '')
 			. ($this->attributeText ? ' '.$this->attributeText : '')
+			. ($callbackFunction && is_callable($callbackFunction) ? $callbackFunction() : '')
 			. '>'._NL
 		: '';
 	}
@@ -219,6 +194,33 @@ class Widget extends WidgetBase {
 
 		$ret .= $this->_renderChildrenContainerEnd();
 		return $ret;
+	}
+
+	// @override
+	function _renderEachChildWidget($key, $widget) {
+		$result = '';
+		if (is_object($widget) && method_exists($widget, 'build')) {
+			// Build Widget
+			$buildResult = $widget->build();
+			if (is_object($buildResult) && method_exists($buildResult, 'build')) {
+				$result .= $buildResult->build();
+			} else {
+				$result .= $buildResult;
+			}
+		} else if (is_object($widget)) {
+			// Build General Object
+			$result .= \SG\json_encode($widget);
+		} else if (is_array($widget)) {
+			// Build Array
+			$result .= \SG\json_encode($widget);
+		} else if (is_string($widget) && $widget === '<sep>') {
+			// Build Seperator
+			$result = '<hr class="separator" size="0" />';
+		} else {
+			// Build Text
+			$result .= $widget;
+		}
+		return $result;
 	}
 
 	// @override
@@ -519,20 +521,53 @@ class ExpandButton extends Widget {
 
 class InlineEdit extends Widget {
 	var $widgetName = 'InlineEdit';
-	// var $tagName = 'span';
+	var $tagName = 'span';
 	var $version = '0.01';
+	var $mode;
+	var $class;
 	var $text;
 	var $type = 'text';
+	// var $class = 'widget-inlineedit';
 	var $editMode;
 	var $emptyText = '...';
 	var $selectOptions = [];
 
 	function __construct($args = []) {
 		parent::__construct($args);
+		if ($this->editMode && $this->mode === 'standalone') $this->class = 'sg-inline-edit'.' '.$this->class;
+		$this->class .= ' inline-edit-item -'.$this->type;
 	}
 
+	// 'label' => 'ชื่อโครงการ',
+	// 'type' => 'text',
+	// 'class' => '-hots -sg-paddingnorm',
+	// 'inputClass' => '-fill',
+	// 'text' => $this->proposalInfo->title,
+	// 'editMode' => $this->right->edit,
+	// 'group' => 'topic',
+	// 'field' => 'title',
+	// 						'selectOptions' => (function() {
+	// 'ret' => 'nl2br',
+	// 'tranId' => $productId,
+	// 'value' => $productInfo->info->{$key},
+	// 'inputName' => 'outofsale',
+
 	function _render() {
+		// echo error_reporting(E_ALL).'<br />';
+		// echo error_reporting().'<br />';
+
+		$ret = '<span'
+			// . ' class="inline-edit-field -'.$this->type.().'"'
+			. '>';
+		$ret .= $this->text;
+		$ret .= '</span>';
+		return $ret;
+	}
+
+	function _render_v1() {
 		// \SG\inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'text', $data = [], $emptytext = '...')
+		if ($this->editMode) $this->class .= ' sg-inline-edit';
+
 		$fld = [];
 		if ($this->label) $fld['label'] = $this->label;
 		if (!is_null($this->group)) $fld['group'] = $this->group;
@@ -548,13 +583,16 @@ class InlineEdit extends Widget {
 		if (!is_null($this->postText)) $fld['posttext'] = $this->postText;
 		if (!is_null($this->description)) $fld['desc'] = $this->desc;
 		if (!is_null($this->removeEmpty)) $fld['removeempty'] = $this->removeEmpty;
+		if (!is_null($this->updateUrl)) $fld['update-url'] = $this->updateUrl;
+
 		$fld['options'] = is_null($this->options) ? [] : $this->options;
-		$fld['container'] = is_null($this->container) ? (Object) [] : $this->container;
+		$fld['container'] = is_null($this->container) ? (Object) [] : (Object) $this->container;
 
 		if ($this->inputClass) $fld['options']['class'] = $this->inputClass;
-		$fld['container']->class = 'widget-inlineedit'.($this->class ? ' '.$this->class : '');
+		$fld['container']->class = ($this->class ? ' '.$this->class : '');
 
 		$ret = \SG\inlineEdit($fld, $this->text, $this->editMode, $this->type, $this->selectOptions, $this->emptyText);
+		// debugMsg($this, '$this');
 		// debugMsg($fld, '$fld');
 		return $ret;
 	}
@@ -562,11 +600,18 @@ class InlineEdit extends Widget {
 	// @override
 	function toString() {
 		$ret = '<!-- Start of '.$this->widgetName.' -->'._NL;
-		$ret .= $this->_renderWidgetContainerStart();
+		$ret .= $this->_renderWidgetContainerStart(
+			function() {
+				return
+					($this->updateUrl ? ' data-update-url="'.$this->updateUrl.'"' : NULL);
+			}
+		);
 		$ret .= $this->_render();
 		if ($this->debug) $ret .= (new DebugMsg($this, '$this'))->build();
 		$ret .= $this->_renderWidgetContainerEnd()._NL;
 		$ret .= '<!-- End of '.$this->widgetName.' -->'._NL;
+		$ret .= '<pre>'.htmlspecialchars($ret).'</pre>';
+		$ret .= print_o($this, '$this');
 		return $ret;
 	}
 } // End of class Container
