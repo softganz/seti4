@@ -24,7 +24,6 @@ $R->request = $request;
 $R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/conf.core.json'));
 
 $includeFileList = [
-	'lib/class.core.function.php',
 	'lib/lib.define.php',
 	'lib/lib.base.php',
 	'lib/lib.function.php',
