@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2023-08-01
-* Version :: 1
+* Modify  :: 2023-10-25
+* Version :: 2
 */
 
 //---------------------------------------
