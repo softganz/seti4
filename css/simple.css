@@ -83,6 +83,7 @@ pre {tab-size: 1;}
 .-sg-line-through {text-decoration: line-through !important;}
 .-sg-child-padding-norm>* {padding: 8px !important;}
 .-sg-child-padding-more>* {padding: 16px !important;}
+.-single-line {line-height: 2.8rem; height: 2.8rem; overflow: hidden;}
 
 
 .-sg-16 {width: 16px !important; height: 16px !important; font-size: 16px !important;}
@@ -576,9 +577,18 @@ $SCREENS
 	.footer {text-align:right;color:#999;font-size:0.8em;font-style:italic;}
 	.package-footer {padding:0 10px 0 0;clear:both;font-size:0.8em;text-align:right;color:#999;font-style:italic;}
 
-	.sg-info {width:16px; height:16px; margin:0 5px; background: #ccc; border-radius: 10px; display: inline-block; text-align: center; font:10px/16px Tahoma;  font-weight: normal; color:#333; cursor: pointer; vertical-align: top;}
+	.sg-info {width:16px; height:16px; margin:0 5px; background: #ccc; border-radius: 10px; display: inline-block; text-align: center; font:10px/16px sans-serif;  font-weight: normal; color:#333; cursor: pointer; vertical-align: top;}
 
 
+	.status-color {}
+	.status-color.-not-start {background-color: #C4C4C4; color: #fff;}
+	.status-color.-working-on-it {background-color: #FDAB3C; color: #fff;}
+	.status-color.-stuck {background-color: #E2445C; color: #fff;}
+	.status-color.-done {background-color: #00C875; color: #fff;}
+	.status-color.-not-start:hover {background-color: #D3D3D4;}
+	.status-color.-working-on-it:hover {background-color: #FCC17D;}
+	.status-color.-stuck:hover {background-color: #EA818F;}
+	.status-color.-done:hover {background-color: #6ED69E;}
 
 
 	/* @group inline-edit-field */
@@ -615,7 +625,7 @@ $SCREENS
 		.inline-edit-field .placeholder {color: #ccc; font-style: italic; font-size: 0.9em;}
 
 		.inline-edit-field>form {display:block; margin:0; padding:0;}
-			.inline-edit-field .form-text {width: calc(100% - 16px); padding: 0px 7px; font-size: 1em; border:none; box-shadow: none; display: block; border:1px #ffb685 solid;}
+			.inline-edit-field .form-text {width: calc(100% - 16px); padding: 0px 8px; font-size: 1em; box-shadow: none; display: block; height: 27px; margin-bottom: 1px;}
 			.inline-edit-field .form-select {width: 100%; padding: 5px 7px; height: 36px; font-size: 1em; border:none;}
 			.inline-edit-field .form-textarea {width: calc(100% - 16px); margin: 0; padding: 6px 8px; font-size: 1em;  border:1px #ffb685 solid; box-shadow: none; background: #ffffcc; border-radius: 0;}
 			.inline-edit-field.-money .form-text {margin: 0; text-align: center;}
@@ -625,12 +635,20 @@ $SCREENS
 
 			.inline-edit-field .form-text:focus,
 			.inline-edit-field .form-textarea:focus,
-			.inline-edit-field .form-select:focus {border:1px #ffffcc solid; border-bottom: 1px #4285F4 solid; border-radius: 0;}
+			.inline-edit-field .form-select:focus {border:none; border-radius: 0; box-shadow: none; background-color: transparent; padding: 0 8px;}
 			/* .inline-edit-field .form-textarea:focus {position: absolute; width: 90%; height: auto; z-index: 10001; left:50px; right: 50px; top:50px; bottom: 50px;} */
+
+			/*
+			.form-text:hover
+			, .form-password:hover
+			, .form-select:hover
+			, .form-textarea:hover {background-color: #ffffcc; outline: none; box-shadow: 0 0 0 1px #86b7fe inset;}
+			*/
 
 		.inline-edit-field.-textarea p {margin:0 0 10px 0; padding: 0; }
 		.inline-edit-field.-textarea ul,
 		.inline-edit-field.-textarea ol {margin:0 0 10px 0; padding: 0 0 0 32px;}
+	.sg-inline-edit .inline-edit-field.-text input:hover {border: none;}
 
 
 	.inline-edit-field.-hidden {display: none;}
@@ -693,7 +711,7 @@ $SCREENS
 	, input[type="password"]
 	, textarea
 	, .ui-autocomplete-input
-	, .uneditable-input {padding: 1px 8px; line-height: 24px; font-family: Tahoma; font-size: 1em; box-shadow: 0 0 0 1px #ccc inset; border: none; border-radius: 3px; background-color: #fff;}
+	, .uneditable-input {padding: 1px 8px; line-height: 24px; font-family: sans-serif; font-size: 1em; box-shadow: 0 0 0 1px #ccc inset; border: none; border-radius: 3px; background-color: #fff;}
 	input[type="radio"]
 	, input[type="checkbox"] {transition: none; -webkit-transition: none; -moz-transition: none; -o-transition: none; box-shadow: none;}
 	input[type="radio"]+.icon
@@ -722,11 +740,11 @@ $SCREENS
 
 		.form-text
 		, .form-password
-		, .form-textarea {font-family: Tahoma; font-size: 1em; -webkit-appearance: none; box-shadow: 0 0 0 1px #ccc inset; border: none;}
+		, .form-textarea {font-family: sans-serif; font-size: 1em; -webkit-appearance: none; box-shadow: 0 0 0 1px #ccc inset; border: none;}
 		.form-text
 		, .form-password {height: 34px; padding: 1px 8px;}
 		.form-textarea {padding: 8px;}
-		.form-select {height: 36px; padding: 0 24px 0 8px; font-family: Tahoma; font-size: 1em;border-radius: 3px; box-shadow: 0 0 0 1px #ccc inset; border: none; -webkit-appearance: none; -moz-appearance:none; appearance: none; background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23cccccc' viewBox='0 0 24 24'%3E%3Cpath d='M7.41 7.84l4.59 4.58 4.59-4.58 1.41 1.41-6 6-6-6z'/%3E%3Cpath d='M0-.75h24v24h-24z' fill='none'/%3E%3C/svg%3E") right center no-repeat; background-size: 24px;}
+		.form-select {height: 36px; padding: 0 24px 0 8px; font-family: sans-serif; font-size: 1em;border-radius: 3px; box-shadow: 0 0 0 1px #ccc inset; border: none; -webkit-appearance: none; -moz-appearance:none; appearance: none; background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23cccccc' viewBox='0 0 24 24'%3E%3Cpath d='M7.41 7.84l4.59 4.58 4.59-4.58 1.41 1.41-6 6-6-6z'/%3E%3Cpath d='M0-.75h24v24h-24z' fill='none'/%3E%3C/svg%3E") right center no-repeat; background-size: 24px;}
 
 		/*
 		focus: background-color: ffffcc
@@ -1557,16 +1575,16 @@ $SCREENS
 
 
 
-/* Light Theme Color */
+	/* Light Theme Color */
 
 
-/* Dark Theme Color */
+	/* Dark Theme Color */
 	.module.-app-theme-dark .my-profile-wrapper {background-color: #333; color: #eee;}
 		.module.-app-theme-dark .my-profile-wrapper>.-upload .icon {color: #eee;}
 
-@media (prefers-color-scheme: dark) {
-	.notify-main {color: #333;}
-}
+	@media (prefers-color-scheme: dark) {
+		.notify-main {color: #333;}
+	}
 
 
 
