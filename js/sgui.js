@@ -987,13 +987,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 * DOWNLOAD : https://github.com/NicolasCARPi/jquery_jeditable
 */
 (function($) { // sg-inline-edit
-	var version = '1.01'
-	var sgInlineEditAction = 'click'
-	var updatePending = 0
-	var updateQueue = 0
-	var database;
-	var ref
-	var debug
+	let version = '1.01'
+	let sgInlineEditAction = 'click'
+	let updatePending = 0
+	let updateQueue = 0
+	let database;
+	let ref
+	let debug
 
 	$.fn.sgInlineEdit = function(target, options = {}) {
 		// default configuration properties
@@ -1021,11 +1021,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		let $this = $(this)
 		let $parent = $this.closest('.sg-inline-edit')
-		let postUrl = $parent.data('updateUrl');
+		let postUrl = $this.data('updateUrl')
 		let inputType = $this.data('type');
 		let callback = $this.data('callback');
 		// console.log($parent.data('updateUrl'))
-		// console.log($parent.data());
+		console.log($this)
+		console.log($parent.data());
+		console.log($this.data())
+
+		if (postUrl === undefined) postUrl = $parent.data('updateUrl');
+
+		console.log(postUrl)
 
 		debug = $parent.data('debug') ? true : false
 
@@ -1033,7 +1039,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			inputType = 'text'
 		} else if (inputType == 'radio' || inputType == 'checkbox') {
 			//console.log('RADIO or CHECKBOX Click:',$this)
-			var value = $this.is(':checked') ? $this.val() : ''
+			let value = $this.is(':checked') ? $this.val() : ''
 			//self.save($this, value, callback)
 			//return
 		} else if (inputType == 'link') {
@@ -1083,14 +1089,14 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				},
 				*/
 			before : function() {
-					//var height = $this.height()
+					//let height = $this.height()
 					//console.log('BEFORE EDIT '+$this.attr('class')+' height = '+$this.height())
 					//$this.height('500px')
 					//$this.find('.form-textarea').height($this.prop('scrollHeight')+'px');
 					//$this.find('.form-textarea').height('100%')
 
-					var options = $this.data('options')
-					var callbackFunction = options != undefined && options.hasOwnProperty('onBefore') ? options.onBefore : null
+					let options = $this.data('options')
+					let callbackFunction = options != undefined && options.hasOwnProperty('onBefore') ? options.onBefore : null
 					//console.log("BEFORE CALLBACK ",callbackFunction)
 					if (callbackFunction && typeof window[callbackFunction] === 'function') {
 						window[callbackFunction]($this,$parent);
@@ -1101,10 +1107,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			placeholder: $(this).data('placeholder') ? $(this).data('placeholder') : '...',
 		}
 
-		var dataOptions = $this.data('options')
+		let dataOptions = $this.data('options')
 		// console.log('typeof container',typeof dataOptions.container)
 		// if (typeof dataOptions.container === "object") delete dataOptions.container
-		var settings = $.extend({}, $.fn.sgInlineEdit.defaults, defaults, options, dataOptions)
+		let settings = $.extend({}, $.fn.sgInlineEdit.defaults, defaults, options, dataOptions)
 		// console.log(typeof settings.container)
 		// if (typeof settings.container === 'object') delete settings.container
 		//console.log('dataOptions',dataOptions)
@@ -1162,13 +1168,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.save = function($this, value, callback) {
-			// console.log('Update Value = '+value)
+			console.log('Update Value = '+value)
 			// console.log($parent.data('updateUrl'))
 			// console.log('postUrl = ', postUrl)
 			// console.log($parent.data());
 
 			if (postUrl === undefined) {
-				console.log('POSTURL UNDEFINED')
+				console.log('ERROR :: POSTURL UNDEFINED')
 				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด')
 				return
 			}
@@ -1179,7 +1185,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// 	return
 			// }
 
-			var para = $.extend({},$parent.data(), $this.data())
+			let para = $.extend({},$parent.data(), $this.data())
 
 			delete para['options']
 			delete para['data']
@@ -1212,7 +1218,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				$parent.find('.inline-edit-field').removeClass('-disabled')
 
 				if (typeof data == 'string') {
-					var tempData = data
+					let tempData = data
 					data = {}
 					data.value = para.value
 					if (debug) data.msg = tempData
@@ -1231,7 +1237,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				} else if ($this.data('type') == 'radio') {
 				} else if ($this.data('type') == 'checkbox') {
 				} else if ($this.data('type') == 'select') {
-					var selectValue
+					let selectValue
 					if ($this.data('data')) {
 						selectValue = $this.data('data')[data.value]
 					} else {
@@ -1244,7 +1250,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				}
 
 
-				var replaceTrMsg = '';
+				let replaceTrMsg = '';
 				//console.log('para.tr='+para.tr+' data.tr='+data.tr)
 				if (para.tr != data.tr) {
 					if (data.tr == 0)
@@ -1266,7 +1272,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// console.log(response)
 			}).done(function(response) {
 				// Process callback function
-				var callbackFunction = settings.callback ? settings.callback : $this.data('callback')
+				let callbackFunction = settings.callback ? settings.callback : $this.data('callback')
 
 				if (debugSG) console.log("CALLBACK ON COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
@@ -1306,20 +1312,20 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 	/* Publicly accessible defaults. */
 	$.fn.sgInlineEdit.defaults = {
-		indicator		: '<div class="loader -rotate"></div>',
-		tooltip 			: 'คลิกเพื่อแก้ไข',
-		cssclass			: 'inlineedit',
-		width				: 'none',
-		height 			: 'none',
-		var				: null,
+		indicator				: '<div class="loader -rotate"></div>',
+		tooltip 				: 'คลิกเพื่อแก้ไข',
+		cssclass				: 'inlineedit',
+		width						: 'none',
+		height 					: 'none',
+		var							: null,
 		cancelcssclass	: 'btn -link -cancel',
 		submitcssclass	: 'btn -primary',
-		showButtonPanel: true,
-		indicator 		: 'SAVING',
-		event 			: 'edit',
-		inputcssclass	: '',
-		autocomplete 	: {},
-		datepicker 		: {},
+		showButtonPanel	: true,
+		indicator 			: 'SAVING',
+		event 					: 'edit',
+		inputcssclass		: '',
+		autocomplete 		: {},
+		datepicker 			: {},
 	}
 
 
@@ -1331,10 +1337,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	$(document).on('keydown', ".sg-inline-edit .inline-edit-field", function(evt) {
 		// TAB Key
 		if(evt.keyCode == 9) {
-			var $this = $(this);
-			var $allBox = $this.closest(".sg-inline-edit");
-			var nextBox = '';
-			var currentBoxIndex = $(".inline-edit-field").index(this);
+			let $this = $(this);
+			let $allBox = $this.closest(".sg-inline-edit");
+			let nextBox = '';
+			let currentBoxIndex = $(".inline-edit-field").index(this);
 			if (currentBoxIndex == ($(".inline-edit-field").length-1)) {
 				nextBox = $(".inline-edit-field:first");
 			} else {
@@ -1364,11 +1370,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			element : $.editable.types.text.element,
 			plugin : function(settings, original) {
 				$(original).attr( 'autocomplete','off' );
-				var defaults = {
+				let defaults = {
 					target: '',
 					source: function(request, response) {
-						var queryUrl = settings.autocomplete.query
-						var para = {}
+						let queryUrl = settings.autocomplete.query
+						let para = {}
 						para.q = request.term
 						$.get(queryUrl,para, function(data){
 							response($.map(data, function(item){
@@ -1390,16 +1396,16 @@ $(document).on('submit', 'form.sg-form', function(event) {
 						//console.log('ui.item',ui.item)
 						this.value = ui.item.label;
 						//settings.container.data('value',ui.item.value)
-						var targetValue = settings.autocomplete.target
+						let targetValue = settings.autocomplete.target
 						console.log('targetValue',targetValue)
 						if (targetValue) {
 							if (typeof targetValue == 'string') {
 								targetValue = JSON.parse('{"'+targetValue+'": "value"}')
 							}
 							//console.log("HAVE TARGET", targetValue)
-							for (var key in targetValue) {
+							for (let key in targetValue) {
 								//$('#'+x).val(ui.item[selectValue[x]]);
-								var dataValue = ui.item[targetValue[key]]
+								let dataValue = ui.item[targetValue[key]]
 								console.log('key = ' + key + ' , value = item.ui.'+ dataValue)
 								if (key.substring(0,1) == '#' || key.substring(0,1) == '.') {
 									$(key).val(ui.item.value)
@@ -1424,10 +1430,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 						/*
 						if ($this.data('select')!=undefined) {
-							var selectValue=$this.data('select');
+							let selectValue=$this.data('select');
 							if (typeof selectValue == 'object') {
 								console.log(selectValue)
-								var x;
+								let x;
 								for (x in selectValue) {
 									$('#'+x).val(ui.item[selectValue[x]]);
 									console.log(x+" "+selectValue[x])
@@ -1471,7 +1477,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		$.editable.addInputType('datepicker-old', {
 			element : function(settings, original) {
-				var input = $('<input class="form-text -datepicker" />');
+				let input = $('<input class="form-text -datepicker" />');
 				input.attr( 'autocomplete','off' );
 				if (settings.datepicker) {
 					input.datepicker(settings.datepicker);
@@ -1489,8 +1495,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			},
 
 			submit: function (settings, original) {
-				var dateRaw = $('input', this).datepicker('getDate');
-				var dateFormatted;
+				let dateRaw = $('input', this).datepicker('getDate');
+				let dateFormatted;
 
 				if (settings.datepicker.format) {
 					dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
@@ -1508,10 +1514,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		$.editable.addInputType('datepicker', {
 			element : function(settings, original) {
-				var input = $('<input class="form-text -datepicker" />')
+				let input = $('<input class="form-text -datepicker" />')
 				input.attr( 'autocomplete','off' )
 
-				var defaults = {
+				let defaults = {
 						format: 'dd/mm/yy',
 						monthNames: thaiMonthName,
 						beforeShow: function( el ){
@@ -1572,7 +1578,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		$.editable.addInputType( 'datepicker', {
 			// create input element
 			element: function( settings, original ) {
-				var form = $( this ),
+				let form = $( this ),
 				input = $( '<input class="form-text" />' );
 				input.attr( 'autocomplete','off' );
 				form.append( input );
@@ -1581,7 +1587,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			attach jquery.ui.datepicker to the input element
 			plugin: function( settings, original ) {
-				var form = this,
+				let form = this,
 				input = form.find( 'input' );
 
 				// Don't cancel inline editing onblur to allow clicking datepicker
