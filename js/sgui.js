@@ -994,6 +994,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	let database;
 	let ref
 	let debug
+	let value
 
 	$.fn.sgInlineEdit = function(target, options = {}) {
 		// default configuration properties
@@ -1025,13 +1026,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let inputType = $this.data('type');
 		let callback = $this.data('callback');
 		// console.log($parent.data('updateUrl'))
-		console.log($this)
-		console.log($parent.data());
-		console.log($this.data())
+		// console.log($this)
+		// console.log($parent.data());
+		// console.log($this.data())
 
 		if (postUrl === undefined) postUrl = $parent.data('updateUrl');
 
-		console.log(postUrl)
+		// console.log('POST URL = ',postUrl)
 
 		debug = $parent.data('debug') ? true : false
 
@@ -1039,7 +1040,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			inputType = 'text'
 		} else if (inputType == 'radio' || inputType == 'checkbox') {
 			//console.log('RADIO or CHECKBOX Click:',$this)
-			let value = $this.is(':checked') ? $this.val() : ''
+			value = $this.is(':checked') ? $this.val() : ''
 			//self.save($this, value, callback)
 			//return
 		} else if (inputType == 'link') {
@@ -1168,13 +1169,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.save = function($this, value, callback) {
-			console.log('Update Value = '+value)
+			// console.log('Update Value = '+value)
 			// console.log($parent.data('updateUrl'))
 			// console.log('postUrl = ', postUrl)
 			// console.log($parent.data());
 
 			if (postUrl === undefined) {
-				console.log('ERROR :: POSTURL UNDEFINED')
+				// console.log('ERROR :: POSTURL UNDEFINED')
 				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด')
 				return
 			}
