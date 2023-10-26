@@ -422,7 +422,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 	if (is_null($fld['max-value'])) unset($fld['max-value']);
 
 	$ret .= '<span'
-		.' class="inline-edit-item'.($container->class ? ' '.$container->class : '').($input_type ? ' -'.$input_type : '').'"'
+		.' class="widget-inlineedit inline-edit-item'.($container->class ? ' '.$container->class : '').($input_type ? ' -'.$input_type : '').'"'
 		. ($container->id ? ' id="'.$container->id.'"' : '')
 		. ($fld['updateUrl'] ? ' data-update-url="'.$fld['updateUrl'].'"' : '')
 		. '>';
