@@ -1,4 +1,4 @@
-<?php
+4<?php
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
@@ -552,8 +552,6 @@ class InlineEdit extends Widget {
 	function _render() {
 		if (!$this->editMode) return $this->_renderText();
 
-		$options = array_merge_recursive($this->options, ['placeholder' => $this->placeholder]);
-
 		$ret = '';
 
 		if ($this->label) $ret .= '<label class="inline-edit-label">' . $this->label . '</label>';
@@ -590,6 +588,8 @@ class InlineEdit extends Widget {
 	}
 
 	function _renderTypeText($text) {
+		$options = array_merge_recursive($this->options, ['placeholder' => $this->placeholder]);
+
 		$ret .= '<span'._NL
 			. ' class="inline-edit-field -'.$this->type.($this->inputClass ? ' '.$this->inputClass : '').'"'._NL
 			. ' onClick=""'._NL
