@@ -1,4 +1,4 @@
-4<?php
+<?php
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01

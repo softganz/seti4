@@ -43,7 +43,7 @@ function controller($loadTemplate = true, $pageTemplate = NULL) {
 function load_lib($file, $folder = NULL) {
 	$error = error_reporting(E_ALL);
 	$libFile = _CORE_FOLDER.'/core/'.($folder ? $folder.'/' : '').$file;
-	// echo 'LOAD LIB '.$libFile.(file_exists($libFile) ? ' COMPLETE' : ' <font color="red">NOT FOUND</font>').' [error_reporting = '.$error.']<br />';
+	// echo 'LOAD LIB '.$libFile.(file_exists($libFile) ? ' COMPLETE' : ' <font color="red">NOT FOUND</font>').' [error_reporting = '.$error.']<br />'."\r\n";
 	if (file_exists($libFile)) {
 		require_once($libFile);
 		error_reporting($error);
