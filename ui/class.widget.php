@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-07-18
-* Version :: 22
+* Modify  :: 2023-10-26
+* Version :: 23
 *
 * @param Array $args
 * @return Widget
@@ -115,22 +115,22 @@ class Widget extends WidgetBase {
 	// @override
 	function _renderWidgetContainerStart($callbackFunction = NULL) {
 		return $this->tagName ?
-			'<'.$this->tagName.' '
-			. ($this->id ? ' id="'.$this->id.'" ' : '')
-			. 'class="widget-'.strtolower($this->widgetName).($this->class ? ' '.$this->class : '')
+			'<'.$this->tagName._NL
+			. ' class="widget-'.strtolower($this->widgetName).($this->class ? ' '.$this->class : '')
 			. ($this->mainAxisAlignment ? ' -main-axis-'.strtolower($this->mainAxisAlignment) : '')
 			. ($this->crossAxisAlignment ? ' -cross-axis-'.strtolower($this->crossAxisAlignment) : '')
-			. '" '
-			. ($this->href ? ' href="'.$this->href.'"' : '')
-			. ($this->config->data['data-rel'] ? ' data-rel="'.$this->config->data['data-rel'].'"' : '')
-			. ($this->config->data['data-done'] ? ' data-done="'.$this->config->data['data-done'].'"' : '')
-			. ($this->dataUrl ? ' data-url="'.$this->dataUrl.'"' : '')
-			. ($this->webview ? ' data-webview="'.$this->webview.'"' : '')
-			. ($this->data('options') ? 'data-options=\''.$this->data('options').'\'' : '')
-			. ($this->data('class-name') ? 'data-class-name="'.$this->data('class-name').'"' : '')
-			. ($this->style ? ' style="'.$this->style.'" ' : '')
-			. ($this->attribute && is_array($this->attribute) ? ' '.sg_implode_attr($this->attribute) : '')
-			. ($this->attributeText ? ' '.$this->attributeText : '')
+			. '"'._NL
+			. ($this->id ? ' id="'.$this->id.'"'._NL : '')
+			. ($this->href ? ' href="'.$this->href.'"'._NL : '')
+			. ($this->config->data['data-rel'] ? ' data-rel="'.$this->config->data['data-rel'].'"'._NL : '')
+			. ($this->config->data['data-done'] ? ' data-done="'.$this->config->data['data-done'].'"'._NL : '')
+			. ($this->dataUrl ? ' data-url="'.$this->dataUrl.'"'._NL : '')
+			. ($this->webview ? ' data-webview="'.$this->webview.'"'._NL : '')
+			. ($this->data('options') ? 'data-options=\''.$this->data('options').'\''._NL : '')
+			. ($this->data('class-name') ? 'data-class-name="'.$this->data('class-name').'"'._NL : '')
+			. ($this->style ? ' style="'.$this->style.'"'._NL : '')
+			. ($this->attribute && is_array($this->attribute) ? ' '.sg_implode_attr($this->attribute)._NL : '')
+			. ($this->attributeText ? ' '.$this->attributeText._NL : '')
 			. ($callbackFunction && is_callable($callbackFunction) ? $callbackFunction() : '')
 			. '>'._NL
 		: '';
@@ -522,44 +522,159 @@ class ExpandButton extends Widget {
 class InlineEdit extends Widget {
 	var $widgetName = 'InlineEdit';
 	var $tagName = 'span';
-	var $version = '0.01';
-	var $mode;
+	var $version = '0.02';
 	var $class;
-	var $text;
+	var $editMode = false;
 	var $type = 'text';
-	// var $class = 'widget-inlineedit';
-	var $editMode;
-	var $emptyText = '...';
+	var $text;
+	var $value;
+	var $label;
+	var $group;
+	var $field;
+	var $tranId;
+	var $updateUrl;
+	var $retType;
+	var $inputClass = NULL;
+	var $inputName;
+	var $title = 'คลิกเพื่อแก้ไข';
+	var $placeholder = '...';
 	var $selectOptions = [];
+	var $options = [];
 
 	function __construct($args = []) {
 		parent::__construct($args);
-		if ($this->editMode && $this->mode === 'standalone') $this->class = 'sg-inline-edit'.' '.$this->class;
+		if ($this->editMode && $this->updateUrl) $this->class = 'sg-inline-edit'.' '.$this->class;
 		$this->class .= ' inline-edit-item -'.$this->type;
+		$this->text = trim($this->text);
+		if (!isset($this->value)) $this->value = $this->text;
 	}
 
-	// 'label' => 'ชื่อโครงการ',
-	// 'type' => 'text',
-	// 'class' => '-hots -sg-paddingnorm',
-	// 'inputClass' => '-fill',
-	// 'text' => $this->proposalInfo->title,
-	// 'editMode' => $this->right->edit,
-	// 'group' => 'topic',
-	// 'field' => 'title',
-	// 						'selectOptions' => (function() {
-	// 'ret' => 'nl2br',
-	// 'tranId' => $productId,
-	// 'value' => $productInfo->info->{$key},
-	// 'inputName' => 'outofsale',
-
 	function _render() {
-		// echo error_reporting(E_ALL).'<br />';
-		// echo error_reporting().'<br />';
+		if (!$this->editMode) return $this->_renderText();
 
-		$ret = '<span'
-			// . ' class="inline-edit-field -'.$this->type.().'"'
-			. '>';
-		$ret .= $this->text;
+		$options = array_merge_recursive($this->options, ['placeholder' => $this->placeholder]);
+
+		$ret = '';
+
+		if ($this->label) $ret .= '<label class="inline-edit-label">' . $this->label . '</label>';
+
+		$text = $this->text;
+		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.$this->placeholder.'</span>';
+		else if ($this->retType === 'nl2br') $text = trim(nl2br($text));
+		else if ($this->retType === 'html') $text = trim(sg_text2html($text));
+		else if ($this->retType === 'text') $text = trim(str_replace("\n",'<br />',$text));
+		else if ($this->retType === 'money' && $text != '') $text = number_format(sg_strip_money($text), 2);
+		else if (preg_match('/^date/i', $this->retType) && $text) {
+			list($this->retType, $retFormat) = explode(':', $this->retType);
+			if (!$retFormat) $retFormat = 'ว ดดด ปปปป';
+			$text = sg_date($this->value, $retFormat);
+		}
+
+		if (is_string($this->selectOptions)) $selectOptions = explode(',', '==เลือก==,' . $this->selectOptions);
+		else if (is_array($this->selectOptions) && count($this->selectOptions) > 0) $selectOptions = ['==เลือก=='] + $this->selectOptions;
+
+		switch ($this->type) {
+			case 'textfield': $ret .= $this->_renderTypeTextField($text); break;
+			case 'radio':
+			case 'checkbox': $ret .= $this->_renderTypeRadio(); break;
+			// case 'select': $ret .= $this->_renderTypeSelect($text); break;
+			default: $ret .= $this->_renderTypeText($text); break;
+		}
+		// $ret .= '</span>'._NL;
+
+		return $ret;
+	}
+
+	function _renderTypeTextField($text) {
+		return '<span class="inline-edit-view">'.$text.'</span>';
+	}
+
+	function _renderTypeText($text) {
+		$ret .= '<span'._NL
+			. ' class="inline-edit-field -'.$this->type.($this->inputClass ? ' '.$this->inputClass : '').'"'._NL
+			. ' onClick=""'._NL
+			. ($this->type ? ' data-type="'.$this->type.'"'._NL : '')
+			. ($this->group ? ' data-group="'.$this->group.'"'._NL : '')
+			. ($this->field ? ' data-fld="'.$this->field.'"'._NL : '')
+			. ' data-tr="'.$this->tranId.'"'
+			. ($this->retType ? ' data-ret="'.$this->retType.'"'._NL : '')
+			. ($this->type === 'textarea' && $options['button'] !== false ? ' data-button="yes"' : '')
+			. ' data-value="'.SG\getFirst($this->value, $this->text).'"'._NL
+			. ($selectOptions ? ' data-data="'.htmlspecialchars(\json_encode($selectOptions)).'"' : '')
+			. ' title="'.$this->title.'"'._NL
+			. ' data-options=\''.SG\json_encode($options).'\''._NL
+			. '>'._NL;
+
+		$ret .= '<span>'._NL;
+		$ret .= $text;
+		$ret .= $this->postText;
+		$ret .= '</span>'._NL;
+		return $ret;
+	}
+
+	// function _renderTypeSelect($text) {
+	// 	$ret = $text;
+	// 	return $ret;
+	// }
+
+	function _renderTypeRadio() {
+		list($choice, $label, $info) = explode(':', $this->text);
+		$choice = trim($choice);
+		$name = SG\getFirst($this->inputName, $this->field);
+		if ($label == '' && strpos($this->text, ':') == false) $label = $choice;
+		$label = trim($label);
+		$ret .= '<label><input class="inline-edit-field '
+			.'-'.$this->type
+			.($this->inputClass ? ' '.$this->inputClass : '').'" '
+			.($this->inputId ? 'id="'.$this->inputId.'"' : '')
+			.'type="'.$this->type.'" '
+			.'data-type="'.$this->type.'" '
+			.'name="'.$this->inputName.'" '
+			.'value="'.$choice.'"'
+			. ($this->group ? ' data-group="'.$this->group.'"'._NL : '')
+			. ($this->field ? ' data-fld="'.$this->field.'"'._NL : '')
+			.(isset($this->value) && $this->value == $choice ? ' checked="checked"':'')
+			.' onclick="" '
+			// .$this->attribute
+			.' style="width: 1.1em; min-width: 1.1em; vertical-align:middle;" '
+			.'/> '
+			.$label
+			.'</label>'
+			.$this->require
+			.($this->info ? '<sup class="sg-info" title="'.$this->info.'">?</sup>' : '')
+			.$this->postText;
+
+		return $ret;
+	}
+
+	function _renderText() {
+		$ret .= '<span class="inline-edit-view '
+			.'-'.$this->type
+			.($this->inputClass ? ' '.$this->inputClass : '').'" '
+			.'>';
+		if ($this->retType === 'html') {
+			$ret .= trim(sg_text2html($text));
+		} else if ($fld['ret'] == 'text') {
+			$ret .= trim(str_replace("\n", '<br />', $text));
+		} else if ($input_type == "money") {
+			$ret .= number_format(sg_strip_money($text), 2);
+		} else if (in_array($input_type, array('radio', 'checkbox'))) {
+			list($choice, $label, $info) = explode(':', $text);
+			$choice = trim($choice);
+			$name = getFirst($fld['name'],$fld['fld']);
+			if ($label == '' && strpos($text, ':') == false) $label = $choice;
+			$label = trim($label);
+			$ret .= '<input type="'.$input_type.'" '
+				.($fld['value'] == $choice ? 'checked="checked" readonly="readonly" disabled="disabled"' : 'disabled="disabled"')
+				.' style="margin:0;margin-top: -1px; display:inline-block;min-width: 1em; vertical-align: middle;" /> '
+				.$label;
+		} else if (substr($fld['ret'], 0, 4) == 'date') {
+			$format = substr($fld['ret'], 5);
+			$ret .= $text ? sg_date($text, $format) : '';
+		} else {
+			$ret .= $this->text;
+		}
+		$ret .= $this->postText;
 		$ret .= '</span>';
 		return $ret;
 	}
@@ -578,7 +693,7 @@ class InlineEdit extends Widget {
 		if (!is_null($this->minValue)) $fld['min-value'] = $this->minValue;
 		if (!is_null($this->maxValue)) $fld['max-value'] = $this->maxValue;
 		if (!is_null($this->require)) $fld['require'] = $this->require;
-		if (!is_null($this->ret)) $fld['ret'] = $this->ret;
+		if (!is_null($this->retType)) $fld['ret'] = $this->retType;
 		if (!is_null($this->preText)) $fld['pretext'] = $this->preText;
 		if (!is_null($this->postText)) $fld['posttext'] = $this->postText;
 		if (!is_null($this->description)) $fld['desc'] = $this->desc;
@@ -599,19 +714,22 @@ class InlineEdit extends Widget {
 
 	// @override
 	function toString() {
+		if (is_null($this->text) || $this->text == '') {
+			$this->class .= ' -empty';
+		}
 		$ret = '<!-- Start of '.$this->widgetName.' -->'._NL;
 		$ret .= $this->_renderWidgetContainerStart(
 			function() {
 				return
-					($this->updateUrl ? ' data-update-url="'.$this->updateUrl.'"' : NULL);
+					($this->updateUrl ? ' data-update-url="'.$this->updateUrl.'"'._NL : NULL);
 			}
 		);
 		$ret .= $this->_render();
 		if ($this->debug) $ret .= (new DebugMsg($this, '$this'))->build();
 		$ret .= $this->_renderWidgetContainerEnd()._NL;
 		$ret .= '<!-- End of '.$this->widgetName.' -->'._NL;
-		$ret .= '<pre>'.htmlspecialchars($ret).'</pre>';
-		$ret .= print_o($this, '$this');
+		// $ret .= '<pre>'.htmlspecialchars($ret).'</pre>';
+		// $ret .= print_o($this, '$this');
 		return $ret;
 	}
 } // End of class Container
