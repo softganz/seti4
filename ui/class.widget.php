@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-10-26
-* Version :: 23
+* Modify  :: 2023-10-27
+* Version :: 24
 *
 * @param Array $args
 * @return Widget
@@ -897,6 +897,8 @@ class ProfilePhoto extends Widget {
 	var $widgetName = 'ProfilePhoto';
 	var $version = '0.01';
 	var $username;
+	var $size; // small,big
+	// parent property : $class,$attribute;
 
 	function __construct($username = NULL, $args = []) {
 		$this->username = $username;
