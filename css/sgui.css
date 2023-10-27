@@ -477,6 +477,7 @@
 	.widget-inlineedit.-fill {display: block;}
 	.widget-inlineedit.-hots>label {font-weight: bold;}
 	.widget-inlineedit.-single-line {line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;}
+	.widget-inlineedit.-single-line>.inline-edit-field {width: 100%;}
 
 	/* @group inline-edit-field */
 	.inline-edit-field {padding: 0; margin: 0; color: #333; display: inline-block; min-width: 100px; width: auto; min-height: 1.4em; vertical-align: middle;}
