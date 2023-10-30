@@ -513,7 +513,7 @@ class Icon extends Widget {
 } // End of class Icon
 
 class ExpandButton extends Widget {
-	var $icon = 'expand_less';
+	var $icon = 'chevron_right';
 	function toString() {
 		return '<a class="sg-expand btn -link -no-print" href="javascript:void(0)"><i class="icon -material">'.$this->icon.'</i></a>';
 	}
