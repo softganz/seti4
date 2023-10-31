@@ -554,7 +554,15 @@ class InlineEdit extends Widget {
 
 		$ret = '';
 
-		if ($this->label) $ret .= '<label class="inline-edit-label">' . $this->label . '</label>';
+		if ($this->label) {
+			$ret .= '<label class="inline-edit-label'
+				. ($this->labelClass ? ' '.$this->labelClass : '')
+				. '"'
+				. ($this->labelStyle ? ' style="'.$this->labelStyle.'"' : '')
+				. '>'
+				. $this->label
+				. '</label>';
+		}
 
 		$text = $this->text;
 		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.$this->placeholder.'</span>';
