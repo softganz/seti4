@@ -181,7 +181,8 @@ class CounterModel {
 		// Not insert log on counter_log is table lock
 		$isCounterTableLock = mydb::table_is_lock('%counter_log%');
 		if ($isCounterTableLock && user_access('access administrator pages')) {
-			cfg('web.message','<p class="notify" style="position: absolute; top: 0; right: 0; z-index: 999999;">Table <strong>counter_log</strong> was locked.</p>');
+			cfg('web.message','<p class="notify" style="position: absolute; top: 0; right: 0; z-index: 999999;">Table <strong>counter_log</strong> was locked!!!.</p>');
+			return false;
 		}
 
 		if ( preg_match('/IIS/i',$_SERVER['SERVER_SOFTWARE']) ) {
