@@ -1,8 +1,9 @@
 <?php
 /**
 * Counter :: Model
-* Created 2021-11-26
-* Modify 	2021-11-26
+* Created :: 2021-11-26
+* Modify  :: 2023-11-03
+* Version :: 2
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -82,7 +83,14 @@ class CounterModel {
 		CounterModel::dayLog($today->date,$today->hours,$new_user);
 		if ( $counter->used_log == 1 ) CounterModel::addLog($today->datetime,$user_id,$new_user);
 		// update user hit count
-		if ( i()->ok ) mydb::query('UPDATE %users% SET hits = hits + 1 WHERE uid = :uid LIMIT 1',':uid',$user_id);
+		if ( i()->ok ) {
+			mydb::query(
+				'UPDATE %users%
+				SET `hits` = `hits` + 1, `lastHitTime` = NOW()
+				WHERE uid = :uid LIMIT 1',
+				[':uid' => $user_id]
+			);
+		}
 
 		$online = (Object) [
 			'keyid' => $onlinekey,

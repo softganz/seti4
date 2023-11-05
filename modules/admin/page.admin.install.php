@@ -1,4 +1,15 @@
 <?php
+/**
+* Admin   :: Install Basic Database Table
+* Created :: 2016-11-08
+* Modify  :: 2023-11-03
+* Version :: 2
+*
+* @return Widget
+*
+* @usage admin/install
+*/
+
 function admin_install($self) {
 	$self->theme->title='Site Install';
 
@@ -131,7 +142,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `key3` (`key3`),
 		KEY `key4` (`key4`),
 		KEY `key5` (`key5`)
-		);';
+	);';
 
 	$query->bigdata='CREATE TABLE IF NOT EXISTS %bigdata% (
 		`bigid` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -154,7 +165,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `ucreated` (`ucreated`),
 		KEY `modified` (`modified`),
 		KEY `umodified` (`umodified`)
-		);';
+	);';
 
 
 	$query->cache='CREATE TABLE IF NOT EXISTS %cache% (
@@ -165,7 +176,7 @@ function __admin_install_create_table($prefix=null) {
 		`headers` text,
 		PRIMARY KEY  (`cid`),
 		KEY `expire` (`expire`)
-		);';
+	);';
 
 	$query->users='CREATE TABLE IF NOT EXISTS %users% (
 		`uid` int(10) unsigned NOT NULL auto_increment,
@@ -184,6 +195,7 @@ function __admin_install_create_table($prefix=null) {
 		`last_login_ip` bigint(20) default NULL,
 		`login_time` datetime default NULL,
 		`login_ip` bigint(20) default NULL,
+		`lastHitTime` datetime default NULL,
 		`code` varchar(255) default NULL,
 		`pwresettime` BIGINT NULL DEFAULT NULL,
 		`views` int(10) unsigned NOT NULL default 0,
@@ -217,45 +229,46 @@ function __admin_install_create_table($prefix=null) {
 		KEY `email` (`email`),
 		KEY `name` (`name`),
 		KEY `areacode` (`areacode`),
-		KEY `pwresettime` (`pwresettime`)
-		);';
+		KEY `pwresettime` (`pwresettime`),
+		KEY `lastHitTime` (`lastHitTime`)
+	);';
 
 	$query->users_online = 'CREATE TABLE IF NOT EXISTS %users_online% (
-			`keyid` varchar(100) NOT NULL,
-			`uid` int(11) DEFAULT NULL,
-			`name` varchar(255) DEFAULT NULL,
-			`coming` bigint(20) DEFAULT NULL,
-			`access` bigint(20) DEFAULT NULL,
-			`hits` int(11) DEFAULT 0,
-			`ip` varchar(50) DEFAULT NULL,
-			`host` varchar(255) DEFAULT NULL,
-			`browser` varchar(255) DEFAULT NULL,
-			PRIMARY KEY (`keyid`),
-			KEY `uid` (`uid`),
-			KEY `coming` (`coming`),
-			KEY `access` (`access`)
-		);';
+		`keyid` varchar(100) NOT NULL,
+		`uid` int(11) DEFAULT NULL,
+		`name` varchar(255) DEFAULT NULL,
+		`coming` bigint(20) DEFAULT NULL,
+		`access` bigint(20) DEFAULT NULL,
+		`hits` int(11) DEFAULT 0,
+		`ip` varchar(50) DEFAULT NULL,
+		`host` varchar(255) DEFAULT NULL,
+		`browser` varchar(255) DEFAULT NULL,
+		PRIMARY KEY (`keyid`),
+		KEY `uid` (`uid`),
+		KEY `coming` (`coming`),
+		KEY `access` (`access`)
+	);';
 
 	$query->users_role = 'CREATE TABLE IF NOT EXISTS %users_role% (
-			`uid` int(10) UNSIGNED NOT NULL,
-			`role` varchar(20) NOT NULL,
-			`status` enum("WAITING","ENABLE","BLOCK") DEFAULT NULL,
-			`reason` varchar(100) DEFAULT NULL,
-			`approved` date DEFAULT NULL,
-			`created` bigint(20) DEFAULT NULL,
-			PRIMARY KEY (`uid`,`role`),
-			KEY `uid` (`uid`),
-			KEY `role` (`role`),
-			KEY `status` (`status`),
-			KEY `created` (`created`),
-			KEY `dateapproved` (`approved`)
-		);';
+		`uid` int(10) UNSIGNED NOT NULL,
+		`role` varchar(20) NOT NULL,
+		`status` enum("WAITING","ENABLE","BLOCK") DEFAULT NULL,
+		`reason` varchar(100) DEFAULT NULL,
+		`approved` date DEFAULT NULL,
+		`created` bigint(20) DEFAULT NULL,
+		PRIMARY KEY (`uid`,`role`),
+		KEY `uid` (`uid`),
+		KEY `role` (`role`),
+		KEY `status` (`status`),
+		KEY `created` (`created`),
+		KEY `dateapproved` (`approved`)
+	);';
 
 	$query->variable='CREATE TABLE IF NOT EXISTS %variable% (
 		`name` varchar(50) NOT NULL default "",
 		`value` longtext NOT NULL,
 		PRIMARY KEY  (`name`)
-		);';
+	);';
 
 	$query->counter_day='CREATE TABLE IF NOT EXISTS %counter_day% (
 		`log_date` date NOT NULL default "0000-00-00",
@@ -310,7 +323,7 @@ function __admin_install_create_table($prefix=null) {
 		`u_22` smallint(5) unsigned NOT NULL default 0,
 		`u_23` smallint(5) unsigned NOT NULL default 0,
 		PRIMARY KEY  (`log_date`)
-		);';
+	);';
 
 	$query->counter_log='CREATE TABLE IF NOT EXISTS %counter_log% (
 		`id` bigint(20) unsigned NOT NULL auto_increment,
@@ -329,7 +342,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `ip` (`ip`,`id`),
 		KEY `log_date` (`log_date`),
 		KEY `url` (`url`)
-		);';
+	);';
 
 	$query->vocabulary='CREATE TABLE IF NOT EXISTS %vocabulary% (
 		`vid` int(10) unsigned NOT NULL auto_increment,
@@ -344,13 +357,13 @@ function __admin_install_create_table($prefix=null) {
 		`module` varchar(255) NULL,
 		`weight` tinyint(4) NOT NULL default 0,
 		PRIMARY KEY  (`vid`)
-		);';
+	);';
 
 	$query->vocabulary_types='CREATE TABLE IF NOT EXISTS %vocabulary_types% (
 		`vid` int(10) unsigned NOT NULL default 0,
 		`type` varchar(32) NOT NULL,
 		PRIMARY KEY  (`vid`,`type`)
-		);';
+	);';
 
 	$query->tag='CREATE TABLE IF NOT EXISTS %tag% (
 		`tid` int(10) unsigned NOT NULL auto_increment,
@@ -369,7 +382,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`tid`),
 		KEY `vid` (`vid`),
 		KEY `taggroup` (`taggroup`)
-		);';
+	);';
 
 	$query->tag_hierarchy='CREATE TABLE IF NOT EXISTS %tag_hierarchy% (
 		`tid` int(10) unsigned NOT NULL default 0,
@@ -377,7 +390,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`tid`,`parent`),
 		KEY `tid` (`tid`),
 		KEY `parent` (`parent`)
-		);';
+	);';
 
 	$query->tag_relation='CREATE TABLE IF NOT EXISTS %tag_relation% (
 		`trid` int(11) NOT NULL auto_increment,
@@ -386,7 +399,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`trid`),
 		UNIQUE KEY `tid1_tid2` (`tid1`,`tid2`),
 		KEY `tid2` (`tid2`)
-		);';
+	);';
 
 	$query->tag_synonym='CREATE TABLE IF NOT EXISTS %tag_synonym% (
 		`tsid` int(11) NOT NULL auto_increment,
@@ -395,7 +408,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`tsid`),
 		KEY `tid` (`tid`),
 		KEY `name` (`name`)
-		);';
+	);';
 
 	$query->tag_topic='CREATE TABLE IF NOT EXISTS %tag_topic% (
 		`tpid` int(10) unsigned NOT NULL default 0,
@@ -404,7 +417,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`tid`,`tpid`),
 		KEY `tpid` (`tpid`),
 		KEY `tid` (`tid`)
-		);';
+	);';
 
 	$query->topic = 'CREATE TABLE IF NOT EXISTS %topic% (
 		`tpid` int(10) unsigned NOT NULL auto_increment,
@@ -462,7 +475,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `ratetimes` (`ratetimes`),
 		KEY `liketimes` (`liketimes`),
 		KEY `approve` (`approve`)
-		);';
+	);';
 
 	$query->topic_revisions='CREATE TABLE IF NOT EXISTS %topic_revisions% (
 		`tpid` int(10) unsigned NOT NULL,
@@ -479,7 +492,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`revid`),
 		KEY `tpid` (`tpid`),
 		KEY `muid` (`uid`)
-		);';
+	);';
 
 	$query->topic_types='CREATE TABLE IF NOT EXISTS %topic_types% (
 		`type` varchar(32) NOT NULL,
@@ -497,7 +510,7 @@ function __admin_install_create_table($prefix=null) {
 		`locked` tinyint(4) NOT NULL default 0,
 		`orig_type` varchar(255) NULL,
 		PRIMARY KEY  (`type`)
-		);';
+	);';
 
 	$query->topic_comments='CREATE TABLE IF NOT EXISTS %topic_comments% (
 		`cid` int(11) unsigned NOT NULL auto_increment,
@@ -522,7 +535,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `tpid` (`tpid`),
 		KEY `status` (`status`),
 		KEY `timestamp` (`timestamp`)
-		);';
+	);';
 
 	$query->topic_files='CREATE TABLE IF NOT EXISTS %topic_files% (
 		`fid` int(10) unsigned NOT NULL auto_increment,
@@ -561,7 +574,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `orgid` (`orgid`),
 		KEY `refid` (`refid`),
 		UNIQUE (`fkey`)
-		);';
+	);';
 
 	$query->topic_parent='CREATE TABLE IF NOT EXISTS %topic_parent% (
 		`tpid` int(11) UNSIGNED NOT NULL DEFAULT 0,
@@ -574,14 +587,14 @@ function __admin_install_create_table($prefix=null) {
 		KEY `parent` (`parent`),
 		KEY `tgtid` (`tgtid`),
 		KEY `bdgroup` (`bdgroup`)
-		)';
+	)';
 
 	$query->topic_user='CREATE TABLE IF NOT EXISTS %topic_user% (
 		`tpid` int(11) NOT NULL DEFAULT 0,
 		`uid` int(11) NOT NULL DEFAULT 0,
 		`membership` enum("Admin","Manager","Follower","Trainer","Owner","Regular member","Commentator","Viewer","Editor") NOT NULL DEFAULT "Regular member",
 		PRIMARY KEY (`tpid`,`uid`)
-		)';
+	)';
 
 	$query->url_alias='CREATE TABLE IF NOT EXISTS %url_alias% (
 		`pid` int(10) unsigned NOT NULL auto_increment,
@@ -591,7 +604,7 @@ function __admin_install_create_table($prefix=null) {
 		PRIMARY KEY  (`pid`),
 		UNIQUE KEY `dst_language` (`system`,`language`),
 		KEY `alias` (`alias`)
-		);';
+	);';
 
 	$query->session='CREATE TABLE IF NOT EXISTS %session% (
 		`sess_id` varchar(200) NOT NULL,
@@ -605,7 +618,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `sess_start` (`sess_start`),
 		KEY `expire` (`expire`),
 		KEY `sess_last_acc` (`sess_last_acc`)
-		);';
+	);';
 
 	$query->property='CREATE TABLE IF NOT EXISTS %property% (
 		`propid` bigint(20) unsigned NOT NULL DEFAULT 0,
@@ -614,7 +627,7 @@ function __admin_install_create_table($prefix=null) {
 		`item` varchar(30) DEFAULT NULL,
 		`value` text NULL DEFAULT NULL,
 		PRIMARY KEY (`propid`,`module`,`name`), KEY `name` (`name`)
-		);';
+	);';
 
 	$query->watchdog='CREATE TABLE IF NOT EXISTS %watchdog% (
 		`wid` bigint(20) NOT NULL auto_increment,
@@ -637,7 +650,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `keyword` (`keyword`),
 		KEY `keyid` (`keyid`),
 		KEY `fldname` (`fldname`)
-		);';
+	);';
 
 	$query->reaction='CREATE TABLE IF NOT EXISTS %reaction% (
 		`actid` int(11) NOT NULL AUTO_INCREMENT,
@@ -650,7 +663,7 @@ function __admin_install_create_table($prefix=null) {
 		KEY `uid` (`uid`),
 		KEY `action` (`action`),
 		KEY `dateact` (`dateact`)
-		);';
+	);';
 
 	$query->lastno = 'CREATE TABLE IF NOT EXISTS %lastno% (
 		`orgId` int(11) NOT NULL,
@@ -659,7 +672,7 @@ function __admin_install_create_table($prefix=null) {
 		`lastNo` varchar(20) NOT NULL,
 		`resetOnPeriod` tinyint(4) NOT NULL DEFAULT 1,
 		PRIMARY KEY (`orgId`,`docName`)
-		);';
+	);';
 
 	// create table with prefix
 	foreach ($query as $table=>$sql_cmd) {
