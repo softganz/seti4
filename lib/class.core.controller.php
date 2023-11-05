@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2023-10-25
-* Version :: 8
+* Modify  :: 2023-11-03
+* Version :: 9
 */
 
 /*************************************************************
@@ -885,7 +885,7 @@ class SgCore {
 	* @param Array $menu
 	* @return String
 	*/
-	static function processMenu($menu, $prefix = 'page') {
+	static function processMenu($menu, &$buildMethod = 'build', $prefix = 'page') {
 		$module = $menu['call']['module'];
 		$auth_code = $menu['access'];
 		$is_auth = user_access($auth_code);
@@ -916,6 +916,7 @@ class SgCore {
 		}
 
 		$menuArgs = array_merge([$module], is_array($menu['call']['arg']) ? $menu['call']['arg'] : [] );
+// debugMsg($menuArgs, '$menuArgsA');
 
 		// Load request from package function file page.package.method[.method].php
 		$funcName = $funcArg = [];
@@ -923,6 +924,16 @@ class SgCore {
 			if (is_numeric($value) || $value == '*' || preg_match('/^[0-9]/', $value)) break;
 			$funcName[] = $value;
 		}
+// debugMsg($funcName, '$funcNameA');
+// debugMsg(end($funcName));
+		if (preg_match('/(.*)\\'._MS_.'(\w*)$/', end($funcName), $out)) {
+			// debugMsg($out, '$outB');
+			$funcName[2] = $out[1];
+			// $request = $out[1];
+			$buildMethod = $out[2];
+			// q($request);
+		}
+// debugMsg($funcName, '$funcNameB');
 
 		$found = false;
 
@@ -930,11 +941,11 @@ class SgCore {
 			$funcArg = array_slice($menuArgs, count($funcName));
 			$pageFile = $prefix.'.'.implode('.', $funcName);
 
+			// debugMsg($funcName,'$funcName');
+			// debugMsg($funcArg,'$funcArg');
 
 			if ($debugLoadfile) {
 				debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in SgCore::processMenu()</div>');
-				// debugMsg($funcName,'$funcName');
-				// debugMsg($funcArg,'$funcArg');
 			}
 
 			$loadResult = list($retClass, $found, $filename) = SgCore::loadResourceFile($pageFile);
@@ -948,9 +959,18 @@ class SgCore {
 			array_pop($funcName);
 		} while (!$found && count($funcName) >= 1);
 
-		if ($found && class_exists($retClass) && method_exists($retClass, 'build')) {
+// debugMsg($retClass);
+// debugMsg($menuArgs, '$menuArgs-after');
+// debugMsg($funcName, '$funcName');
+// debugMsg($funcArg, '$funcArg');
+
+
+
+// debugMsg($funcArg, '$funcArg');
+
+		if ($found && class_exists($retClass) && method_exists($retClass, $buildMethod)) {
 			$pageClassWidget = new $retClass(...$funcArg);
-			$pageBuildWidget = $pageClassWidget->build();
+			$pageBuildWidget = $pageClassWidget->$buildMethod();
 			// debugMsg($pageClassWidget, '$pageClassWidget');
 			// debugMsg($pageBuildWidget, '$pageBuildWidget');
 			if ($pageBuildWidget->exeClass) {
@@ -959,8 +979,10 @@ class SgCore {
 			}
 		} else if ($found && function_exists($retClass)) {
 			$pageBuildWidget = $retClass(...array_merge([$pageClass], $funcArg));
+			$pageClassWidget = NULL;
 		} else {
 			$pageBuildWidget = NULL;
+			$pageClassWidget = NULL;
 		}
 
 		return [$pageClass, $found, $pageBuildWidget, $pageClassWidget];
@@ -977,6 +999,7 @@ class SgCore {
 		$isLoadHomePage = false;
 		$requestFilePrefix = 'page';
 		$isDebugProcess = debug('process');
+		$buildMethod = 'build'; // Default build method
 
 		if ($isDebugProcess) $process_debug = 'process debug of <b>'.$request.'</b> request<br />'._NL;
 
@@ -1017,6 +1040,15 @@ class SgCore {
 				q($request);
 				$requestFilePrefix = 'api';
 			}
+			// debugMsg($request);
+			// if (preg_match('/(.*)\\'._MS_.'(person)$/', $request, $out)) {
+			// 	debugMsg($out, '$out');
+			// 	$request = $out[1];
+			// 	$buildMethod = $out[2];
+			// 	q($request);
+			// }
+			// debugMsg($request);
+			// debugMsg(q(),'q()');
 			if (q(0)) $manifest = R::Manifest(q(0));
 			if ($url_alias = url_alias($request)) {
 				// check url alias
@@ -1041,13 +1073,11 @@ class SgCore {
 		// Load Page On Request
 		if ($manifest[1] && $menu) { // This is a core version 4
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 <b>'.$request.'</b><br />';
-			// list($pageClass, $found, $pageBuildWidget) = SgCore::processMenu($menu);
 		} else { // Page no manifest
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
-			// list($pageClass, $found, $pageBuildWidget) = SgCore::processMenu($menu);
 		}
-		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = SgCore::processMenu($menu, $requestFilePrefix);
-
+		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = SgCore::processMenu($menu, $buildMethod, $requestFilePrefix);
+// debugMsg('$buildMethod = '.$buildMethod);
 		// Set page id to home
 		if ($isLoadHomePage) cfg('page_id','home');
 
@@ -1057,11 +1087,11 @@ class SgCore {
 				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 			}
 
-			if (is_object($pageClassWidget) && method_exists($pageClassWidget, 'build')) {
+
+			if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
 
-				$buildMethod = 'build'; // Default build method
 				$reservedMethod = ['rightToBuild'];
 				// debugMsg($pageClassWidget, '$pageClassWidget');
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
@@ -1071,7 +1101,17 @@ class SgCore {
 					$error = $pageClassWidget->rightToBuild();
 					if (is_object($error)) $pageBuildWidget = $error;
 				}
+				// print_r($pageBuildWidget);
+				// die($buildMethod.'@'.date('H:i:s'));
 
+				if (is_object($pageBuildWidget) && $pageBuildWidget->onBuild && is_callable($pageBuildWidget->onBuild)) {
+					// debugMsg('ONBUILD');
+					// debugMsg($pageBuildWidget, '$pageBuildWidget');
+					$a = $pageBuildWidget->onBuild;
+					$a($pageBuildWidget);
+					// $pageBuildWidget->{$pageBuildWidget->onBuild}($this);
+					// if ($this->args['onComplete'] && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
+				}
 				// Build request result
 				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
 					$requestResult = $pageBuildWidget->build();
@@ -1097,6 +1137,7 @@ class SgCore {
 					$pageClass->sideBar = $pageBuildWidget->sideBar;
 				}
 
+				// Create Floating Action Button
 				if ($pageBuildWidget->floatingActionButton) {
 					$pageClass->floatingActionButton = $pageBuildWidget->floatingActionButton;
 				}
@@ -1107,7 +1148,8 @@ class SgCore {
 				// Result is String, join
 				$requestResult .= $pageBuildWidget;
 			}
-
+// debugMsg(gettype($requestResult));
+// debugMsg($requestResult, '$resourceType');
 			// Generate result by content type
 			if (cfg('Content-Type') == 'text/xml') {
 				die(process_widget($requestResult));
@@ -1147,10 +1189,11 @@ class SgCore {
 				}
 
 				// Show AppBar as Box Header
-				if (is_object($pageBuildWidget->appBar) && $pageBuildWidget->appBar->boxHeader && method_exists($pageBuildWidget->appBar, 'build')) {
+				if (is_object($pageBuildWidget->appBar) && $pageBuildWidget->appBar->boxHeader && method_exists($pageBuildWidget->appBar, $buildMethod)) {
 					$pageBuildWidget->appBar->showInBox = true;
 					$requestResult = $pageBuildWidget->appBar->build() . $requestResult;
 				}
+// die($buildMethod.'@'.date('H:i:s'));
 
 				die(debugMsg().process_widget($requestResult));
 			} else {
@@ -1176,6 +1219,8 @@ class SgCore {
 
 		// Start Render Page, result is string
 		$requestResult = (new PageRenderWidget($pageClass, $requestResult))->build();
+
+		// Replace widget container with associate widget
 		$requestResult = process_widget($requestResult);
 
 		R()->timer->stop($request);
