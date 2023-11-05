@@ -473,10 +473,10 @@
 	.widget-table.-info>tbody>tr>td:nth-child(2) {width: 100%;}
 	.widget-table.-sg-child-vertical-align-middle>tbody>tr>td {vertical-align: middle;}
 
-.widget-inlineedit {display: block;}
+.widget-inlineedit {display: inline-block;}
 	.widget-inlineedit.-fill {display: block;}
 	.widget-inlineedit.-hots>label {font-weight: bold;}
-	.widget-inlineedit.-single-line {line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;}
+	.widget-inlineedit.-single-line {display: block; line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;}
 	.widget-inlineedit.-single-line>.inline-edit-field {width: 100%;}
 
 	/* @group inline-edit-field */
