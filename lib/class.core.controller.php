@@ -3,7 +3,7 @@
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
 * Modify  :: 2023-11-07
-* Version :: 10
+* Version :: 11
 */
 
 /*************************************************************
@@ -381,9 +381,10 @@ class SgCore {
 		if (is_dir('./modules/'.$module)) $mainFolder .= '.;';
 		$mainFolder .= $coreFolder;
 
-		if (in_array($resourceType, ['r', 'widget', 'view', 'page', 'on', 'asset']) && $template) {
+		if (in_array($resourceType, ['r', 'widget', 'model', 'view', 'page', 'api', 'on', 'asset']) && $template) {
 			foreach (explode(';', $template) as $item)
 				if ($item) $paths[] = 'modules/'.$module.'/template/'.trim($item);
+				if ($item && $subModule) $paths[] = 'modules/'.$module.'/template/'.trim($item).'/'.$subModule;
 		}
 
 		switch ($resourceType) {
