@@ -2,8 +2,8 @@
 /**
 * Person   :: Person Model
 * Created :: 2022-09-27
-* Modify  :: 2022-09-27
-* Version :: 1
+* Modify  :: 2023-11-07
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -108,7 +108,7 @@ class PersonModel {
 		if ($isAdmin || $isOwner) {
 			$isAccess=true;
 			$isEdit=true;
-		} else  if ($zones=ImedModel::get_user_zone(i()->uid,'imed')) {
+		} else  if (i()->ok && $zones=ImedModel::get_user_zone(i()->uid,'imed')) {
 			$psnRight=R::Model('imed.zone.right',$zones,$rs->changwat,$rs->ampur,$rs->tambon);
 			if (!$psnRight) {
 				$isAccess=false;
