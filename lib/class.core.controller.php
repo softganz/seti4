@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2023-11-03
-* Version :: 9
+* Modify  :: 2023-11-07
+* Version :: 10
 */
 
 /*************************************************************
@@ -916,57 +916,56 @@ class SgCore {
 		}
 
 		$menuArgs = array_merge([$module], is_array($menu['call']['arg']) ? $menu['call']['arg'] : [] );
-// debugMsg($menuArgs, '$menuArgsA');
 
-		// Load request from package function file page.package.method[.method].php
-		$funcName = $funcArg = [];
-		foreach ($menuArgs as $value) {
-			if (is_numeric($value) || $value == '*' || preg_match('/^[0-9]/', $value)) break;
-			$funcName[] = $value;
-		}
-// debugMsg($funcName, '$funcNameA');
-// debugMsg(end($funcName));
-		if (preg_match('/(.*)\\'._MS_.'(\w*)$/', end($funcName), $out)) {
-			// debugMsg($out, '$outB');
-			$funcName[2] = $out[1];
-			// $request = $out[1];
-			$buildMethod = $out[2];
-			// q($request);
-		}
-// debugMsg($funcName, '$funcNameB');
+		// debugMsg($menuArgs, '$menuArgsA');
 
-		$found = false;
+				// Load request from package function file page.package.method[.method].php
+				$funcName = $funcArg = [];
+				foreach ($menuArgs as $value) {
+					if (is_numeric($value) || $value == '*' || preg_match('/^[0-9]/', $value)) break;
+					$funcName[] = $value;
+				}
+				// debugMsg($funcName, '$funcNameA');
+				// debugMsg(end($funcName));
+				if (preg_match('/(.*)\\'._MS_.'(\w*)$/', end($funcName), $out)) {
+					// debugMsg($out, '$out');
+					$funcName[count($funcName) - 1] = $out[1]; // Last argument
+					$buildMethod = $out[2]; // After method separator
+				}
+				// debugMsg($funcName, '$funcNameB');
 
-		do {
-			$funcArg = array_slice($menuArgs, count($funcName));
-			$pageFile = $prefix.'.'.implode('.', $funcName);
+				$found = false;
 
-			// debugMsg($funcName,'$funcName');
-			// debugMsg($funcArg,'$funcArg');
+				do {
+					$funcArg = array_slice($menuArgs, count($funcName));
+					$pageFile = $prefix.'.'.implode('.', $funcName);
 
-			if ($debugLoadfile) {
-				debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in SgCore::processMenu()</div>');
-			}
+					// debugMsg($funcName,'$funcName');
+					// debugMsg($funcArg,'$funcArg');
 
-			$loadResult = list($retClass, $found, $filename) = SgCore::loadResourceFile($pageFile);
+					if ($debugLoadfile) {
+						debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in SgCore::processMenu()</div>');
+					}
 
-			if ($debugLoadfile) {
-				// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
-				// debugMsg($loadResult,'$loadResult');
-				debugMsg('<div style="color: green;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
-			}
+					$loadResult = list($retClass, $found, $filename) = SgCore::loadResourceFile($pageFile);
 
-			array_pop($funcName);
-		} while (!$found && count($funcName) >= 1);
+					if ($debugLoadfile) {
+						// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
+						// debugMsg($loadResult,'$loadResult');
+						debugMsg('<div style="color: green;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
+					}
 
-// debugMsg($retClass);
-// debugMsg($menuArgs, '$menuArgs-after');
-// debugMsg($funcName, '$funcName');
-// debugMsg($funcArg, '$funcArg');
+					array_pop($funcName);
+				} while (!$found && count($funcName) >= 1);
 
+		// debugMsg($retClass);
+		// debugMsg($menuArgs, '$menuArgs-after');
+		// debugMsg($funcName, '$funcName');
+		// debugMsg($funcArg, '$funcArg');
 
 
-// debugMsg($funcArg, '$funcArg');
+
+		// debugMsg($funcArg, '$funcArg');
 
 		if ($found && class_exists($retClass) && method_exists($retClass, $buildMethod)) {
 			$pageClassWidget = new $retClass(...$funcArg);
