@@ -1435,7 +1435,7 @@ $SCREENS
 			#cboxLoadedContent .header {}
 			#cboxLoadedContent .header>.nav.-back {display: none;}
 			#cboxLoadedContent .header h2,
-			#cboxLoadedContent .header h3 {color: #333; line-height: 48px; overflow: hidden; padding: 0 8px;}
+			#cboxLoadedContent .header h3 {line-height: 48px; overflow: hidden; padding: 0 8px;}
 			#cboxLoadedContent .header>.nav:not(.-back) {padding: 6px 0 6px 0;}
 			#cboxLoadedContent .header>.nav:not(.-back) .ui-item>a {padding: 6px;}
 			#cboxLoadedContent .header>.nav form {display: inherit; vertical-align: middle;}
