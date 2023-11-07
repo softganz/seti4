@@ -108,7 +108,7 @@ class PersonModel {
 		if ($isAdmin || $isOwner) {
 			$isAccess=true;
 			$isEdit=true;
-		} else  if ($zones=R::Model('imed.zone.get',i()->uid,'imed')) {
+		} else  if ($zones=ImedModel::get_user_zone(i()->uid,'imed')) {
 			$psnRight=R::Model('imed.zone.right',$zones,$rs->changwat,$rs->ampur,$rs->tambon);
 			if (!$psnRight) {
 				$isAccess=false;
