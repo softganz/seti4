@@ -394,6 +394,9 @@ class SgCore {
 		if ($template && in_array($resourceType, ['widget', 'model', 'page', 'api', 'asset', /* @deprecated */ 'r', 'view', 'on'])) {
 			foreach (explode(';', $template) as $item) {
 				$item = trim($item);
+
+				// debugMsg($coreFolder.'/modules/'.$module.'/template/'.$item.(is_dir($coreFolder.'/modules/'.$module.'/template/'.$item) ? ' Exists' : ' Not Exists'));
+
 				if (in_array($resourceType, ['widget', 'model', 'api'])) {
 					if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$fixFolders[$resourceType];
 				} else if (in_array($resourceType, ['page'])) {
@@ -549,7 +552,6 @@ class SgCore {
 				$paths[] = 'core/modules/'.$module.'/r';
 				$paths[] = 'core/models';
 				break;
-
 		}
 
 		// Load module configuration file in json format
@@ -569,9 +571,13 @@ class SgCore {
 
 		$fileName .= implode('.',$request);
 		if (!in_array($resourceType, ['asset'])) {
-			$fileName .= (preg_match('/\.php$/i', $package) ? '' : '.php');
+			$fileName .= preg_match('/\.php$/i', $package) ? '' : '.php';
 		}
-		if(!is_null($funcName)) $funcName .= implode('_',$request);
+
+		if(!is_null($funcName)) {
+			$funcName .= implode('_',$request);
+		}
+
 		if ((($funcName && function_exists($funcName)) || ($className && class_exists($className)) ) && array_key_exists($packageName, $loadFiles)) {
 			// Resource file was loaded
 			$found = true;
@@ -628,19 +634,6 @@ class SgCore {
 							} else if ($funcName || $className) {
 								// If has $funcName or $className but not found class or function
 								// Then continue load next file
-								// If not effect, please remove
-
-								// if (class_exists($className)) {
-								// 	$debugStr .= '<span style="color:green;">Found Execute class '.$className.'().</span><br />'._NL;
-								// 	$found = true;
-								// 	break;
-								// } else if (function_exists($funcName)) {
-								// 	$debugStr .= '<span style="color:green;">Found Execute function '.$funcName.'().</span><br />'._NL;
-								// 	$found = true;
-								// 	break;
-								// } else {
-								// 	// Execute function '.$funcName.'() is not exist.
-								// }
 							} else {
 								$found = true;
 							}
