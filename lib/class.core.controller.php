@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2023-11-07
-* Version :: 11
+* Modify  :: 2023-11-08
+* Version :: 12
 */
 
 /*************************************************************
@@ -328,6 +328,7 @@ class SgCore {
 		$funcName = NULL;
 		$isDebugable = true;
 		$debugLoadfile = debug('load') || $debugResourceFile;
+		$fixFolders = ['widget' => 'widgets', 'model' => 'models', 'api' => 'api'];
 		$template = cfg('template');
 		if (cfg('template.add')) {
 			$template = cfg('template.add').';'.$template;
@@ -335,10 +336,14 @@ class SgCore {
 
 		$loadCount++;
 
+		// debugMsg('$packageName = '.$packageName);
+
 		// Remove .php extension
 		$packageName = preg_replace('/\.php$/i', '', $packageName);
 
-		if (preg_match('/^(r|widget|view|page|api|on|manifest|module)\.(.*)/i',$packageName,$out)) {
+		// debugMsg('$packageName = '.$packageName);
+
+		if (preg_match('/^(widget|page|api|manifest|module|r|view|on|)\.(.*)/i', $packageName, $out)) {
 			// Begin with keyword and follow by .
 			list(, $resourceType, $package) = $out;
 			$request = explode('.',$package);
@@ -365,6 +370,10 @@ class SgCore {
 		}
 
 		$subModule = isset($request[1]) ? $request[1] : NULL;
+		$actionModule = isset($request[2]) && is_string($request[2]) ? $request[2] : NULL;
+
+		// debugMsg($request, '$request');
+		// debugMsg('$subModule = '.$subModule.' $actionModule = '.$actionModule);
 
 		$loadAction = in_array($resourceType, ['asset']) ? 'content' : 'include';
 
@@ -381,10 +390,20 @@ class SgCore {
 		if (is_dir('./modules/'.$module)) $mainFolder .= '.;';
 		$mainFolder .= $coreFolder;
 
-		if (in_array($resourceType, ['r', 'widget', 'model', 'view', 'page', 'api', 'on', 'asset']) && $template) {
-			foreach (explode(';', $template) as $item)
-				if ($item) $paths[] = 'modules/'.$module.'/template/'.trim($item);
-				if ($item && $subModule) $paths[] = 'modules/'.$module.'/template/'.trim($item).'/'.$subModule;
+		// Add template tp path
+		if ($template && in_array($resourceType, ['widget', 'model', 'page', 'api', 'asset', /* @deprecated */ 'r', 'view', 'on'])) {
+			foreach (explode(';', $template) as $item) {
+				$item = trim($item);
+				if (in_array($resourceType, ['widget', 'model', 'api'])) {
+					if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$fixFolders[$resourceType];
+				} else if (in_array($resourceType, ['page'])) {
+					if ($subModule && $actionModule) {
+						$paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$actionModule;
+					}
+				}
+				if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule;
+				$paths[] = 'modules/'.$module.'/template/'.$item;
+			}
 		}
 
 		switch ($resourceType) {
@@ -427,7 +446,8 @@ class SgCore {
 
 			case 'model' : // Model Resource
 				$fileName = 'model.';
-				$paths[] = 'modules/'.$module.'/template/'.$template;
+				// if ($subModule && $template) $paths[] = 'modules/'.$module.'/template/'.$template.'/'.$subModule.'/models';
+				# $paths[] = 'modules/'.$module.'/template/'.$template;
 				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/models';
 				$paths[] = 'modules/'.$module.'/models';
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
@@ -435,6 +455,62 @@ class SgCore {
 					$paths[] = 'core/modules/'.$module.'/models';
 				}
 				$paths[] = 'core/models';
+				break;
+
+			case 'api' : // Page Resource
+				$fileName = 'api.';
+				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request)).'Api';
+
+				if ($subModule && $template) $paths[] = 'modules/'.$module.'/template/'.$template.'/'.$subModule.'/api';
+				$paths[] = 'modules/'.$module.'/template/'.$template;
+				if ($subModule) {
+					$paths[] = 'modules/'.$module.'/'.$subModule.'/api';
+					if (isset($request[2]) && is_string($request[2])) {
+						$paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
+					}
+					$paths[] = 'modules/'.$module.'/'.$subModule;
+				}
+				$paths[] = 'modules/'.$module.'/api';
+				if ($subModule) {
+					$paths[] = 'core/modules/'.$module.'/'.$subModule;
+				}
+				$paths[] = 'core/modules/'.$module.'/api';
+				$paths[] = 'core/modules/api';
+				break;
+
+			case 'page' : // Page Resource
+				$fileName = 'page.';
+				$funcName = ''; // for page function of old version
+				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request));
+
+				if ($subModule) {
+					if ($actionModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
+					$paths[] = 'modules/'.$module.'/'.$subModule;
+				}
+				$paths[] = 'modules/'.$module.'/default';
+				$paths[] = 'modules/'.$module;
+
+				// Is in core module
+				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
+					if ($subModule) {
+						if ($actionModule) $paths[] = 'core/modules/'.$module.'/'.$subModule.'/'.$request[2];
+						$paths[] = 'core/modules/'.$module.'/'.$subModule;
+					}
+					$paths[] = 'core/modules/'.$module.'/default';
+					$paths[] = 'core/modules/'.$module;
+				} else {
+					$paths[] = 'core/modules/system';
+				}
+				break;
+
+			case 'package':
+				$paths[] = 'modules/'.$packageFolder;
+				$paths[] = 'core/'.$packageFolder;
+				break;
+
+			case 'asset':
+				$paths[] = 'modules/'.$packageFolder.'/assets';
+				$paths[] = 'core/'.$packageFolder.'/assets';
 				break;
 
 			// @deprecated
@@ -465,6 +541,7 @@ class SgCore {
 				$paths[] = 'core/view';
 				break;
 
+			// @deprecated
 			case 'on' : // Event Resource
 				$fileName = 'on.';
 				$funcName = 'on_';
@@ -473,60 +550,6 @@ class SgCore {
 				$paths[] = 'core/models';
 				break;
 
-			case 'api' : // Page Resource
-				$fileName = 'api.';
-				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request)).'Api';
-
-				$paths[] = 'modules/'.$module.'/template/'.$template;
-				if ($subModule) {
-					$paths[] = 'modules/'.$module.'/'.$subModule.'/api';
-					if (isset($request[2]) && is_string($request[2])) {
-						$paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
-					}
-					$paths[] = 'modules/'.$module.'/'.$subModule;
-				}
-				$paths[] = 'modules/'.$module.'/api';
-				if ($subModule) {
-					$paths[] = 'core/modules/'.$module.'/'.$subModule;
-				}
-				$paths[] = 'core/modules/'.$module.'/api';
-				$paths[] = 'core/modules/api';
-				break;
-
-			case 'page' : // Page Resource
-				$fileName = 'page.';
-				$funcName = ''; // for page function of old version
-				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request));
-
-				if ($subModule) {
-					if (isset($request[2]) && is_string($request[2])) $paths[] = 'modules/'.$module.'/'.$subModule.'/'.$request[2];
-					$paths[] = 'modules/'.$module.'/'.$subModule;
-				}
-				$paths[] = 'modules/'.$module.'/default';
-				$paths[] = 'modules/'.$module;
-
-				// Is in core module
-				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
-					if ($subModule) {
-						if (isset($request[2]) && is_string($request[2])) $paths[] = 'core/modules/'.$module.'/'.$subModule.'/'.$request[2];
-						$paths[] = 'core/modules/'.$module.'/'.$subModule;
-					}
-					$paths[] = 'core/modules/'.$module.'/default';
-					$paths[] = 'core/modules/'.$module;
-				} else {
-					$paths[] = 'core/modules/system';
-				}
-				break;
-
-			case 'package':
-				$paths[] = 'modules/'.$packageFolder;
-				$paths[] = 'core/'.$packageFolder;
-				break;
-
-			case 'asset':
-				$paths[] = 'modules/'.$packageFolder.'/assets';
-				$paths[] = 'core/'.$packageFolder.'/assets';
-				break;
 		}
 
 		// Load module configuration file in json format
