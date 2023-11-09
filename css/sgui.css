@@ -479,6 +479,7 @@
 	.widget-inlineedit.-single-line {display: block; line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;}
 	.widget-inlineedit.-single-line>.inline-edit-field {width: 100%;}
 
+	.inline-edit-item.-textarea {display: block;}
 	/* @group inline-edit-field */
 	.inline-edit-field {padding: 0; margin: 0; color: #333; display: inline-block; min-width: 100px; width: auto; min-height: 1.4em; vertical-align: middle;}
 
@@ -493,7 +494,7 @@
 	.inline-edit-field.-datepicker {text-align: center;}
 
 	.inline-edit-field>span {min-height:25px;border:none;}
-	.inline-edit-field.-textarea {width: 100%; padding: 0;}
+	.inline-edit-field.-textarea {display: block;}
 	.inline-edit-field.-center {text-align: center;}
 	.inline-edit-field.-money {text-align: center;}
 	.inline-edit-field.-numeric {text-align: center;}
