@@ -498,7 +498,9 @@ class Icon extends Widget {
 	}
 
 	function toString() {
-		if (preg_match('/$</', $this->icon)) return $this->icon;
+		if (is_string($this->icon) && preg_match('/$</', $this->icon)) return $this->icon;
+
+		if (is_object($this->icon)) return $this->icon;
 
 		$attribute = array_replace_recursive(
 			$this->attribute,
