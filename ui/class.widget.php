@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-10-27
-* Version :: 24
+* Modify  :: 2023-11-10
+* Version :: 25
 *
 * @param Array $args
 * @return Widget
@@ -517,7 +517,13 @@ class Icon extends Widget {
 class ExpandButton extends Widget {
 	var $icon = 'chevron_right';
 	function toString() {
-		return '<a class="sg-expand btn -link -no-print" href="javascript:void(0)"><i class="icon -material">'.$this->icon.'</i></a>';
+		return '<a'
+			. ' class="sg-expand btn -link -no-print"'
+			. ' href="javascript:void(0)"'
+			. sg_implode_attr($this->attribute)
+			. '>'
+			. '<i class="icon -material">'.$this->icon.'</i>'
+			. '</a>';
 	}
 } // End of class ExpandButton
 
@@ -663,24 +669,24 @@ class InlineEdit extends Widget {
 			.($this->inputClass ? ' '.$this->inputClass : '').'" '
 			.'>';
 		if ($this->retType === 'html') {
-			$ret .= trim(sg_text2html($text));
-		} else if ($fld['ret'] == 'text') {
-			$ret .= trim(str_replace("\n", '<br />', $text));
+			$ret .= trim(sg_text2html($this->text));
+		} else if ($this->retType === 'text') {
+			$ret .= trim(str_replace("\n", '<br />', $this->text));
 		} else if ($input_type == "money") {
-			$ret .= number_format(sg_strip_money($text), 2);
+			$ret .= number_format(sg_strip_money($this->text), 2);
 		} else if (in_array($input_type, array('radio', 'checkbox'))) {
-			list($choice, $label, $info) = explode(':', $text);
+			list($choice, $label, $info) = explode(':', $this->text);
 			$choice = trim($choice);
 			$name = getFirst($fld['name'],$fld['fld']);
-			if ($label == '' && strpos($text, ':') == false) $label = $choice;
+			if ($label == '' && strpos($this->text, ':') == false) $label = $choice;
 			$label = trim($label);
 			$ret .= '<input type="'.$input_type.'" '
 				.($fld['value'] == $choice ? 'checked="checked" readonly="readonly" disabled="disabled"' : 'disabled="disabled"')
 				.' style="margin:0;margin-top: -1px; display:inline-block;min-width: 1em; vertical-align: middle;" /> '
 				.$label;
-		} else if (substr($fld['ret'], 0, 4) == 'date') {
-			$format = substr($fld['ret'], 5);
-			$ret .= $text ? sg_date($text, $format) : '';
+		} else if (substr($this->retType, 0, 4) == 'date') {
+			$format = substr($this->retType, 5);
+			$ret .= $this->text ? sg_date($this->text, $format) : '';
 		} else {
 			$ret .= $this->text;
 		}
