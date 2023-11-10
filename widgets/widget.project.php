@@ -98,7 +98,7 @@ function widget_project() {
 		'children' => array_map(
 			function ($rs) {
 				list($photo) = explode(',', $rs->photos);
-				$linkUrl = url('project/'.$rs->tpid.'/action.view/'.$rs->trid);
+				$linkUrl = url('project/'.$rs->tpid.'/info.action.view/'.$rs->trid);
 				$linkTitle = htmlspecialchars($rs->title);
 
 				return [
