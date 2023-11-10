@@ -609,7 +609,7 @@ class InlineEdit extends Widget {
 			. ' data-tr="'.$this->tranId.'"'
 			. ($this->retType ? ' data-ret="'.$this->retType.'"'._NL : '')
 			. ($this->type === 'textarea' && $options['button'] !== false ? ' data-button="yes"' : '')
-			. ' data-value="'.SG\getFirst($this->value, $this->text).'"'._NL
+			. ' data-value="'.htmlspecialchars(SG\getFirst($this->value, $this->text)).'"'._NL
 			. ($selectOptions ? ' data-data="'.htmlspecialchars(\json_encode($selectOptions)).'"' : '')
 			. ' title="'.$this->title.'"'._NL
 			. ' data-options=\''.SG\json_encode($options).'\''._NL
