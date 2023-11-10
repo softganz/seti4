@@ -552,8 +552,8 @@
 	.widget-profilephoto.-size-small {width: 24px; height: 24px; display: block; }
 	.widget-profilephoto.-size-big {margin: 0px auto 32px; width: 196px; height: 196px; display: block; }
 
-.widget-album {list-style-type: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-start; width: initial !important;}
-	.widget-album>* {flex: 0 0 206px; padding: 0; margin: 2px; position: relative; overflow: hidden; background-color: #eee;}
+.widget-album {list-style-type: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-start; width: initial !important; gap: 4px;}
+	.widget-album>* {flex: 0 0 206px; padding: 0; position: relative; overflow: hidden; background-color: #eee;}
 	.widget-album>*::before {content: ""; float: left; padding-top: 100%;}
 	.widget-album>* .-photo {height: 100%; width: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
 	.widget-album>* .-photo.-wide {height: 100%; width: auto;}
