@@ -51,6 +51,8 @@ class PaperEditPhoto extends Page {
 			'appBar' => new AppBar([
 				'title' => '{tr:Photo management}',
 				'trailing' => '<a class="sg-action btn -primary" href="'.url('paper/'.$this->nodeId.'/edit.photo.add').'" data-rel="box" data-width="640" data-height="640"><i class="icon -material">cloud_upload</i><span>{tr:UPLOAD NEW PHOTO}</span></a>',
+				'boxHeader' => true,
+				'leading' => _HEADER_BACK,
 			]), // AppBar
 			'body' => new Container([
 				'class' => 'photos',
