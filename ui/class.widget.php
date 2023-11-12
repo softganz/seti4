@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-11-10
-* Version :: 25
+* Modify  :: 2023-11-11
+* Version :: 26
 *
 * @param Array $args
 * @return Widget
@@ -546,8 +546,10 @@ class InlineEdit extends Widget {
 	var $inputName;
 	var $title = 'คลิกเพื่อแก้ไข';
 	var $placeholder = '...';
+	var $onBlur;
+	var $debug;
 	var $selectOptions = [];
-	var $options = [];
+	var $options = []; // debug,place
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -555,6 +557,10 @@ class InlineEdit extends Widget {
 		$this->class .= ' inline-edit-item -'.$this->type;
 		$this->text = trim($this->text);
 		if (!isset($this->value)) $this->value = $this->text;
+		if (isset($this->debug)) $this->options['debug'] = $this->debug;
+		$this->options['placeholder'] = $this->placeholder;
+		if ($this->onBlur) $this->options['onblur'] = $this->onBlur;
+
 	}
 
 	function _render() {
@@ -604,7 +610,7 @@ class InlineEdit extends Widget {
 	}
 
 	function _renderTypeText($text) {
-		$options = array_merge_recursive($this->options, ['placeholder' => $this->placeholder]);
+		$options = $this->options;
 
 		$ret .= '<span'._NL
 			. ' class="inline-edit-field -'.$this->type.($this->inputClass ? ' '.$this->inputClass : '').'"'._NL
@@ -618,13 +624,14 @@ class InlineEdit extends Widget {
 			. ' data-value="'.htmlspecialchars(SG\getFirst($this->value, $this->text)).'"'._NL
 			. ($selectOptions ? ' data-data="'.htmlspecialchars(\json_encode($selectOptions)).'"' : '')
 			. ' title="'.$this->title.'"'._NL
-			. ' data-options=\''.SG\json_encode($options).'\''._NL
+			. ' data-options=\''.json_encode($options).'\''._NL
 			. '>'._NL;
 
 		$ret .= '<span>'._NL;
 		$ret .= $text;
-		$ret .= $this->postText;
 		$ret .= '</span>'._NL;
+		$ret .= '</span>'._NL;
+		$ret .= $this->postText;
 		return $ret;
 	}
 
@@ -741,7 +748,7 @@ class InlineEdit extends Widget {
 			}
 		);
 		$ret .= $this->_render();
-		if ($this->debug) $ret .= (new DebugMsg($this, '$this'))->build();
+		// if ($this->debug) $ret .= (new DebugMsg($this, '$this'))->build();
 		$ret .= $this->_renderWidgetContainerEnd()._NL;
 		$ret .= '<!-- End of '.$this->widgetName.' -->'._NL;
 		// $ret .= '<pre>'.htmlspecialchars($ret).'</pre>';

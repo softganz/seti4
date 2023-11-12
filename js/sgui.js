@@ -1,6 +1,13 @@
+/**
+* sgui    :: Javascript Library For SoftGanz
+* Created :: 2021-12-24
+* Modify  :: 2023-11-11
+* Version :: 2
+*/
+
 'use strict'
 
-let sgUiVersion = '4.00.06'
+let sgUiVersion = '4.00.07'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPage = 0
@@ -130,6 +137,7 @@ function sgShowBox(html, $this, options, e) {
 		sgBoxPage = 0
 		let group = $this.data("group")
 		options.open = true
+		options.className = options.className+' -photo -full'
 
 		$('.sg-action[data-group="'+group+'"]').each(function(i){
 			let $elem = $(this)
@@ -1029,6 +1037,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		// console.log($this)
 		// console.log($parent.data());
 		// console.log($this.data())
+		// console.log(options)
 
 		if (postUrl === undefined) postUrl = $parent.data('updateUrl');
 
@@ -1114,9 +1123,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let settings = $.extend({}, $.fn.sgInlineEdit.defaults, defaults, options, dataOptions)
 		// console.log(typeof settings.container)
 		// if (typeof settings.container === 'object') delete settings.container
-		//console.log('dataOptions',dataOptions)
+		// console.log('dataOptions',dataOptions)
 		//console.log($this.data('options'))
 		// console.log('SG-INLINE-EDIT SETTING:',settings)
+
+		if (dataOptions.debug) debug = true
 
 		if ($this.data('type') == 'textarea') settings.inputcssclass = 'form-textarea'
 		else if ($this.data('type') == 'text') settings.inputcssclass = 'form-text'
@@ -1641,6 +1652,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		*/
 	});
 })(jQuery);
+
+
+
+
 
 /*
 * jQuery Extension :: sg-expand
