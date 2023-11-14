@@ -1093,79 +1093,71 @@ class SgCore {
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 		}
 		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = SgCore::processMenu($menu, $buildMethod, $requestFilePrefix);
-// debugMsg('$buildMethod = '.$buildMethod);
-		// Set page id to home
-		if ($isLoadHomePage) cfg('page_id','home');
+			// debugMsg('$buildMethod = '.$buildMethod);
+					// Set page id to home
+					if ($isLoadHomePage) cfg('page_id','home');
 
-		if ($found) {
-			// Set splash page was show
-			if (cfg('web.splash.time')) {
-				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
-			}
-
-
-			if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
-				// Result is Widget Class then build widget to String
-				// Case widget, Call method build()
-
-				$reservedMethod = ['rightToBuild'];
-				// debugMsg($pageClassWidget, '$pageClassWidget');
-				// debugMsg($pageBuildWidget, '$pageBuildWidget');
-
-				// Check right to build widget
-				if (method_exists($pageClassWidget, 'rightToBuild')) {
-					$error = $pageClassWidget->rightToBuild();
-					if (is_object($error)) $pageBuildWidget = $error;
-				}
-				// print_r($pageBuildWidget);
-				// die($buildMethod.'@'.date('H:i:s'));
-
-				if (is_object($pageBuildWidget) && $pageBuildWidget->onBuild && is_callable($pageBuildWidget->onBuild)) {
-					// debugMsg('ONBUILD');
-					// debugMsg($pageBuildWidget, '$pageBuildWidget');
-					$a = $pageBuildWidget->onBuild;
-					$a($pageBuildWidget);
-					// $pageBuildWidget->{$pageBuildWidget->onBuild}($this);
-					// if ($this->args['onComplete'] && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
-				}
-				// Build request result
-				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
-					$requestResult = $pageBuildWidget->build();
-				} else {
-					$requestResult = $pageBuildWidget;
-				}
-
-				// Create App Bar
-				if ($pageBuildWidget->appBar) {
-					if (is_object($pageBuildWidget->appBar) && method_exists($pageBuildWidget->appBar, 'build')) {
-						if ($pageBuildWidget->appBar->removeOnApp && is_object(R()->appAgent)) {
-							// don't show appBar
-						} else {
-							$pageClass->appBarText = $pageBuildWidget->appBar->build();
+					if ($found) {
+						// Set splash page was show
+						if (cfg('web.splash.time')) {
+							setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 						}
-					} else if (is_object($pageBuildWidget->appBar->title)) {
-						$pageClass->theme->toolbar = $pageBuildWidget->appBar->title;
-						$pageClass->theme->title = $pageBuildWidget->appBar->title;
-					} else {
-						$pageClass->theme->title = $pageBuildWidget->appBar->title;
-					}
-					$pageClass->appBar = $pageBuildWidget->appBar;
-					$pageClass->sideBar = $pageBuildWidget->sideBar;
-				}
 
-				// Create Floating Action Button
-				if ($pageBuildWidget->floatingActionButton) {
-					$pageClass->floatingActionButton = $pageBuildWidget->floatingActionButton;
-				}
-			} else if (is_array($pageBuildWidget) || is_object($pageBuildWidget)) {
-				// Result is array or object
-				$requestResult = $pageBuildWidget;
-			} else {
-				// Result is String, join
-				$requestResult .= $pageBuildWidget;
-			}
-// debugMsg(gettype($requestResult));
-// debugMsg($requestResult, '$resourceType');
+
+						if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
+							// Result is Widget Class then build widget to String
+							// Case widget, Call method build()
+
+							$reservedMethod = ['rightToBuild'];
+							// debugMsg($pageClassWidget, '$pageClassWidget');
+							// debugMsg($pageBuildWidget, '$pageBuildWidget');
+
+							// Check right to build widget
+							if (method_exists($pageClassWidget, 'rightToBuild')) {
+								$error = $pageClassWidget->rightToBuild();
+								if (is_object($error)) $pageBuildWidget = $error;
+							}
+							// print_r($pageBuildWidget);
+							// die($buildMethod.'@'.date('H:i:s'));
+
+							// Build request result
+							if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
+								$requestResult = $pageBuildWidget->build();
+							} else {
+								$requestResult = $pageBuildWidget;
+							}
+
+							// Create App Bar
+							if ($pageBuildWidget->appBar) {
+								if (is_object($pageBuildWidget->appBar) && method_exists($pageBuildWidget->appBar, 'build')) {
+									if ($pageBuildWidget->appBar->removeOnApp && is_object(R()->appAgent)) {
+										// don't show appBar
+									} else {
+										$pageClass->appBarText = $pageBuildWidget->appBar->build();
+									}
+								} else if (is_object($pageBuildWidget->appBar->title)) {
+									$pageClass->theme->toolbar = $pageBuildWidget->appBar->title;
+									$pageClass->theme->title = $pageBuildWidget->appBar->title;
+								} else {
+									$pageClass->theme->title = $pageBuildWidget->appBar->title;
+								}
+								$pageClass->appBar = $pageBuildWidget->appBar;
+								$pageClass->sideBar = $pageBuildWidget->sideBar;
+							}
+
+							// Create Floating Action Button
+							if ($pageBuildWidget->floatingActionButton) {
+								$pageClass->floatingActionButton = $pageBuildWidget->floatingActionButton;
+							}
+						} else if (is_array($pageBuildWidget) || is_object($pageBuildWidget)) {
+							// Result is array or object
+							$requestResult = $pageBuildWidget;
+						} else {
+							// Result is String, join
+							$requestResult .= $pageBuildWidget;
+						}
+			// debugMsg(gettype($requestResult));
+			// debugMsg($requestResult, '$resourceType');
 			// Generate result by content type
 			if (cfg('Content-Type') == 'text/xml') {
 				die(process_widget($requestResult));
@@ -1209,7 +1201,7 @@ class SgCore {
 					$pageBuildWidget->appBar->showInBox = true;
 					$requestResult = $pageBuildWidget->appBar->build() . $requestResult;
 				}
-// die($buildMethod.'@'.date('H:i:s'));
+				// die($buildMethod.'@'.date('H:i:s'));
 
 				die(debugMsg().process_widget($requestResult));
 			} else {
