@@ -31,6 +31,19 @@ class MenuGroupWidget extends Widget {
 				foreach (explode(',', $this->use) as $navKey) {
 					$menuItem = $this->menu->{$navKey};
 
+					foreach ($menuItem as $menuItemKey => $menuItemValue) {
+						if (!is_string($menuItemValue)) continue;
+						$menuItem->{$menuItemKey} = preg_replace_callback(
+							'/(\{\{(.*?)\}\})/',
+							function($match) {
+								// debugMsg($match, '$match');
+								return $this->variable->{$match[2]};
+							},
+							$menuItemValue
+						);
+					}
+					// debugMsg($menuItem, '$menuItem');
+
 					if ($button = $this->_renderButton($menuItem, $this->variable)) {
 						$childrens[$navKey] = $button;
 					}
