@@ -493,9 +493,8 @@
 	.inline-edit-field.-primary {font-weight: bold; background-color: #f5f5f5; box-shadow: 0 0 0 1px #999 inset; border: none;}
 	.inline-edit-field.-datepicker {text-align: center;}
 
-	.inline-edit-field>span {min-height:25px;border:none;}
+	.inline-edit-field>span {min-height: 25px;}
 	.inline-edit-field.-textarea {display: block;}
-	.inline-edit-field.-center {text-align: center;}
 	.inline-edit-field.-money {text-align: center;}
 	.inline-edit-field.-numeric {text-align: center;}
 	.inline-edit-field.-incomplete {color:#999;}
@@ -504,8 +503,8 @@
 	.inline-edit-view.-primary {font-weight: bold;}
 	.inline-edit-view.-fill:not('-hidden'); {display: block;}
 
-	.sg-inline-edit .inline-edit-field>span {border-bottom: 1px dotted #ccc; cursor: text;}
-	.sg-inline-edit .inline-edit-field>span:hover {border-bottom: 1px dotted #f60;}
+	.sg-inline-edit .inline-edit-item.-text, .sg-inline-edit .inline-edit-item.-textarea {border-bottom: 1px dotted #ccc; cursor: text;}
+	.sg-inline-edit .inline-edit-item.-text:hover, .sg-inline-edit .inline-edit-item.-textarea:hover {border-bottom: 1px dotted #f60;}
 
 		.inline-edit-field .placeholder {color: #ccc; font-style: italic; font-size: 0.9em;}
 
