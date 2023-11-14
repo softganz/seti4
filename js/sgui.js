@@ -1127,7 +1127,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		//console.log($this.data('options'))
 		// console.log('SG-INLINE-EDIT SETTING:',settings)
 
-		if (dataOptions.debug) debug = true
+		if (dataOptions && 'debug' in dataOptions && dataOptions.debug) debug = true
 
 		if ($this.data('type') == 'textarea') settings.inputcssclass = 'form-textarea'
 		else if ($this.data('type') == 'text') settings.inputcssclass = 'form-text'
