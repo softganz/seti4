@@ -243,7 +243,13 @@ class Widget extends WidgetBase {
 	}
 
 	// @override
-	function build() {return $this->toString();}
+	function build() {
+		if ($this->onBuild && is_callable($this->onBuild)) {
+			$onBuildFunction = $this->onBuild;
+			$onBuildFunction($this);
+		}
+		return $this->toString();
+	}
 
 	// @deprecated
 	function show() {return $this->build();}
@@ -963,7 +969,7 @@ class Scaffold extends Widget {
 		// 	//debugMsg('AppBar was set');
 		// 	//debugMsg($this, '$Scaffold');
 		// }
-		return $this->toString();
+		return parent::build();
 	}
 } // End of class Scaffold
 
