@@ -1679,7 +1679,6 @@ $PRINT
 
 	.box {padding: 0; border: none; box-shadow: none;}
 
-	.inline-edit-view.-text.-fill {display: block;}
 
 	input[type="radio"]+.icon
 	, input[type="checkbox"]+.icon {color: #eee; box-shadow: 0 0 0 1px #eee inset; border: none;}
