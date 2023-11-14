@@ -50,7 +50,6 @@ class DbSelect {
 		if (isset($db)) $this->DB = $db;
 		return $this->DB;
 	}
-
 }
 
 class DbQuery {
@@ -140,7 +139,14 @@ class DB {
 			$result = new DbSelect(reset($select->items)); // + ['DB' => $select]]);
 			$result->DB($select);
 		} else {
-			$result = new DbSelect(['count' => $select->count, 'items' => $select->items, 'DB' => $select]);
+			$result = new DbSelect(['count' => $select->count, 'foundRows' => NULL, 'items' => $select->items, 'DB' => $select]);
+
+			if (preg_match('/SQL_CALC_FOUND_ROWS/', $select->stmt)) {
+				$result->foundRows = DB::select('SELECT FOUND_ROWS() `totals` LIMIT 1')->totals;
+			} else {
+				unset($result->foundRows);
+			}
+
 		}
 
 		if ($select->options->sum) $result->sum = $select->options->sum;
