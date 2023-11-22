@@ -58,7 +58,7 @@ class PaperEditPhotoAdd extends Page {
 
 	function uploadSingleForm() {
 		return new Form([
-			'action' => url('api/paper/info/'.$this->nodeId.'/photo.add'),
+			'action' => url('api/paper/'.$this->nodeId.'/photo.add'),
 			'enctype' => 'multipart/form-data',
 			'id' => 'edit-topic',
 			'class' => 'sg-form -upload',
@@ -102,7 +102,7 @@ class PaperEditPhotoAdd extends Page {
 
 	function uploadMultipleForm() {
 		return new Form([
-			'action' => url('api/paper/info/'.$this->nodeId.'/photo.add'),
+			'action' => url('api/paper/'.$this->nodeId.'/photo.add'),
 			'enctype' => 'multipart/form-data',
 			'id' => 'edit-topic',
 			'class' => 'sg-form -upload',

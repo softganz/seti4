@@ -2,19 +2,16 @@
 /**
 * Paper   :: Information API
 * Created :: 2021-11-22
-* Modify  :: 2023-07-24
-* Version :: 2
+* Modify  :: 2023-11-22
+* Version :: 3
 *
-* @param Int $topicId
+* @param Int $nodeId
 * @param String $action
 * @param Int $tranId
 * @return String
 *
-* @usage paper/info/api/{id}/{action}[/{tranId}]
+* @usage api/paper/{nodeId}/{action}[/{tranId}]
 */
-
-// @deprecated
-// use api/paper/info
 
 use Paper\Model\PaperModel;
 

@@ -148,7 +148,7 @@ class NodeModel {
 		$result->debug['ITEMS'] = mydb()->_query;
 
 		$result->items = $dbs->items;
-		$result->count = count($result->items);
+		$result->count = count((Array) $result->items);
 		$result->total = $dbs->_found_rows;
 
 

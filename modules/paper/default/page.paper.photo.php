@@ -39,9 +39,9 @@ class PaperPhoto extends Page {
 				'boxHeader' => true,
 				'trailing' => $this->right->edit ? new Nav([
 					'children' => [
-						user_access('upload photo') ? '<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('api/paper/info/'.$this->nodeId.'/photo.change/'.$this->photoInfo->fid).'" data-rel="refresh" data-done="close"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>' : NULL,
+						user_access('upload photo') ? '<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('api/paper/'.$this->nodeId.'/photo.change/'.$this->photoInfo->fid).'" data-rel="refresh" data-done="close"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>' : NULL,
 						'<a class="sg-action btn -link" href="'.url('paper/'.$this->nodeId.'/edit.photo.info/'.$this->photoInfo->fid).'" data-rel="box" data-width="640" data-height="80%"><i class="icon -material">edit</i><span class="-hidden">{tr:Edit detail}</span></a>',
-						'<a class="sg-action btn -link" href="'.url('api/paper/info/'.$this->nodeId.'/photo.delete/'.$this->photoInfo->fid).'" data-title="Delete photo!!!!!" data-confirm="Delete photo -> '.htmlspecialchars($this->photoInfo->file).' <-- !!! Are you sure?" data-rel="notify" data-done="close | remove:#photo-id-'.$this->photoInfo->fid.'"><i class="icon -material">delete</i><span class="-hidden">'.tr('Remove').'</span></a>',
+						'<a class="sg-action btn -link" href="'.url('api/paper/'.$this->nodeId.'/photo.delete/'.$this->photoInfo->fid).'" data-title="Delete photo!!!!!" data-confirm="Delete photo -> '.htmlspecialchars($this->photoInfo->file).' <-- !!! Are you sure?" data-rel="notify" data-done="close | remove:#photo-id-'.$this->photoInfo->fid.'"><i class="icon -material">delete</i><span class="-hidden">'.tr('Remove').'</span></a>',
 					], // children
 				]) : NULL, // Nav
 			]), // AppBar

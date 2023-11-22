@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-07-26
-* Version :: 2
+* Modify  :: 2023-11-21
+* Version :: 3
 *
 * @param Int $nodeId
 * @param String $action
@@ -15,7 +15,8 @@
 
 use Paper\Model\PaperModel;
 
-class PaperInfoApi extends PageApi {
+class PaperApi extends PageApi {
+	var $actionDefault = 'detail';
 	var $nodeId;
 	var $action;
 	var $tranId;
@@ -40,6 +41,40 @@ class PaperInfoApi extends PageApi {
 		else if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 
 		return parent::build();
+	}
+
+	function detail() {
+		$nodeInfo = PaperModel::get($this->nodeId);
+
+		$photoList = [];
+		$docList = [];
+
+		foreach($nodeInfo->photos as $photo) {
+			$photoList[] = (Object) [
+				'src' => _DOMAIN.$photo->src,
+				'exits' => $photo->exists,
+				'size' => $photo->size,
+				'width' => $photo->width,
+				'height' => $photo->height,
+			];
+		}
+
+		foreach($nodeInfo->docs as $doc) {
+			$docList[] = (Object) [
+				'src' => _DOMAIN.$doc->src,
+				'exits' => $doc->exists,
+				'size' => $doc->size,
+			];
+		}
+
+		return (Object) [
+			'nodeId' => $nodeInfo->nodeId,
+			'title' => $nodeInfo->title,
+			'body' => $nodeInfo->info->body,
+			'photoList' => $photoList,
+			'docList' => $docList,
+			// 'info' => $nodeInfo,
+		];
 	}
 
 	function delete() {

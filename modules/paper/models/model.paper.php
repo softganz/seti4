@@ -176,6 +176,19 @@ class PaperModel extends \NodeModel {
 			$result->photos[$key] = object_merge($result->photos[$key],\FileModel::photoProperty($photo->file, $photo->folder));
 		}
 
+		// Get docs
+		\mydb::value('$TOPIC_FILES$', '%'.($archived ? 'archive_':'').'topic_files%');
+		$result->docs = \mydb::select(
+			'SELECT *
+			FROM $TOPIC_FILES$
+			WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc"
+			ORDER BY fid;
+			-- {key: "fid"}',
+			[':tpid' => $tpid]
+		)->items;
+		foreach ($result->docs as $key => $doc) {
+			$result->docs[$key] = object_merge($result->docs[$key],\FileModel::docProperty($doc->file, $doc->folder));
+		}
 
 		// Get Videos
 		if (cfg('topic.video.allow')) {
