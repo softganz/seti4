@@ -1080,11 +1080,13 @@ class Page extends PageBase {
 
 class PageApi extends PageBase {
 	var $widgetName = 'PageApi';
+	var $actionDefault;
 	var $action;
 	var $actionMethod;
 
 	function __construct($args = []) {
 		parent::__construct($args);
+		if (empty($this->action)) $this->action = $this->actionDefault;
 		$this->actionMethod = (preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->action));
 	}
 
