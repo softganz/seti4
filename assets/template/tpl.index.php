@@ -9,7 +9,7 @@
 <meta name="generator" content="www.softganz.com" />
 <meta name="formatter" content="Little Bear by SoftGanz Group" />
 <meta name="author" content="<?php echo cfg('web.title');?>" />
-<meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.5, user-scalable=yes"/>
+<meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=<?php echo cfg('system')->initialScale;?>, minimum-scale=<?php echo cfg('system')->minimumScale;?>, maximum-scale=<?php echo cfg('system')->maximumScale;?>, user-scalable=yes"/>
 <meta name="format-detection" content="telephone=no"/>
 <meta name="msapplication-tap-highlight" content="no"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>

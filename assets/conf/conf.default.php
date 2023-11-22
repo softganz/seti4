@@ -35,6 +35,11 @@ $cfg['server']=true;
 // Encription key for user password
 $cfg['encrypt_key'] = '# place your key for password encryption here!!!.';
 
+$cfg['system'] = '{
+	"maximumScale": 2.5,
+	"initialScale": 1.0,
+	"minimumScale": 1.0
+}';
 
 $currentLang = array_key_exists('lang', $_COOKIE) && strtoupper($_COOKIE['lang'] ? $_COOKIE['lang'] : $cfg['lang']);
 $yearFormat = $currentLang == 'TH' ? 'ปปปป' : 'Y';
