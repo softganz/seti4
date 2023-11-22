@@ -25,6 +25,7 @@ function user_register($self) {
 		$error = false;
 
 		$register->username = strtolower($register->username);
+		$register->email = strtolower($register->email);
 
 		event_tricker('user.register_check',$self,$register,$form,$error);
 		//$ret.='Format = '.cfg('member.username.format').' username='.$register->username;
