@@ -399,6 +399,7 @@ class SgCore {
 
 				if (in_array($resourceType, ['widget', 'model', 'api'])) {
 					if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$fixFolders[$resourceType];
+					$paths[] = 'modules/'.$module.'/template/'.$item.'/models';
 				} else if (in_array($resourceType, ['page'])) {
 					if ($subModule && $actionModule) {
 						$paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$actionModule;
