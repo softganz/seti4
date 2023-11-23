@@ -1,9 +1,9 @@
 <?php
 /**
-* Model   :: Description
+* API     :: API Model
 * Created :: 2023-11-13
-* Modify  :: 2023-11-13
-* Version :: 1
+* Modify  :: 2023-11-23
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -13,16 +13,18 @@
 * @usage ApiModel::function($conditions)
 */
 
+use Softganz\DB;
+
 class ApiModel {
 	function __construct($args = []) {
 	}
 
-	public static function send($args = []) {
+	public static function send($args = [], &$options = []) {
 		set_time_limit(3600);
 		ini_set('memory_limit', '4095M'); // 4 GBs minus 1 MB
 		if (is_string($args)) $args = ['url' => $args];
 
-		debugMsg('Send to '.$args['url']);
+		// debugMsg('Send to '.$args['url']);
 
 		$default = '{port: null, username: null, password: null, type: "text"}';
 		$options = json_decode($options, $default);
@@ -90,7 +92,7 @@ class ApiModel {
 		//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		// curl_setopt($ch, CURLOPT_FILE, $fh);
 
-		debugMsg($options, '$options');
+		// debugMsg($options, '$options');
 
 		curl_setopt_array($ch, $options);
 
@@ -101,14 +103,103 @@ class ApiModel {
 
 		if ($args['result'] === 'json') {
 			if (debug()) debugMsg($result);
-			// $info['text'] = $result;
-			// $info['result'] = \json_decode($result);
 			return \json_decode($result);
 		} else if ($args['result'] === 'text') {
-			return $result;//['result'];
+			return $result;
 		} else {
 			return $result;
 		}
+	}
+
+	public static function waitInfo($conditions = []) {
+		$info = DB::select([
+			'SELECT * FROM %api_wait% %WHERE% LIMIT 1',
+			'where' => [
+				'%WHERE%' => [
+					$conditions['id'] ? ['`apiId` = :apiId', ':apiId' => $conditions['id']] : NULL,
+					$conditions['key'] ? ['`apiKey` = :apiKey', ':apiKey' => $conditions['key']] : NULL,
+				]
+			], // where
+		]);
+
+		return $info;
+	}
+
+	public static function resend($options = []) {
+		set_time_limit(3600);
+		ini_set('memory_limit', '4095M'); // 4 GBs minus 1 MB
+
+		$ch = curl_init();
+
+		curl_setopt_array($ch, $options);
+
+		$result = curl_exec($ch);
+		$info = curl_getinfo($ch);
+		$info['error'] = curl_error($ch);
+		curl_close($ch);
+
+		return \json_decode($result);
+
+		// if ($args['result'] === 'json') {
+		// 	if (debug()) debugMsg($result);
+		// 	// $info['text'] = $result;
+		// 	// $info['result'] = \json_decode($result);
+		// 	return \json_decode($result);
+		// } else if ($args['result'] === 'text') {
+		// 	return $result;//['result'];
+		// } else {
+		// 	return $result;
+		// }
+	}
+
+	public static function sendLater($args = []) {
+		if (empty($args['apiModel'])) return false;
+
+		$data = [
+			':userId' => i()->uid,
+			':apiKey' => $args['apiKey'],
+			':apiModel' => $args['apiModel'],
+			':status' => 'WAITING',
+			':sendResult' => SG\json_encode($args['sendResult']),
+			':curlParam' => SG\json_encode($args['curlParam']),
+			':created' => date('U'),
+		];
+		DB::query([
+			'INSERT INTO %api_wait%
+			(`userId`, `apiKey`, `apiModel`, `status`, `sendResult`, `curlParam`, `created`)
+			VALUES
+			(:userId, :apiKey, :apiModel, :status, :sendResult, :curlParam, :created)',
+			'var' => $data
+		]);
+		// debugMsg(mydb()->_query);
+	}
+
+	public static function sendComplete($args = []) {
+		if (empty($args['apiModel'])) return false;
+
+		$data = [
+			':userId' => i()->uid,
+			':apiKey' => $args['apiKey'],
+			':apiModel' => $args['apiModel'],
+			':status' => 'COMPLETE',
+			':sendResult' => SG\json_encode($args['sendResult']),
+			':curlParam' => SG\json_encode($args['curlParam']),
+			':created' => date('U'),
+		];
+		DB::query([
+			'INSERT INTO %api_wait%
+			(`userId`, `apiKey`, `apiModel`, `status`, `sendResult`, `curlParam`, `created`)
+			VALUES
+			(:userId, :apiKey, :apiModel, :status, :sendResult, :curlParam, :created)',
+			'var' => $data
+		]);
+		// debugMsg(mydb()->_query);
+	}
+
+	public static function getWaiting() {
+		$result = DB::select('SELECT * FROM %api_wait% WHERE `status` = "WAITING" LIMIT 10');
+		DB::query('UPDATE %api_wait% SET `status` = "SENDING" WHERE `status` = "WAITING" LIMIT 10');
+		return $result;
 	}
 }
 ?>
