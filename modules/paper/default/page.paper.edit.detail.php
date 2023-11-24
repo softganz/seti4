@@ -55,7 +55,7 @@ function paper_edit_detail($self, $topicInfo) {
 
 	$form = new Form([
 		'variable' => 'topic',
-		'action' => url('paper/info/api/'.$tpid.'/update'),
+		'action' => url('api/paper/'.$tpid.'/detail.update'),
 		'class' => 'sg-form',
 		'checkValid' => true,
 		'rel' => 'notify',

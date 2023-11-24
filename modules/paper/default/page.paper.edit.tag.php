@@ -83,7 +83,7 @@ function __paper_edit_tag_current($topicInfo) {
 	foreach ($topicInfo->tags as $tag) {
 		$tables->rows[] = array($tag->tid,
 			$tag->name.' :: '.$tag->vocab_name
-			. '<nav class="nav -icons -hover"><a class="sg-action" href="'.url('paper/info/api/'.$tpid.'/tag.remove/'.$tag->tid).'" data-rel="#tags-remain" data-ret="'.url('paper/'.$tpid.'/edit.tag',array('vocab'=>$tag->vid)).'" data-removeparent="tr"><i class="icon -material -gray">cancel</i></a></nav>'
+			. '<nav class="nav -icons -hover"><a class="sg-action" href="'.url('api/paper/'.$tpid.'/tag.remove/'.$tag->tid).'" data-rel="#tags-remain" data-ret="'.url('paper/'.$tpid.'/edit.tag',array('vocab'=>$tag->vid)).'" data-removeparent="tr"><i class="icon -material -gray">cancel</i></a></nav>'
 		);
 	}
 
@@ -119,8 +119,8 @@ function __paper_edit_tag_list_vocab($topicInfo, $vocabId = NULL) {
 				} else {
 					$tables->rows[] = array(
 								$term->tid,
-								'<a class="sg-action -fill" href="'.url('paper/info/api/'.$tpid.'/tag.add', array('vocab'=>$vocab->vid,'tag'=>$term->tid)).'" data-rel="#tags-current" data-ret="'.url('paper/'.$tpid.'/edit.tag',array('show'=>'current')).'" data-removeparent="tr">'.str_repeat('--', $term->depth).' '.$term->name.'</a>'
-								. '<nav class="nav -icons -hover"><a class="sg-action" href="'.url('paper/info/api/'.$tpid.'/tag.add', array('vocab'=>$vocab->vid,'tag'=>$term->tid)).'" data-rel="#tags-current" data-ret="'.url('paper/'.$tpid.'/edit.tag',array('show'=>'current')).'" data-removeparent="tr"><i class="icon -material -gray">add_circle</i></a></nav>',
+								'<a class="sg-action -fill" href="'.url('api/paper/'.$tpid.'/tag.add', ['vocab'=>$vocab->vid,'tag'=>$term->tid]).'" data-rel="notify" data-done="remove:parent tr | load:#tags-current:'.url('paper/'.$tpid.'/edit.tag', ['show'=>'current']).'">'.str_repeat('--', $term->depth).' '.$term->name.'</a>'
+								. '<nav class="nav -icons -hover"><a class="sg-action" href="'.url('api/paper/'.$tpid.'/tag.add', ['vocab'=>$vocab->vid,'tag'=>$term->tid]).'" data-rel="notify" data-done="remove:parent tr | load:#tags-current:'.url('paper/'.$tpid.'/edit.tag',['show'=>'current']).'"><i class="icon -material -gray">add_circle</i></a></nav>',
 							);
 				}
 			}

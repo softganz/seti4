@@ -18,7 +18,7 @@ function paper_edit_main($self, $topicInfo) {
 
 	$ret = '<header class="header -box"><nav class="nav -back"><a class="sg-action" href="javascript:void(0)" data-rel="back"><i class="icon -material">arrow_back</i></a></nav><h3>จัดการเอกสาร</h3></header>';
 
-	$form = new Form('topic', url('paper/info/api/'.$tpid.'/update'), 'edit-topic', 'sg-form');
+	$form = new Form('topic', url('api/paper/'.$tpid.'/detail.update'), 'edit-topic', 'sg-form');
 	$form->addData('rel', 'notify');
 	$form->addData('done', 'close | reload');
 

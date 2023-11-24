@@ -21,7 +21,7 @@ function paper_edit_photo_info($self, $topicInfo, $fileId = NULL) {
 
 	$info = $topicInfo->photos[$fileId];
 
-	$form = new Form('photoinfo',url('paper/info/api/'.$tpid.'/update/'.$info->fid), NULL, 'sg-form');
+	$form = new Form('photoinfo',url('api/paper/'.$tpid.'/detail.update/'.$info->fid), NULL, 'sg-form');
 	$form->addData('rel', 'close');
 
 	$form->addField('fid', array('type'=>'hidden', 'value'=>$fileId));

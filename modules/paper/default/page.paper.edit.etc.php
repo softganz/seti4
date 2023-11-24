@@ -23,7 +23,7 @@ function paper_edit_etc($self, $topicInfo) {
 
 	$form = new Form([
 		'variable' => 'topic',
-		'action' => url('paper/info/api/'.$tpid.'/update'),
+		'action' => url('api/paper/'.$tpid.'/detail.update'),
 		'class' => 'sg-form',
 		'rel' => 'notify',
 		'done' => 'reload',
