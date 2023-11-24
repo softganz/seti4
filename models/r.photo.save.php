@@ -18,10 +18,12 @@ function r_photo_save($upload, $folder = NULL, $options = '{}') {
 	$debug = $options->debug;
 	$is_simulate = $options->simulate;
 
-	$result = NULL;
-
-	$result->error = false;
-	$result->complete = false;
+	$result = (Object) [
+		'error' => false,
+		'complete' => false,
+		'save' => (Object) [],
+		'process' => [],
+	];
 
 	$result->process[] = 'Model photo_save '.($is_simulate?'simulation ':'').'request';
 
