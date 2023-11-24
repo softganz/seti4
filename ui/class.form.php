@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2023-07-17
-* Version :: 22
+* Modify  :: 2023-11-24
+* Version :: 23
 *
 * @param Array $args
 * @return Widget
@@ -13,13 +13,23 @@
 
 /*
 	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, leading, rel, done, children, width, height, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
-	Form Children:
-		- Array
+	Form Children: Array of
 		- Text
-		- Widget
-		- (Object) [Attribute, Array]
-		- Array[Array]
+		- new Widget([])
+		- new FormGroup([type => String, children = Array])
+		- (Object) [type => String, children = Array]
 */
+
+class FormGroup {
+	var $type;
+	var $children;
+
+	function __construct($args = []) {
+		foreach($args as $key => $value) {
+			$this->{$key} = $value;
+		}
+	}
+}
 
 class Form extends Widget {
 	var $widgetName = 'Form';
