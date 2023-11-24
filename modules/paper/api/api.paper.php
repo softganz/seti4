@@ -2,18 +2,19 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-11-21
-* Version :: 3
+* Modify  :: 2023-11-23
+* Version :: 4
 *
 * @param Int $nodeId
 * @param String $action
 * @param Int $tranId
 * @return Array/Object
 *
-* @usage paper/info/api/{nodeId}/{action}[/{tranId}]
+* @usage api/paper/{nodeId}/{action}[/{tranId}]
 */
 
 use Paper\Model\PaperModel;
+use Softganz\DB;
 
 class PaperApi extends PageApi {
 	var $actionDefault = 'detail';
@@ -38,7 +39,6 @@ class PaperApi extends PageApi {
 
 	function build() {
 		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'PROCESS ERROR');
-		else if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 
 		return parent::build();
 	}
@@ -78,6 +78,7 @@ class PaperApi extends PageApi {
 	}
 
 	function delete() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		if (!\SG\confirm()) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
 		else if ($this->nodeInfo->info->status == _LOCK) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'This topic was lock:You cannot delete a lock topic. Please unlock topic and go to delete again.');
 
@@ -114,7 +115,34 @@ class PaperApi extends PageApi {
 		}
 	}
 
+	function detailUpdate() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!$_POST) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
+
+		// Update paper information
+		$post = (Object) post();
+		$debug = false;
+
+		$result = R::Model('paper.info.update', $this->nodeInfo, $post);
+
+		$ret .= 'Update Completed';
+
+		if ($simulate) {
+			$ret .= print_o($result, '$result');
+		} else if ($this->nodeInfo->info->module != 'paper') {
+			$onViewResult = R::On($this->nodeInfo->info->module.'.paper.edit.complete', $self, $this->nodeInfo, $data);
+		}
+
+		if ($debug) {
+			$ret .= '<p>UPDATE INFORMATION</p>';
+			$ret .= print_o($result, '$result');
+			$ret .= print_o(post(),'post()');
+			return $ret;
+		}
+	}
+
 	function photoAdd() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		// if (!post('upload')) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลไฟล์แนบ');
 
 		$is_simulate = debug('simulate');
@@ -148,6 +176,7 @@ class PaperApi extends PageApi {
 	}
 
 	function photoChange() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		if (!is_uploaded_file($_FILES['photo']['tmp_name'])) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีไฟล์แนบ');
 
 		$fileId = $this->tranId;
@@ -180,11 +209,81 @@ class PaperApi extends PageApi {
 	}
 
 	function photoDelete() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		if (!\SG\confirm()) return error(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
 
 		$result = FileModel::delete($this->tranId);
 		// debugMsg($result, '$result');
 		return success('ลบภาพเรียบร้อย');
+	}
+
+	function propSave() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
+		$post = (Object) post('prop',_TRIM+_STRIPTAG);
+		$post->option = (Object) post('option');
+
+		if ($post->show_photo == 'some' && post('show_photo_num')) {
+			$post->show_photo = round(post('show_photo_num'));
+		}
+
+		$post->slide_width = $post->slide_width ? round($post->slide_width) : NULL;
+		$post->slide_height = $post->slide_height ? round($post->slide_height) : NULL;
+
+		$post->option->fullpage = $post->option->fullpage ? true : false;
+		$post->option->secondary = $post->option->secondary ? true : false;
+		$post->option->header = $post->option->header ? true : false;
+		$post->option->title = $post->option->title ? true : false;
+		$post->option->ribbon = $post->option->ribbon ? true : false;
+		$post->option->toolbar = $post->option->toolbar ? true : false;
+		$post->option->container = $post->option->container ? true : false;
+		$post->option->timestamp = $post->option->timestamp ? true : false;
+		$post->option->related = $post->option->related ? true : false;
+		$post->option->docs = $post->option->docs ? true : false;
+		$post->option->footer = $post->option->footer ? true : false;
+		$post->option->package = $post->option->package ? true : false;
+		$post->option->commentwithphoto = $post->option->commentwithphoto ? true : false;
+		$post->option->social = $post->option->social ? true : false;
+		$post->option->ads = $post->option->ads ? true : false;
+		$post->option->show_video = $post->option->show_video ? true : false;
+
+		$newProperty = \SG\json_decode($post, $this->nodeInfo->property);
+		$data = (Object) [
+			'detail' => (Object) [
+				'property' => SG\json_encode($newProperty),
+			],
+		];
+		$result = R::Model('paper.info.update', $this->nodeInfo, $data);
+		// debugMsg($result, '$result');
+	}
+
+	function tagAdd() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		$getTag = post('tag');
+		$getVocab = post('vocab');
+		if (empty($getTag) || empty($getVocab)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
+
+		DB::query([
+			'INSERT INTO %tag_topic% (`tpid`, `vid`, `tid`) VALUES (:tpid, :vid, :tid) ON DUPLICATE KEY UPDATE `tid` = :tid',
+			'var' => [
+				':tpid' => $this->nodeId,
+				':vid' => $getVocab,
+				':tid' => $getTag
+			]
+		]);
+	}
+
+	function tagRemove() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (empty($this->tranId)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
+
+		DB::query([
+			'DELETE FROM %tag_topic% WHERE `tpid` = :tpid AND `tid` = :tid LIMIT 1',
+			'var' => [
+				':tpid' => $this->nodeId,
+				':tid' => $this->tranId,
+			]
+		]);
 	}
 }
 ?>
