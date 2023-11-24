@@ -16,6 +16,8 @@ $debug = true;
 function forum($self, $forumId = NULL, $action = NULL, $tranId = NULL) {
 	if (empty($action)) return R::Page('forum.home',$self, $forumId);
 
+	$args = func_get_args();
+
 	switch ($action) {
 
 		default:
@@ -30,11 +32,11 @@ function forum($self, $forumId = NULL, $action = NULL, $tranId = NULL) {
 				'forum.'.$action,
 				$self,
 				$topicInfo,
-				func_get_arg($argIndex),
-				func_get_arg($argIndex+1),
-				func_get_arg($argIndex+2),
-				func_get_arg($argIndex+3),
-				func_get_arg($argIndex+4)
+				$args[$argIndex],
+				$args[$argIndex+1],
+				$args[$argIndex+2],
+				$args[$argIndex+3],
+				$args[$argIndex+4]
 			);
 
 			//debugMsg('TYPE = '.gettype($ret));
