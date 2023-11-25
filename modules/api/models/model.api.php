@@ -101,6 +101,8 @@ class ApiModel {
 		$info['error'] = curl_error($ch);
 		curl_close($ch);
 
+		// debugMsg($result, '$result');
+
 		if ($args['result'] === 'json') {
 			if (debug()) debugMsg($result);
 			return \json_decode($result);
