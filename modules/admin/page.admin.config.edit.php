@@ -48,7 +48,7 @@ class AdminConfigEdit extends Page {
 				'variable' => 'admin',
 				'action' => url('admin/config/edit'._MS_.'update', ['name' => $this->configName]),
 				'id' => 'admin-config-form',
-				'class' => 'sg-form',
+				'class' => 'sg-form admin-config-form',
 				'rel' => 'notify',
 				'done' => 'load',
 				'children' => [
@@ -59,6 +59,12 @@ class AdminConfigEdit extends Page {
 						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('admin/config/edit'._MS_.'restore', ['name' => $this->configName,'restore' => 'yes']).'" data-rel="notify" data-done="load" data-title="Reset to default" data-confirm="Reset to default. Plese confirm?"><i class="icon -material -gray">settings_backup_restore</i><span>Reset to default</span></a>',
 						'container' => '{class: "-sg-text-right"}',
 					],
+					'<style type="text/css">
+					.admin-config-form {height: 100%;}
+					.form-item.-edit-admin-value {height: calc(100% - 70px);}
+					.form-item.-edit-admin-value .resizable-textarea {height: calc(100% - 48px);}
+					.form-item.-edit-admin-value .form-textarea {height: 100%;}
+					</style>',
 				], // children
 			]), // Form
 		]);
