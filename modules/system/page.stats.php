@@ -12,6 +12,7 @@
 
 class Stats extends Page {
 	function build() {
+		cfg('web.title', 'Stats - '.cfg('web.title'));
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'Current online <b>'.number_format(CounterModel::onlineCount()).'</b> users @'.sg_date(cfg('dateformat')),
