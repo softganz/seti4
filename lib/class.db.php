@@ -641,7 +641,10 @@ class DB {
 	}
 
 	private function updateLastQueryStmt($stmt, $error = NULL) {
-		if (function_exists('mydb')) mydb()->_query = $stmt;
+		if (function_exists('mydb')) {
+			mydb()->_query = $stmt;
+			mydb()->_query_items[] = $stmt;
+		}
 	}
 
 }

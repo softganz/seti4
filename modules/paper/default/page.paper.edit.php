@@ -28,7 +28,7 @@ class PaperEdit extends Page {
 			'appBar' => new AppBar([
 				'title' => $this->topicInfo->title,
 			]),
-			'sideBar' => R::View('paper.edit.menu', $this->tpid),
+			'sideBar' => new PaperEditMenuWidget(['nodeId' => $this->tpid]),
 			'body' => new Container([
 				'class' => '-sg-paddingnorm',
 				'children' => [

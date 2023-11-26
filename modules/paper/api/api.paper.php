@@ -285,5 +285,81 @@ class PaperApi extends PageApi {
 			]
 		]);
 	}
+
+	function nodeDuplicate() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
+		// Get old record
+		$oldNode = DB::select([
+			'SELECT * FROM %topic% WHERE `tpid` = :tpid LIMIT 1',
+			'var' => [':tpid' => $this->nodeId]
+		]);
+
+		$oldRev = DB::select([
+			'SELECT * FROM %topic_revisions% WHERE `revid` = :revid LIMIT 1',
+			'var' => [':revid' => $oldNode->revid]
+		]);
+
+		// Create new topic record
+		$oldNode->tpid = NULL;
+		$oldNode->revid = NULL;
+
+		$result = DB::query([
+			'INSERT INTO %topic%
+				(`'.implode('`,`', array_keys((Array) get_object_vars($oldNode))).'`)
+				VALUES
+				(:'.implode(', :', array_keys((Array) get_object_vars($oldNode))).')',
+			'var' => $oldNode
+		]);
+		$newNodeId = $result->insertId();
+
+		// debugMsg('$newNodeId = '.$newNodeId);
+		// debugMsg(mydb()->_query);
+
+		// Create new revision record
+		$oldRev->tpid = $newNodeId;
+		$oldRev->revid = NULL;
+
+		$result = DB::query([
+			'INSERT INTO %topic_revisions%
+				(`'.implode('`,`', array_keys((Array) get_object_vars($oldRev))).'`)
+				VALUES
+				(:'.implode(', :', array_keys((Array) get_object_vars($oldRev))).')',
+			'var' => $oldRev
+		]);
+		$newRevId = $result->insertId();
+
+		// debugMsg('$newRevId = '.$newRevId);
+		// debugMsg(mydb()->_query);
+
+		// Update topic revid
+		DB::query([
+			'UPDATE %topic% SET `revid` = :newRevId WHERE `tpid` = :newNodeId LIMIT 1',
+			'var' => [
+				':newNodeId' => $newNodeId,
+				':newRevId' => $newRevId,
+			]
+		]);
+		// debugMsg(mydb()->_query);
+
+		// Create topic user
+		$nodeUser = DB::select([
+			'SELECT * FROM %topic_user% WHERE `tpid` = :oldNodeId',
+			'var' => [':oldNodeId' => $this->nodeId]
+		]);
+		// debugMsg($nodeUser, '$nodeUser');
+		foreach ($nodeUser->items as $user) {
+			$user->tpid = $newNodeId;
+			DB::query([
+				'INSERT INTO %topic_user%
+				(`'.implode('`,`', array_keys((Array) $user)).'`)
+				VALUES
+				(:'.implode(', :', array_keys((Array) $user)).')',
+				'var' => $user
+			]);
+			// debugMsg(mydb()->_query);
+		}
+		return ['code' => 200, 'text' => 'ดำเนินการเสร็จสิ้น', 'nodeId' => $newNodeId];
+	}
 }
 ?>
