@@ -1025,6 +1025,9 @@ class SgCore {
 
 		R()->timer->start($request);
 
+		// To view url parameter
+		// echo '<p style="padding-top:86px;">$request = '.$request.'<br />$_GET<br/><pre>'.print_r($_GET,1).'</pre><br />$_REQUEST<pre>'.print_r($_REQUEST,2).'</pre></p>';
+
 		if (!isset($request) || empty($request) || ($request == 'home') || ($request == cfg('web.homepage'))) {
 			// Check for splash page
 		 	// Show splash if not visite site in time
