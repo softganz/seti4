@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2023-11-18
-* Version :: 3
+* Modify  :: 2023-11-29
+* Version :: 4
 */
 
 'use strict'
@@ -389,7 +389,7 @@ function sgUpdateData(html, relTarget, $this, options = {}) {
 * data-done="load->replace:#id:/project/view"
 * data-done="remove:parent li.ui-action"
 */
-function sgActionDone(doneData, $this, data, options = {}) {
+async function sgActionDone(doneData, $this, data, options = {}) {
 	if (doneData === undefined) return
 
 	doneData = doneData.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
@@ -402,7 +402,7 @@ function sgActionDone(doneData, $this, data, options = {}) {
 
 		if (doneTarget == '') doneTarget = '#main';
 
-		console.log(doneItem, doneExplode)
+		// console.log(doneItem, doneExplode)
 		//console.log('doneType = ',doneType, 'doneAction = ',doneAction)
 		//console.log('doneTarget = ',doneTarget)
 		// console.log(data)
@@ -702,7 +702,7 @@ function sgWebViewDomProcess(id) {
 		// console.log(dataOptions)
 		// console.log(settings)
 
-		self.doAction = function() {
+		self.doAction = async function() {
 			//console.log("Do Action Start Something")
 			//console.log('$THIS is ',$this)
 			console.log('relTarget = '+relTarget+' Action = '+relAction)
@@ -796,7 +796,28 @@ function sgWebViewDomProcess(id) {
 				notify('')
 				return
 			}
+
+
 			// console.log('URL = '+url)
+			let urlMatch = url.match(/^(function|javascript)\:(.*)/)
+			if (urlMatch) {
+				let urlFunction = urlMatch[2]
+				// console.log(urlFunction,urlMatch)
+				// console.log("1.START EXECUTE FUNCTION")
+
+				if (urlMatch[1] === 'javascript') {
+					eval(urlFunction)
+				} else {
+					let exeFunction = window[urlFunction]
+					await exeFunction($this).then(function(){
+						// console.log("4.EXECUTE DONE")
+						notify()
+						sgActionDone(linkData.done, $this, doneResult)
+					})
+				}
+				// console.log("9.END EXECUTE FUNCTION")
+				return
+			}
 
 			$.post(url, para, function(html) {
 				doneResult = html
