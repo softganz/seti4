@@ -21,7 +21,7 @@ if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
 
 $R = new R();
 $R->request = $request;
-$R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/conf.core.json'));
+$R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
 
 $includeFileList = [
 	'lib/lib.define.php',
@@ -149,8 +149,8 @@ unset($_module_folder, $_folder); // clear unused variable
 // Load configuration file
 SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
 SgCore::loadConfig('conf.web.release.php', '.'); // load web config release
-SgCore::loadConfig(_CONFIG_FILE, '.'); // load web config file
-SgCore::loadConfig('conf.local.php', '.'); // load local config file
+SgCore::loadConfig(_CONFIG_FILE, ['conf.d','.']); // load web config file
+SgCore::loadConfig('conf.local.php', ['conf.local','.']); // load local config file
 error_reporting(cfg('error_reporting'));
 //echo 'error after load config '.error_reporting().' : '.decbin(error_reporting()).'<br />';
 

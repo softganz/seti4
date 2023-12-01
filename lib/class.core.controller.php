@@ -208,62 +208,94 @@ class SgCore {
 		return $result;
 	}
 
+	function mergeConfig() {
+
+	}
+
 	/**
 	* Load configuration from file and store into cfg
-	* @param Mixed $config_file
+	* @param Mixed $configFile
 	* @param Mixed $folder
 	*/
-	static function loadConfig($config_file = NULL, $folders = ['./core/assets/conf']) {
+	static function loadConfig($configFile = NULL, $folders = ['./core/assets/conf']) {
+		$debugStr = '';
 		$configArray = [];
 
-		if (is_array($config_file)) {
+		if (is_array($configFile)) {
 			// merge array config to current config value
-			$configArray = $config_file;
-		} else if (is_string($config_file)) {
-			// debugMsg($folder);
-			// debugMsg($folder, '$srcFolder');
+			$configArray = $configFile;
+		} else if (is_string($configFile) && preg_match('/\.(\w*)\.(\w*)$/', $configFile, $out)) {
+			// get match end with .module.ext from config file
+			// last is config file extension
+			// before is module name
+
 			if (is_string($folders)) $folders = explode(';',$folders);
-			list($a,$module,$configExt) = explode('.',$config_file);
-			//debugMsg('$module = '.$module.' $configExt = '.$configExt);
+
+			$debugStr .= '<b>START LOAD CONFIG :: '.$configFile.' :: </b> from '.implode(';', (Array) $folders).'<br />';
+
+			$module = $out[1];
+			$configExt = $out[2];
+
+			$debugStr .= 'module = <b>'.$module.'</b> config extension = <b>'.$configExt.'</b><br />';
 			// if (i()->username == 'softganz') {
-			// 	debugMsg($folders, '$folders');
+				// debugMsg($folders, '$folders');
 			// }
 
 			foreach ($folders as $folder) {
-				$each_config_file = $folder.'/'.$config_file;
-				//debugMsg('$each_config_file = '.$each_config_file);
-				// echo '$each_config_file = '.$each_config_file.'<br />';
-				if ( file_exists($each_config_file) and is_file($each_config_file) ) {
-					// if (i()->username == 'softganz') debugMsg('START LOAD CONFIG : '.$each_config_file);
-					if ($configExt == 'php') {
-						include($each_config_file);
-						if (isset($cfg) && is_array($cfg)) {
-							$configArray = $cfg;
-						}
-					} else if ($configExt == 'json') {
-						$jsonString = file_get_contents($each_config_file);
+				$each_config_file = $folder.'/'.$configFile;
+				if (!(file_exists($each_config_file) && is_file($each_config_file))) {
+					$debugStr .= '* Load from '.$each_config_file.' <span style="color: red; font-weight: bold;">not found!!!.</span><br />';
+					continue;
+				}
 
-						// Merge json config file to current config
-						// Module json config file was load after database, so it less important than database
-						// Current cfg($module) is config from file conf.???.php and config from table variable
-						$jsonValue = \SG\json_decode($jsonString, cfg($module));
-
-						// if (i()->username == 'softganz') {
-						// 	debugMsg('LOAD JSON : '.$each_config_file);
-						// 	debugMsg('<pre>'.$jsonString.'</pre>');
-						// 	debugMsg(\json_decode($jsonString),'\json_decode($jsonString)');
-						// 	debugMsg($jsonValue, '$jsonValue');
-						// 	debugMsg(cfg($module), '$cfg['.$module.']');
-						// }
-
-						if (isset($jsonValue) && is_object($jsonValue)) {
-							cfg($module, $jsonValue);
-						}
+				$debugStr .= '<span style="color: green;">* Load from '.$each_config_file.' <b>found!</b></span>';
+				// if (i()->username == 'softganz') debugMsg('START LOAD CONFIG : '.$each_config_file);
+				if ($configExt === 'php') {
+					// $debugStr .= 'Load from php';
+					include($each_config_file);
+					if (isset($cfg) && is_array($cfg)) {
+						$configArray = $cfg;
 					}
 					break;
+				} else if ($configExt === 'json') {
+					$jsonString = file_get_contents($each_config_file);
+
+					// debugMsg($configFile.' => '.$each_config_file);
+
+					// Merge json config file to current config
+					// Module json config file was load after database, so it less important than database
+					// Current cfg($module) is config from file conf.???.php and config from table variable
+					$jsonTest = json_decode($jsonString);
+					if (!(isset($jsonTest) && is_object($jsonTest))) {
+						$debugStr .= ' <span style="color: red; font-weight: bold;">json error!!!!!!.</span><br />';
+					}
+
+					$debugStr .= ' <span style="color: green; font-weight: bold;">json completed!.</span><br />';
+					$debugStr .= '<pre>jsonString = '.$jsonString.'</pre>';
+					$debugStr .= '<pre>decode = '.print_r($jsonTest,1).'</pre>';
+					$debugStr .= '<br />';
+
+
+					$jsonValue = SG\json_decode($jsonTest, cfg($module));
+
+					// if (i()->username == 'softganz') {
+					// 	debugMsg('LOAD JSON : '.$each_config_file);
+					// 	debugMsg(\json_decode($jsonString),'\json_decode($jsonString)');
+					// 	debugMsg($jsonValue, '$jsonValue');
+					// 	debugMsg(cfg($module), '$cfg['.$module.']');
+					// }
+
+					if (isset($jsonValue) && is_object($jsonValue)) {
+						cfg($module, $jsonValue);
+						// $debugStr .= ' <span style="color: red; font-weight: bold;">complete!!!!!!.</span>';
+					} else {
+						// $debugStr .= ' <span style="color: red; font-weight: bold;">error!!!!!!.</span>';
+					}
 				}
 			}
 		}
+
+		if (i()->ok && debug('config')) debugMsg($debugStr);
 
 		// Add each config key to cfg(), except conf.[module].json
 		foreach ($configArray as $configKey => $configValue) {
@@ -555,18 +587,26 @@ class SgCore {
 				break;
 		}
 
-		// Load module configuration file in json format
+		// Load module configuration file in json format, if nerver loaded
 		if (!in_array($module, $loadCfg)) {
 			$cfgPaths = [$coreFolder.'/modules/'.$module];
 			if (file_exists($coreFolder.'/core/modules/'.$module)) $cfgPaths[] = $coreFolder.'/core/modules/'.$module;
 			$cfgPaths[] = $coreFolder.'/system';
+			$cfgPaths[] = './conf.d';
 			$cfgPaths[] = '.';
-			$cfgFile = 'conf.'.$module.'.json';
-			// debugMsg($cfgPaths,'$cfgPaths');
-			foreach ($cfgPaths as $path) {
-			 	SgCore::loadConfig($cfgFile, $path);
-			}
+			$cfgFileProduction = 'conf.'.$module.'.json';
+			$cfgFileDevelop = 'conf.local.'.$module.'.json';
+
+			// debugMsg('<b>START LOAD CONFIG WEB :: '.$cfgFileProduction.' :: </b> from '.implode(';',$cfgPaths));
+			SgCore::loadConfig($cfgFileProduction, $cfgPaths);
+			// foreach ($cfgPaths as $path) {
+			// 	debugMsg('<b>START LOAD CONFIG WEB :: '.$cfgFileProduction.' :: </b>'.$path.'/'.$cfgFileProduction);
+			//  	SgCore::loadConfig($cfgFileProduction, $path);
+			// }
+			// debugMsg('<b>START LOAD CONFIG LOCAL :: '.$cfgFileDevelop.' :: </b> ./'.$cfgFileDevelop);
+			SgCore::loadConfig($cfgFileDevelop, ['conf.local', '.']);
 			$loadCfg[] = $module;
+			// debugMsg($loadCfg, '$loadCfg');
 		}
 
 
@@ -1098,68 +1138,68 @@ class SgCore {
 		}
 		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = SgCore::processMenu($menu, $buildMethod, $requestFilePrefix);
 			// debugMsg('$buildMethod = '.$buildMethod);
-					// Set page id to home
-					if ($isLoadHomePage) cfg('page_id','home');
+		// Set page id to home
+		if ($isLoadHomePage) cfg('page_id','home');
 
-					if ($found) {
-						// Set splash page was show
-						if (cfg('web.splash.time')) {
-							setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
-						}
+		if ($found) {
+			// Set splash page was show
+			if (cfg('web.splash.time')) {
+				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
+			}
 
 
-						if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
-							// Result is Widget Class then build widget to String
-							// Case widget, Call method build()
+			if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
+				// Result is Widget Class then build widget to String
+				// Case widget, Call method build()
 
-							$reservedMethod = ['rightToBuild'];
-							// debugMsg($pageClassWidget, '$pageClassWidget');
-							// debugMsg($pageBuildWidget, '$pageBuildWidget');
+				$reservedMethod = ['rightToBuild'];
+				// debugMsg($pageClassWidget, '$pageClassWidget');
+				// debugMsg($pageBuildWidget, '$pageBuildWidget');
 
-							// Check right to build widget
-							if (method_exists($pageClassWidget, 'rightToBuild')) {
-								$error = $pageClassWidget->rightToBuild();
-								if (is_object($error)) $pageBuildWidget = $error;
-							}
-							// print_r($pageBuildWidget);
-							// die($buildMethod.'@'.date('H:i:s'));
+				// Check right to build widget
+				if (method_exists($pageClassWidget, 'rightToBuild')) {
+					$error = $pageClassWidget->rightToBuild();
+					if (is_object($error)) $pageBuildWidget = $error;
+				}
+				// print_r($pageBuildWidget);
+				// die($buildMethod.'@'.date('H:i:s'));
 
-							// Build request result
-							if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
-								$requestResult = $pageBuildWidget->build();
-							} else {
-								$requestResult = $pageBuildWidget;
-							}
+				// Build request result
+				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
+					$requestResult = $pageBuildWidget->build();
+				} else {
+					$requestResult = $pageBuildWidget;
+				}
 
-							// Create App Bar
-							if ($pageBuildWidget->appBar) {
-								if (is_object($pageBuildWidget->appBar) && method_exists($pageBuildWidget->appBar, 'build')) {
-									if ($pageBuildWidget->appBar->removeOnApp && is_object(R()->appAgent)) {
-										// don't show appBar
-									} else {
-										$pageClass->appBarText = $pageBuildWidget->appBar->build();
-									}
-								} else if (is_object($pageBuildWidget->appBar->title)) {
-									$pageClass->theme->toolbar = $pageBuildWidget->appBar->title;
-									$pageClass->theme->title = $pageBuildWidget->appBar->title;
-								} else {
-									$pageClass->theme->title = $pageBuildWidget->appBar->title;
-								}
-								$pageClass->appBar = $pageBuildWidget->appBar;
-								$pageClass->sideBar = $pageBuildWidget->sideBar;
-							}
-
-							// Create Floating Action Button
-							if ($pageBuildWidget->floatingActionButton) {
-								$pageClass->floatingActionButton = $pageBuildWidget->floatingActionButton;
-							}
-						} else if (is_array($pageBuildWidget) || is_object($pageBuildWidget)) {
-							// Result is array or object
-							$requestResult = $pageBuildWidget;
+				// Create App Bar
+				if ($pageBuildWidget->appBar) {
+					if (is_object($pageBuildWidget->appBar) && method_exists($pageBuildWidget->appBar, 'build')) {
+						if ($pageBuildWidget->appBar->removeOnApp && is_object(R()->appAgent)) {
+							// don't show appBar
 						} else {
-							// Result is String, join
-							$requestResult .= $pageBuildWidget;
+							$pageClass->appBarText = $pageBuildWidget->appBar->build();
 						}
+					} else if (is_object($pageBuildWidget->appBar->title)) {
+						$pageClass->theme->toolbar = $pageBuildWidget->appBar->title;
+						$pageClass->theme->title = $pageBuildWidget->appBar->title;
+					} else {
+						$pageClass->theme->title = $pageBuildWidget->appBar->title;
+					}
+					$pageClass->appBar = $pageBuildWidget->appBar;
+					$pageClass->sideBar = $pageBuildWidget->sideBar;
+				}
+
+				// Create Floating Action Button
+				if ($pageBuildWidget->floatingActionButton) {
+					$pageClass->floatingActionButton = $pageBuildWidget->floatingActionButton;
+				}
+			} else if (is_array($pageBuildWidget) || is_object($pageBuildWidget)) {
+				// Result is array or object
+				$requestResult = $pageBuildWidget;
+			} else {
+				// Result is String, join
+				$requestResult .= $pageBuildWidget;
+			}
 			// debugMsg(gettype($requestResult));
 			// debugMsg($requestResult, '$resourceType');
 			// Generate result by content type
