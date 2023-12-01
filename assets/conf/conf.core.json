@@ -1,0 +1,8 @@
+{
+	"autoLoader" : {
+		"items" : {
+			"DB": "lib/class.db.php",
+			"Album": "widgets/widget.album.php"
+		}
+	}
+}
