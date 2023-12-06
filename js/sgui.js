@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2023-11-29
-* Version :: 4
+* Modify  :: 2023-12-02
+* Version :: 5
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.08'
+let sgUiVersion = '4.00.09'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -63,7 +63,7 @@ async function requestCameraPermission() {
 	console.log('CAMERA PERMISSION (after) is ', cameraPermission)
 	// console.log('Result is ', result)
 	// console.log(result.toString())
-	console.log('JavaScript: call CAMERA permission result is ',JSON.stringify(result))
+	// console.log('JavaScript: call CAMERA permission result is ',JSON.stringify(result))
 	if (cameraPermission) {
 		return true
 	} else {
@@ -127,17 +127,17 @@ async function requestCameraPermission() {
 * @return jQuery element
 */
 function sgFindTargetElement(target, $this) {
-	var $ele
-	if (target == 'this') $ele = $this
-	else if (target == 'parent') $ele = $this.parent()
-	else if (target.match(/^parent /i)) $ele = $this.closest(target.substring(7))
-	else if (target == 'before') $ele = $this.before()
-	else if (target == 'after') $ele = $this.after()
-	else if (target == 'prev') $ele = $this.prev()
-	else if (target == 'next') $ele = $this.next()
-	else if (target == 'box') $ele = $('#cboxLoadedContent>.box-page').last()
-	else $ele = $(target)
-	return $ele
+	let $targetElement
+	if (target == 'this') $targetElement = $this
+	else if (target == 'parent') $targetElement = $this.parent()
+	else if (target.match(/^parent /i)) $targetElement = $this.closest(target.substring(7))
+	else if (target == 'before') $targetElement = $this.before()
+	else if (target == 'after') $targetElement = $this.after()
+	else if (target == 'prev') $targetElement = $this.prev()
+	else if (target == 'next') $targetElement = $this.next()
+	else if (target == 'box') $targetElement = $('#cboxLoadedContent>.box-page').last()
+	else $targetElement = $(target)
+	return $targetElement
 }
 
 
@@ -183,7 +183,7 @@ function sgShowBox(html, $this, options, e) {
 
 	options.onClosed = function() {
 		window.onscroll=function(){}
-		console.log('ON BOX CLOSE')
+		// console.log('ON BOX CLOSE')
 		sgBoxBack({close: true})
 	}
 
@@ -217,18 +217,18 @@ function sgShowBox(html, $this, options, e) {
 	}
 
 	history.pushState(null, document.title, '#box-'+sgBoxPageCount);
-	console.log(history.state, sgBoxPageCount)
+	// console.log(history.state, sgBoxPageCount)
 	// console.log("pushState from sgShowBox()")
 	// history.pushState(null, document.title, location.href);
 }
 
 async function sgBoxBack(options = {}) {
-	console.log(options)
+	// console.log(options)
 	options = $.extend({close: null, historyBack: true}, options)
 	let $boxElement = $('#cboxLoadedContent')
 	let $boxPage = $('.box-page')
 
-	console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options)
+	// console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options)
 
 	// if ($this.closest('.sg-dropbox.box').length != 0) {
 	// 	$('.sg-dropbox.box').children('div').hide()
@@ -238,10 +238,10 @@ async function sgBoxBack(options = {}) {
 	// if ($boxElement.length == 0) return
 
 	if (options.close) {
-		console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
+		// console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
 		if (options.historyBack) {
 			for (let historyCount = 0; historyCount < sgBoxPageCount; historyCount++) {
-				console.log('historyCount = ', historyCount)
+				// console.log('historyCount = ', historyCount)
 				history.back()
 			}
 		}
@@ -249,13 +249,13 @@ async function sgBoxBack(options = {}) {
 		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
 		sgBoxPageCount = 0
 	} else if (sgBoxPageCount === 1) {
-		console.log('sgBoxBack => CLOSE FOR LAST BOX')
+		// console.log('sgBoxBack => CLOSE FOR LAST BOX')
 		// history.back()
 		$.colorbox.close()
 		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
 		sgBoxPageCount = 0
 	} else if (sgBoxPageCount > 1) {
-		console.log('sgBoxBack => BACK')
+		// console.log('sgBoxBack => BACK')
 		// Remove last box page
 		$boxElement.children('.box-page').last().remove()
 		// Show last box after remove
@@ -290,15 +290,15 @@ function sgPopState(event) {
 	// console.log('POP STATE CALLBACK = ',popStateCallback)
 	// if (!popStateCallback) return
 	// console.log("popState", $(".box-page").length, event)
-	console.log(window.location.href, window.location.hash)
+	// console.log(window.location.href, window.location.hash)
 	if (sgBoxPageCount === 1) {
-		console.log("POP STATE => CLOSE")
+		// console.log("POP STATE => CLOSE")
 		// history.back()
 		// $.colorbox.close()
 		sgBoxBack({close: true, historyBack: false})
 	} else if (sgBoxPageCount > 1) {
-		console.log("POP STATE => BACK")
-		console.log("pushState from EventListener()")
+		// console.log("POP STATE => BACK")
+		// console.log("pushState from EventListener()")
 		// history.pushState(null, document.title, location.href);
 		// history.back()
 		sgBoxBack({historyBack: false})
@@ -479,42 +479,50 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 				break
 
 			case 'reload':
-				var refreshUrl = doneExplode.length > 1 ? doneExplode[1] : document.URL
-				// refreshUrl = refreshUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
-				window.location = refreshUrl
+				// console.log('done reload')
+				setTimeout(function(){
+					var reloadUrl = doneExplode.length > 1 ? doneExplode[1] : document.URL
+					reloadUrl = reloadUrl.split('#')[0]
+					// console.log('done reload url '+reloadUrl)
+					window.location = reloadUrl
+				}, 200);
 				break
 
 			case 'load':
-				console.log('DONE TARGET = ' + doneTarget)
-				var $ele = sgFindTargetElement(doneTarget, $this)
-				var loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($ele.data('url') ? $ele.data('url') : document.URL)
-				if (loadUrl && ($ele.length || doneTarget == 'none')) {
-					console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
-					// loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
+				setTimeout(function(){
+					// console.log('DONE TARGET = ' + doneTarget)
+					var $loadTargetElement = sgFindTargetElement(doneTarget, $this)
+					var loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($loadTargetElement.data('url') ? $loadTargetElement.data('url') : document.URL)
+					if (loadUrl && ($loadTargetElement.length || doneTarget == 'none')) {
+						// console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
+						// loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
+						loadUrl = loadUrl.split('#')[0]
+						// console.log(loadUrl)
 
-					$.post(loadUrl,function(html){
-						switch (doneAction) {
-							case 'replace' : $ele.replaceWith(html); break;
-							case 'before' : $ele.before(html); break;
-							case 'after' : $ele.after(html); break;
-							case 'append' : $ele.append(html); break;
-							case 'prepend': $ele.prepend(html); break;
-							case 'prev' : $ele.prev().html(html); break;
-							case 'next' : $ele.next().html(html); break;
-							case 'clear' :
-								if (doneTarget == 'box') {
-									//console.log("CLEAR BOX WITH CLEAR");
-									sgShowBox(html, $this, {clearBoxContent: true});
-								}
-								break;
-							default: $ele.html(html); break;
-						}
-						if (doneTarget == 'box' && $this.data('boxResize')) {
-							$.fn.colorbox.resize({})
-						}
-					})
-					.fail(function() {console.log('Refresh url fail')})
-				}
+						$.post(loadUrl,function(html){
+							switch (doneAction) {
+								case 'replace' : $loadTargetElement.replaceWith(html); break;
+								case 'before' : $loadTargetElement.before(html); break;
+								case 'after' : $loadTargetElement.after(html); break;
+								case 'append' : $loadTargetElement.append(html); break;
+								case 'prepend': $loadTargetElement.prepend(html); break;
+								case 'prev' : $loadTargetElement.prev().html(html); break;
+								case 'next' : $loadTargetElement.next().html(html); break;
+								case 'clear' :
+									if (doneTarget == 'box') {
+										//console.log("CLEAR BOX WITH CLEAR");
+										sgShowBox(html, $this, {clearBoxContent: true});
+									}
+									break;
+								default: $loadTargetElement.html(html); break;
+							}
+							if (doneTarget == 'box' && $this.data('boxResize')) {
+								$.fn.colorbox.resize({})
+							}
+						})
+						.fail(function() {console.log('Refresh url fail')})
+					}
+				}, 200);
 				break
 
 		}
@@ -745,7 +753,7 @@ function sgWebViewDomProcess(id) {
 					relTarget = undefined
 				}
 			} else if (relTarget == 'back' && $boxElement.length) {
-				console.log('BACK BUTTON CLICK')
+				// console.log('BACK BUTTON CLICK')
 				// sgBoxBack()
 				history.back()
 				// var $boxPage = $('.box-page')
@@ -778,7 +786,7 @@ function sgWebViewDomProcess(id) {
 			} else if (url && url.substr(0,1) == '#') {
 				// href is begin with #
 				// Get HTML from #id and send to data-rel
-				console.log('LOAD FROM DOM ' + url)
+				// console.log('LOAD FROM DOM ' + url)
 				let html = null
 				if (url != '#' && $(url).length) html = $(url).get(0).innerHTML
 				sgUpdateData(html, relTarget, $this)
@@ -1056,9 +1064,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					})
 				} else {
 					sgUpdateData(html, relTarget,$this)
-					console.log(html)
-					console.log($this)
-					sgActionDone($this.data('done'), $this, html)
+					// console.log(html)
+					// console.log($this)
+					// sgActionDone($this.data('done'), $this, html)
+					// console.log('UPLOAD DONE')
+					sgActionDone($this.data('done'), $this, doneResult);
 				}
 				if (relTarget != 'notify') notify()
 				$this.replaceWith($this.clone(true))
@@ -1141,7 +1151,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	var inputCount = $input.length
 	if(event.keyCode == 13) {
 		event.preventDefault()
-		console.log($input.attr('onEnter'))
+		// console.log($input.attr('onEnter'))
 		if ($input.attr('onEnter') == 'submit') {
 			$input.closest('form').submit()
 			return false
@@ -1351,10 +1361,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.save = function($this, value, callback) {
-			// console.log('Update Value = '+value)
-			// console.log($parent.data('updateUrl'))
-			// console.log('postUrl = ', postUrl)
-			// console.log($parent.data());
+			console.log('Update Value = '+value)
+			console.log($parent.data('updateUrl'))
+			console.log('postUrl = ', postUrl)
+			console.log($parent.data());
 
 			if (postUrl === undefined) {
 				// console.log('ERROR :: POSTURL UNDEFINED')
@@ -1410,7 +1420,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				//if (data == '' || data == '<p>&nbsp;</p>')
 				//	data = '...';
 
-				//console.log('RETURN DATA:', data)
+				// console.log('RETURN DATA:', data)
 
 				if (para.ret == 'refresh') {
 					window.location = window.location
@@ -1580,7 +1590,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 						this.value = ui.item.label;
 						//settings.container.data('value',ui.item.value)
 						let targetValue = settings.autocomplete.target
-						console.log('targetValue',targetValue)
+						// console.log('targetValue',targetValue)
 						if (targetValue) {
 							if (typeof targetValue == 'string') {
 								targetValue = JSON.parse('{"'+targetValue+'": "value"}')
@@ -1589,12 +1599,12 @@ $(document).on('submit', 'form.sg-form', function(event) {
 							for (let key in targetValue) {
 								//$('#'+x).val(ui.item[selectValue[x]]);
 								let dataValue = ui.item[targetValue[key]]
-								console.log('key = ' + key + ' , value = item.ui.'+ dataValue)
+								// console.log('key = ' + key + ' , value = item.ui.'+ dataValue)
 								if (key.substring(0,1) == '#' || key.substring(0,1) == '.') {
 									$(key).val(ui.item.value)
 								} else {
 									$(original).data(key, dataValue)
-									console.log('data of key '+ key +' = '+$(original).data(key))
+									// console.log('data of key '+ key +' = '+$(original).data(key))
 								}
 							}
 						}
@@ -2262,7 +2272,7 @@ $(document).on('click', '.widget-tabbar>.tabs>li>a, .sg-tabs>.ui-tab>.ui-item>a,
 		$parent.children($this.attr('href')).show()
 	} else if (!$this.hasClass('sg-action')) {
 		notify('LOADING')
-		console.log('LOAD TAB')
+		// console.log('LOAD TAB')
 		//window.history.pushState({},$this.text(),href)
 		//TODO: FIXED bug on class sg-action will double request
 		$.post(href,function(html) {
@@ -2443,7 +2453,7 @@ $(document).on('focus', '.sg-address', function(e) {
 	$this
 	.autocomplete({
 		source: function(request, response){
-			console.log('Search address of ' + request.term)
+			// console.log('Search address of ' + request.term)
 			$.get(url+"api/address?q="+encodeURIComponent(request.term), function(data){
 				response(data)
 			}, "json");
@@ -2454,7 +2464,7 @@ $(document).on('focus', '.sg-address', function(e) {
 		select: function(event, ui) {
 			this.value = ui.item.label;
 			// Do something with id
-			console.log('Return Address : '+ui.item.value)
+			// console.log('Return Address : '+ui.item.value)
 			if ($this.data('altfld')) $("#"+$this.data('altfld')).val(ui.item.value);
 
 			// Process call back
@@ -2633,13 +2643,13 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 		var tagName = $form.data('before')
 		var insertElement = '<'+tagName+targetClass+'><div class="loader -rotate -center"></div></'+tagName+'>'
 		var $targetElement = $this.closest(tagName).before(insertElement)
-		console.log($targetElement)
+		// console.log($targetElement)
 	} else {
 		notify('<div class="loader -rotate"></div> กำลังอัพโหลดไฟล์ กรุณารอสักครู่')
 	}
 	$form.ajaxForm({
 		success: function(data) {
-			console.log('Inline upload file complete.', data);
+			// console.log('Inline upload file complete.', data);
 			if (isAndroidWebViewReady) Android.showToast('อัพโหลดไฟล์เรียบร้อบ')
 			if (target) {
 				if ($form.data('append')) {
@@ -2670,9 +2680,11 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 			notify("ดำเนินการเสร็จแล้ว.",5000)
 			$this.val("")
 			$this.replaceWith($this.clone(true))
-			if ($form.data('done') == 'close') {
-				sgBoxBack({close: true})
-			}
+			sgActionDone($form.data('done'), $form, data);
+
+			// if ($form.data('done') == 'close') {
+			// 	sgBoxBack({close: true})
+			// }
 		}
 	}).submit()
 });
@@ -2705,7 +2717,7 @@ function drawChart(chartDom) {
 
 	console.log('::SG-CHART ' + chartType + ' of ' + chartId)
 	// console.log('Chart Title : '+chartTitle+' Chart Type : '+chartType)
-	if ($chartNav.length) console.log($chartNav)
+	// if ($chartNav.length) console.log($chartNav)
 
 	let defaults = {
 		pointSize: 4,
@@ -2869,7 +2881,7 @@ function drawChart(chartDom) {
 			a.innerHTML = $chartNav.prop('outerHTML')
 			chartContainer.prepend(a)
 			// chartContainer.before($('<div>').html($chartNav.html()))
-			console.log($chartNav.html())
+			// console.log($chartNav.html())
 		}
 	}
 }
@@ -3060,7 +3072,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 
 	var editLocation = function(latLng) {
 		if (updateUrl == undefined) return false
-		console.log("EDIT", latLng)
+		// console.log("EDIT", latLng)
 	}
 
 	function updateLocationValue(lat,lng) {
@@ -3229,7 +3241,7 @@ $(document).on('change','.sg-changwat',function() {
 	var $village=$form.find('.sg-village');
 	var altField = $this.data('altfld')
 
-	console.log('Get Ampur of ' + $this.val())
+	// console.log('Get Ampur of ' + $this.val())
 	if ($this.val()=='') {
 		$ampur.val("").hide();
 	} else {
@@ -3269,7 +3281,7 @@ $(document).on('change','.sg-ampur', function() {
 	var $village = $form.find('.sg-village');
 	var altField = $this.data('altfld')
 
-	console.log('Get Tambon of ' + $this.val())
+	// console.log('Get Tambon of ' + $this.val())
 
 	if ($this.val()=='') {
 		$tambon.val("").hide();
@@ -3308,12 +3320,12 @@ $(document).on('change','.sg-tambon', function() {
 	let altField = $this.data('altfld')
 
 	if (altField) {
-		console.log('tambon altfld = ' + altField)
+		// console.log('tambon altfld = ' + altField)
 		$form.find(altField).val($changwat.val()+$ampur.val()+$this.val())
 	}
 	if (!$village.length) return;
 
-	console.log('Get Village of ' + $this.val())
+	// console.log('Get Village of ' + $this.val())
 	if ($this.val()=='') {
 		$village.val("").hide();
 	} else {
