@@ -126,7 +126,7 @@ class PaperMy extends Page {
 						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->nodeId.'/edit.photo').'" data-rel="box" data-width="full"><i class="icon -material">photo</i></a>',
 						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->nodeId.'/edit.detail').'" data-rel="box" data-width="full"><i class="icon -material">edit</i></a>',
 						'<a class="sg-action btn'.($rs->status == _PUBLISH ? ' -success' : '').'" href="'.url('paper/'.$rs->nodeId.'/edit.main').'" data-rel="box" data-width="full">'.$statusList[$rs->status].'</a>',
-						(new DropBox([
+						(new Dropbox([
 							// 'debug' => true,
 							'position' => 'left',
 							'children' => [
