@@ -22,14 +22,16 @@ function admin_site_theme($self) {
 	$ret.='<div class="row">';
 	$ret .= '<div class="col -md-4">';
 	$ret .= '<p>Current theme name is <strong>'.cfg('theme.name').'</strong>.</p>';
-	$ret.='<p>Please select <strong>new theme or <a href="'.url('admin/site/theme/clear').'">Restore theme to default</a></strong></p>';
+	$ret.='<p>Please select <strong>new theme or <a class="sg-action" href="'.url('admin/site/theme/clear').'" data-rel="none" data-done="reload">Restore web theme to default</a> for all users.</strong></p>';
 	$ui=new Ui(NULL,'ui-card');
 	foreach ($themes as $theme) {
 		$theme_thumbnail_file=$theme_folder.'/'.$theme.'/theme.thumbnail.png';
 		$theme_thumbnail=_URL.cfg('theme.folder').'/'.$theme.'/theme.thumbnail.png';
 		$ui->add('<h3>Theme name : '.$theme.'</h3>'
 			.(file_exists($theme_thumbnail_file)?'<a href="'.url('admin/site/theme/select/'.$theme).'"><img src="'.$theme_thumbnail.'" alt="'.$theme.'" width="200" /></a>':'No theme photo.')
-			.'<p><a href="'.url('admin/site/theme/select/'.$theme).'">Set as default</a></p>');
+			.'<p><a href="'.url('admin/site/theme/select/'.$theme).'">Set as default</a> | '
+			. ($_COOKIE['theme'] === $theme ? '<a class="sg-action" href="'.url('admin/site/theme', ['theme' => ':clear']).'" data-rel="none" data-done="reload">Cancel temporary theme</a>' : '<a class="sg-action" href="'.url('admin/site/theme', ['theme' => $theme]).'" data-rel="none" data-done="reload">Use temporary</a>')
+			. '</p>');
 	}
 	$ret.=$ui->build();
 	$ret.='</div><!-- col -->';

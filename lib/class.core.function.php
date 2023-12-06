@@ -417,12 +417,20 @@ function set_theme($name = NULL, $style = 'style.css') {
 	/folder/themes -> /folder/themes
 	*/
 
+	$getTemporaryTheme = $_GET['theme'];
+
 	$themes = [];
-	if (isset($name)) $themes[]=$name;
-	if ($_GET['theme']) $themes[]=$_GET['theme'];
-	if ($_COOKIE['theme']) $themes[]=$_COOKIE['theme'];
-	$themes[]=cfg('theme.name');
-	$themes[]='default';
+	if (isset($name)) $themes[] = $name;
+	if ($getTemporaryTheme == ':clear') {
+		setcookie('theme', '', time()-3600, cfg('cookie.path'), cfg('cookie.domain'));
+		unset($_COOKIE['theme']);
+	} else if ($getTemporaryTheme) {
+		$themes[] = $_GET['theme'];
+		setcookie('theme', $_GET['theme'], time()+10*365*24*60*60, cfg('cookie.path'), cfg('cookie.domain'));
+	}
+	if ($_COOKIE['theme']) $themes[] = $_COOKIE['theme'];
+	$themes[] = cfg('theme.name');
+	$themes[] = 'default';
 
 	foreach ($themes as $name) {
 		$theme_folder=cfg('folder.abs').cfg('theme.folder').'/'.$name.'/';
