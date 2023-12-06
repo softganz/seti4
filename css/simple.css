@@ -855,7 +855,7 @@ $SCREENS
 		.menu.-pulldown li.-has-sub {}
 		.menu.-pulldown li.-has-sub:after {content : ''; position: absolute; margin-top: -24px; left: auto; right: 8px; width: 0px; height: 0px; display: inline-block; border-bottom: 4px solid transparent; border-top: 4px solid transparent; border-left: 4px solid #2f2f2f; font-size: 0px; line-height: 0px;}
 		.menu.-pulldown>li {}
-		.menu.-pulldown>li>a {padding: 0 9px; line-height: 48px; display: block;}
+		.menu.-pulldown>li>a {padding: 0 9px; display: block;}
 		.menu.-pulldown>li:hover>a {}
 		.menu.-pulldown ul {border-radius: 0; border: none; background: #eee; box-shadow: 0 0 0 1px #ddd; height: auto; min-width: 200px;}
 		.menu.-pulldown ul>li {margin: 0; padding: 0px; background: transparent; border-bottom: #ddd 1px solid;}
