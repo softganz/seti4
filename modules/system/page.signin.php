@@ -34,6 +34,7 @@ class Signin extends Page {
 			'showGuide' => post('showGuide') === '0' ? false : true,
 			'showInfo' => post('showInfo') === '0' ? false : true,
 			'showRegist' => post('showRegist') === '0' ? false : true,
+			'done' => post('done'),
 		]);
 	}
 
@@ -52,6 +53,7 @@ class Signin extends Page {
 				'showGuide' => $this->showGuide,
 				'showInfo' => $this->showInfo,
 				'showRegist' => $this->showRegist,
+				'done' => $this->done,
 			];
 		}
 
