@@ -1,8 +1,14 @@
 {
-	"autoLoader" : {
-		"items" : {
+	"autoLoader": {
+		"items": {
 			"DB": "lib/class.db.php",
 			"Album": "widgets/widget.album.php"
 		}
+	},
+	"system": {
+		"logResizePhoto": false,
+		"maximumScale": 2.5,
+		"initialScale": 1.0,
+		"minimumScale": 1.0
 	}
 }
