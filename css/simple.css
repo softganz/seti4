@@ -1317,7 +1317,7 @@ $SCREENS
 
 
 
-	.widget-item {margin:20px 10px; background: #fff; box-shadow: 1px 1px 2px #aaa; position: relative;}
+	.widget-item {margin:20px 10px; background-color: #fff; box-shadow: 1px 1px 2px #aaa; position: relative;}
 		.widget-item h2 {margin:0; padding:5px; color: green;}
 		.widget-item .summary {margin:0 10px; padding:0; overflow: hidden; pointer-events: none;}
 		.widget-item div.photo {margin:10px 0; padding:0; border:none;}
