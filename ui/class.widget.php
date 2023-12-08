@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-11-11
-* Version :: 26
+* Modify  :: 2023-12-08
+* Version :: 27
 *
 * @param Array $args
 * @return Widget
@@ -556,17 +556,20 @@ class InlineEdit extends Widget {
 	var $debug;
 	var $selectOptions = [];
 	var $options = []; // debug,place
+	var $children = []; // For multiple edit items
 
 	function __construct($args = []) {
 		parent::__construct($args);
-		if ($this->editMode && $this->updateUrl) $this->class = 'sg-inline-edit'.' '.$this->class;
-		$this->class .= ' inline-edit-item -'.$this->type;
-		$this->text = trim($this->text);
-		if (!isset($this->value)) $this->value = $this->text;
-		if (isset($this->debug)) $this->options['debug'] = $this->debug;
-		$this->options['placeholder'] = $this->placeholder;
-		if ($this->onBlur) $this->options['onblur'] = $this->onBlur;
 
+		if (empty($this->children)) {
+			if ($this->editMode /* && $this->updateUrl */) $this->class = 'sg-inline-edit'.' '.$this->class;
+			$this->class .= ' inline-edit-item -'.$this->type;
+			$this->text = trim($this->text);
+			if (!isset($this->value)) $this->value = $this->text;
+			if (isset($this->debug)) $this->options['debug'] = $this->debug;
+			$this->options['placeholder'] = $this->placeholder;
+			if ($this->onBlur) $this->options['onblur'] = $this->onBlur;
+		}
 	}
 
 	function _render() {
@@ -622,6 +625,7 @@ class InlineEdit extends Widget {
 			. ' class="inline-edit-field -'.$this->type.($this->inputClass ? ' '.$this->inputClass : '').'"'._NL
 			. ' onClick=""'._NL
 			. ($this->type ? ' data-type="'.$this->type.'"'._NL : '')
+			. ($this->inputName ? ' data-name="'.$this->inputName.'"'._NL : '')
 			. ($this->group ? ' data-group="'.$this->group.'"'._NL : '')
 			. ($this->field ? ' data-fld="'.$this->field.'"'._NL : '')
 			. ' data-tr="'.$this->tranId.'"'
@@ -630,6 +634,7 @@ class InlineEdit extends Widget {
 			. ' data-value="'.htmlspecialchars(SG\getFirst($this->value, $this->text)).'"'._NL
 			. ($selectOptions ? ' data-data="'.htmlspecialchars(\json_encode($selectOptions)).'"' : '')
 			. ' title="'.$this->title.'"'._NL
+			. ($this->attribute && is_array($this->attribute) ? ' '.sg_implode_attr($this->attribute)._NL : '')
 			. ' data-options=\''.json_encode($options).'\''._NL
 			. '>'._NL;
 
@@ -760,6 +765,32 @@ class InlineEdit extends Widget {
 		// $ret .= '<pre>'.htmlspecialchars($ret).'</pre>';
 		// $ret .= print_o($this, '$this');
 		return $ret;
+	}
+
+	// @override
+	function build() {
+		if ($this->onBuild && is_callable($this->onBuild)) {
+			$onBuildFunction = $this->onBuild;
+			$onBuildFunction($this);
+		}
+		if ($this->children) {
+			// debugMsg($this->children,'$this->children');
+			$this->tagName = 'div';
+			$this->class .= ' sg-inline-edit';
+			$ret .= $this->_renderWidgetContainerStart(function(){
+				return (' data-update-url="'.$this->action.'"');
+			});
+			foreach ($this->children as $key => $child) {
+				// $child['updateUrl'] = SG\getFirst($child['updateUrl'], $this->action);
+				if (is_string($key)) $child['inputName'] = $key;
+				$ret .= (new InlineEdit($child))->_render();
+				// $ret .= (new DebugMsg($child,'$child'))->build();
+			}
+			$ret .= $this->_renderWidgetContainerEnd();
+			return $ret;
+		} else {
+			return $this->toString();
+		}
 	}
 } // End of class Container
 
