@@ -1319,16 +1319,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		else if ($this.data('type') == 'autocomplete') settings.inputcssclass = 'form-text -autocomplete'
 		else if ($this.data('type') == 'select') settings.inputcssclass = 'form-select'
 
-		$this.editable(function(value, settings) {
-			if (_validValue($this, value)) {
-				self.save($this, value, callback)
-				return value
-			} else {
-				notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
-				return $this.data('value')
-			}
-		} ,
-		settings
+		$this.editable(
+			function(value, settings) {
+				if (_validValue($this, value)) {
+					self.save($this, value, callback)
+					return value
+				} else {
+					notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
+					return $this.data('value')
+				}
+			} ,
+			settings
 		).trigger('edit')
 
 		// $this.editable(function(value, settings) {
@@ -1365,6 +1366,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			console.log($parent.data('updateUrl'))
 			console.log('postUrl = ', postUrl)
 			console.log($parent.data());
+			console.log($this.data());
 
 			if (postUrl === undefined) {
 				// console.log('ERROR :: POSTURL UNDEFINED')
@@ -1385,14 +1387,18 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			delete para['event.editable']
 			delete para['uiAutocomplete']
 			para.action = 'save';
-			para.value = value.replace(/\"/g, "\"");
+			if ($this.data('name')) {
+				para[$this.data('name')] = value.replace(/\"/g, "\"")
+			} else {
+				para.value = value.replace(/\"/g, "\"")
+			}
 			if (settings.var) para[settings.var] = para.value
-			$this.data('value', para.value);
+			$this.data('value', para.value)
 
 			//if (settings.blank === null && para.value === "") para.value = null
 			//console.log(settings.blank)
 
-			//console.log('UPDATE PARA:', para)
+			// console.log('UPDATE PARA:', para)
 
 			updatePending++
 			updateQueue++
@@ -1464,6 +1470,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				notify('ERROR ON POSTING. Please Contact Admin.');
 				// console.log(response)
 			}).done(function(response) {
+				console.log('response', response)
 				// Process callback function
 				let callbackFunction = settings.callback ? settings.callback : $this.data('callback')
 
