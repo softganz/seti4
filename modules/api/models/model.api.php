@@ -198,6 +198,32 @@ class ApiModel {
 		// debugMsg(mydb()->_query);
 	}
 
+	public static function getQueue($conditions = []) {
+		$conditions = SG\json_decode(
+			$conditions,
+			(Object) [
+				'status' => '',
+				'options' => ['start' => 0, 'items' => 10, 'orderBy' => 'apiId', 'sortOrder' => 'DESC']
+			]
+		);
+
+		// debugMsg($conditions, '$conditions');
+		$result = DB::select([
+			'SELECT *, FROM_UNIXTIME(`created`) `created` FROM %api_wait% %WHERE% $ORDER$ $LIMIT$',
+			'where' => [
+				'%WHERE%' => [
+					$conditions->status ? ['`status` = :status', ':status' => $conditions->status] : NULL
+				]
+			],
+			'var' => [
+				'$ORDER$' => 'ORDER BY '.$conditions->options['orderBy'].' '.$conditions->options['sortOrder'],
+				'$LIMIT$' => 'LIMIT '.$conditions->options['start'].','.$conditions->options['items'],
+			]
+		]);
+		// debugMsg(mydb()->_query);
+		return $result;
+	}
+
 	public static function getWaiting() {
 		$result = DB::select('SELECT * FROM %api_wait% WHERE `status` = "WAITING" LIMIT 10');
 		DB::query('UPDATE %api_wait% SET `status` = "SENDING" WHERE `status` = "WAITING" LIMIT 10');
