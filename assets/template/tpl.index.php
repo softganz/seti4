@@ -1,49 +1,48 @@
 <!DOCTYPE html>
-<html xmlns="https://www.w3.org/1999/xhtml" dir="ltr" lang="en-EN">
-<head profile="https://gmpg.org/xfn/11">
+<html lang="en-TH">
+<head>
 <?php if (cfg('web.init')) {ob_start();eval ('?>'.cfg('web.init'));echo ob_get_clean()._NL;}?>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo cfg('client.characterset');?>" />
-<meta http-equiv="Content-Language" content="th" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=<?php echo cfg('client.characterset');?>">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title><?php echo ($GLOBALS['title']?$GLOBALS['title']:'') .($GLOBALS['title'] && cfg('web.title') ? ' | ':'').cfg('web.title');?></title>
-<meta name="generator" content="www.softganz.com" />
-<meta name="formatter" content="Little Bear by SoftGanz Group" />
-<meta name="author" content="<?php echo cfg('web.title');?>" />
-<meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=<?php echo cfg('system')->initialScale;?>, minimum-scale=<?php echo cfg('system')->minimumScale;?>, maximum-scale=<?php echo cfg('system')->maximumScale;?>, user-scalable=yes"/>
-<meta name="format-detection" content="telephone=no"/>
-<meta name="msapplication-tap-highlight" content="no"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="generator" content="www.softganz.com">
+<meta name="formatter" content="Little Bear by SoftGanz Group">
+<meta name="author" content="<?php echo cfg('web.title');?>">
+<meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=<?php echo cfg('system')->initialScale;?>, minimum-scale=<?php echo cfg('system')->minimumScale;?>, maximum-scale=<?php echo cfg('system')->maximumScale;?>, user-scalable=yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="msapplication-tap-highlight" content="no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <?php if (cfg('gmapkey')) echo '<script>var googleMapKeyApi = "'.cfg('gmapkey').'"</script>';?>
 
 <?php if (cfg('head.include.first')) echo implode(_NL,head());?>
 
 <?php if (cfg('favicon')) echo cfg('favicon');?>
-<link rel="stylesheet" type="text/css" href="<?php echo cfg('theme.stylesheet').cfg('theme.stylesheet.para');?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo cfg('theme.stylesheet').cfg('theme.stylesheet.para');?>">
 <?php
-if (file_exists(cfg('theme.absfolder').'/style.inc.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'style.inc.css" />'._NL;
-if (is_home() && file_exists(cfg('theme.absfolder').'/home.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'home.css" />'._NL;
-if (cfg('theme.'.cfg('theme.name').'.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'theme.css" />'._NL;
+if (file_exists(cfg('theme.absfolder').'/style.inc.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'style.inc.css">'._NL;
+if (is_home() && file_exists(cfg('theme.absfolder').'/home.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'home.css">'._NL;
+if (cfg('theme.'.cfg('theme.name').'.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'theme.css">'._NL;
 if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 	;//
 } else if (cfg('theme.backandwhite')) {
-	echo '<link rel="stylesheet" type="text/css" href="https://softganz.com/themes/bw/bw.css" />'._NL;
+	echo '<link rel="stylesheet" type="text/css" href="https://softganz.com/themes/bw/bw.css">'._NL;
 }
 ?>
-<script type="text/javascript">var isRunOnHost=<?php echo cfg('server')?'true':'false';?></script>
-<script type="text/javascript">var rootUrl = url = "<?php echo _URL;?>"</script>
+<script>var isRunOnHost=<?php echo cfg('server')?'true':'false';?></script>
+<script>var rootUrl = url = "<?php echo _URL;?>"</script>
 
 <?php $jsLocation = cfg('clean_url')?'/js/':cfg('library');?>
-<script type="text/javascript" src="<?php echo $jsLocation;?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
+<script src="<?php echo $jsLocation;?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
 
-<script type="text/javascript" src="<?php echo $jsLocation;?>jquery.ui.datepicker.js"></script>
-<script type="text/javascript" src="<?php echo $jsLocation;?>jquery.colorbox.js"></script>
-<script type="text/javascript" src="<?php echo $jsLocation;?>jquery.jeditable.js"></script>
-<script type="text/javascript" src="<?php echo $jsLocation;?>jquery.form.js"></script>
+<script src="<?php echo $jsLocation;?>jquery.ui.datepicker.js"></script>
+<script src="<?php echo $jsLocation;?>jquery.colorbox.js"></script>
+<script src="<?php echo $jsLocation;?>jquery.jeditable.js"></script>
+<script src="<?php echo $jsLocation;?>jquery.form.js"></script>
 
 
-<script type="text/javascript" src="<?php echo $jsLocation;?>jquery.confirm.js"></script>
+<script src="<?php echo $jsLocation;?>jquery.confirm.js"></script>
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css"> -->
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script> -->
 
@@ -53,8 +52,8 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 -->
 
-<script type="text/javascript" src="<?php echo $jsLocation.'library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js').cfg('theme.stylesheet.para');?>"></script>
-<script type="text/javascript" src="<?php echo $jsLocation.($_SESSION['devMode'] ? 'sgui.js':'sgui.min.js').cfg('theme.stylesheet.para');?>"></script>
+<script src="<?php echo $jsLocation.'library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js').cfg('theme.stylesheet.para');?>"></script>
+<script src="<?php echo $jsLocation.($_SESSION['devMode'] ? 'sgui.js':'sgui.min.js').cfg('theme.stylesheet.para');?>"></script>
 
 
 <?php if (!cfg('head.include.first')) echo implode(_NL,head());?>
@@ -153,7 +152,7 @@ if (cfg('firebase')) {
 	</script>'._NL;
 }
 ?>
-<script type="text/javascript">
+<script>
 <?php
 if (cfg('social.facebook')) echo '// Load the Facebook SDK asynchronously
 (function(d, s, id) {

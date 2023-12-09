@@ -246,6 +246,8 @@ class Form extends Widget {
 			}
 		}
 
+		unset($formElement->container['class']);
+
 		$ret .= '<div id="form-item-'.$tag_id.'" '
 				. 'class="form-'.(in_array($formElement->type,array('','')) ? $formElement->type : 'item -'.$tag_id).($containerClass ? ' '.$containerClass : '')
 				. ($formElement->type == 'hidden' ? ' -hidden' : '')
@@ -327,7 +329,7 @@ class Form extends Widget {
 	}
 
 	function _renderHidden($tag_id, $name, $formElement) {
-		return '<input type="hidden" name="'.$name.'" id="'.$tag_id.'" class="'.($formElement->require?'-require':'').'" value="'.htmlspecialchars($formElement->value).'" />'._NL._NL;
+		return '<input type="hidden" name="'.$name.'" id="'.$tag_id.'" class="'.($formElement->require?'-require':'').'" value="'.htmlspecialchars($formElement->value).'">'._NL._NL;
 	}
 
 	function _renderTextPassword($tag_id, $name, $formElement) {
@@ -349,7 +351,7 @@ class Form extends Widget {
 			. ($formElement->{"autocomplete-url"} ? ' autocomplete-url="'.$formElement->{"autocomplete-url"}.'"' : '')
 			. ' value="'.htmlspecialchars($formElement->value).'"'
 			. (isset($formElement->placeholder) ? ' placeholder="'.$formElement->placeholder.'"' : '')
-			. ' />';
+			. '>';
 		return $ret;
 	}
 
@@ -420,7 +422,7 @@ class Form extends Widget {
 				// 	$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
 				// 		. ' type="'.$formElement->type.'"'
 				// 		. ($formElement->attribute ? ' '.$formElement->attribute : '')
-				// 		. ' /> ';
+				// 		. '> ';
 				// 	$ret .= $optionValue['label'];
 				// 	$ret .= '</label></abbr>'._NL;
 				} else {
@@ -471,7 +473,7 @@ class Form extends Widget {
 						. ' type="'.$formElement->type.'"'
 						. ($formElement->attribute ? ' '.$formElement->attribute:'')
 						. $this->onElementEvent('onChange', $formElement->onChange)
-						. ' /> ';
+						. '> ';
 					$ret .= '<span>'.$optionValue.'</span>';
 					$ret .= '</label></abbr>'._NL;
 				}
@@ -515,7 +517,7 @@ class Form extends Widget {
 					$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
 						. ' type="'.$formElement->type.'"'
 						. ($formElement->attribute ? ' '.$formElement->attribute : '')
-						. ' /> ';
+						. '> ';
 					$ret .= $optionValue['label'];
 					$ret .= '</label></abbr>'._NL;
 					// $ret .= print_o($formElement->value, '$formElement->value');
@@ -543,7 +545,7 @@ class Form extends Widget {
 						$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require':'').'"'
 							. ' type="'.$formElement->type.'"'
 							. ($formElement->attribute?' '.$formElement->attribute:'')
-							. ' /> ';
+							. '> ';
 						$ret .= $itemOptionValue;
 
 						$ret .= '</label>'._NL;
@@ -580,7 +582,7 @@ class Form extends Widget {
 						. ' type="'.$formElement->type.'"'
 						. ($formElement->attribute ? ' '.$formElement->attribute:'')
 						. $this->onElementEvent('onChange', $formElement->onChange)
-						. ' /> ';
+						. '> ';
 				}
 				$ret .= $optionValue;
 				$ret .= '</label></abbr>'._NL;
@@ -619,7 +621,7 @@ class Form extends Widget {
 			$ret .= ' class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'"'
 				. ' type="'.$formElement->type.'"'
 				. ($formElement->attribute ? ' '.$formElement->attribute:'')
-				. ' /> ';
+				. '> ';
 		}
 		$ret .= $option_value;
 		$ret .= '</label>'._NL;
@@ -772,10 +774,10 @@ class Form extends Widget {
 	function _renderFile($tag_id, $name, $formElement) {
 		if ($formElement->count) {
 			for ($i = 1; $i <= $formElement->count; $i++) {
-				$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'['.$i.']" id="'.$tag_id.'-'.$i.'" class="form-'.$formElement->type.($formElement->require?' -require':'').'" type="'.$formElement->type.'" />';
+				$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'['.$i.']" id="'.$tag_id.'-'.$i.'" class="form-'.$formElement->type.($formElement->require?' -require':'').'" type="'.$formElement->type.'">';
 			}
 		} else {
-			$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'" id="'.$tag_id.'" class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'" type="'.$formElement->type.'"'.($formElement->multiple?'multiple="multiple"':'').' />';
+			$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'" id="'.$tag_id.'" class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'" type="'.$formElement->type.'"'.($formElement->multiple?'multiple="multiple"':'').'>';
 		}
 		return $ret;
 	}
@@ -810,7 +812,7 @@ class Form extends Widget {
 		$ret = '';
 		foreach ($formElement->items as $key=>$value) {
 			if (substr($key,0,4)=='text') $ret .= $value;
-			else $ret .= '	<input name="'.$key.'" '.($this->isReadOnly || $formElement->readonly?'readonly="readonly" ':'').'class="btn'.($key=='save'?' -primary':'').' -'.$key.($formElement->class?' '.$formElement->class:'').'"  type="'.$formElement->type.'" value="'.$value.'" />';
+			else $ret .= '	<input name="'.$key.'" '.($this->isReadOnly || $formElement->readonly?'readonly="readonly" ':'').'class="btn'.($key=='save'?' -primary':'').' -'.$key.($formElement->class?' '.$formElement->class:'').'"  type="'.$formElement->type.'" value="'.$value.'">';
 		}
 		return $ret;
 	}
@@ -891,7 +893,7 @@ class Form extends Widget {
 		if (empty($formElement->color)) $formElement->color='#ffffff, #cccccc, #c0c0c0, #999999, #666666, #333333, #000000, #ffcccc, #ff6666, #ff0000, #cc0000, #990000, #660000, #330000, #ffcc99, #ff9966, #ff9900, #ff6600, #cc6600, #993300, #663300, #ffff99, #ffff66, #ffcc66, #ffcc33, #cc9933, #996633, #663333, #ffffcc, #ffff33, #ffff00, #ffcc00, #999900, #666600, #333300, #99ff99, #66ff99, #33ff33, #33cc00, #009900, #006600, #003300, #99ffff, #33ffff, #66cccc, #00cccc, #339999, #336666, #003333, #ccffff, #66ffff, #33ccff, #3366ff, #3333ff, #000099, #000066, #ccccff, #9999ff, #6666cc, #6633ff, #6600cc, #333399, #330099, #ffccff, #ff99ff, #cc66cc, #cc33cc, #993399, #663366, #330033';
 		foreach (explode(',',$formElement->color) as $color) {
 			$color = trim($color);
-			$ret .= '<span style="background:'.$color.'; display:inline-block; padding:4px; border-radius: 4px; width: 18px; height: 18px;"><input type="radio" name="'.$name.'" value="'.$color.'"'.($color == $formElement->value?' checked="checked"':'').' style="outline: none; box-shadow: none; margin: 0 0 0 2px; padding: 0; height: 16px; width: 16px;" /></span>'._NL;
+			$ret .= '<span style="background:'.$color.'; display:inline-block; padding:4px; border-radius: 4px; width: 18px; height: 18px;"><input type="radio" name="'.$name.'" value="'.$color.'"'.($color == $formElement->value?' checked="checked"':'').' style="outline: none; box-shadow: none; margin: 0 0 0 2px; padding: 0; height: 16px; width: 16px;"></span>'._NL;
 		}
 		return $ret;
 	}

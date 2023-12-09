@@ -2,24 +2,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-EN">
 <head profile="http://gmpg.org/xfn/11">
 <?php if (cfg('web.init')) {ob_start();eval ('?>'.cfg('web.init'));echo ob_get_clean()._NL;}?>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo cfg('client.characterset');?>" />
-<meta http-equiv="Content-Language" content="th" />
+<meta http-equiv="Content-Type" content="text/html; charset=<?php echo cfg('client.characterset');?>">
+<meta http-equiv="Content-Language" content="th">
 <title><?php echo ($GLOBALS['title']?$GLOBALS['title']:'') .($GLOBALS['title'] && cfg('web.title') ? ' | ':'').cfg('web.title');?></title>
-<meta name="generator" content="www.softganz.com" />
-<meta name="formatter" content="Little Bear by SoftGanz Group" />
-<meta name="author" content="<?php echo cfg('web.title');?>" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="generator" content="www.softganz.com">
+<meta name="formatter" content="Little Bear by SoftGanz Group">
+<meta name="author" content="<?php echo cfg('web.title');?>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<link rel="stylesheet" type="text/css" href="<?php echo cfg('theme.stylesheet').cfg('theme.stylesheet.para');?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo cfg('theme.stylesheet').cfg('theme.stylesheet.para');?>">
 <?php
-if (file_exists(cfg('theme.absfolder').'/style.inc.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'style.inc.css" />'._NL;
-if (is_home() && file_exists(cfg('theme.absfolder').'/home.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'home.css" />'._NL;
-if (cfg('theme.'.cfg('theme.name').'.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'theme.css" />'._NL;
+if (file_exists(cfg('theme.absfolder').'/style.inc.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'style.inc.css">'._NL;
+if (is_home() && file_exists(cfg('theme.absfolder').'/home.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'home.css">'._NL;
+if (cfg('theme.'.cfg('theme.name').'.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'theme.css">'._NL;
 if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 	;//
 } else if (cfg('theme.backandwhite')) {
-	echo '<link rel="stylesheet" type="text/css" href="http://softganz.com/themes/bw/bw.css" />'._NL;
+	echo '<link rel="stylesheet" type="text/css" href="http://softganz.com/themes/bw/bw.css">'._NL;
 }
 ?>
 <script type="text/javascript">var isRunOnHost=<?php echo cfg('server')?'true':'false';?></script>

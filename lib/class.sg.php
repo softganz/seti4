@@ -92,16 +92,16 @@ public static function explode_name($sep=' ',$name=null) {
  */
 public static function add_opengraph($type) {
 	head(
-		'<meta property="og:title" content="'.str_replace('"','',strip_tags($type->title)).'" />'._NL
-		. '<meta property="og:type" content="'.$type->type.'" />'._NL
-		. '<meta property="og:url" content="'.cfg('domain').$type->url.'" />'
+		'<meta property="og:title" content="'.str_replace('"','',strip_tags($type->title)).'">'._NL
+		. '<meta property="og:type" content="'.$type->type.'">'._NL
+		. '<meta property="og:url" content="'.cfg('domain').$type->url.'">'
 	);
 	if ($type->image) {
 		$imgUrl=(preg_match('/^http\:\/\/|https\:\/\/|\/\//i',$type->image)?'':cfg('domain')).$type->image;
-		head('<meta property="og:image" content="'.$imgUrl.'" />');
-		head('<link rel="image_src" href="'.$imgUrl.'" />');
+		head('<meta property="og:image" content="'.$imgUrl.'">');
+		head('<link rel="image_src" href="'.$imgUrl.'">');
 	}
-	if ($type->description) head('<meta property="og:description" content="'.trim(str_replace(array('"','\'',"\r","\n",'  '),array('','',' ',' ',' '),strip_tags($type->description))).'" />');
+	if ($type->description) head('<meta property="og:description" content="'.trim(str_replace(array('"','\'',"\r","\n",'  '),array('','',' ',' ',' '),strip_tags($type->description))).'">');
 }
 
 
