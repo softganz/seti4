@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-TH">
+<html lang="th">
 <head>
 <?php if (cfg('web.init')) {ob_start();eval ('?>'.cfg('web.init'));echo ob_get_clean()._NL;}?>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo cfg('client.characterset');?>">
+<meta charset="<?php echo cfg('client.characterset');?>">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title><?php echo ($GLOBALS['title']?$GLOBALS['title']:'') .($GLOBALS['title'] && cfg('web.title') ? ' | ':'').cfg('web.title');?></title>
 <meta name="generator" content="www.softganz.com">
