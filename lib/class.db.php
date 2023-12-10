@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2023-10-25
-* Version :: 5
+* Modify  :: 2023-12-10
+* Version :: 6
 *
 * @param Array $args
 * @return Object
@@ -432,36 +432,51 @@ class DB {
 	private function setVariable($variable = []) {
 		if (empty($variable)) return;
 
+		// Value of var is object, convert to array with : in front of key
 		if (is_object($variable)) $variable = $this->valueObjectConvert($variable);
 
-		// TODO: convert variable to string with quote
 		foreach ($variable as $key => $value) {
-			if (is_null($value)) {
-				$value = "NULL";
-			} else if (is_string($value) && preg_match('/^\$/', $key)) {
-				$value = $value;
-			} else if (is_string($value) && preg_match('/^func\./i', $value)) {
-				$value = substr($value,5);
-			} else if (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key, $out)) {
-				$value = $this->jsonObjectString($value);
-			} else if (is_object($value) && get_class($value) === 'Softganz\JsonDataModel') {
-				$value = $this->jsonObjectString($value->args);
-			} else if (is_object($value) && get_class($value) === 'Softganz\JsonArrayDataModel') {
-				$value = $this->jsonArrayString($value->args);
-			} else if (is_object($value) && get_class($value) === 'Softganz\SetDataModel') {
-				$value = $this->valueOfSet($value);
-			} else if (is_string($value)) {
-				$value = $this->quote($value);
-			} else if (is_bool($value)) {
-				$value = $value ? 1 : 0;
-			} else if (is_numeric($value)) {
-				$value = $value;
-			} else {
-				$value = '""';
-			}
-
-			$this->var[$key] = $value;
+			self::setEachVariable($key, $value);
 		}
+		// debugMsg($this->var, '$this->var');
+	}
+
+	private function setEachVariable($key, $value) {
+		if (is_null($value)) {
+			$value = 'NULL';
+		} else if (is_object($value) && get_class($value) === 'Softganz\JsonDataModel') {
+			$value = $this->jsonObjectString($value->args);
+		} else if (is_object($value) && get_class($value) === 'Softganz\JsonArrayDataModel') {
+			$value = $this->jsonArrayString($value->args);
+		} else if (is_object($value) && get_class($value) === 'Softganz\SetDataModel') {
+			$value = $this->valueOfSet($value);
+		} else if (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key, $out)) {
+			$value = $this->jsonObjectString($value);
+		} else if (is_object($value)) {
+			// If value is object, recursive all element with add : in front of key
+			return self::setVariable($value);
+		} else if (is_array($value)) {
+			// If value is object, recursive all element without add : in front of key
+			return self::setVariable($value);
+		} else if (preg_match('/^\$([a-zA-Z0-9_]*)\$$/', $key, $out)) {
+			// If key leading and ending with $ and function name format, Don't quote
+			$value = $value;
+		} else if (preg_match('/^\$([a-zA-Z0-9_]*)/', $key, $out)) {
+			// If key leading with $ and follow by function name format, Quote value
+			$value = $this->quote($value);
+		} else if (is_string($value) && preg_match('/^func\./i', $value)) {
+			$value = substr($value, 5);
+		} else if (is_string($value)) {
+			$value = $this->quote($value);
+		} else if (is_bool($value)) {
+			$value = $value ? 1 : 0;
+		} else if (is_numeric($value)) {
+			$value = $value;
+		} else {
+			$value = '""';
+		}
+		$this->var[$key] = $value;
+		return $value;
 	}
 
 	private function replaceWhere() {
@@ -530,7 +545,12 @@ class DB {
 	private function valueObjectConvert(Object $object) {
 		$result = [];
 		foreach ($object as $key => $value) {
-			$result[':'.$key] = $value;
+			if (preg_match('/^\$/', $key, $out)) {
+				// Key leading with $ will not add : to front of it
+				$result[$key] = $value;
+			} else {
+				$result[':'.$key] = $value;
+			}
 		}
 		return $result;
 	}
@@ -549,7 +569,7 @@ class DB {
 		}
 	}
 
-	private function quote($value) {return $this->PDO->quote($value);}
+	private function quote($value, $type = NULL) {return $this->PDO->quote($value, $type);}
 
 	/**
 	 * Set & get table with keyword
