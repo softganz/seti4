@@ -1,19 +1,15 @@
 <?php
 /**
- * SOFTGANZ :: common function
- *
- * @package core
- * @version 1.00
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2007-07-09
- * @modify 2012-04-04
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- */
+* Function:: Common Function
+* Created :: 2007-07-09
+* Modify  :: 2023-12-08
+* Version :: 2
+*
+* @param Array $args
+* @return Widget
+*
+* @usage new Widget([key => value,...])
+*/
 
 function sg_budget_year($date) {
 	return sg_date($date,'Y')+(sg_date($date,'m')>=10?1:0);
@@ -751,7 +747,15 @@ function sg_seturl($url,$value) {
 }
 
 function sg_status_text($status) {
-static $status_text=array(0=>'n/a',_DRAFT=>'draft',_PUBLISH=>'pubish',_WAITING=>'waiting',_BLOCK=>'block',_LOCK=>'lock');
+	static $status_text = [
+		0 => 'n/a',
+		_DRAFT => 'draft',
+		_PUBLISH => 'pubish',
+		_WAITING => 'waiting',
+		_BLOCK => 'block',
+		_LOCK => 'lock'
+	];
+
 	return $status_text[$status];
 }
 
@@ -786,24 +790,25 @@ function sg_explode_attr($attribs) {
 
 /**
 * Implode attrbute array to string format name=value
-* @param Array $attr
+* @param Array $attributes
 * @return String
 */
-function sg_implode_attr($attr=array(), $sep = ' ', $options = '{}') {
+function sg_implode_attr($attributes = [], $sep = ' ', $options = '{}') {
 	$defaultOptions = '{quote: "\""}';
-	$options = sg_json_decode($options, $defaultOptions);
+	$options = SG\json_decode($options, $defaultOptions);
 
-	if (is_string($attr)) return $attr;
-	$ret = '';
-	if (is_object($attr)) $attr = (Array)$attr;
-	if (is_array($attr)) {
-		foreach ($attr as $k => $v) {
-			if (is_null($v)) continue;
-			if ($k === 'data-options' || (is_string($v) && preg_match('/^\{/', $v))) {
-				$ret .= $k.'='."'".trim($v)."'".$sep;
-			} else {
-				$ret .= $k.'='.$options->quote.$v.$options->quote.$sep;
-			}
+	if (is_string($attributes)) return $attributes;
+
+	if (is_object($attributes)) $attributes = (Array) $attributes;
+	if (!is_array($attributes)) return;
+
+	$ret = ' ';
+	foreach ($attributes as $attributeKey => $attributeValue) {
+		if (is_null($attributeValue)) continue;
+		if ($attributeKey === 'data-options' || (is_string($attributeValue) && preg_match('/^\{/', $attributeValue))) {
+			$ret .= is_array($attributeValue) ? 'data-options=\''.json_encode($attributeValue).'\'' : $attributeKey.'='."'".trim($attributeValue)."'".$sep;
+		} else {
+			$ret .= $attributeKey.'='.$options->quote.$attributeValue.$options->quote.$sep;
 		}
 	}
 	return trim($ret, $sep);
