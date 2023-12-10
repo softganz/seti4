@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-12-08
-* Version :: 27
+* Modify  :: 2023-12-10
+* Version :: 28
 *
 * @param Array $args
 * @return Widget
@@ -48,9 +48,11 @@ class Widget extends WidgetBase {
 	function __construct($args = []) {
 		$this->initConfig();
 		foreach ($args as $argKey => $argValue) {
-			if ($argKey === 'class') $this->class .= ($this->class ? ' ' : '').$argValue;
-			else if ($argKey === 'config' && is_array($argValue)) $argValue = (Object) $argValue;
-			else if ($argKey === 'attribute' && is_array($argValue)) {
+			if ($argKey === 'class') {
+				$this->class .= ($this->class ? ' ' : '').$argValue;
+			} else if ($argKey === 'config' && is_array($argValue)) {
+				$argValue = (Object) $argValue;
+			} else if ($argKey === 'attribute' && is_array($argValue)) {
 				$this->attribute = array_replace_recursive($this->attribute, $argValue);
 			} else if ($argKey === 'children') {
 				foreach ($argValue as $childName => $childValue) {
@@ -86,7 +88,6 @@ class Widget extends WidgetBase {
 	function addId($id) {$this->id = $id;}
 
 	function addConfig($key,$value) {
-		// if (!isset($this->config)) $this->initConfig();
 		$this->config->{$key} = $value;
 	}
 
@@ -559,6 +560,7 @@ class InlineEdit extends Widget {
 	var $children = []; // For multiple edit items
 
 	function __construct($args = []) {
+		// debugMsg($args, '$args');
 		parent::__construct($args);
 
 		if (empty($this->children)) {
@@ -778,12 +780,18 @@ class InlineEdit extends Widget {
 			$this->tagName = 'div';
 			$this->class .= ' sg-inline-edit';
 			$ret .= $this->_renderWidgetContainerStart(function(){
-				return (' data-update-url="'.$this->action.'"');
+				return ($this->action ? ' data-update-url="'.$this->action.'"'._NL : '');
 			});
 			foreach ($this->children as $key => $child) {
 				// $child['updateUrl'] = SG\getFirst($child['updateUrl'], $this->action);
-				if (is_string($key)) $child['inputName'] = $key;
-				$ret .= (new InlineEdit($child))->_render();
+				if (is_string($child)) {
+					$ret .= $child;
+				} else if (is_object($child) && method_exists($child, 'build')) {
+					$ret .= $this->_renderEachChildWidget($key, $child);
+				} else {
+					if (is_string($key)) $child['inputName'] = $key;
+					$ret .= (new InlineEdit($child))->_render();
+				}
 				// $ret .= (new DebugMsg($child,'$child'))->build();
 			}
 			$ret .= $this->_renderWidgetContainerEnd();
