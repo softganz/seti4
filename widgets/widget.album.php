@@ -39,7 +39,7 @@ class Album extends Widget {
 		return parent::_renderChildContainerStart($childrenKey, $args, $childrenValue);
 	}
 
-	function _renderEachChildWidget($key, $widget) {
+	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
 		if (is_object($widget)) return widget::_renderEachChildWidget($key, $widget);
 
 		$imageTag = '<img class="photoitem -photo" src="'.$widget['img'].'" />';
