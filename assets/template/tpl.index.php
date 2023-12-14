@@ -3,7 +3,6 @@
 <head>
 <?php if (cfg('web.init')) {ob_start();eval ('?>'.cfg('web.init'));echo ob_get_clean()._NL;}?>
 <meta charset="<?php echo cfg('client.characterset');?>">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title><?php echo ($GLOBALS['title']?$GLOBALS['title']:'') .($GLOBALS['title'] && cfg('web.title') ? ' | ':'').cfg('web.title');?></title>
 <meta name="generator" content="www.softganz.com">
 <meta name="formatter" content="Little Bear by SoftGanz Group">
@@ -13,6 +12,7 @@
 <meta name="msapplication-tap-highlight" content="no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <?php if (cfg('gmapkey')) echo '<script>var googleMapKeyApi = "'.cfg('gmapkey').'"</script>';?>
 
@@ -104,10 +104,9 @@ if (cfg('web.header')===false) {
 	;
 } else {
 	$navigator = \SG\getFirst(cfg('navigator.'.q(0).'.'.q(1)),cfg('navigator.'.q(0)),cfg('navigator'));
-	echo '<div id="header-wrapper" class="page -header">
-	<div class="wrapper">
-	<header>
-	<h1><a href="'.url(cfg('web.url')).'" title="'.htmlspecialchars(cfg('web.title')).'"><span>'.cfg('web.title').'</span></a></h1>'
+	echo '<div id="header-wrapper" class="page -header">'._NL
+	. '<div class="wrapper">'
+	. '<header><h1><a href="'.url(cfg('web.url')).'" title="'.htmlspecialchars(cfg('web.title')).'"><span>'.cfg('web.title').'</span></a></h1>'
 	. (cfg('web.slogan') ? '<p>'.cfg('web.slogan').'</p>'._NL : '')
 	. '</header>'
 	. process_widget(eval_php($navigator,_NL,_NL))
