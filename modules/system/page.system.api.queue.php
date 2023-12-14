@@ -12,15 +12,21 @@
 
 class SystemApiQueue extends Page {
 	var $status = 'WAITING';
-	var $items = 100;
+	var $items = 1000;
+	var $right;
 
 	function __construct() {
 		parent::__construct([
 			'status' => SG\getFirst(post('status'), $this->status),
 			'items' => SG\getFirstInt(post('items'), $this->items),
+			'right' => (Object) [
+				'access' => is_admin(),
+			],
 		]);
 	}
 	function build() {
+		if (!$this->right->access) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'API Queue',
@@ -45,13 +51,15 @@ class SystemApiQueue extends Page {
 			]), // AppBar
 			'body' => new ScrollView([
 				'child' => new Table([
-					'thead' => ['ID', 'create -date' => 'Date', 'key -nowrap' => 'Key', 'model -nowrap' => 'Model', 'status', 'retry', 'curl -nowrap' => 'curl'],
+					'thead' => ['no' => '', 'ID', 'create -date' => 'Date', 'key -nowrap' => 'Key', 'model -nowrap' => 'Model', 'status', 'retry', 'curl -nowrap' => 'curl'],
 					'children' => array_map(
 						function ($apiItem) {
+							static $no = 0;
 							// list($class, $method) = explode('::', $apiItem->apiModel);
 							// $apiResult = $class::$method('resend', $apiItem);
 
 							return [
+								++$no,
 								$apiItem->apiId,
 								$apiItem->created,
 								$apiItem->apiKey,
