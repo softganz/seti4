@@ -358,6 +358,21 @@
 
 
 
+/* widget-dashboard */
+.widget-dashboard {display: flex; flex-wrap: nowrap; gap: 8px;}
+	.widget-dashboard>* {border-radius: 8px; padding: 8px; flex: 0 0 15rem; display: flex; flex-wrap: wrap; background-color: #ccc;}
+	.widget-dashboard>*.-green {background-color: #1CB09A;}
+	.widget-dashboard>*.-red {background-color: #DA534F;}
+	.widget-dashboard>*.-yellow {background-color: #c3c500;}
+	.widget-dashboard>*.-blue {background-color: #418BCA;}
+	.widget-dashboard>*.-black {background-color: #1D2939;}
+	.widget-dashboard>*>.-title {display: flex; font-size: 1.4rem; white-space: nowrap; flex: 1 0 100%; color: #fff; gap: 8px;}
+	.widget-dashboard>*>.-title>.icon {color: #fff;}
+	.widget-dashboard>*>.-value {font-size: 2.4rem; flex: 1; text-align: center; color: #fff;}
+	.widget-dashboard>*>.-unit {font-size: 1.2rem; color: #fff;}
+	.widget-dashboard.-guage>* {}
+	.widget-dashboard.-guage .sg-chart {width: 20rem; height: 20rem;}
+
 
 
 /* Old style widget */
