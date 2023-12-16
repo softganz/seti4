@@ -293,6 +293,7 @@ $SCREENS
 		.btn.-success>.icon {color: #c5ffc6;}
 		.btn.-info {color: #E5F2FF; background-color: #60C0DC;}
 		.btn.-info:hover {background-color: #65C7E4;}
+		.btn.-info>.icon {color: #E5F2FF;}
 		.btn.-warning {color: #FFEEDB; background-color: #EEAC57;}
 		.btn.-warning:hover {background-color: #F9B45A;}
 		.btn.-danger {color: #FFE0E0; background-color: #D75452;}
