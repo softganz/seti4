@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2023-12-13
-* Version :: 6
+* Modify  :: 2023-12-02
+* Version :: 5
 */
 
 'use strict'
@@ -1167,7 +1167,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 
 
-// @deprecated
 /*
 * jQuery Extension :: sg-inline-edit
 * Softganz inline edit field
@@ -1209,6 +1208,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			return;
 		}
 
+
 		let $this = $(this)
 		let $parent = $this.closest('.sg-inline-edit')
 		let postUrl = $this.data('updateUrl')
@@ -1229,10 +1229,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		if (inputType == 'money' || inputType == 'numeric' || inputType == 'text-block') {
 			inputType = 'text'
 		} else if (inputType == 'radio' || inputType == 'checkbox') {
-			// console.log('RADIO or CHECKBOX Click:',$this)
-			// console.log('$this.attr(value) = ',$this.attr('value'))
-			value = $this.is(':checked') ? $this.attr('value') : ''
-			// console.log('value = ', value)
+			//console.log('RADIO or CHECKBOX Click:',$this)
+			value = $this.is(':checked') ? $this.val() : ''
 			//self.save($this, value, callback)
 			//return
 		} else if (inputType == 'link') {
@@ -1321,6 +1319,27 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		else if ($this.data('type') == 'autocomplete') settings.inputcssclass = 'form-text -autocomplete'
 		else if ($this.data('type') == 'select') settings.inputcssclass = 'form-select'
 
+		$this.editable(
+			function(value, settings) {
+				if (_validValue($this, value)) {
+					self.save($this, value, callback)
+					return value
+				} else {
+					notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
+					return $this.data('value')
+				}
+			} ,
+			settings
+		).trigger('edit')
+
+		// $this.editable(function(value, settings) {
+		// 	self.save($this, value, callback)
+		// 	return value
+		// } ,
+		// settings
+		// ).trigger('edit')
+
+
 		self._validValue = function($this, newValue) {
 			if ($this.data('ret') != 'numeric') return true
 
@@ -1343,11 +1362,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.save = function($this, value, callback) {
-			// console.log('Update Value = '+value)
-			// console.log($parent.data('updateUrl'))
-			// console.log('postUrl = ', postUrl)
-			// console.log($parent.data());
-			// console.log($this.data());
+			console.log('Update Value = '+value)
+			console.log($parent.data('updateUrl'))
+			console.log('postUrl = ', postUrl)
+			console.log($parent.data());
+			console.log($this.data());
 
 			if (postUrl === undefined) {
 				// console.log('ERROR :: POSTURL UNDEFINED')
@@ -1368,7 +1387,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			delete para['event.editable']
 			delete para['uiAutocomplete']
 			para.action = 'save';
-			para.value = value.replace(/\"/g, "\"")
+			if ($this.data('name')) {
+				para[$this.data('name')] = value.replace(/\"/g, "\"")
+			} else {
+				para.value = value.replace(/\"/g, "\"")
+			}
 			if (settings.var) para[settings.var] = para.value
 			$this.data('value', para.value)
 
@@ -1447,7 +1470,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				notify('ERROR ON POSTING. Please Contact Admin.');
 				// console.log(response)
 			}).done(function(response) {
-				// console.log('response', response)
+				console.log('response', response)
 				// Process callback function
 				let callbackFunction = settings.callback ? settings.callback : $this.data('callback')
 
@@ -1468,32 +1491,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			});
 		}
 
-
 		// SAVE value immediately when radio or checkbox click
 		if (inputType == 'radio' || inputType == 'checkbox') {
 			self.save($this, value, callback)
-		} else {
-			$this.editable(
-				function(value, settings) {
-					if (_validValue($this, value)) {
-						self.save($this, value, callback)
-						return value
-					} else {
-						notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
-						return $this.data('value')
-					}
-				} ,
-				settings
-			).trigger('edit')
 		}
-
-		// $this.editable(function(value, settings) {
-		// 	self.save($this, value, callback)
-		// 	return value
-		// } ,
-		// settings
-		// ).trigger('edit')
-
 
 		// RETURN that can call from outside
 		return {
@@ -1563,769 +1564,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		$.editable.addInputType('radio', {
 		});
-
-		//Add input type autocomplete to jEditable
-		$.editable.addInputType('autocomplete', {
-			element : $.editable.types.text.element,
-			plugin : function(settings, original) {
-				$(original).attr( 'autocomplete','off' );
-				let defaults = {
-					target: '',
-					source: function(request, response) {
-						let queryUrl = settings.autocomplete.query
-						let para = {}
-						para.q = request.term
-						$.get(queryUrl,para, function(data){
-							response($.map(data, function(item){
-								// RETURN all of data field
-								return item
-							}))
-						}, 'json');
-					},
-					minLength: 2,
-					dataType: 'json',
-					cache: false,
-					// On move up/down by keyboard or mouse over
-					focus: function(event,ui) {
-						event.preventDefault();
-						//console.log('FOCUS '+ui.item.label)
-						//settings.container.find('input').val(ui.item.label);
-					},
-					select: function(event, ui) {
-						//console.log('ui.item',ui.item)
-						this.value = ui.item.label;
-						//settings.container.data('value',ui.item.value)
-						let targetValue = settings.autocomplete.target
-						// console.log('targetValue',targetValue)
-						if (targetValue) {
-							if (typeof targetValue == 'string') {
-								targetValue = JSON.parse('{"'+targetValue+'": "value"}')
-							}
-							//console.log("HAVE TARGET", targetValue)
-							for (let key in targetValue) {
-								//$('#'+x).val(ui.item[selectValue[x]]);
-								let dataValue = ui.item[targetValue[key]]
-								// console.log('key = ' + key + ' , value = item.ui.'+ dataValue)
-								if (key.substring(0,1) == '#' || key.substring(0,1) == '.') {
-									$(key).val(ui.item.value)
-								} else {
-									$(original).data(key, dataValue)
-									// console.log('data of key '+ key +' = '+$(original).data(key))
-								}
-							}
-						}
-
-						/*
-						if (target && target.substring(0,1) == '#') {
-							if ($form.find(target).length) {
-								$form.find(target).val(ui.item.value)
-							} else {
-								$(target).val(ui.item.value)
-							}
-
-						} else if (target) {
-						}
-						*/
-
-						/*
-						if ($this.data('select')!=undefined) {
-							let selectValue=$this.data('select');
-							if (typeof selectValue == 'object') {
-								console.log(selectValue)
-								let x;
-								for (x in selectValue) {
-									$('#'+x).val(ui.item[selectValue[x]]);
-									console.log(x+" "+selectValue[x])
-								}
-							} else if (typeof selectValue == 'string') {
-								$this.val(ui.item[selectValue]);
-							}
-						} else {
-							$this.val(ui.item.label);
-						}
-						*/
-						//if (settings.container.data('ret') == 'address') {
-						//	settings.container.data('areacode',ui.item.value)
-						//}
-						$(this).submit()
-					}
-				}
-
-				settings.autocomplete = $.extend({}, defaults,settings.autocomplete)
-
-				//console.log('SG-INLINE-EDIT:AUTOCOMPLETE settings:',settings)
-
-
-				$('input', this).autocomplete(
-					settings.autocomplete,
-				)
-				.autocomplete( 'instance' )._renderItem = function( ul, item ) {
-					if (item.value=='...') {
-						return $('<li class="ui-state-disabled -more"></li>')
-						.append(item.label)
-						.appendTo( ul );
-					} else {
-						return $( '<li></li>' )
-						.append( '<a><span>'+item.label+'</span>'+(item.desc!=undefined ? '<p>'+item.desc+'</p>' : '')+'</a>' )
-						.appendTo( ul )
-					}
-				}
-			}
-		})
-
-
-		$.editable.addInputType('datepicker-old', {
-			element : function(settings, original) {
-				let input = $('<input class="form-text -datepicker" />');
-				input.attr( 'autocomplete','off' );
-				if (settings.datepicker) {
-					input.datepicker(settings.datepicker);
-				} else {
-					input.datepicker();
-				}
-
-				// get the date in the correct format
-				if (settings.datepicker.format) {
-					input.datepicker('option', 'dateFormat', settings.datepicker.format);
-				}
-
-				$(this).append(input);
-				return(input);
-			},
-
-			submit: function (settings, original) {
-				let dateRaw = $('input', this).datepicker('getDate');
-				let dateFormatted;
-
-				if (settings.datepicker.format) {
-					dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
-				} else {
-					dateFormatted = dateRaw;
-				}
-				$('input', this).val(dateFormatted);
-				},
-
-				plugin : function(settings, original) {
-				// prevent disappearing of calendar
-				settings.onblur = 'submit';
-			}
-		})
-
-		$.editable.addInputType('datepicker', {
-			element : function(settings, original) {
-				let input = $('<input class="form-text -datepicker" />')
-				input.attr( 'autocomplete','off' )
-
-				let defaults = {
-						format: 'dd/mm/yy',
-						monthNames: thaiMonthName,
-						beforeShow: function( el ){
-							// set the current value before showing the widget
-							//$(this).data('previous', $(el).val() );
-							console.log('INLINE DATE BEFORE SHOW')
-							$(".ui-datepicker:visible").css({top:"+=5"});
-						},
-						open: function() {
-							console.log('INLINE DATEOPEN')
-							$(".ui-datepicker:visible").css({top:"+=5"});
-						},
-						onSelect: function() {
-								// clicking specific day in the calendar should
-								// submit the form and close the input field
-								$(this).submit();
-							},
-					}
-				settings.datepicker = $.extend({},defaults)
-
-				input.datepicker(settings.datepicker);
-
-				// get the date in the correct format
-				if (settings.datepicker.format) {
-					input.datepicker('option', 'dateFormat', settings.datepicker.format);
-				}
-
-				$(this).append(input);
-				return(input);
-			},
-
-			submit: function (settings, original) {
-				let dateRaw = $('input', this).datepicker('getDate');
-				let dateFormatted;
-				if (dateRaw === null) {
-					dateFormatted = null
-				} else if (settings.datepicker.format) {
-					dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
-				} else {
-					dateFormatted = dateRaw;
-				}
-				if (dateFormatted) {
-					$('input', this).val(dateFormatted);
-				} else {
-					$('input', this).val('');
-				}
-				$('input', this).datepicker('hide');
-			},
-
-			plugin : function(settings, original) {
-				// prevent disappearing of calendar
-				//settings.onblur = 'submit';
-				settings.onblur = 'nothing'
-			}
-		})
-
-		/*
-		$.editable.addInputType( 'datepicker', {
-			// create input element
-			element: function( settings, original ) {
-				let form = $( this ),
-				input = $( '<input class="form-text" />' );
-				input.attr( 'autocomplete','off' );
-				form.append( input );
-				return input;
-			},
-
-			attach jquery.ui.datepicker to the input element
-			plugin: function( settings, original ) {
-				let form = this,
-				input = form.find( 'input' );
-
-				// Don't cancel inline editing onblur to allow clicking datepicker
-				settings.onblur = 'nothing';
-
-				input.datepicker( {
-					dateFormat: settings.dateFormat,
-					monthNames: settings.monthNames,
-					showButtonPanel: settings.showButtonPanel,
-					changeMonth: settings.changeMonth,
-					changeYear: settings.changeYear,
-					altFormat: settings.altFormat,
-					altField: settings.altField,
-
-					onSelect: function() {
-						// clicking specific day in the calendar should
-						// submit the form and close the input field
-						form.submit();
-						console.log('SELECT')
-					},
-
-					onClose: function() {
-							setTimeout( function() {
-								if ( !input.is( ':focus' ) ) {
-									// input has NO focus after 150ms which means
-									// calendar was closed due to click outside of it
-									// so let's close the input field without saving
-									original.reset( form );
-								} else {
-									// input still HAS focus after 150ms which means
-									// calendar was closed due to Enter in the input field
-									// so lets submit the form and close the input field
-									form.submit();
-								}
-								// the delay is necessary; calendar must be already
-								// closed for the above :focus checking to work properly;
-								// without a delay the form is submitted in all scenarios, which is wrong
-							}, 150 );
-						}
-				} )
-			}
-		})
-		*/
-
-		/*
-		if (firebaseConfig) {
-			database = firebase.database();
-			ref = database.ref('/update/');
-		}
-		*/
-	});
-})(jQuery);
-
-
-
-/*
-* jQuery Extension :: sg-inline-edit
-* Softganz inline edit field
-* Written by Panumas Nontapan
-* https://softganz.com
-* Using <div class="sg-inline-edit"><span class="inlineedit-field" data-type="text"></span></div>
-* DOWNLOAD : https://github.com/NicolasCARPi/jquery_jeditable
-*/
-(function($) { // sg-inlineedit
-	let version = '2.00'
-	let sgInlineEditAction = 'click'
-	let updatePending = 0
-	let updateQueue = 0
-	let database;
-	let ref
-	let debug
-	let radioClickCount = 0
-
-
-	let count = 0 // @deprecated
-	let editActive = false // @deprecated
-
-	$.fn.sgInlineEdit2 = function(target, options = {}) {
-		// default configuration properties
-		if (typeof $.fn.editable === 'undefined') {
-			console.log('ERROR :: $.editable is not load')
-			return
-		}
-
-		if ('disable' === target) {
-			//$(this).data('disabled.editable', true);
-			return;
-		}
-		if ('enable' === target) {
-			//$(this).data('disabled.editable', false);
-			return;
-		}
-		if ('destroy' === target) {
-			//$(this)
-			//.unbind($(this).data('event.editable'))
-			//.removeData('disabled.editable')
-			//.removeData('event.editable');
-			return;
-		}
-
-		editActive = true
-		count++
-		// console.log("COUNT = ",count)
-		// if (updatePending > 0) return
-
-		let $this = $(this)
-		let $inlineField = $this.closest('.inlineedit-field')
-		let $parent = $this.closest('.sg-inlineedit')
-		let inputType = $inlineField.data('type')
-		let callback = $inlineField.data('callback')
-		let fieldOptions = $inlineField.data('options')
-		let showSubmitButton = (fieldOptions && 'button' in fieldOptions) || $inlineField.data('button') == 'yes'
-		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
-		if (postUrl === undefined) {
-			postUrl = $parent.data('action') ? $parent.data('action') : $parent.data('updateUrl')
-		}
-		debug = $parent.data('debug') ? true : false
-
-		// console.log('POST URL = ',postUrl)
-		// console.log($parent.data('updateUrl'))
-		// console.log('$inlineField', $inlineField)
-		// console.log('$this', $this)
-		// console.log('$parent', $parent)
-		// console.log($parent.data());
-		// console.log($this.data())
-		// console.log(options)
-		console.log('INPUT TYPE = ', inputType)
-
-
-		if (inputType == 'money' || inputType == 'numeric' || inputType == 'text-block') {
-			inputType = 'text'
-		} else if (inputType == 'radio' || inputType == 'checkbox') {
-			// Get value of radio or checkbox
-			// console.log('RADIO or CHECKBOX Click:',$this)
-			// let $inputElement = $this.find('input')
-			// value = $inputElement.is(':checked') ? $inputElement.attr('value') : ''
-		} else if (inputType == 'link') {
-			return
-		} else if (inputType == '' || inputType == undefined) {
-			inputType = 'text'
-			$inlineField.data('type','text')
-		}
-
-		let defaults = {
-			type: inputType,
-			result: 'json',
-			// container : $inlineField,
-			onblur: $inlineField.data('onblur') ? $inlineField.data('onblur') : 'submit', // submit,nothing
-			data: function(value, settings) {
-				if ($inlineField.data('data'))
-					return $inlineField.data('data');
-				else if ($inlineField.data('value') != undefined)
-					return $inlineField.data('value');
-				else if (value == '...')
-					return '';
-				return value;
-			},
-			loadurl: $inlineField.data('loadurl'),
-			before : function() {
-				let options = $inlineField.data('options')
-				let callbackFunction = options != undefined && options.hasOwnProperty('onBefore') ? options.onBefore : null
-				//console.log("BEFORE CALLBACK ",callbackFunction)
-				if (callbackFunction && typeof window[callbackFunction] === 'function') {
-					window[callbackFunction]($inlineField,$parent);
-				}
-			},
-			cancel: showSubmitButton ? '<button class="btn -link -cancel"><i class="icon -material -gray">cancel</i><span>ยกเลิก</span></button>':null,
-			submit: showSubmitButton ? '<button class="btn -primary"><i class="icon -material -white">done_all</i><span>บันทึก</span></button>':null,
-			placeholder: $inlineField.data('placeholder') ? $inlineField.data('placeholder') : '...',
-		}
-
-		// console.log('typeof container',typeof fieldOptions.container)
-		// if (typeof fieldOptions.container === "object") delete fieldOptions.container
-		let settings = $.extend({}, $.fn.sgInlineEdit.defaults, defaults, options, fieldOptions)
-		// console.log(typeof settings.container)
-		// if (typeof settings.container === 'object') delete settings.container
-		// console.log('fieldOptions',fieldOptions)
-		//console.log($this.data('options'))
-		// console.log('SG-INLINE-EDIT SETTING:',settings)
-
-		if (fieldOptions && 'debug' in fieldOptions && fieldOptions.debug) debug = true
-
-		if (inputType == 'textarea') settings.inputcssclass = 'form-textarea'
-		else if (inputType == 'text') settings.inputcssclass = 'form-text'
-		else if (inputType == 'numeric') settings.inputcssclass = 'form-text -numeric'
-		else if (inputType == 'money') settings.inputcssclass = 'form-text -money'
-		else if (inputType == 'email') settings.inputcssclass = 'form-text -email'
-		else if (inputType == 'url') settings.inputcssclass = 'form-text -url'
-		else if (inputType == 'autocomplete') settings.inputcssclass = 'form-text -autocomplete'
-		else if (inputType == 'select') settings.inputcssclass = 'form-select'
-
-		self._validValue = function($inlineField, newValue) {
-			if ($inlineField.data('ret') != 'numeric') return true
-
-			newValue = newValue.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(newValue)
-			// console.log('minValue = ',$inlineField.data("minValue"),' newValue = ',newValue,' IS ',newValue*1 < $inlineField.data('minValue')*1)
-			if ($inlineField.data('minValue') != undefined && newValue*1 < $inlineField.data('minValue')*1) {
-				// console.log('less than minValue')
-				return false
-			} else if ($inlineField.data('maxValue') != undefined && newValue*1 > $inlineField.data('maxValue')*1) {
-				// console.log('more than maxValue')
-				// console.log('Reverse value to ',$inlineField.data('value'))
-				// console.log($inlineField.html())
-				// console.log($inlineField)
-				//$inlineField.html($('<span />').html($inlineField.data('value')))
-				return false
-			} else {
-				// console.log('not check or valid')
-				return true
-			}
-		}
-
-		self.save = function($inlineField, value, callback) {
-			console.log('Update Value = '+value)
-			// console.log($parent.data('updateUrl'))
-			// console.log('postUrl = ', postUrl)
-			// console.log('parent.data', $parent.data());
-			// console.log('this.data', $inlineField.data());
-
-			if (postUrl === undefined) {
-				// console.log('ERROR :: POSTURL UNDEFINED')
-				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด (ไม่ได้ระบุ)')
-				return
-			}
-			// console.log("POST")
-
-			// if (!_validValue($inlineField, value)) {
-			// 	notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
-			// 	return
-			// }
-
-			let para = $.extend({},$parent.data(), $inlineField.data())
-			let returnType = para.retType || para.ret // if has retType then use retType, if ret use ret, if both use retType
-
-			delete para['updateUrl']
-			delete para['options']
-			delete para['data']
-			delete para['event.editable']
-			delete para['uiAutocomplete']
-			delete para['rel']
-			delete para['done']
-
-			para.action = 'save';
-			para.value = typeof value === 'string' ? value.replace(/\"/g, "\"") : value
-			if ($inlineField.data('inputName')) {
-				para[$inlineField.data('inputName')] = value
-			}
-			if (settings.var) para[settings.var] = para.value
-			$inlineField.data('value', para.value)
-
-			//if (settings.blank === null && para.value === "") para.value = null
-			//console.log(settings.blank)
-
-			// console.log('SENDING PARA:', para)
-
-			updatePending++
-			updateQueue++
-
-			notify('กำลังบันทึก กรุณารอสักครู่....' + (debug ? '<br />Updating : pending = '+updatePending+' To = '+postUrl+'<br />' : ''))
-
-			// Lock all inlineedit-field until post complete
-			$parent.find('.inlineedit-field').addClass('-disabled')
-
-			// console.log(postUrl)
-			//console.log('length='+$('[data-group="'+para.group+'"]').length)
-			//console.log(para)
-
-			$.post(postUrl,para, function(data) {
-				updatePending--
-				$parent.find('.inlineedit-field').removeClass('-disabled')
-
-				if (typeof data == 'string') {
-					let tempData = data
-					data = {}
-					data.value = para.value
-					if (debug) data.msg = tempData
-				}
-
-				//if (data == '' || data == '<p>&nbsp;</p>')
-				//	data = '...';
-
-				// console.log('RETURN DATA:', data)
-
-				if (returnType == 'refresh') {
-					window.location = window.location
-				} else if (inputType == 'autocomplete') {
-					$inlineField.data('value',para.value)
-					$inlineField.find('form').replaceWith(data.value);
-				} else if (inputType == 'radio') {
-				} else if (inputType == 'checkbox') {
-				} else if (inputType == 'select') {
-					let selectValue
-					if ($inlineField.data('data')) {
-						selectValue = $inlineField.data('data')[data.value]
-					} else {
-						selectValue = data.value
-					}
-					$inlineField.find('form').replaceWith(selectValue)
-				} else {
-					// console.log('REPLACE VALUE = ',data.value)
-					// $inlineField.find('form').replaceWith('AAAA')
-					// $inlineField.find('form').replaceWith(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
-					$this.html('<span class=".-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
-				}
-
-
-				let replaceTrMsg = '';
-				//console.log('para.tr='+para.tr+' data.tr='+data.tr)
-				if (para.tr != data.tr) {
-					if (data.tr == 0)
-						data.tr = '';
-					//console.log(para.group+' : '+para.tr+' : '+data.tr)
-					$('[data-group="'+para.group+'"]').data('tr', data.tr)
-					replaceTrMsg = 'Replace tr of group '+para.group+' with '+data.tr
-					//console.log(replaceTrMsg);
-				}
-
-				notify(
-					('error' in data ? data.error : ('msg' in data ? data.msg : 'บันทึกเรียบร้อย'))
-					+ (debug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>POST PARAMETER:</b><pre>'+JSON.stringify(para, null, "\t")+'</pre><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
-					debug ? 300000 : 5000
-				)
-			}, settings.result)
-			.fail(function(response) {
-				notify('ERROR ON POSTING. Please Contact Admin.');
-				// console.log(response)
-			})
-			.done(function(response) {
-				// console.log('response', response)
-				// Process callback function
-				let callbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
-
-				if (debugSG) console.log("CALLBACK ON COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
-				if (callbackFunction) {
-					if (typeof window[callbackFunction] === 'function') {
-						window[callbackFunction]($inlineField,response,$parent);
-					} else if (settings.callbackType == 'silent') {
-						$.get(callbackFunction, function() {})
-					} else {
-						window.location = callbackFunction;
-					}
-				}
-
-				// console.log('settings.done ', settings.done)
-
-				// Process action done
-				if (settings.done) sgActionDone(settings.done, $inlineField, response);
-				editActive = false
-				console.log('$.sgInlineEdit DONE!!!')
-			});
-		}
-
-		// SAVE value immediately when radio or checkbox click
-		if (inputType == 'radio') {
-			// console.log('$inlineField', $inlineField)
-			setTimeout(function(){
-				let $inputElement = $this.find('input:checked')
-				// value = $inputElement.is(':checked') ? $inputElement.attr('value') : ''
-				let value = $inputElement.attr('value')
-				console.log('RADIO VALUE ',value)
-				// console.log('RADIO VALUE 1 ',$inputElement.attr('value'))
-				self.save($inlineField, value, callback)
-			}, 200)
-		} else if (inputType == 'checkbox') {
-			// console.log('$inlineField', $inlineField)
-			// let $inputElement = $inputElement.is(':checked')
-			// console.log('CHECKBOX VALUE 1 ',$inputElement.attr('value'))
-			// setTimeout(function(){
-				// let value = $inputElement.is(':checked') ? $inputElement.attr('value') : ''
-				// let value = $inputElement.attr('value')
-				let $allCheckbox = $this.find('input:checked')
-				console.log('INPUT ',$this.find('input:checked'))
-				let checkboxValue = []
-				$allCheckbox.each(function(key, value){
-					console.log(key,$(this).attr('value'))
-					checkboxValue.push($(this).attr('value'))
-				})
-				// let value = $this.find('input:checked') ?  : 'B'
-				console.log('CHECKBOX VALUE ',checkboxValue)
-				// console.log('$this',$this)
-				self.save($inlineField, checkboxValue, callback)
-			// }, 100)
-		} else {
-			$this.editable(
-				function(value, settings) {
-					if (_validValue($inlineField, value)) {
-						self.save($inlineField, value, callback)
-						return value
-					} else {
-						notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
-						return $inlineField.data('value')
-					}
-				} ,
-				settings
-			).trigger('edit')
-		}
-
-		// RETURN that can call from outside
-		return {
-			// GET VERSION
-			getVersion: function() {
-				return version
-			},
-
-			// SAVE DATA IN FORM TO TARGET
-			update: function($inlineField, value, callback) {
-				self.save($inlineField, value, callback)
-			}
-		}
-	}
-
-	/* Publicly accessible defaults. */
-	$.fn.sgInlineEdit.defaults = {
-		indicator				: '<div class="loader -rotate"></div>',
-		tooltip 				: 'คลิกเพื่อแก้ไข',
-		cssclass				: 'inlineedit',
-		width						: 'none',
-		height 					: 'none',
-		var							: null,
-		cancelcssclass	: 'btn -link -cancel',
-		submitcssclass	: 'btn -primary',
-		showButtonPanel	: true,
-		indicator 			: 'SAVING',
-		event 					: 'edit',
-		inputcssclass		: '',
-		autocomplete 		: {},
-		datepicker 			: {},
-	}
-
-
-	$(document).on(
-		sgInlineEditAction,
-		'.sg-inlineedit .inlineedit-field:not(.-readonly)>.-for-input',
-		function() {
-			console.log('$.sgInlineEdit version ' + version + ' start', $(this))
-			console.log('editActive = ',editActive)
-			let dataType = $(this).closest('.inlineedit-field').data('type')
-			if (dataType == 'radio' || dataType == 'checkbox') {
-				if (radioClickCount == 1) {
-					$(this).sgInlineEdit2()
-					radioClickCount = 0
-				} else {
-					radioClickCount++
-				}
-			} else {
-				$(this).sgInlineEdit2()
-			}
-		}
-	);
-
-	$(document).on('keydown', ".sg-inlineedit .inlineedit-field", function(evt) {
-		// TAB Key
-		// console.log("evt.keyCode=",evt.keyCode)
-		if(evt.keyCode == 9) {
-			let $this = $(this);
-			let $allBox = $this.closest(".sg-inlineedit");
-			let nextBox = '';
-			let currentBoxIndex = $(".inlineedit-field").index(this);
-			if (currentBoxIndex == ($(".inlineedit-field").length-1)) {
-				nextBox = $(".inlineedit-field:first");
-			} else {
-				nextBox = $(".inlineedit-field").eq(currentBoxIndex+1);
-			}
-			$(this).find("input").blur();
-			$(nextBox).trigger('click')
-			//		notify('Index='+currentBoxIndex+$this' Length='+$allBox.children(".inlineedit-field").length+' Next='+nextBox.data('fld'))
-			return false;
-		};
-	});
-
-	// Add editable plugin
-	// Move into sgInlineEdit after fixed all other inline-edit to sg-inline-edit
-	$(document).ready(function() {
-
-		if (typeof $.fn.editable === 'undefined') return
-
-		$.editable.addInputType('checkbox', {});
-		$.editable.addInputType('radio', {});
-
-		// $.editable.addInputType('radio', {
-		// 	element : null
-		// });
-
-		// $.editable.addInputType('radio', {
-		// 	element : function(settings, original) {
-		// 		var input = $('<input />')
-		// 		.attr({
-		// 			type: 'radio'
-		// 		});
-
-		// 		$(this).append(input);
-		// 		return(input);
-		// 	}
-		// });
-
-    // $.editable.addInputType('checkbox', {
-    //     element : function(settings, original) {
-    //         var input = $('<input type="checkbox">');
-    //         $(this).append(input);
-
-    //         $(input).bind('click', function() {
-    //             if ($(input).val() === 'on') {
-    //                 $(input).val('off');
-    //                 $(input).removeAttr('checked');
-    //             } else {
-    //                 $(input).val('on');
-    //                 $(input).attr('checked', 'checked');
-    //             }
-    //         });
-
-    //     return(input);
-    //     },
-
-    //     content : function(string, settings, original) {
-
-    //         var checked = (string === 'yes') ? 'on' : 'off';
-    //         var input = $(':input:first', this);
-
-    //         if (checked === 'on') {
-    //             $(input).attr('checked', checked);
-    //         } else {
-    //             $(input).removeAttr('checked');
-    //         }
-
-    //         var value = $(input).is(':checked') ? 'on' : 'off';
-    //         $(input).val(value);
-    //     },
-
-    //     submit: function (settings, original) {
-    //         var value;
-    //         var input = $(':input:first', this);
-    //         if (input.is(':checked')) {
-    //             value = '1';
-    //         } else {
-    //             value = '0';
-    //         }
-    //         $('input', this).val(value);
-    //     }
-    // });
 
 		//Add input type autocomplete to jEditable
 		$.editable.addInputType('autocomplete', {
