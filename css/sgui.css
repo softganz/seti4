@@ -128,7 +128,7 @@
 
 	.widget-nav.-button-menu>ul>li>a {line-height: 4.8rem; border-radius: 4.8rem; margin: 8px 0; align-items: center; padding: 0;}
 	.widget-nav.-button-menu>ul>li>a>span {text-align: center; font-size: 1.6rem;}
-	.widget-nav.-button-menu>ul>li>a>.icon {border-radius: 50%; padding: 12px; opacity: 0.8; width: 4.8rem; height: 4.8rem; font-size: 4.4rem; padding: 2px;}
+	.widget-nav.-button-menu>ul>li>a>.icon {border-radius: 50%; opacity: 0.8; width: 5.2rem; height: 5.2rem; font-size: 4.4rem; padding: 2px;}
 
 
 
@@ -295,8 +295,8 @@
 	.inlineedit-field.-textarea ul,
 	.inlineedit-field.-textarea ol {margin:0 0 10px 0; padding: 0 0 0 32px;}
 	.inlineedit-field.-text input:hover {border: none;}
-	.inlineedit-field>*>abbr {margin: 4px 0; padding: 8px; display: block; background-color: #eee; border-radius: 4px;}
-	.inlineedit-field>*>abbr>label {display: flex; align-items: center; gap: 4px;}
+	.inlineedit-field>abbr {margin: 4px 0; padding: 8px; display: block; background-color: #eee; border-radius: 4px;}
+	.inlineedit-field>abbr>label {display: flex; align-items: center; gap: 4px;}
 
 
 	.inlineedit-field.-hidden {display: none;}
