@@ -758,7 +758,7 @@ class InlineEdit extends Widget {
 		// $ret .= 'type = '.$widget->type;
 
 		switch ($widget->type) {
-			case 'textfield': $ret .= $this->_renderTypeTextField($text); break;
+			case 'textfield': $ret .= $this->_renderTypeTextField($widget); break;
 			case 'radio':
 			case 'checkbox': $ret .= $this->_renderTypeRadio($widget); break;
 			// case 'select': $ret .= $this->_renderTypeSelect($text); break;
@@ -827,8 +827,8 @@ class InlineEdit extends Widget {
 			. '</label>'._NL;
 	}
 
-	function _renderTypeTextField($text) {
-		return '<span class="inline-edit-view">'.$text.'</span>';
+	function _renderTypeTextField($widget) {
+		return $this->_renderLabel($widget).'<span>'.$widget->text.'</span>';
 	}
 
 	function _renderTypeText($text, $widget) {
@@ -884,15 +884,15 @@ class InlineEdit extends Widget {
 		foreach($widget->options as $key => $value) {
 			$isCheck = NULL;
 			if (is_array($widget->value)) {
-				$isCheck = in_array($value, $widget->value);
+				$isCheck = in_array($key, $widget->value);
 			} else {
-				$isCheck = $value == $widget->value;
+				$isCheck = $key == $widget->value;
 			}
 			$ret .= '<abbr class="checkbox -block">'
 				. '<label>'
-				. '<input type="'.$widget->type.'"'
+				. '<input class="-for-input" type="'.$widget->type.'"'
 				. ' name="'.$widget->inputName.'"'
-				. ' value="'.$value.'"'
+				. ' value="'.$key.'"'
 				. ($isCheck ? ' checked="checked"' : '')
 				. ' />'
 				. '<span>'.$value.'</span>'
@@ -910,7 +910,8 @@ class InlineEdit extends Widget {
 		$ret = $this->_renderLabel($widget);
 
 		if ($childEditMode) {
-			$ret .= '<span class="-for-input">'.$this->_renderRadioItem($widget).'</span>'._NL;
+			$ret .= $this->_renderRadioItem($widget)._NL;
+			// $ret .= '<span class="x-for-input">'.$this->_renderRadioItem($widget).'</span>'._NL;
 		} else {
 			$ret .= '<span class="-for-view">'.$this->_renderRadioItem($widget).'</span>'._NL;
 		}
