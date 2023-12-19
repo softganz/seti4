@@ -373,7 +373,8 @@
                           if ($.isFunction(settings.target)) {
                              /* Callback function to handle the target reponse */
                               var responseHandler = function(value) {
-                                  $(self).html('<span>'+value+'</span>'); // Modify by softganz@gmail.com
+                                  $(self).html(value); // Modify by softganz@gmail.com
+                                  // $(self).html('<span>'+value+'</span>'); // Modify by softganz@gmail.com
                                   self.editing = false;
                                   callback.apply(self, [self.innerHTML, settings]);
                                   if (!$.trim($(self).html())) {
