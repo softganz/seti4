@@ -624,7 +624,7 @@ class InlineEdit extends Widget {
 	// @override
 	function _renderChildContainerStart($childKey, $attributes = [], $child = []) {
 		if (!is_array($child)) return;
-		// debugMsg($child, '$childSrc');
+		// debugMsg($childKey, '$childKey');
 
 		if ($this->editMode) {
 			$attributes['class'] = $this->editFieldClassName;
@@ -642,6 +642,7 @@ class InlineEdit extends Widget {
 
 		$attributes['onClick'] = '';
 
+		if (is_string($childKey) && empty($child['inputName'])) $attributes['data-input-name'] = $childKey;
 		// if ($child['inputName']) $attributes['data-name'] = $child['inputName'];
 		// 	. ($child->group ? ' data-group="'.$child->group.'"'._NL : '')
 		// 	. ($child->field ? ' data-fld="'.$child->field.'"'._NL : '')
@@ -714,6 +715,7 @@ class InlineEdit extends Widget {
 	}
 
 	private function _renderChildType($key, $widget = '{}') {
+		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
 		$text = $widget->text;
 		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.$widget->placeholder.'</span>';
 		else if ($widget->retType === 'nl2br') $text = trim(nl2br($text));

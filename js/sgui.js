@@ -254,6 +254,7 @@ async function sgBoxBack(options = {}) {
 		$.colorbox.close()
 		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
 		sgBoxPageCount = 0
+		history.back()
 	} else if (sgBoxPageCount > 1) {
 		// console.log('sgBoxBack => BACK')
 		// Remove last box page
@@ -279,7 +280,6 @@ async function sgBoxBack(options = {}) {
 	// 	Android.closeWebView()
 	// 	return false
 	// }
-
 }
 
 window.addEventListener('popstate', function (event) {
@@ -1606,7 +1606,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		let $this = $(this)
 		let $inlineField = $this.closest('.inlineedit-field')
-		let $parent = $this.closest('.sg-inlineedit')
+		let $inlineWidget = $this.closest('.sg-inlineedit')
 
 		let inputType = $inlineField.data('type')
 		let callback = $inlineField.data('callback')
@@ -1617,15 +1617,15 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let debug = false
 
 		if (postUrl === undefined) {
-			postUrl = $parent.data('action') ? $parent.data('action') : $parent.data('updateUrl')
+			postUrl = $inlineWidget.data('action') ? $inlineWidget.data('action') : $inlineWidget.data('updateUrl')
 		}
 
 		// console.log('POST URL = ',postUrl)
-		// console.log($parent.data('updateUrl'))
+		// console.log($inlineWidget.data('updateUrl'))
 		// console.log('$inlineField', $inlineField)
 		// console.log('$this', $this)
-		// console.log('$parent', $parent)
-		// console.log($parent.data());
+		// console.log('$inlineWidget', $inlineWidget)
+		// console.log($inlineWidget.data());
 		// console.log($this.data())
 		// console.log('INPUT TYPE = ', inputType)
 		// console.log('FIELD OPTIONS', fieldOptions)
@@ -1665,7 +1665,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				let callbackFunction = options != undefined && options.hasOwnProperty('onBefore') ? options.onBefore : null
 				//console.log("BEFORE CALLBACK ",callbackFunction)
 				if (callbackFunction && typeof window[callbackFunction] === 'function') {
-					window[callbackFunction]($inlineField,$parent);
+					window[callbackFunction]($inlineField,$inlineWidget);
 				}
 			},
 			cancel: showSubmitButton ? '<button class="btn -link -cancel"><i class="icon -material -gray">cancel</i><span>ยกเลิก</span></button>':null,
@@ -1680,7 +1680,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$.fn.sgInlineEdit.defaults,
 			defaults,
 			options,
-			$parent.data('options'),
+			$inlineWidget.data('options'),
 			$inlineField.data('options'),
 			$this.data('options')
 		)
@@ -1688,9 +1688,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		// if (typeof settings.container === 'object') delete settings.container
 		// console.log('fieldOptions',fieldOptions)
 		//console.log($this.data('options'))
-		console.log('SG-INLINE-EDIT SETTING:',settings)
+		// console.log('SG-INLINE-EDIT SETTING:',settings)
 
-		debug = $parent.data('debug') ? true : false
+		debug = $inlineWidget.data('debug') ? true : false
 		if (fieldOptions && 'debug' in fieldOptions && fieldOptions.debug) debug = true
 
 		debug = settings.debug;
@@ -1726,10 +1726,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.save = function($inlineField, value, callback) {
-			console.log('Update Value = '+value)
-			// console.log($parent.data('updateUrl'))
+			// console.log('Update Value = '+value)
+			// console.log($inlineWidget.data('updateUrl'))
 			// console.log('postUrl = ', postUrl)
-			// console.log('parent.data', $parent.data());
+			// console.log('parent.data', $inlineWidget.data());
 			// console.log('this.data', $inlineField.data());
 
 			if (postUrl === undefined) {
@@ -1744,7 +1744,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// 	return
 			// }
 
-			let para = $.extend({},$parent.data(), $inlineField.data())
+			let para = $.extend({},$inlineWidget.data(), $inlineField.data())
 			let returnType = para.retType || para.ret // if has retType then use retType, if ret use ret, if both use retType
 
 			delete para['updateUrl']
@@ -1766,7 +1766,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			//if (settings.blank === null && para.value === "") para.value = null
 			//console.log(settings.blank)
 
-			console.log('SENDING PARA:', para)
+			// console.log('SENDING PARA:', para)
 
 			updatePending++
 			updateQueue++
@@ -1774,7 +1774,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			notify('กำลังบันทึก กรุณารอสักครู่....' + (debug ? '<br />Updating : pending = '+updatePending+' To = '+postUrl+'<br />' : ''))
 
 			// Lock all inlineedit-field until post complete
-			if (disableInputOnSave) $parent.find('.inlineedit-field').addClass('-disabled')
+			if (disableInputOnSave) $inlineWidget.find('.inlineedit-field').addClass('-disabled')
 
 			// console.log(postUrl)
 			//console.log('length='+$('[data-group="'+para.group+'"]').length)
@@ -1782,7 +1782,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			$.post(postUrl,para, function(data) {
 				updatePending--
-				$parent.find('.inlineedit-field').removeClass('-disabled')
+				$inlineWidget.find('.inlineedit-field').removeClass('-disabled')
 
 				if (typeof data == 'string') {
 					let tempData = data
@@ -1812,8 +1812,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 					$inlineField.find('form').replaceWith(selectValue)
 				} else {
-					console.log('REPLACE VALUE = ',data.value)
-					console.log($this)
+					// console.log('REPLACE VALUE = ',data.value)
+					// console.log($this)
 					// $inlineField.find('form').replaceWith('AAAA')
 					// $inlineField.find('form').replaceWith(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
 					// $this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
@@ -1844,13 +1844,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			})
 			.done(function(response) {
 				// console.log('response', response)
+
+				// Process widget callback function
+				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
+
 				// Process callback function
 				let callbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
 
 				if (debugSG) console.log("CALLBACK ON COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
 					if (typeof window[callbackFunction] === 'function') {
-						window[callbackFunction]($inlineField,response,$parent);
+						window[callbackFunction]($inlineField,response,$inlineWidget);
 					} else if (settings.callbackType == 'silent') {
 						$.get(callbackFunction, function() {})
 					} else {
@@ -1873,7 +1877,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 				// let $inputElement = $this.val()
 				let value = $this.attr('value')
-				console.log('RADIO VALUE ',value)
+				// console.log('RADIO VALUE ',value)
 				self.save($inlineField, value, callback)
 
 			// setTimeout(function(){
@@ -1885,15 +1889,20 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// 	self.save($inlineField, value, callback)
 			// }, 200)
 		} else if (inputType == 'checkbox') {
-			let $allCheckbox = $this.closest('.inlineedit-field').find('input:checked')
-			// console.log('INPUT ',$allCheckbox)
-			let checkboxValue = []
-			$allCheckbox.each(function(key, value){
-				// console.log(key,$(this).attr('value'))
-				checkboxValue.push($(this).attr('value'))
-			})
+			if ($inlineField.data('jsonType') === 'array') {
+				let $allCheckbox = $this.closest('.inlineedit-field').find('input:checked')
+				// console.log('INPUT ',$allCheckbox)
+				let checkboxValue = []
+				$allCheckbox.each(function(key, value){
+					// console.log(key,$(this).attr('value'))
+					checkboxValue.push($(this).attr('value'))
+				})
+				self.save($inlineField, checkboxValue, callback)
+			} else {
+				let value = $this.attr('value')
+				self.save($inlineField, value, callback)
+		}
 			// console.log('CHECKBOX VALUE ',checkboxValue)
-			self.save($inlineField, checkboxValue, callback)
 		} else {
 			$this.editable(
 				function(value, settings) {
@@ -1947,7 +1956,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		'.sg-inlineedit .inlineedit-field:not(.-readonly) .-for-input',
 		function() {
 			console.log('$.sgInlineEdit version ' + version + ' start')
-			console.log('updatePending = '+updatePending+' updateQueue = '+updateQueue)
+			// console.log('updatePending = '+updatePending+' updateQueue = '+updateQueue)
 			$(this).sgInlineEdit2()
 
 			// console.log('editActive = ',editActive)
