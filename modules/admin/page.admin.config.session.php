@@ -17,7 +17,7 @@ class AdminConfigSession extends Page {
 				'title' => 'View session value',
 				'navigator' => 	R::View('admin.default.nav'),
 			]), // AppBar
-			'body' => new Widget([
+			'body' => new ScrollView([
 				'children' => [
 					print_o($_SESSION,'$_SESSION')
 				], // children
