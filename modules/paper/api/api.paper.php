@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-11-23
-* Version :: 4
+* Modify  :: 2023-12-23
+* Version :: 5
 *
 * @param Int $nodeId
 * @param String $action
@@ -213,8 +213,7 @@ class PaperApi extends PageApi {
 		if (!\SG\confirm()) return error(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
 
 		$result = FileModel::delete($this->tranId);
-		// debugMsg($result, '$result');
-		return success('ลบภาพเรียบร้อย');
+		return $result->code ? error($result->code, $result->msg) : success('ลบภาพเรียบร้อย');
 	}
 
 	function propSave() {
