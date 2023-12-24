@@ -31,7 +31,7 @@ class PaperItemsApi extends PageApi {
 		$paperList = NodeModel::items([
 			'type' => $this->type,
 			'tags' => $this->tag,
-			'options' => ['items' => $this->items, 'debug' => false, 'field' => 'detail,photo'],
+			'options' => ['items' => $this->items, 'debug' => false, 'field' => 'detail,photo,doc'],
 		]);
 		return $paperList;
 	}

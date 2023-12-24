@@ -12,6 +12,9 @@
 * @usage NodeModel::function($conditions, $options)
 */
 
+use Softganz\DB;
+use Softganz\SetDataModel;
+
 class NodeModel {
 
 	public static function get($id) {
@@ -171,6 +174,22 @@ class NodeModel {
 
 			foreach ($photoList as $photo) {
 				$result->items[$photo->nodeId]->photo = FileModel::photoProperty($photo->file, $photo->folder);
+			}
+		}
+		if (in_array('doc', $fields) && $nodeList) {
+			$docList = DB::select([
+				'SELECT `fid` `fileId`, `tpid` `nodeId`, `file`, `folder`
+				FROM %topic_files%
+				WHERE `tpid` IN ( :nodeList ) AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc" AND `tagName` IS NULL
+				-- GROUP BY `tpid`
+				ORDER BY `tpid` ASC',
+				'var' => [':nodeList' => new SetDataModel($nodeList)]
+			])->items;
+
+			$result->debug['DOCS'] = mydb()->_query;
+
+			foreach ($docList as $doc) {
+				$result->items[$doc->nodeId]->doc[] = FileModel::docProperty($doc->file, $doc->folder);
 			}
 		}
 		if (!$debug) unset($result->debug);
