@@ -54,30 +54,6 @@ class PaperInfoApi extends Page {
 
 		$ret = '';
 		switch ($this->action) {
-			case 'doc.upload':
-				if (post('upload')) {
-					$is_simulate = debug('simulate');
-					$desc = (Object) post('info',_TRIM+_STRIPTAG);
-					$desc->tpid = $topicInfo->tpid;
-					$desc->type = 'doc';
-
-					$options = new stdClass;
-					$options->debug = false;
-					if ($desc->noRename) $options->useSourceFilename = true;
-
-					//$ret .= print_o($desc,'$desc');
-
-					$result = R::Model('doc.upload', $_FILES['doc'], $desc, $options);
-
-					location('paper/'.$tpid.'/edit.docs');
-
-					//$ret .= print_o($result,'$result');
-				}
-				//$ret .= print_o(post(),'post()');
-				//$ret .= print_o($_FILES,'$_FILES');
-				//location('paper/'.$tpid.'/edit.photo');
-				break;
-
 			case 'doc.delete':
 				if ($tranId) {
 					$doc = mydb::select('SELECT * FROM %topic_files% WHERE fid = :fid LIMIT 1', ':fid',$tranId);

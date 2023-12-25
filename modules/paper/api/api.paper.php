@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-12-23
-* Version :: 5
+* Modify  :: 2023-12-24
+* Version :: 6
 *
 * @param Int $nodeId
 * @param String $action
@@ -215,6 +215,34 @@ class PaperApi extends PageApi {
 		$result = FileModel::delete($this->tranId);
 		return $result->code ? error($result->code, $result->msg) : success('ลบภาพเรียบร้อย');
 	}
+
+	function docAdd() {
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!post('upload')) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'No upload');
+
+		$is_simulate = debug('simulate');
+		$desc = (Object) post('info',_TRIM+_STRIPTAG);
+		$desc->tpid = $this->nodeId;
+		$desc->type = 'doc';
+
+		$options = (Object) [
+			'debug' => false,
+			'useSourceFilename' => $desc->noRename ? true : false,
+		];
+
+		//$ret .= print_o($desc,'$desc');
+
+		$result = R::Model('doc.upload', $_FILES['doc'], $desc, $options);
+
+		// // location('paper/'.$tpid.'/edit.docs');
+
+		// debugMsg($result,'$result');
+		// debugMsg(post(),'post()');
+		// debugMsg($_FILES,'$_FILES');
+		// debugMsg($_POST, '$_POST');
+		//location('paper/'.$tpid.'/edit.photo');
+	}
+
 
 	function propSave() {
 		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
