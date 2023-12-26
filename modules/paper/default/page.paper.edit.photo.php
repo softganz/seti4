@@ -29,7 +29,7 @@ class PaperEditPhoto extends Page {
 	}
 
 	function rightToBuild() {
-		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'PARAMETER ERROR');
+		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
 		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		return true;
 	}
@@ -139,8 +139,8 @@ class PaperEditPhoto extends Page {
 			'children' => [
 				'photo' => [
 					'type' => 'file',
+					'name' => 'image',
 					'label' => '<i class="icon -material">attach_file</i>{tr:Select photo file to upload}',
-					'size' => 50,
 					'container' => ['class' => 'btn -upload'],
 				],
 				'<div id="edit-photo-filename"></div>',
@@ -168,6 +168,13 @@ class PaperEditPhoto extends Page {
 					'container' => '{class: "-sg-text-right"}',
 				],
 				$this->rule(),
+				'<script type="text/javascript">
+				$("#edit-photo").change(function() {
+					var f = $(this).val().replace(/.*[\/\\\\]/, "")
+					$("#edit-photo-filename").text("เลือกไฟล์ : "+f)
+					$("#edit-title").val(f)
+				})
+				</script>'
 			], // children
 		]);
 	}
@@ -183,9 +190,8 @@ class PaperEditPhoto extends Page {
 			'children' => [
 				'photo' => [
 					'type' => 'file',
-					'name' => 'photo[]',
+					'name' => 'image[]',
 					'label' => '<i class="icon -material">attachment</i>{tr:Select photo file to upload}',
-					'size' => 50,
 					'multiple' => true,
 				],
 				'submit' => [
