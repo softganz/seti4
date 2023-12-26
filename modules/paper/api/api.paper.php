@@ -119,6 +119,7 @@ class PaperApi extends PageApi {
 		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		if (!$_POST) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
 
+		$simulate = true;
 		// Update paper information
 		$post = (Object) post();
 		$debug = false;
@@ -217,8 +218,8 @@ class PaperApi extends PageApi {
 	}
 
 	function docAdd() {
-		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-		if (!post('upload')) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'No upload');
+		// if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		// if (!post('upload')) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'No upload');
 
 		$is_simulate = debug('simulate');
 		$desc = (Object) post('info',_TRIM+_STRIPTAG);
@@ -230,8 +231,6 @@ class PaperApi extends PageApi {
 			'useSourceFilename' => $desc->noRename ? true : false,
 		];
 
-		//$ret .= print_o($desc,'$desc');
-
 		$result = R::Model('doc.upload', $_FILES['doc'], $desc, $options);
 
 		// // location('paper/'.$tpid.'/edit.docs');
@@ -240,6 +239,7 @@ class PaperApi extends PageApi {
 		// debugMsg(post(),'post()');
 		// debugMsg($_FILES,'$_FILES');
 		// debugMsg($_POST, '$_POST');
+		// debugMsg($desc,'$desc');
 		//location('paper/'.$tpid.'/edit.photo');
 	}
 

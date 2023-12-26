@@ -88,7 +88,11 @@ class PaperModel extends \NodeModel {
 		$result->info = $rs;
 		$result->membership = NULL;
 		$result->officers = NULL;
-		$result->right = $right = (Object) [];
+		$result->right = $right = (Object) [
+			'admin' => false,
+			'owner' => false,
+			'edit' => false,
+		];
 		$result->options = NULL;
 		$result->is = NULL;
 
@@ -114,15 +118,15 @@ class PaperModel extends \NodeModel {
 			}
 		}
 
-		$right->isAdmin = user_access('administer papers,administer contents');
-		$right->isOwner = i()->ok && ($result->info->uid == i()->uid || $result->membership[i()->uid] == 'OWNER');
+		$right->admin = $right->isAdmin = user_access('administer papers,administer contents');
+		$right->owner = $right->isOwner = i()->ok && ($result->info->uid == i()->uid || $result->membership[i()->uid] == 'OWNER');
 
 		if ($right->isAdmin) $result->membership[i()->uid] = 'ADMIN';
 
 		$result->info->membershipType = $result->membership[i()->uid];
 		$result->info->orgMemberShipType = $result->orgid ? \OrgModel::officerType($result->orgid, i()->uid) : NULL;
 
-		$right->isEdit = $right->isAdmin
+		$right->edit = $right->isEdit = $right->isAdmin
 						|| $right->isOwner
 						|| in_array($result->info->membershipType,array('ADMIN','MANAGER','OWNER'))
 						|| in_array($result->info->orgMembershipType,array('ADMIN','MANAGER','OFFICER'));
