@@ -30,10 +30,11 @@ class PaperApi extends PageApi {
 			'tranId' => $tranId,
 			'nodeInfo' => $nodeInfo = (is_numeric($nodeId) ? PaperModel::get($nodeId) : NULL),
 			'nodeId' => $nodeInfo->nodeId,
-			'right' => (Object) [
-				'admin' => user_access('administer contents,administer papers'),
-				'edit' => $nodeInfo->RIGHT & _IS_EDITABLE,
-			]
+			'right' => $nodeInfo->right,
+			// 'right' => (Object) [
+			// 	'admin' => user_access('administer contents,administer papers'),
+			// 	'edit' => $nodeInfo->RIGHT & _IS_EDITABLE,
+			// ]
 		]);
 	}
 
@@ -160,8 +161,10 @@ class PaperApi extends PageApi {
 			'useSourceFilename' => post('noRename') ? true : false,
 		];
 
-		$result = FileModel::upload($_FILES['photo'], $data, $options);
-		// return new debugMsg($result, '$result');
+		$result = FileModel::upload($_FILES['image'], $data, $options);
+
+		if ($result->error) return error(_HTTP_ERROR_NOT_ACCEPTABLE, implode(',', $result->error));
+
 		return [
 			'items' => array_map(
 				function($photo) {

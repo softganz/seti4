@@ -34,7 +34,7 @@ class PaperEditMenuWidget extends Widget {
 		$ui->add('<a href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material">home</i><span>สถานะ</span></a>');
 		$ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.main').'" data-rel="#main"><i class="icon -material">settings</i><span>จัดการเอกสาร</span></a>');
 		$ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.detail').'" data-rel="box" data-width="full"><i class="icon -material">description</i><span>รายละเอียด</span></a>');
-		if (user_access('upload photo')) $ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.photo').'" data-rel="#main"><i class="icon -material">photo_library</i><span>ภาพประกอบ</span></a>');
+		if (user_access('upload photo')) $ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.photo').'" data-rel="box" data-width="full"><i class="icon -material">photo_library</i><span>ภาพประกอบ</span></a>');
 		if (user_access('upload document')) $ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.docs').'" data-rel="#main"><i class="icon -material">attachment</i><span>เอกสารประกอบ</span></a>');
 		$ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.prop').'" data-rel="#main"><i class="icon -material">text_format</i><span>รูปแบบการแสดงผล</span></a>');
 

@@ -172,7 +172,8 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 				'edit',
 				'edit_photo',
 				'ภาพประกอบ',
-				url('paper/'.$tpid.'/edit.photo')
+				url('paper/'.$tpid.'/edit.photo'),
+				'{"class": "sg-action", "data-rel": "box", "data-width": "full"}'
 			);
 
 		if (user_access('upload document'))
@@ -180,7 +181,8 @@ function paper_view($self, $tpid = NULL, $action = NULL) {
 				'edit',
 				'add_doc',
 				'เอกสารประกอบ',
-				url('paper/'.$tpid.'/edit.docs')
+				url('paper/'.$tpid.'/edit.docs'),
+				'{"class": "sg-action", "data-rel": "box", "data-width": "full"}'
 			);
 
 		user_menu(
