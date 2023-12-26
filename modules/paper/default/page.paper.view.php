@@ -1,16 +1,19 @@
 <?php
 /**
-* View Paper
+* Paper   :: View
+* Created :: 2018-06-04
+* Modify  :: 2023-12-26
+* Version :: 4
 *
-* @param Object $self
-* @param Int $tpid
-* @param String $action
-* @return String
+* @param String $nodeInfo
+* @return Widget
+*
+* @usage paper/{nodeId}/edit.docs
 */
 
 use Paper\Model\PaperModel;
 
-function paper_view($self, $tpid = NULL, $action = NULL) {
+function paper_view($self, $tpid = NULL) {
 	$para = (Object) [
 		'commentPage' => post('page'),
 	];

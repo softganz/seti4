@@ -1,9 +1,9 @@
 <?php
 /**
-* Widget  :: Description
+* Paper   :: Edit Menu
 * Created :: 2019-01-01
-* Modify  :: 2023-11-25
-* Version :: 2
+* Modify  :: 2023-12-26
+* Version :: 3
 *
 * @param Array $args
 * @return Widget

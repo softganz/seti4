@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-12-24
-* Version :: 6
+* Modify  :: 2023-12-26
+* Version :: 7
 *
 * @param Int $nodeId
 * @param String $action

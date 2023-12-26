@@ -2,8 +2,8 @@
 /**
 * Paper   :: Document Management
 * Created :: 2019-06-02
-* Modify  :: 2023-12-24
-* Version :: 2
+* Modify  :: 2023-12-26
+* Version :: 3
 *
 * @param String $nodeInfo
 * @return Widget
