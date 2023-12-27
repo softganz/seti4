@@ -2,8 +2,8 @@
 /**
 * Model   :: File Model
 * Created :: 2021-12-21
-* Modify  :: 2023-11-06
-* Version :: 4
+* Modify  :: 2023-12-26
+* Version :: 5
 *
 * @return Object
 *
@@ -11,16 +11,22 @@
 * @usage FileModel::method()
 */
 
+use Softganz\DB;
+
 class FileModel {
-	public static function get($fileId, $options = '{}') {
-		$defaults = '{debug: false}';
-		$options = SG\json_decode($options, $defaults);
-		$debug = $options->debug;
+	/**
+	 * @param Int/Array $fileId
+	 * @return Object/NULL
+	 */
+	public static function get($fileId) {
+		if (is_array($fileId)) {
+			$nodeId = $fileId['nodeId'];
+			$fileId = $fileId['fileId'];
+		}
 
-		if ($debug) debugMsg(mydb()->_query);
+		if (empty($fileId)) return NULL;
 
-		mydb::where('`fid` = :fileId', ':fileId', $fileId);
-		$rs = mydb::select(
+		$rs = DB::select([
 			'SELECT
 			f.`fid` `id`
 			, f.`fkey` `key`
@@ -48,17 +54,23 @@ class FileModel {
 			, f.`ip`
 			FROM %topic_files% f
 			%WHERE%
-			LIMIT 1'
-		);
+			LIMIT 1',
+			'where' => [
+				'%WHERE%' => [
+					['`fid` = :fileId', ':fileId' => $fileId],
+					$nodeId ? ['`tpid` = :nodeId', ':nodeId' => $nodeId] : NULL,
+				],
+			],
+		]);
 
-		if ($rs->_empty) return NULL;
+		if (empty($rs->id)) return NULL;
 
 		$result = (Object) [
 			'fileId' => $rs->id,
 			'fileName' => $rs->fileName,
 			'folder' => $rs->folder,
 			'title' => $rs->title,
-			'info' => mydb::clearProp($rs),
+			'info' => $rs,
 			'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName, $rs->folder) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName, $rs->folder) : NULL),
 		];
 
@@ -247,72 +259,73 @@ class FileModel {
 
 			$linkInfo = '';
 
-			if ($upload->copy()) {
-				//$ret.='<p>Upload file '.$postFile['name'].' save complete.</p>';
+			if (!$upload->copy()) {
+				$result->error[] = 'Upload error : Cannot save upload file ('.$postFile['name'].')<br />';
+				continue;
+			}
 
-				mydb::query(
-					'INSERT INTO %topic_files%
-					(
-						`fid`, `tpid`, `cid`, `type`, `orgId`, `uid`, `refId`
-					, `tagName`
-					, `folder`, `file`
-					, `title`, `description`
-					, `timestamp`, `ip`
-					) VALUES (
-					  :fileId, :nodeId, :cid, :type, :orgId, :uid, :refId
-					, :tagName
-					, :folder, :file
-					, :title, :description
-					, :timestamp, :ip
-					) ON DUPLICATE KEY UPDATE
-					`file` = :file',
-					$picsData
-				);
+			//$ret.='<p>Upload file '.$postFile['name'].' save complete.</p>';
 
-				if (empty($picsData->fileId)) $fileId = $picsData->fileId = mydb()->insert_id;
+			mydb::query(
+				'INSERT INTO %topic_files%
+				(
+					`fid`, `tpid`, `cid`, `type`, `orgId`, `uid`, `refId`
+				, `tagName`
+				, `folder`, `file`
+				, `title`, `description`
+				, `timestamp`, `ip`
+				) VALUES (
+				  :fileId, :nodeId, :cid, :type, :orgId, :uid, :refId
+				, :tagName
+				, :folder, :file
+				, :title, :description
+				, :timestamp, :ip
+				) ON DUPLICATE KEY UPDATE
+				`file` = :file',
+				$picsData
+			);
 
-				$result->_query[] = mydb()->_query;
+			if (empty($picsData->fileId)) $fileId = $picsData->fileId = mydb()->insert_id;
+
+			$result->_query[] = mydb()->_query;
 
 
-				if ($picsData->type == 'photo') {
-					$picsData->photo = $photo = FileModel::photoProperty($upload->filename, $data->folder);
+			if ($picsData->type == 'photo') {
+				$picsData->photo = $photo = FileModel::photoProperty($upload->filename, $data->folder);
 
-					if ($data->link == 'href') {
-						$uploadUrl = url('project/'.$data->nodeId.'/info.photo/'.$fileId);
-						$linkInfo .= '<a class="sg-action" data-rel="box" href="'.$uploadUrl.'" data-width="840" data-height="80%">';
-					} else {
-						$uploadUrl = $photo->url;
-						$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="'.$photo->url.'" title="">';
-					}
-
-					$linkInfo .= '<img class="photoitem" src="'.$photo->url.'" alt="" width="100%" />';
-					$linkInfo .= '</a>';
-					if ($options->showDetail) $linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
-
-					$ui = new Ui('span');
-					if ($deleteUrl) {
-						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
-					}
-					$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
+				if ($data->link == 'href') {
+					$uploadUrl = url('project/'.$data->nodeId.'/info.photo/'.$fileId);
+					$linkInfo .= '<a class="sg-action" data-rel="box" href="'.$uploadUrl.'" data-width="840" data-height="80%">';
 				} else {
-					$uploadUrl = cfg('paper.upload.document.url').$upload->filename;
-					$linkInfo .= '<a href="'.$uploadUrl.'" target="_blank">'
-						. '<img class="photoitem -doc" src="//img.softganz.com/icon/icon-file.png" width="63" />'
-						. '<span class="title">'.$picsData->title.'</span>'
-						. '</a>';
-					$ui = new Ui('span');
-					if ($deleteUrl) {
-						$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
-					}
-					$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
+					$uploadUrl = $photo->url;
+					$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="'.$photo->url.'" title="">';
 				}
 
-				$picsData->link = $linkInfo;
-				$picsData->_FILES = $postFile;
-				$result->items[] = $picsData;
+				$linkInfo .= '<img class="photoitem" src="'.$photo->url.'" alt="" width="100%" />';
+				$linkInfo .= '</a>';
+				if ($options->showDetail) $linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
+
+				$ui = new Ui('span');
+				if ($deleteUrl) {
+					$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+				}
+				$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 			} else {
-				$result->error[] = 'Upload error : Cannot save upload file ('.$postFile['name'].')<br />';
+				$uploadUrl = cfg('paper.upload.document.url').$upload->filename;
+				$linkInfo .= '<a href="'.$uploadUrl.'" target="_blank">'
+					. '<img class="photoitem -doc" src="//img.softganz.com/icon/icon-file.png" width="63" />'
+					. '<span class="title">'.$picsData->title.'</span>'
+					. '</a>';
+				$ui = new Ui('span');
+				if ($deleteUrl) {
+					$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+				}
+				$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 			}
+
+			$picsData->link = $linkInfo;
+			$picsData->_FILES = $postFile;
+			$result->items[] = $picsData;
 			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -hover-parent">';
 		}
 
