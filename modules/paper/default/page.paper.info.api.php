@@ -2,8 +2,8 @@
 /**
 * Paper   :: Information API
 * Created :: 2021-11-22
-* Modify  :: 2023-11-23
-* Version :: 4
+* Modify  :: 2023-12-27
+* Version :: 5
 *
 * @param Int $nodeId
 * @param String $action
@@ -54,17 +54,7 @@ class PaperInfoApi extends Page {
 
 		$ret = '';
 		switch ($this->action) {
-			case 'doc.delete':
-				if ($tranId) {
-					$doc = mydb::select('SELECT * FROM %topic_files% WHERE fid = :fid LIMIT 1', ':fid',$tranId);
-					if ($doc->_num_rows) {
-						$doc_file = cfg('paper.upload.document.folder').$doc->file;
-						if ($doc->file && file_exists($doc_file) && is_file($doc_file)) unlink($doc_file);
-						mydb::query('DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1', ':fid', $tranId);
-						$ret.=message('status','Delete document complete : Document file <em>'.$doc->file.'</em> was deleted');
-					} else $ret.=message('error','Document not found');
-				}
-				break;
+
 
 			case 'poll.update':
 				$ret .= 'Create Poll';

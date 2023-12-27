@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-12-26
-* Version :: 7
+* Modify  :: 2023-12-27
+* Version :: 8
 *
 * @param Int $nodeId
 * @param String $action
@@ -31,10 +31,6 @@ class PaperApi extends PageApi {
 			'nodeInfo' => $nodeInfo = (is_numeric($nodeId) ? PaperModel::get($nodeId) : NULL),
 			'nodeId' => $nodeInfo->nodeId,
 			'right' => $nodeInfo->right,
-			// 'right' => (Object) [
-			// 	'admin' => user_access('administer contents,administer papers'),
-			// 	'edit' => $nodeInfo->RIGHT & _IS_EDITABLE,
-			// ]
 		]);
 	}
 
@@ -221,31 +217,90 @@ class PaperApi extends PageApi {
 	}
 
 	function docAdd() {
-		// if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-		// if (!post('upload')) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'No upload');
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!file_exists($_FILES['doc']['tmp_name'])) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'No upload file');
 
-		$is_simulate = debug('simulate');
-		$desc = (Object) post('info',_TRIM+_STRIPTAG);
-		$desc->tpid = $this->nodeId;
-		$desc->type = 'doc';
+		// $desc = (Object) post('info',_TRIM+_STRIPTAG);
+		// $desc->tpid = $this->nodeId;
+		// $desc->type = 'doc';
+
+		// $desc = (Object) [
+		// 	...post('info',_TRIM+_STRIPTAG),
+		// 	'tpid' => $this->nodeId,
+		// 	'type' => 'doc',
+		// ];
+
+		$desc = (Object) array_merge(
+			post('info',_TRIM+_STRIPTAG),
+			[
+				'nodeId' => $this->nodeId,
+				'type' => 'doc',
+			]
+		);
 
 		$options = (Object) [
 			'debug' => false,
 			'useSourceFilename' => $desc->noRename ? true : false,
 		];
 
-		$result = R::Model('doc.upload', $_FILES['doc'], $desc, $options);
+		$result = FileModel::upload($_FILES['doc'], $desc, $options);
 
-		// // location('paper/'.$tpid.'/edit.docs');
+		// $result = R::Model('doc.upload', $_FILES['doc'], $desc, $options);
 
+		// debugMsg($desc,'$desc');
 		// debugMsg($result,'$result');
 		// debugMsg(post(),'post()');
 		// debugMsg($_FILES,'$_FILES');
 		// debugMsg($_POST, '$_POST');
-		// debugMsg($desc,'$desc');
-		//location('paper/'.$tpid.'/edit.photo');
+
+		if ($result->error) return error(_HTTP_ERROR_NOT_ACCEPTABLE, implode(',', $result->error));
+		// debugMsg([
+		// 	'items' => array_map(
+		// 		function($doc) {
+		// 			$docProperty = FileModel::docProperty($doc->file, $doc->folder);
+		// 			return (Object) [
+		// 				'fileId' => $doc->fileId,
+		// 				'url' => _DOMAIN.$docProperty->src,
+		// 				'exists' => $docProperty->exists,
+		// 				'size' => $docProperty->size,
+		// 				// 'link' => $doc->link,
+		// 				// 'property' => $docProperty,
+		// 			];
+		// 		},
+		// 		$result->items
+		// 	),
+		// ],'aaa');
+
+		return [
+			'items' => array_map(
+				function($doc) {
+					$docProperty = FileModel::docProperty($doc->file, $doc->folder);
+					return (Object) [
+						'fileId' => $doc->fileId,
+						'url' => _DOMAIN.$docProperty->src,
+						'exists' => $docProperty->exists,
+						'size' => $docProperty->size,
+						// 'link' => $doc->link,
+						// 'property' => $docProperty,
+					];
+				},
+				$result->items
+			),
+		];
 	}
 
+	function docDelete() {
+		$fileId = post('fileId');
+
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (empty($fileId)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลตามที่ระบุ');
+		if (!SG\confirm()) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีการยืนยัน');
+
+		$fileInfo = FileModel::get(['fileId' => $fileId, 'nodeId' => $this->nodeId]);
+
+		if (empty($fileInfo)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลตามที่ระบุ');
+		$result = FileModel::delete($fileId);
+	}
 
 	function propSave() {
 		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
