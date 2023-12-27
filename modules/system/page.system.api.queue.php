@@ -30,6 +30,13 @@ class SystemApiQueue extends Page {
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'API Queue',
+				'trailing' => new Row([
+					'child' => new Button([
+						'type' => 'primary',
+						'href' => url('system/api/resend'),
+						'text' => 'RESEND',
+					]), // Button
+				]), // Row
 				'navigator' => new Form([
 					'class' => 'sg-form form-report',
 					'action' => url('system/api/queue'),

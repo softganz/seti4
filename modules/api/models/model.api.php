@@ -224,9 +224,15 @@ class ApiModel {
 		return $result;
 	}
 
-	public static function getWaiting() {
+	/**
+	 * $options - Bool updateStatus
+	 *
+	 */
+	public static function getWaiting($options = []) {
 		$result = DB::select('SELECT * FROM %api_wait% WHERE `status` = "WAITING" LIMIT 10');
-		DB::query('UPDATE %api_wait% SET `status` = "SENDING" WHERE `status` = "WAITING" LIMIT 10');
+		if ($options['updateStatus']) {
+			DB::query('UPDATE %api_wait% SET `status` = "SENDING" WHERE `status` = "WAITING" LIMIT 10');
+		}
 		return $result;
 	}
 }
