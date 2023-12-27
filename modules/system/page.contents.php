@@ -13,6 +13,7 @@
 
 use Paper\Model\PaperModel;
 use Paper\Widget\PaperListWidget;
+use Softganz\DB;
 
 class Contents extends Page {
 	var $contentTypes;
@@ -20,6 +21,7 @@ class Contents extends Page {
 	var $page;
 	var $items;
 	var $order;
+	var $right;
 
 	private const LISTSTYLE = 'div';
 	private const PAGE = 1;
@@ -27,12 +29,18 @@ class Contents extends Page {
 	private const ORDERBY = 'nodeId';
 
 	function __construct($contentTypes = NULL) {
+		$singleType = !preg_match('/,/', $contentTypes) && user_access('create '.$contentTypes.' paper');
+
 		parent::__construct([
 			'contentTypes' => $contentTypes,
-			'listStyle' => \SG\getFirst(post('listStyle'), self::LISTSTYLE),
-			'page' => \SG\getFirst(post('page'), self::PAGE),
-			'items' => \SG\getFirst(post('items'), self::ITEMS),
-			'order' => \SG\getFirst(post('order'), self::ORDERBY),
+			'listStyle' => SG\getFirst(post('listStyle'), self::LISTSTYLE),
+			'page' => SG\getFirst(post('page'), self::PAGE),
+			'items' => SG\getFirst(post('items'), self::ITEMS),
+			'order' => SG\getFirst(post('order'), self::ORDERBY),
+			'singleType' => $singleType,
+			'right' => (Object) [
+				'create' => $singleType ? true : false,
+			],
 		]);
 		// debugMsg($this, '$this');
 	}
@@ -118,9 +126,28 @@ class Contents extends Page {
 
 		event_tricker('paper.listing.complete',$self,$topics,$para);
 
+		if ($this->singleType) {
+			$title = DB::select([
+				'SELECT `name` FROM %topic_types% WHERE `type` = :type LIMIT 1',
+				'var' => [':type' => $this->contentTypes]
+			])->name;
+		} else {
+			$title = 'Contents';
+		}
+
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Contents',
+				'title' => $title,
+				'trailing' => new Row([
+					'children' => [
+						$this->right->create ? new Button([
+							'type' => 'primary',
+							'href' => url('paper/post/'.$this->contentTypes),
+							'text' => 'สร้าง '.$title,
+							'icon' => new Icon('add'),
+						]) : NULL, // Button
+					], // children
+				]), // Row
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
