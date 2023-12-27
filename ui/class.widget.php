@@ -305,6 +305,11 @@ class Widget extends WidgetBase {
 * Basic Widget
 */
 
+class HtmlTemplate extends Widget {
+	var $widgetName = 'Template';
+	var $tagName = 'template';
+}
+
 class Container extends Widget {
 	var $widgetName = 'Container';
 	var $tagName = 'div';
