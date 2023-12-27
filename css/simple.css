@@ -668,6 +668,7 @@ $SCREENS
 		.form-item .description {color:gray;font-size:.8em;margin:5px 0;}
 		.form-item .form-required {color:#ff6600;}
 		.form-item.btn.-upload {padding: 6px 8px;}
+		.form-item.btn.-upload.-primary>label>.icon {color: #fff;}
 		.form-item.btn.-upload>label:not(.-hidden) {margin:0;}
 
 		.form-text
