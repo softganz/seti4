@@ -1899,7 +1899,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				})
 				self.save($inlineField, checkboxValue, callback)
 			} else {
-				let value = $this.attr('value')
+				let value = $this.is(':checked') ? $this.attr('value') : ''
 				self.save($inlineField, value, callback)
 		}
 			// console.log('CHECKBOX VALUE ',checkboxValue)
