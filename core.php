@@ -164,7 +164,7 @@ function loadJS($requestFile, $ext) {
  * @return String
  */
 function requestString() {
-	$result = NULL;
+	$request = NULL;
 	reset($_GET);
 
 	$key = key($_GET);
@@ -172,15 +172,38 @@ function requestString() {
 
 	reset($_GET);
 
+	// debugMsg($_GET, '$_GET');
+	// debugMsg('_URL = '._URL);
+
 	if ($key && empty($value)) {
+		$folder = dirname($_SERVER['DOCUMENT_URI']);
 		$request_string = $_SERVER['QUERY_STRING'];
+		$pattern = '%^'.preg_quote(addslashes($folder)).'%';
+
+		// debugMsg('$folder = ['.$folder.']');
+		// debugMsg('$request_string1 = '.$request_string);
+		// debugMsg('reg = '.$pattern);
+
+		$request_string = preg_replace($pattern, '', $request_string);
+
+		// debugMsg('$request_string2 = ['.$request_string.']');
+
 		$request_string = ltrim($request_string, '/');
 		// if (preg_match('/^index.php/i', $request_string,$out)) $request_string = substr($request_string, 10);
 		list($key) = explode('&', $request_string);
-		$result = str_replace('%2F', '/', $key);
-		if (substr($result, -1) == '=') $result = substr($result, 0, -1);
+		$request = str_replace('%2F', '/', $key);
+		if (substr($request, -1) == '=') $request = substr($request, 0, -1);
+
+		// debugMsg('__FILE__ = '.__FILE__);
 	}
-	return $result;
+	// preg_replace('pattern', replacement, subject)
+	// $request = preg_replace('/happy\/communeinfo\.com\//', '', $request);
+
+	// debugMsg('$request = ['.$request.']');
+
+	// $_SERVER['SCRIPT_FILENAME']
+	// $_SERVER['DOCUMENT_URI']
+	return $request;
 }
 
 /**
