@@ -60,7 +60,7 @@ class Report extends Widget {
 				. '<label>'
 				. '<input '
 				. 'id="'.$filter.'_'.$selKey.'" '
-				. 'class="-checkbox-'.$filter.' -filter-checkbox" '
+				. 'class="-checkbox-'.$filter.' -filter-checkbox'.($typeValue['class'] ? ' '.$typeValue['class'] : '').'" '
 				. 'type="'.$inputType.'" '
 				. 'name="'.$filter.($inputTypeMultiple ? '[]' : '').'" '
 				. 'value="'.$selKey.'" '.sg_implode_attr($selItem->attr).' '
