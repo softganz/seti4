@@ -1286,6 +1286,8 @@ class ProfilePhoto extends Widget {
 			[
 				'class' => trim('widget-'.strtolower($this->widgetName).' '.\SG\getFirst($this->class)).($this->size ? ' -size-'.$this->size : ''),
 				'src' => UserModel::profilePhoto($this->username),
+				'alt' => htmlspecialchars($this->title),
+				'title' => htmlspecialchars($this->title),
 			]
 		);
 		return '<img '.sg_implode_attr($attribute).' />';
