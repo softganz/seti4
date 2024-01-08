@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2023-12-12
-* Version :: 28
+* Modify  :: 2024-01-08
+* Version :: 29
 *
 * @param Array $args
 * @return Widget
@@ -110,6 +110,9 @@ class Widget extends WidgetBase {
 
 	function addConfig($key,$value) {
 		$this->config->{$key} = $value;
+
+		// Add key to class property
+		if (in_array($key, ['id'])) $this->{$key} = $value;
 	}
 
 	function addAttr($key,$value) {$this->config->attr[$key] = $value;}
