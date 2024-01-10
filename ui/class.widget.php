@@ -165,7 +165,7 @@ class Widget extends WidgetBase {
 
 	// @override
 	function _renderWidgetContainerEnd() {
-		return $this->tagName ? '</'.$this->tagName.'>'._NL : '';
+		return $this->tagName ? '</'.$this->tagName.'><!-- end of '.$this->widgetName.' -->'._NL : '';
 	}
 
 	// Container cover all children
