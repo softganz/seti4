@@ -55,8 +55,8 @@ class Dropbox extends Widget {
 		if (!$this->print) $this->class .= ' -no-print';
 
 		$defaultLink = '<a href="javascript:void(0)" title="'.$this->title.'">'
-			. ($this->text!=''?'<span>'.$this->text.'</span>':'')
-			. '<i class="icon -'.($this->icon ? $this->icon : 'material').'">'.($this->iconText).'</i>'
+			. ($this->text != '' ? '<span>'.$this->_renderEachChildWidget(NULL, $this->text).'</span>' : '')
+			. ($this->icon ? $this->_renderEachChildWidget(NULL, $this->icon) : '<i class="icon -'.($this->icon ? $this->icon : 'material').'">'.($this->iconText).'</i>')
 			. '</a>';
 
 		$dropLink = \SG\getFirst($this->link, $defaultLink);
