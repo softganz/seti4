@@ -2425,7 +2425,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		self.startDrawReport = function(data) {
 			console.log('$.sgDrawReport ' + version + ' start draw report')
-			var isDebug = $container.find('input[name="debug"]:checked').length > 0 && data.process != undefined
+			// console.log('data', data)
+
+			// var isDebug = $container.find('input[name="debug"]:checked').length > 0 && data.process != undefined
 
 			if (settings.dataType == 'html') {
 				let $detailElement = $($container.data('showHtml'))
@@ -2462,23 +2464,23 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			let chartType = $container.find('#graphtype').val()
 			let graphData = [['รายการ','จำนวน']]
 
-			console.log("graphType = ", chartType)
+			// console.log("graphType = ", chartType)
 			if (data.summary == undefined || $chartElement.length == 0) return
 
 			data.summary.forEach(function(item, index) {
 				graphData.push([item.label, item.project])
 			})
 
-			var dataForGraph = google.visualization.arrayToDataTable(graphData)
+			let dataForGraph = google.visualization.arrayToDataTable(graphData)
 
-			var options = {
+			let options = {
 				title: data.title,
 				hAxis: {title: "H Axis", titleTextStyle: {color: "black"}},
 				vAxis: {title: "Y Axis", minValue: 0},
 				isStacked: false
 			}
 
-			var chart
+			let chart
 
 			if (chartType == 'Bar') {
 				chart = new google.visualization.BarChart(document.getElementById("report-output-chart"))
@@ -2640,7 +2642,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				settings.dataType
 			).fail(function(data) {
 				notify('ERROR ON POSTING')
-				// console.log('DONE WITH data = ',data)
+				$(".report-output").css("opacity", outputOpacity)
+				console.log('DONE WITH data = ',data)
 			}).done(function(data) {
 				$(".report-output").css("opacity", outputOpacity)
 				if (debugSG && data.debug) console.log('DONE WITH data = ',data)
@@ -2693,7 +2696,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		$this.makeFilterBtn = function() {
 			//console.log('MAKE FILTER BTN')
-			let $filterBar = $container.find('#toolbar-report-filter>.-item')
+			let $filterBar = $container.find('#toolbar-report-filter-items')
 
 			$filterBar.empty()
 			$('.sg-drawreport .-filter-checkbox:checked').each(function(i) {
