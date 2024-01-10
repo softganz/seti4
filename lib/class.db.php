@@ -518,6 +518,9 @@ class DB {
 
 			// Convert format from `table`.`field` ->> "$.jsonKey" to JSON_UNQUOTE(JSON_EXTRACT())
 			$this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.\w*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
+			# $this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.[\u0E01-\u0E5B]*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
+
+
 			// $this->stmt = preg_replace('/(`dos`\.`information`) \-\>\> ("\$\.\w*\")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
 			// debugMsg('CONVERT STMT');
 			// debugMsg($this->stmt);
