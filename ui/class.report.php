@@ -2,8 +2,8 @@
 /**
 * Widget  :: Report Widget
 * Created :: 2020-10-01
-* Modify  :: 2024-01-08
-* Version :: 2
+* Modify  :: 2024-01-15
+* Version :: 3
 *
 * @param Array $args
 * @return Widget
@@ -159,24 +159,24 @@ class Report extends Widget {
 			return sg_implode_attr($attributes, "\r");
 		});
 
-		$ret .= '<form class="form" id="report-form" data-rel="none" method="get" action="">'._NL
+		$form = '<form class="form" id="report-form" data-rel="none" method="get" action="">'._NL
 			. '<input type="hidden" name="dataType" value="'.$this->dataType.'" />'._NL
 			. '<input type="hidden" name="r" id="reporttype" value="" />'._NL
 			. '<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />'._NL
 			. ($this->config->showPage ? '<input id="page" type="hidden" name="page" value="" />'._NL : '')
 			. (post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />'._NL : '');
 
-		$ret .= '<div class="-toolbar">';
+		$form .= '<div class="-toolbar">';
 
-		$ret .= '<div class="-filter">'
+		$form .= '<div class="-filter">'
 			. '<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
 			. ($this->filterBar ? (
 				function() {
-					$ret = '';
+					$form = '';
 					foreach ($this->filterBar['children'] as $key => $widget) {
-						$ret .= '<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
+						$form .= '<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
 					}
-					return $ret;
+					return $form;
 				}
 			)() : '')
 			. '<span id="toolbar-report-filter" class="-select">'
@@ -189,35 +189,90 @@ class Report extends Widget {
 			. '</div><!-- -filter -->'._NL;
 
 		if ($groupUi->count()) {
-			$ret .= '<div class="-group">'._NL;
-			if ($this->config->showArrowLeft) $ret .= '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>';
-			$ret .= $groupUi->build()._NL;
-			if ($this->config->showArrowRight) $ret .= '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL;
-			$ret .= '</div>'._NL;
+			$form .= '<div class="-group">'._NL;
+			if ($this->config->showArrowLeft) $form .= '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>';
+			$form .= $groupUi->build()._NL;
+			if ($this->config->showArrowRight) $form .= '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL;
+			$form .= '</div>'._NL;
 		}
 
 		if ($this->optionBar) {
-			// $ret .= '<div class="-options">'._NL;
-			$ret .= (new Widget([
+			// $form .= '<div class="-options">'._NL;
+			$form .= (new Widget([
 				'tagName' => 'div',
 				'class' => '-options',
 				'children' => $this->optionBar,
 			]))->build();
 			// $this->optionsUi->build()._NL;
-			// $ret .= '</div>'._NL;
+			// $form .= '</div>'._NL;
 		}
 
-		$ret .= '</div><!-- toolbar -report -->'._NL;
-		$ret .= '</form>'._NL._NL;
+		$form .= '</div><!-- toolbar -report -->'._NL;
+		$form .= '</form>'._NL._NL;
 
-		$ret .= '<div id="report-output" class="report-output">'._NL._NL;
-		$ret .= '<div id="report-output-debug" class="report-output-debug"></div>'._NL._NL;
-		foreach ($this->output as $key => $html) {
-			$ret .= '<div id="report-output-'.$key.'" class="report-output-'.$key.'">'.$html.'</div>'._NL._NL;
-		}
-		$ret .= '</div><!--report-output-->'._NL._NL;
+		$this->children['form'] = new Form([
+			'class' => 'form',
+			'action' => 'javascript:void(0)',
+			'children' => [
+				'<input type="hidden" name="dataType" value="'.$this->dataType.'" />',
+				'<input type="hidden" name="r" id="reporttype" value="" />',
+				'<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />',
+				'<input type="hidden" name="metric" id="metric" value="" />',
+				$this->config->showPage ? '<input id="page" type="hidden" name="page" value="" />' : '',
+				post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />' : '',
 
-		// $ret .= '</div><!-- sg-drawreport -->'._NL._NL._NL;
+				'<div class="-toolbar">',
+				'<div class="-filter">'
+					. '<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
+					. ($this->filterBar ? (
+						function() {
+							$form = '';
+							foreach ($this->filterBar['children'] as $key => $widget) {
+								$form .= '<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
+							}
+							return $form;
+						}
+					)() : '')
+					. '<span id="toolbar-report-filter" class="-select">'
+					. ($this->config->filterPretext ? $this->config->filterPretext : '')
+					. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item" style="flex: 1;"></span>'
+					. '</span><!-- toolbar-report-filter -->'
+					. '<span class="">'
+					. '<button class="btn -primary -submit" type="submit">'.($this->submitIcon ? $this->submitIcon : '<i class="icon -material">search</i>').''.($this->submitText ? '<span>'.$this->submitText.'</span>' : '').'</button>'
+					. '</span>'._NL
+					. '</div><!-- -filter -->'._NL,
+
+				($groupUi->count() ?
+					'<div class="-group">'._NL
+						. ($this->config->showArrowLeft ? '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>' : '')
+						. $groupUi->build()._NL
+						. ($this->config->showArrowRight ? '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL : '')
+						. '</div>'._NL
+					: ''),
+				new Row([
+					'tagName' => 'div',
+					'class' => '-options',
+					'children' => $this->optionBar,
+				]),
+				'</div><!-- toolbar -report -->'._NL,
+			]
+		]);
+
+		$this->children['output'] = new Container([
+			'id' => 'report-output',
+			'class' => 'report-output',
+			'children' => array_merge(
+				['<div id="report-output-debug" class="report-output-debug debug-msg" style="display: none;"></div>'],
+				array_map(
+					function($html, $key) {
+						return '<div id="report-output-'.$key.'" class="report-output-'.$key.'">'.$html.'</div>';
+					},
+					$this->output, array_keys($this->output)
+				)
+			),
+		]);
+
+		$ret .= $this->_renderChildren($this->children);
 		$ret .= $this->_renderWidgetContainerEnd().'<!-- -->';
 
 		return $ret;
