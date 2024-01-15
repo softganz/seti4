@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2023-12-13
-* Version :: 6
+* Modify  :: 2024-01-14
+* Version :: 7
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.09'
+let sgUiVersion = '4.00.10'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -2439,6 +2439,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			if (data.debug && data.process) {
 				data.process.forEach(function(item) {
+					$debugOutput.show()
 					$debugOutput.append($('<div></div>').html(item))
 				})
 			}
@@ -2631,9 +2632,19 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$(".report-output").css("opacity", 0.5)
 
 			// console.log("API Parameter :: " + $form.serialize());
+
+			let para = {}
+			$form.serializeArray().map(function(inputItem) {
+				// console.log(inputItem)
+				para[inputItem.name] = inputItem.value
+			})
+
+			// console.log('API Parameter :: ', para)
+			// console.log($this.data())
+
 			$.post(
 				queryUrl,
-				$form.serialize(),
+				para,
 				function(data) {
 					notify()
 					//console.log(data)
