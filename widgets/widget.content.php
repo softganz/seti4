@@ -267,12 +267,12 @@ global $today;
 	if ($pattern->{'show-style'}!='div') $ret .= '</'.$pattern->{'show-style'}.'><!--end of widget-item -->'._NL;
 
 	$showReadAll = SG\getFirst($para->{'data-show-readall'},$para->{'data-cfg-readall'},$para->{'show-readall'});
-	$ret .= 'READ ALL '.$showReadAll;
+	// $ret .= $showReadAll;
 	if ($showReadAll) {
 		$readAllitems=explode(',',$showReadAll);
 		if (count($readAllitems)==1) {
 			list($readalltext,$readallurl)=explode(':',$showReadAll);
-			$ret.='<p class="readall"><a href="'.url($readallurl).'">'.$readalltext.'</a><span class="arrow-right "></span></p>';
+			$ret .= '<p class="readall"><a href="'.url($readallurl).'">'.$readalltext.'</a><span class="arrow-right "></span></p>';
 		} else {
 			$ui=new ui();
 			foreach ($readAllitems as $readAllItem) {
