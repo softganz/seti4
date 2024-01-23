@@ -193,6 +193,7 @@
 	.widget-inlineedit.-single-line {display: block; line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;}
 	.widget-inlineedit.-single-line>.inline-edit-field {width: 100%;}
 	.widget-inlineedit.-textarea {display: block;}
+	.widget-inlineedit.-disabled {opacity: 0.5;}
 	/* @group inline-edit-field */
 	.inline-edit-field {padding: 0; margin: 0; color: #333; display: inline-block; min-width: 100px; width: auto; min-height: 1.4em; vertical-align: middle;}
 
@@ -698,11 +699,12 @@
 
 	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox.rightside .sg-dropbox--wrapper {left: 0;}
 	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox {height: 100%; flex: 1 0 100%; position: relative;}
-	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox>a {width: 100%; height: 100%; display: flex; align-items: center; position: relative;}
+	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox>a {display: flex; align-items: center; position: relative;}
 	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox>a>span {padding: 0 24px 0 8px; color: #666; font-size: 0.9em;}
 	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox>.icon {position: relative;}
 
 	.widget-report .-toolbar>.-group .-checkbox {height: calc(240px - 80px); overflow: auto;}
+	.widget-report .-toolbar>.-group .-checkbox>abbr {padding-left: 4px; display: block; padding: 4px; white-space: nowrap;}
 	.widget-report .-toolbar>.-group .-checkbox>.-level-2 {padding-left: 16px; display: block;}
 	.widget-report .-toolbar>.-group .-check-count {flex: 1; position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 0.7em; color: #bbbbbb; pointer-events: none;}
 	.widget-report .-toolbar>.-group .-check-count>* {display: inline-block;}
@@ -712,7 +714,7 @@
 	.widget-report .-toolbar>.-options>.-item {border-right: 1px #ccc solid; padding: 2px;}
 	.widget-report .-toolbar>.-options>.-item:last-child {border-right: none;}
 
-	.widget-report .-toolbar .widget-dropbox .sg-dropbox--wrapper {left: 0;}
+	.widget-report .-toolbar .widget-dropbox .sg-dropbox--wrapper {left: 0; min-width: 200px;}
 
 /* @end */
 
