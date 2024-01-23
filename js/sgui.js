@@ -84,8 +84,8 @@ async function requestCameraPermission() {
 // 		throw new Error("window is undefined");
 // 	}
 // 	// history.forward()
-// 	var _hash = "!";
-// 	var noBackPlease = function () {
+// 	let _hash = "!";
+// 	let noBackPlease = function () {
 // 		global.location.href += "#";
 
 // 		// making sure we have the fruit available for juice....
@@ -106,7 +106,7 @@ async function requestCameraPermission() {
 // 		noBackPlease();
 // 		// disables backspace on page except on input fields and textarea..
 // 		document.body.onkeydown = function (e) {
-// 			var elm = e.target.nodeName.toLowerCase();
+// 			let elm = e.target.nodeName.toLowerCase();
 
 // 			console.log("BACK PRESS", e.which)
 
@@ -270,7 +270,7 @@ async function sgBoxBack(options = {}) {
 	}
 
 	// Close box
-	// var $boxElement = $('#cboxLoadedContent')
+	// let $boxElement = $('#cboxLoadedContent')
 	// if ($boxElement.length) {
 	// 	$.colorbox.close()
 	// } else if (isFlutterInAppWebViewReady) {
@@ -323,9 +323,9 @@ function sgPopState(event) {
 function sgUpdateData(html, relTarget, $this, options = {}) {
 	if (relTarget == undefined) return
 
-	var relExplode = relTarget.split(':')
-	var relType = relExplode[0]
-	var $ele
+	let relExplode = relTarget.split(':')
+	let relType = relExplode[0]
+	let $ele
 
 	if (relExplode.length > 1 )
 		relTarget = relExplode[1]
@@ -362,7 +362,7 @@ function sgUpdateData(html, relTarget, $this, options = {}) {
 		$ele.append(html)
 	} else if (relType == 'refresh') {
 		$ele = relTarget=='refresh' ? $('#main') : $(relTarget);
-		var refreshUrl = $ele.data('url') ? $ele.data('url') : document.URL
+		let refreshUrl = $ele.data('url') ? $ele.data('url') : document.URL
 		if (refreshUrl) {
 			$.post(refreshUrl,function(html){
 				$ele.html(html);
@@ -395,10 +395,10 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 	doneData = doneData.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
 
 	doneData.split('|').map(function(doneItem) {
-		var doneExplode = doneItem.trim().split(':')
-		var doneType = doneExplode[0].split('->')[0]
-		var doneAction = doneExplode[0].split('->')[1]
-		var doneTarget = doneExplode.length > 1 ? doneExplode[1].trim() : ''
+		let doneExplode = doneItem.trim().split(':')
+		let doneType = doneExplode[0].split('->')[0]
+		let doneAction = doneExplode[0].split('->')[1]
+		let doneTarget = doneExplode.length > 1 ? doneExplode[1].trim() : ''
 
 		if (doneTarget == '') doneTarget = '#main';
 
@@ -423,7 +423,7 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 				break;
 
 			case 'callback':
-				var callback = doneTarget.trim()
+				let callback = doneTarget.trim()
 				if (doneTarget && typeof window[doneTarget] === 'function') {
 					window[doneTarget]($this,data)
 				}
@@ -432,9 +432,9 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 			case 'back':
 				// sgPopState()
 				sgBoxBack()
-				// var $boxElement = $('#cboxLoadedContent')
+				// let $boxElement = $('#cboxLoadedContent')
 				// if ($boxElement.length) {
-				// 	var $boxPage = $('.box-page')
+				// 	let $boxPage = $('.box-page')
 				// 	if ($boxPage.length <= 1) {
 				// 		$.colorbox.close()
 				// 		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
@@ -449,7 +449,7 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 
 			case 'close':
 				sgBoxBack({close: true})
-				// var $boxElement = $('#cboxLoadedContent')
+				// let $boxElement = $('#cboxLoadedContent')
 				// if ($boxElement.length) {
 				// 	$.colorbox.close()
 				// } else if (isFlutterInAppWebViewReady) {
@@ -468,20 +468,20 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 						$('html,body').animate({ scrollTop: $(doneExplode[1]).offset().top - $('#header-wrapper').height() - 16 }, 'slow');
 					}
 				} else {
-					var moveto = doneExplode[1].split(',');
+					let moveto = doneExplode[1].split(',');
 					window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]))
 				}
 				break
 
 			case 'remove':
-				var $ele = sgFindTargetElement(doneTarget, $this)
+				let $ele = sgFindTargetElement(doneTarget, $this)
 				$ele.remove()
 				break
 
 			case 'reload':
 				// console.log('done reload')
 				setTimeout(function(){
-					var reloadUrl = doneExplode.length > 1 ? doneExplode[1] : document.URL
+					let reloadUrl = doneExplode.length > 1 ? doneExplode[1] : document.URL
 					reloadUrl = reloadUrl.split('#')[0]
 					// console.log('done reload url '+reloadUrl)
 					window.location = reloadUrl
@@ -491,8 +491,8 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 			case 'load':
 				setTimeout(function(){
 					// console.log('DONE TARGET = ' + doneTarget)
-					var $loadTargetElement = sgFindTargetElement(doneTarget, $this)
-					var loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($loadTargetElement.data('url') ? $loadTargetElement.data('url') : document.URL)
+					let $loadTargetElement = sgFindTargetElement(doneTarget, $this)
+					let loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($loadTargetElement.data('url') ? $loadTargetElement.data('url') : document.URL)
 					if (loadUrl && ($loadTargetElement.length || doneTarget == 'none')) {
 						// console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
 						// loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
@@ -538,7 +538,7 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 * Using {processDomOnResume: "#id" | ".class"} in onWebViewComplete
 */
 function sgWebViewDomProcess(id) {
-	var $this = $(id)
+	let $this = $(id)
 	//console.log("PROCESS DOM ",id,$this.data("webviewResume"))
 	sgActionDone($this.data("webviewResume"), $this)
 }
@@ -579,7 +579,7 @@ function sgWebViewDomProcess(id) {
 
 			if (openType == 'intent') {
 				if (isFlutterInAppWebViewReady) {
-					var options = $.extend({"actionBar": false}, $this.data('options'))
+					let options = $.extend({"actionBar": false}, $this.data('options'))
 					const args = [location, linkData.webviewTitle, options]
 					let r = window.flutter_inappwebview.callHandler("openIntent", ...args)
 				} else if (isAndroidWebViewReady) {
@@ -589,7 +589,7 @@ function sgWebViewDomProcess(id) {
 				if (isFlutterInAppWebViewReady) {
 					// const args = [location, linkData.webviewTitle, linkData];
 					// let r = window.flutter_inappwebview.callHandler("openBrowser", ...args);
-					var options = $.extend({"actionBar": false}, $this.data('options'))
+					let options = $.extend({"actionBar": false}, $this.data('options'))
 					const args = [location, linkData.webviewTitle, options]
 					let r = window.flutter_inappwebview.callHandler("openBrowser", ...args)
 				} else if (isAndroidWebViewReady) {
@@ -616,7 +616,7 @@ function sgWebViewDomProcess(id) {
 				webviewData = JSON.stringify(linkData)
 				location = pattern.test(location) ? location : document.location.origin + location
 				if (isFlutterInAppWebViewReady) {
-					var options = $.extend({"actionBar": true}, $this.data('options'))
+					let options = $.extend({"actionBar": true}, $this.data('options'))
 					const args = [location, linkData.webviewTitle, options]
 					let r = window.flutter_inappwebview.callHandler("showWebView", ...args)
 				} else if (isAndroidWebViewReady) {
@@ -670,24 +670,24 @@ function sgWebViewDomProcess(id) {
 * <a class="sg-action" data-rel="target" data-done="action[->targetAction]:target:url | ..."></a>
 */
 (function($) {	// sg-action
-	var version = '1.01'
-	var sgActionType = 'click'
-	var actionResult
-	var debug
+	let version = '1.01'
+	let sgActionType = 'click'
+	let actionResult
+	let debug
 
 	$.fn.sgAction = function(event, options = {}) {
-		var $this = $(this)
-		var linkData = $this.data()
-		var dataOptions = linkData.options
-		var url = $this.attr('href')
-		var relTarget = linkData.rel
-		var retUrl = linkData.ret
-		var para = {}
-		var $boxElement = $('#cboxLoadedContent')
-		var confirm = linkData.confirm == undefined || linkData.confirmed
-		var callback = linkData.callback
-		var relAction
-		var doneResult
+		let $this = $(this)
+		let linkData = $this.data()
+		let dataOptions = linkData.options
+		let url = $this.attr('href')
+		let relTarget = linkData.rel
+		let retUrl = linkData.ret
+		let para = {}
+		let $boxElement = $('#cboxLoadedContent')
+		let confirm = linkData.confirm == undefined || linkData.confirmed
+		let callback = linkData.callback
+		let relAction
+		let doneResult
 
 		if (url == 'javascript:void(0)') url = linkData.url
 
@@ -698,7 +698,7 @@ function sgWebViewDomProcess(id) {
 			relTarget = relTarget.split('->')[0]
 		}
 
-		var defaults = {
+		let defaults = {
 			result: 'html',
 			container : $(this),
 			loadurl: linkData.loadurl,
@@ -706,7 +706,7 @@ function sgWebViewDomProcess(id) {
 			callback : false,
 		}
 
-		var settings = $.extend({}, $.fn.sgAction.defaults, defaults, dataOptions, options)
+		let settings = $.extend({}, $.fn.sgAction.defaults, defaults, dataOptions, options)
 		// console.log(dataOptions)
 		// console.log(settings)
 
@@ -756,7 +756,7 @@ function sgWebViewDomProcess(id) {
 				// console.log('BACK BUTTON CLICK')
 				// sgBoxBack()
 				history.back()
-				// var $boxPage = $('.box-page')
+				// let $boxPage = $('.box-page')
 				// if ($boxPage.length <= 1) {
 				// 	$.colorbox.close()
 				// 	//if (isAndroidWebViewReady) Android.reloadWebView('Yes')
@@ -845,8 +845,8 @@ function sgWebViewDomProcess(id) {
 				// @deprecated => use data-done="remove:parent element"
 				// REMOVE element after done
 				if (linkData.removeparent) {
-					var removeTag = linkData.removeparent
-					var $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag)
+					let removeTag = linkData.removeparent
+					let $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag)
 					$removeElement.remove()
 				}
 
@@ -933,7 +933,7 @@ function sgWebViewDomProcess(id) {
 	}
 
 	$(document).on(sgActionType, '.sg-action', function(event) {
-		var result = $(this).sgAction(event,{aTestOpt: "This is test option"})
+		let result = $(this).sgAction(event,{aTestOpt: "This is test option"})
 		//console.log('RESULT ', result)
 		return !result.actionResult
 	});
@@ -942,7 +942,7 @@ function sgWebViewDomProcess(id) {
 
 /*
 $(document).ready(function(){
-	var $sgAction = $("#ticket-2")
+	let $sgAction = $("#ticket-2")
 	.sgAction(null, {
 		aTestOpt: 'Test Option in query',
 		callback: function($this, data) {console.log('project-pin CALLBACK PROCESS'+data)}
@@ -967,16 +967,16 @@ $(document).ready(function(){
 * Using <form class="sg-form"></form>
 */
 $(document).on('submit', 'form.sg-form', function(event) {
-	var $this = $(this)
-	var relTarget = $this.data('rel')
-	var retUrl = $this.data('ret')
-	var onComplete = $this.data('complete')
-	var checkValid = $this.data('checkvalid')
+	let $this = $(this)
+	let relTarget = $this.data('rel')
+	let retUrl = $this.data('ret')
+	let onComplete = $this.data('complete')
+	let checkValid = $this.data('checkvalid')
 	let onFormSubmit = $this.data('onformsubmit')
-	var silent = $this.data('silent')
-	var errorField = ''
-	var errorMsg = ''
-	var doneResult
+	let silent = $this.data('silent')
+	let errorField = ''
+	let errorMsg = ''
+	let doneResult
 
 	console.log('sg-form :: Submit');
 	// console.log('rel', relTarget)
@@ -984,7 +984,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	if (checkValid) {
 		console.log('Form Check input valid start.');
 		$this.find('.require, .-require').each(function(i) {
-			var $inputTag = $(this);
+			let $inputTag = $(this);
 			//console.log('Form check valid input tag '+$inputTag.prop("tagName")+' type '+$inputTag.attr('type')+' id='+$inputTag.attr('id'))
 			if (($inputTag.attr('type') == 'text' || $inputTag.attr('type') == 'password' || $inputTag.attr('type') == 'hidden' || $inputTag.prop("tagName") == 'TEXTAREA') && $inputTag.val().trim() == "") {
 				errorField = $inputTag;
@@ -1002,7 +1002,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			//console.log($("input[name=\'"+$inputTag.attr('name')+"\']*:checked").val())
 			if (errorField) {
 				//console.log('Invalid input '+errorField.attr('id'))
-				var invalidId = errorField.attr('id')
+				let invalidId = errorField.attr('id')
 				//console.log('invalidId = ',invalidId)
 				//$('#'+invalidId).focus();
 				//console.log($('#'+invalidId).isOnScreen() ? 'VISIBLE' : 'INVISIBLE')
@@ -1114,7 +1114,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					sgUpdateData(html, relTarget, $this)
 
 					if ($this.data('moveto')) {
-						var moveto = $this.data('moveto').split(',');
+						let moveto = $this.data('moveto').split(',');
 						window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]));
 					}
 				}
@@ -1122,7 +1122,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				if (relTarget.substring(0,6) != 'notify') notify()
 
 				// Process callback function
-				var callback = $this.data('callback');
+				let callback = $this.data('callback');
 				if (callback && typeof window[callback] === 'function') {
 					window[callback]($this,html);
 				} else if (callback) {
@@ -1147,8 +1147,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	return false
 })
 .on('keydown', 'form.sg-form input:text', function(event) {
-	var $input = $(this).closest('form').find("input:text")
-	var inputCount = $input.length
+	let $input = $(this).closest('form').find("input:text")
+	let inputCount = $input.length
 	if(event.keyCode == 13) {
 		event.preventDefault()
 		// console.log($input.attr('onEnter'))
@@ -1156,7 +1156,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$input.closest('form').submit()
 			return false
 		}
-		var nextIndex = $input.index(this) + 1
+		let nextIndex = $input.index(this) + 1
 		if(nextIndex < inputCount)
 			$input[nextIndex].focus()
 		return false
@@ -2009,7 +2009,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		// $.editable.addInputType('radio', {
 		// 	element : function(settings, original) {
-		// 		var input = $('<input />')
+		// 		let input = $('<input />')
 		// 		.attr({
 		// 			type: 'radio'
 		// 		});
@@ -2021,7 +2021,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
     // $.editable.addInputType('checkbox', {
     //     element : function(settings, original) {
-    //         var input = $('<input type="checkbox">');
+    //         let input = $('<input type="checkbox">');
     //         $(this).append(input);
 
     //         $(input).bind('click', function() {
@@ -2039,8 +2039,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
     //     content : function(string, settings, original) {
 
-    //         var checked = (string === 'yes') ? 'on' : 'off';
-    //         var input = $(':input:first', this);
+    //         let checked = (string === 'yes') ? 'on' : 'off';
+    //         let input = $(':input:first', this);
 
     //         if (checked === 'on') {
     //             $(input).attr('checked', checked);
@@ -2048,13 +2048,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
     //             $(input).removeAttr('checked');
     //         }
 
-    //         var value = $(input).is(':checked') ? 'on' : 'off';
+    //         let value = $(input).is(':checked') ? 'on' : 'off';
     //         $(input).val(value);
     //     },
 
     //     submit: function (settings, original) {
-    //         var value;
-    //         var input = $(':input:first', this);
+    //         let value;
+    //         let input = $(':input:first', this);
     //         if (input.is(':checked')) {
     //             value = '1';
     //         } else {
@@ -2427,7 +2427,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			console.log('$.sgDrawReport ' + version + ' start draw report')
 			// console.log('data', data)
 
-			// var isDebug = $container.find('input[name="debug"]:checked').length > 0 && data.process != undefined
+			// let isDebug = $container.find('input[name="debug"]:checked').length > 0 && data.process != undefined
 
 			if (settings.dataType == 'html') {
 				let $detailElement = $($container.data('showHtml'))
@@ -2497,13 +2497,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.showSummary = function(data) {
-			var $tableElement = $($container.data('showSummary'))
+			let $tableElement = $($container.data('showSummary'))
 			$tableElement.empty()
 
 			if (data.summary == undefined || $tableElement.length == 0) return
 
-			var table = $('<table></table>').addClass('widget-table')
-			var thead = $('<thead></thead>')
+			let table = $('<table></table>').addClass('widget-table')
+			let thead = $('<thead></thead>')
 
 			Object.keys(data.summaryFields).forEach( function(key) {
 				//console.log(key,data.summaryFields[key])
@@ -2513,7 +2513,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			table.append(thead)
 
 			data.summary.forEach(function(item, index) {
-				var row = $('<tr></tr>').addClass('row')
+				let row = $('<tr></tr>').addClass('row')
 				Object.keys(data.summaryFields).forEach( function(key) {
 					let itemValue = item[key]
 					if (typeof itemValue === 'number' && parseInt(itemValue) != itemValue) {
@@ -2528,7 +2528,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			})
 
 			if (data.total) {
-				var tfoot = $('<tfoot></tfoot').append($('<tr></tr>'))
+				let tfoot = $('<tfoot></tfoot').append($('<tr></tr>'))
 
 				Object.keys(data.summaryFields).forEach( function(key) {
 					if (key == 'label') {
@@ -2558,7 +2558,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			if (!isShowDetail) return
 
-			var exportBtn = $('<a/>')
+			let exportBtn = $('<a/>')
 			exportBtn
 				.addClass('btn')
 				.html('<i class="icon -material">cloud_download</i><span>EXPORT</span>')
@@ -2566,14 +2566,14 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				.attr('onClick', 'export2excel("trans")')
 			$detailElement.append($('<nav></nav>').addClass('nav -page -table-export -sg-text-right').append(exportBtn))
 
-			var table = $('<table></table>').addClass('widget-table').attr('id','detail-list')
-			var thead = $('<thead></thead>')
+			let table = $('<table></table>').addClass('widget-table').attr('id','detail-list')
+			let thead = $('<thead></thead>')
 				.append($('<tr></tr>'));
 			Object.keys(data.itemsFields).forEach( function(key) {
 				thead.append($('<th></th>').text(data.itemsFields[key]))
 			});
 			table.append(thead)
-			var tbody = $('<tbody></tbody>')
+			let tbody = $('<tbody></tbody>')
 
 
 			data.items.forEach(function(item, index) {
@@ -2669,7 +2669,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			})
 
 			if (event != undefined) {
-				var $eventTarget = $(event.target)
+				let $eventTarget = $(event.target)
 				//console.log($eventTarget)
 				//console.log($eventTarget.attr('type'))
 
@@ -2725,17 +2725,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	}
 
 	$(document).on('click', '.sg-drawreport>form>.toolbar.-report>.-filter>.-select>.-item a', function() {
-		var srcId = $(this).closest('span').data('src')
+		let srcId = $(this).closest('span').data('src')
 		$('#'+srcId).prop("checked", false)
 		let $srcAmt = $('#'+srcId).closest('li').find('.-amt')
 		$srcAmt.html($srcAmt.text() - 1)
 		//console.log('CLICK')
-		var result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
+		let result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
 		$(this).parent().remove()
 	});
 
 	$(document).on(sgActionType, '.sg-drawreport .-submit', function(event) {
-		var result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
+		let result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
 		//console.log('SUBMIT')
 		return result
 	});
@@ -2778,9 +2778,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 * Using <div class="widget-tabbar sg-tabs"><ul class="tabs">tab click</ul><div>tab container</div></div>
 */
 $(document).on('click', '.widget-tabbar>.tabs>li>a, .sg-tabs>.ui-tab>.ui-item>a, .sg-tabs>ul.tabs>li>a, .sg-tabs>ul>li>a', function(e) {
-	var $this = $(this)
-	var $parent = $this.closest('.sg-tabs')
-	var href = $this.attr('href')
+	let $this = $(this)
+	let $parent = $this.closest('.sg-tabs')
+	let href = $this.attr('href')
 	$this.closest('ul').children('li').removeClass('-active')
 	$this.closest('li').addClass('-active')
 
@@ -2802,7 +2802,7 @@ $(document).on('click', '.widget-tabbar>.tabs>li>a, .sg-tabs>.ui-tab>.ui-item>a,
 	}
 
 	// Process CALLBACK function
-	var callback = $this.data("callback")
+	let callback = $this.data("callback")
 	if (callback && typeof window[callback] === 'function') {
 		window[callback]($this,html)
 	} else if (callback) {
@@ -2823,9 +2823,9 @@ $(document).on('click', '.widget-tabbar>.tabs>li>a, .sg-tabs>.ui-tab>.ui-item>a,
 * Using sg_dropbox()
 */
 $(document).on('click', '.sg-dropbox>a', function() {
-	var $parent=$(this).parent()
-	var $wrapper=$(this).next()
-	var $target=$parent.find('.sg-dropbox--content')
+	let $parent=$(this).parent()
+	let $wrapper=$(this).next()
+	let $target=$parent.find('.sg-dropbox--content')
 
 	$('.sg-dropbox.click').not($(this).parent()).each(function() {
 		$(this).children('div').hide()
@@ -2845,19 +2845,19 @@ $(document).on('click', '.sg-dropbox>a', function() {
 	} else {
 		$wrapper.toggle()
 	}
-	var offset=$(this).offset()
-	var width=$wrapper.width()
-	var docwidth=$(document).width()
-	var right=0
+	let offset=$(this).offset()
+	let width=$wrapper.width()
+	let docwidth=$(document).width()
+	let right=0
 	if (offset.left+width>docwidth) {
-		var right=docwidth-offset.left-$(this).width()-8;//offset.left
+		let right=docwidth-offset.left-$(this).width()-8;//offset.left
 		$wrapper.css({'rightside':right+"px"})
 	}
 	//notify("left: " + offset.left + ", top: " + offset.top+", width="+width+", document width="+docwidth+", right="+right)
  	return false
 })
 .on('click','body', function(e) {
-	var $this = $(e.target)
+	let $this = $(e.target)
 	//console.log($this.closest('.sg-dropbox'))
 	if ($this.closest('.sg-dropbox').length == 0) {
 		$('.sg-dropbox.click').children('div').hide()
@@ -2969,7 +2969,7 @@ $(document).on('focus', '.sg-datepicker', function(e) {
 * Using <input class="sg-address" type="text" />
 */
 $(document).on('focus', '.sg-address', function(e) {
-	var $this=$(this)
+	let $this=$(this)
 	$this
 	.autocomplete({
 		source: function(request, response){
@@ -2988,7 +2988,7 @@ $(document).on('focus', '.sg-address', function(e) {
 			if ($this.data('altfld')) $("#"+$this.data('altfld')).val(ui.item.value);
 
 			// Process call back
-			var callback = $this.data('callback');
+			let callback = $this.data('callback');
 			if (callback) {
 				if (callback == 'submit') {
 					//$this.closest('form').triger('submit');
@@ -2996,7 +2996,7 @@ $(document).on('focus', '.sg-address', function(e) {
 				} else if (typeof window[callback] === 'function') {
 					 window[callback]($this, ui);
 				} else {
-					var url = callback + '/' + ui.item.value
+					let url = callback + '/' + ui.item.value
 					window.location = url;
 				}
 			}
@@ -3029,9 +3029,9 @@ $(document).on('focus', '.sg-address', function(e) {
 *	data-select = {"id":"result field key"[, "id":"result field key"]}
 */
 $(document).on('focus', '.sg-autocomplete', function(e) {
-	var $this = $(this)
-	var $form = $this.closest('form')
-	var minLength=1
+	let $this = $(this)
+	let $form = $this.closest('form')
+	let minLength=1
 	if ($this.data('minlength')) minLength=$this.data('minlength')
 	$this
 	.autocomplete({
@@ -3039,7 +3039,7 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 		dataType: "json",
 		cache: false,
 		source: function(request, response){
-			var para={}
+			let para={}
 			para.n=$this.data('item');
 			para.q=$this.val();
 			//console.log("Query "+$this.data('query'))
@@ -3047,7 +3047,7 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 			$.get($this.data('query'),para, function(data){
 				notify();
 				response(data);
-				var renderComplete = $this.data('renderComplete')
+				let renderComplete = $this.data('renderComplete')
 				if (renderComplete && typeof window[renderComplete] === 'function') {
 					return window[renderComplete]($this);
 				}
@@ -3070,7 +3070,7 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 			// Do something with id
 			// console.log('Select ' + ui.item.value);
 			if ($this.data('altfld')) {
-				var altElement = "#"+$this.data('altfld')
+				let altElement = "#"+$this.data('altfld')
 				if ($form.find(altElement).length) {
 					$form.find(altElement).val(ui.item.value)
 				} else {
@@ -3081,11 +3081,11 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 			// data-select = string
 			// data-select = {"id-1":"result field key 1", "id-2":"result field key 2"}
 			if ($this.data('select')!=undefined) {
-				var selectValue=$this.data('select');
+				let selectValue=$this.data('select');
 				// console.log(selectValue)
 				if (typeof selectValue == 'object') {
 					// console.log("Select Value is Object", selectValue)
-					var x;
+					let x;
 					for (x in selectValue) {
 						$('#'+x).val(ui.item[selectValue[x]]);
 						//console.log(x+" "+selectValue[x])
@@ -3117,14 +3117,14 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 		response: function(event, ui) {
 			//console.log('RESPONSE')
 			//console.log('EVENT', event)
-			var renderStart = $this.data('renderStart')
+			let renderStart = $this.data('renderStart')
 			if (renderStart && typeof window[renderStart] === 'function') {
 				window[renderStart]($this, ui);
 			}
 		},
 	})
 	.autocomplete('instance')._renderItem = function( ul, item ) {
-		var renderItem = $this.data('renderItem')
+		let renderItem = $this.data('renderItem')
 		if (renderItem && typeof window[renderItem] === 'function') {
 			return window[renderItem]($this, ul, item);
 		} else {
@@ -3151,18 +3151,18 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 * Using <form class="sg-upload"><input class="inline-uplaod" type="file" /></form>
 */
 $(document).on('change', "form.sg-upload .inline-upload", function() {
-	var $this = $(this)
-	var $form = $this.closest("form")
-	var target = $form.data('rel')
-	var targetClass = ' class="' + ($form.data('class') != undefined ? $form.data('class') : 'ui-item -hover-parent') + '"'
+	let $this = $(this)
+	let $form = $this.closest("form")
+	let target = $form.data('rel')
+	let targetClass = ' class="' + ($form.data('class') != undefined ? $form.data('class') : 'ui-item -hover-parent') + '"'
 
 	if (isAndroidWebViewReady) Android.showToast('กำลังอัพโหลดไฟล์')
 
 	console.log('sg-upload :: Inline upload file start and show result in '+target)
 	if ($form.data('before')) {
-		var tagName = $form.data('before')
-		var insertElement = '<'+tagName+targetClass+'><div class="loader -rotate -center"></div></'+tagName+'>'
-		var $targetElement = $this.closest(tagName).before(insertElement)
+		let tagName = $form.data('before')
+		let insertElement = '<'+tagName+targetClass+'><div class="loader -rotate -center"></div></'+tagName+'>'
+		let $targetElement = $this.closest(tagName).before(insertElement)
 		// console.log($targetElement)
 	} else {
 		notify('<div class="loader -rotate"></div> กำลังอัพโหลดไฟล์ กรุณารอสักครู่')
@@ -3173,21 +3173,21 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 			if (isAndroidWebViewReady) Android.showToast('อัพโหลดไฟล์เรียบร้อบ')
 			if (target) {
 				if ($form.data('append')) {
-					var insertElement = '<'+$form.data('append')+targetClass+'>'+data+'</'+$form.data('append')+'>';
+					let insertElement = '<'+$form.data('append')+targetClass+'>'+data+'</'+$form.data('append')+'>';
 					$(target).append(insertElement);
 				} else if ($form.data('prepend')) {
-					var insertElement = '<'+$form.data('prepend')+targetClass+'>'+data+'</'+$form.data('prepend')+'>';
+					let insertElement = '<'+$form.data('prepend')+targetClass+'>'+data+'</'+$form.data('prepend')+'>';
 					$(target).prepend(insertElement);
 					//console.log(insertElement)
 				} else if ($form.data('before')) {
-					//var tagName = $form.data('before')
-					//var insertElement = '<'+tagName+targetClass+'>'+data+'</'+tagName+'>';
+					//let tagName = $form.data('before')
+					//let insertElement = '<'+tagName+targetClass+'>'+data+'</'+tagName+'>';
 					//console.log('Before ',$form.data('before'));
 					//console.log('Value ',insertElement)
 					//$this.closest($form.data('before')).before(insertElement);
 					$targetElement.prev().html(data)
 				} else if ($form.data('after')) {
-					var insertElement = '<'+$form.data('after')+targetClass+'>'+data+'</'+$form.data('after')+'>';
+					let insertElement = '<'+$form.data('after')+targetClass+'>'+data+'</'+$form.data('after')+'>';
 					//console.log($form.data('after'));
 					//console.log(insertElement)
 					$this.closest($form.data('after')).after(insertElement);
@@ -3425,7 +3425,7 @@ $(document).ready(function() {
 * https://softganz.com
 */
 let sgDrawMap = function(thisMap, options = {}) {
-	var defaults = {
+	let defaults = {
 		gisDigit: 14,
 		zoom: 9,
 		center: [],
@@ -3445,18 +3445,18 @@ let sgDrawMap = function(thisMap, options = {}) {
 		callback : false,
 	}
 
-	var settings = $.extend({}, defaults, options)
+	let settings = $.extend({}, defaults, options)
 	if (settings.debug) console.log(settings)
 
-	var currentMarker
-	var currentMarkerText
-	var $currentMarkerDom = $("#current-location .value")
-	var updateUrl = settings.updateUrl
-	var is_point = settings.pin.lat ? true : false
-	var currentInfoText = ""
-	var dragText = updateUrl ? ((settings.drag == "map" ? "เลื่อนแผนที่" : "ลากหมุด") + "เพื่อเปลี่ยนตำแหน่ง") : ''
-	var dragNotifyTime = 20000
-	var zoomChange = false
+	let currentMarker
+	let currentMarkerText
+	let $currentMarkerDom = $("#current-location .value")
+	let updateUrl = settings.updateUrl
+	let is_point = settings.pin.lat ? true : false
+	let currentInfoText = ""
+	let dragText = updateUrl ? ((settings.drag == "map" ? "เลื่อนแผนที่" : "ลากหมุด") + "เพื่อเปลี่ยนตำแหน่ง") : ''
+	let dragNotifyTime = 20000
+	let zoomChange = false
 
 	// console.log('settings', settings)
 
@@ -3471,7 +3471,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 		is_point = true
 	}
 
-	var $map = new GMaps({
+	let $map = new GMaps({
 		div: settings.mapCanvas,
 		zoom: settings.zoom,
 		scrollwheel: true,
@@ -3490,18 +3490,18 @@ let sgDrawMap = function(thisMap, options = {}) {
 			// console.log(currentMarkerText)
 			currentMarker = createMarker({lat: event.latLng.lat(), lng: event.latLng.lng()})
 			is_point = true
-			var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+			let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
 			infoWindow.open($map, currentMarker)
 			$currentMarkerDom.text(currentMarkerText)
 		}
 	});
 
 	/*
-		var myMap = document.getElementById(settings.mapCanvas);
+		let myMap = document.getElementById(settings.mapCanvas);
 
 		function zoomIn() {
-			var lat
-			var lng
+			let lat
+			let lng
 			console.log('ZOOM Change '+$map.getZoom())
 			zoomChange = true
 			//$map.zoom = 10
@@ -3524,8 +3524,8 @@ let sgDrawMap = function(thisMap, options = {}) {
 		$map.addListener("x-zoom_changed", () => {
 			console.log($map.getCenter().toUrlValue())
 			if (currentMarker) {
-				var lat = currentMarker.getPosition().lat();
-				var lng = currentMarker.getPosition().lng()
+				let lat = currentMarker.getPosition().lat();
+				let lng = currentMarker.getPosition().lng()
 				$map.setCenter(lat, lng)
 				//currentMarker.setPosition($map.getCenter())
 				//updateLocationValue($map.getCenter().lat(), $map.getCenter().lng())
@@ -3560,21 +3560,21 @@ let sgDrawMap = function(thisMap, options = {}) {
 		currentMarker.setMap(null);
 	}
 
-	var locationUpdate = function(latLng) {
+	let locationUpdate = function(latLng) {
 		if (updateUrl == undefined) return false
 
-		var para = settings.updatePara == undefined ? {} : settings.updatePara
+		let para = settings.updatePara == undefined ? {} : settings.updatePara
 		para.location = latLng
 		if (settings.debug) console.log("SAVE Location "+updateUrl,para)
 		$.post(updateUrl, para, function(data) {
-			var googleMapUrl = "https://www.google.com/maps/place/"+latLng
-			var googleNavUrl = "geo:?q="+latLng
+			let googleMapUrl = "https://www.google.com/maps/place/"+latLng
+			let googleNavUrl = "geo:?q="+latLng
 
 			$("#googlemap").attr("href", googleMapUrl).removeClass("-hidden")
 			$("#googlenav").attr("href", googleNavUrl).removeClass("-hidden")
 
-			var mapIcon = latLng != "" ? "where_to_vote" : "room"
-			var mapActive = latLng != "" ? "-active" : ""
+			let mapIcon = latLng != "" ? "where_to_vote" : "room"
+			let mapActive = latLng != "" ? "-active" : ""
 			if (settings.updateIcon) {
 				$(settings.updateIcon)
 					//.text(mapIcon)
@@ -3590,13 +3590,13 @@ let sgDrawMap = function(thisMap, options = {}) {
 			})
 	}
 
-	var editLocation = function(latLng) {
+	let editLocation = function(latLng) {
 		if (updateUrl == undefined) return false
 		// console.log("EDIT", latLng)
 	}
 
 	function updateLocationValue(lat,lng) {
-		var $currentLocation = $("#current-location")
+		let $currentLocation = $("#current-location")
 		//console.log(currentMarker.position.toUrlValue())
 		$currentLocation.find(".value").text(lat.toFixed(settings.gisDigit)+","+lng.toFixed(settings.gisDigit))
 		$currentLocation.find(".show").text(lat.toFixed(4)+","+lng.toFixed(4))
@@ -3604,11 +3604,11 @@ let sgDrawMap = function(thisMap, options = {}) {
 
 	function createMarker(marker) {
 		currentMarkerText = marker.lat.toFixed(settings.gisDigit)+','+marker.lng.toFixed(settings.gisDigit)
-		var saveNavText = '<nav class="nav -sg-flex">'
+		let saveNavText = '<nav class="nav -sg-flex">'
 			+ '<a class="sg-action btn -link -cancel" href="#current-location" data-rel="none" data-title="ลบหมุด" data-confirm="ลบหมุด กรุณายืนยัน?" data-done="javascript:'+thisMap+'.clearMap()"><i class="icon -material">cancel</i><span>ลบหมุด</span></a>'
 			+ '<a class="btn -primary" onClick=\''+thisMap+'.locationUpdate($("#current-location>.value").text());return false;\'><i class="icon -material">done</i><span>บันทึกตำแหน่ง</span></a>'
 			+ '</nav>';
-		var pinText = ''
+		let pinText = ''
 		//console.log(marker.currentLocation)
 		if (marker.currentLocation && settings.locationText != undefined) {
 			//console.log("SET TO locationText")
@@ -3666,7 +3666,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 
 	if (settings.pin.lat && settings.pin.lng) {
 		currentMarker = createMarker(settings.pin)
-		var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+		let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
 		infoWindow.open($map, currentMarker)
 	}
 
@@ -3691,7 +3691,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 				address: address,
 				callback: function(results, status) {
 					if (status == "OK") {
-						var latlng = results[0].geometry.location;
+						let latlng = results[0].geometry.location;
 						if (!is_point && i == 0) $map.setCenter(latlng.lat(), latlng.lng());
 						$map.addMarker({
 							lat: latlng.lat(),
@@ -3716,7 +3716,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 					$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
 					if (currentMarker == undefined) {
 						currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
-						var infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+						let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
 						infoWindow.open($map, currentMarker)
 						is_point = true
 					}
@@ -3753,13 +3753,13 @@ let sgDrawMap = function(thisMap, options = {}) {
 
 // Province change
 $(document).on('change','.sg-changwat',function() {
-	var $this=$(this)
-	var $form=$this.closest('form');
-	var $changwat=$form.find('.sg-changwat');
-	var $ampur=$form.find('.sg-ampur');
-	var $tambon=$form.find('.sg-tambon');
-	var $village=$form.find('.sg-village');
-	var altField = $this.data('altfld')
+	let $this=$(this)
+	let $form=$this.closest('form');
+	let $changwat=$form.find('.sg-changwat');
+	let $ampur=$form.find('.sg-ampur');
+	let $tambon=$form.find('.sg-tambon');
+	let $village=$form.find('.sg-village');
+	let altField = $this.data('altfld')
 
 	// console.log('Get Ampur of ' + $this.val())
 	if ($this.val()=='') {
@@ -3779,7 +3779,7 @@ $(document).on('change','.sg-changwat',function() {
 
 	$.get(url+'api/ampur',{q:$this.val()}, function(data) {
 		if (data.length) $ampur.show(); else $ampur.hide()
-		for (var i = 0; i < data.length; i++) {
+		for (let i = 0; i < data.length; i++) {
 			$ampur.append(
 				$("<option></option>")
 				.text(data[i].label)
@@ -3793,13 +3793,13 @@ $(document).on('change','.sg-changwat',function() {
 
 // Ampur change
 $(document).on('change','.sg-ampur', function() {
-	var $this = $(this);
-	var $form = $this.closest('form');
-	var $changwat = $form.find('.sg-changwat');
-	var $ampur = $form.find('.sg-ampur');
-	var $tambon = $form.find('.sg-tambon');
-	var $village = $form.find('.sg-village');
-	var altField = $this.data('altfld')
+	let $this = $(this);
+	let $form = $this.closest('form');
+	let $changwat = $form.find('.sg-changwat');
+	let $ampur = $form.find('.sg-ampur');
+	let $tambon = $form.find('.sg-tambon');
+	let $village = $form.find('.sg-village');
+	let altField = $this.data('altfld')
 
 	// console.log('Get Tambon of ' + $this.val())
 
@@ -3818,7 +3818,7 @@ $(document).on('change','.sg-ampur', function() {
 
 	$.get(url+'api/tambon',{q:$changwat.val()+$ampur.val()}, function(data) {
 		if (data.length) $tambon.show(); else $tambon.hide()
-		for (var i = 0; i < data.length; i++) {
+		for (let i = 0; i < data.length; i++) {
 			$tambon.append(
 				$("<option></option>")
 				.text(data[i].label)
@@ -3866,12 +3866,12 @@ $(document).on('change','.sg-tambon', function() {
 
 // Village cgange
 $(document).on('change','.sg-village', function() {
-	var $this=$(this)
-	var $form=$this.closest('form');
-	var $changwat=$form.find('.sg-changwat');
-	var $ampur=$form.find('.sg-ampur');
-	var $tambon=$form.find('.sg-tambon');
-	var $village=$form.find('.sg-village');
+	let $this=$(this)
+	let $form=$this.closest('form');
+	let $changwat=$form.find('.sg-changwat');
+	let $ampur=$form.find('.sg-ampur');
+	let $tambon=$form.find('.sg-tambon');
+	let $village=$form.find('.sg-village');
 
 	if ($changwat.data('altfld')) $($changwat.data('altfld')).val($changwat.val()+$ampur.val()+$tambon.val()+$this.val());
 
@@ -3920,10 +3920,10 @@ $(document).on('click', '.widget-table>thead>tr>th[class*="-sort-"]', function(e
 	// }
 
 	function sortTable1(table_id, sortColumn){
-		var tableData = document.getElementById(table_id).getElementsByTagName('tbody').item(0);
-		var rowData = tableData.getElementsByTagName('tr');
-		for(var i = 0; i < rowData.length - 1; i++){
-			for(var j = 0; j < rowData.length - (i + 1); j++){
+		let tableData = document.getElementById(table_id).getElementsByTagName('tbody').item(0);
+		let rowData = tableData.getElementsByTagName('tr');
+		for(let i = 0; i < rowData.length - 1; i++){
+			for(let j = 0; j < rowData.length - (i + 1); j++){
 				if(Number(rowData.item(j).getElementsByTagName('td').item(sortColumn).innerHTML.replace(/[^0-9\.]+/g, "")) < Number(rowData.item(j+1).getElementsByTagName('td').item(sortColumn).innerHTML.replace(/[^0-9\.]+/g, ""))){
 					tableData.insertBefore(rowData.item(j+1),rowData.item(j));
 				}
@@ -3933,7 +3933,7 @@ $(document).on('click', '.widget-table>thead>tr>th[class*="-sort-"]', function(e
 
 	function sortTable(id, n) {
 		console.log('FUNCTION SORT START')
-		var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+		let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
 		table = document.getElementById(id);
 		switching = true;
 		//Set the sorting direction to ascending:
