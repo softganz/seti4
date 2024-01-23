@@ -913,7 +913,7 @@ function sg_dropbox($ui, $options = '{}') {
 
 	$dropLink = \SG\getFirst($options->link, $defaultLink);
 
-	$ret .= '<span class="sg-dropbox '.$options->type.' '.$options->class.'" data-type="'.$options->type.'"'.($options->url ? ' data-url="'.$options->url.'"' : '').'>'
+	$ret .= '<span class="widget-dropbox sg-dropbox '.$options->type.' '.$options->class.'" data-type="'.$options->type.'"'.($options->url ? ' data-url="'.$options->url.'"' : '').'>'
 		. $dropLink
 		. '<div class="sg-dropbox--wrapper -wrapper -hidden">'
 		. '<div class="sg-dropbox--arrow -arrow"></div>'
