@@ -59,13 +59,13 @@ class AdminUserEdit extends Page {
 						'description'=>'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.',
 					],
 					'password' => [
-						'type'=>'password',
+						'type'=>'text',
 						'label'=>'Password',
 						'maxlength'=>20,
 						'class'=>'-fill',
 					],
 					'repassword' => [
-						'type'=>'password',
+						'type'=>'text',
 						'label'=>'Confirm password',
 						'class'=>'-fill',
 						'maxlength'=>20,
