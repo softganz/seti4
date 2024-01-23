@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-01-14
-* Version :: 7
+* Modify  :: 2024-01-23
+* Version :: 8
 */
 
 'use strict'
