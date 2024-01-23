@@ -101,16 +101,27 @@ class Report extends Widget {
 				$groupUiStr = $typeValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#'.$typeId.'"><span>'.$typeValue['group'].'</span></a></span>' : '';
 				if (isset($typeValue['select'])) {
 					$checkbox = $this->_render_checkbox($typeValue['select'],$typeValue);
-					//if ($checkbox) {
-						$groupUiStr .= _NL.'	'.sg_dropbox(
-							_NL.'	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
-							. '	<div class="-checkbox">'._NL
-							. $checkbox
-							. '	</div><!-- checkbox -->'._NL
-							. '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
-							'{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
+					// $groupUiStr .= _NL.'	'
+					// 	. (new Dropbox([
+					// 		'text' => 'ตัวกรอง:',
+					// 		'children' => [
+					// 			$this->_render_checkbox($typeValue['select'],$typeValue)
+					// 		],
+					// 	// . '	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
+					// 	// . '	<div class="-checkbox">'._NL
+					// 	// . $checkbox
+					// 	// . '	</div><!-- checkbox -->'._NL
+					// 	// . '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
+					// 	// '{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
+					// ]))->build()._NL;
+					$groupUiStr .= _NL.'	'.sg_dropbox(
+						_NL.'	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
+						. '	<div class="-checkbox">'._NL
+						. $checkbox
+						. '	</div><!-- checkbox -->'._NL
+						. '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
+						'{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
 						)._NL;
-					//}
 				}
 				$groupUiStr .= '	<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>'._NL;
 				$groupUi->add(
