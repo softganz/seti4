@@ -3750,6 +3750,48 @@ let sgDrawMap = function(thisMap, options = {}) {
 
 
 
+// Fund area change
+$(document).on('change','.sg-area-fund',function() {
+	let $this = $(this)
+	let $form = $this.closest('form');
+	let $area = $form.find('.sg-area-fund');
+	let $changwat = $form.find('.sg-changwat');
+	let $ampur = $form.find('.sg-ampur');
+	let $tambon = $form.find('.sg-tambon');
+	let $village = $form.find('.sg-village');
+	let altField = $this.data('altfld')
+
+	console.log('Get Area of ' + $this.val())
+	if ($this.val()=='') {
+		$changwat.val("").hide();
+	} else {
+		$changwat.val("");
+	}
+	if ($ampur.length) $ampur.val("").hide();
+	if ($tambon.length) $tambon.val("").hide();
+	if ($village.length) $village.val("").hide()
+	if ($changwat.length) $changwat[0].options.length = 1;
+	if ($ampur.length) $ampur[0].options.length = 1;
+	if ($tambon.length) $tambon[0].options.length = 1;
+	if ($village.length) $village[0].options.length = 1;
+
+	if (altField) {
+		$form.find(altField).val($this.val())
+	}
+
+	$.get(url+'api/changwat',{"areaFund" : $this.val()}, function(data) {
+		if (data.length) $changwat.show(); else $changwat.hide()
+		for (let i = 0; i < data.length; i++) {
+			$changwat.append(
+				$("<option></option>")
+				.text(data[i].label)
+				.val(data[i].changwat)
+			);
+		};
+	},'json')
+	if ($this.data('change') == 'submit') $form.submit();
+	//$this.closest('form').submit()
+});
 
 // Province change
 $(document).on('change','.sg-changwat',function() {
@@ -3761,7 +3803,7 @@ $(document).on('change','.sg-changwat',function() {
 	let $village=$form.find('.sg-village');
 	let altField = $this.data('altfld')
 
-	// console.log('Get Ampur of ' + $this.val())
+	console.log('Get Ampur of ' + $this.val())
 	if ($this.val()=='') {
 		$ampur.val("").hide();
 	} else {
