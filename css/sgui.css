@@ -45,7 +45,7 @@
 	.widget-stepmenu>ul>.ui-item {display: block; flex: 0 0 48px; text-align: center;}
 	.widget-stepmenu>ul>.ui-item>* {display: block; width: 48px; height: 48px; margin: 0 auto; background-color: #eee; line-height: 48px; border-radius: 50%; overflow: hidden;}
 	.widget-stepmenu>ul>.ui-item>*:hover {background-color: #f5f5f5;}
-	.widget-stepmenu>ul>.ui-item .icon {margin-top: 12px; color: grey;}
+	.widget-stepmenu>ul>.ui-item .icon {color: grey;}
 	.widget-stepmenu>ul>.ui-item.-active>* {background-color: green; color:#fff;}
 	.widget-stepmenu>ul>.ui-item.-active>*:hover {background-color: #008912;}
 	.widget-stepmenu>ul>.ui-item.-active .icon {color: #fff;}
