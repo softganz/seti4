@@ -2395,7 +2395,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 (function($) {	// sg-drawreport
 	'use strict';
 
-	let version = '0.10'
+	let version = '0.11'
 	let sgActionType = 'click'
 	let debug
 	let toolbarIndex = 0
@@ -2636,7 +2636,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			let para = {}
 			$form.serializeArray().map(function(inputItem) {
 				// console.log(inputItem)
-				para[inputItem.name] = inputItem.value
+				// console.log(inputItem.name.match('\]$'))
+				if (inputItem.name.match('\]$')) {
+					if (para[inputItem.name] == undefined) para[inputItem.name] = []
+					para[inputItem.name].push(inputItem.value)
+				} else {
+					para[inputItem.name] = inputItem.value
+				}
 			})
 
 			// console.log('API Parameter :: ', para)
@@ -2712,7 +2718,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$filterBar.empty()
 			$('.sg-drawreport .-filter-checkbox:checked').each(function(i) {
 				$filterBar
-					.append('<span class="" data-src="'+$(this).attr('id')+'">'+$(this).closest('label').text()+'<a class="x-submit"><i class="icon -material -sg-16">close</i></a></span>')
+					.append('<span class="" data-src="'+$(this).attr('id')+'">'+$(this).closest('label').text()+'<a class="-filter-remove"><i class="icon -material -sg-16">close</i></a></span>')
 			})
 		}
 
@@ -2724,19 +2730,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		indicator			: 'LOADING',
 	}
 
-	$(document).on('click', '.sg-drawreport>form>.toolbar.-report>.-filter>.-select>.-item a', function() {
+	$(document).on('click', '#toolbar-report-filter-items a.-filter-remove', function() {
 		let srcId = $(this).closest('span').data('src')
 		$('#'+srcId).prop("checked", false)
 		let $srcAmt = $('#'+srcId).closest('li').find('.-amt')
 		$srcAmt.html($srcAmt.text() - 1)
-		//console.log('CLICK')
 		let result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
 		$(this).parent().remove()
 	});
 
 	$(document).on(sgActionType, '.sg-drawreport .-submit', function(event) {
 		let result = $(this).sgDrawReport(event, {aTestOption: "This is test option"}).doAction()
-		//console.log('SUBMIT')
 		return result
 	});
 
