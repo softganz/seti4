@@ -1375,7 +1375,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			//if (settings.blank === null && para.value === "") para.value = null
 			//console.log(settings.blank)
 
-			// console.log('UPDATE PARA:', para)
+			if (debug) console.log('UPDATE PARA:', para)
 
 			updatePending++
 			updateQueue++
@@ -1436,6 +1436,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					replaceTrMsg = 'Replace tr of group '+para.group+' with '+data.tr
 					//console.log(replaceTrMsg);
 				}
+
+				if (debug) console.log('data', data)
 
 				notify(
 					(data.error ? data.error : (data.msg ? data.msg : ''))
@@ -1766,6 +1768,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			//if (settings.blank === null && para.value === "") para.value = null
 			//console.log(settings.blank)
 
+			// console.log(postUrl)
 			// console.log('SENDING PARA:', para)
 
 			updatePending++
@@ -1776,7 +1779,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// Lock all inlineedit-field until post complete
 			if (disableInputOnSave) $inlineWidget.find('.inlineedit-field').addClass('-disabled')
 
-			// console.log(postUrl)
 			//console.log('length='+$('[data-group="'+para.group+'"]').length)
 			//console.log(para)
 
@@ -2721,6 +2723,24 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					.append('<span class="" data-src="'+$(this).attr('id')+'">'+$(this).closest('label').text()+'<a class="-filter-remove"><i class="icon -material -sg-16">close</i></a></span>')
 			})
 		}
+
+		$this.apiParameter = function() {
+			let para = {}
+			$form.serializeArray().map(function(inputItem) {
+				// console.log(inputItem)
+				// console.log(inputItem.name.match('\]$'))
+				if (inputItem.name.match('\]$')) {
+					if (para[inputItem.name] == undefined) para[inputItem.name] = []
+					para[inputItem.name].push(inputItem.value)
+				} else {
+					para[inputItem.name] = inputItem.value
+				}
+			})
+
+			return para
+		}
+
+		$this.queryUrl = queryUrl
 
 		return $this
 	}
