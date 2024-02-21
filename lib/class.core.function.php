@@ -271,12 +271,7 @@ function i($key = NULL, $value = NULL) {
 		// print_o($i,'$i',1);
 	}
 	// if (!isset($R->user->admin)) $R->user->admin = user_access('access administrator pages');
-	if (!isset($R->user->am)) {
-		if ($R->user->ok && module_install('ibuy') && mydb::table_exists('%ibuy_customer%') && mydb::columns('ibuy_customer','custtype')) {
-			$R->user->am = mydb::select('SELECT `custtype` FROM %ibuy_customer% WHERE `uid` = :uid LIMIT 1',':uid',$R->user->uid)->shop_type;
-		}
-		if (!isset($R->user->am)) $R->user->am = '';
-	}
+
 	// if (!$i->server) {
 	// 	$i->ip = GetEnv('REMOTE_ADDR');
 	// 	$i->server = &$_SERVER;
@@ -512,10 +507,10 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	if ($role===true) return true;
 
 	// root have all privileges
-	if (isset(i()->uid) && i()->uid==1) return true;
+	if (function_exists('i') && isset(i()->uid) && i()->uid == 1) return true;
 
 	// admin have all privileges
-	if (i() && i()->ok && in_array('admin',i()->roles)) return true;
+	if (function_exists('i') && i()->ok && in_array('admin',i()->roles)) return true;
 
 	$role=explode(',',$role);
 
@@ -523,7 +518,7 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	if (in_array('method permission',$role)) return true;
 
 	// check for member
-	if (i()->ok) {
+	if (function_exists('i') && i()->ok) {
 		// collage all member roles
 		if (!array_key_exists(i()->uid, $member_roles)) {
 			$member_roles[i()->uid] = array_merge($roles['anonymous'], $roles['member']);
@@ -1064,6 +1059,7 @@ function location($url = NULL, $get = NULL, $frement = NULL, $str = NULL) {
  * @return Array
  */
 function post($key = NULL, $flag = _TRIM) {
+	static $count = 0;
 	$post = $_REQUEST;
 	if ( is_long($key) ) {
 		$flag = $key;
@@ -1074,7 +1070,12 @@ function post($key = NULL, $flag = _TRIM) {
 	// $magic_quote = get_magic_quotes_gpc();
 	// if ( $magic_quote == 1 ) $post = arrays::convert($post,_STRIPSLASHES);
 
-	if ( $flag ) $post = arrays::convert($post, $flag);
+	// echo (++$count).'. '.date('H:i:s').' key = '.$key.' flag = '.$flag.' access = '.user_access('input format type script').'<br>';
+
+	if (!user_access('input format type script')) $flag = $flag + _STRIPTAG;
+
+	if ($flag) $post = Arrays::convert($post, $flag);
+
 	if ( isset($key) ) {
 		return isset($post[$key]) ? $post[$key] : NULL;
 	} else {
