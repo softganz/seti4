@@ -442,7 +442,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 
 
 		if (array_key_exists('value', $fld)) {
-			$value = htmlspecialchars($fld['value']);
+			$value = $dataOptions->rawValue ? $fld['value'] : htmlspecialchars($fld['value']);
 			unset($fld['value']);
 		}
 		//debugMsg(sg_json_encode($dataOptions));
