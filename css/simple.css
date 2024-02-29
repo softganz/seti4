@@ -256,6 +256,8 @@ $SCREENS
 	.-uppercase {text-transform: uppercase;}
 	.-forprint {margin:20px; padding:20px; border:2px #ccc solid; box-shadow: 2px 2px 10px #ccc; position: relative;}
 
+	.icon.-show-password {color: gray; font-size: 1.6rem; width: 1.6rem; height: 1.6rem; cursor: pointer; position: absolute; right: 8px;}
+	.icon.-show-password.-active {color: black;}
 
 
 	.loader.-rotate {width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 8px; border: 4px solid rgba(0, 82, 236, 0.25); border-top-color: #0052ec; border-radius: 50%; position: relative; animation: loader-rotate 1s linear infinite; top: calc(50% - 12px);}
@@ -325,9 +327,9 @@ $SCREENS
 		.btn>.icon+span {padding-left: 4px;}
 		.btn.-fill {width: 100%; padding-left: 0; padding-right: 0;}
 		.btn.-wrap {white-space: normal;}
-		.btn.-disabled {background-color: #bababa; box-shadow: 0 0 0 1px #dadada inset; color: #848484;}
+		.btn.-disabled {background-color: #d0d0d0; color: #a0a0a0;}
 		.btn.-disabled.-link {color: #c3c3c3;}
-		.btn.-disabled>.icon.-material {color: #848484;}
+		.btn.-disabled>.icon.-material {color: #a0a0a0;}
 		.btn.-active {box-shadow: 0 0 0 1px #ffba8c inset;}
 
 		.btn.-upload>input.form-file {display: none;}
@@ -1112,6 +1114,8 @@ $SCREENS
 		.login .signform .form-item {margin-bottom: 8px; position: relative;}
 		.login .signform label {margin: 0; padding: 2px 8px; font-style: italic; left: 12px;}
 		.login .signform .form-text, .login .signform .form-password {padding: 12px 16px 0; width: calc(100% - 32px); border-radius: 32px;}
+		.signform .form-group {border-radius: 32px;}
+		.signform .form-group .icon {position: absolute; right: 8px;}
 		.login .signform .form-select {border-radius: 32px; padding: 14px 24px 15px 12px; height: auto;}
 		.login .signform .btn.-primary {padding: 11px 0; border-radius: 32px;}
 		.login .member-zone {padding: 10px; margin-bottom: 0; border-bottom:1px #ccc solid;}

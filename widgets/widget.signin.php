@@ -2,8 +2,8 @@
 /**
 * SignIn  :: Sign In Widget
 * Created :: 2022-07-20
-* Modify  :: 2023-04-11
-* Version :: 2
+* Modify  :: 2024-02-29
+* Version :: 3
 *
 * @param Array $args
 * @return Widget
@@ -50,7 +50,8 @@ class SignInWidget extends Widget {
 						'placeholder' => 'Password',
 						'maxlength' => 20,
 						'value' => $this->password,
-						'container' => '{class: "-label-in"}',
+						'posttext' => '<i class="icon -material -show-password" onClick=\'showPassword(this)\'>visibility_off</i>',
+						'container' => ['class' => '-label-in -group'],
 					],
 					'cookielength' => in_array($this->time, [-1, 'forever']) ? [
 						'type' => 'hidden',

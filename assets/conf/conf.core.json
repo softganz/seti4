@@ -10,5 +10,18 @@
 		"maximumScale": 2.5,
 		"initialScale": 1.0,
 		"minimumScale": 1.0
+	},
+	"user": {
+		"register": {
+			"validAvaiable": "usernameMinLength,usernameMaxLength,usernameMatch,passwordMinLength,passwordMaxLength,passwordContainNumeric,passwordContainLetter,passwordContainUpperCase",
+			"valid": "usernameMinLength,usernameMaxLength,usernameMatch,passwordMinLength,passwordMaxLength,passwordContainNumeric,passwordContainLetter",
+			"usernameMinLength": 4,
+			"usernameMaxLength": 20,
+			"usernameMatch": "/^[a-z0-9\\_\\-\\.]+\\z/",
+			"usernameMatchText": "<ul><li><strong>ชื่อสมาชิก (username)</strong> เป็นชื่อสำหรับใช้ในการ <strong>sign in</strong> เข้าสู่ระบบสมาชิก</li><li>ขนาดความยาว <strong>4-20</strong> ตัวอักษร</li><li>ชื่อสมาชิกต้องเป็นตัวอักษร ภาษาอังกฤษตัวเล็ก (a-z) , ตัวเลข (0-9) , สัญลักษณ์ ( . - _ ) เท่านั้น</li><li>ห้ามมีการเว้นวรรคอย่างเด็ดขาด</li></ul>",
+			"passwordMinLength": 6,
+			"passwordMaxLength": 30,
+			"registrationConfirmMethod": "default"
+		}
 	}
 }

@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2023-09-29
-* Version :: 4
+* Modify  :: 2024-02-14
+* Version :: 5
 *
 * @param Int $userId
 * @return Object
@@ -675,28 +675,6 @@ class UserModel {
 		}
 		// debugMsg($dbs,'$dbs');
 		// debugMsg($this, '$this');
-	}
-
-	public static function validUsername($username, $pattern = NULL) {
-		if (is_null($pattern)) $pattern = cfg('member.username.format');
-
-		$result = true;
-
-		if (strlen($username) < 4) {
-			//-- username length
-			$result = 'ชื่อสมาชิก (Username) อย่างน้อย 4 อักษร';
-		} else if (!preg_match($pattern, $username)) {
-			//-- check valid char
-			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$username.'</em></strong> มีอักษรหรือความยาวไม่ตรงตามเงื่อนไข';
-		} else if (mydb::select(
-				'SELECT `username` FROM %users% WHERE `username` = :username LIMIT 1;
-				-- {reset: false}',
-				[':username' => $username]
-			)->username) {
-			//-- duplicate username
-			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$username.'</em></strong> มีผู้อื่นใช้ไปแล้ว กรุณาใช้ชื่อใหม่';
-		}
-		return $result;
 	}
 
 	public static function profilePhoto($username = NULL, $fullSize = true) {

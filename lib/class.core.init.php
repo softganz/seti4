@@ -2,7 +2,7 @@
 /**
 * Core Init :: Init Web
 * Created   :: 2023-08-01
-* Modify    :: 2023-10-25
+* Modify    :: 2024-02-29
 * Version   :: 2
 */
 
@@ -147,7 +147,9 @@ cfg('module.folder',$_module_folder);
 unset($_module_folder, $_folder); // clear unused variable
 
 // Load configuration file
+if ($R->core) foreach ($R->core as $key => $value) cfg($key, $value);
 SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
+SgCore::loadConfig('conf.core.json', 'conf.d'); // load core config file
 SgCore::loadConfig('conf.web.release.php', '.'); // load web config release
 SgCore::loadConfig(_CONFIG_FILE, ['conf.d','.']); // load web config file
 SgCore::loadConfig('conf.local.php', ['conf.local','.']); // load local config file

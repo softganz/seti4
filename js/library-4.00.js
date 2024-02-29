@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com>
  * http://www.softganz.com
  * @created 2009-09-22
- * @modify  2022-06-22
+ * @modify  2024-02-28
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +114,18 @@ function sgPrintPage(str) {
 	})
 }
 
+function showPassword(element) {
+	let $passwordElement = $(element).closest("span").find("input")
+	let inputType = $passwordElement.attr("type")
+
+	if (inputType == "password") {
+		$passwordElement.attr("type", "text")
+		$(element).text("visibility").addClass("-active")
+	} else {
+		$passwordElement.attr("type", "password")
+		$(element).text("visibility_off").removeClass("-active")
+	}
+}
 
 // if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
 // 	alert('hello world');

@@ -1,13 +1,13 @@
 <?php
 /**
-* My :: My Home
-* Created 2021-12-14
-* Modify  2021-12-14
+* My      :: My Home
+* Created :: 2021-12-14
+* Modify  :: 2024-02-29
+* Version :: 2
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage my
 */
 
 import('widget:profile.photo.php');
@@ -47,10 +47,11 @@ class My extends Page {
 
 							user_access('administer users','change own profile',$userInfo->uid) ? new Row([
 								'mainAxisAlignment' => 'center',
+								'style' => 'gap: 16px;',
 								'children' => [
-									'<a class="btn" href="'.url('my/change/detail').'">'.tr('change your profile details').'</a>&nbsp;',
-									'<a class="sg-action btn" href="'.url('my/change/password').'" data-rel="#main">'.tr('change password').'</a>&nbsp;',
-									'<a class="btn" href="'.url('my/change/photo').'">'.tr('change photo').'</a>',
+									'<a class="btn" href="'.url('my/change/detail').'"><i class="icon -material">person</i><span>'.tr('change your profile details').'</span></a>',
+									'<a class="sg-action btn" href="'.url('my/change/password').'" data-rel="#main"><i class="icon -material">enhanced_encryption</i><span>'.tr('change password').'</span></a>',
+									'<a class="btn" href="'.url('my/change/photo').'"><i class="icon -material">add_a_photo</i><span>'.tr('change photo').'</span></a>',
 								],
 							]) : NULL,
 						], // children

@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2023-11-24
-* Version :: 23
+* Modify  :: 2024-02-29
+* Version :: 24
 *
 * @param Array $args
 * @return Widget
@@ -329,7 +329,13 @@ class Form extends Widget {
 	}
 
 	function _renderHidden($tag_id, $name, $formElement) {
-		return '<input type="hidden" name="'.$name.'" id="'.$tag_id.'" class="'.($formElement->require?'-require':'').'" value="'.htmlspecialchars($formElement->value).'">'._NL._NL;
+		return '<input type="hidden" name="'.$name
+			. '" id="'.$tag_id.'"'
+			. ' class="'.($formElement->require?'-require':'').'"'
+			. ' value="'.htmlspecialchars($formElement->value).'"'
+			. ' placeholder="'.$formElement->placeholder.'"'
+			. ($formElement->attribute ? ' '.$formElement->attribute : '')
+			. ' >'._NL._NL;
 	}
 
 	function _renderTextPassword($tag_id, $name, $formElement) {

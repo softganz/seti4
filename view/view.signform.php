@@ -1,8 +1,9 @@
 <?php
 /**
 * View User Sign In Form
-* Created 2019-05-06
-* Modify  2019-09-05
+* Created :: 2019-05-06
+* Modify  :: 2024-02-29
+* Version :: 2
 *
 * @param Object $options
 * @return String
@@ -88,7 +89,8 @@ function view_signform($options = '{}') {
 				'value' => \SG\getFirst($options->password,post('user_p')),
 				'placeholder' => 'Password',
 				'maxlength' => cfg('member.password.maxlength'),
-				'container' => '{class: "-label-in"}',
+				'posttext' => '<i class="icon -material -show-password" onClick=\'showPassword(this)\'>visibility_off</i>',
+				'container' => ['class' => '-label-in -group'],
 			],
 			'cookielength' => [
 				'name' => 'cookielength',

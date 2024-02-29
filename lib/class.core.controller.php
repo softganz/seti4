@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2023-11-08
-* Version :: 12
+* Modify  :: 2024-02-29
+* Version :: 13
 */
 
 /*************************************************************
@@ -276,23 +276,39 @@ class SgCore {
 					$debugStr .= '<br />';
 
 
-					$jsonValue = SG\json_decode($jsonTest, cfg($module));
-
-					// if (i()->username == 'softganz') {
-					// 	debugMsg('LOAD JSON : '.$each_config_file);
-					// 	debugMsg(\json_decode($jsonString),'\json_decode($jsonString)');
-					// 	debugMsg($jsonValue, '$jsonValue');
-					// 	debugMsg(cfg($module), '$cfg['.$module.']');
-					// }
-
-					if (isset($jsonValue) && is_object($jsonValue)) {
-						cfg($module, $jsonValue);
-						// $debugStr .= ' <span style="color: red; font-weight: bold;">complete!!!!!!.</span>';
+					if ($module === 'core') {
+						$debugStr .= 'MERGE CORE CONFIG';
+						$jsonValue = SG\json_decode($jsonTest, cfg());
+						$debugStr .= ('<pre>'.htmlspecialchars(print_r($jsonValue,1)).'</pre>');
+						cfg((Array) $jsonValue);
+						// $cfg = cfg();
+						// array_walk_recursive($cfg, '__htmlspecialchars');
+						// debugMsg($cfg, 'coreCfg');
+						// $jsonValue = cfg();
+						// foreach ($jsonTest as $key => $value) {
+						// 	$jsonValue = SG\json_decode($value, $jsonValue);
+						// }
 					} else {
-						// $debugStr .= ' <span style="color: red; font-weight: bold;">error!!!!!!.</span>';
+						$jsonValue = SG\json_decode($jsonTest, cfg($module));
+
+						// if (i()->username == 'softganz') {
+						// 	debugMsg('LOAD JSON : '.$each_config_file);
+						// 	debugMsg(\json_decode($jsonString),'\json_decode($jsonString)');
+						// 	debugMsg($jsonValue, '$jsonValue');
+						// 	debugMsg(cfg($module), '$cfg['.$module.']');
+						// }
+
+						if (isset($jsonValue) && is_object($jsonValue)) {
+							cfg($module, $jsonValue);
+							// $debugStr .= ' <span style="color: red; font-weight: bold;">complete!!!!!!.</span>';
+						} else {
+							// $debugStr .= ' <span style="color: red; font-weight: bold;">error!!!!!!.</span>';
+						}
 					}
 				}
 			}
+		} else {
+			// $debugStr .= '<b>START LOAD CONFIG :: '.$configFile.' :: </b> from '.implode(';', (Array) $folders).'<br />';
 		}
 
 		if (i()->ok && debug('config')) debugMsg($debugStr);

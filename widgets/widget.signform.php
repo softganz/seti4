@@ -6,8 +6,9 @@
  * @version 0.01
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2011-11-04
- * @modify 2012-10-16
+ * @created :: 2011-11-04
+ * @modify  :: 2024-02-29
+ * Version  :: 2
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +101,8 @@ function widget_signform() {
 					'class' => '-password -fill',
 					'placeholder' => 'Password',
 					'maxlength' => 20,
-					'container' => '{class: "-label-in"}',
+					'posttext' => '<i class="icon -material -show-password" onClick=\'showPassword(this)\'>visibility_off</i>',
+					'container' => ['class' => '-label-in -group'],
 				],
 				'cookielength' => [
 					'name' => 'cookielength',
