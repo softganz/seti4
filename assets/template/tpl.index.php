@@ -81,6 +81,7 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 		}
 	}
 }?>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
 </head>
 
 <body<?php echo
@@ -133,6 +134,13 @@ if (cfg('web.header')===false) {
 
 </div><!--page-wrapper-->
 <?php
+// if (!isset($_COOKIE['cookie_policy'])) {
+// 	echo 'COOKIE POLICY';
+// } else {
+
+// }
+?>
+<?php
 if (debug('query')) {
 	echo '<strong>Query time = '.$GLOBALS['R']->myDb->_query_times.' ms.</strong><br />';
 	print_o($GLOBALS['R']->mysql->query_items,'$mysql',1);
@@ -162,6 +170,27 @@ if (cfg('social.facebook')) echo '// Load the Facebook SDK asynchronously
   fjs.parentNode.insertBefore(js, fjs);
 }(document, "script", "facebook-jssdk"));'._NL;
 ?>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+<script>
+window.cookieconsent.initialise({
+  "palette": {
+    "popup": {
+      "background": "#f2f2f2"
+    },
+    "button": {
+      "background": "#4285f4"
+    }
+  },
+  "theme": "edgeless",
+  "position": "bottom-right",
+  "content": {
+    "message": "เราใช้คุกกี้เพื่อเพิ่มประสบการณ์และความพึงพอใจในการใช้งานเว็บไซต์ หากคุณกด \"ยอมรับ\" หรือใช้งานเว็บไซต์ของเราต่อ ถือว่าคุณยินยอมให้มีการใช้งานคุกกี้",
+    "dismiss": "ยอมรับ",
+    "link": "อ่านต่อ",
+    "href": "<?php echo url('cookies/policy');?>"
+  }
+});
 </script>
 </body>
 </html>
