@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2023-05-23
- * @version :: 5
+ * @modify  :: 2024-03-01
+ * @version :: 6
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -372,6 +372,31 @@ function sgMapErrorCode($code) {
 	return [$error, $log];
 }
 
+function sgSendLog($data = []) {
+	$data = array_replace_recursive(
+		[
+			'force' => false,
+			'url' => _DOMAIN.$_SERVER['REQUEST_URI'],
+			'referer' => $_SERVER["HTTP_REFERER"],
+			'agent' => $_SERVER['HTTP_USER_AGENT'],
+			'date' => date('Y-m-d H:i:s'),
+			'user' => function_exists('i') ? i()->uid : NULL,
+			'name' => function_exists('i') ? i()->name : NULL,
+		],
+		(Array) $data
+	);
+
+	if ($data['force'] || !in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
+		$result = \SG\api([
+			'url' => 'https://softganz.com/system/issue/new',
+			'method' => 'post',
+			'postField' => $data,
+			'returnTransfer' => true,
+			'result' => 'json',
+		]);
+	}
+}
+
 function sgFatalError($code, $description, $file, $line) {
 	$accessDebug = function_exists('user_access') ? user_access('access debugging program') : NULL;
 	$isAdmin = $userId == 1 || $accessDebug;
@@ -384,27 +409,12 @@ function sgFatalError($code, $description, $file, $line) {
 		$reportFileName = preg_replace('/\.php$/', '', $reportFileName);
 	}
 
-	$reportData = [
-		'url' => _DOMAIN.$_SERVER['REQUEST_URI'],
+	sgSendLog([
+		'type' => 'Fatal Error',
 		'file' => $file,
 		'line' => $line,
-		'date' => date('Y-m-d H:i:s'),
-		'user' => function_exists('i') ? i()->uid : NULL,
-		'name' => function_exists('i') ? i()->name : NULL,
-		'referer' => $_SERVER["HTTP_REFERER"],
-		'agent'=> $_SERVER['HTTP_USER_AGENT'],
 		'description' => 'Error at line <b>'.$line.'</b><br />'.$description,
-	];
-
-	if (!in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
-		$result = \SG\api([
-			'url' => 'https://softganz.com/system/issue/new',
-			'method' => 'post',
-			'postField' => $reportData,
-			'returnTransfer' => true,
-			'result' => 'json',
-		]);
-	}
+	]);
 
 	$msg = 'There is error in <b>'.$reportFileName.'</b> '
 		. 'line <b>'.$line.'</b>. '

@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2024-02-28
-* Version :: 2
+* Modify  :: 2024-03-01
+* Version :: 3
 *
 * @param Object $register
 * @return Widget
@@ -442,7 +442,7 @@ class UserRegisterFormWidget extends Widget {
 					})
 					.fail(function(response){
 						console.clear()
-						// console.log("FAIL", response.responseText)
+						// console.log("FAIL", response)
 
 						Object.keys(response.responseJSON).forEach( function(key) {
 							let errorText = response.responseJSON[key]

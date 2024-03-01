@@ -2,8 +2,8 @@
 /**
 * User    :: New User Register
 * Created :: 2024-02-14
-* Modify  :: 2024-02-27
-* Version :: 1
+* Modify  :: 2024-03-01
+* Version :: 2
 *
 * @return Widget
 *

@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2024-02-14
-* Version :: 5
+* Modify  :: 2024-03-01
+* Version :: 6
 *
 * @param Int $userId
 * @return Object
@@ -78,6 +78,7 @@ class UserModel {
 		}
 
 		$result = (Object) [
+			'userId' => NULL,
 			'uid' => NULL,
 			'complete' => false,
 			'error' => false,
@@ -140,6 +141,16 @@ class UserModel {
 		$result->password = $user->encryptPassword;
 		if ($debug) $result->process[] = mydb()->_query;
 		$result->complete = true;
+
+
+		sgSendLog([
+			'file' => __FILE__,
+			'line' => __LINE__,
+			'type' => 'Create user',
+			'user' => SG\getFirst(i()->uid, $result->userId),
+			'name' => SG\getFirst(i()->name, $user->name),
+			'description' => 'User '.$user->username.' : '.$user->name.' ('.$result->userId.') was created',
+		]);
 
 		if ($user->roles) {
 			mydb::query(
