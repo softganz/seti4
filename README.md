@@ -8,6 +8,8 @@ Folder structure
 seti4
 ├── core
 ⎪   ├── assets
+⎪   ⎪   ├── conf
+⎪   ⎪   └── template
 ⎪   ├── css
 ⎪   ├── js
 ⎪   ├── lib
