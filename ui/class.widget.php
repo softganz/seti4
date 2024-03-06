@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-01-08
-* Version :: 29
+* Modify  :: 2024-02-06
+* Version :: 30
 *
 * @param Array $args
 * @return Widget
@@ -467,12 +467,13 @@ class Message extends WidgetBase {
 	function __construct($args = []) {
 		parent::__construct($args);
 		unset($this->widgetName, $this->version);
+		$this->returnObject = is_array($args) || is_object($args) ? $args : NULL;
 	}
 
 	// @override
 	function build() {
 		if ($this->responseCode) http_response_code($this->responseCode);
-		return $this->text;
+		return $this->returnObject ? $this->returnObject : $this->text;
 	}
 } // End of class Message
 
