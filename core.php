@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2024-03-01
- * @version :: 6
+ * @modify  :: 2024-03-07
+ * @version :: 7
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,7 +399,7 @@ function sgSendLog($data = []) {
 
 function sgFatalError($code, $description, $file, $line) {
 	$accessDebug = function_exists('user_access') ? user_access('access debugging program') : NULL;
-	$isAdmin = $userId == 1 || $accessDebug;
+	$isAdmin = (function_exists('i') && i()->uid == 1) || $accessDebug;
 	$reportFileName = $file;
 	$debugMsg = debugMsg();
 
@@ -419,9 +419,9 @@ function sgFatalError($code, $description, $file, $line) {
 	$msg = 'There is error in <b>'.$reportFileName.'</b> '
 		. 'line <b>'.$line.'</b>. '
 		. 'Please report to webmaster.'
-		// . $description
-		. ($isAdmin ? '<br /><br />'.$reportData['description'] : '');
+		. ($isAdmin ? '<br /><br />Error at line <b>'.$line.'</b><br />'.$description : '');
 
+	$url = _DOMAIN.$_SERVER['REQUEST_URI'];
 
 	return '<html><head><title>Fatal error</title></head>
 	<body>
@@ -431,7 +431,7 @@ function sgFatalError($code, $description, $file, $line) {
 		<td width="80%">
 			<div style="border: 1px solid rgb(210, 210, 210); border-radius: 8px; background-color: rgb(241, 241, 241); padding: 30px;">
 			<h1>Fatal error'.($isAdmin ? '<span style="font-size: 0.6em;"> @PHP Version '.phpversion().'</span>' : '').'</h1>
-			<p>The requested URL <b>'.$reportData['url'].'</b> was error.</p>
+			<p>The requested URL <b>'.$url.'</b> was error.</p>
 			<p>'.$msg.'</p>'
 			. '<hr>
 			<address>copyright <a href="http://'.$_SERVER['HTTP_HOST'].'">'.$_SERVER['HTTP_HOST'].'</a> Allright reserved.</address>
