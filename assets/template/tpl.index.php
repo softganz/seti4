@@ -171,6 +171,7 @@ if (cfg('social.facebook')) echo '// Load the Facebook SDK asynchronously
 }(document, "script", "facebook-jssdk"));'._NL;
 ?>
 </script>
+<?php if (!R()->appAgent) echo '
 <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
 <script>
 window.cookieconsent.initialise({
@@ -188,9 +189,10 @@ window.cookieconsent.initialise({
     "message": "เราใช้คุกกี้เพื่อเพิ่มประสบการณ์และความพึงพอใจในการใช้งานเว็บไซต์ หากคุณกด \"ยอมรับ\" หรือใช้งานเว็บไซต์ของเราต่อ ถือว่าคุณยินยอมให้มีการใช้งานคุกกี้",
     "dismiss": "ยอมรับ",
     "link": "อ่านต่อ",
-    "href": "<?php echo url('cookies/policy');?>"
+    "href": "<?php echo url(\'cookies/policy\');?>"
   }
 });
-</script>
+</script>';
+?>
 </body>
 </html>
