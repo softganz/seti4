@@ -23,6 +23,7 @@ class Stats extends Page {
 					'<a class="sg-action" href="'.url('stats/online', ['show' => 'user']).'" data-rel="#main"><i class="icon -material">person</i><span>USER</span></a>',
 					'<a class="sg-action" href="'.url('stats/online', ['show' => 'member']).'" data-rel="#main"><i class="icon -material">account_circle</i><span>MEMBER</a>',
 					'<a class="sg-action" href="'.url('stats/online', ['show' => 'bot']).'" data-rel="#main"><i class="icon -material">block</i><span>BOT</span></a>',
+					'<a class="sg-action" href="'.url('stats/list').'" data-rel="#main"><i class="icon -material">view_list</i><span>List</span></a>',
 				], // Navigator
 			]), // AppBar
 			'body' => new Widget([
