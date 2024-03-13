@@ -171,7 +171,7 @@ if (cfg('social.facebook')) echo '// Load the Facebook SDK asynchronously
 }(document, "script", "facebook-jssdk"));'._NL;
 ?>
 </script>
-<?php if (!R()->appAgent && !i()->ok) echo '
+<?php if (!(R()->appAgent || i()->ok)) echo '
 <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
 <script>
 window.cookieconsent.initialise({
