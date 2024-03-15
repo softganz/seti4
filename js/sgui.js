@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-03-0
-* Version :: 9
+* Modify  :: 2024-03-15
+* Version :: 10
 */
 
 'use strict'
@@ -2380,8 +2380,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 /*
 * jQuery Extension :: sg-drawreport
-* Created : 2020-05-25
-*	written by Panumas Nontapan
+* Created :: 2020-05-25
+* Modify  :: 2024-03-14
+* Version :: 2
+*	Written :: Panumas Nontapan
 *
 *	Copyright (c) 2009 Softganz Group (https://softganz.com)
 *	Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -2398,7 +2400,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 	let version = '0.11'
 	let sgActionType = 'click'
-	let debug
 	let toolbarIndex = 0
 
 	$.fn.sgDrawReport = function(event, options = {}) {
@@ -2406,6 +2407,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let $form = $this.closest('form')
 		let $container = $this.closest('.sg-drawreport')
 		let queryUrl = $container.data('query')
+		let debug = false
+		let $debugOutput = $("#report-output-debug")
 
 		let callback = $container.data("callback");
 
@@ -2423,6 +2426,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let settings = $.extend({}, $.fn.sgDrawReport.defaults, defaults, dataOptions, options)
 		//console.log(dataOptions)
 		//console.log(settings)
+
+		debug = settings.debug
 
 		self.startDrawReport = function(data) {
 			console.log('$.sgDrawReport ' + version + ' start draw report')
@@ -2615,9 +2620,53 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$htmlElement.html(data.html)
 		}
 
+		self.apiParameter = function() {
+			let para = {}
+			$form.serializeArray().map(function(inputItem) {
+				// console.log(inputItem)
+				// console.log('inputItem = ', inputItem, 'match = ', inputItem.name.match(/\[\]$/))
+				if (inputItem.name.match(/\[\]$/)) {
+					if (para[inputItem.name] == undefined) para[inputItem.name] = []
+					para[inputItem.name].push(inputItem.value)
+				} else {
+					para[inputItem.name] = inputItem.value
+				}
+			})
+
+			return para
+		}
+
+		self.makeFilterBtn = function() {
+			//console.log('MAKE FILTER BTN')
+			let $filterBar = $container.find('#toolbar-report-filter-items')
+
+			$filterBar.empty()
+			$('.sg-drawreport .-filter-checkbox:checked').each(function(i) {
+				$filterBar
+					.append('<span class="" data-src="'+$(this).attr('id')+'">'+$(this).closest('label').text()+'<a class="-filter-remove"><i class="icon -material -sg-16">close</i></a></span>')
+			})
+		}
+
+		self.startDebug = function(para) {
+			$debugOutput.empty().show()
+			$debugOutput.append(
+				$('<a>')
+				.text('Query Link')
+				.attr({
+					'href': queryUrl + '?' + new URLSearchParams(para),
+					'target': '_blank'
+				})
+			)
+			.append('<br>')
+			.append(JSON.stringify(para))
+			.append('<hr>')
+
+		}
 
 		// RETURN function that can call from outside
-		$this.doAction = function() {
+		self.doAction = function() {
+			let outputOpacity = $(".report-output").css("opacity")
+
 			if ($this.hasClass('-submit-group')) {
 				$this.closest('ul').children().removeClass("-active")
 				$this.closest('li').addClass("-active")
@@ -2626,28 +2675,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				$("#graphtype").val($this.val())
 			}
 
-			// notify('LOADING')
-
-			let outputOpacity = $(".report-output").css("opacity")
-
 			$(".report-output").css("opacity", 0.5)
 
+			// Create post parameter
+			let para = apiParameter()
+
 			// console.log("API Parameter :: " + $form.serialize());
-
-			let para = {}
-			$form.serializeArray().map(function(inputItem) {
-				// console.log(inputItem)
-				// console.log(inputItem.name.match('\]$'))
-				if (inputItem.name.match('\]$')) {
-					if (para[inputItem.name] == undefined) para[inputItem.name] = []
-					para[inputItem.name].push(inputItem.value)
-				} else {
-					para[inputItem.name] = inputItem.value
-				}
-			})
-
 			// console.log('API Parameter :: ', para)
+			// console.log('url = ', queryUrl + '?' + new URLSearchParams(para))
 			// console.log($this.data())
+
+			if (debug) startDebug(para)
 
 			$.post(
 				queryUrl,
@@ -2661,7 +2699,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			).fail(function(data) {
 				notify('ERROR ON POSTING')
 				$(".report-output").css("opacity", outputOpacity)
-				console.log('DONE WITH data = ',data)
+				// console.log('DONE WITH data = ',data)
 			}).done(function(data) {
 				$(".report-output").css("opacity", outputOpacity)
 				if (debugSG && data.debug) console.log('DONE WITH data = ',data)
@@ -2684,6 +2722,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					event.preventDefault()
 				}
 			}
+		}
+
+		$this.doAction = function() {
+			doAction()
 			return $this
 		}
 
@@ -2713,31 +2755,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		$this.makeFilterBtn = function() {
-			//console.log('MAKE FILTER BTN')
-			let $filterBar = $container.find('#toolbar-report-filter-items')
-
-			$filterBar.empty()
-			$('.sg-drawreport .-filter-checkbox:checked').each(function(i) {
-				$filterBar
-					.append('<span class="" data-src="'+$(this).attr('id')+'">'+$(this).closest('label').text()+'<a class="-filter-remove"><i class="icon -material -sg-16">close</i></a></span>')
-			})
+			makeFilterBtn()
+			return $this
 		}
 
-		$this.apiParameter = function() {
-			let para = {}
-			$form.serializeArray().map(function(inputItem) {
-				// console.log(inputItem)
-				// console.log(inputItem.name.match('\]$'))
-				if (inputItem.name.match('\]$')) {
-					if (para[inputItem.name] == undefined) para[inputItem.name] = []
-					para[inputItem.name].push(inputItem.value)
-				} else {
-					para[inputItem.name] = inputItem.value
-				}
-			})
-
-			return para
-		}
+		$this.apiParameter = function() {return apiParameter()}
 
 		$this.queryUrl = queryUrl
 
@@ -2747,6 +2769,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	/* Publicly accessible defaults. */
 	$.fn.sgDrawReport.defaults = {
 		indicator			: 'LOADING',
+		debug 				: false
 	}
 
 	$(document).on('click', '#toolbar-report-filter-items a.-filter-remove', function() {

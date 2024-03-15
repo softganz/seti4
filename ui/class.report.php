@@ -158,6 +158,7 @@ class Report extends Widget {
 					'dataType' => $this->dataType,
 				],
 			];
+			if ($this->debug) $attributes['data-options']['debug'] = true;
 
 			foreach ($this->config->data as $key => $value) {
 				$attributes[$key] = $value;
