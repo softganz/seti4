@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-02-29
-* Version :: 13
+* Modify  :: 2024-03-18
+* Version :: 14
 */
 
 /*************************************************************
@@ -1152,8 +1152,10 @@ class SgCore {
 		} else { // Page no manifest
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 		}
+
 		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = SgCore::processMenu($menu, $buildMethod, $requestFilePrefix);
-			// debugMsg('$buildMethod = '.$buildMethod);
+		// debugMsg('$buildMethod = '.$buildMethod);
+
 		// Set page id to home
 		if ($isLoadHomePage) cfg('page_id','home');
 
@@ -1177,8 +1179,6 @@ class SgCore {
 					$error = $pageClassWidget->rightToBuild();
 					if (is_object($error)) $pageBuildWidget = $error;
 				}
-				// print_r($pageBuildWidget);
-				// die($buildMethod.'@'.date('H:i:s'));
 
 				// Build request result
 				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
@@ -1286,10 +1286,10 @@ class SgCore {
 		}
 
 		// Start Render Page, result is string
-		$requestResult = (new PageRenderWidget($pageClass, $requestResult))->build();
+		$requestTextResult = (new PageRenderWidget($pageClass, $requestResult))->build();
 
 		// Replace widget container with associate widget
-		$requestResult = process_widget($requestResult);
+		$requestTextResult = process_widget($requestTextResult);
 
 		R()->timer->stop($request);
 
@@ -1302,7 +1302,7 @@ class SgCore {
 		$request_process_time = $GLOBALS['request_process_time']+R()->timer->get($request);
 		if (debug('timer')) debugMsg('Request process time : '.$request_process_time.' ms.'.print_o($request_time));
 
-		if (debug('html')) debugMsg(htmlview($requestResult,'html tag'));
+		if (debug('html')) debugMsg(htmlview($requestTextResult,'html tag'));
 		if (debug('config')) {
 			$cfg = cfg();
 			array_walk_recursive($cfg, '__htmlspecialchars');
@@ -1312,8 +1312,8 @@ class SgCore {
 
 		if ($pageTemplate) $page = $pageTemplate;
 		else if (empty($page)) $page = 'index';
-		if ($loadTemplate) echo SgCore::processIndex($page, $requestResult);
-		return $requestResult;
+		if ($loadTemplate) echo SgCore::processIndex($page, $requestTextResult);
+		return $requestTextResult;
 	}
 
 	/**
