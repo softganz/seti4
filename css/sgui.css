@@ -38,9 +38,6 @@
 /* widget-message */
 .widget-message {padding: 32px 8px; text-align: center;}
 
-
-
-
 /* widget-listtile */
 .widget-listtile {display: flex; flex-wrap: wrap; justify-content: space-between; padding: 8px; align-items: flex-start;}
 	.widget-listtile>.-title {flex: 1;}
