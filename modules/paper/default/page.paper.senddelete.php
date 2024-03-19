@@ -9,7 +9,8 @@
 
 use Paper\Model\PaperModel;
 
-function paper_senddelete($self, $tpid) {
+function paper_senddelete($self, $tpid = NULL) {
+	if (empty($tpid)) return 'ไม่มีข้อมูลตามที่ระบุ';
 	$self->theme->title = 'แจ้งลบหัวข้อที่ไม่เหมาะสม';
 
 	$ret .= '<header class="header -box -hidden"><h3>'.$self->theme->title.'</h3></header>';
