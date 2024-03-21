@@ -2,7 +2,7 @@
 /**
 * Paper   :: Edit Property
 * Created :: 2019-06-02
-* Modify  :: 2023-11-23
+* Modify  :: 2024-03-20
 * Version :: 2
 *
 * @param String $topicInfo
@@ -13,17 +13,20 @@
 
 class PaperEditProp extends Page {
 	var $nodeId;
+	var $right;
 	var $topicInfo;
 
 	function __construct($topicInfo = NULL) {
 		parent::__construct([
 			'nodeId' => $topicInfo->nodeId,
 			'topicInfo' => $topicInfo,
+			'right' => $topicInfo->right,
 		]);
 	}
 
 	function build() {
 		if (!$this->nodeId) return message('error', 'PARAMETER ERROR');
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 
 		$prop = $this->topicInfo->property;
 

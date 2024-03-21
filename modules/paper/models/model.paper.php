@@ -2,8 +2,8 @@
 /**
 * Paper   :: Paper Model
 * Created :: 2007-11-21
-* Modify  :: 2023-07-25
-* Version :: 4
+* Modify  :: 2024-03-20
+* Version :: 5
 *
 * @usage import('model:paper.php');
 * @usage new PaperModel([])
@@ -108,8 +108,8 @@ class PaperModel extends \NodeModel {
 
 		if ($result->info->uid) $result->membership[$result->info->uid] = 'OWNER';
 
-		foreach (\mydb::select('SELECT * FROM %topic_user% WHERE `tpid` = :tpid',':tpid',$tpid)->items as $item) {
-			$result->membership[$item->uid] = strtoupper($item->membership);
+		foreach (\mydb::select('SELECT `uid`, UPPER(`membership`) `membership` FROM %topic_user% WHERE `tpid` = :tpid',':tpid',$tpid)->items as $item) {
+			$result->membership[$item->uid] = $item->membership;
 		}
 
 		if ($result->orgid) {
@@ -119,7 +119,7 @@ class PaperModel extends \NodeModel {
 		}
 
 		$right->admin = $right->isAdmin = user_access('administer papers,administer contents');
-		$right->owner = $right->isOwner = i()->ok && ($result->info->uid == i()->uid || $result->membership[i()->uid] == 'OWNER');
+		$right->owner = $right->isOwner = i()->ok && ($result->info->uid == i()->uid || in_array($result->membership[i()->uid], ['OWNER']));
 
 		if ($right->isAdmin) $result->membership[i()->uid] = 'ADMIN';
 
@@ -128,8 +128,8 @@ class PaperModel extends \NodeModel {
 
 		$right->edit = $right->isEdit = $right->isAdmin
 						|| $right->isOwner
-						|| in_array($result->info->membershipType,array('ADMIN','MANAGER','OWNER'))
-						|| in_array($result->info->orgMembershipType,array('ADMIN','MANAGER','OFFICER'));
+						|| in_array($result->info->membershipType,array('ADMIN','MANAGER','TRAINER','OWNER'))
+						|| in_array($result->info->orgMembershipType,array('ADMIN','MANAGER','TRAINER','OFFICER'));
 
 		if ($right->isAdmin) $result->RIGHT = $result->RIGHT | _IS_ADMIN;
 		if ($right->isOwner) $result->RIGHT = $result->RIGHT | _IS_OWNER;

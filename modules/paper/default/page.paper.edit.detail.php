@@ -2,8 +2,8 @@
 /**
 * Paper   :: Edit Detail
 * Created :: 2019-06-01
-* Modify  :: 2023-10-06
-* Version :: 2
+* Modify  :: 2024-03-20
+* Version :: 3
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -14,6 +14,7 @@ $debug = true;
 
 function paper_edit_detail($self, $topicInfo) {
 	if (!$topicInfo->tpid) return message('error', 'PARAMETER ERROR');
+	if (!$topicInfo->right->edit) return message('error', 'Access Denied');
 
 	$tpid = $topicInfo->tpid;
 
