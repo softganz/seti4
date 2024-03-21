@@ -1,8 +1,9 @@
 <?php
 /**
-* Make Paper as Poll
-* Created 2019-06-02
-* Modify  2019-06-02
+* Paper   :: Make Paper as Poll
+* Created :: 2019-06-02
+* Modify  :: 2024-03-20
+* Version :: 2
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -13,6 +14,7 @@ $debug = true;
 
 function paper_edit_makepoll($self, $topicInfo) {
 	if (!$topicInfo->tpid) return message('error', 'PARAMETER ERROR');
+	if (!$topicInfo->right->edit) return message('error', 'Access Denied');
 
 	$tpid = $topicInfo->tpid;
 

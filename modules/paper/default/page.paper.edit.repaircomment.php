@@ -1,8 +1,9 @@
 <?php
 /**
-* Repair Comment
-* Created 2019-06-02
-* Modify  2019-06-02
+* Paper   :: Repair Comment
+* Created :: 2019-06-02
+* Modify  :: 2024-03-20
+* Version :: 2
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -13,6 +14,7 @@ use Paper\Model\PaperModel;
 
 function paper_edit_repaircomment($self, $topicInfo) {
 	if (!$topicInfo->nodeId) return message('error', 'PARAMETER ERROR');
+	if (!$topicInfo->right->edit) return message('error', 'Access Denied');
 
 	if (!user_access('upload document')) return message('error','Access denied');
 
