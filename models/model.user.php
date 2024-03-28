@@ -12,6 +12,8 @@
 * @usage UserModel::function($conditions, $options)
 */
 
+use Softganz\DB;
+
 class UserModel {
 	var $userId;
 
@@ -307,24 +309,39 @@ class UserModel {
 	}
 
 	public static function signInProcess($username = NULL, $password = NULL, $cookielength = NULL) {
-		$rs = mydb::select('SELECT * FROM %users% u WHERE `username` = :username LIMIT 1', [':username' => $username]);
+		// Check username is email
+		if (preg_match('/\@/', $username)) {
+			$username = DB::select([
+				'SELECT `username` FROM %users% WHERE `email` = :email LIMIT 1',
+				'var' => [':email' => $username]
+			])->username;
+		}
+
+		$rs = DB::select([
+			'SELECT * FROM %users% u WHERE `username` = :username LIMIT 1',
+			'var' => [':username' => $username]
+		]);
 
 		//TODO: Bug ตอนลงทะเบียนสมาชิกใหม่ จะไม่สามารถดึงค่าจากฐานข้อมูลผ่าน function ได้
-
-		$user = (Object) ['rs' => $rs];
 
 		if (!in_array($rs->status, ['enable',1])) {
 			BasicModel::watch_log('user','Invalid signin','user '.$username.' not exists or disabled');
 			return false;
 		}
+
 		$de_password = sg_decrypt($rs->password,cfg('encrypt_key'));
 
 		// sign in password error -> log
 		if ( $password != $de_password ) {
 			$ip = GetEnv('REMOTE_ADDR');
-			$stmt = 'UPDATE %users% SET tries = tries+1, remote_ip = :ip , date_tries = NOW() WHERE username = :username LIMIT 1';
-			mydb::query($stmt,':ip',$ip, ':username',$username);
-			BasicModel::watch_log('user','Invalid signin',$username.' incorrect password');
+			DB::query([
+				'UPDATE %users% SET tries = tries+1, remote_ip = :ip , date_tries = NOW() WHERE username = :username LIMIT 1',
+				'var' => [
+					':ip' => $ip,
+					':username' => $username
+				]
+			]);
+			BasicModel::watch_log('user', 'Invalid signin', $username.' incorrect password');
 			return false;
 		}
 
@@ -350,7 +367,7 @@ class UserModel {
 			'uid' => intval($rs->uid),
 			'username' => $rs->username,
 			'name' => $rs->name,
-				'email' => $rs->email,
+			'email' => $rs->email,
 			'remember' => $cookielength*60,
 			'ip' => GetEnv('REMOTE_ADDR'),
 			'admin' => false,

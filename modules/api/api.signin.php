@@ -76,6 +76,7 @@ class SigninApi extends PageApi {
 
 			// $result->user = i();
 		} else {
+			http_response_code(_HTTP_ERROR_UNAUTHORIZED);
 			$result->status = 'fail';
 			$result->code = _HTTP_ERROR_UNAUTHORIZED;
 			$result->text = 'Sign In Error';
