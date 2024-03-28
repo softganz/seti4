@@ -40,7 +40,7 @@ class SigninApi extends PageApi {
 			'signed' => NULL,
 			'status' => NULL,
 			'username' => $this->username,
-			'password' => $this->password,
+			// 'password' => $this->password,
 			// "headerError" => "Text",
 			// "descriptionError" => "Text"
 			// 'server' => $_SERVER,
@@ -62,8 +62,9 @@ class SigninApi extends PageApi {
 		// 	if ($userCache->count()) {
 		// 		$user = $userCache->data;
 		// 	}
-		} else {
-			$user = i();
+		// } else {
+		// 	$user = i();
+		// 	// $result->already=true;
 		}
 
 		$result->signed = $user->ok ? true : false;
@@ -73,7 +74,7 @@ class SigninApi extends PageApi {
 			$result->status = 'complete';
 			$result->name = $user->name;
 			$result->token = $user->session;
-
+			$result->roles = $user->roles;
 			// $result->user = i();
 		} else {
 			http_response_code(_HTTP_ERROR_UNAUTHORIZED);
