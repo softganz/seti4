@@ -19,10 +19,12 @@ class SigninApi extends PageApi {
 	var $appToken;
 	var $token;
 	var $email;
+	var $time = -1;
 
 	function __construct() {
 		$this->username = $_SERVER['HTTP_USERNAME'];
 		$this->password = $_SERVER['HTTP_PASSWORD'];
+		$this->time = SG\getFirst($_SERVER['HTTP_TIME'], $this->time);
 		$this->appId = $_SERVER['HTTP_APPID'];
 		$this->appToken = $_SERVER['HTTP_APPTOKEN'];
 		$this->token = $_SERVER['HTTP_SIGNINTOKEN'];
@@ -52,7 +54,7 @@ class SigninApi extends PageApi {
 
 		if ($this->username && $this->password) {
 			// debugMsg('SIGN');
-			$user = UserModel::signInProcess($this->username, $this->password, -1);
+			$user = UserModel::signInProcess($this->username, $this->password, $this->time);
 			// $result->user = $user;
 			// debugMsg($result, '$result');
 			// $user = i();
@@ -75,6 +77,7 @@ class SigninApi extends PageApi {
 			$result->name = $user->name;
 			$result->token = $user->session;
 			$result->roles = $user->roles;
+			// $result->time = $this->time;
 			// $result->user = i();
 		} else {
 			http_response_code(_HTTP_ERROR_UNAUTHORIZED);
