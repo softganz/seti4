@@ -10,18 +10,22 @@
 * @usage api/tags/{vid}?input=tagString
 */
 
+use Softganz\DB;
+
 class TagsApi extends PageApi {
 	var $vid;
 	var $input;
+	var $actionDefault = 'vid';
 
-	function __construct($vid = NULL) {
+	function __construct($vid = NULL, $action = NULL) {
 		parent::__construct([
+			'action' => is_string($vid) ? $vid : $action,
 			'vid' => $vid,
 			'input' => post('input'),
 		]);
 	}
 
-	function build() {
+	function vid() {
 		if (!debug('process')) sendHeader('text/xml');
 		$len = strlen($this->input);
 		if (strpos($this->input,',')) {
@@ -42,6 +46,31 @@ class TagsApi extends PageApi {
 		//	$ret.='<rs id="97" info="Query">'.htmlspecialchars($tags->_query).'</rs>';
 			$ret.='</results>';
 		die($ret);
+	}
+
+	function items() {
+		$childOf = post('childOf');
+
+		$dbs = DB::select([
+			'SELECT
+			`tag`.`tid` `tagId`
+			, `tag`.`name`
+			, `hierarchy`.`parent`
+			FROM %tag% `tag`
+				LEFT JOIN %tag_hierarchy% `hierarchy` ON `tag`.`tid` = `hierarchy`.`tid`
+			%WHERE%',
+			'where' => [
+				'%WHERE%' => [
+					$childOf ? ['`hierarchy`.`parent` = :parent', ':parent' => $childOf] : NULL
+				]
+			],
+		]);
+
+		$result = (Object) [
+			'count' => count($dbs->items),
+			'items' => $dbs->items,
+		];
+		return $result;
 	}
 }
 ?>

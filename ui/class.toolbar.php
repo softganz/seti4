@@ -18,6 +18,7 @@ class Toolbar extends Widget {
 	var $info = NULL;
 
 	function __construct($self, $title = NULL, $nav = NULL, $info = NULL, $class = NULL, $options = '{}') {
+		parent::__construct();
 		$this->self = $self;
 		$this->title = $title;
 		$this->class = 'sg-toolbar '.($class ? $class : '-main');
@@ -26,7 +27,7 @@ class Toolbar extends Widget {
 		if (is_string($nav)) {
 			$this->nav = $nav;
 			$this->navGroup = R::View($self->module.'.'.$nav.'.nav', $info, $options);
-			$this->config->class .= ' -'.$self->module.'-'.str_replace('.', '-', $nav);
+			$this->class .= ' -'.$self->module.'-'.str_replace('.', '-', $nav);
 		}
 		$this->options = \SG\json_decode($options);
 
