@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2024-03-01
-* Version :: 3
+* Modify  :: 2024-04-11
+* Version :: 4
 *
 * @param Object $register
 * @return Widget
@@ -163,7 +163,7 @@ class UserRegisterFormWidget extends Widget {
 				'accept' => [
 					'type' => 'checkbox',
 					'options' => ['yes' => '<b>ฉันเข้าใจและยอมรับข้อตกลงรวมทั้งเงื่อนไขในการใช้บริการ <a href="'.url('privacy').'" target="_blank" data-webview="เงื่อนไขการใช้งาน">รายละเอียดเงื่อนไข</a></b>'],
-					// 'description' => 'ยอมรับข้อตกลงการใช้งาน',
+					'description' => 'ยอมรับข้อตกลงการใช้งาน',
 					'attribute' => ['onChange' => 'checkComplete.checkAccept(this)']
 				],
 				'verify' => [
@@ -172,7 +172,7 @@ class UserRegisterFormWidget extends Widget {
 					'require' => true,
 					'pretext' => '<em id="spamword" class="spamword"></em> ',
 					'placeholder' => 'พิมพ์อักขระที่ปรากฎด้านหน้าของช่อง',
-					// 'description' => 'ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
+					'description' => 'ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
 					'attribute' => ['onKeyUp' => 'checkComplete.checkAllComplete(this)']
 				],
 				'submit' => [
@@ -442,7 +442,7 @@ class UserRegisterFormWidget extends Widget {
 					})
 					.fail(function(response){
 						console.clear()
-						// console.log("FAIL", response)
+						console.log("FAIL", response)
 
 						Object.keys(response.responseJSON).forEach( function(key) {
 							let errorText = response.responseJSON[key]
@@ -465,6 +465,9 @@ class UserRegisterFormWidget extends Widget {
 									break;
 								case "accept":
 									showErrors(document.getElementById("edit-register-accept-yes"), errorText)
+									break;
+								case "submit":
+									showErrors(document.getElementById("edit-register-verify"), errorText)
 									break;
 							}
 						});

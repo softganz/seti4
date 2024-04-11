@@ -2,8 +2,8 @@
 /**
 * User    :: New User Register
 * Created :: 2024-02-14
-* Modify  :: 2024-03-01
-* Version :: 2
+* Modify  :: 2024-04-11
+* Version :: 3
 *
 * @return Widget
 *
@@ -131,6 +131,14 @@ class UserRegister extends Page {
 
 	function save() {
 		$cfgUserRegister = cfg('user')->register;
+
+
+		// Check referer domain must same as current domain
+		$fromDomain = parse_url($_SERVER['HTTP_REFERER']);
+		if ($fromDomain['host'] != _DOMAIN_SHORT) {
+			http_response_code(_HTTP_ERROR_NOT_ACCEPTABLE);
+			return ['submit' => ['Invalid source domain']];
+		}
 
 		if ($errors = $this->checkValid()) {
 			http_response_code(_HTTP_ERROR_NOT_ACCEPTABLE);
