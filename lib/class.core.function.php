@@ -843,7 +843,13 @@ function banIp($ip) {
 
 	foreach ($banips as $idx => $ban) {
 		if ($currentTime > $ban->end) unset($banips->{$idx});
-		if ($idx == $ip && $currentTime < $ban->end) {
+		if (preg_match('/^(.*)\*/', $idx, $out)) {
+			$banPattern = $out[1];
+			if (preg_match('/^'.preg_quote($banPattern).'/', $ip)) {
+				$is_ban = true;
+				break;
+			}
+		} else if ($idx == $ip && $currentTime < $ban->end) {
 			$is_ban = true;
 			break;
 		}
