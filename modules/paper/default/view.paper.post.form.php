@@ -1,8 +1,9 @@
 <?php
 /**
-* Paper Post Form
-* Created 2019-06-10
-* Modify 2019-06-10
+* Paper   :: Post Form
+* Created :: 2019-06-10
+* Modify  :: 2024-04-26
+* Version :: 2
 *
 * @param Object $topic
 * @return Object $form
@@ -276,7 +277,7 @@ function _vid($topic) {
 				'description' => \SG\getFirst($vocab->help,'A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc."'),
 				'description' => '<script type="text/javascript">
 					var options_xml = {
-						script:"'.url('api/tags/'.$vocab->vid,'').'",
+						script:"'.url('api/tags/vid/'.$vocab->vid,'').'",
 						varname:"input"
 					};
 					var as_xml = new AutoSuggest(\'taxonomy-freetags\', options_xml);
