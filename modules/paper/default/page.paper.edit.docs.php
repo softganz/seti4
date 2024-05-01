@@ -2,8 +2,8 @@
 /**
 * Paper   :: Document Management
 * Created :: 2019-06-02
-* Modify  :: 2023-12-27
-* Version :: 4
+* Modify  :: 2024-05-01
+* Version :: 5
 *
 * @param String $nodeInfo
 * @return Widget
@@ -107,7 +107,7 @@ class PaperEditDocs extends Page {
 						'id' => 'edit-topic',
 						'enctype' => 'multipart/form-data',
 						'class' => 'sg-form -upload -sg-paddingnorm',
-						// 'rel' => 'notify',
+						'rel' => 'notify',
 						'done' => 'close | load->replace:#paper-edit-docs-list',
 						'children' => [
 							'doc' => [
