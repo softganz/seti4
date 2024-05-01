@@ -126,11 +126,15 @@ if (cfg('web.header')===false) {
 <div id="content-footer" class="page -content-footer"></div>
 </div><!--content-wrapper-->
 
-<div id="footer-wrapper" class="page -footer">
-<div class="wrapper warpper--footer">
-<?php echo process_widget(eval_php(cfg('web.footer'),NULL,_NL));?>
-</div>
-</div><!--footer-wrapper-->
+<?php
+if (cfg('web.footer')) {
+	echo '	<div id="footer-wrapper" class="page -footer">
+	<div class="wrapper warpper--footer">
+	'.process_widget(eval_php(cfg('web.footer'),NULL,_NL)).'
+	</div>
+	</div><!--footer-wrapper-->';
+}
+?>
 
 </div><!--page-wrapper-->
 <?php
