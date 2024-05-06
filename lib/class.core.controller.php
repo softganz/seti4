@@ -1177,6 +1177,7 @@ class SgCore {
 
 				// Check right to build widget
 				if (method_exists($pageClassWidget, 'rightToBuild')) {
+					// debugMsg('RIGHT TO BUILD');
 					$rightToBuildError = $pageClassWidget->rightToBuild();
 					if (is_object($rightToBuildError)) $pageBuildWidget = $rightToBuildError;
 				}
@@ -1187,9 +1188,6 @@ class SgCore {
 				} else {
 					$requestResult = $pageBuildWidget;
 				}
-
-// debugMsg($requestResult,'$requestResult');
-// echo '<pre>'.print_r($requestResult,1).'</pre>';
 
 				// Create App Bar
 				if ($pageBuildWidget->appBar) {
