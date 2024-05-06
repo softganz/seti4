@@ -866,16 +866,31 @@ function sgWebViewDomProcess(id) {
 				sgActionDone(linkData.done, $this, doneResult)
 			})
 			.fail(function(response) {
-				// console.log('sg-action FAIL');
-				// console.log(response)
+				// // console.log('sg-action FAIL');
+				console.log(response)
+
+				// Old way
+				// let errorMsg = 'ERROR : '
+				// if (response.responseJSON.text) {
+				// 	errorMsg += response.responseJSON.text
+				// } else {
+				// 	errorMsg += response.statusText
+				// }
+				// errorMsg += ' ('+response.status+')'
+				// notify(errorMsg, 3000)
+
+				// New way like form
 				let errorMsg = 'ERROR : '
-				if (response.responseJSON.text) {
-					errorMsg += response.responseJSON.text
+				// console.log(response.responseJSON.text)
+				if (response.responseJSON != undefined && response.responseJSON.text) {
+					errorMsg += response.responseJSON.text+' ('+response.status+')'
 				} else {
-					errorMsg += response.statusText
+					errorMsg += response.statusText+' ('+response.status+')'
 				}
-				errorMsg += ' ('+response.status+')'
-				notify(errorMsg, 3000)
+				notify(errorMsg)
+				if (debugSG) console.log(response)
+				return false
+
 			});
 
 			// console.log('sg-action done')
