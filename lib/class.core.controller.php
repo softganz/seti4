@@ -1171,13 +1171,14 @@ class SgCore {
 				// Case widget, Call method build()
 
 				$reservedMethod = ['rightToBuild'];
+				// debugMsg($pageClass, '$pageClass');
 				// debugMsg($pageClassWidget, '$pageClassWidget');
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
 
 				// Check right to build widget
 				if (method_exists($pageClassWidget, 'rightToBuild')) {
-					$error = $pageClassWidget->rightToBuild();
-					if (is_object($error)) $pageBuildWidget = $error;
+					$rightToBuildError = $pageClassWidget->rightToBuild();
+					if (is_object($rightToBuildError)) $pageBuildWidget = $rightToBuildError;
 				}
 
 				// Build request result
@@ -1186,6 +1187,9 @@ class SgCore {
 				} else {
 					$requestResult = $pageBuildWidget;
 				}
+
+// debugMsg($requestResult,'$requestResult');
+// echo '<pre>'.print_r($requestResult,1).'</pre>';
 
 				// Create App Bar
 				if ($pageBuildWidget->appBar) {
@@ -1231,7 +1235,9 @@ class SgCore {
 				// AJAX Call process
 				// Check error result
 				$ajaxResult = [];
+				// debugMsg($pageBuildWidget, '$pageBuildWidget');
 				if (is_object($pageBuildWidget) && $pageBuildWidget->widgetName === 'ErrorMessage') {
+					// debugMsg('ErrorMessage');
 					if ($pageBuildWidget->responseCode) $ajaxResult['responseCode'] = $pageBuildWidget->responseCode;
 					if ($pageBuildWidget->text) $ajaxResult['text'] = $pageBuildWidget->text;
 				} else if (is_object($requestResult)) {
@@ -1325,7 +1331,7 @@ class SgCore {
 		//echo 'lang='.$_GET['lang'].'='.$_REQUEST['lang'].'='.post('lang').'='.$lang.'='.$_COOKIE['lang'];
 		if ($lang) {
 			// do nothing
-		} else if ($lang=$_GET['lang']) {
+		} else if ($lang = $_GET['lang'] && is_string($lang)) {
 			if ($lang=='clear') {
 				setcookie('lang',NULL,time()-100,cfg('cookie.path'),cfg('cookie.domain'));
 			} else {
