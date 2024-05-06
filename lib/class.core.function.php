@@ -419,9 +419,9 @@ function set_theme($name = NULL, $style = 'style.css') {
 	if ($getTemporaryTheme == ':clear') {
 		setcookie('theme', '', time()-3600, cfg('cookie.path'), cfg('cookie.domain'));
 		unset($_COOKIE['theme']);
-	} else if ($getTemporaryTheme) {
-		$themes[] = $_GET['theme'];
-		setcookie('theme', $_GET['theme'], time()+10*365*24*60*60, cfg('cookie.path'), cfg('cookie.domain'));
+	} else if ($getTemporaryTheme && is_string($getTemporaryTheme)) {
+		$themes[] = $getTemporaryTheme;
+		setcookie('theme', $getTemporaryTheme, time()+10*365*24*60*60, cfg('cookie.path'), cfg('cookie.domain'));
 	}
 	if ($_COOKIE['theme']) $themes[] = $_COOKIE['theme'];
 	$themes[] = cfg('theme.name');
@@ -1122,6 +1122,7 @@ function error($code, String $message) {
 	if (strtolower($message) === 'access denied') {
 		R::Model('watchdog.log', NULL, 'Access denied');
 	}
+	if ($code) http_response_code($code);
 	if (_AJAX) return ['responseCode' => $code, 'text' => $message];
 	return new ErrorMessage(['responseCode' => $code, 'text' => $message]);
 }
