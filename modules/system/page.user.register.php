@@ -2,8 +2,8 @@
 /**
 * User    :: New User Register
 * Created :: 2024-02-14
-* Modify  :: 2024-04-11
-* Version :: 3
+* Modify  :: 2024-05-11
+* Version :: 4
 *
 * @return Widget
 *
@@ -193,6 +193,11 @@ class UserRegister extends Page {
 		if ($this->register->email && !sg_is_email($this->register->email)) $errors['email'][] = 'อีเมล์ (E-mail) ไม่ถูกต้อง'; //-- invalid email
 
 		if ($this->register->email && mydb::count_rows('%users%','email="'.mydb::escape($this->register->email).'"') ) $errors['email'][] = 'อีเมล์ <strong><em>'.$this->register->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password').'">ท่านจำรหัสผ่านไม่ได้</a>'; //-- duplicate email
+
+		// preg_match('/rightbliss/i', 'hrightblissbeauty', $out);
+		// print_r($out);
+
+		if (sg::is_spam_word([$this->register->email])) $errors['accept'][] = 'มีคำต้องห้ามอยู่ในข้อมูลที่ป้อนเข้ามา';
 
 		if (!$this->register->accept) $errors['accept'][] = 'กรุณายอมรับข้อตกลงการใช้งาน';
 
