@@ -793,6 +793,30 @@ function sg_explode_attr($attribs) {
 * @param Array $attributes
 * @return String
 */
+function sg_implode_attr_v2($attributes = [], $sep = ' ', $options = '{}') {
+	$defaultOptions = '{quote: "\""}';
+	$options = SG\json_decode($options, $defaultOptions);
+
+	if (is_string($attributes)) return $attributes;
+
+	if (is_object($attributes)) $attributes = (Array) $attributes;
+	if (!is_array($attributes)) return;
+
+	// debugMsg($attributes, '$attributes');
+	$ret = ' ';
+	foreach ($attributes as $attributeKey => $attributeValue) {
+		if (is_null($attributeValue)) continue;
+		else if (is_array($attributeValue) || is_object($attributeValue)) {
+			$ret .= $attributeKey.'='.$options->quote.sg_implode_attr($attributeValue, $sep, $options).$options->quote.$sep;
+		} else if ($attributeKey === 'data-options' || (is_string($attributeValue) && preg_match('/^\{/', $attributeValue))) {
+			$ret .= is_array($attributeValue) ? 'data-options=\''.json_encode($attributeValue).'\'' : $attributeKey.'='."'".trim($attributeValue)."'".$sep;
+		} else {
+			$ret .= $attributeKey.'='.$options->quote.((String) $attributeValue).$options->quote.$sep;
+		}
+	}
+	return trim($ret, $sep);
+}
+
 function sg_implode_attr($attributes = [], $sep = ' ', $options = '{}') {
 	$defaultOptions = '{quote: "\""}';
 	$options = SG\json_decode($options, $defaultOptions);

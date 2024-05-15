@@ -2,8 +2,8 @@
 /**
 * Core Init :: Init Web
 * Created   :: 2023-08-01
-* Modify    :: 2024-02-29
-* Version   :: 2
+* Modify    :: 2024-05-14
+* Version   :: 3
 */
 
 global $R;
@@ -31,13 +31,13 @@ $includeFileList = [
 	'lib/class.common.php',
 	'lib/class.module.php',
 	'lib/class.mydb.php',
-	'lib/lib.widget.php',
 	'lib/class.view.php',
 	'lib/class.sg.php',
 	'lib/class.poison.php',
 	'models/model.basic.php',
 	'models/model.user.php',
 	'models/model.counter.php',
+	'widgets/class.widget.php',
 	// Extend Library
 	// 'lib/lib.corefunction.v'.cfg('core.version.major').'.php',
 ];
@@ -287,10 +287,11 @@ function sg_autoloader($class) {
 		$class = end(explode('\\', $class));
 	}
 
-	if (in_array($class, array_keys($registerFileList))) {
-		load_lib($registerFileList[$class]);
+	$lowerClass = strtolower($class);
+	if (in_array($lowerClass, array_keys($registerFileList))) {
+		load_lib($registerFileList[$lowerClass]);
 		if (debug('auto')) {
-			debugMsg('AUTOLOAD '.$class.' from <b style="color: green">'.$registerFileList[$class].'</b>');
+			debugMsg('AUTOLOAD '.$class.' from <b style="color: green">'.$registerFileList[$lowerClass].'</b>');
 		}
 		return;
 	}

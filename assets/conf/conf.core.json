@@ -1,8 +1,20 @@
 {
 	"autoLoader": {
 		"items": {
-			"DB": "lib/class.db.php",
-			"Album": "widgets/widget.album.php"
+			"db": "lib/class.db.php",
+			"album": "widgets/class.album.php",
+			"ui": "widgets/class.ui.php",
+			"dropbox": "widgets/class.dropbox.php",
+			"toolbar": "widgets/class.toolbar.php",
+			"form": "widgets/class.form.php",
+			"table": "widgets/class.table.php",
+			"pagenavigator": "widgets/class.pagenavigator.php",
+			"survey": "widgets/class.survey.php",
+			"report": "widgets/class.report.php",
+			"inlineedit": "widgets/class.inlineedit.php",
+
+			"changwatmodel": "models/model.code.php",
+			"ampurmodel": "models/model.code.php"
 		}
 	},
 	"system": {
