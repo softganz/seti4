@@ -7,12 +7,12 @@
 *
 * @return String/Array
 *
-* @usage api/tags/{action}/{id}?input=tagString
+* @usage api/tag/{action}/{id}?input=tagString
 */
 
 use Softganz\DB;
 
-class TagsApi extends PageApi {
+class TagApi extends PageApi {
 	var $id;
 	var $input;
 	var $actionDefault = 'items';
@@ -57,14 +57,31 @@ class TagsApi extends PageApi {
 	}
 
 	function id() {
-		// debugMsg($this, '$this');
-		$tagId = SG\getFirstInt(post('id'));
+		$tagId = $this->id;
 		if (empty($tagId)) return error(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
 
+		$dbs = DB::select([
+			'SELECT
+			`tag`.`tid` `id`
+			, `tag`.`name`
+			, `tag`.`catId` `categoryId`
+			, `tag`.`catParent` `categoryParent`
+			FROM %tag% `tag`
+			%WHERE%
+			LIMIT 1',
+			'where' => [
+				'%WHERE%' => [
+					$tagId ? ['`tag`.`tid` = :tagId', ':tagId' => $tagId] : NULL,
+				]
+			],
+		]);
+
+		return $dbs;
 	}
 
 	function items() {
 		$childOf = post('childOf');
+		$tagId = post('id');
 
 		$result = (Object) [
 			'childOf' => NULL,
@@ -84,6 +101,7 @@ class TagsApi extends PageApi {
 			%WHERE%',
 			'where' => [
 				'%WHERE%' => [
+					$tagId ? ['`tag`.`tid` = :tagId', ':tagId' => $tagId] : NULL,
 					$childOf ? ['`hierarchy`.`parent` = :parent', ':parent' => $childOf] : NULL
 				]
 			],

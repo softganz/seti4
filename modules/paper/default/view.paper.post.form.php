@@ -277,7 +277,7 @@ function _vid($topic) {
 				'description' => \SG\getFirst($vocab->help,'A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc."'),
 				'description' => '<script type="text/javascript">
 					var options_xml = {
-						script:"'.url('api/tags/vid/'.$vocab->vid,'').'",
+						script:"'.url('api/tag/vid/'.$vocab->vid,'').'",
 						varname:"input"
 					};
 					var as_xml = new AutoSuggest(\'taxonomy-freetags\', options_xml);
