@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2023-07-26
-* Version :: 3
+* Modify 	:: 2024-05-15
+* Version :: 4
 *
 * @param Array $args
 * @return Object
@@ -152,7 +152,7 @@ class NodeModel {
 
 		$result->items = $dbs->items;
 		$result->count = count((Array) $result->items);
-		$result->total = $dbs->_found_rows;
+		$result->total = intval($dbs->_found_rows);
 
 
 		$nodeList = [];
@@ -160,6 +160,32 @@ class NodeModel {
 			$nodeList[] = $topic->nodeId;
 			if (in_array('detail', $fields)) $result->items[$nodeId]->summary = sg_summary_text($topic->body);
 		}
+
+		if (in_array('tag', $fields) && $nodeList) {
+			$tagList = DB::select([
+				'SELECT
+				`node`.`tpid` `nodeId`
+				, `node`.`tid` `tagId`
+				, `tag`.`name` `tagName`
+				FROM %tag_topic% `node`
+					LEFT JOIN %tag% `tag` ON `node`.`tid` = `tag`.`tid`
+				%WHERE%',
+				'where' => [
+					'%WHERE%' => [
+						['`node`.`tpid` IN ( :nodeList )', ':nodeList' => new SetDataModel($nodeList)]
+					]
+				]
+			])->items;
+			foreach ($tagList as $tag) {
+				if (empty($result->items[$tag->nodeId]->tags)) $result->items[$tag->nodeId]->tags = [];
+				$result->items[$tag->nodeId]->tags[] = (Object) [
+					'id' => $tag->tagId,
+					'name' => $tag->tagName,
+				];
+
+			}
+		}
+
 		if (in_array('photo', $fields) && $nodeList) {
 			$photoList = mydb::select(
 				'SELECT `fid` `fileId`, `tpid` `nodeId`, `file`, `folder`
@@ -176,6 +202,7 @@ class NodeModel {
 				$result->items[$photo->nodeId]->photo = FileModel::photoProperty($photo->file, $photo->folder);
 			}
 		}
+
 		if (in_array('doc', $fields) && $nodeList) {
 			$docList = DB::select([
 				'SELECT `fid` `fileId`, `tpid` `nodeId`, `file`, `folder`
@@ -192,6 +219,7 @@ class NodeModel {
 				$result->items[$doc->nodeId]->doc[] = FileModel::docProperty($doc->file, $doc->folder);
 			}
 		}
+
 		if (!$debug) unset($result->debug);
 
 		return $result;
