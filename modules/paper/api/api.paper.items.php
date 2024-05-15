@@ -2,8 +2,8 @@
 /**
 * Paper   :: Get Node List
 * Created :: 2023-02-04
-* Modify  :: 2023-02-04
-* Version :: 1
+* Modify  :: 2024-05-15
+* Version :: 2
 *
 * @return Object
 *
@@ -31,8 +31,13 @@ class PaperItemsApi extends PageApi {
 		$paperList = NodeModel::items([
 			'type' => $this->type,
 			'tags' => $this->tag,
-			'options' => ['items' => $this->items, 'debug' => false, 'field' => 'detail,photo,doc'],
+			'options' => ['items' => $this->items, 'debug' => false, 'field' => 'detail,photo,doc,tag'],
 		]);
+
+		if ($paperList->count) {
+			$paperList->items = (Array) array_values($paperList->items);
+		}
+
 		return $paperList;
 	}
 }
