@@ -1,17 +1,20 @@
 <?php
-/********************************************
-* Class :: Survey
-* Survey widget for create survey form
+/**
+* Survey  :: Survey widget for create survey form
+* Created :: 2020-10-01
+* Modify  :: 2024-05-15
+* Version :: 2
 *
-* Created 2020-10-01
-* Modify  2020-12-13
+* @param Object $patientInfo
+* @param Object $visitInfo
+* @return String
 *
 * Property
 * config {nav: "nav -icons"}
 *
 * @usage new Survey([schema, values => [], children => [form]])
 * Optional [Boolean debug]
-********************************************/
+*/
 
 class Survey extends Widget {
 	var $widgetName = 'Survey';
@@ -51,6 +54,7 @@ class Survey extends Widget {
 				$this->children['form']->addText('</div>');
 			}
 		} else if (is_object($inputField)) {
+			debugMsg($inputField, '$inputField');
 			$inputType = \SG\getFirst($inputField->type,$inputField->tag);
 			if ($inputType) {
 				$inputOption = NULL;
