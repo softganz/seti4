@@ -2,8 +2,8 @@
 /**
 * Survey  :: Survey widget for create survey form
 * Created :: 2020-10-01
-* Modify  :: 2024-05-15
-* Version :: 2
+* Modify  :: 2024-05-21
+* Version :: 3
 *
 * @param Object $patientInfo
 * @param Object $visitInfo
@@ -54,7 +54,7 @@ class Survey extends Widget {
 				$this->children['form']->addText('</div>');
 			}
 		} else if (is_object($inputField)) {
-			debugMsg($inputField, '$inputField');
+			// debugMsg($inputField, '$inputField');
 			$inputType = \SG\getFirst($inputField->type,$inputField->tag);
 			if ($inputType) {
 				$inputOption = NULL;
