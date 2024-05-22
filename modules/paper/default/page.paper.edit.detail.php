@@ -90,7 +90,7 @@ function paper_edit_detail($self, $topicInfo) {
 					} else {
 						$onclick = 'editor.insert("<img src=\"'.$photo->_url.'\" alt=\"'.htmlspecialchars($photo_desc).'\" title=\"'.htmlspecialchars($photo_title).'\"'.(cfg('topic.photo.detail.class')?' class=\"'.cfg('topic.photo.detail.class').'\"':'').' />");return false';
 					}
-					$photo_list .= '<img src="'.$photo->_src.'" class="photo" onclick=\''.$onclick.'\' alt="'.$photo->file.'" title="'.sg_client_convert('คลิกเพื่อวางภาพนี้').' -> '.$photo->file.' ('.$photo->_size->width.'x'.$photo->_size->height.' pixels '.number_format($photo->_filesize).' bytes)" height="50" /> ';
+					$photo_list .= '<img src="'.$photo->src.'" class="photo" onclick=\''.$onclick.'\' alt="'.$photo->file.'" title="'.sg_client_convert('คลิกเพื่อวางภาพนี้').' -> '.$photo->file.' ('.$photo->_size->width.'x'.$photo->_size->height.' pixels '.number_format($photo->_filesize).' bytes)" height="50" /> ';
 				}
 				$photo_list .= '</div>'._NL;
 
