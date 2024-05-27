@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-05-14
-* Version :: 2
+* Modify  :: 2024-05-27
+* Version :: 3
 *
 * @param Array $args
 * @return Widget
@@ -39,10 +39,10 @@ class InlineEdit extends Widget {
 	var $title = 'คลิกเพื่อแก้ไข';
 	var $placeholder = '...';
 	var $onBlur;
-	var $debug;
 	var $selectOptions = [];
 	var $options = []; // debug,place
 	var $children = []; // For multiple edit items
+	var $debug = []; // For debug message
 
 	private $editModeClassName = 'sg-inlineedit';
 	private $editFieldClassName = 'inlineedit-field';
@@ -127,6 +127,11 @@ class InlineEdit extends Widget {
 
 		// debugMsg('$childKey = '.$childKey); debugMsg($attributes, '$attributes'); debugMsg($child, '$child');
 
+		if (in_array('childContainer', $this->debug)) {
+			debugMsg('$childKey = '.$childKey);
+			debugMsg($attributes, '$attributes');
+			debugMsg($child, '$child');
+		}
 		return parent::_renderChildContainerStart($childKey, $attributes, $child);
 	}
 
@@ -150,7 +155,7 @@ class InlineEdit extends Widget {
 
 	private function _renderChildType($key, $widget = '{}') {
 		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
-		$text = $widget->text;
+		$text = SG\getFirst($widget->value, $widget->text);
 		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.$widget->placeholder.'</span>';
 		else if ($widget->retType === 'nl2br') $text = trim(nl2br($text));
 		else if ($widget->retType === 'html') $text = trim(sg_text2html($text));
@@ -203,6 +208,9 @@ class InlineEdit extends Widget {
 
 		// $ret .= print_o($widget, '$widget');
 		// $ret .= $this->_renderChildContainerEnd().'<!-- field -->'._NL;
+		if (in_array('rawItem', $this->debug)) {
+			$ret .= (new DebugMsg($widget, '$widget'))->build();
+		}
 
 		return $ret;
 	}
