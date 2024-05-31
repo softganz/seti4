@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-05-14
-* Version :: 32
+* Modify  :: 2024-05-31
+* Version :: 33
 *
 * @param Array $args
 * @return Widget
@@ -217,15 +217,14 @@ class Widget extends WidgetBase {
 			if (is_string($child) && $child === '<sep>') {
 				$extraArgs['class'] = $args['class'].' -sep';
 			} else if (is_object($child) && get_class($child) === 'ChildrenWidget') {
-				$childrenToRender[] = '<div class="'.$child->class.'">';
+				if ($child->tagName) $ret .= '<'.$child->tagName.' class="-children-widget '.$child->class.'">';
 				foreach ($child->children as $subKey => $subChild) {
 					if (is_string($subKey)) $subChild['inputName'] = $subKey;
-					// $childrenToRender[] = $subChild;
 					$ret .= $this->_renderChildContainerStart($subKey, [], $subChild);
 					$ret .= $this->_renderEachChildWidget($subKey, $subChild);
 					$ret .= $this->_renderChildContainerEnd($subKey, $subChild)._NL;
 				}
-				$childrenToRender[] = '</div>';
+				if ($child->tagName) $ret .= '</'.$child->tagName.'>';
 				continue;
 			} else {
 				if (is_string($key)) $child['inputName'] = $key;

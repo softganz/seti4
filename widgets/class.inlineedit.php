@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-05-27
-* Version :: 3
+* Modify  :: 2024-05-31
+* Version :: 4
 *
 * @param Array $args
 * @return Widget
@@ -147,6 +147,10 @@ class InlineEdit extends Widget {
 			'array' => function($key, $widget) {
 				return $this->_renderChildType($key, (Object) $widget); //'<div>RENDER ARRAY '.$key.$widget['label'].'<div>'._NL;
 			},
+			// 'object' => function($key, $widget) {
+			// 	debugMsg('RENDER OBJECT '.$key);
+			// 	debugMsg($widget, '$widget');
+			// },
 			'text' => function($key, $text) {
 				return $text._NL;
 			}
@@ -199,6 +203,7 @@ class InlineEdit extends Widget {
 		// $ret .= 'type = '.$widget->type;
 
 		switch ($widget->type) {
+			case "comment": break;
 			case 'textfield': $ret .= $this->_renderTypeTextField($widget); break;
 			case 'radio':
 			case 'checkbox': $ret .= $this->_renderTypeRadio($widget); break;
