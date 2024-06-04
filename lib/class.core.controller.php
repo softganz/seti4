@@ -982,10 +982,12 @@ class SgCore {
 		$verify = $options->verify ? R::Model($options->verify,$pageClass) : true;
 
 		if ($verify === false) {
+			http_response_code(_HTTP_ERROR_FORBIDDEN);
 			return [$pageClass, true, message('error', 'Access denied', NULL)];
 		} else if (is_string($verify)) {
 			return [$pageClass, true, $verify];
 		} else if ($is_auth === false) {
+			http_response_code(_HTTP_ERROR_FORBIDDEN);
 			return [$pageClass, true, message('error', 'Access denied', NULL, $options->signform)];
 		}
 
