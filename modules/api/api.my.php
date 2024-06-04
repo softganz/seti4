@@ -2,8 +2,8 @@
 /**
 * My      :: My Information API
 * Created :: 2022-07-11
-* Modify  :: 2024-02-15
-* Version :: 4
+* Modify  :: 2024-06-04
+* Version :: 5
 *
 * @param String $action
 * @return Array/Object
@@ -15,6 +15,7 @@ import('model:user.php');
 
 class MyApi extends PageApi {
 	var $action;
+	var $actionDefault = 'info';
 
 	function __construct($action = NULL) {
 		parent::__construct([
@@ -23,9 +24,20 @@ class MyApi extends PageApi {
 	}
 
 	function build() {
-		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		// if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 
 		return parent::build();
+	}
+
+	function info() {
+		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Not Login');
+		return (Object) [
+			'id' => i()->uid,
+			'username' => i()->username,
+			'name' => i()->name,
+			'email' => i()->email,
+			'roles' => (Array) i()->roles,
+		];
 	}
 
 	public function passwordChange() {
