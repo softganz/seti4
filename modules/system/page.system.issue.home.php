@@ -2,8 +2,8 @@
 /**
 * Sysgtem :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2022-10-20
-* Version :: 2
+* Modify  :: 2024-06-04
+* Version :: 3
 *
 * @return Widget
 *
@@ -60,7 +60,7 @@ class SystemIssueHome extends Page {
 										new ListTile([
 											'crossAxisAlignment' => 'center',
 											'title' => $item->host,
-											// 'leading' => $item->issueId,
+											'leading' => new Icon($this->issueIcon($item->issueType)),
 											// 'subtitle' => ($item->reportBy ? 'By : '.$item->reportBy : NULL)
 												// . (' @'.$item->reportDate),
 											'trailing' => new Nav([
@@ -103,6 +103,7 @@ class SystemIssueHome extends Page {
 												]
 											]), // Column
 										]), // ScrollView
+										// new DebugMsg($item, '$item'),
 									], // children
 								]);
 								// 	$item->issueId,
@@ -118,6 +119,16 @@ class SystemIssueHome extends Page {
 				], // children
 			]), // Widget
 		]);
+	}
+
+	private function issueIcon($issueType) {
+		$icons = [
+			'Fatal Error' => 'error',
+			'Create user' => 'person_add',
+			'Other' => 'priority_high'
+		];
+
+		return array_key_exists($issueType, $icons) ? $icons[$issueType] : $icons['Other'];
 	}
 }
 ?>
