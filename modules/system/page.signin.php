@@ -21,6 +21,7 @@ class Signin extends Page {
 	var $showGuide;
 	var $showInfo;
 	var $showRegist;
+	var $complete;
 
 	function __construct() {
 		parent::__construct([
@@ -38,6 +39,7 @@ class Signin extends Page {
 			'showInfo' => post('showInfo') === '0' ? false : true,
 			'showRegist' => post('showRegist') === '0' ? false : true,
 			'done' => post('done'),
+			'complete' => post('complete')
 		]);
 	}
 
@@ -49,6 +51,7 @@ class Signin extends Page {
 				'username' => $this->username,
 				'password' => $this->password,
 				'time' => $this->time,
+				'complete' => $this->complete,
 				'ret' => $this->ret,
 				'rel' => $this->rel,
 				'signret' => $this->signRet,

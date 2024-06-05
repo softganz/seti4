@@ -67,6 +67,7 @@ function view_signform($options = '{}') {
 		'rel' => $options->rel ? $options->rel : NULL,
 		'ret' => $options->ret ? url($options->signret) : NULL,
 		'done' => $options->done ? $options->done : NULL,
+		'attribute' => ['data-complete' => $options->complete ? $options->complete : NULL],
 		'children' => [
 			'username' => [
 				'name' => 'username',

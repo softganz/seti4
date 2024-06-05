@@ -214,7 +214,9 @@ $(document).on('submit','form.signform', function(e) {
 	let signInOk = function(result) {
 		// If Sign In Complete then redirect to current URL
 		notify(result.signInResult)
-		if ($this.data('rel')) {
+		if ($this.data('complete')) {
+			window.location = $this.data('complete')
+		} else if ($this.data('rel')) {
 			sgUpdateData(result.signInResult, $this.data('rel'), $this)
 			if ($this.data('done')) sgActionDone($this.data('done'), $this)
 		} else if((navigator.userAgent.indexOf('Android') != -1)) {
