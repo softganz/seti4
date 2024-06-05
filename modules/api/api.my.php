@@ -24,7 +24,7 @@ class MyApi extends PageApi {
 	}
 
 	function build() {
-		// if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 
 		return parent::build();
 	}
