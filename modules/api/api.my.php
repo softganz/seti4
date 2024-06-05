@@ -2,8 +2,8 @@
 /**
 * My      :: My Information API
 * Created :: 2022-07-11
-* Modify  :: 2024-06-04
-* Version :: 5
+* Modify  :: 2024-06-05
+* Version :: 6
 *
 * @param String $action
 * @return Array/Object
@@ -31,11 +31,13 @@ class MyApi extends PageApi {
 
 	function info() {
 		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Not Login');
+
 		return (Object) [
 			'id' => i()->uid,
 			'username' => i()->username,
 			'name' => i()->name,
 			'email' => i()->email,
+			'photo' => BasicModel::user_photo(i()->username),
 			'roles' => (Array) i()->roles,
 		];
 	}
