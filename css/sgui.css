@@ -576,7 +576,7 @@
 		.widget-dropbox .sg-dropbox--content {overflow: auto;}
 		.widget-dropbox .sg-dropbox--content>ul {padding: 0;}
 		.widget-dropbox .sg-dropbox--content>ul>li {padding: 0;}
-		.widget-dropbox .sg-dropbox--content>ul>li>a {padding: 4px 24px 4px 16px; white-space: nowrap; display: block;}
+		.widget-dropbox .sg-dropbox--content>ul>li>a {padding: 4px 24px 4px 16px; white-space: nowrap; display: flex;}
 		.widget-dropbox .sg-dropbox--content>ul>li>a>.icon {margin-right: 4px;}
 		.widget-dropbox .sg-dropbox--content>ul>li>.iconset {padding: 0;}
 		.widget-dropbox .sg-dropbox--content>ul>li>.iconset>a {padding: 0;}

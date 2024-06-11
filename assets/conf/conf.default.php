@@ -46,7 +46,7 @@ $yearFormat = $currentLang == 'TH' ? 'ปปปป' : 'Y';
 
 $cfg['dateformat'] = empty($currentLang) || $currentLang == 'TH' ? 'ว ดด ปป H:i' : 'F,d Y H.i';
 $cfg['date.format'] = 'd/m/'.$yearFormat;
-$cfg['date.format.short'] = empty($currentLang) || $currentLang == 'TH' ? 'ว ดด ปปปป' : 'F,d Y';;
+$cfg['date.format.short'] = empty($currentLang) || $currentLang == 'TH' ? 'ว ดด ปปปป' : 'F,d Y';
 
 // Clean url
 $cfg['url.domain']=NULL;

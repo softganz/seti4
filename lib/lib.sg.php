@@ -83,7 +83,7 @@ function sg_date($para1=NULL,$para2=NULL) {
 	$date = NULL;
 	$format = cfg('date.format.short');
 	$dd = $mm = $yy = $hr = $min = $sec = 0;
-	if ( isset($para1) and isset($para2) ) {
+	if (isset($para1) and isset($para2)) {
 		$date = $para1;
 		$format = $para2;
 	} elseif ( isset($para1) ) {
@@ -93,45 +93,46 @@ function sg_date($para1=NULL,$para2=NULL) {
 
 	if ( isset($date) ) {
 		if (strlen($date) == 4) $date = $date.'-01-01';
-		else if (is_numeric($date)) $date = date('Y-m-d H:i:s',$date);
+		else if (is_numeric($date)) $date = date('Y-m-d H:i:s', $date);
 		$date .= ' ';
-		list($d,$t) = explode(" ",$date);
+		list($d,$t) = explode(" ", $date);
 		//debugMsg('date ='.$date.'=>'.$d.'<br />'.print_o(preg_split('/[-\/]+/',$d),'split'));
-		if (list($yy,$mm,$dd) = preg_split('/[-\/]+/',$d)) {
-			if (strlen($dd) == 4) list($yy,$dd) = array($dd,$yy);
+		if (list($yy, $mm, $dd) = preg_split('/[-\/]+/', $d)) {
+			if (strlen($dd) == 4) list($yy, $dd) = array($dd, $yy);
 			if ($yy > 2400) $yy -= 543;
 		}
-		if (!empty($t) && preg_match('/[\.\:]/', $t)) list($hr,$min,$sec) = preg_split('/[\.\:]+/',$t);
+		if (!empty($t) && preg_match('/[\.\:]/', $t)) list($hr, $min, $sec) = preg_split('/[\.\:]+/', $t);
 		//debugMsg('time ='.$date.'=> $t='.$t.'=> $hr='.$hr.' $min='.$min.' $sec='.$sec.'<br />'.print_o(preg_split('/[\.\:]+/',$t),'split'));
 		$dd = intval($dd); $mm = intval($mm); $yy = intval($yy);
 		$hr = intval($hr); $min = intval($min); $sec = intval($sec);
-		$w = date("w",mktime(0,0,0,$mm,$dd,$yy));
+		$w = date("w", mktime(0, 0, 0, $mm, $dd, $yy));
 	} else {
 		$dd = date("j"); $mm = date("m"); $yy = date("Y"); $hr = date("H"); $min = date("i"); $sec = date("s");
 		$w = date("w");
 	}
 	if ( $dd === 0 ) return;
 
-	$ret = ( date($format,mktime($hr,$min,$sec,$mm,$dd,$yy)) ) ? date($format,mktime($hr,$min,$sec,$mm,$dd,$yy)) : $format;
-	$days = array('อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์');
-	$months = array('January','February','March','April','May','June','July','August','September','October','November','December');
+	$ret = (date($format, mktime($hr, $min, $sec, $mm, $dd, $yy))) ? date($format, mktime($hr, $min, $sec, $mm, $dd, $yy)) : $format;
+	$days = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+	$months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 	$thMonth = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-	$smonths = array('ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.');
+	$smonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 
 	$min15 = $min - ($min % 15);
-	$source = array(
+	$source = [
 		'"ววว"' , '"ว"' ,
 		'"ปปปป"', '"ปป"' ,
 		'"ดดด"' , '"ดด"',
 		'"น15"',
-	);
+	];
 	$replace = array(
 		tr($days[$w]) , tr($dd) ,
-		sprintf('%04d',$yy+($lang == 'th' ? 543 : 0)) , substr($yy+543,-2) ,
+		sprintf('%04d', $yy + ($lang == 'th' ? 543 : 0)) , substr($yy + 543, -2) ,
+		// sprintf('%04d', $yy + (empty($lang) || strtoupper($lang) == 'TH' ? 543 : 0)) , substr($yy + 543, -2) ,
 		$thMonth[$mm-1], $smonths[$mm-1],
-		sprintf('%02d',$min15),
+		sprintf('%02d', $min15),
 	);
-	$ret = preg_replace($source,$replace,$ret);
+	$ret = preg_replace($source, $replace, $ret);
 	return $ret;
 }
 
