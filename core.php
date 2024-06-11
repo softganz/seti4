@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
  * @modify  :: 2024-06-11
- * @version :: 8
+ * @version :: 15
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        14);
-cfg('core.version',             '4.3.01');
-cfg('core.release',             '2023-10-04');
+cfg('core.version.code',        15);
+cfg('core.version',             '4.3.02');
+cfg('core.release',             '2024-06-11');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
