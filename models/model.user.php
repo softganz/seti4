@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2024-03-01
-* Version :: 6
+* Modify  :: 2024-06-11
+* Version :: 7
 *
 * @param Int $userId
 * @return Object
@@ -151,7 +151,12 @@ class UserModel {
 			'type' => 'Create user',
 			'user' => SG\getFirst(i()->uid, $result->userId),
 			'name' => SG\getFirst(i()->name, $user->name),
-			'description' => 'User '.$user->username.' : '.$user->name.' ('.$result->userId.') was created',
+			'description' => (Object) [
+				'username' => $user->username,
+				'name' => $user->name,
+				'id' => $result->userId,
+				'email' => $user->email,
+			],
 		]);
 
 		if ($user->roles) {

@@ -1528,7 +1528,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			} else {
 				let value = $this.is(':checked') ? $this.attr('value') : ''
 				self.save($inlineField, value, callback)
-		}
+			}
 			// console.log('CHECKBOX VALUE ',checkboxValue)
 		} else {
 			$this.editable(
