@@ -2,19 +2,23 @@
 /**
 * Sysgtem :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2024-06-04
-* Version :: 3
+* Modify  :: 2024-06-13
+* Version :: 4
 *
 * @return Widget
 *
 * @usage system/issue
 */
 
+use Softganz\DB;
+
 class SystemIssueHome extends Page {
+	var $issueType;
 	var $right;
 
  	function __construct() {
 		parent::__construct([
+			'issueType' => post('type'),
 			'right' => (Object) [
 				'access' => is_admin(),
 			],
@@ -30,21 +34,38 @@ class SystemIssueHome extends Page {
 			]);
 		}
 
-		$dbs = mydb::select(
+		$dbs = DB::select([
 			'SELECT *
-			FROM %system_issue%
-			WHERE `status` != :complete
+			FROM %system_issue% `issue`
+			%WHERE%
 			ORDER BY `issueId` DESC
 			LIMIT 1000',
-			[':complete' => _COMPLETE]
-		);
+			'where' => [
+				'%WHERE%' => [
+					['`issue`.`status` != :complete', ':complete' => _COMPLETE],
+					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
+				]
+			]
+		]);
 
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => $dbs->_num_rows.' Issues Report',
 				'trailing' => new Row([
+					'crossAxisAlignment' => 'center',
 					'children' => [
-						'<a class="sg-action btn" href="'.url('api/system/issue.close/*').'" data-rel="notify" data-done="reload" data-title="ล้างรายการ" data-confirm="ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?"><i class="icon -material">done_all</i></a>',
+						new Form([
+							'action' => url('system/issue'),
+							'children' => [
+								'type' => [
+									'type' => 'select',
+									'onChange' => 'submit',
+									'value' => $this->issueType,
+									'options' => ['' => 'All', 'Fatal Error' => 'Fatal Error', 'Create user' => 'Create user'],
+								]
+							], // children
+						]),
+						'<a class="sg-action btn" href="'.url('api/system/issue.close/*', ['type' => $this->issueType]).'" data-rel="notify" data-done="reload" data-title="ล้างรายการ" data-confirm="ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?"><i class="icon -material">done_all</i></a>',
 						'<a class="sg-action btn" href="'.url('system/issue').'" data-rel="#main"><i class="icon -material">refresh</i></a>'
 					], // children
 				]), // Row
