@@ -3,7 +3,7 @@
 * Sysgtem :: Issue Home Page
 * Created :: 2022-10-14
 * Modify  :: 2024-06-13
-* Version :: 5
+* Version :: 6
 *
 * @return Widget
 *
@@ -50,7 +50,7 @@ class SystemIssueHome extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => $dbs->_num_rows.' Issues Report',
+				'title' => $dbs->count.' Issues Report',
 				'trailing' => new Row([
 					'crossAxisAlignment' => 'center',
 					'children' => [
