@@ -3,7 +3,7 @@
 * Sysgtem :: Issue Home Page
 * Created :: 2022-10-14
 * Modify  :: 2024-06-13
-* Version :: 4
+* Version :: 5
 *
 * @return Widget
 *
@@ -118,6 +118,7 @@ class SystemIssueHome extends Page {
 												'children' => [
 													'<b>Link : '.$item->host.$item->path.($item->query ? '?'.$item->query : '').'</b>',
 													$item->reportBy ? 'By : '.$item->reportBy : NULL,
+													$item->issueType === 'Create user' ? $this->showCreateUserInfo($item) : NULL,
 													'Date : '.$item->reportDate,
 													'Referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
 													'Agent : '.$item->agent,
@@ -150,6 +151,10 @@ class SystemIssueHome extends Page {
 		];
 
 		return array_key_exists($issueType, $icons) ? $icons[$issueType] : $icons['Other'];
+	}
+
+	private function showCreateUserInfo($item) {
+		return $item->description;
 	}
 }
 ?>
