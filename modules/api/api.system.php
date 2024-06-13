@@ -1,9 +1,9 @@
 <?php
 /**
-* Module  :: Description
+* System  :: System API
 * Created :: 2022-10-14
-* Modify  :: 2022-10-14
-* Version :: 1
+* Modify  :: 2024-06-13
+* Version :: 2
 *
 * @param Int $mainId
 * @param String $action
@@ -12,6 +12,8 @@
 *
 * @usage module/api/{id}/{action}[/{tranId}]
 */
+
+use Softganz\DB;
 
 class SystemApi extends PageApi {
 	var $action;
@@ -42,15 +44,21 @@ class SystemApi extends PageApi {
 	public function issueClose() {
 		if (!$this->right->admin) return $this->_accessDenied();
 
+		$issueType = post('type');
+
 		if ($issueId = $this->tranId) {
-			if ($issueId === '*') mydb::where('`status` = :draft', ':draft', _START);
-			else mydb::where('`issueId` = :issueId', ':issueId', $issueId);
-			mydb::query(
+			DB::query([
 				'UPDATE %system_issue%
 				SET `status` = :status
 				%WHERE%',
-				[':status' => _COMPLETE]
-			);
+				'where' => [
+					'%WHERE%' => [
+						$issueId === '*' ? ['`status` = :draft', ':draft' => _START] : ['`issueId` = :issueId', ':issueId' => $issueId],
+						$issueType ? ['`issueType` = :issueType', ':issueType' => $issueType] : NULL,
+					]
+				], // where
+				'var' => [':status' => _COMPLETE]
+			]);
 		}
 	}
 }
