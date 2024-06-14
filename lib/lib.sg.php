@@ -78,8 +78,8 @@ function sg_generate_token($length = 16) {
  * Date ( [string Format] ) //--- Show Current Date with format
  * Date ( DateString,FormatString ) Show Date with format
  */
-function sg_date($para1=NULL,$para2=NULL) {
-	$lang=cfg('lang');
+function sg_date($para1 = NULL, $para2 = NULL) {
+	$lang = cfg('lang');
 	$date = NULL;
 	$format = cfg('date.format.short');
 	$dd = $mm = $yy = $hr = $min = $sec = 0;
@@ -91,17 +91,19 @@ function sg_date($para1=NULL,$para2=NULL) {
 		if ( preg_match("/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/",$para1,$out) ) $date = $para1; else $format = $para1;
 	}
 
-	if ( isset($date) ) {
+	if (isset($date)) {
 		if (strlen($date) == 4) $date = $date.'-01-01';
 		else if (is_numeric($date)) $date = date('Y-m-d H:i:s', $date);
 		$date .= ' ';
 		list($d,$t) = explode(" ", $date);
 		//debugMsg('date ='.$date.'=>'.$d.'<br />'.print_o(preg_split('/[-\/]+/',$d),'split'));
 		if (list($yy, $mm, $dd) = preg_split('/[-\/]+/', $d)) {
-			if (strlen($dd) == 4) list($yy, $dd) = array($dd, $yy);
+			if (strlen($dd) == 4) list($yy, $dd) = [$dd, $yy];
 			if ($yy > 2400) $yy -= 543;
 		}
-		if (!empty($t) && preg_match('/[\.\:]/', $t)) list($hr, $min, $sec) = preg_split('/[\.\:]+/', $t);
+		if (!empty($t) && preg_match('/[\.\:]/', $t)) {
+			list($hr, $min, $sec) = preg_split('/[\.\:]+/', $t);
+		}
 		//debugMsg('time ='.$date.'=> $t='.$t.'=> $hr='.$hr.' $min='.$min.' $sec='.$sec.'<br />'.print_o(preg_split('/[\.\:]+/',$t),'split'));
 		$dd = intval($dd); $mm = intval($mm); $yy = intval($yy);
 		$hr = intval($hr); $min = intval($min); $sec = intval($sec);
@@ -110,9 +112,9 @@ function sg_date($para1=NULL,$para2=NULL) {
 		$dd = date("j"); $mm = date("m"); $yy = date("Y"); $hr = date("H"); $min = date("i"); $sec = date("s");
 		$w = date("w");
 	}
-	if ( $dd === 0 ) return;
+	if ($dd === 0) return;
 
-	$ret = (date($format, mktime($hr, $min, $sec, $mm, $dd, $yy))) ? date($format, mktime($hr, $min, $sec, $mm, $dd, $yy)) : $format;
+	$ret = date($format, mktime($hr, $min, $sec, $mm, $dd, $yy)) ? date($format, mktime($hr, $min, $sec, $mm, $dd, $yy)) : $format;
 	$days = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
 	$months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 	$thMonth = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
@@ -125,13 +127,12 @@ function sg_date($para1=NULL,$para2=NULL) {
 		'"ดดด"' , '"ดด"',
 		'"น15"',
 	];
-	$replace = array(
+	$replace = [
 		tr($days[$w]) , tr($dd) ,
-		sprintf('%04d', $yy + ($lang == 'th' ? 543 : 0)) , substr($yy + 543, -2) ,
-		// sprintf('%04d', $yy + (empty($lang) || strtoupper($lang) == 'TH' ? 543 : 0)) , substr($yy + 543, -2) ,
+		sprintf('%04d', $yy + 543) , substr($yy + 543, -2) ,
 		$thMonth[$mm-1], $smonths[$mm-1],
 		sprintf('%02d', $min15),
-	);
+	];
 	$ret = preg_replace($source, $replace, $ret);
 	return $ret;
 }
