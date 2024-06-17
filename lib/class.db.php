@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2023-12-10
-* Version :: 6
+* Modify  :: 2024-06-17
+* Version :: 7
 *
 * @param Array $args
 * @return Object
@@ -253,6 +253,35 @@ class DB {
 		$result = [];
 		foreach ($items as $key => $value) {
 			$value = (Object) $value;
+			if ($this->options->jsonDecode) {
+				foreach ($this->options->jsonDecode as $jsonDecode) {
+					$jsonDecodeResult = json_decode($value->{$jsonDecode['field']});
+					if ($jsonDecode['type'] === 'merge') {
+						$foundField = false;
+						$before = [];
+						$after = [];
+						foreach ($value as $itemKey => $itemValue) {
+							if ($itemKey === $jsonDecode['field']) {
+								$foundField = true;
+								continue;
+							}
+							if (!$foundField) $before[$itemKey] = $itemValue;
+							else $after[$itemKey] = $itemValue;
+						}
+						// debugMsg($before, '$before');
+						// debugMsg($after, '$after');
+						$value = (Object) array_merge_recursive(
+							(Array) $before,
+							(Array) $jsonDecodeResult,
+							(Array) $after
+						);
+						// debugMsg($value, '$value');
+					} else {
+						$value->{$jsonDecode['field']} = $jsonDecodeResult;
+					}
+				}
+			}
+
 			if ($this->options->group) {
 				// Collect result using group of items and/or using key and value
 				if ($this->options->key && $this->options->value) {
