@@ -1292,6 +1292,11 @@ class SgCore {
 		}
 
 		// Start Render Page, result is string
+		// debugMsg($pageClass, '$pageClass');
+		// debugMsg($requestResult, $requestResult);
+		if (is_object($pageClass) && is_object($pageClass->appBar) && $pageClass->appBar->title && is_string($pageClass->appBar->title)) {
+			$GLOBALS['title'] = $pageClass->appBar->title;
+		}
 		$requestTextResult = (new PageRenderWidget($pageClass, $requestResult))->build();
 
 		// Replace widget container with associate widget
