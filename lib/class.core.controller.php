@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-03-18
-* Version :: 14
+* Modify  :: 2024-06-17
+* Version :: 15
 */
 
 /*************************************************************
@@ -1292,6 +1292,11 @@ class SgCore {
 		}
 
 		// Start Render Page, result is string
+		// debugMsg($pageClass, '$pageClass');
+		// debugMsg($requestResult, $requestResult);
+		if (is_object($pageClass) && is_object($pageClass->appBar) && $pageClass->appBar->title && is_string($pageClass->appBar->title)) {
+			$GLOBALS['title'] = $pageClass->appBar->title;
+		}
 		$requestTextResult = (new PageRenderWidget($pageClass, $requestResult))->build();
 
 		// Replace widget container with associate widget
