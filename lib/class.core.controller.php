@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-03-18
-* Version :: 14
+* Modify  :: 2024-06-17
+* Version :: 15
 */
 
 /*************************************************************
