@@ -1,0 +1,145 @@
+<h3>class DB()</h3>
+
+<code>
+=========================================
+class DB()
+=========================================
+</code>
+
+<h4>DB::select()</h4>
+<code>
+	Format: DB::select([
+		query statment,
+		where,
+		var,
+		options,
+		connection,
+	]);
+</code>
+<h5>Result</h5>
+<code>
+	Property:
+	Int $count
+	Array $items
+</code>
+
+<h5>where</h5>
+<code>
+	where => [
+		'%WHERE%' => [
+			[condition, variable => value],
+			[condition, variable => value],
+		]
+	]
+</code>
+
+<h5>var</h5>
+<code>
+	var => [
+		variable => value,
+		variable => value,
+	]
+</code>
+
+<h5>options</h5>
+<code>
+	options => [
+		option => value,
+		option => value,
+	]
+
+	options key:
+	- sum = field list separate by ,
+	- jsonDecode = [
+		['field' => 'field1', 'type' => 'merge,default']
+	]
+	- group = field name
+	- key = field name
+	- value
+</code>
+
+Data Model
+<code>
+class DataModel()
+class SetDataModel()
+class JsonDataModel()
+class JsonArrayDataModel()
+</code>
+
+
+====== END ======
+
+<h4>Property :</h4>
+<code>
+public $class='mydb';
+public static $version='3.10';
+public $dburi;
+private $server;
+private $user;
+private $password;
+private $host;
+public $db;
+private $mydb;
+
+public $status=false;
+public $simulate=false;
+public $_watchlog=true;
+
+public $_query;
+public $_affected_rows;
+public $_error;
+public $_error_no;
+public $_errors=array();
+public $_query_count=0;
+public $_query_items=array();
+public $_field=array();
+public $_where=array();
+public $_values=array();
+
+private $multiquery=false;
+</code>
+<h4>Method :</h4>
+<code>
+mydb::Constructor ( $dburi )
+mydb::where ( $condition , $key , $value [, $key , $value] )
+mydb::query ( $stmt , $key , $value [, $key , $value] , $object , $array )
+mydb::select ( $stmt , $key , $value [, $key , $value] , $object , $array )
+mydb::clearProp ( $rs )
+mydb::table_list ()
+mydb::table_exists ( $table_name )
+mydb::columns ( $table,$col_name, $dbname )
+mydb::clear_autoid ( $table )
+mydb::get_set_member ( $table_name, $col_name )
+mydb::make_set ( $set_value=array() )
+mydb::convert_record_to_recordset ( $rs )
+mydb::create_insert_cmd ( $table_name, $values=array() )
+mydb::create_update_cmd ( $table_name, $values=array(), $cond )
+mydb::table_is_lock ( $table_name, $db_name )
+mydb::printTable ( $dbs )
+mydb::setMultiQuery ( $value )
+</code>
+
+<h4>Method description</h4>
+<code>
+mydb::Constructor ( $dburi )
+array mydb::where ( string $condition [, string $key , mixed $value [,...]] )
+array , object mydb::query ( $stmt , [, string $key , mixed $value [,...]] , $object , $array )
+object mydb::select ( $stmt , [, string $key , mixed $value [,...]] , $object , $array )
+object mydb::clearProp ( object $rs )
+array mydb::table_list ()
+bool mydb::table_exists ( string $table_name )
+array , bool mydb::columns ( string $table , string $col_name, string $dbname )
+int mydb::clear_autoid ( string $table )
+string mydb::get_set_member ( string $table_name, string $col_name )
+string mydb::make_set ( array $set_value )
+object mydb::convert_record_to_recordset ( object $rs )
+string mydb::create_insert_cmd ( string $table_name, array $values )
+string mydb::create_update_cmd ( string $table_name, array $values, string $cond )
+bool mydb::table_is_lock ( string $table_name, string $db_name )
+string mydb::printTable ( object $dbs )
+mydb::setMultiQuery ( bool $value )
+</code>
+
+
+
+
