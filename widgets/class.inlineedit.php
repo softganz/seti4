@@ -127,7 +127,7 @@ class InlineEdit extends Widget {
 
 		// debugMsg('$childKey = '.$childKey); debugMsg($attributes, '$attributes'); debugMsg($child, '$child');
 
-		if (in_array('childContainer', $this->debug)) {
+		if (is_array($this->debug) && in_array('childContainer', $this->debug)) {
 			debugMsg('$childKey = '.$childKey);
 			debugMsg($attributes, '$attributes');
 			debugMsg($child, '$child');
@@ -213,7 +213,7 @@ class InlineEdit extends Widget {
 
 		// $ret .= print_o($widget, '$widget');
 		// $ret .= $this->_renderChildContainerEnd().'<!-- field -->'._NL;
-		if (in_array('rawItem', $this->debug)) {
+		if (is_array($this->debug) && in_array('rawItem', $this->debug)) {
 			$ret .= (new DebugMsg($widget, '$widget'))->build();
 		}
 
