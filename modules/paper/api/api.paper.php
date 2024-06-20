@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2023-12-27
-* Version :: 8
+* Modify  :: 2024-06-20
+* Version :: 9
 *
 * @param Int $nodeId
 * @param String $action
@@ -68,6 +68,7 @@ class PaperApi extends PageApi {
 			'nodeId' => $nodeInfo->nodeId,
 			'title' => $nodeInfo->title,
 			'body' => $nodeInfo->info->body,
+			'tags' => array_values($nodeInfo->tags),
 			'photoList' => $photoList,
 			'docList' => $docList,
 			// 'info' => $nodeInfo,
