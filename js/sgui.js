@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-03-15
-* Version :: 10
+* Modify  :: 2024-06-24
+* Version :: 11
 */
 
 'use strict'
@@ -403,8 +403,8 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 		if (doneTarget == '') doneTarget = '#main';
 
 		// console.log(doneItem, doneExplode)
-		//console.log('doneType = ',doneType, 'doneAction = ',doneAction)
-		//console.log('doneTarget = ',doneTarget)
+		// console.log('doneType = ',doneType, 'doneAction = ',doneAction)
+		// console.log('doneTarget = ',doneTarget)
 		// console.log(data)
 
 		switch (doneType) {
@@ -1489,7 +1489,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 				}
 
-				console.log('settings.done ', settings.done)
+				// console.log('settings.done ', settings.done)
 
 				// Process action done
 				if (settings.done) sgActionDone(settings.done, $inlineField, response);
@@ -1506,6 +1506,21 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				let value = $this.attr('value')
 				// console.log('RADIO VALUE ',value)
 				self.save($inlineField, value, callback)
+
+				// console.log("SHOW:", $inlineField.data("showOnValue"))
+				if ($inlineField.data("showOnValue") != undefined) {
+					let showOnValue = $inlineField.data("showOnValue")
+					let showOnElement = $inlineField.data("showOnElement")
+					let $targetElement
+					if (showOnElement === 'nextInput') $targetElement = $inlineField.next('.inlineedit-field')
+					if ($targetElement) {
+						if (value === showOnValue) {
+							$targetElement.show()
+						} else {
+							$targetElement.hide()
+						}
+					}
+				}
 
 			// setTimeout(function(){
 			// 	let $inputElement = $this.find('input:checked')
@@ -1577,6 +1592,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		datepicker 			: {},
 	}
 
+	// self.processDomOnValue = function(element) {
+	// 	console.log(element)
+	// }
 
 	$(document).on(
 		sgInlineEditAction,
@@ -1627,69 +1645,37 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		if (typeof $.fn.editable === 'undefined') return
 
+		// Show/ Hide element
+		$('.inlineedit-field[data-show-on-value]').each(function(index) {
+			// console.log($(this))
+			// this.processDomOnValue($(this))
+			let $this = $(this)
+			let $targetElement;
+			let inputName = $this.data('inputName')
+			let showOnValue = $this.data('showOnValue')
+			let inputValue = $this.find('input[name=' + inputName + ']:checked').val()
+
+			// console.log('showOnElement',$this.data('showOnElement'), inputName, inputValue)
+			if ($this.data('showOnElement') === 'nextInput') {
+				$targetElement = $this.next('.inlineedit-field')
+			} else {
+
+			}
+			// console.log('$targetElement', $targetElement)
+			if ($targetElement) {
+				let inputName = $this.data('inputName')
+				if (inputValue === showOnValue) {
+					$targetElement.show()
+				} else {
+					$targetElement.hide()
+				}
+				// console.log($this.find('input[name='+ inputName +']'))
+				// if ($this.find('input[name='+ inputName +']'))
+			}
+		});
+
 		$.editable.addInputType('checkbox', {});
 		$.editable.addInputType('radio', {});
-
-		// $.editable.addInputType('radio', {
-		// 	element : null
-		// });
-
-		// $.editable.addInputType('radio', {
-		// 	element : function(settings, original) {
-		// 		let input = $('<input />')
-		// 		.attr({
-		// 			type: 'radio'
-		// 		});
-
-		// 		$(this).append(input);
-		// 		return(input);
-		// 	}
-		// });
-
-    // $.editable.addInputType('checkbox', {
-    //     element : function(settings, original) {
-    //         let input = $('<input type="checkbox">');
-    //         $(this).append(input);
-
-    //         $(input).bind('click', function() {
-    //             if ($(input).val() === 'on') {
-    //                 $(input).val('off');
-    //                 $(input).removeAttr('checked');
-    //             } else {
-    //                 $(input).val('on');
-    //                 $(input).attr('checked', 'checked');
-    //             }
-    //         });
-
-    //     return(input);
-    //     },
-
-    //     content : function(string, settings, original) {
-
-    //         let checked = (string === 'yes') ? 'on' : 'off';
-    //         let input = $(':input:first', this);
-
-    //         if (checked === 'on') {
-    //             $(input).attr('checked', checked);
-    //         } else {
-    //             $(input).removeAttr('checked');
-    //         }
-
-    //         let value = $(input).is(':checked') ? 'on' : 'off';
-    //         $(input).val(value);
-    //     },
-
-    //     submit: function (settings, original) {
-    //         let value;
-    //         let input = $(':input:first', this);
-    //         if (input.is(':checked')) {
-    //             value = '1';
-    //         } else {
-    //             value = '0';
-    //         }
-    //         $('input', this).val(value);
-    //     }
-    // });
 
 		//Add input type autocomplete to jEditable
 		$.editable.addInputType('autocomplete', {
@@ -1800,44 +1786,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			}
 		})
 
-
-		$.editable.addInputType('datepicker-old', {
-			element : function(settings, original) {
-				let input = $('<input class="form-text -datepicker" />');
-				input.attr( 'autocomplete','off' );
-				if (settings.datepicker) {
-					input.datepicker(settings.datepicker);
-				} else {
-					input.datepicker();
-				}
-
-				// get the date in the correct format
-				if (settings.datepicker.format) {
-					input.datepicker('option', 'dateFormat', settings.datepicker.format);
-				}
-
-				$(this).append(input);
-				return(input);
-			},
-
-			submit: function (settings, original) {
-				let dateRaw = $('input', this).datepicker('getDate');
-				let dateFormatted;
-
-				if (settings.datepicker.format) {
-					dateFormatted = $.datepicker.formatDate(settings.datepicker.format, new Date(dateRaw));
-				} else {
-					dateFormatted = dateRaw;
-				}
-				$('input', this).val(dateFormatted);
-				},
-
-				plugin : function(settings, original) {
-				// prevent disappearing of calendar
-				settings.onblur = 'submit';
-			}
-		})
-
 		$.editable.addInputType('datepicker', {
 			element : function(settings, original) {
 				let input = $('<input class="form-text -datepicker" />')
@@ -1899,71 +1847,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				settings.onblur = 'nothing'
 			}
 		})
-
-		/*
-		$.editable.addInputType( 'datepicker', {
-			// create input element
-			element: function( settings, original ) {
-				let form = $( this ),
-				input = $( '<input class="form-text" />' );
-				input.attr( 'autocomplete','off' );
-				form.append( input );
-				return input;
-			},
-
-			attach jquery.ui.datepicker to the input element
-			plugin: function( settings, original ) {
-				let form = this,
-				input = form.find( 'input' );
-
-				// Don't cancel inline editing onblur to allow clicking datepicker
-				settings.onblur = 'nothing';
-
-				input.datepicker( {
-					dateFormat: settings.dateFormat,
-					monthNames: settings.monthNames,
-					showButtonPanel: settings.showButtonPanel,
-					changeMonth: settings.changeMonth,
-					changeYear: settings.changeYear,
-					altFormat: settings.altFormat,
-					altField: settings.altField,
-
-					onSelect: function() {
-						// clicking specific day in the calendar should
-						// submit the form and close the input field
-						form.submit();
-						console.log('SELECT')
-					},
-
-					onClose: function() {
-							setTimeout( function() {
-								if ( !input.is( ':focus' ) ) {
-									// input has NO focus after 150ms which means
-									// calendar was closed due to click outside of it
-									// so let's close the input field without saving
-									original.reset( form );
-								} else {
-									// input still HAS focus after 150ms which means
-									// calendar was closed due to Enter in the input field
-									// so lets submit the form and close the input field
-									form.submit();
-								}
-								// the delay is necessary; calendar must be already
-								// closed for the above :focus checking to work properly;
-								// without a delay the form is submitted in all scenarios, which is wrong
-							}, 150 );
-						}
-				} )
-			}
-		})
-		*/
-
-		/*
-		if (firebaseConfig) {
-			database = firebase.database();
-			ref = database.ref('/update/');
-		}
-		*/
 	});
 })(jQuery);
 
