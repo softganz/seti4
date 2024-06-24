@@ -1,6 +1,6 @@
 <?php
 /**
-* Sysgtem :: Issue Home Page
+* System  :: Issue Home Page
 * Created :: 2022-10-14
 * Modify  :: 2024-06-24
 * Version :: 7
