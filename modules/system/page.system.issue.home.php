@@ -2,8 +2,8 @@
 /**
 * Sysgtem :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2024-06-13
-* Version :: 6
+* Modify  :: 2024-06-24
+* Version :: 7
 *
 * @return Widget
 *
@@ -105,7 +105,7 @@ class SystemIssueHome extends Page {
 													]), // Button
 													new Button([
 														'type' => 'link',
-														'href' => $item->host.$item->path.($item->query ? '?'.$item->query : ''),
+														'href' => $this->createTargetUrl($item),
 														'icon' => new Icon('public'),
 														'attribute' => ['target' => '_blank']
 													]), // Button
@@ -155,6 +155,21 @@ class SystemIssueHome extends Page {
 
 	private function showCreateUserInfo($item) {
 		return $item->description;
+	}
+
+	private function createTargetUrl($item) {
+		$url = '';
+		switch ($item->issueType) {
+			case 'Create user':
+				$userInfo = json_decode($item->description);
+				$url = $item->host.'/profile/'.$userInfo->id;
+				break;
+
+			default:
+				$url = $item->host.$item->path.($item->query ? '?'.$item->query : '');
+				break;
+		}
+		return $url;
 	}
 }
 ?>
