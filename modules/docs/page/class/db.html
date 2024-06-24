@@ -7,28 +7,51 @@ class DB()
 </code>
 
 <h4>DB::select()</h4>
+
+<h5>DB::Select(String $query)</h5>
+<h6>Parameter:</h6>
 <code>
-	Format: DB::select([
-		query statment,
+String $query
+</code>
+
+<h5>DB::Select(Array $mixed)</h5>
+<code>
+	DB::select([
+		query,
 		where,
 		var,
 		options,
 		connection,
 	]);
 </code>
-<h5>Result</h5>
+<h6>Parameter:</h6>
+<code>
+String $query
+Array $where
+Array $var
+Array $options
+Array | String $connection
+</code>
+
+<h6>Result</h6>
 <code>
 	Property:
 	Int $count
 	Array $items
 </code>
 
+<h4>Parameter</h4>
+
+
+
 <h5>where</h5>
 <code>
+	%WHERE% in query statement
+
 	where => [
 		'%WHERE%' => [
-			[condition, variable => value],
-			[condition, variable => value],
+			[condition1, ":variable1" => value1],
+			[condition2, ":variable2" => value2],
 		]
 	]
 </code>
@@ -36,26 +59,24 @@ class DB()
 <h5>var</h5>
 <code>
 	var => [
-		variable => value,
-		variable => value,
+		":variable1"  => value1,
+		"$variable2"  => value2,
+		"$variable3$" => value3,
 	]
 </code>
 
 <h5>options</h5>
 <code>
 	options => [
-		option => value,
-		option => value,
+		"sum"					=> "field1,field2",
+		"group"				=> "field",
+		"key"					=> "field",
+		"value" 			=> "field",
+		"jsonDecode"	=> [
+			['field' => 'field1', 'type' => 'merge,default']
+			...
+		],
 	]
-
-	options key:
-	- sum = field list separate by ,
-	- jsonDecode = [
-		['field' => 'field1', 'type' => 'merge,default']
-	]
-	- group = field name
-	- key = field name
-	- value
 </code>
 
 Data Model
