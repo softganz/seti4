@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-06-24
-* Version :: 11
+* Modify  :: 2024-06-25
+* Version :: 12
 */
 
 'use strict'
@@ -3149,6 +3149,9 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 			// if ($form.data('done') == 'close') {
 			// 	sgBoxBack({close: true})
 			// }
+		},
+		error: function(xhr, textStatus, errorThrown){
+			notify(errorThrown, 5000)
 		}
 	}).submit()
 });
