@@ -145,7 +145,7 @@ class NodeModel {
 
 		$dbs = \mydb::select($sql_cmd);
 		// debugMsg($conditions, '$conditions');
-		debugMsg(mydb()->_query);
+		// debugMsg(mydb()->_query);
 		// debugMsg($dbs, '$dbs');
 
 		$result->debug['ITEMS'] = mydb()->_query;
