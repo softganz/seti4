@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2024-06-20
-* Version :: 9
+* Modify  :: 2024-06-25
+* Version :: 10
 *
 * @param Int $nodeId
 * @param String $action
@@ -48,6 +48,7 @@ class PaperApi extends PageApi {
 
 		foreach($nodeInfo->photos as $photo) {
 			$photoList[] = (Object) [
+				'photoId' => $photo->fid,
 				'src' => _DOMAIN.$photo->src,
 				'exits' => $photo->exists,
 				'size' => $photo->size,
@@ -58,6 +59,7 @@ class PaperApi extends PageApi {
 
 		foreach($nodeInfo->docs as $doc) {
 			$docList[] = (Object) [
+				'docId' => $doc->fid,
 				'src' => _DOMAIN.$doc->src,
 				'exits' => $doc->exists,
 				'size' => $doc->size,
