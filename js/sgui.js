@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-06-25
-* Version :: 12
+* Modify  :: 2024-06-26
+* Version :: 13
 */
 
 'use strict'
@@ -1513,6 +1513,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					let showOnElement = $inlineField.data("showOnElement")
 					let $targetElement
 					if (showOnElement === 'nextInput') $targetElement = $inlineField.next('.inlineedit-field')
+					else $targetElement = $(showOnElement)
+
 					if ($targetElement) {
 						if (value === showOnValue) {
 							$targetElement.show()
@@ -1653,13 +1655,14 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			let $targetElement;
 			let inputName = $this.data('inputName')
 			let showOnValue = $this.data('showOnValue')
+			let showOnElement = $this.data('showOnElement')
 			let inputValue = $this.find('input[name=' + inputName + ']:checked').val()
 
 			// console.log('showOnElement',$this.data('showOnElement'), inputName, inputValue)
-			if ($this.data('showOnElement') === 'nextInput') {
+			if (showOnElement === 'nextInput') {
 				$targetElement = $this.next('.inlineedit-field')
 			} else {
-
+				$targetElement = $(showOnElement)
 			}
 			// console.log('$targetElement', $targetElement)
 			if ($targetElement) {
