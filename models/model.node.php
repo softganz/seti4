@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2024-05-15
-* Version :: 4
+* Modify 	:: 2024-06-26
+* Version :: 5
 *
 * @param Array $args
 * @return Object
@@ -117,7 +117,7 @@ class NodeModel {
 		// Condition
 		if ($conditions->type) mydb::where('`topic`.`type` IN ( :type )', ':SET-STRING:type', $conditions->type);
 		if ($conditions->nodeId) \mydb::where('`topic`.`tpid` IN ( :nodeId )', ':SET:nodeId', $conditions->nodeId);
-		if ($conditions->tags) \mydb::where('`tag_topic`.`tid` IN ( :tags )', ':SET:tags', $conditions->tags);
+		if ($conditions->tags) \mydb::where('`tag_topic`.`tid` IN ( :tags )', ':SET-STRING:tags', $conditions->tags);
 		if ($conditions->sticky) \mydb::where('`topic`.`sticky` = :sticky', ':sticky', $conditions->sticky);
 		if ($conditions->user) \mydb::where('`topic`.`uid` = :userId', ':userId', $conditions->user);
 		if ($conditions->ip) \mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
@@ -145,7 +145,7 @@ class NodeModel {
 
 		$dbs = \mydb::select($sql_cmd);
 		// debugMsg($conditions, '$conditions');
-		// debugMsg(mydb()->_query);
+		debugMsg(mydb()->_query);
 		// debugMsg($dbs, '$dbs');
 
 		$result->debug['ITEMS'] = mydb()->_query;
