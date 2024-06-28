@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2024-06-17
-* Version :: 7
+* Modify  :: 2024-06-28
+* Version :: 8
 *
 * @param Array $args
 * @return Object
@@ -138,16 +138,26 @@ class DB {
 		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $select->stmt)) {
 			$result = new DbSelect(reset($select->items)); // + ['DB' => $select]]);
 			$result->DB($select);
+			// debugMsg('LIMIT 1: '.$select->stmt);
+			// debugMsg($select, '$select');
+			// debugMsg($args,'$args');
 		} else {
-			$result = new DbSelect(['count' => $select->count, 'foundRows' => NULL, 'items' => $select->items, 'DB' => $select]);
+			// debugMsg('LIMIT *: '.$select->stmt);
+			$result = new DbSelect([
+				'count' => $select->count,
+				'foundRows' => NULL,
+				'items' => $select->items,
+				'DB' => $select
+			]);
 
 			if (preg_match('/SQL_CALC_FOUND_ROWS/', $select->stmt)) {
 				$result->foundRows = DB::select('SELECT FOUND_ROWS() `totals` LIMIT 1')->totals;
 			} else {
 				unset($result->foundRows);
 			}
-
 		}
+
+		if ($args['onComplete'] && is_callable($args['onComplete'])) $args['onComplete']($result);
 
 		if ($select->options->sum) $result->sum = $select->options->sum;
 
@@ -215,8 +225,6 @@ class DB {
 		$this->items = $this->fetchRow($query);
 
 		$this->count = count($this->items);
-
-		if ($this->args['onComplete'] && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
 	}
 
 	function queryResult() {
