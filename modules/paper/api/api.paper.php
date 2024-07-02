@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2024-06-25
-* Version :: 10
+* Modify  :: 2024-07-02
+* Version :: 11
 *
 * @param Int $nodeId
 * @param String $action
@@ -234,7 +234,7 @@ class PaperApi extends PageApi {
 		// ];
 
 		$desc = (Object) array_merge(
-			post('info',_TRIM+_STRIPTAG),
+			(Array) post('info',_TRIM+_STRIPTAG),
 			[
 				'nodeId' => $this->nodeId,
 				'type' => 'doc',
