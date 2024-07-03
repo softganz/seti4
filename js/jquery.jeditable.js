@@ -714,7 +714,7 @@
 
                             // add the selected prop if it's the same as original or if the key is 'selected'
                             // modify by softganz@gmail.com add condition key == settings.container.data('value')
-                            if (key == settings.container.data('value') || json.selected === key || key === $.trim(original.revert)) {
+                            if (settings.container.data('value') == key || json.selected === key || key === $.trim(original.revert)) {
                                 $(option).prop('selected', 'selected');
                             }
 
