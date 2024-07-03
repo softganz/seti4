@@ -16,8 +16,8 @@
 * ============================================
 
 Created :: 2019-12-08
-Modify  :: 2023-12-16
-Version :: 3
+Modify  :: 2024-07-03
+Version :: 4
 */
 
 namespace SG;
@@ -120,10 +120,7 @@ function getFirst() {
 function getFirstInt() {
 	for ( $i = 0; $i < func_num_args(); $i++ ) {
 		$value = func_get_arg($i);
-		if (is_object($value) || is_array($value)) continue;
-		if (!(is_null($value) || trim($value) === '')) {
-			return intval($value);
-		}
+		if (is_numeric($value)) return intval($value);
 	}
 	return NULL;
 }
