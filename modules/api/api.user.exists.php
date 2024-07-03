@@ -2,8 +2,8 @@
 /**
 * User    :: Check User Exists API
 * Created :: 2024-02-14
-* Modify  :: 2024-02-15
-* Version :: 1
+* Modify  :: 2024-07-03
+* Version :: 2
 *
 * @return Array/Object
 *
@@ -25,7 +25,7 @@ class UserExistsApi extends PageApi {
 	function build() {
 		if ($this->username) return $this->checkUsername();
 		else if ($this->email) return $this->checkEmail();
-		else return error(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุข้อมูลที่ต้องการตรวจสอบ');
+		else return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุข้อมูลที่ต้องการตรวจสอบ');
 	}
 
 	private function checkUsername() {
@@ -33,22 +33,22 @@ class UserExistsApi extends PageApi {
 		// debugMsg($userInfo);
 
 		if ($userInfo->userId) {
-			return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'มีสมาชิกท่านอื่นใช้ชื่อนี้อยู่แล้ว');
+			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'มีสมาชิกท่านอื่นใช้ชื่อนี้อยู่แล้ว');
 		} else {
-			return success('สามารถใช้งานได้');
+			return apiSuccess('สามารถใช้งานได้');
 		}
 	}
 
 	private function checkEmail() {
-		if (empty($this->email)) return error(_HTTP_OK_NO_CONTENT, 'ไม่ระบุอีเมล์');
+		if (empty($this->email)) return apiError(_HTTP_OK_NO_CONTENT, 'ไม่ระบุอีเมล์');
 
 		$userInfo = UserModel::get(['email' => $this->email]);
 		// debugMsg($userInfo);
 
 		if ($userInfo->userId) {
-			return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'มีสมาชิกท่านอื่นใช้อีเมล์นี้อยู่แล้ว');
+			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'มีสมาชิกท่านอื่นใช้อีเมล์นี้อยู่แล้ว');
 		} else {
-			return success('สามารถใช้งานได้');
+			return apiSuccess('สามารถใช้งานได้');
 		}
 	}
 
