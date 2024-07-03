@@ -1123,9 +1123,8 @@ function error($code, String $message) {
 		R::Model('watchdog.log', NULL, 'Access denied');
 	}
 	if ($code) http_response_code($code);
-	return (Object) ['responseCode' => $code, 'text' => $message];
-	// if (_AJAX) return ['responseCode' => $code, 'text' => $message];
-	// return new ErrorMessage(['responseCode' => $code, 'text' => $message]);
+	if (_AJAX) return ['responseCode' => $code, 'text' => $message];
+	return new ErrorMessage(['responseCode' => $code, 'text' => $message]);
 }
 
 /**
@@ -1134,18 +1133,41 @@ function error($code, String $message) {
  * @return Array
  */
 function success($message) {
+	if (is_object($message) || is_array($message)) {
+		$message = (Object) $message;
+		if (!$message->responseCode) $message->responseCode = _HTTP_OK;
+		$result = new Message($message);
+	} else {
+		$result = new Message([
+			'responseCode' => _HTTP_OK,
+			'text' => $message,
+		]);
+	}
+	return $result;
+}
+
+/**
+ * Get error message from error code
+ * @param String $code
+ * @param String $ext_msg
+ *
+ * @return String
+ */
+function apiError($code, String $message) {
+	if (strtolower($message) === 'access denied') {
+		R::Model('watchdog.log', NULL, 'Access denied');
+	}
+	if ($code) http_response_code($code);
+	return (Object) ['responseCode' => $code, 'text' => $message];
+}
+
+/**
+ * Return success value
+ * @param String/Array/Object $message
+ * @return Array
+ */
+function ApiSuccess($message) {
 	return (Object) ['responseCode' => _HTTP_OK, 'text' => $message];
-	// if (is_object($message) || is_array($message)) {
-	// 	$message = (Object) $message;
-	// 	if (!$message->responseCode) $message->responseCode = _HTTP_OK;
-	// 	$result = new Message($message);
-	// } else {
-	// 	$result = new Message([
-	// 		'responseCode' => _HTTP_OK,
-	// 		'text' => $message,
-	// 	]);
-	// }
-	// return $result;
 }
 
 /**
