@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-06-17
-* Version :: 15
+* Modify  :: 2024-07-03
+* Version :: 16
 */
 
 /*************************************************************
@@ -87,10 +87,11 @@ class R {
 		$buildMethod = 'build'; // Default build method
 		$reservedMethod = ['rightToBuild'];
 
-		// Specific build method using _MS_ method at end of action
-		if (preg_match('/([\w].*)['._MS_.']([\w].*)$/', $pageName, $out)) {
+		// Specific build method using _MS_ or .. method at end of action
+		if (preg_match('/([\w].*)(['._MS_.']|\.\.)([\w\.].*)$/', $pageName, $out)) {
 			$pageName = $out[1];
-			$buildMethod = $out[2];
+			$buildMethod = $out[3];
+			$buildMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $buildMethod);
 		}
 
 		list($className, $found, $fileName, $resourceType) = SgCore::loadResourceFile('page.'.$pageName);
@@ -1003,11 +1004,17 @@ class SgCore {
 				}
 				// debugMsg($funcName, '$funcNameA');
 				// debugMsg(end($funcName));
-				if (preg_match('/(.*)\\'._MS_.'(\w*)$/', end($funcName), $out)) {
+
+				// Find method in function name
+				if (preg_match('/([\w].*)(['._MS_.']|\.\.)([\w\.].*)$/', end($funcName), $out)) {
+				// if (preg_match('/(.*)(['._MS_.']|\.\.)(\w*)$/', end($funcName), $out)) {
 					// debugMsg($out, '$out');
 					$funcName[count($funcName) - 1] = $out[1]; // Last argument
-					$buildMethod = $out[2]; // After method separator
+					$buildMethod = $out[3]; // After method separator
+					$buildMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $buildMethod);
 				}
+				// debugMsg($out, '$out');
+				// debugMsg('$buildMethod = '.$buildMethod);
 				// debugMsg($funcName, '$funcNameB');
 
 				$found = false;
