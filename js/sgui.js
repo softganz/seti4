@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-06-26
-* Version :: 13
+* Modify  :: 2024-07-03
+* Version :: 14
 */
 
 'use strict'
@@ -1203,7 +1203,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	let count = 0 // @deprecated
 	let editActive = false // @deprecated
 
+
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
+		if (debugSG) console.log('SG-INLINE-EDIT DEBUG =====>')
 		// default configuration properties
 		if (typeof $.fn.editable === 'undefined') {
 			console.log('ERROR :: $.editable is not load')
@@ -1236,7 +1238,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let $inlineWidget = $this.closest('.sg-inlineedit')
 
 		let inputType = $inlineField.data('type')
-		let callback = $inlineField.data('callback')
+		let onSaveFunction = $inlineWidget.attr('onSave')
+		let onSaveFieldCallback = $inlineField.data('callback')
 		let fieldOptions = $inlineField.data('options')
 		let showSubmitButton = (fieldOptions && 'button' in fieldOptions) || $inlineField.data('button') == 'yes'
 		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
@@ -1275,7 +1278,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let defaults = {
 			type: inputType,
 			result: 'json',
-			// container : $inlineField,
+			container : $inlineField,
 			onblur: $inlineField.data('onblur') ? $inlineField.data('onblur') : 'submit', // submit,nothing
 			data: function(value, settings) {
 				if ($inlineField.data('data'))
@@ -1300,6 +1303,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			placeholder: $inlineField.data('placeholder') ? $inlineField.data('placeholder') : '...',
 		}
 
+		// console.log("CONTAINER", $inlineField)
 		// console.log('typeof container',typeof fieldOptions.container)
 		// if (typeof fieldOptions.container === "object") delete fieldOptions.container
 		let settings = $.extend(
@@ -1311,11 +1315,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$inlineField.data('options'),
 			$this.data('options')
 		)
-		// console.log(typeof settings.container)
+
+		// console.log('value of container = ', settings.container.data('value'))
+		// console.log('typeof container', typeof settings.container)
 		// if (typeof settings.container === 'object') delete settings.container
 		// console.log('fieldOptions',fieldOptions)
 		//console.log($this.data('options'))
-		// console.log('SG-INLINE-EDIT SETTING:',settings)
+		if (debugSG)  console.log('SG-INLINE-EDIT SETTING:',settings)
 
 		debug = $inlineWidget.data('debug') ? true : false
 		if (fieldOptions && 'debug' in fieldOptions && fieldOptions.debug) debug = true
@@ -1394,7 +1400,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			//console.log(settings.blank)
 
 			// console.log(postUrl)
-			// console.log('SENDING PARA:', para)
+			if (debugSG) console.log('SENDING PARA:', para)
 
 			updatePending++
 			updateQueue++
@@ -1421,7 +1427,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				//if (data == '' || data == '<p>&nbsp;</p>')
 				//	data = '...';
 
-				// console.log('RETURN DATA:', data)
+				if (debugSG) console.log('RETURN DATA:', data)
 
 				if (returnType == 'refresh') {
 					window.location = window.location
@@ -1441,10 +1447,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				} else {
 					// console.log('REPLACE VALUE = ',data.value)
 					// console.log($this)
-					// $inlineField.find('form').replaceWith('AAAA')
-					// $inlineField.find('form').replaceWith(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
-					// $this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
-					// $this.html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
+					$inlineField.find('form').replaceWith(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
+					$this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
+					$this.html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
 				}
 
 
@@ -1475,10 +1480,15 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// Process widget callback function
 				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
 
-				// Process callback function
-				let callbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
+				if (debugSG) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '()' : ''))
+				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
+					window[onSaveFunction]($inlineField, response, $inlineWidget);
+				}
 
-				if (debugSG) console.log("CALLBACK ON COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
+				// Process callback function on each save field
+				let callbackFunction = callback
+
+				if (debugSG) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
 					if (typeof window[callbackFunction] === 'function') {
 						window[callbackFunction]($inlineField,response,$inlineWidget);
@@ -1505,7 +1515,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// let $inputElement = $this.val()
 				let value = $this.attr('value')
 				// console.log('RADIO VALUE ',value)
-				self.save($inlineField, value, callback)
+				self.save($inlineField, value, onSaveFieldCallback)
 
 				// console.log("SHOW:", $inlineField.data("showOnValue"))
 				if ($inlineField.data("showOnValue") != undefined) {
@@ -1517,9 +1527,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 					if ($targetElement) {
 						if (value === showOnValue) {
-							$targetElement.show()
+							$targetElement.removeClass('-hidden')
 						} else {
-							$targetElement.hide()
+							$targetElement.addClass('-hidden')
 						}
 					}
 				}
@@ -1530,7 +1540,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// 	let value = $inputElement.attr('value')
 			// 	console.log('RADIO VALUE ',value)
 			// 	// console.log('RADIO VALUE 1 ',$inputElement.attr('value'))
-			// 	self.save($inlineField, value, callback)
+			// 	self.save($inlineField, value, onSaveFieldCallback)
 			// }, 200)
 		} else if (inputType == 'checkbox') {
 			if ($inlineField.data('jsonType') === 'array') {
@@ -1541,17 +1551,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					// console.log(key,$(this).attr('value'))
 					checkboxValue.push($(this).attr('value'))
 				})
-				self.save($inlineField, checkboxValue, callback)
+				self.save($inlineField, checkboxValue, onSaveFieldCallback)
 			} else {
 				let value = $this.is(':checked') ? $this.attr('value') : ''
-				self.save($inlineField, value, callback)
+				self.save($inlineField, value, onSaveFieldCallback)
 			}
 			// console.log('CHECKBOX VALUE ',checkboxValue)
 		} else {
 			$this.editable(
 				function(value, settings) {
 					if (_validValue($inlineField, value)) {
-						self.save($inlineField, value, callback)
+						self.save($inlineField, value, onSaveFieldCallback)
 						return value
 					} else {
 						notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
@@ -1626,19 +1636,34 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		// console.log("evt.keyCode=",evt.keyCode)
 		if(evt.keyCode == 9) {
 			let $this = $(this);
-			let $allBox = $this.closest(".sg-inlineedit");
-			let nextBox = '';
-			let currentBoxIndex = $(".inlineedit-field").index(this);
-			if (currentBoxIndex == ($(".inlineedit-field").length-1)) {
-				nextBox = $(".inlineedit-field:first");
+			let $allBox = $this.closest('.sg-inlineedit').find('.inlineedit-field:not(.-hidden');
+			let $nextBox = '';
+			let currentBoxIndex = $allBox.index(this);
+			if (currentBoxIndex === $allBox.length - 1) {
+				$nextBox = $allBox.eq(0);
 			} else {
-				nextBox = $(".inlineedit-field").eq(currentBoxIndex+1);
+				$nextBox = $allBox.eq(currentBoxIndex+1);
 			}
-			$(this).find("input").blur();
-			$(nextBox).trigger('click')
-			//		notify('Index='+currentBoxIndex+$this' Length='+$allBox.children(".inlineedit-field").length+' Next='+nextBox.data('fld'))
+			$this.find("input").blur();
+			let $nextBoxInput = $nextBox.find(".-for-input")
+			// console.log('TYPE ',$nextBox.data('type'))
+			switch ($nextBox.data('type')) {
+				case 'text':
+				case 'textarea':
+					$nextBoxInput.trigger('click')
+					break;
+				case 'radio':
+				case 'checkbox':
+					$nextBoxInput = $nextBox.find(".-for-input:first-child")
+					$nextBoxInput.focus()
+					break;
+			}
+			// console.log('Index = ', currentBoxIndex)
+			// console.log('Next Input = ', $nextBox.data('inputName'))
+			// console.log('$this', $this)
+			// console.log('Length = ',$allBox.length)
 			return false;
-		};
+		}
 	});
 
 	// Add editable plugin
@@ -1668,9 +1693,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			if ($targetElement) {
 				let inputName = $this.data('inputName')
 				if (inputValue === showOnValue) {
-					$targetElement.show()
+					$targetElement.removeClass('-hidden')
 				} else {
-					$targetElement.hide()
+					$targetElement.addClass('-hidden')
 				}
 				// console.log($this.find('input[name='+ inputName +']'))
 				// if ($this.find('input[name='+ inputName +']'))
@@ -3101,7 +3126,7 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 	let $this = $(this)
 	let $form = $this.closest("form")
 	let target = $form.data('rel')
-	let targetClass = ' class="' + ($form.data('class') != undefined ? $form.data('class') : 'ui-item -hover-parent') + '"'
+	let targetClass = ' class="' + ($form.data('class') != undefined ? $form.data('class') : 'ui-item -item -hover-parent') + '"'
 
 	if (isAndroidWebViewReady) Android.showToast('กำลังอัพโหลดไฟล์')
 
