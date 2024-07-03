@@ -2,8 +2,8 @@
 /**
 * Model   :: File Model
 * Created :: 2021-12-21
-* Modify  :: 2023-12-26
-* Version :: 5
+* Modify  :: 2024-07-01
+* Version :: 6
 *
 * @return Object
 *
@@ -155,7 +155,29 @@ class FileModel {
 
 		$useSourceFilename = $options->useSourceFilename;
 
+		$data = (Object) array_merge(
+			[
+				'nodeId' => NULL, // Int
+				'folder' => NULL, // String
+				'preName' => NULL, // String
+				'deleteUrl' => NULL, // String,
+				'fileId' => NULL, // Int,
+				'cid' => NULL, // Int
+				'title' => NULL, // String
+				'tagName' => NULL, // String
+				'orgId' => NULL, // Int
+				'uid' => NULL, // Int
+				'refId' => NULL, // Int
+				'link' => NULL, // String
+				'description' => NULL, // String
+				'onComplete' => function($data) {}
+			],
+			(Array) $data
+		);
+
 		$data->nodeId = SG\getFirst($data->nodeId, $data->tpid);
+
+		if ($data->folder && !preg_match('/\//$', $data->folder)) $data->folder .= '/';
 
 		$result = (Object) [
 			'link' => NULL,
@@ -248,7 +270,7 @@ class FileModel {
 				'tagName' => SG\getFirst($data->tagName, $data->tagname),
 				'folder' => SG\getFirst($data->folder),
 				'orgId' => SG\getFirst($data->orgId, $data->orgid),
-				'uid' => SG\getFirst($data->uid,i()->uid),
+				'userId' => SG\getFirst($data->userId, $data->uid,i()->uid),
 				'file' => $photo_upload,
 				'refId' => SG\getFirst($data->refId, $data->refid),
 				'description' => SG\getFirst($data->description),
@@ -275,7 +297,7 @@ class FileModel {
 				, `title`, `description`
 				, `timestamp`, `ip`
 				) VALUES (
-				  :fileId, :nodeId, :cid, :type, :orgId, :uid, :refId
+				  :fileId, :nodeId, :cid, :type, :orgId, :userId, :refId
 				, :tagName
 				, :folder, :file
 				, :title, :description
@@ -301,7 +323,7 @@ class FileModel {
 					$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="'.$photo->url.'" title="">';
 				}
 
-				$linkInfo .= '<img class="photoitem" src="'.$photo->url.'" alt="" width="100%" />';
+				$linkInfo .= '<img class="photoitem -photo" src="'.$photo->url.'" alt="" width="100%" />';
 				$linkInfo .= '</a>';
 				if ($options->showDetail) $linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
 
@@ -326,7 +348,7 @@ class FileModel {
 			$picsData->link = $linkInfo;
 			$picsData->_FILES = $postFile;
 			$result->items[] = $picsData;
-			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -hover-parent">';
+			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">';
 		}
 
 
