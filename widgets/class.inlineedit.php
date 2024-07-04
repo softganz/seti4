@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-05-31
-* Version :: 4
+* Modify  :: 2024-07-04
+* Version :: 5
 *
 * @param Array $args
 * @return Widget
@@ -39,7 +39,7 @@ class InlineEdit extends Widget {
 	var $title = 'คลิกเพื่อแก้ไข';
 	var $placeholder = '...';
 	var $onBlur;
-	var $selectOptions = [];
+	var $choices = [];
 	var $options = []; // debug,place
 	var $children = []; // For multiple edit items
 	var $debug = []; // For debug message
@@ -96,7 +96,14 @@ class InlineEdit extends Widget {
 			$attributes['data-value'] = '';
 		}
 
-		$options = SG\getFirst($child['choices'], $child['options']);
+		if ($child['type'] === 'select') {
+			$child['data'] = json_encode($this->processChoice(SG\getFirst($child['choices'], $child['data'])), JSON_UNESCAPED_UNICODE);
+			unset($child['choices']);
+		} else if ($child['choices']) {
+			$child['choices'] = json_encode($child['choices'], JSON_UNESCAPED_UNICODE);
+		}
+
+		$options = SG\getFirst($child['options']);
 		if ($child['placeholder']) $options['placeholder'] = $child['placeholder'];
 		if ($child['onBlur']) $options['onblur'] = $child['onBlur'];
 		if ($child['type'] === 'textarea' && $options['button'] !== false) $options['button'] = 'yes';
@@ -105,16 +112,12 @@ class InlineEdit extends Widget {
 
 		$childAttribute = $child['attribute'];
 
-		// if ($child['type'] === 'radio') {
-		// 	$this->childTagName = 'input';
-		// 	$attributes['type'] = 'radio';
-		// }
-
 		unset(
 			$child['action'], $child['class'], $child['options'],
 			$child['placeholder'], $child['inputClass'],
 			$child['editMode'], $child['text'], $child['value'], $child['label'],
-			$child['onClick'], $child['onBlur'], $child['attribute']
+			$child['onClick'], $child['onBlur'], $child['attribute'],
+			$child['description'], $child['postText']
 		);
 
 		foreach ($child as $key => $value) {
@@ -171,8 +174,8 @@ class InlineEdit extends Widget {
 			$text = sg_date($widget->value, $retFormat);
 		}
 
-		if (is_string($widget->selectOptions)) $selectOptions = explode(',', '==เลือก==,' . $widget->selectOptions);
-		else if (is_array($widget->selectOptions) && count($widget->selectOptions) > 0) $selectOptions = ['==เลือก=='] + $widget->selectOptions;
+		// if (is_string($widget->selectOptions)) $selectOptions = explode(',', '==เลือก==,' . $widget->selectOptions);
+		// else if (is_array($widget->selectOptions) && count($widget->selectOptions) > 0) $selectOptions = ['==เลือก=='] + $widget->selectOptions;
 
 
 		// $ret .= $this->_renderChildContainerStart(
@@ -207,9 +210,10 @@ class InlineEdit extends Widget {
 			case 'textfield': $ret .= $this->_renderTypeTextField($widget); break;
 			case 'radio':
 			case 'checkbox': $ret .= $this->_renderTypeRadio($widget); break;
-			// case 'select': $ret .= $this->_renderTypeSelect($text); break;
+			case 'select': $ret .= $this->_renderTypeSelect($widget); break;
 			default: $ret .= $this->_renderTypeText($text, $widget); break;
 		}
+		$ret .= $this->_renderEachChildWidget(NULL, $widget->description);
 
 		// $ret .= print_o($widget, '$widget');
 		// $ret .= $this->_renderChildContainerEnd().'<!-- field -->'._NL;
@@ -218,50 +222,6 @@ class InlineEdit extends Widget {
 		}
 
 		return $ret;
-	}
-
-	// TODO: delete
-	function _render() {
-		// debugMsg('START RENDER '.$this->label);
-		// if (!$this->editMode) return $this->_renderNotField();
-		// // debugMsg($this, '$this');
-		// $ret = '';
-
-		// if ($this->label) {
-		// 	$ret .= '<label class="inline-edit-label'
-		// 		. ($this->labelClass ? ' '.$this->labelClass : '')
-		// 		. '"'
-		// 		. ($this->labelStyle ? ' style="'.$this->labelStyle.'"' : '')
-		// 		. '>'
-		// 		. $this->label
-		// 		. '</label>';
-		// }
-
-		// $text = $this->text;
-		// if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.$this->placeholder.'</span>';
-		// else if ($this->retType === 'nl2br') $text = trim(nl2br($text));
-		// else if ($this->retType === 'html') $text = trim(sg_text2html($text));
-		// else if ($this->retType === 'text') $text = trim(str_replace("\n",'<br />',$text));
-		// else if ($this->retType === 'money' && $text != '') $text = number_format(sg_strip_money($text), 2);
-		// else if (preg_match('/^date/i', $this->retType) && $text) {
-		// 	list($this->retType, $retFormat) = explode(':', $this->retType);
-		// 	if (!$retFormat) $retFormat = 'ว ดดด ปปปป';
-		// 	$text = sg_date($this->value, $retFormat);
-		// }
-
-		// if (is_string($this->selectOptions)) $selectOptions = explode(',', '==เลือก==,' . $this->selectOptions);
-		// else if (is_array($this->selectOptions) && count($this->selectOptions) > 0) $selectOptions = ['==เลือก=='] + $this->selectOptions;
-
-		// switch ($this->type) {
-		// 	case 'textfield': $ret .= $this->_renderTypeTextField($text); break;
-		// 	case 'radio':
-		// 	case 'checkbox': $ret .= $this->_renderTypeRadio(); break;
-		// 	// case 'select': $ret .= $this->_renderTypeSelect($text); break;
-		// 	default: $ret .= $this->_renderTypeText($text); break;
-		// }
-		// // $ret .= '</span>'._NL;
-
-		// return $ret;
 	}
 
 	private function _renderLabel($widget) {
@@ -323,14 +283,42 @@ class InlineEdit extends Widget {
 		return $ret;
 	}
 
-	// function _renderTypeSelect($text) {
-	// 	$ret = $text;
-	// 	return $ret;
-	// }
+	function _renderTypeSelect($widget) {
+		$childEditMode = $this->editMode || $widget->editMode;
+		$widget->data = $this->processChoice(SG\getFirst($widget->choices, $widget->data));
+
+		$ret = '';
+		$ret .= $this->_renderLabel($widget);
+
+		$text = $widget->data[$widget->value];
+
+		if ($childEditMode) {
+			$ret .= '<span class="-for-input">'.$text.'<i class="icon -material -gray">expand_more</i></span>'._NL;
+		} else {
+			$ret .= '<span class="-for-view">'.$text.'</span>'._NL;
+		}
+		$ret .= $widget->postText;
+		return $ret;
+	}
+
+	private function processChoice($choices) {
+		$result = [];
+		if (is_array($choices) || is_object($choices)) {
+			$result = (Array) $choices;
+		} else if (preg_match('/^\{/', $choices)) {
+			$result = $choices;
+		} else if (preg_match('/\.\./', $choices)) {
+			list($start, $end) = explode('..', $choices);
+			for ($choice=$start; $choice <= $end; $choice++) {
+				$result[$choice] = $choice;
+			}
+		}
+		return $result;
+	}
 
 	private function _renderRadioItem($widget) {
 		$ret = '';
-		foreach($widget->options as $key => $value) {
+		foreach($widget->choices as $key => $value) {
 			$isCheck = NULL;
 			if (is_array($widget->value)) {
 				$isCheck = in_array($key, $widget->value);
@@ -347,8 +335,6 @@ class InlineEdit extends Widget {
 				. '<span>'.$value.'</span>'
 				. '</label>'
 				. '</abbr>';
-			// 				$ret.='<abbr class="checkbox -block"><label><input type="checkbox" data-type="checkbox" class="inline-edit-field '.($isEdit?'':'-disabled').'" name="parent[]" data-group="objective:info:actobj" data-fld="parent" data-tr="'.$activityInfo->trid.'" data-objid="'.$item->trid.'" value="'.$item->trid.'" '.(in_array($item->trid,$parentObjectiveId)?'checked="checked"':'').' data-url="'.url('project/develop/plan/'.$tpid).' "data-callback="projectDevelopMainactAddObjective" /> '.$item->title.'</label></abbr>';
-
 		}
 		return $ret;
 	}
@@ -435,120 +421,5 @@ class InlineEdit extends Widget {
 		}
 		return $ret;
 	}
-
-	function _render_v1() {
-		// // \SG\inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'text', $data = [], $emptytext = '...')
-		// if ($this->editMode) $this->class .= ' sg-inline-edit';
-
-		// $fld = [];
-		// if ($this->label) $fld['label'] = $this->label;
-		// if (!is_null($this->group)) $fld['group'] = $this->group;
-		// if (!is_null($this->field)) $fld['fld'] = $this->field;
-		// if (!is_null($this->tranId)) $fld['tr'] = $this->tranId;
-		// if (!is_null($this->inputName)) $fld['name'] = $this->inputName;
-		// if (!is_null($this->value)) $fld['value'] = $this->value;
-		// if (!is_null($this->minValue)) $fld['min-value'] = $this->minValue;
-		// if (!is_null($this->maxValue)) $fld['max-value'] = $this->maxValue;
-		// if (!is_null($this->require)) $fld['require'] = $this->require;
-		// if (!is_null($this->retType)) $fld['ret'] = $this->retType;
-		// if (!is_null($this->preText)) $fld['pretext'] = $this->preText;
-		// if (!is_null($this->postText)) $fld['posttext'] = $this->postText;
-		// if (!is_null($this->description)) $fld['desc'] = $this->desc;
-		// if (!is_null($this->removeEmpty)) $fld['removeempty'] = $this->removeEmpty;
-		// if (!is_null($this->updateUrl)) $fld['update-url'] = $this->updateUrl;
-
-		// $fld['options'] = is_null($this->options) ? [] : $this->options;
-		// $fld['container'] = is_null($this->container) ? (Object) [] : (Object) $this->container;
-
-		// if ($this->inputClass) $fld['options']['class'] = $this->inputClass;
-		// $fld['container']->class = ($this->class ? ' '.$this->class : '');
-
-		// $ret = \SG\inlineEdit($fld, $this->text, $this->editMode, $this->type, $this->selectOptions, $this->emptyText);
-		// // debugMsg($this, '$this');
-		// // debugMsg($fld, '$fld');
-		// return $ret;
-	}
-
-	// @override
-	function toString1() {
-		// if (is_null($this->text) || $this->text == '') {
-		// 	$this->class .= ' -empty';
-		// }
-		// $ret = '<!-- Start of '.$this->widgetName.' -->'._NL;
-		// $ret .= $this->_renderWidgetContainerStart(
-		// 	function() {
-		// 		return
-		// 			($this->updateUrl ? ' data-update-url="'.$this->updateUrl.'"'._NL : NULL);
-		// 	}
-		// );
-		// $ret .= $this->_render();
-		// // if ($this->debug) $ret .= (new DebugMsg($this, '$this'))->build();
-		// $ret .= $this->_renderWidgetContainerEnd()._NL;
-		// $ret .= '<!-- End of '.$this->widgetName.' -->'._NL;
-		// // $ret .= '<pre>'.htmlspecialchars($ret).'</pre>';
-		// // $ret .= print_o($this, '$this');
-		// return $ret;
-	}
-
-	// function _renderWidgetContainerStart($callbackFunction = NULL) {
-	// }
-	// @override
-	// function _renderWidgetContainerStart($callbackFunction = NULL) {
-	// 	if ($this->editMode ? $this->class .= ' '.$this->editModeClassName : '');
-	// 	return parent::_renderChildContainerStart(function() {
-	// 		// return ($this->action && $this->editMode ? ' data-action="'.$this->action.'"'._NL : '');
-	// 	});
-	// }
-
-	// @override
-	function toString2() {
-		$childrenToRender = [];
-
-		if ($this->editMode ? $this->class .= ' '.$this->editModeClassName : '');
-		$ret .= $this->_renderWidgetContainerStart(function() {
-			return ($this->action && $this->editMode ? ' data-action="'.$this->action.'"'._NL : '');
-		});
-
-		if (empty($this->children)) {
-			// Render single child
-			$child = (Array) get_object_vars($this);
-			unset($child['action'], $child['updateUrl']);
-			$childrenToRender[] = $child;
-		} else {
-			// Render multiple child from children
-			foreach ($this->children as $key => $child) {
-				// debugMsg($child, '$child');
-				if (is_object($child) && get_class($child) === 'ChildrenWidget') {
-					$childrenToRender[] = '<div class="'.$child->class.'">';
-					foreach ($child->children as $subKey => $subChild) {
-						if (is_string($subKey)) $subChild['inputName'] = $subKey;
-						$childrenToRender[] = $subChild;
-					}
-					$childrenToRender[] = '</div>';
-				} else {
-					if (is_string($key)) $child['inputName'] = $key;
-					$childrenToRender[] = $child;
-				}
-			}
-		}
-
-		// debugMsg($childrenToRender, '$childrenToRender');
-
-		foreach ($childrenToRender as $key => $child) {
-			// debugMsg($child, '$child');
-			$ret .= $this->_renderEachChildWidget($key, $child, [
-				'array' => function($key, $widget) {
-					return $this->_renderChildType($key, (Object) $widget); //'<div>RENDER ARRAY '.$key.$widget['label'].'<div>'._NL;
-				},
-				'text' => function($key, $text) {
-					return $text._NL;
-				}
-			]);
-		}
-
-		$ret .= $this->_renderWidgetContainerEnd();
-		return $ret;
-	}
 } // End of class InlineEdit
-
 ?>

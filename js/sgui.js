@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-07-03
-* Version :: 14
+* Modify  :: 2024-07-04
+* Version :: 15
 */
 
 'use strict'
@@ -1382,6 +1382,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			delete para['updateUrl']
 			delete para['options']
+			delete para['choices']
 			delete para['data']
 			delete para['event.editable']
 			delete para['uiAutocomplete']
@@ -1433,7 +1434,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					window.location = window.location
 				} else if (inputType == 'autocomplete') {
 					$inlineField.data('value',para.value)
-					$inlineField.find('form').replaceWith(data.value);
+					$inlineField.find('.-for-input').html(data.value);
 				} else if (inputType == 'radio') {
 				} else if (inputType == 'checkbox') {
 				} else if (inputType == 'select') {
@@ -1443,13 +1444,15 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					} else {
 						selectValue = data.value
 					}
-					$inlineField.find('form').replaceWith(selectValue)
+					$inlineField.find('.-for-input').html(selectValue)
 				} else {
-					// console.log('REPLACE VALUE = ',data.value)
-					// console.log($this)
-					$inlineField.find('form').replaceWith(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
-					$this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
-					$this.html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
+					console.log('REPLACE VALUE = ',data.value)
+					console.log($this)
+					// $this.html('<span>'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
+
+					$inlineField.find('.-for-input').html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
+					// $this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
+					// $this.html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
 				}
 
 
@@ -1517,10 +1520,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// console.log('RADIO VALUE ',value)
 				self.save($inlineField, value, onSaveFieldCallback)
 
-				// console.log("SHOW:", $inlineField.data("showOnValue"))
-				if ($inlineField.data("showOnValue") != undefined) {
-					let showOnValue = $inlineField.data("showOnValue")
-					let showOnElement = $inlineField.data("showOnElement")
+				console.log("SHOW:", fieldOptions)
+				if ('showOn' in fieldOptions) {
+					let showOnValue = fieldOptions.showOn.value
+					let showOnElement = fieldOptions.showOn.element
 					let $targetElement
 					if (showOnElement === 'nextInput') $targetElement = $inlineField.next('.inlineedit-field')
 					else $targetElement = $(showOnElement)
@@ -1673,32 +1676,36 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		if (typeof $.fn.editable === 'undefined') return
 
 		// Show/ Hide element
-		$('.inlineedit-field[data-show-on-value]').each(function(index) {
-			// console.log($(this))
+		$('.inlineedit-field[data-options]').each(function(index) {
 			// this.processDomOnValue($(this))
 			let $this = $(this)
-			let $targetElement;
-			let inputName = $this.data('inputName')
-			let showOnValue = $this.data('showOnValue')
-			let showOnElement = $this.data('showOnElement')
-			let inputValue = $this.find('input[name=' + inputName + ']:checked').val()
+			let options = $this.data('options')
 
-			// console.log('showOnElement',$this.data('showOnElement'), inputName, inputValue)
-			if (showOnElement === 'nextInput') {
-				$targetElement = $this.next('.inlineedit-field')
-			} else {
-				$targetElement = $(showOnElement)
-			}
-			// console.log('$targetElement', $targetElement)
-			if ($targetElement) {
+			if ('showOn' in options) {
+				let $targetElement;
 				let inputName = $this.data('inputName')
-				if (inputValue === showOnValue) {
-					$targetElement.removeClass('-hidden')
+				let showOnValue = options.showOn.value
+				let showOnElement = options.showOn.element
+				let inputValue = $this.find('input[name=' + inputName + ']:checked').val()
+
+				// console.log($(this).data('inputName'),$(this).data('options'),$(this))
+				// console.log('showOnElement',$this.data('showOnElement'), inputName, inputValue)
+				if (showOnElement === 'nextInput') {
+					$targetElement = $this.next('.inlineedit-field')
 				} else {
-					$targetElement.addClass('-hidden')
+					$targetElement = $(showOnElement)
 				}
-				// console.log($this.find('input[name='+ inputName +']'))
-				// if ($this.find('input[name='+ inputName +']'))
+				// console.log('$targetElement', $targetElement)
+				if ($targetElement) {
+					let inputName = $this.data('inputName')
+					if (inputValue === showOnValue) {
+						$targetElement.removeClass('-hidden')
+					} else {
+						$targetElement.addClass('-hidden')
+					}
+					// console.log($this.find('input[name='+ inputName +']'))
+					// if ($this.find('input[name='+ inputName +']'))
+				}
 			}
 		});
 
