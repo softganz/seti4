@@ -19,8 +19,8 @@ Last Modify : 2022-11-17
 @import url(jquery-confirm.css);
 @import url(sgui.css);
 
-html {height: 100%; font-size: 62.5%;}
-body {height: 100%; font: 1.4rem/2.2rem sans-serif; color: #333;}
+html {height: 100vh; font-size: 62.5%;}
+body {height: 100vh; font: 1.4rem/2.2rem sans-serif; color: #333;}
 p {margin-bottom: 8px;}
 ul , ol {margin-bottom: 8px; padding-left: 30px;}
 img {border: none;}
