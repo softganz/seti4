@@ -271,7 +271,7 @@ $SCREENS
 	.loading {width:120px; height:20px; margin:5px; padding:3px; position:absolute; text-align:center; background:#fff url(https://softganz.com/library/img/loading.gif) no-repeat 10px 5px; border:1px green solid; border-radius:10px;	}
 
 	/* Class look like bootstrap4 */
-	.btn {margin: 0px; padding: 6px; font-size: 1em; font-weight: normal; line-height: 24px; color: #666; border: none; border-radius: 18px; display: inline-flex; background-color: #eee; cursor: pointer; justify-content: center; white-space: nowrap;}
+	.btn {margin: 0px; padding: 6px 16px; font-size: 1em; font-weight: normal; line-height: 24px; color: #666; border: none; border-radius: 18px; display: inline-flex; background-color: #eee; cursor: pointer; justify-content: center; white-space: nowrap;}
 		.btn:hover {color: #555; background-color: #f0f0f0;}
 		.btn.-sg-16 {padding: 0;}
 		.btn.-sg-24 {padding: 0;}
@@ -1554,8 +1554,8 @@ $SCREENS
 		.login .member-zone {border-right:1px #ccc solid; border-bottom: none;}
 
 
-		.module.-module-has-sidebar .page.-primary {display: flex; flex-wrap: wrap;}
-		.module.-module-has-sidebar .page.-sidebar {flex: 0 0 220px; margin:0; overflow:hidden; border-right: 1px #eee solid; box-shadow: none;}
+		.module.-module-has-sidebar .page.-primary {display: flex; flex-wrap: wrap; gap: 8px;}
+		.module.-module-has-sidebar .page.-sidebar {flex: 0 0 220px; margin:0; overflow: hidden;}
 		.module.-module-has-sidebar .page.-main {flex: 1; overflow: auto;}
 		.module.-module-has-sidebar .sg-toolbar.-main {flex: 1 0 100%;}
 		.module.-module-has-sidebar .page.-primary>h2.title {flex: 1 0 100%;}

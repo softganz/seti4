@@ -132,7 +132,7 @@
 	.widget-nav.-vertical {flex: 1 0 100%; flex-wrap: wrap;}
 	.widget-nav.-vertical>ul {flex: 1 0 100%; flex-wrap: wrap; width: 100%;}
 	.widget-nav.-vertical>ul>li {flex: 0 0 100%; flex-wrap: wrap; padding: 0;}
-	.widget-nav.-vertical>ul>li>a {display: flex; padding: 8px;}
+	.widget-nav.-vertical>ul>li>a {display: flex; padding: 8px; gap: 8px;}
 	.widget-nav.-vertical>ul>li>a>span {flex: 1;}
 	.widget-nav.-main-axis-end>ul {margin-left: auto;}
 
