@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-07-04
-* Version :: 5
+* Modify  :: 2024-07-06
+* Version :: 6
 *
 * @param Array $args
 * @return Widget
@@ -233,6 +233,7 @@ class InlineEdit extends Widget {
 			. ($widget->labelStyle ? ' style="'.$widget->labelStyle.'"' : '')
 			. '>'
 			. $widget->label
+			. ($widget->unit ? ' ('.$widget->unit.')' : '')
 			. '</label>'._NL;
 	}
 
@@ -354,33 +355,33 @@ class InlineEdit extends Widget {
 		// $ret .= (new DebugMsg($widget, '$widget'))->build();
 		return $ret;
 
-		list($choice, $label, $info) = explode(':', $this->text);
-		$choice = trim($choice);
-		$name = SG\getFirst($this->inputName, $this->field);
-		if ($label == '' && strpos($this->text, ':') == false) $label = $choice;
-		$label = trim($label);
-		$ret .= '<label><input class="inline-edit-field '
-			.'-'.$this->type
-			.($this->inputClass ? ' '.$this->inputClass : '').'" '
-			.($this->inputId ? 'id="'.$this->inputId.'"' : '')
-			.'type="'.$this->type.'" '
-			.'data-type="'.$this->type.'" '
-			.'name="'.$this->inputName.'" '
-			.'value="'.$choice.'"'
-			. ($this->group ? ' data-group="'.$this->group.'"'._NL : '')
-			. ($this->field ? ' data-fld="'.$this->field.'"'._NL : '')
-			.(isset($this->value) && $this->value == $choice ? ' checked="checked"':'')
-			.' onclick="" '
-			// .$this->attribute
-			.' style="width: 1.1em; min-width: 1.1em; vertical-align:middle;" '
-			.'/> '
-			.$label
-			.'</label>'
-			.$this->require
-			.($this->info ? '<sup class="sg-info" title="'.$this->info.'">?</sup>' : '')
-			.$this->postText;
+		// list($choice, $label, $info) = explode(':', $this->text);
+		// $choice = trim($choice);
+		// $name = SG\getFirst($this->inputName, $this->field);
+		// if ($label == '' && strpos($this->text, ':') == false) $label = $choice;
+		// $label = trim($label);
+		// $ret .= '<label><input class="inline-edit-field '
+		// 	.'-'.$this->type
+		// 	.($this->inputClass ? ' '.$this->inputClass : '').'" '
+		// 	.($this->inputId ? 'id="'.$this->inputId.'"' : '')
+		// 	.'type="'.$this->type.'" '
+		// 	.'data-type="'.$this->type.'" '
+		// 	.'name="'.$this->inputName.'" '
+		// 	.'value="'.$choice.'"'
+		// 	. ($this->group ? ' data-group="'.$this->group.'"'._NL : '')
+		// 	. ($this->field ? ' data-fld="'.$this->field.'"'._NL : '')
+		// 	.(isset($this->value) && $this->value == $choice ? ' checked="checked"':'')
+		// 	.' onclick="" '
+		// 	// .$this->attribute
+		// 	.' style="width: 1.1em; min-width: 1.1em; vertical-align:middle;" '
+		// 	.'/> '
+		// 	.$label
+		// 	.'</label>'
+		// 	.$this->require
+		// 	.($this->info ? '<sup class="sg-info" title="'.$this->info.'">?</sup>' : '')
+		// 	.$this->postText;
 
-		return $ret;
+		// return $ret;
 	}
 
 	function _renderNotField() {
