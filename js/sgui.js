@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-07-04
-* Version :: 15
+* Modify  :: 2024-07-06
+* Version :: 16
 */
 
 'use strict'
@@ -1240,7 +1240,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let inputType = $inlineField.data('type')
 		let onSaveFunction = $inlineWidget.attr('onSave')
 		let onSaveFieldCallback = $inlineField.data('callback')
-		let fieldOptions = $inlineField.data('options')
+		let fieldOptions = $inlineField.data('options') ? $inlineField.data('options') : {}
 		let showSubmitButton = (fieldOptions && 'button' in fieldOptions) || $inlineField.data('button') == 'yes'
 		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
 		let disableInputOnSave = false
@@ -1446,8 +1446,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 					$inlineField.find('.-for-input').html(selectValue)
 				} else {
-					console.log('REPLACE VALUE = ',data.value)
-					console.log($this)
+					// console.log('REPLACE VALUE = ',data.value)
+					// console.log($this)
 					// $this.html('<span>'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
 
 					$inlineField.find('.-for-input').html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
@@ -1520,7 +1520,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// console.log('RADIO VALUE ',value)
 				self.save($inlineField, value, onSaveFieldCallback)
 
-				console.log("SHOW:", fieldOptions)
+				// console.log("SHOW:", fieldOptions)
 				if ('showOn' in fieldOptions) {
 					let showOnValue = fieldOptions.showOn.value
 					let showOnElement = fieldOptions.showOn.element
