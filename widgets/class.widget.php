@@ -400,6 +400,7 @@ class ListTile extends Widget {
 			. ($this->subtitle ? '<span class="-subtitle-text">'.$this->_renderEachChildWidget(NULL, $this->subtitle).'</span>' : '')
 			. '</div>'._NL
 			. ($this->trailing ? '<div class="-trailing">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
+			. ($this->child || $this->children ? $this->_renderChildren($this->children, [$this->child]) : NULL)
 			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class ListTile
