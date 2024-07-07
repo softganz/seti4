@@ -7,9 +7,9 @@ Description : A simple theme.
 Template    : options
 Author      : Panumas Nontapan
 Author URI  : http://softganz.com
-Version     : 2
 Created     : 2018-10-15
-Last Modify : 2022-11-17
+Last Modify : 2027-07-07
+Version     : 3
 */
 
 @import url(reset.css);
@@ -319,6 +319,7 @@ $SCREENS
 		button.btn.-circle48 {width: 48px; height: 48px; padding: 0;}
 
 		.btn.-hidden {display: none;}
+		.btn:only-child {padding: 6px;}
 		.btn>.icon {margin: 0;}
 		.btn>.icon:only-child {margin: 0;}
 		.btn>.icon:not(:only-child) {}
