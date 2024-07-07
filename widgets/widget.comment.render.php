@@ -147,7 +147,7 @@ class CommentRenderWidget extends Widget {
 				$ret.= '<li><a class="reply" href="javascript:void(0)" onclick="window.location=\''.url('paper/'.$rs->tpid.'/comment/'.$rs->cid,NULL,'form').'\';return false;" title="Reply comment">Reply</a></li>'._NL;
 				$ret .= '<li><a class="quote" href="javascript:void(0)" onclick="window.location=\''.url('paper/'.$rs->tpid,'quote='.$rs->cid,'form').'\';return false;" title="Quote comment">Quote</a></li>'._NL;
 			}
-			if (cfg('email.delete_message')) $ret .= '<li><a class="sg-action" href="'.url('paper/comment/senddelete/'.$rs->cid.'/').' data-rel="box"">แจ้งลบความคิดเห็น</a></li>';
+			if (1||cfg('email.delete_message')) $ret .= '<li><a class="sg-action" href="'.url('paper/comment/senddelete/'.$rs->cid).'" data-rel="box" data-width="360">แจ้งลบความคิดเห็น</a></li>';
 			$ret.='</ul>';
 			$ret .= '</div>';
 
