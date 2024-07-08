@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2024-02-06
-* Version :: 3
+* Modify  :: 2024-07-08
+* Version :: 4
 */
 
 //---------------------------------------
@@ -832,32 +832,61 @@ function core_version_check() {
  * @param String $ip
  * @return boolean
  */
-function banIp($ip) {
-	$banips = cfg('ban.ip');
+function banRequest($ip = NULL, $host = NULL) {
+	$banList = (Array) cfg('ban.ip');
 	$banCount = count((Array) cfg('ban.ip'));
 	$currentTime = date('Y-m-d H:i:s');
+	$isBan = false;
+	$banChange = false;
 
-	$is_ban = false;
+	if (empty($banList)) return $isBan;
 
-	if (empty($banips)) return $is_ban;
+	// $banList[0]->ip = '^185.';
+	// $banList[0]->host = 'bot.semrush.[c]';
+	// $ip = '185.191.171.8';
+	// $host = '8.bl.bot.semrush.com';
 
-	foreach ($banips as $idx => $ban) {
-		if ($currentTime > $ban->end) unset($banips->{$idx});
-		if (preg_match('/^(.*)\*/', $idx, $out)) {
-			$banPattern = $out[1];
-			if (preg_match('/^'.preg_quote($banPattern).'/', $ip)) {
-				$is_ban = true;
-				break;
-			}
-		} else if ($idx == $ip && $currentTime < $ban->end) {
-			$is_ban = true;
-			break;
+	// debugMsg('IP '. $ip);
+	// debugMsg('HOST '. $host);
+	// debugMsg($banList, '$banList');
+
+	foreach ($banList as $idx => $ban) {
+		// Remove ban end time lese than current time
+		if ($currentTime > $ban->end) {
+			unset($banList[$idx]);
+			$banChange = true;
+			continue;
 		}
+
+		// debugMsg('PATTERN IP '.'/'.$ban->ip.'/');
+		if ($ban->ip && ($ban->ip === $ip || preg_match('/'.$ban->ip.'/', $ip))) {
+			// debugMsg('PATTERN IP FOUND '.'/'.$ban->ip.'/');
+			$isBan = true;
+		}
+		// debugMsg('PATTERN HOST '.'/'.$ban->host.'/');
+		if ($ban->host && preg_match('/'.$ban->host.'/', $host)) {
+			// debugMsg('PATTERN HOST FOUND '.'/'.$ban->host.'/');
+			$isBan = true;
+		}
+		// if ($isBan) break;
+
+		// if (preg_match('/^(.*)\*/', $idx, $out)) {
+		// 	$banPattern = $out[1];
+		// 	if (preg_match('/^'.preg_quote($banPattern).'/', $ip)) {
+		// 		$isBan = true;
+		// 		break;
+		// 	}
+		// } else if ($idx == $ip && $currentTime < $ban->end) {
+		// 	$isBan = true;
+		// 	break;
+		// }
 	}
-	$newBanCount = count((Array) $banips);
-	if ($newBanCount == 0) cfg_db_delete('ban.ip');
-	else if ($newBanCount != $banCount) cfg_db('ban.ip',$banips);
-	return $is_ban;
+	// debugMsg($banList, '$banList');
+	$newBanCount = count($banList);
+	if (count($banList) === 0) cfg_db_delete('ban.ip');
+	else if ($banChange) cfg_db('ban.ip', $banList);
+	// debugMsg($isBan ? 'BANED' : 'NOT BAN');
+	return $isBan;
 }
 
 /**

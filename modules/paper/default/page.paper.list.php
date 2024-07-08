@@ -2,8 +2,8 @@
 /**
 * Paper   :: Topics List Page
 * Created :: 2019-01-01
-* Modify  :: 2023-07-26
-* Version :: 3
+* Modify  :: 2024-07-08
+* Version :: 4
 *
 * @return Widget
 *
@@ -166,7 +166,7 @@ function paper_list($self) {
 		} else if ($topics->forum->fid && user_access('administer contents,administer papers,create '.$topics->forum->fid.' paper')) {
 			user_menu('new',tr('Create new topic'),url('paper/post/forum/'.$topics->forum->fid));
 		}
-		if ($para->ip && user_access('access administrator pages')) user_menu('banip','Ban this IP for 1 day',url('api/admin/ip.ban', ['ip' => $para->ip]));
+		if ($para->ip && user_access('access administrator pages')) user_menu('banip','Ban this IP for 1 day',url('admin/ban/request', ['ip' => $para->ip]));
 
 		$self->theme->navigator=user_menu();
 	}

@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-07-03
-* Version :: 16
+* Modify  :: 2024-07-08
+* Version :: 17
 */
 
 /*************************************************************
@@ -323,6 +323,12 @@ class SgCore {
 				$jsonValue = \SG\json_decode($configValue, cfg($configKey));
 				//debugMsg($jsonValue, '$jsonValue['.$configKey.']');
 				if (isset($jsonValue) && is_object($jsonValue)) {
+					cfg($configKey, $jsonValue);
+				}
+			} else if (is_string($configValue) && preg_match('/^\[/', trim($configValue))) {
+				$jsonValue = (Array) SG\json_decode($configValue, cfg($configKey));
+				//debugMsg($jsonValue, '$jsonValue['.$configKey.']');
+				if (isset($jsonValue) && is_array($jsonValue)) {
 					cfg($configKey, $jsonValue);
 				}
 			} else {

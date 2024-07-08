@@ -2,8 +2,8 @@
 /**
 * Admin   :: Admin General API
 * Created :: 2021-12-27
-* Modify  :: 2023-01-28
-* Version :: 2
+* Modify  :: 2024-07-08
+* Version :: 3
 *
 * @param String $action
 * @return Array
@@ -18,26 +18,6 @@ class AdminApi extends PageApi {
 		parent::__construct([
 			'action' => $action,
 		]);
-	}
-
-	function IpBan() {
-		if (!($ip = post('ip'))) {
-			return [
-				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
-				'text' => 'ข้อมูลไม่ครบถ้วน',
-			];
-		}
-
-		$banIpList = cfg('ban.ip');
-		if (!is_object($banIpList)) $banIpList = (Object) [];
-		$banTime = \SG\getFirst(post('time'), cfg('ban.time'), 1*24*60); // Ban time in minute
-		$banIpList->{$ip} = (Object) [
-			'start' => date('Y-m-d H:i:s'),
-			'end' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' +'.$banTime.' minutes')),
-		];
-		$ret .= 'BAN IP '.$ip;
-		cfg_db('ban.ip', \SG\json_encode($banIpList));
-		return 'IP was banded.';
 	}
 
 	function saveUserAccess() {

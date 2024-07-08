@@ -1,16 +1,15 @@
 <?php
 /**
-* Stats : Current User Online
-* Created 2018-09-01
-* Modify  2022-02-13
+* Stats   :: Current User Online
+* Created :: 2018-09-01
+* Modify  :: 2024-07-08
+* Version :: 2
 *
 * @param String $arg1
 * @return Widget
 *
 * @usage stats/online
 */
-
-import('model:counter.php');
 
 class StatsOnline extends Page {
 	var $onlineType;
@@ -75,7 +74,7 @@ class StatsOnline extends Page {
 							'access -date'=>'Access',
 							'amt hits'=>'Hits',
 							'Browser/Host',
-							'ban -center' => $this->right->fullView ? 'Ban' : '',
+							'ban -center' => $this->right->fullView ? '<a class="sg-action" href="'.url('admin/ban..list').'" data-rel="box" data-width="full">Ban</a>' : '',
 						],
 						'children' => array_map(
 							function($rs) {
@@ -96,7 +95,7 @@ class StatsOnline extends Page {
 									date(($current_date != date('Y-m-d',$rs->access) ? 'Y-m-d ' : '').'H:i:s',$rs->access),
 									$rs->hits,
 									$rs->browser.' '.($this->right->fullView ? $rs->host : ''),
-									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('api/admin/ip.ban', ['ip' => $full_ip]).'" data-rel="notify" data-title="BAN IP" data-confirm="ต้องการ BAN IP นี้ไม่ให้เข้าใช้งานระบบ กรุณายืนยัน?"><i class="icon -material">block</i></a>' : '',
+									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('admin/ban/request', ['ip' => $full_ip, 'host' => $rs->host]).'" data-rel="box" data-width="480"><i class="icon -material">block</i></a>' : '',
 								];
 							},
 							CounterModel::onlineUsers(['type' => $this->onlineType])

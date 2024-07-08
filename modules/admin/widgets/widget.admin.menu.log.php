@@ -1,8 +1,9 @@
 <?php
 /**
-* Admin : Log Menu
-* Created 2016-11-08
-* Modify  2022-03-31
+* Admin   :: Log Menu
+* Created :: 2016-11-08
+* Modify  :: 2024-07-08
+* Version :: 2
 *
 * @return Widget
 *
@@ -21,7 +22,7 @@ class AdminMenuLogWidget extends Widget {
 							'leading' => new Icon(''),
 							'trailing' => new Button([
 								'type' => 'normal',
-								'href' => url('admin/log/ban'),
+								'href' => url('admin/ban..list'),
 								'text' => 'Ban List',
 							]),
 							'subtitle' => 'View IP ban list.',
