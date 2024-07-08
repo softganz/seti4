@@ -3,7 +3,7 @@
 * Core Init :: Init Web
 * Created   :: 2023-08-01
 * Modify    :: 2024-07-08
-* Version   :: 4
+* Version   :: 5
 */
 
 global $R;
@@ -177,7 +177,10 @@ if (!$R->myDb->status) {
 // Load config variable from table
 SgCore::loadConfig(cfg_db());
 
-if (banRequest(getenv('REMOTE_ADDR'), $_SERVER['HTTP_USER_AGENT'])) die('Sorry!!!! You were banned.');
+if (banRequest(getenv('REMOTE_ADDR'), gethostbyaddr(getenv('REMOTE_ADDR')))) {
+	http_response_code(_HTTP_ERROR_NOT_FOUND);
+	die('Sorry!!!! You were banned.');
+}
 
 // if ($site_message) {
 // 	$ret .= '<p class="notify">'.tr('<h2>Website temporary out of service.</h2><p>My Website is currently out of service ('.$site_message.'). We should be back shortly. Thank you for your patience.</p>','<strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ').'</p>';

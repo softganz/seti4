@@ -1,4 +1,9 @@
 {
+	"dev": {
+		"created": "2024-05-15",
+		"lastModify": "2024-07-08",
+		"version": 2
+	},
 	"autoLoader": {
 		"items": {
 			"db": "lib/class.db.php",
@@ -22,6 +27,9 @@
 		"maximumScale": 2.5,
 		"initialScale": 1.0,
 		"minimumScale": 1.0
+	},
+	"ban": {
+		"log": false
 	},
 	"user": {
 		"register": {

@@ -3,7 +3,7 @@
 * Core    :: Core Function
 * Created :: 2023-08-01
 * Modify  :: 2024-07-08
-* Version :: 4
+* Version :: 5
 */
 
 //---------------------------------------
@@ -861,12 +861,12 @@ function banRequest($ip = NULL, $host = NULL) {
 		// debugMsg('PATTERN IP '.'/'.$ban->ip.'/');
 		if ($ban->ip && ($ban->ip === $ip || preg_match('/'.$ban->ip.'/', $ip))) {
 			// debugMsg('PATTERN IP FOUND '.'/'.$ban->ip.'/');
-			$isBan = true;
+			$isBan = 'IP';
 		}
 		// debugMsg('PATTERN HOST '.'/'.$ban->host.'/');
 		if ($ban->host && preg_match('/'.$ban->host.'/', $host)) {
 			// debugMsg('PATTERN HOST FOUND '.'/'.$ban->host.'/');
-			$isBan = true;
+			$isBan = 'HOST';
 		}
 		// if ($isBan) break;
 
@@ -886,6 +886,16 @@ function banRequest($ip = NULL, $host = NULL) {
 	if (count($banList) === 0) cfg_db_delete('ban.ip');
 	else if ($banChange) cfg_db('ban.ip', $banList);
 	// debugMsg($isBan ? 'BANED' : 'NOT BAN');
+
+	if (cfg('ban')->log) {
+		LogModel::save([
+			'module' => 'ban',
+			'keyword' => 'request',
+			'message' => $ip.' '.$host,
+			'fieldName' => $isBan ? 'BAN '.$isBan : 'PASS',
+		]);
+	}
+
 	return $isBan;
 }
 
