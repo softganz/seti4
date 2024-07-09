@@ -2,8 +2,8 @@
 /**
 * Admin   :: Admin Ban API
 * Created :: 2024-07-08
-* Modify  :: 2024-07-08
-* Version :: 2
+* Modify  :: 2024-07-09
+* Version :: 3
 *
 * @param String $action
 * @return Array
@@ -56,8 +56,8 @@ class AdminBanApi extends PageApi {
 	// Remove ban item
 	function remove() {
 		$id = SG\getFirstInt(post('id'));
-		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน[confirm]');
-		if (is_null($id)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน[id]');
+		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		if (is_null($id)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
 
 		$banList = (Array) cfg('ban.ip');
 		unset($banList[$id]);
