@@ -16,8 +16,8 @@
 * ============================================
 
 Created :: 2019-12-08
-Modify  :: 2024-07-03
-Version :: 4
+Modify  :: 2024-07-09
+Version :: 5
 */
 
 namespace SG;
@@ -371,11 +371,14 @@ function qrcode($url, $options = '{}') {
 		$domain = $options->domain ? $options->domain : _DOMAIN;
 	}
 	$urlEncode = $domain.urlencode($url);
-	$qrCode = '<img class="-qrcode" src="https://chart.googleapis.com/chart?cht=qr&chl='.$urlEncode.'&chs='.$options->width.'x'.$options->height.'&choe=UTF-8&chld=L|2" alt="QR-Code" width="'.$options->imgWidth.'" height="'.$options->imgHeight.'">'
+	// Google qr code was deprecated
+	// $qrCode = '<img class="-qrcode" src="https://chart.googleapis.com/chart?cht=qr&chl='.$urlEncode.'&chs='.$options->width.'x'.$options->height.'&choe=UTF-8&chld=L|2" alt="QR-Code" width="'.$options->imgWidth.'" height="'.$options->imgHeight.'">'
+
+	$qrCode = '<img class="-qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size='.$options->width.'x'.$options->height.'&data='.$urlEncode.'" alt="QR-Code" width="'.$options->imgWidth.'" height="'.$options->imgHeight.'">'
 		. ($options->showUrl ? '<span class="-url">'.urldecode($urlEncode).'</span>' : '');
 	return $qrCode;
 }
-
+https://communeinfo.com/imed
 
 
 /**
