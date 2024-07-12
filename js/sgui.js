@@ -1666,6 +1666,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// console.log('$this', $this)
 			// console.log('Length = ',$allBox.length)
 			return false;
+		// } else {
+		// 	console.log('keyboard code : ',evt.keyCode)
+		// 	console.log($(this))
 		}
 	});
 
