@@ -95,6 +95,7 @@
 	.widget-appbar>.-nav>.-more {position: absolute; right: 8px; top: 8px; overflow: visible;}
 
 	.widget-appbar>.-trailing {height: 4.8rem; display: flex; align-items: center;}
+	.widget-appbar>.-trailing .widget-nav>ul {align-items: center;}
 	.widget-appbar>.-trailing .widget-row>.-item>.btn {box-shadow: none; margin: 0 4px;}
 	.widget-appbar>.-trailing .widget-dropbox>a {background-color: transparent; box-shadow: none;}
 	.widget-appbar>.-trailing .widget-dropbox>a:hover {background-color: #fff; opacity: 0.5;}
@@ -124,12 +125,12 @@
 
 
 /* widget-nav */
-.widget-nav {display: flex; overflow: scroll; flex-direction: column; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */}
+.widget-nav {display: flex; overflow: scroll; flex-direction: row; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */}
 	.widget-nav::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
 	.widget-nav>ul {display: flex; justify-content: space-around; list-style-type: none; margin: 0; padding: 0; width: fit-content;}
 	.widget-nav>ul>li {position: relative;}
 	.widget-nav>ul>li:not(:last-child) {padding: 0 4px 0 0;}
-	.widget-nav.-vertical {flex: 1 0 100%; flex-wrap: wrap;}
+	.widget-nav.-vertical {flex: 1 0 100%; flex-wrap: wrap; flex-direction: column;}
 	.widget-nav.-vertical>ul {flex: 1 0 100%; flex-wrap: wrap; width: 100%;}
 	.widget-nav.-vertical>ul>li {flex: 0 0 100%; flex-wrap: wrap; padding: 0;}
 	.widget-nav.-vertical>ul>li>a {display: flex; padding: 8px; gap: 8px;}
