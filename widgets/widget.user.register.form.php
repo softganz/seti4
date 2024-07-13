@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2024-04-11
-* Version :: 4
+* Modify  :: 2024-07-13
+* Version :: 5
 *
 * @param Object $register
 * @return Widget
