@@ -44,7 +44,7 @@ class UserRegisterFormWidget extends Widget {
 
 		return new Form([
 			'variable' => 'register',
-			'action' => url('user/register'._MS_.'save'),
+			'action' => url('user/register..save'),
 			'id' => 'edit-register',
 			'class' => 'x-sg-form user-register-form',
 			// 'title' => '<header class="header"><h3>'.tr('Register New Member').'</h3></header>',
