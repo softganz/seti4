@@ -46,7 +46,7 @@ function docs($self) {
 	}
 
 	$ret.='<style type="text/css">
-	body {font: 400 16px/24px Roboto,sans-serif; color:#666;}
+	body {font: 400 16px/24px Roboto,sans-serif;}
 	h1, h2, h3, h4, h5, h6 {margin: 0; padding:8px 0;font-family: Roboto,sans-serif; font-weight: normal; color: #ccc;}
 	h2 {font-size:1.4em;}
 	h3 {font-size:1.2em;}
