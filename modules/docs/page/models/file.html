@@ -51,29 +51,30 @@
 
 <h3 id="upload">FileModel::upload($photoFiles, $data = NULL, $options = '{}')</h3>
 <pre>
-		$defaults = '{debug: false, showDetail: true;}';
+		$options = {
+			debug: false,
+			showDetail: true,
+			useSourceFilename: false,
+			fileNameLength: 30,
+			showDetail: false
+		}
 
-		$useSourceFilename = $options->useSourceFilename;
-
-		$data = (Object) array_merge(
-			[
-				'nodeId' => NULL, // Int
-				'folder' => NULL, // String
-				'preName' => NULL, // String
-				'deleteUrl' => NULL, // String,
-				'fileId' => NULL, // Int,
-				'cid' => NULL, // Int
-				'title' => NULL, // String
-				'tagName' => NULL, // String
-				'orgId' => NULL, // Int
-				'uid' => NULL, // Int
-				'refId' => NULL, // Int
-				'link' => NULL, // String
-				'description' => NULL, // String
-				'onComplete' => function($data) {}
-			],
-			(Array) $data
-		);
+		$data = (Object) [
+			'nodeId' => NULL, // Int
+			'folder' => NULL, // String
+			'preName' => NULL, // String
+			'deleteUrl' => NULL, // String,
+			'fileId' => NULL, // Int,
+			'cid' => NULL, // Int
+			'title' => NULL, // String
+			'tagName' => NULL, // String
+			'orgId' => NULL, // Int
+			'uid' => NULL, // Int
+			'refId' => NULL, // Int
+			'link' => NULL, // String
+			'description' => NULL, // String
+			'onComplete' => function($data) {}
+		]
 
 		$result = (Object) [
 			'link' => NULL,
@@ -82,7 +83,7 @@
 			'error' => [],
 			'items' => [],
 			'_query' => [],
-		];
+		]
 </pre>
 
 <h3 id="delete">FileModel::delete($fileId, $options = '{}')</h3>
