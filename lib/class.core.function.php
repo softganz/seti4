@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2024-07-08
-* Version :: 5
+* Modify  :: 2024-07-13
+* Version :: 6
 */
 
 //---------------------------------------
@@ -13,7 +13,9 @@
 /**
  * function R :: Access core resource
  */
-function R() {return $GLOBALS['R'];}
+function R($resourceKey = NULL) {
+	return $resourceKey ? $GLOBALS['R']->{$resourceKey} : $GLOBALS['R'];
+}
 
 /**
  * Import library in module folder and found
