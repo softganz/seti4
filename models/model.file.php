@@ -149,7 +149,7 @@ class FileModel {
 	}
 
 	public static function upload($photoFiles, $data = NULL, $options = '{}') {
-		$defaults = '{debug: false, showDetail: true;}';
+		$defaults = '{debug: false, showDetail: true, useSourceFilename: false, fileNameLength: 30, showDetail: false}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
 
