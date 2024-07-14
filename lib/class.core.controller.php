@@ -18,13 +18,15 @@
 class R {
 	public $request;
 	public $appAgent = NULL;
+	public $message;
 	public $setting;
 	public $options;
 	public $counter;
 	public $timer;
 	public $user;
-	public $mydb;
-	public $message;
+	public $core;
+	public $myDb;
+	public $DB;
 
 	function __construct() {
 		$this->setting = (Object) [];
