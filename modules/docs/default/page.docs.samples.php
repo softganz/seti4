@@ -1,7 +1,6 @@
 <?php
 function docs_samples($self=NULL) {
 	$ret .= '<h3>Samples</h3>';
-	$lookfolder = array('busi','gov','hsmi','happy','seti','sator4u','photon');
 	$dir    = '/Users/httpdocs/';
 
 	$dir = dirname(__FILE__).'/../page/sample';
