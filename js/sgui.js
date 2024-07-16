@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-07-06
-* Version :: 16
+* Modify  :: 2024-07-16
+* Version :: 17
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.10'
+let sgUiVersion = '4.00.11'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -33,6 +33,10 @@ window.addEventListener(
 			});
 	}
 );
+
+window.addEventListener('popstate', function (event) {
+	sgPopState(event)
+});
 
 // Add click event to input type="file"
 // for Flutter inapp_webview to check camera permission
@@ -281,10 +285,6 @@ async function sgBoxBack(options = {}) {
 	// 	return false
 	// }
 }
-
-window.addEventListener('popstate', function (event) {
-	sgPopState(event)
-});
 
 function sgPopState(event) {
 	// console.log('POP STATE CALLBACK = ',popStateCallback)
@@ -606,9 +606,10 @@ function sgWebViewDomProcess(id) {
 				if (debugSG) console.log('Change to Server to '+linkData.server)
 				if (isFlutterInAppWebViewReady) {
 					const args = [linkData.server];
-					let r = window.flutter_inappwebview.callHandler("useServer", ...args);
+					console.log(linkData.server)
+					let r = window.flutter_inappwebview.callHandler("changeServer", linkData.server);
 				} else if (isAndroidWebViewReady) {
-					Android.useServer(linkData.server)
+					Android.changeServer(linkData.server)
 				}
 			} else if (openType) {
 				let pattern = /^((http|https|ftp):\/\/)/
