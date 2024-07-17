@@ -61,6 +61,7 @@ class Widget extends WidgetBase {
 	var $child; // Any
 	var $children = []; // Array
 	var $attribute = []; // Array
+	var $childContainer = []; // Array
 
 	// @deprecated
 	var $attributeText;
@@ -188,9 +189,10 @@ class Widget extends WidgetBase {
 		foreach ($attributes as $key => $value) if (is_null($value)) unset($attributes[$key]);
 
 		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
-		$attributes['class'] .= ($this->childContainer['class'] ? $this->childContainer['class'] : '')
+		$attributes['class'] = ($this->childContainer['class'] ? $this->childContainer['class'] : '')
 			. ($this->itemClass ? ' '.$this->itemClass : '')
-			. (!is_numeric($childKey) ? ' -'.$childKey : '');
+			. (!is_numeric($childKey) ? ' -'.$childKey : '')
+			. ($attributes['class'] ? ' '.$attributes['class'] : '');
 
 		// debugMsg('$childTagName = '.$childTagName);
 		// debugMsg($attributes, '$attributes-_renderChildContainerStart');
@@ -215,8 +217,14 @@ class Widget extends WidgetBase {
 		foreach ($childrens as $childKey => $child) {
 			$extraArgs = [];
 			if (is_string($child) && $child === '<sep>') {
+				// Children is separator
 				$extraArgs['class'] = $args['class'].' -sep';
+			} else if (is_string($child) && $child === '<spacer>') {
+				// Children is spacer
+				$extraArgs['class'] = $args['class'].($args['class'] ? ' ' : '').'-space';
+				$child = '';
 			} else if (is_object($child) && get_class($child) === 'ChildrenWidget') {
+				// children is class of ChildrenWidget
 				if ($child->tagName) $ret .= '<'.$child->tagName.' class="-children-widget '.$child->class.'">';
 				foreach ($child->children as $subKey => $subChild) {
 					if (is_string($subKey)) $subChild['inputName'] = $subKey;
@@ -228,7 +236,6 @@ class Widget extends WidgetBase {
 				continue;
 			} else {
 				if (is_string($key)) $child['inputName'] = $key;
-				$childrenToRender[] = $child;
 			}
 
 			$ret .= $this->_renderChildContainerStart($childKey, $args + $extraArgs, $child);
