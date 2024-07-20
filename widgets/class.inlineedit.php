@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-07-06
-* Version :: 6
+* Modify  :: 2024-07-20
+* Version :: 7
 *
 * @param Array $args
 * @return Widget
@@ -320,6 +320,11 @@ class InlineEdit extends Widget {
 	private function _renderRadioItem($widget) {
 		$ret = '';
 		foreach($widget->choices as $key => $value) {
+			if (is_string($value) && preg_match('/^</', $value)) {
+				$ret .= $value;
+				continue;
+			}
+
 			$isCheck = NULL;
 			if (is_array($widget->value)) {
 				$isCheck = in_array($key, $widget->value);
