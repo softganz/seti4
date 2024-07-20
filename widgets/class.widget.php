@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-05-31
-* Version :: 33
+* Modify  :: 2024-07-20
+* Version :: 34
 *
 * @param Array $args
 * @return Widget
@@ -551,7 +551,7 @@ class Button extends Widget {
 			. ($this->onClick ? ' onClick=\''.$this->onClick.'\'' : '')
 			. '>'
 			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
-			. ($this->text ? '<span class="-label">' . $this->text . ($this->description ? '<em class="-desc">'.$this->description.'</em>' : '') . '</span>' : '')
+			. ($this->text ? '<span class="-label">' . $this->text . ($this->description ? $this->description : '') . '</span>' : '')
 			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
 			. '</a>';
 		return $button;
