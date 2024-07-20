@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-07-16
-* Version :: 17
+* Modify  :: 2024-07-20
+* Version :: 18
 */
 
 'use strict'
@@ -243,14 +243,19 @@ async function sgBoxBack(options = {}) {
 
 	if (options.close) {
 		// console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
-		if (options.historyBack) {
-			for (let historyCount = 0; historyCount < sgBoxPageCount; historyCount++) {
-				// console.log('historyCount = ', historyCount)
-				history.back()
+		if (isFlutterInAppWebViewReady) {
+			window.flutter_inappwebview.callHandler("closeWebView");
+		} else if (isAndroidWebViewReady) {
+			Android.reloadWebView('Yes')
+		} else if ($boxElement.length) {
+			if (options.historyBack) {
+				for (let historyCount = 0; historyCount < sgBoxPageCount; historyCount++) {
+					// console.log('historyCount = ', historyCount)
+					history.back()
+				}
 			}
+			$.colorbox.close()
 		}
-		if ($boxElement.length) $.colorbox.close()
-		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
 		sgBoxPageCount = 0
 	} else if (sgBoxPageCount === 1) {
 		// console.log('sgBoxBack => CLOSE FOR LAST BOX')
@@ -1694,12 +1699,15 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 				// console.log($(this).data('inputName'),$(this).data('options'),$(this))
 				// console.log('showOnElement',$this.data('showOnElement'), inputName, inputValue)
+
 				if (showOnElement === 'nextInput') {
 					$targetElement = $this.next('.inlineedit-field')
 				} else {
 					$targetElement = $(showOnElement)
 				}
+
 				// console.log('$targetElement', $targetElement)
+
 				if ($targetElement) {
 					let inputName = $this.data('inputName')
 					if (inputValue === showOnValue) {
@@ -1710,6 +1718,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					// console.log($this.find('input[name='+ inputName +']'))
 					// if ($this.find('input[name='+ inputName +']'))
 				}
+				// console.log('-----')
 			}
 		});
 
