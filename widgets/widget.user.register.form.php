@@ -312,6 +312,7 @@ class UserRegisterFormWidget extends Widget {
 					let $this = $(element)
 					let password = $this.val()
 
+
 					if (!validPassword(password)) {
 						// $this.focus()
 						return false
@@ -322,6 +323,7 @@ class UserRegisterFormWidget extends Widget {
 					this.checkAllComplete()
 
 					function validPassword(password) {
+						let passwordChar = /[a-zA-Zก-ฮ\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\[\]\|\:\"\;\\\'\<\>\?\,\.\\/\\\\]/
 						let errors = []
 
 						if (password.length == 0) return true
@@ -332,7 +334,7 @@ class UserRegisterFormWidget extends Widget {
 						} else {
 							if (password.length < '.$this->cfgUserRegister->passwordMinLength.') errors.push("รหัสผ่านต้องมากกว่า '.$this->cfgUserRegister->passwordMinLength.' ตัวอักษร")
 							else if (checkValids.indexOf("passwordContainNumeric") && !password.match(/\d/)) errors.push("รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว")
-							else if (checkValids.indexOf("passwordContainLetter") && !password.match(/[a-zA-Zก-ฮ]/)) errors.push("รหัสผ่านต้องมีตัวอักษรอย่างน้อย 1 ตัว")
+							else if (checkValids.indexOf("passwordContainLetter") && !password.match(passwordChar)) errors.push("รหัสผ่านต้องมีตัวอักษรอย่างน้อย 1 ตัว")
 						}
 
 						if (errors.length === 0) {

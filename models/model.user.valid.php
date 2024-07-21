@@ -2,8 +2,8 @@
 /**
 * User    :: Check User Valid
 * Created :: 2024-02-27
-* Modify  :: 2024-02-27
-* Version :: 1
+* Modify  :: 2024-07-21
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -14,35 +14,36 @@
 */
 
 class UserValidModel {
-	public static function checkPasswordValid($pwd, &$errors) {
+	public static function checkPasswordValid($password, &$errors) {
 		$errors_init = $errors;
 		$cfgUserRegister = cfg('user')->register;
 		$validCheck = explode(',', $cfgUserRegister->valid);
 
 		// passwordMinLength,passwordMaxLength,passwordContainNumeric
-		// $errors[] = 'password = '.$pwd;
+		// $errors[] = 'password = '.$password;
 		// $errors[] = 'passwordMinLength = '.$cfgUserRegister->passwordMinLength;
-		if (in_array('passwordMinLength', $validCheck) && strlen($pwd) < $cfgUserRegister->passwordMinLength) {
+		if (in_array('passwordMinLength', $validCheck) && strlen($password) < $cfgUserRegister->passwordMinLength) {
 			$errors[] = 'รหัสผ่านต้องมีความยาวอย่างน้อย '.$cfgUserRegister->passwordMinLength.' ตัวอักษร'; //"Password too short!";
 		}
 
-		if (in_array('passwordMaxLength', $validCheck) && strlen($pwd) > $cfgUserRegister->passwordMaxLength) {
+		if (in_array('passwordMaxLength', $validCheck) && strlen($password) > $cfgUserRegister->passwordMaxLength) {
 			$errors[] = 'รหัสผ่านต้องมีความยาวไม่เกิน '.$cfgUserRegister->passwordMaxLength.' ตัวอักษร'; //"Password too long!";
 		}
 
-		if (in_array('passwordContainNumeric', $validCheck) && !preg_match('/[0-9]+/', $pwd)) {
+		if (in_array('passwordContainNumeric', $validCheck) && !preg_match('/[0-9]+/', $password)) {
 			$errors[] = tr('Password must include at least one number').'!';
 		}
 
-		if (in_array('passwordContainLetter', $validCheck) && !preg_match('/[a-zA-Zก-ฮ]+/', $pwd)) {
+		$containChar = 'a-zA-Zก-ฮ\!\@\#\$\%\^\&\*\(\)\_\+\-\=\{\}\[\]\|\:\"\;\\\'\<\>\?\,\.\\/';
+		if (in_array('passwordContainLetter', $validCheck) && !preg_match('/['.$containChar.']/', $password)) {
 			$errors[] = tr('Password must include at least one letter').'!';
 		}
 
-		if (in_array('passwordContainUpperCase', $validCheck) && !preg_match('/[A-Z]+/', $pwd)) {
+		if (in_array('passwordContainUpperCase', $validCheck) && !preg_match('/[A-Z]+/', $password)) {
 			$errors[] = tr('Password must include at least one upper case letter').'!';
 		}
 
-		// if (in_array('passwordContainNoneLetter', $validCheck) && !preg_match('/[A-Z]+/', $pwd)) {
+		// if (in_array('passwordContainNoneLetter', $validCheck) && !preg_match('/[A-Z]+/', $password)) {
 		// 	$errors[] = tr('Password must include at least one upper case letter').'!';
 		// }
 
