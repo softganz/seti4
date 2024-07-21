@@ -261,6 +261,7 @@ $(document).on('submit','form.signform', function(e) {
 
 
 
+// .sg-load,[data-load
 $(document).ready(function() {
 	$('body').append('<div id="notify" class="notify-main -no-print"></div><div id="tooltip" class="-noprint"></div>');
 	$("#notify").hide();
