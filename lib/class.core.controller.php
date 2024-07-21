@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-07-08
-* Version :: 17
+* Modify  :: 2024-07-21
+* Version :: 18
 */
 
 /*************************************************************
@@ -1348,22 +1348,21 @@ class SgCore {
 	* @param String
 	*/
 	static function setLang($lang = NULL) {
-		//echo 'lang='.$_GET['lang'].'='.$_REQUEST['lang'].'='.post('lang').'='.$lang.'='.$_COOKIE['lang'];
 		if ($lang) {
 			// do nothing
-		} else if ($lang = $_GET['lang'] && is_string($lang)) {
-			if ($lang=='clear') {
-				setcookie('lang',NULL,time()-100,cfg('cookie.path'),cfg('cookie.domain'));
+		} else if (($lang = $_GET['lang']) && is_string($lang)) {
+			if ($lang === 'clear') {
+				setcookie('lang', NULL, time()-100, cfg('cookie.path'), cfg('cookie.domain'));
 			} else {
-				setcookie('lang',$lang,time()+10*365*24*60*60,cfg('cookie.path'),cfg('cookie.domain'));
+				setcookie('lang', $lang, time()+10*365*24*60*60, cfg('cookie.path'), cfg('cookie.domain'));
 			}
-			//$_COOKIE['lang']=$lang;
 			//echo 'lang='.$_REQUEST['lang'].'='.post('lang').'='.$lang.'='.$_COOKIE['lang'];
 			//echo cfg('cookie.path').' '.cfg('cookie.domain');
-		} else if (array_key_exists('lang', $_COOKIE) && $lang=$_COOKIE['lang']) {
-			$lang=$_COOKIE['lang'];
+		} else if (array_key_exists('lang', $_COOKIE) && ($lang = $_COOKIE['lang'])) {
+			$lang = $_COOKIE['lang'];
 		}
 		cfg('lang',$lang);
+		// echo '<br><br><br>setLang<br>_GET = '.$_GET['lang'].'<br>_REQUEST = '.$_REQUEST['lang'].'<br>post = '.post('lang').'<br>_COOKIE = '.$_COOKIE['lang'].'<br>$lang = '.$lang;
 		return $lang;
 	}
 }
