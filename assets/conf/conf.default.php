@@ -292,7 +292,9 @@ Disallow: /stat
 Disallow: /tags
 Disallow: /watchdog
 Disallow: /project/develop
-Disallow: /user';
+Disallow: /user
+Disallow: /upload
+Disallow: /file';
 
 $cfg['ibuy.ordersep']='';
 $cfg['ibuy.orderdigit']=4;
