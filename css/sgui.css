@@ -248,6 +248,7 @@
 	.inline-edit-field.-text input:hover {border: none;}
 	.inline-edit-field>*>abbr {margin: 0 0 8px 0; padding: 8px; display: block; background-color: #eee; border-radius: 4px;}
 
+	.inlineedit-field input:invalid {background-color: #ffafaf;}
 
 	.inline-edit-field.-hidden {display: none;}
 	.inline-edit-field.-warning, .inline-edit-view.-warning {color: blue;}
