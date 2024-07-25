@@ -2,8 +2,8 @@
 /**
 * Widget  :: Table Widget
 * Created :: 2020-10-01
-* Modify  :: 2023-07-05
-* Version :: 2
+* Modify  :: 2024-07-25
+* Version :: 3
 *
 * @param Array $args
 * @return Widget
@@ -133,7 +133,7 @@ class Table extends Widget {
 			$rowNo = 0;
 
 			$ret .= '<tbody>'._NL;
-			foreach ($this->children as $row) {
+			foreach ($this->children as $rowKey => $row) {
 				if (is_string($row) && $row == '<header>') {
 					$ret .= $headerTag._NL;
 					continue;
@@ -154,7 +154,11 @@ class Table extends Widget {
 
 				++$rowNo;
 
-				$rowConfig['class'] = 'row -row-'.$rowNo.(isset($rowConfig['class']) ? ' '.$rowConfig['class'] : '');
+				if (is_string($rowKey)) $rowConfig['id'] = $rowKey;
+
+				$rowConfig['class'] = 'row -row-'.$rowNo
+					. (is_string($rowKey) ? ' '.$rowKey : '')
+					. (isset($rowConfig['class']) ? ' '.$rowConfig['class'] : '');
 				if (array_key_exists('attr', $rowConfig)) {
 					$attr = $rowConfig['attr'].' ';
 					unset($rowConfig['attr']);
