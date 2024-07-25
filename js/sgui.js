@@ -2,7 +2,7 @@
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
 * Modify  :: 2024-07-25
-* Version :: 20
+* Version :: 21
 */
 
 'use strict'
@@ -1409,7 +1409,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			//console.log('length='+$('[data-group="'+para.group+'"]').length)
 			//console.log(para)
 
-			$.post(postUrl,para, function(data) {
+			$.post(postUrl, para, function(data) {
 				updatePending--
 				$inlineWidget.find('.inlineedit-field').removeClass('-disabled')
 
@@ -1480,7 +1480,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 				if (debugSG) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '()' : ''))
 				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
-					window[onSaveFunction]($inlineField, response, $inlineWidget);
+					window[onSaveFunction](settings, $inlineField, response);
+					// window[onSaveFunction]($inlineField, response, $inlineWidget);
 				}
 
 				// Process callback function on each save field
@@ -1489,7 +1490,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				if (debugSG) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
 					if (typeof window[callbackFunction] === 'function') {
-						window[callbackFunction]($inlineField,response,$inlineWidget);
+						window[callbackFunction]($inlineField, response, $inlineWidget);
 					} else if (settings.callbackType == 'silent') {
 						$.get(callbackFunction, function() {})
 					} else {
@@ -1500,7 +1501,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// console.log('settings.done ', settings.done)
 
 				// Process action done
-				if (settings.done) sgActionDone(settings.done, $inlineField, response);
+				if (settings.done) {
+					if (debugSG) console.log('PROCESSING DONE:', settings.done)
+					sgActionDone(settings.done, $inlineField, response);
+				}
 				editActive = false
 				console.log('$.sgInlineEdit DONE!!!')
 			});
@@ -1641,7 +1645,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 					// Blur to save value
 					$this.find('input').blur();
-					// console.log('TYPE ',$nextBox.data('type'))
 
 					// Delay to focus next box
 					setTimeout(function() {
