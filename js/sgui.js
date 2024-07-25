@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-07-24
-* Version :: 19
+* Modify  :: 2024-07-25
+* Version :: 20
 */
 
 'use strict'
@@ -1215,7 +1215,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			postUrl = $inlineWidget.data('action') ? $inlineWidget.data('action') : $inlineWidget.data('updateUrl')
 		}
 
-		if (debugSG) console.log(`=== SG-INLINE-EDIT DEBUG for "(${inputType}) ${$inlineField.data("inputName")}" ===>`)
+		if (debugSG) console.log('=== SG-INLINE-EDIT DEBUG for "(' + inputType + ') ' + $inlineField.data("inputName") + '" ===>')
 
 		// console.log('POST URL = ',postUrl)
 		// console.log($inlineWidget.data('updateUrl'))
@@ -1262,9 +1262,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// called on error
 			onerror: function(settings, original, xhr) {},
 			// called before reset
-			onreset: function(settings, original) {
-				console.log('ON RESET')
-			},
+			onreset: function(settings, original) {},
 			// called before submit
 			onsubmit: function(settings, original) {return true},
 			data: function(value, settings) {
@@ -1277,7 +1275,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			before : function() {
 				let options = $inlineField.data('options')
 				let callbackFunction = options != undefined && options.hasOwnProperty('onBefore') ? options.onBefore : null
-				//console.log("BEFORE CALLBACK ",callbackFunction)
 				if (callbackFunction && typeof window[callbackFunction] === 'function') {
 					window[callbackFunction]($inlineField, $inlineWidget);
 				}
@@ -1325,7 +1322,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		self.validValue = (value, settings) => {
 			let errorMsg = ''
 
-			console.log('VALID VALUE:', value, settings)
+			if (debugSG) console.log('VALID VALUE:', value, settings)
 
 			if (settings.minValue != undefined) {
 				// if (settings.container.data('ret') != 'numeric') return true
@@ -1561,14 +1558,15 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// console.log('CHECKBOX VALUE ',checkboxValue)
 		}
 
-		// checkValidity
+		// checkValidity for 3 cse
 		// case ENTER => HTML.checkValidity
 		// case TAB => tab valid
+		// case Blur => click outside
 		self.saveEditable = () => {
 			if (debugSG) console.log('ENTER EDITABLE MODE')
 			$this.editable(
 				function(value, settings) {
-					if (debugSG) console.log(`SAVE EDITABLE FUNCTION for "${settings.container.data('inputName')}"`)
+					if (debugSG) console.log('SAVE EDITABLE FUNCTION for "' + settings.container.data('inputName') + '"')
 					let errorMsg = validValue(value, settings)
 					if (true != errorMsg) {
 						notify(errorMsg, 2000)
@@ -1588,7 +1586,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 
-		// SAVE value immediately when radio or checkbox click
+		// Save value immediately when radio or checkbox click
 		if (inputType == 'radio') saveRadio()
 		else if (inputType == 'checkbox') saveCheckbox()
 		else saveEditable()
