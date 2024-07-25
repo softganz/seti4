@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2024-06-11
- * @version :: 15
+ * @modify  :: 2024-07-25
+ * @version :: 16
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +133,7 @@ function loadJS($requestFile, $ext) {
 		$fileName .=  _CORE_FOLDER.'/core/modules/'.$module.'/'.basename($requestFile);
 	} else {
 		// Module is user module
-		$fileName .=  _CORE_FOLDER.'/modules/'.$module.'/'.basename($requestFile);
+		$fileName .=  _CORE_FOLDER.'/modules/'.$requestFile;
 	}
 
 	if ($ext == 'js') {
