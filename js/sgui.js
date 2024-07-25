@@ -1,27 +1,27 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-07-20
-* Version :: 18
+* Modify  :: 2024-07-24
+* Version :: 19
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.11'
+let sgUiVersion = '4.00.12'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
 let popStateCallback = true
 let cameraPermission = false
 
-console.log('SG-UI Version ' + sgUiVersion + ' loaded')
-
 // For Mobile Web App Communication
 let isAndroidWebViewReady = typeof Android == 'object'
 let isFlutterInAppWebViewReady = false
 
 // Import old library that will deprecated
-import('./sgui.deprecated.js')
+import('./deprecated/sgui.inlineedit.v1.js')
+
+console.log('SG-UI Version ' + sgUiVersion + ' loaded')
 
 window.addEventListener(
 	"flutterInAppWebViewPlatformReady",
@@ -1152,7 +1152,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 * DOWNLOAD : https://github.com/NicolasCARPi/jquery_jeditable
 */
 (function($) {
-	let version = '2.00'
+	let inlineEditDom;
+	let version = '2.01'
 	let sgInlineEditAction = 'click'
 	let updatePending = 0
 	let updateQueue = 0
@@ -1169,7 +1170,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
 		console.log('$.sgInlineEdit version ' + version + ' start')
-		if (debugSG) console.log('SG-INLINE-EDIT DEBUG =====>')
 
 		// default configuration properties
 		if (typeof $.fn.editable === 'undefined') {
@@ -1215,6 +1215,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			postUrl = $inlineWidget.data('action') ? $inlineWidget.data('action') : $inlineWidget.data('updateUrl')
 		}
 
+		if (debugSG) console.log(`=== SG-INLINE-EDIT DEBUG for "(${inputType}) ${$inlineField.data("inputName")}" ===>`)
+
 		// console.log('POST URL = ',postUrl)
 		// console.log($inlineWidget.data('updateUrl'))
 		// console.log('$inlineField', $inlineField)
@@ -1229,10 +1231,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		if (inputType == 'money' || inputType == 'numeric' || inputType == 'text-block') {
 			inputType = 'text'
 		} else if (inputType == 'radio' || inputType == 'checkbox') {
-			// Get value of radio or checkbox
-			// console.log('RADIO or CHECKBOX Click:',$this)
-			// let $inputElement = $this.find('input')
-			// value = $inputElement.is(':checked') ? $inputElement.attr('value') : ''
 		} else if (inputType == 'link') {
 			return
 		} else if (inputType == '' || inputType == undefined) {
@@ -1268,26 +1266,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				console.log('ON RESET')
 			},
 			// called before submit
-			onsubmit: function(settings, original) {
-				console.log("ON SUBMIT", original, $(this), settings.container)
-				let inputBox = settings.container.find(".form-text")[0]
-				console.log(inputBox)
-				// let _event = window.event
-				if (!inputBox.checkValidity()) {
-					notify('ป้อนข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด', 2000)
-					// _event.returnValue = false;
-					// if (_event.preventDefault) _event.preventDefault();
-					return false
-				}
-				return true
-			},
+			onsubmit: function(settings, original) {return true},
 			data: function(value, settings) {
-				if ($inlineField.data('data'))
-					return $inlineField.data('data');
-				else if ($inlineField.data('value') != undefined)
-					return $inlineField.data('value');
-				else if (value == '...')
-					return '';
+				if ($inlineField.data('data')) return $inlineField.data('data');
+				else if ($inlineField.data('value') != undefined) return $inlineField.data('value');
+				else if (value == '...') return '';
 				return value;
 			},
 			loadurl: $inlineField.data('loadurl'),
@@ -1296,11 +1279,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				let callbackFunction = options != undefined && options.hasOwnProperty('onBefore') ? options.onBefore : null
 				//console.log("BEFORE CALLBACK ",callbackFunction)
 				if (callbackFunction && typeof window[callbackFunction] === 'function') {
-					window[callbackFunction]($inlineField,$inlineWidget);
+					window[callbackFunction]($inlineField, $inlineWidget);
 				}
 			},
-			cancel: showSubmitButton ? '<button class="btn -link -cancel"><i class="icon -material -gray">cancel</i><span>ยกเลิก</span></button>':null,
-			submit: showSubmitButton ? '<button class="btn -primary"><i class="icon -material -white">done_all</i><span>บันทึก</span></button>':null,
+			cancel: showSubmitButton ? '<button class="widget-button btn -link -cancel"><i class="icon -material -gray">cancel</i><span>ยกเลิก</span></button>':null,
+			submit: showSubmitButton ? '<button class="widget-button btn -primary"><i class="icon -material -white">done_all</i><span>บันทึก</span></button>':null,
 			placeholder: $inlineField.data('placeholder') ? $inlineField.data('placeholder') : '...',
 			inputcssclass: () => {
 				let inputcssclass = ''
@@ -1325,7 +1308,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$this.data('options')
 		)
 
-		if (debugSG)  console.log('SG-INLINE-EDIT SETTING:',settings)
+		if (debugSG) console.log('SG-INLINE-EDIT SETTING:',settings)
 
 		// console.log('value of container = ', settings.container.data('value'))
 		// console.log('typeof container', typeof settings.container)
@@ -1339,25 +1322,44 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		debug = settings.debug;
 
-		self.validValue = ($inlineField, newValue) => {
-			if ($inlineField.data('ret') != 'numeric') return true
+		self.validValue = (value, settings) => {
+			let errorMsg = ''
 
-			newValue = newValue.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(newValue)
-			// console.log('minValue = ',$inlineField.data("minValue"),' newValue = ',newValue,' IS ',newValue*1 < $inlineField.data('minValue')*1)
-			if ($inlineField.data('minValue') != undefined && newValue*1 < $inlineField.data('minValue')*1) {
-				// console.log('less than minValue')
-				return false
-			} else if ($inlineField.data('maxValue') != undefined && newValue*1 > $inlineField.data('maxValue')*1) {
-				// console.log('more than maxValue')
-				// console.log('Reverse value to ',$inlineField.data('value'))
-				// console.log($inlineField.html())
-				// console.log($inlineField)
-				//$inlineField.html($('<span />').html($inlineField.data('value')))
-				return false
-			} else {
-				// console.log('not check or valid')
-				return true
+			console.log('VALID VALUE:', value, settings)
+
+			if (settings.minValue != undefined) {
+				// if (settings.container.data('ret') != 'numeric') return true
+				value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(value)
+				// console.log('minValue = ',settings.minValue,' value = ',value,' IS ',value < settings.minValue*1)
+				if (value*1 < settings.minValue) {
+					errorMsg = 'ข้อมูลมีค่าน้อยกว่าช่วงที่กำหนด', 2000
+				}
 			}
+
+			if (settings.maxValue != undefined) {
+				// if (settings.container.data('ret') != 'numeric') return true
+				value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(value)
+				// console.log('maxValue = ',settings.maxValue,' value = ',value,' IS ',value > settings.maxValue*1)
+				if (value*1 > settings.maxValue) {
+					errorMsg = 'ข้อมูลมีค่ามากกว่าช่วงที่กำหนด', 2000
+				}
+			}
+
+			if (settings.pattern) {
+				let inputBox = settings.container.find(".form-text")[0]
+				if (!inputBox.checkValidity()) {
+					errorMsg = 'ข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด', 2000
+				}
+			}
+
+			if (errorMsg) {
+				settings.container.addClass('-invalid')
+				// settings.container.trigger('click')
+				return errorMsg
+			}
+
+			settings.container.removeClass('-invalid')
+			return true
 		}
 
 		self.save = ($inlineField, value, callback) => {
@@ -1559,21 +1561,31 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// console.log('CHECKBOX VALUE ',checkboxValue)
 		}
 
+		// checkValidity
+		// case ENTER => HTML.checkValidity
+		// case TAB => tab valid
 		self.saveEditable = () => {
+			if (debugSG) console.log('ENTER EDITABLE MODE')
 			$this.editable(
 				function(value, settings) {
-					if (validValue($inlineField, value)) {
-						self.save($inlineField, value, onSaveFieldCallback)
+					if (debugSG) console.log(`SAVE EDITABLE FUNCTION for "${settings.container.data('inputName')}"`)
+					let errorMsg = validValue(value, settings)
+					if (true != errorMsg) {
+						notify(errorMsg, 2000)
+						// $this.trigger('click')
+						setTimeout(function() {
+							settings.container.find('-for-input').trigger('click')
+							// $nextBoxInput.trigger('click')
+						}, 100);
 						return value
-					} else {
-						notify('ข้อมูลไม่อยู่ในช่วงที่กำหนด')
-						return $inlineField.data('value')
 					}
+
+					self.save($inlineField, value, onSaveFieldCallback)
+					return value
 				} ,
 				settings
 			).trigger('edit')
 		}
-
 
 
 		// SAVE value immediately when radio or checkbox click
@@ -1583,9 +1595,76 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		// RETURN that can call from outside
 		return {
+			settings: settings,
+
 			// GET VERSION
 			getVersion: function() {
 				return version
+			},
+
+			validValue: function validValue(value, settings) {
+				return self.validValue(value, settings)
+			},
+
+			onKeyDown: function(settings, dom, self, event) {
+				// console.log("_event.keyCode=",_event.keyCode)
+				let _event = event || window.event;
+
+				// console.log('ONKEYDOWN: settings:', settings, 'dom: ', dom, 'self: ', self, 'event: ', event)
+				// TAB Key
+				if(_event.keyCode == 9) {
+					let $this = $(self);
+
+					// Check valid
+					let inputBox = $this.find('.form-text')
+					// console.log('INPUTBOX: ', inputBox.val(), inputBox)
+					if (inputBox.length) {
+						let errorMsg = dom.validValue(inputBox.val(), settings)
+						if (true != errorMsg) {
+							notify(errorMsg, 2000)
+							_event.returnValue = false;
+							if (_event.preventDefault) _event.preventDefault();
+							return // value //$inlineField.data('value')
+						}
+					}
+
+					// Goto next field
+					let $allBox = $this.closest('.sg-inlineedit').find('.inlineedit-field:not(.-hidden');
+					let $nextBox;
+					let currentBoxIndex = $allBox.index(self)
+					let $nextBoxInput
+
+					if (currentBoxIndex === $allBox.length - 1) {
+						$nextBox = $allBox.eq(0);
+					} else {
+						$nextBox = $allBox.eq(currentBoxIndex+1);
+					}
+					$nextBoxInput = $nextBox.find('.-for-input')
+
+					// Blur to save value
+					$this.find('input').blur();
+					// console.log('TYPE ',$nextBox.data('type'))
+
+					// Delay to focus next box
+					setTimeout(function() {
+						switch ($nextBox.data('type')) {
+							case 'text':
+							case 'textarea':
+								$nextBoxInput.trigger('click')
+								break;
+							case 'radio':
+							case 'checkbox':
+								$nextBoxInput = $nextBox.find('.-for-input:first-child')
+								$nextBoxInput.focus()
+								break;
+						}
+					}, 100);
+					// console.log('Index = ', currentBoxIndex)
+					// console.log('Next Input = ', $nextBox.data('inputName'))
+					// console.log('$this', $this)
+					// console.log('Length = ',$allBox.length)
+					return false;
+				}
 			},
 
 			// SAVE DATA IN FORM TO TARGET
@@ -1613,102 +1692,19 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		datepicker 			: {},
 	}
 
-	// self.processDomOnValue = function(element) {
-	// 	console.log(element)
-	// }
-
 	$(document).on(
 		sgInlineEditAction,
 		'.sg-inlineedit .inlineedit-field:not(.-readonly) .-for-input',
 		function() {
 			// console.log('updatePending = '+updatePending+' updateQueue = '+updateQueue)
-			$(this).sgInlineEdit2()
+			inlineEditDom = $(this).sgInlineEdit2()
 		}
 	);
 
 	$(document).on('keydown', ".sg-inlineedit .inlineedit-field", function(event) {
-		// console.log("_event.keyCode=",_event.keyCode)
-		let _event = event || window.event;
-
-		// TAB Key
-		if(_event.keyCode == 9) {
-			let $this = $(this);
-
-			// Check valid
-			let inputBox = $this.find('.form-text')[0]
-			if (inputBox && !inputBox.checkValidity()) {
-				notify('ป้อนข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด', 2000)
-				_event.returnValue = false;
-				if (_event.preventDefault) _event.preventDefault();
-				return
-			}
-
-			let $allBox = $this.closest('.sg-inlineedit').find('.inlineedit-field:not(.-hidden');
-			let $nextBox = '';
-			let currentBoxIndex = $allBox.index(this);
-			if (currentBoxIndex === $allBox.length - 1) {
-				$nextBox = $allBox.eq(0);
-			} else {
-				$nextBox = $allBox.eq(currentBoxIndex+1);
-			}
-			$this.find("input").blur();
-			let $nextBoxInput = $nextBox.find(".-for-input")
-			// console.log('TYPE ',$nextBox.data('type'))
-			switch ($nextBox.data('type')) {
-				case 'text':
-				case 'textarea':
-					$nextBoxInput.trigger('click')
-					break;
-				case 'radio':
-				case 'checkbox':
-					$nextBoxInput = $nextBox.find(".-for-input:first-child")
-					$nextBoxInput.focus()
-					break;
-			}
-			// console.log('Index = ', currentBoxIndex)
-			// console.log('Next Input = ', $nextBox.data('inputName'))
-			// console.log('$this', $this)
-			// console.log('Length = ',$allBox.length)
-			return false;
-		// } else {
-		// 	console.log('keyboard code : ',_event.keyCode)
-		// 	console.log($(this))
-		} else {
-			// console.log('keyboard code : ',_event.keyCode)
-			// console.log($(this))
-		}
+		inlineEditDom.onKeyDown(inlineEditDom.settings, inlineEditDom, this, event)
 	});
 
-	// $(document).on('keydown', ".sg-inlineedit .inlineedit-field .form-text", function(event) {
-	// 	console.log('keyboard code : ',event.keyCode)
-	// 	console.log($(this))
-	// 	let $this = $(this)
-	// 	let options = $this.closest('.inlineedit-field').data('options')
-	// 	console.log(options)
-	// 	let inputFormat = options.format
-	// 	let inputString = $this.val()
-	// 	console.log('input format', inputFormat)
-	// 	if (options.format) {
-	// 		let match = inputString.match(new RegExp(options.format))
-	// 		console.log('CHECK FORMAT', match)
-
-	// 		let regex = new RegExp(options.format)
-	// 		let _event = event || window.event;
-	// 		let key = _event.keyCode || _event.which;
-	// 		console.log('INPUT KEY: ',key);
-	// 		key = String.fromCharCode(key);
-	// 		console.log('STRING KEY: ',key);
-	// 		if(regex.test(key)) {
-	// 			console.log("MATCH")
-	// 		} else {
-	// 			console.log("NOT MATCH")
-	// 			_event.returnValue = false;
-	// 			if (_event.preventDefault)
-	// 				_event.preventDefault();
-	// 		}
-	// 	}
-	// 	// if ()
-	// });
 
 	// Add editable plugin
 	// Move into sgInlineEdit after fixed all other inline-edit to sg-inline-edit
