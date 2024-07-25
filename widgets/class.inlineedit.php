@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-07-20
-* Version :: 7
+* Modify  :: 2024-07-25
+* Version :: 8
 *
 * @param Array $args
 * @return Widget
@@ -59,6 +59,7 @@ class InlineEdit extends Widget {
 	function _renderChildContainerStart($childKey, $attributes = [], $child = []) {
 		if (!is_array($child)) return;
 		// debugMsg($childKey, '$childKey');
+		// debugMsg($child, '$child');
 
 		if ($this->editMode) {
 			$attributes['class'] = $this->editFieldClassName;
@@ -67,6 +68,12 @@ class InlineEdit extends Widget {
 			$attributes['class'] = $this->viewFieldClassName;
 		}
 		$attributes['class'] .= ' -'.$child['type'];
+		if ($child['inputName']) $attributes['class'] .= ' -name-'.preg_replace_callback('/([A-Z])/', function($matches) {return '-'.strtolower($matches[1]);}, $child['inputName']);
+
+
+			// preg_replace('/([A-Z])/', '-$1', $child['inputName']);
+				// $className = 'ImedGroup'.ucfirst((preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->action)));
+
 		if ($child['class']) $attributes['class'] .= ' '.$child['class'];
 		if ($child['inputClass']) $attributes['class'] .= ' -input-'.$child['inputClass'];
 
