@@ -362,7 +362,7 @@ function dropbox($text, $option = NULL) {
 * @param String $url // Url with urlencode()
 */
 function qrcode($url, $options = '{}') {
-	$defaults = '{showUrl: true, domain: false, width: 160, height: 160, imgWidth: "100%", imgHeight: "100%"}';
+	$defaults = '{text: "", showUrl: true, domain: false, width: 160, height: 160, imgWidth: "100%", imgHeight: "100%", attribute: []}';
 	$options = json_decode($options, $defaults);
 
 	if (preg_match('/^(http\:|https\:)/', $url, $out)) {
@@ -374,8 +374,15 @@ function qrcode($url, $options = '{}') {
 	// Google qr code was deprecated
 	// $qrCode = '<img class="-qrcode" src="https://chart.googleapis.com/chart?cht=qr&chl='.$urlEncode.'&chs='.$options->width.'x'.$options->height.'&choe=UTF-8&chld=L|2" alt="QR-Code" width="'.$options->imgWidth.'" height="'.$options->imgHeight.'">'
 
-	$qrCode = '<img class="-qrcode" src="https://api.qrserver.com/v1/create-qr-code/?size='.$options->width.'x'.$options->height.'&data='.$urlEncode.'" alt="QR-Code" width="'.$options->imgWidth.'" height="'.$options->imgHeight.'">'
-		. ($options->showUrl ? '<span class="-url">'.urldecode($urlEncode).'</span>' : '');
+	$qrCode = '<img class="-qrcode" '
+		. 'src="https://api.qrserver.com/v1/create-qr-code/?size='.$options->width.'x'.$options->height.'&data='.$urlEncode.'" '
+		. 'alt="QR-Code" '
+		. 'width="'.$options->imgWidth.'" '
+		. 'height="'.$options->imgHeight.'"'
+		. ($options->attribute ? ' '.sg_implode_attr($options->attribute) : '')
+		. ' />'
+		. ($options->showUrl ? '<span class="-url">'.urldecode($urlEncode).'</span>' : '')
+		. ($options->text ? '<span class="-text">'.$options->text.'</span>' : '');
 	return $qrCode;
 }
 https://communeinfo.com/imed

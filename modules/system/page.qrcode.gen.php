@@ -26,7 +26,7 @@ class QrcodeGen extends Page {
 			]),
 			'body' => new Widget([
 				'children' => [
-					\SG\qrcode($this->url,'{width: 512, height: 512, domain: "'._DOMAIN.'", imgWidth: "200px", imgHeight: "200px"}'),
+					SG\qrcode($this->url,'{width: 512, height: 512, domain: "'._DOMAIN.'", imgWidth: "200px", imgHeight: "200px"}'),
 					''
 				],
 			]),
