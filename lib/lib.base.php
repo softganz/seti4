@@ -385,7 +385,6 @@ function qrcode($url, $options = '{}') {
 		. ($options->text ? '<span class="-text">'.$options->text.'</span>' : '');
 	return $qrCode;
 }
-https://communeinfo.com/imed
 
 
 /**
