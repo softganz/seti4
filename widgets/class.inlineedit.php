@@ -110,7 +110,7 @@ class InlineEdit extends Widget {
 			$child['choices'] = json_encode($child['choices'], JSON_UNESCAPED_UNICODE);
 		}
 
-		$options = SG\getFirst($child['options']);
+		$options = (Array) SG\getFirst($child['options']);
 		if ($child['placeholder']) $options['placeholder'] = $child['placeholder'];
 		if ($child['onBlur']) $options['onblur'] = $child['onBlur'];
 		if ($child['type'] === 'textarea' && $options['button'] !== false) $options['button'] = 'yes';
