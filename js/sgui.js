@@ -1478,7 +1478,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// Process widget callback function
 				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
 
-				if (debugSG) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '()' : ''))
+				if (debugSG) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '()' : ''), "response:", response)
 				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
 					window[onSaveFunction](settings, $inlineField, response);
 					// window[onSaveFunction]($inlineField, response, $inlineWidget);
