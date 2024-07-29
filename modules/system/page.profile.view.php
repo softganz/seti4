@@ -27,7 +27,7 @@ class ProfileView extends Page {
 	}
 
 	function rightToBuild() {
-		if ($this->userInfo->uid == 1) return error('Access Denied');
+		if ($this->userInfo->uid == 1) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		if (empty($this->userId)) return error(_HTTP_ERROR_NOT_FOUND, 'User <em>'.$this->userId.'</em> not exists.');
 		if (!user_access('administer users,access user profiles','change own profile', $this->userInfo->uid)) return message('error','Access denied');
 		return true;
