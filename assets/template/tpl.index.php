@@ -33,7 +33,7 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 <script>let isRunOnHost=<?php echo cfg('server')?'true':'false';?></script>
 <script>let rootUrl = url = "<?php echo _URL;?>"</script>
 
-<?php $jsLocation = cfg('clean_url')?'/js/':cfg('library');?>
+<?php $jsLocation = '/js/';?>
 <script src="<?php echo $jsLocation;?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
 
 <script src="<?php echo $jsLocation;?>jquery.ui.datepicker.js"></script>
