@@ -180,9 +180,7 @@ function requestString() {
 		$request_string = $_SERVER['QUERY_STRING'];
 		$pattern = '%^'.preg_quote(addslashes($folder)).'%';
 
-		// debugMsg('$folder = ['.$folder.']');
-		// debugMsg('$request_string1 = '.$request_string);
-		// debugMsg('reg = '.$pattern);
+		// debugMsg('$folder = ['.$folder.']<br>$request_string1 = '.$request_string.'<br>reg = '.$pattern);
 
 		$request_string = preg_replace($pattern, '', $request_string);
 
@@ -200,6 +198,7 @@ function requestString() {
 	// $request = preg_replace('/happy\/communeinfo\.com\//', '', $request);
 
 	// debugMsg('$request = ['.$request.']');
+	// debugMsg('<pre>'.print_r($_SERVER,1).'</pre>');
 
 	// $_SERVER['SCRIPT_FILENAME']
 	// $_SERVER['DOCUMENT_URI']
