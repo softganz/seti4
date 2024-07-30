@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-07-25
-* Version :: 21
+* Modify  :: 2024-07-30
+* Version :: 22
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.12'
+let sgUiVersion = '4.00.13'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -1359,7 +1359,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			return true
 		}
 
-		self.save = ($inlineField, value, callback) => {
+		self.saveToServer = ($inlineField, value, callback) => {
 			// console.log('Update Value = '+value)
 			// console.log($inlineWidget.data('updateUrl'))
 			// console.log('postUrl = ', postUrl)
@@ -1478,7 +1478,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// Process widget callback function
 				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
 
-				if (debugSG) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '()' : ''), "response:", response)
+				if (debugSG) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
 				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
 					window[onSaveFunction](settings, $inlineField, response);
 					// window[onSaveFunction]($inlineField, response, $inlineWidget);
@@ -1510,30 +1510,72 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			});
 		}
 
+		// Process show/hide element when radio or checkbox was click
+		// self.showHideElement = (value, fieldOptions, $inlineField) => {
+		// 	return showHideElement(value, fieldOptions, $inlineField);
+		// }
+
+		// self.showHideElement = (value, fieldOptions, $inlineField) => {
+		// 	let showOn = fieldOptions.showOn;
+
+		// 	console.log("SHOW ON:", value, showOn)
+
+		// 	self.processShow = (property, showValue) => {
+		// 		// console.log("SHOW/HIDE ", property, showValue)
+		// 		if (showValue.hide) {
+		// 			// console.log("HIDE ", showValue.hide)
+		// 			let hideElement = showValue.hide
+		// 			if (hideElement === "nextInput") hideElement = $inlineField.next('.inlineedit-field');
+		// 			$(hideElement).addClass('-hidden').hide()
+		// 		}
+
+		// 		if (showValue.show) {
+		// 			// console.log("SHOW ", showValue.show)
+		// 			let showElement = showValue.show
+		// 			if (showElement === "nextInput") showElement = $inlineField.next('.inlineedit-field');
+		// 			$(showElement).removeClass('-hidden').show()
+		// 		}
+		// 	}
+
+		// 	// Init process with show and hide
+		// 	if ("hide" in showOn) processShow(value, {"hide": showOn.hide});
+		// 	if ("show" in showOn) processShow(show, {"hide": showOn.show});
+
+		// 	if (showOn.value) {
+		// 		// Show/hide single value
+		// 		if (value == showOn.value) processShow(value, {"show": showOn.element});
+		// 		else processShow(value, {"hide": showOn.element});
+		// 	} else if (showOn.values) {
+		// 		// Show/hide multiple values
+		// 		if (value in showOn.values) processShow(value, showOn.values[value]);
+		// 	}
+		// }
+
 		self.saveRadio = () => {
 			// console.log('$inlineField', $inlineField)
 
 			// let $inputElement = $this.val()
 			let value = $this.attr('value')
 			// console.log('RADIO VALUE ',value)
-			self.save($inlineField, value, onSaveFieldCallback)
+			self.saveToServer($inlineField, value, onSaveFieldCallback);
 
-			// console.log("SHOW:", fieldOptions)
-			if ('showOn' in fieldOptions) {
-				let showOnValue = fieldOptions.showOn.value
-				let showOnElement = fieldOptions.showOn.element
-				let $targetElement
-				if (showOnElement === 'nextInput') $targetElement = $inlineField.next('.inlineedit-field')
-				else $targetElement = $(showOnElement)
+			if ('showOn' in fieldOptions) showHideElement(value, fieldOptions, $inlineField);
 
-				if ($targetElement) {
-					if (value === showOnValue) {
-						$targetElement.removeClass('-hidden')
-					} else {
-						$targetElement.addClass('-hidden')
-					}
-				}
-			}
+			// if ('showOn' in fieldOptions) {
+			// 	let showOnValue = fieldOptions.showOn.value
+			// 	let showOnElement = fieldOptions.showOn.element
+			// 	let $targetElement
+			// 	if (showOnElement === 'nextInput') $targetElement = $inlineField.next('.inlineedit-field')
+			// 	else $targetElement = $(showOnElement)
+
+			// 	if ($targetElement) {
+			// 		if (value === showOnValue) {
+			// 			$targetElement.removeClass('-hidden')
+			// 		} else {
+			// 			$targetElement.addClass('-hidden')
+			// 		}
+			// 	}
+			// }
 
 			// setTimeout(function(){
 			// 	let $inputElement = $this.find('input:checked')
@@ -1541,7 +1583,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// 	let value = $inputElement.attr('value')
 			// 	console.log('RADIO VALUE ',value)
 			// 	// console.log('RADIO VALUE 1 ',$inputElement.attr('value'))
-			// 	self.save($inlineField, value, onSaveFieldCallback)
+			// 	self.saveToServer($inlineField, value, onSaveFieldCallback)
 			// }, 200)
 		}
 
@@ -1554,10 +1596,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					// console.log(key,$(this).attr('value'))
 					checkboxValue.push($(this).attr('value'))
 				})
-				self.save($inlineField, checkboxValue, onSaveFieldCallback)
+				self.saveToServer($inlineField, checkboxValue, onSaveFieldCallback)
 			} else {
 				let value = $this.is(':checked') ? $this.attr('value') : ''
-				self.save($inlineField, value, onSaveFieldCallback)
+				self.saveToServer($inlineField, value, onSaveFieldCallback)
 			}
 			// console.log('CHECKBOX VALUE ',checkboxValue)
 		}
@@ -1582,7 +1624,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 						return value
 					}
 
-					self.save($inlineField, value, onSaveFieldCallback)
+					self.saveToServer($inlineField, value, onSaveFieldCallback)
 					return value
 				} ,
 				settings
@@ -1603,6 +1645,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			getVersion: function() {
 				return version
 			},
+
+			// // showHideElement: function showHideElement() ,
+			// showHideElement: function showHideElement(inputValue, options, $inlineField) {
+			// 	return self.showHideElement(inputValue, options, $inlineField);
+			// },
 
 			validValue: function validValue(value, settings) {
 				return self.validValue(value, settings)
@@ -1670,7 +1717,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			// SAVE DATA IN FORM TO TARGET
 			update: function($inlineField, value, callback) {
-				self.save($inlineField, value, callback)
+				self.saveToServer($inlineField, value, callback)
 			}
 		}
 	}
@@ -1693,64 +1740,62 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		datepicker 			: {},
 	}
 
-	$(document).on(
-		sgInlineEditAction,
-		'.sg-inlineedit .inlineedit-field:not(.-readonly) .-for-input',
-		function() {
-			// console.log('updatePending = '+updatePending+' updateQueue = '+updateQueue)
-			inlineEditDom = $(this).sgInlineEdit2()
+	// Process show/hide element when radio or checkbox was click
+	function showHideElement(value, fieldOptions, $inlineField) {
+		let showOn = fieldOptions.showOn;
+
+		// console.log("SHOW ON:", value, showOn)
+
+		self.processShow = (property, showValue) => {
+			// console.log("SHOW/HIDE ", property, showValue)
+			if (showValue.hide) {
+				// console.log("HIDE ", showValue.hide)
+				let hideElement = showValue.hide
+				if (hideElement === "nextInput") hideElement = $inlineField.next('.inlineedit-field');
+				$(hideElement).addClass('-hidden').hide()
+			}
+
+			if (showValue.show) {
+				// console.log("SHOW ", showValue.show)
+				let showElement = showValue.show
+				if (showElement === "nextInput") showElement = $inlineField.next('.inlineedit-field');
+				$(showElement).removeClass('-hidden').show()
+			}
 		}
-	);
 
-	$(document).on('keydown', ".sg-inlineedit .inlineedit-field", function(event) {
-		inlineEditDom.onKeyDown(inlineEditDom.settings, inlineEditDom, this, event)
-	});
+		// Init process with show and hide
+		if ("hide" in showOn) processShow(value, {"hide": showOn.hide});
+		if ("show" in showOn) processShow(show, {"hide": showOn.show});
 
+		if (showOn.value) {
+			// Show/hide single value
+			if (value == showOn.value) processShow(value, {"show": showOn.element});
+			else processShow(value, {"hide": showOn.element});
+		} else if (showOn.values) {
+			// Show/hide multiple values
+			if (value in showOn.values) processShow(value, showOn.values[value]);
+		}
+	}
 
-	// Add editable plugin
-	// Move into sgInlineEdit after fixed all other inline-edit to sg-inline-edit
-	$(document).ready(function() {
-
-		if (typeof $.fn.editable === 'undefined') return
-
-		// Show/ Hide element
+	// Show/hide element that has options.showOn
+	function initElementShowOn() {
 		$('.inlineedit-field[data-options]').each(function(index) {
-			// this.processDomOnValue($(this))
-			let $this = $(this)
-			let options = $this.data('options')
+			let $this = $(this);
+			let options = $this.data('options');
 
 			if ('showOn' in options) {
-				let $targetElement;
-				let inputName = $this.data('inputName')
-				let showOnValue = options.showOn.value
-				let showOnElement = options.showOn.element
-				let inputValue = $this.find('input[name=' + inputName + ']:checked').val()
+				let inputName = $this.data('inputName');
+				let inputValue = $this.find('input[name=' + inputName + ']:checked').val();
 
-				// console.log($(this).data('inputName'),$(this).data('options'),$(this))
-				// console.log('showOnElement',$this.data('showOnElement'), inputName, inputValue)
+				// console.log('showOnElement', inputName, inputValue, options.showOn);
 
-				if (showOnElement === 'nextInput') {
-					$targetElement = $this.next('.inlineedit-field')
-				} else {
-					$targetElement = $(showOnElement)
-				}
-
-				// console.log('$targetElement', $targetElement)
-
-				if ($targetElement) {
-					let inputName = $this.data('inputName')
-					if (inputValue === showOnValue) {
-						$targetElement.removeClass('-hidden')
-					} else {
-						$targetElement.addClass('-hidden')
-					}
-					// console.log($this.find('input[name='+ inputName +']'))
-					// if ($this.find('input[name='+ inputName +']'))
-				}
-				// console.log('-----')
+				showHideElement(inputValue, options, $this);
 			}
 		});
+	}
 
+	// Add editable plugin
+	function addOtherPlugin() {
 		$.editable.addInputType('checkbox', {});
 		$.editable.addInputType('radio', {});
 
@@ -1861,7 +1906,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 				}
 			}
-		})
+		});
 
 		$.editable.addInputType('datepicker', {
 			element : function(settings, original) {
@@ -1923,7 +1968,31 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				//settings.onblur = 'submit';
 				settings.onblur = 'nothing'
 			}
-		})
+		});
+	}
+
+	// Add event to inlineedit-field
+	$(document).on(
+		sgInlineEditAction,
+		'.sg-inlineedit .inlineedit-field:not(.-readonly) .-for-input',
+		function() {
+			// console.log('updatePending = '+updatePending+' updateQueue = '+updateQueue)
+			inlineEditDom = $(this).sgInlineEdit2()
+		}
+	);
+
+	// Add event keydown to inlineedit-field
+	$(document).on('keydown', ".sg-inlineedit .inlineedit-field", function(event) {
+		inlineEditDom.onKeyDown(inlineEditDom.settings, inlineEditDom, this, event)
+	});
+
+
+	// Move into sgInlineEdit after fixed all other inline-edit to sg-inline-edit
+	$(document).ready(function() {
+		if (typeof $.fn.editable === 'undefined') return;
+
+		initElementShowOn();
+		addOtherPlugin();
 	});
 })(jQuery);
 
