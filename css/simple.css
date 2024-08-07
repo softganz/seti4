@@ -282,7 +282,8 @@ $SCREENS
 		.btn.-sg-64 {padding: 0;}
 		.btn.-sg-64>.icon {margin-top: 20px;}
 		.btn.-big {padding-top: 16px; padding-bottom: 16px;}
-		.btn.-normal {}
+		.btn.-normal {background-color: transparent;}
+		.btn.-normal:hover {color: unset; background-color: transparent;}
 		.btn.-primary {font-weight: normal; color: #E5F2FF; cursor: pointer; background-color: #057BFF;}
 		.btn.-primary:hover {background-color: #1672ff;}
 		.btn.-primary>.icon {opacity: 0.8;}
