@@ -80,6 +80,7 @@ $dict['th']['invalid user signin'] = 'การเข้าสู่ระบบ
 $dict['th']['i already have an account.'] = 'กรณีเป็นสมาชิกเว็บอยู่แล้ว';
 $dict['th']['i am a new customer!'] = 'กรณียังไม่เคยเป็นสมาชิกเว็บ';
 
+$dict['th']['join group'] = 'เข้าร่วมกลุ่ม';
 $dict['th']['verifiable contact information is required for domain registration. please create an account to proceed.'] = 'การลงทะเบียนสมาชิกเพื่อเก็บข้อมูลสำหรับการติดต่อเป็นสิ่งจำเป็นในการใช้งานระบบ โปรดสร้างบัญชีเพื่อดำเนินการในขั้นตอนต่อไป หรือ กรุณาติดต่อผู้ดูแลระบบเพื่อสร้างบัญชีสมาชิกใหม่และกำหนดสิทธิ์ในการใช้งานระบบ';
 $dict['th']['Invite Members'] = 'เชิญสมาชิก';
 
