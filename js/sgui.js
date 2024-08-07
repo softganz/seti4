@@ -1510,47 +1510,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			});
 		}
 
-		// Process show/hide element when radio or checkbox was click
-		// self.showHideElement = (value, fieldOptions, $inlineField) => {
-		// 	return showHideElement(value, fieldOptions, $inlineField);
-		// }
-
-		// self.showHideElement = (value, fieldOptions, $inlineField) => {
-		// 	let showOn = fieldOptions.showOn;
-
-		// 	console.log("SHOW ON:", value, showOn)
-
-		// 	self.processShow = (property, showValue) => {
-		// 		// console.log("SHOW/HIDE ", property, showValue)
-		// 		if (showValue.hide) {
-		// 			// console.log("HIDE ", showValue.hide)
-		// 			let hideElement = showValue.hide
-		// 			if (hideElement === "nextInput") hideElement = $inlineField.next('.inlineedit-field');
-		// 			$(hideElement).addClass('-hidden').hide()
-		// 		}
-
-		// 		if (showValue.show) {
-		// 			// console.log("SHOW ", showValue.show)
-		// 			let showElement = showValue.show
-		// 			if (showElement === "nextInput") showElement = $inlineField.next('.inlineedit-field');
-		// 			$(showElement).removeClass('-hidden').show()
-		// 		}
-		// 	}
-
-		// 	// Init process with show and hide
-		// 	if ("hide" in showOn) processShow(value, {"hide": showOn.hide});
-		// 	if ("show" in showOn) processShow(show, {"hide": showOn.show});
-
-		// 	if (showOn.value) {
-		// 		// Show/hide single value
-		// 		if (value == showOn.value) processShow(value, {"show": showOn.element});
-		// 		else processShow(value, {"hide": showOn.element});
-		// 	} else if (showOn.values) {
-		// 		// Show/hide multiple values
-		// 		if (value in showOn.values) processShow(value, showOn.values[value]);
-		// 	}
-		// }
-
 		self.saveRadio = () => {
 			// console.log('$inlineField', $inlineField)
 
@@ -1560,22 +1519,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			self.saveToServer($inlineField, value, onSaveFieldCallback);
 
 			if ('showOn' in fieldOptions) showHideElement(value, fieldOptions, $inlineField);
-
-			// if ('showOn' in fieldOptions) {
-			// 	let showOnValue = fieldOptions.showOn.value
-			// 	let showOnElement = fieldOptions.showOn.element
-			// 	let $targetElement
-			// 	if (showOnElement === 'nextInput') $targetElement = $inlineField.next('.inlineedit-field')
-			// 	else $targetElement = $(showOnElement)
-
-			// 	if ($targetElement) {
-			// 		if (value === showOnValue) {
-			// 			$targetElement.removeClass('-hidden')
-			// 		} else {
-			// 			$targetElement.addClass('-hidden')
-			// 		}
-			// 	}
-			// }
 
 			// setTimeout(function(){
 			// 	let $inputElement = $this.find('input:checked')
