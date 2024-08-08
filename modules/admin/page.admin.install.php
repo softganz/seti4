@@ -151,6 +151,7 @@ function __admin_install_create_table($prefix=null) {
 		`fldname` varchar(100) DEFAULT NULL,
 		`fldtype` varchar(30) DEFAULT NULL,
 		`fldref` varchar(30) DEFAULT NULL,
+		`data` JSON NOT NULL DEFAULT "{}",
 		`flddata` longtext DEFAULT NULL,
 		`created` bigint(20) unsigned DEFAULT NULL,
 		`ucreated` int(10) unsigned DEFAULT NULL,
