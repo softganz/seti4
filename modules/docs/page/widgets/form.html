@@ -1,0 +1,70 @@
+<h3>Class Form Widget</h3>
+
+<ul class="docs-page-nav-list">
+<li>Contents</li>
+<li>Before you begin</li>
+<li><a href="{widget/widget}">Extends from Widget</a></li>
+<li><a href="#Property">Property</a></li>
+<li><a href="#Method">Method</a></li>
+</ul>
+
+
+
+
+<h4>Class constructor</h4>
+<code>
+new Form([
+	String id,
+	String class,
+	String action,
+	Strng method,
+	Bool checkValid,
+	String rel,
+	String done,
+	String onFormSubmit,
+	Array[Array/Widget] children,
+	String/Widget child,
+	Array attribute,
+]);
+</code>
+
+<a name="Property"></a>
+<h4>Property :</h4>
+<code>
+id ↔ String default NULL
+class ↔ String default NULL
+method ↔ String GET/POST
+attribute ↔ Array[
+	data-silent ↔ Bool
+] : default NULL
+</code>
+
+<a name="Method"></a>
+<h4>Method :</h4>
+<code>
+</code>
+
+<h4>Children/Child</h4>
+<p>Children can be String/Array/Widget</p>
+<h5>Children type array</h5>
+<code>
+	type ↔ String text/textarea/radio/checkbox/select, default is text
+	class ↔ String ex. -fill
+	id ↔ String ex. group-search
+	value ↔ Mixed
+	autocomplete ↔ String ex. ON/OFF
+	placeholder ↔ String
+	pretext ↔ String
+	posttext ↔ String
+	container ↔ Object
+	attribute ↔ Array [
+		data-query ↔ String
+		data-altfld ↔ String
+		onEnter ↔ String
+			value submit = form submit when hit enter in text box
+			default NULL
+	]
+</code>
+
+<h4>Class sg-form</h4>
+<p>When assign class with sg-form and assign rel with any value</p>
