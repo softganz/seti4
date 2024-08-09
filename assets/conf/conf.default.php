@@ -112,7 +112,7 @@ $cfg['member.menu.paper.add']=false; // show paper add topic of all right in mem
 $cfg['member.menu.paper.forum']=true; // show paper forum name in member ribbon
 $cfg['member.name_alias']=false; // use name alias when post message
 
-$cfg['photo.file_type']=array('image/gif','image/jpeg','image/png','image/pjpeg');
+$cfg['photo.file_type']=array('image/gif','image/jpeg','image/png','image/pjpeg','image/webp');
 $cfg['photo.max_file_size']=200; // in Kbyte
 $cfg['photo.resize.width']=960; // in pixel
 $cfg['photo.resize.quality']=70; // in %
