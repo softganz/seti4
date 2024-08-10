@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com>
  * http://www.softganz.com
  * @created 2009-09-22
- * @modify  2024-02-28
+ * @modify  2024-08-10
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,7 +284,7 @@ $(document).ready(function() {
 		if (loadUrl == undefined) loadUrl = $this.data('load');
 
 		if (loadUrl) {
-			if (loadUrl.left(1)!='/') loadUrl = url + loadUrl;
+			if (loadUrl.left(1)!='/') loadUrl = SG.url(loadUrl);
 			$.post(loadUrl, para, function(html) {
 				if (replace) {
 					$this.replaceWith(html)

@@ -14,11 +14,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<?php if (cfg('gmapkey')) echo '<script>var googleMapKeyApi = "'.cfg('gmapkey').'"</script>';?>
-
 <?php if (cfg('head.include.first')) echo implode(_NL,head());?>
 
 <?php if (cfg('favicon')) echo cfg('favicon');?>
+<script type="text/javascript">
+	let ENV = {
+		runOnHost: <?php echo cfg('server')?'true':'false';?>,
+		cleanUrl: <?php echo cfg('clean_url') ? 'true' : 'false';?>,
+		rootUrl: "<?php echo _URL;?>",
+		googleMapKeyApi: <?php echo cfg('gmapkey') ? '"'.cfg('gmapkey').'"' : 'null'; ?>,
+	}
+	let url = ENV.rootUrl;
+	let googleMapKeyApi = EN.googleMapKeyApi;
+</script>
 <link rel="stylesheet" type="text/css" href="<?php echo cfg('theme.stylesheet').cfg('theme.stylesheet.para');?>">
 <?php
 if (file_exists(cfg('theme.absfolder').'/style.inc.css')) echo '<link rel="stylesheet" type="text/css" href="'.cfg('theme').'style.inc.css">'._NL;
@@ -30,18 +38,12 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 	echo '<link rel="stylesheet" type="text/css" href="https://softganz.com/themes/bw/bw.css">'._NL;
 }
 ?>
-<script>let isRunOnHost=<?php echo cfg('server')?'true':'false';?></script>
-<script>let rootUrl = url = "<?php echo _URL;?>"</script>
-
 <?php $jsLocation = '/js/';?>
 <script src="<?php echo $jsLocation;?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
-
 <script src="<?php echo $jsLocation;?>jquery.ui.datepicker.js"></script>
 <script src="<?php echo $jsLocation;?>jquery.colorbox.js"></script>
 <script src="<?php echo $jsLocation;?>jquery.jeditable.js"></script>
 <script src="<?php echo $jsLocation;?>jquery.form.js"></script>
-
-
 <script src="<?php echo $jsLocation;?>jquery.confirm.js"></script>
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css"> -->
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script> -->
@@ -54,7 +56,6 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 
 <script src="<?php echo $jsLocation.'library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js').cfg('theme.stylesheet.para');?>"></script>
 <script src="<?php echo $jsLocation.($_SESSION['devMode'] ? 'sgui.js':'sgui.min.js').cfg('theme.stylesheet.para');?>"></script>
-
 
 <?php if (!cfg('head.include.first')) echo implode(_NL,head());?>
 <?php

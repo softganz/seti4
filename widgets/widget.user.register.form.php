@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2024-07-13
-* Version :: 5
+* Modify  :: 2024-08-10
+* Version :: 6
 *
 * @param Object $register
 * @return Widget
@@ -258,7 +258,7 @@ class UserRegisterFormWidget extends Widget {
 
 					$.ajax({
 						type: "GET",
-						url: rootUrl+"api/user/exists",
+						url: SG.url("api/user/exists"),
 						async: false,
 						data: para,
 						error: function(response) {
@@ -405,7 +405,7 @@ class UserRegisterFormWidget extends Widget {
 						if (!$("#spamword").text()) {
 							$.ajax({
 								type: "GET",
-								url: rootUrl+"user/register'._MS_.'verify",
+								url: SG.url("user/register'._MS_.'verify"),
 								async: false,
 								error: function(response) {
 									console.clear()
@@ -438,7 +438,7 @@ class UserRegisterFormWidget extends Widget {
 						// console.log("DONE", response)
 						let location = response.location
 						if (location === undefined || location === "") location = "my"
-						if (!location.match(/^\//)) location = rootUrl + location
+						if (!location.match(/^\//)) location = SG.url(location)
 						// console.log("location", location)
 						window.location = location
 					})
