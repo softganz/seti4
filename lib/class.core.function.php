@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2024-07-13
-* Version :: 6
+* Modify  :: 2024-08-190
+* Version :: 7
 */
 
 //---------------------------------------
@@ -1207,8 +1207,15 @@ function apiError($code, String $message) {
  * @param String/Array/Object $message
  * @return Array
  */
-function ApiSuccess($message) {
-	return (Object) ['responseCode' => _HTTP_OK, 'text' => $message];
+function apiSuccess($message) {
+	if (is_array($message) || is_object($message)) {
+		return (Object) array_merge_recursive(
+			['responseCode' => _HTTP_OK],
+			(Array) $message
+		);
+	} else {
+		return (Object) ['responseCode' => _HTTP_OK, 'text' => $message];
+	}
 }
 
 /**
