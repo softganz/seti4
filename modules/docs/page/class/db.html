@@ -59,21 +59,21 @@ Array | String $connection
 <h5>var</h5>
 <code>
 	var => [
-		":variable1"  => value1,
-		"$variable2"  => value2,
-		"$variable3$" => value3,
+		':variable1'  => value1, // with quote
+		'$variable2'  => value2,
+		'$variable3$' => value3, // without qoute
 	]
 </code>
 
 <h5>options</h5>
 <code>
 	options => [
-		"sum"					=> "field1,field2",
-		"group"				=> "field",
-		"key"					=> "field",
-		"value" 			=> "field",
+		"sum"					=> "fieldName1,fieldName2",
+		"group"				=> "fieldName",
+		"key"					=> "fieldName",
+		"value" 			=> "fieldName",
 		"jsonDecode"	=> [
-			['field' => 'field1', 'type' => 'merge,default']
+			['field' => 'fieldName', 'type' => 'merge,default']
 			...
 		],
 	]
