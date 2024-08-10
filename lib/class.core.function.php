@@ -2,7 +2,7 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2024-08-190
+* Modify  :: 2024-08-10
 * Version :: 7
 */
 
