@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2024-06-26
-* Version :: 5
+* Modify 	:: 2024-08-10
+* Version :: 6
 *
 * @param Array $args
 * @return Object
@@ -37,6 +37,22 @@ class NodeModel {
 		$result->title = $result->info->title;
 
 		return $result;
+	}
+
+	public static function getBackend($nodeId) {
+		return DB::select([
+			'SELECT
+				 `topic`.`tpid` `nodeId`
+				, `rev`.`phpBackend`
+				, `rev`.`css`
+				, `rev`.`script`
+				, `rev`.`data`
+			FROM %topic% `topic`
+				LEFT JOIN %topic_revisions% `rev` ON `rev`.`revid` = `topic`.`revid`
+			WHERE `topic`.`tpid` = :nodeId
+			LIMIT 1',
+			'var' => [':nodeId' => $nodeId]
+		]);
 	}
 
 	public static function items($conditions) {

@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2024-07-02
-* Version :: 11
+* Modify  :: 2024-08-10
+* Version :: 12
 *
 * @param Int $nodeId
 * @param String $action
@@ -30,7 +30,15 @@ class PaperApi extends PageApi {
 			'tranId' => $tranId,
 			'nodeInfo' => $nodeInfo = (is_numeric($nodeId) ? PaperModel::get($nodeId) : NULL),
 			'nodeId' => $nodeInfo->nodeId,
-			'right' => $nodeInfo->right,
+			'right' => (Object) array_merge(
+				(Array) $nodeInfo->right,
+				[
+					'editBackend' => is_admin(),
+					'editCss' => is_admin(),
+					'editScript' => is_admin(),
+					'editData' => is_admin()
+				]
+			)
 		]);
 	}
 
@@ -116,17 +124,29 @@ class PaperApi extends PageApi {
 	}
 
 	function detailUpdate() {
-		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-		if (!$_POST) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
-
 		$simulate = true;
-		// Update paper information
 		$post = (Object) post();
 		$debug = false;
 
-		$result = R::Model('paper.info.update', $this->nodeInfo, $post);
+		if (!$this->right->edit) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		} else if (!$_POST) {
+			return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
+		} else if (isset($post->detail['phpBackend']) && !$this->right->editBackend) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		} else if (isset($post->detail['css']) && !$this->right->editCss) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		} else if (isset($post->detail['script']) && !$this->right->editScript) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		} else if (isset($post->detail['data']) && !$this->right->editData) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 
-		$ret .= 'Update Completed';
+		// debugMsg($post, '$post');
+
+		$result = PaperModel::updateInfo($this->nodeInfo, $post);
+
+		// $ret .= 'Update Completed';
 
 		if ($simulate) {
 			$ret .= print_o($result, '$result');
@@ -140,6 +160,8 @@ class PaperApi extends PageApi {
 			$ret .= print_o(post(),'post()');
 			return $ret;
 		}
+
+		return apiSuccess('บันทึกเรียบร้อย');
 	}
 
 	function photoAdd() {
@@ -341,7 +363,7 @@ class PaperApi extends PageApi {
 				'property' => SG\json_encode($newProperty),
 			],
 		];
-		$result = R::Model('paper.info.update', $this->nodeInfo, $data);
+		$result = PaperModel::updateInfo($this->nodeInfo, $data);
 		// debugMsg($result, '$result');
 	}
 
