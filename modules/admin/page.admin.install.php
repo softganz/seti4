@@ -2,8 +2,8 @@
 /**
 * Admin   :: Install Basic Database Table
 * Created :: 2016-11-08
-* Modify  :: 2023-11-03
-* Version :: 2
+* Modify  :: 2024-08-10
+* Version :: 3
 *
 * @return Widget
 *
@@ -489,6 +489,10 @@ function __admin_install_create_table($prefix=null) {
 		`email` varchar(100) NULL,
 		`homepage` varchar(200) NULL,
 		`redirect` varchar(255) NULL,
+		`css` TEXT NULL DEFAULT NULL,
+		`phpBackend` LONGTEXT NULL DEFAULT NULL,
+		`script` LONGTEXT NULL DEFAULT NULL,
+		`data` JSON NOT NULL DEFAULT "{}"
 		`timestamp` datetime default NULL,
 		PRIMARY KEY  (`revid`),
 		KEY `tpid` (`tpid`),
