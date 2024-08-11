@@ -25,7 +25,7 @@
 		googleMapKeyApi: <?php echo cfg('gmapkey') ? '"'.cfg('gmapkey').'"' : 'null'; ?>,
 	}
 	let url = ENV.rootUrl;
-	let googleMapKeyApi = EN.googleMapKeyApi;
+	let googleMapKeyApi = ENV.googleMapKeyApi;
 </script>
 <link rel="stylesheet" type="text/css" href="<?php echo cfg('theme.stylesheet').cfg('theme.stylesheet.para');?>">
 <?php
