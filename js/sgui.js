@@ -2364,7 +2364,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			return $this
 		}
 
-		$this.apiParameter = function() {return apiParameter()}
+		$this.apiParameter = function() {
+			return apiParameter()
+		}
 
 		$this.queryUrl = queryUrl
 
