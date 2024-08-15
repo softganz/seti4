@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-08-10
-* Version :: 23
+* Modify  :: 2024-08-11
+* Version :: 24
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.13'
+let sgUiVersion = '4.00.14'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -1329,6 +1329,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			if (debugSG) console.log('VALID VALUE:', value, settings)
 
+			// Valid min value
 			if (settings.minValue != undefined) {
 				// if (settings.container.data('ret') != 'numeric') return true
 				value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(value)
@@ -1338,6 +1339,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				}
 			}
 
+			// valid max value
 			if (settings.maxValue != undefined) {
 				// if (settings.container.data('ret') != 'numeric') return true
 				value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(value)
@@ -1347,6 +1349,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				}
 			}
 
+			// valid pattern
 			if (settings.pattern) {
 				let inputBox = settings.container.find(".form-text")[0]
 				if (!inputBox.checkValidity()) {
@@ -1536,6 +1539,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.saveCheckbox = () => {
+			// Show or hide checkbox when options has maxCheckbox
+			showHideMaxCheckbox(settings, $inlineField);
+
 			if ($inlineField.data('jsonType') === 'array') {
 				let $allCheckbox = $this.closest('.inlineedit-field').find('input:checked')
 				// console.log('INPUT ',$allCheckbox)
@@ -1725,17 +1731,29 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 	}
 
+	// Disabled chackbox if check equal to options.maxCheckbox
+	function showHideMaxCheckbox(fieldOptions, $inlineField) {
+		let checkCount = $inlineField.find('input[type=checkbox]:checked');
+		if (checkCount.length >= fieldOptions.maxCheckbox) {
+			$inlineField.find('input[type=checkbox]:not(":checked")').attr('disabled', 'disabled');
+		} else {
+			$inlineField.find('input[type=checkbox]').attr('disabled', null)
+		}
+	}
+
 	// Show/hide element that has options.showOn
-	function initElementShowOn() {
+	function initElement() {
 		$('.inlineedit-field[data-options]').each(function(index) {
 			let $this = $(this);
 			let options = $this.data('options');
 
+			if ('maxCheckbox' in options) {
+				showHideMaxCheckbox(options, $this);
+			}
+
 			if ('showOn' in options) {
 				let inputName = $this.data('inputName');
 				let inputValue = $this.find('input[name=' + inputName + ']:checked').val();
-
-				// console.log('showOnElement', inputName, inputValue, options.showOn);
 
 				showHideElement(inputValue, options, $this);
 			}
@@ -1939,7 +1957,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	$(document).ready(function() {
 		if (typeof $.fn.editable === 'undefined') return;
 
-		initElementShowOn();
+		initElement();
 		addOtherPlugin();
 	});
 })(jQuery);
