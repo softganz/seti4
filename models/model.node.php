@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2024-08-10
-* Version :: 6
+* Modify 	:: 2024-08-15
+* Version :: 7
 *
 * @param Array $args
 * @return Object
@@ -51,7 +51,10 @@ class NodeModel {
 				LEFT JOIN %topic_revisions% `rev` ON `rev`.`revid` = `topic`.`revid`
 			WHERE `topic`.`tpid` = :nodeId
 			LIMIT 1',
-			'var' => [':nodeId' => $nodeId]
+			'var' => [':nodeId' => $nodeId],
+			'onComplete' => function(&$data) {
+				$data->data = json_encode(json_decode($data->data), JSON_PRETTY_PRINT  + JSON_UNESCAPED_UNICODE);
+			}
 		]);
 	}
 
