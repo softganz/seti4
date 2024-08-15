@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2024-08-10
-* Version :: 12
+* Modify  :: 2024-08-15
+* Version :: 13
 *
 * @param Int $nodeId
 * @param String $action
@@ -45,7 +45,32 @@ class PaperApi extends PageApi {
 	function build() {
 		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'PROCESS ERROR');
 
+		if ($this->action === 'node') return $this->nodeAPI();
+
 		return parent::build();
+	}
+
+	function nodeApi() {
+		$apiMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->tranId); // Change .\w to uppercase
+		$apiClassName = 'Paper'.$this->nodeId.'Api';
+			// 'modelClassName' => 'Paper'.$nodeInfo->nodeId.'Model',
+
+		$apiCode = DB::select([
+			'SELECT `phpBackend` FROM %topic_revisions% WHERE `tpid` = :nodeId LIMIT 1',
+			'var' => [':nodeId' => $this->nodeId]
+		])->phpBackend;
+
+		if (!preg_match('/^\<\?php/', $apiCode)) $apiCode = '<?php'._NL.$apiCode._NL.'?>';
+
+		eval('?>'.$apiCode.'<?php'._NL);
+
+		if (!class_exists($apiClassName)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+
+		$api = new $apiClassName($this->nodeInfo);
+
+		if (!method_exists($api, $apiMethod)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+
+		return $api->{$apiMethod}();
 	}
 
 	function detail() {
@@ -470,6 +495,12 @@ class PaperApi extends PageApi {
 			// debugMsg(mydb()->_query);
 		}
 		return ['code' => 200, 'text' => 'ดำเนินการเสร็จสิ้น', 'nodeId' => $newNodeId];
+	}
+
+	function backend() {
+		if (!$this->right->admin) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		$backend = NodeModel::getBackend($this->nodeId);
+		return $backend;
 	}
 }
 ?>

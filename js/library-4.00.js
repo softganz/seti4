@@ -1,25 +1,25 @@
-/**
- * SoftGanz JavaScript Library
- *
- * @package library
- * @version 4.00.06
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com>
- * http://www.softganz.com
- * @created 2009-09-22
- * @modify  2024-08-10
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- *
- * Using Library
- * - jquery.3.3.js : https://jquery.com
- * - jquery.form.js : http://jquery.malsup.com/form/
- * - jquery.editable.js : https://github.com/*NicolasCARPi/jquery_jeditable
- * - gmaps.js : https://hpneo.github.io/gmaps/
- */
+/*
+* SoftGanz JavaScript Library
+*
+* @package library
+* @version 4.00.06
+* @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+* @author Panumas Nontapan <webmaster@softganz.com>
+* http://www.softganz.com
+* @created 2009-09-22
+* @modify  2024-08-10
+* ============================================
+* This program is free software. You can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License.
+* ============================================
+*
+* Using Library
+* - jquery.3.3.js : https://jquery.com
+* - jquery.form.js : http://jquery.malsup.com/form/
+* - jquery.editable.js : https://github.com/*NicolasCARPi/jquery_jeditable
+* - gmaps.js : https://hpneo.github.io/gmaps/
+*/
 
 'use strict'
 
@@ -903,7 +903,7 @@ if (typeof document.attachEvent != 'undefined') {
 
 
 
-/*!
+/*
 * Responsive Menu v0.0.0 by @softganz
 * Copyright 2013 Softganz Group.
 * Licensed under http://www.apache.org/licenses/LICENSE-2.0

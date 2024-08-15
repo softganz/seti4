@@ -741,6 +741,7 @@ $SCREENS
 		.form-text.-require:focus,
 		.form-select.-require:focus,
 		.form-textarea.-require:focus {box-shadow: 0 0 0 1px #86b7fe inset;}
+		.form-textarea.-monospace {font-family: monospace, monospace; tab-size: 2;}
 
 		.form-text.-highlight,
 		.form-password.-highlight,

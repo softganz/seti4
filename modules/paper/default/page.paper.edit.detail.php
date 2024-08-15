@@ -2,8 +2,8 @@
 /**
 * Paper  :: Edit Detail
 * Created :: 2019-06-01
-* Modify  :: 2024-08-10
-* Version :: 5
+* Modify  :: 2024-08-105
+* Version :: 6
 *
 * @param String $nodeInfo
 * @return Widget
@@ -178,7 +178,7 @@ class PaperEditDetail extends Page {
 				'phpBackend' => [
 					'type' => 'textarea',
 					'name' => 'detail[phpBackend]',
-					'class' => '-fill',
+					'class' => '-monospace -fill',
 					'rows' => 32,
 					'value' => $this->backend->phpBackend,
 				],
@@ -186,7 +186,9 @@ class PaperEditDetail extends Page {
 				'save' => [
 					'type' => 'button',
 					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link" onClick="copyBackend()"><i class="icon -material">content_copy</i><span>Copy Template</span></a> <a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'pretext' => '<a class="btn -link" onClick="copyBackend()"><i class="icon -material">content_copy</i><span>Copy Template</span></a> '
+						. '<a class="btn -link" onClick="getBackend(\'backend\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
+						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 					'container' => '{class: "-sg-text-right"}',
 				],
 				$this->backendTemplate(),
@@ -205,7 +207,7 @@ class PaperEditDetail extends Page {
 				'css' => [
 					'type' => 'textarea',
 					'name' => 'detail[css]',
-					'class' => '-fill',
+					'class' => '-monospace -fill',
 					'rows' => 32,
 					'value' => $this->backend->css,
 				],
@@ -213,7 +215,8 @@ class PaperEditDetail extends Page {
 				'save' => [
 					'type' => 'button',
 					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'pretext' => '<a class="btn -link" onClick="getBackend(\'css\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
+						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 					'container' => '{class: "-sg-text-right"}',
 				],
 			], // children
@@ -231,7 +234,7 @@ class PaperEditDetail extends Page {
 				'script' => [
 					'type' => 'textarea',
 					'name' => 'detail[script]',
-					'class' => '-fill',
+					'class' => '-monospace -fill',
 					'rows' => 32,
 					'value' => $this->backend->script,
 				],
@@ -239,7 +242,8 @@ class PaperEditDetail extends Page {
 				'save' => [
 					'type' => 'button',
 					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'pretext' => '<a class="btn -link" onClick="getBackend(\'script\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
+						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 					'container' => '{class: "-sg-text-right"}',
 				],
 			], // children
@@ -257,7 +261,7 @@ class PaperEditDetail extends Page {
 				'data' => [
 					'type' => 'textarea',
 					'name' => 'detail[data]',
-					'class' => '-fill',
+					'class' => '-monospace -fill',
 					'rows' => 32,
 					'value' => json_encode(json_decode($this->backend->data), JSON_PRETTY_PRINT  + JSON_UNESCAPED_UNICODE),
 				],
@@ -265,7 +269,8 @@ class PaperEditDetail extends Page {
 				'save' => [
 					'type' => 'button',
 					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'pretext' => '<a class="btn -link" onClick="getBackend(\'data\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
+						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 					'container' => '{class: "-sg-text-right"}',
 				],
 			], // children
@@ -274,14 +279,7 @@ class PaperEditDetail extends Page {
 
 
 	private function backendTemplate() {
-		return '<script>
-		function copyBackend() {
-			let temp = document.getElementById("backend-template");
-			let target = document.getElementById("edit-detail-phpbackend");
-			target.innerHTML = "<?php\n" + temp.innerHTML + "\r?>";
-		}
-		</script>
-<template id="backend-template">use Softganz\DB;
+		return '<template id="backend-template">use Softganz\DB;
 class Paper'.$this->nodeId.'Api extends PageApi {
 	var $nodeInfo;
 	var $action;
@@ -294,6 +292,8 @@ class Paper'.$this->nodeId.'Api extends PageApi {
 			\'right\' => (Object) []
 		]);
 	}
+
+	// @usage /api/paper/{nodeId}/node/foo
 	function foo() {
 		return apiSuccess([
 			\'text\' => \'FOO \'.Paper'.$this->nodeId.'Model::get($this->nodeId),
@@ -312,7 +312,52 @@ class Paper'.$this->nodeId.'Model extends Model {
 	private function formScript() {
 		return '<style type="text/css">
 		.widget-tabbar>div {border: 1px #ccc solid; border-top: none; border-radius: 0 0 8px 8px;}
-		</style>';
+		</style>
+		<script>
+			const divs = document.querySelectorAll(".-monospace");
+
+			divs.forEach(el => el.addEventListener("keydown", event => {
+				// console.log(event.target.getAttribute("data-el"));
+				if (event.key == "Tab") {
+					event.preventDefault();
+					let target = event.target;
+					var start = target.selectionStart;
+					var end = target.selectionEnd;
+
+					// set textarea value to: text before caret + tab + text after caret
+					target.value = target.value.substring(0, start) + "\t" + target.value.substring(end);
+
+					// put caret at right position again
+					target.selectionStart = target.selectionEnd = start + 1;
+				}
+
+			}));
+
+			function copyBackend() {
+				let template = document.getElementById("backend-template");
+				let target = document.getElementById("edit-detail-phpbackend");
+				target.innerHTML = "<?php\n" + template.innerHTML + "\r?>";
+			}
+
+			function getBackend(element) {
+				event.preventDefault();
+				$.get(SG.url("api/paper/'.$this->nodeId.'/backend"), function(){
+
+				})
+				.done(function(data){
+					if (element === "backend") {
+						$("#form-item-edit-detail-phpbackend textarea").val(data.phpBackend);
+					} else if (element === "css") {
+						$("#form-item-edit-detail-css textarea").val(data.css);
+					} else if (element === "script") {
+						$("#form-item-edit-detail-script textarea").val(data.script);
+					} else if (element === "data") {
+						$("#form-item-edit-detail-data textarea").val(data.data.json);
+					}
+				});
+				return false;
+			}
+		</script>';
 	}
 }
 ?>
