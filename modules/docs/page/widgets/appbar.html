@@ -20,6 +20,7 @@ new AppBar([
 	Widget leading,
 	Widget trailing,
 	Widget navigator,
+	Widget dropbox,
 	Boolean removeOnApp = false,
 	Boolean boxHeader = false,
 	Widget[] children,
@@ -29,8 +30,20 @@ new AppBar([
 <h4>Property :</h4>
 <code>
 title ↔ String : default NULL
+
 removeOnApp ↔ Boolean default false
+
 boxHeader ↔ Boolean default false
+
+navigator ↔ Array
+	Ex.
+			- <a>text</a> : String
+	 	- [1, 2, 3] : Array
+	 	- [[1, 2], [3, 4]] : Array of Array
+	 	- [[1, 2], widget, dropbbox] : Array of widget
+
+dropBox ↔ Dropbox widget
+</code>
 </code>
 
 <h4>Method :</h4>

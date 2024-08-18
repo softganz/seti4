@@ -1,4 +1,4 @@
-<h3>Class Scaffold Widget</h3>
+<h3>Class Nav Widget</h3>
 
 <ul class="docs-page-nav-list">
 <li>Contents</li>
@@ -10,23 +10,23 @@
 
 <h4>Class constructor</h4>
 <code>
-new Scaffold([
+new Nav([
 	String id,
 	String class,
-	Widget appBar,
-	Widget sideBar,
-	Widget floatingActionButton,
-	Widget body,
+	Array children,
+	Widget child,
 ]);
 </code>
 
 <a name="Property"></a>
 <h4>Property :</h4>
 <code>
-appBar : default NULL
-sideBar ↔ Widget
-floatingActionButton ↔ Widget
-body ↔ Widget : default NULL,
+children ↔ Array
+	Ex.
+		- <a>text</a> : String
+	 	- [1, 2, 3] : Array
+	 	- [[1, 2], [3, 4]] : Array of Array
+	 	- [[1, 2], widget, dropbbox] : Array of widget
 </code>
 
 <a name="Method"></a>
