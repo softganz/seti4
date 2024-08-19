@@ -89,7 +89,7 @@
 	.widget-appbar>.-nav a {white-space: nowrap; display: block; color: #666; background-color: #eee; margin: 2px 2px 0 0; padding: 4px 8px; border-radius: 0px; text-align: center;}
 	.widget-appbar>.-nav a:hover {background-color: #f5f5f5;}
 	.widget-appbar>.-nav a>.icon {display: block; margin: 0 auto;}
-	.widget-appbar>.-nav>ul {display: flex; flex-wrap: nowrap; flex: none; margin: 0 8px 0 0; padding: 0; overflow: auto;}
+	.widget-appbar>.-nav>ul {display: flex; flex-wrap: nowrap; flex: none; margin: 0 8px 0 0; padding: 0; overflow: auto; list-style-type: none;}
 	.widget-appbar>.-nav>ul:last-child {margin-right: 0;}
 	.widget-appbar>.-nav.-is-more-nav {}
 	.widget-appbar>.-nav.-is-more-nav>.ui-nav {flex-basis: calc(100% - 32px);}
