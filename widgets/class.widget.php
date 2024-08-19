@@ -133,7 +133,7 @@ class Widget extends WidgetBase {
 		$this->header = (Object) array('text' => $str, 'attr' => \SG\json_decode($attr), 'options' => \SG\json_decode($options));
 	}
 
-	protected function children($value = NULL) {
+	function children($value = NULL) {
 		if (isset($value)) $this->children[] = $value;
 
 		if ($this->body) $childrens = [$this->body];
