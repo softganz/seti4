@@ -2,8 +2,8 @@
 /**
 * Admin   :: Clear User Online
 * Created :: 2023-02-09
-* Modify  :: 2023-02-09
-* Version :: 2
+* Modify  :: 2024-08-19
+* Version :: 3
 *
 * @return Widget
 *
@@ -13,10 +13,9 @@
 class AdminConfigOnline extends Page {
 	function build() {
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Clear user online',
-				'navigator' => 	R::View('admin.default.nav'),
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Clear user online'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [
 					R::PageWidget('stats.online'),

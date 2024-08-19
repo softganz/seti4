@@ -2,8 +2,8 @@
 /**
 * Admin   :: Admin Repair
 * Created :: 2024-07-10
-* Modify  :: 2024-07-10
-* Version :: 1
+* Modify  :: 2024-08-19
+* Version :: 2
 *
 * @return Widget
 *
@@ -13,9 +13,9 @@
 class AdminRepair extends Page {
 	function build() {
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Admin Repair',
-			]),
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Admin Repair'
+			]), // AdminAppBarWidget
 			'body' => new Nav([
 				'direction' => 'vertical',
 				'children' => [

@@ -2,8 +2,8 @@
 /**
 * Admin   :: Set User Access For Some User Only
 * Created :: 2016-11-08
-* Modify  :: 2023-07-18
-* Version :: 2
+* Modify  :: 2024-08-19
+* Version :: 3
 *
 * @param Int $userId
 * @return Widget
@@ -94,9 +94,9 @@ class AdminUserAccessUid extends Page {
 		$ret.='</form>';
 
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Title',
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'User Access of '.$this->userInfo->name.' ( '.$this->userInfo->username.' ) only'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [$ret], // children
 			]), // Widget

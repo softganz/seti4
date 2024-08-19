@@ -1,8 +1,9 @@
 <?php
 /**
-* Admin :: Site Information
-* Created 2007-04-22
-* Modify  2021-11-27
+* Admin   :: Site Information
+* Created :: 2007-04-22
+* Modify  :: 2024-08-19
+* Version :: 2
 *
 * @return Widget
 *
@@ -17,9 +18,9 @@ class AdminSiteInfo extends Page {
 		if ($config->title) return $this->_save($config);
 
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Site information',
-			]),
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Site information'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [
 					new Form([

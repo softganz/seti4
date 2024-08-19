@@ -2,8 +2,8 @@
 /**
 * Admin   :: Add Content Type
 * Created :: 2016-11-08
-* Modify  :: 2024-01-03
-* Version :: 2
+* Modify  :: 2024-08-19
+* Version :: 3
 *
 * @return Widget
 *
@@ -49,10 +49,9 @@ class AdminContentTypeAdd extends Page {
 		}
 
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Content types',
-				'navigator' => 	R::View('admin.default.nav'),
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Content types'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [
 					'<div id="tabs-wrapper" class="clear-block"><h2 class="with-tabs">Content types</h2>

@@ -2,8 +2,8 @@
 /**
 * Admin   :: User Access Setting
 * Created :: 2016-11-08
-* Modify  :: 2023-01-28
-* Version :: 2
+* Modify  :: 2024-08-19
+* Version :: 3
 *
 * @return Widget
 *
@@ -21,13 +21,9 @@ class AdminUserAccess extends Page {
 		ksort($perms);
 
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'User Management &gt; Access control',
-				'trailing' => '<form id="search" class="search-box" method="get" action="'.url('admin/user/list').'" name="memberlist" role="search">'
-					. '<input type="hidden" name="sid" id="sid" /><input id="search-box" class="sg-autocomplete" type="text" name="q" size="20" value="'.$_GET['q'].'" data-query="'.url('admin/get/username').'" data-altfld="sid" data-callback="submit" placeholder="Username or Name or Email"><button><i class="icon -material">search</i></button>'
-					. '</form>',
-				'navigator' => 	R::View('admin.default.nav'),
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'User Management &gt; Access control'
+			]), // AdminAppBarWidget
 
 			'body' => new Widget([
 				'children' => [

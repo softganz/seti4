@@ -2,8 +2,8 @@
 /**
 * Admin   :: Check Invalid Charactor In Username
 * Created :: 2022-10-01
-* Modify  :: 2022-10-01
-* Version :: 1
+* Modify  :: 2024-08-19
+* Version :: 2
 *
 * @return Widget
 *
@@ -21,9 +21,9 @@ class AdminUserCheckUsername extends Page {
 		);
 
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Check Invalid Username',
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Check Invalid Username'
+			]), // AdminAppBarWidget
 			'body' => new Table([
 				'thead' => [
 					'id -center' => 'ID',

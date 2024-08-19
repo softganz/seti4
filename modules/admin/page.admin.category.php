@@ -1,8 +1,9 @@
 <?php
 /**
-* admin :: Manage Category
-* Created 2018-11-19
-* Modify  2020-12-22
+* Admin   :: Manage Category
+* Created :: 2018-11-19
+* Modify  :: 2024-08-19
+* Version :: 2
 *
 * @param Object $self
 * @return String
@@ -58,20 +59,18 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 			if (empty($action) && empty($tagId)) $action = 'home';
 			else if (empty($action) && $tagId) $action = 'view';
 
+			$args = func_get_args();
 			$argIndex = 3; // Start argument
-
-			//debugMsg('PAGE CONTROLLER Id = '.$tagId.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.func_get_arg($argIndex));
-			//debugMsg(func_get_args(), '$args');
 
 			$ret = R::Page(
 				'admin.category.'.$action,
 				$self,
 				$tagInfo,
-				func_get_arg($argIndex),
-				func_get_arg($argIndex+1),
-				func_get_arg($argIndex+2),
-				func_get_arg($argIndex+3),
-				func_get_arg($argIndex+4)
+				$args[0],
+				$args[1],
+				$args[2],
+				$args[3],
+				$args[4]
 			);
 
 			//debugMsg('TYPE = '.gettype($ret));

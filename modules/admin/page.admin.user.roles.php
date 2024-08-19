@@ -1,8 +1,9 @@
 <?php
 /**
-* Admin :: User Rolws
-* Created 2022-04-01
-* Modify  2022-04-01
+* Admin   :: User Rolws
+* Created :: 2022-04-01
+* Modify  :: 2024-08-19
+* Version :: 2
 *
 * @return Widget
 *
@@ -12,10 +13,9 @@
 class AdminUserRoles extends Page {
 	function build() {
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'User Roles',
-				'navigator' => 	R::View('admin.default.nav'),
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'User Roles'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [
 					new ListTile([

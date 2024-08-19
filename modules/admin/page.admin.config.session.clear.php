@@ -2,8 +2,8 @@
 /**
 * Admin   :: Clear Empty Session in Database
 * Created :: 2021-10-10
-* Modify  :: 2023-08-05
-* Version :: 3
+* Modify  :: 2024-08-19
+* Version :: 4
 *
 * @return Widget
 *
@@ -23,10 +23,9 @@ class AdminConfigSessionClear extends Page {
 		]);
 
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Clear Empty Session ('.$totals->users.'/'.$totals->totals.')',
-				'navigator' => 	R::View('admin.default.nav'),
-			]),
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Clear Empty Session ('.$totals->users.'/'.$totals->totals.')'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [
 					'<div class="-sg-text-center -sg-paddingmore">'

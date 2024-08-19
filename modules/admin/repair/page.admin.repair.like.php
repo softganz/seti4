@@ -2,8 +2,8 @@
 /**
 * Admin   :: Repair Like Times
 * Created :: 2024-07-10
-* Modify  :: 2024-07-10
-* Version :: 2
+* Modify  :: 2024-08-19
+* Version :: 3
 *
 * @return Widget
 *
@@ -15,9 +15,9 @@ use Softganz\DB;
 class AdminRepairLike extends Page {
 	function build() {
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Repair Like Times',
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Repair Like Times'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [
 					new Nav([

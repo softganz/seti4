@@ -1,8 +1,9 @@
 <?php
 /**
-* Admin :: Site building
-* Created 2016-11-08
-* Modify  2022-03-31
+* Admin   :: Site building
+* Created :: 2016-11-08
+* Modify  :: 2024-08-19
+* Version :: 2
 *
 * @return Widget
 *
@@ -14,10 +15,9 @@ import('widget:admin.menu.site.php');
 class AdminSite extends Page {
 	function build() {
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Site building',
-				'navigator' => 	R::View('admin.default.nav'),
-			]), // AppBar
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Site building'
+			]), // AdminAppBarWidget
 			'body' => new Container([
 				'class' => 'admin-panel',
 				'children' => [

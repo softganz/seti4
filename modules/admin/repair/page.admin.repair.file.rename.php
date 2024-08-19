@@ -2,8 +2,8 @@
 /**
 * Admin   :: Repair File Rename
 * Created :: 2024-07-10
-* Modify  :: 2024-07-10
-* Version :: 1
+* Modify  :: 2024-08-19
+* Version :: 2
 *
 * @return Widget
 *
@@ -15,9 +15,10 @@ use Softganz\DB;
 class AdminRepairFileRename extends Page {
 	function build() {
 		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Rename Files',
-			]), // AppBar
+
+			'appBar' => new AdminAppBarWidget([
+				'title' => 'Rename Files'
+			]), // AdminAppBarWidget
 			'body' => new Widget([
 				'children' => [
 					new Nav([
