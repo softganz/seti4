@@ -46,7 +46,7 @@ class Dropbox extends Widget {
 
 		if (empty($this->children)) return '';
 
-		$text = $this->_renderChildren();
+		$text = $this->_renderChildren($this->children());
 
 		// $options = \SG\json_decode($options,isset($this) ? $this->options : NULL, Dropbox::$defaultOption);
 		if ($this->position == 'left') $this->class .= ' leftside';

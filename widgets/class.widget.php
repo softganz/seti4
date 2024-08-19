@@ -133,15 +133,23 @@ class Widget extends WidgetBase {
 		$this->header = (Object) array('text' => $str, 'attr' => \SG\json_decode($attr), 'options' => \SG\json_decode($options));
 	}
 
-	function children($value = NULL) {
-		$this->children[] = $value;
+	protected function children($value = NULL) {
+		if (isset($value)) $this->children[] = $value;
+
+		if ($this->body) $childrens = [$this->body];
+		else if ($this->child) $childrens = [$this->child];
+		else if ($this->children) $childrens = $this->children;
+		else $childrens = [];
+		// debugMsg($childrens, 'CHILDRENS');
+		return $childrens;
 	}
 
 	// Container of widget
 	// @override
 	function _renderWidgetContainerStart($callbackFunction = NULL) {
 		return $this->tagName ?
-			'<'.$this->tagName._NL
+			($this->widgetName != 'Widget' ? '<!-- Start of '.$this->widgetName.' -->'._NL : '')
+			. '<'.$this->tagName._NL
 			. ($this->id ? ' id="'.$this->id.'"'._NL : '')
 			// Start if class
 			. ' class="widget-'.strtolower($this->widgetName).($this->class ? ' '.$this->class : '')
@@ -166,7 +174,7 @@ class Widget extends WidgetBase {
 
 	// @override
 	function _renderWidgetContainerEnd() {
-		return $this->tagName ? '</'.$this->tagName.'><!-- end of '.$this->widgetName.' -->'._NL : '';
+		return $this->tagName ? _NL.'</'.$this->tagName.'><!-- End of '.$this->widgetName.' -->'._NL : '';
 	}
 
 	// Container cover all children
@@ -196,21 +204,55 @@ class Widget extends WidgetBase {
 
 		// debugMsg('$childTagName = '.$childTagName);
 		// debugMsg($attributes, '$attributes-_renderChildContainerStart');
-		return $childTagName ? '<'.$childTagName.' '.sg_implode_attr($attributes).'>'._NL : '';
+		return $childTagName ? '<'.$childTagName.' '.sg_implode_attr($attributes).'>' : '';
 	}
 
 	// @override
 	function _renderChildContainerEnd($childKey = NULL, $child = []) {
 		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
-		return $childTagName ? '</'.$childTagName.'>' : '';
+		return $childTagName ? '</'.$childTagName.'>'._NL : '';
+	}
+
+	// @override
+	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
+		$result = '';
+		if (is_object($widget) && method_exists($widget, 'build')) {
+			// Build Widget
+			if ($callbackFunction['object'] && is_callable($callbackFunction['object'])) {
+				$result .= $callbackFunction['object']($key, $widget);
+			} else {
+				$buildResult = $widget->build();
+				if (is_object($buildResult) && method_exists($buildResult, 'build')) {
+					$result .= $buildResult->build();
+				} else {
+					$result .= $buildResult;
+				}
+			}
+		} else if (is_object($widget)) {
+			// Build General Object
+			$result .= $callbackFunction['object'] && is_callable($callbackFunction['object']) ? $callbackFunction['object']($key, $widget) : SG\json_encode($widget);
+			$result .= \SG\json_encode($widget);
+		} else if (is_array($widget)) {
+			// Build Array
+			$result .= $callbackFunction['array'] && is_callable($callbackFunction['array']) ? $callbackFunction['array']($key, $widget) : SG\json_encode($widget);
+		} else if (is_string($widget) && $widget === '<sep>') {
+			// Build Seperator
+			$result .= $callbackFunction['seperator'] && is_callable($callbackFunction['seperator']) ? $callbackFunction['seperator']($key, $widget) : '<hr class="separator" size="0" />';
+		} else {
+			// Build Text
+			$result .= $callbackFunction['text'] && is_callable($callbackFunction['text']) ? $callbackFunction['text']($key, $widget) : $widget;
+		}
+		// $result .= _NL;
+		return $result;
 	}
 
 	// @override
 	function _renderChildren($childrens = [], $args = []) {
-		if (empty($childrens)) $childrens = [];
-		if ($this->body) $childrens[] = $this->body;
-		if ($this->child) $childrens[] = $this->child;
-		if ($this->children) $childrens = $childrens + $this->children;
+		$childrens = (Array) $childrens;
+		// if (empty($childrens)) $childrens = [];
+		// if ($this->body) $childrens[] = $this->body;
+		// if ($this->child) $childrens[] = $this->child;
+		// if ($this->children) $childrens = $childrens + $this->children;
 
 		$ret .= $this->_renderChildrenContainerStart();
 
@@ -248,41 +290,8 @@ class Widget extends WidgetBase {
 	}
 
 	// @override
-	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
-		$result = '';
-		if (is_object($widget) && method_exists($widget, 'build')) {
-			// Build Widget
-			if ($callbackFunction['object'] && is_callable($callbackFunction['object'])) {
-				$result .= $callbackFunction['object']($key, $widget);
-			} else {
-				$buildResult = $widget->build();
-				if (is_object($buildResult) && method_exists($buildResult, 'build')) {
-					$result .= $buildResult->build();
-				} else {
-					$result .= $buildResult;
-				}
-			}
-		} else if (is_object($widget)) {
-			// Build General Object
-			$result .= $callbackFunction['object'] && is_callable($callbackFunction['object']) ? $callbackFunction['object']($key, $widget) : SG\json_encode($widget);
-			$result .= \SG\json_encode($widget);
-		} else if (is_array($widget)) {
-			// Build Array
-			$result .= $callbackFunction['array'] && is_callable($callbackFunction['array']) ? $callbackFunction['array']($key, $widget) : SG\json_encode($widget);
-		} else if (is_string($widget) && $widget === '<sep>') {
-			// Build Seperator
-			$result .= $callbackFunction['seperator'] && is_callable($callbackFunction['seperator']) ? $callbackFunction['seperator']($key, $widget) : '<hr class="separator" size="0" />';
-		} else {
-			// Build Text
-			$result .= $callbackFunction['text'] && is_callable($callbackFunction['text']) ? $callbackFunction['text']($key, $widget) : $widget;
-		}
-		return $result;
-	}
-
-	// @override
 	function toString() {
-		$ret = $this->widgetName != 'Widget' ? '<!-- Start of '.$this->widgetName.' -->'._NL : '';
-		$ret .= $this->_renderWidgetContainerStart();
+		$ret = $this->_renderWidgetContainerStart();
 		if ($this->header) {
 			if (is_object($this->header) && method_exists($this->header, 'build')) {
 				$ret .= $this->header->build();
@@ -291,10 +300,9 @@ class Widget extends WidgetBase {
 			}
 		}
 		if (isset($this->children) || isset($this->child) || isset($this->body)) {
-			$ret .= $this->_renderChildren();
+			$ret .= $this->_renderChildren($this->children());
 		}
-		$ret .= $this->_renderWidgetContainerEnd()._NL;
-		$ret .= $this->widgetName != 'Widget' ? '<!-- End of '.$this->widgetName.' -->'._NL : '';
+		$ret .= $this->_renderWidgetContainerEnd();
 		return $ret;
 	}
 
@@ -333,13 +341,12 @@ class Container extends Widget {
 
 	// @override
 	function toString() {
-		$ret = '<!-- Start of '.$this->widgetName.' -->'._NL;
-		$ret .= $this->_renderWidgetContainerStart();
+		// debugMsg($this->children(),'$this->children()');
+		$ret = $this->_renderWidgetContainerStart();
 		if (isset($this->children) || isset($this->child) || isset($this->body)) {
-			$ret .= $this->_renderChildren();
+			$ret .= $this->_renderChildren($this->children());
 		}
 		$ret .= $this->_renderWidgetContainerEnd();
-		$ret .= '<!-- End of '.$this->widgetName.' -->'._NL;
 		return $ret;
 	}
 } // End of class Container
@@ -379,7 +386,7 @@ class FloatingActionButton extends Widget {
 
 	// function toString() {
 	// 	$ret = '<div class="widget-'.strtolower($this->widgetName).' -right-bottom'.($this->fillButton ? ' -fill-button' : '').'">';
-	// 	$ret .= $this->_renderChildren();
+	// 	$ret .= $this->_renderChildren($this->chiildren());
 	// 	$ret .= '</div>';
 	// 	return $ret;
 	// }
@@ -407,7 +414,7 @@ class ListTile extends Widget {
 			. ($this->subtitle ? '<span class="-subtitle-text">'.$this->_renderEachChildWidget(NULL, $this->subtitle).'</span>' : '')
 			. '</div>'._NL
 			. ($this->trailing ? '<div class="-trailing">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
-			. ($this->child || $this->children ? $this->_renderChildren($this->children, [$this->child]) : NULL)
+			. $this->_renderChildren($this->children)
 			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class ListTile
@@ -425,12 +432,51 @@ class Nav extends Widget {
 	var $widgetName = 'Nav';
 	var $tagName = 'nav';
 	var $class = 'nav';
-	var $childrenContainer = ['tagName' => 'ul'];
-	var $childContainer = ['tagName' => 'li', 'class' => '-item'];
+	var $multipleLevel = false;
+	// var $childrenContainer = ['tagName' => 'ul'];
+	// var $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
 	function __construct($args = []) {
 		parent::__construct($args);
+
 		if ($args['direction']) $this->class .= ' -'.$args['direction'];
+	}
+
+	// @override
+	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
+		return parent::_renderEachChildWidget($key, $widget, [
+			'array' => function($key, $widget) {
+				$result = '<ul>'._NL;
+				foreach ($widget as $eachKey => $eachWidget) {
+					$result .= '<li class="-item">'.trim($this->_renderEachChildWidget($eachKey, $eachWidget)).'</li>'._NL;
+				}
+				$result .= '</ul>'._NL;
+				return $result;
+			},
+			'object' => function($key, $widget) {
+				return trim($widget->build());
+			},
+			'text' => function($key, $text) {
+				return $text;
+			}
+		]);
+		return $result;
+	}
+
+	// @override
+	function _renderChildren($childrens = [], $args = []) {
+		// debugMsg($childrens, '$childrens');
+		foreach ($childrens as $key => $value) {
+			if (is_array($value)) {
+				$this->multipleLevel = true;
+				break;
+			}
+		}
+		if (!$this->multipleLevel) {
+			$this->childrenContainer = ['tagName' => 'ul'];
+			$this->childContainer = ['tagName' => 'li', 'class' => '-item'];
+		}
+		return parent::_renderChildren($childrens, $args);
 	}
 } // End of class Nav
 
@@ -600,7 +646,6 @@ class ExpandButton extends Widget {
 	}
 } // End of class ExpandButton
 
-
 class StepMenu extends Widget {
 	var $widgetName = 'StepMenu';
 	var $tagName = 'nav';
@@ -620,11 +665,6 @@ class StepMenu extends Widget {
 			. 'class="ui-item -step-'.$stepIndex.($this->childContainer['class'] ? $this->childContainer['class'] : '').($stepIndex == $this->currentStep ? ' -current-step' : '').(isset($this->activeStep[$stepIndex]) && $this->activeStep[$stepIndex] ? ' -active' : '').'" '
 			. '>';
 	}
-
-	// @override
-	function _renderChildren($childrens = [], $args = []) {
-		return parent::_renderChildren();
-	}
 } // End of class StepMenu
 
 class ListItem extends Widget {
@@ -638,7 +678,7 @@ class ListItem extends Widget {
 
 	function _renderChildren($childrens = [], $args = []) {
 		$ret = '';
-		foreach ($this->children as $key => $value) {
+		foreach ($childrens as $key => $value) {
 			if (is_array($value)) {
 				$child = (Object) $value;
 			} else if (is_object($value)) {
@@ -708,7 +748,7 @@ class ListItem extends Widget {
 				. '</header>';
 			if ($headerClass) $this->header->attr->class = $headerClass;
 		}
-		$ret .= $this->_renderChildren();
+		$ret .= $this->_renderChildren($this->children);
 		$ret .= '</'.$joinTag.'>'._NL;
 
 		if ($this->config->nav) {
@@ -738,7 +778,7 @@ class TabBar extends Widget {
 	function _renderChildren($childrens = [], $args = []) {
 		$tabItems = '<ul class="tabs">';
 		$tabContent = '';
-		foreach ($this->children as $key => $child) {
+		foreach ($childrens as $key => $child) {
 			if (is_array($child)) $child = (Object) $child;
 
 			$tabItems .= '<li'
@@ -797,8 +837,16 @@ class Scaffold extends Widget {
 		parent::__construct($args);
 	}
 
+	// @override
+	// function _renderChildren($childrens = [], $args = []) {
+	// 	// debugMsg($childrens, '$childrens');
+	// 	return parent::_renderChildren($this->children(), $args);
+	// }
+
 	function build() {
 		// debugMsg('SCAFFOLD WAS BUILD');
+		// debugMsg($this->body, '$body');
+		// debugMsg($this, '$Scaffold');
 		// if ($this->appBar) {
 		// 	$this->theme->toolbar = $this->appBar->toString();
 		// 	$this->theme->title = $this->appBar->title;
@@ -821,40 +869,81 @@ class AppBar extends Widget {
 	var $leading;
 	var $trailing;
 	var $navigator;
+	var $dropbox;
 	var $boxHeader = false;
 	var $showInBox = false;
 	var $removeOnApp = false;
+	var $navigatorMultipleLevel = false;
 
 	function __construct($args = []) {
 		parent::__construct($args);
 	}
 
-	function _renderNavigator() {
-		if (!is_array($this->navigator)) return $this->_renderEachChildWidget(NULL, $this->navigator);
+	/**
+	 * Navigator format:
+	 * #1: <a></a> : String
+	 * #2: [1,2,3,widget,dropbbox] : Array
+	 * #3: [[1,2],[3,4],widget,dropbbox] : Array of Array
+	 * #4: [widget,dropbbox] : Array of widget
+	 */
+	function _renderNavigator($navigators = NULL) {
+		// $navigators = $navigators ? $navigators : NULL;
+		$navigatorText = '';
 
-		$ret = '';
-		foreach ($this->navigator as $key => $value) {
-			$ret .= $this->_renderEachChildWidget($key, $value);
+		if (is_array($navigators)) {
+			$navigatorText = '';
+			foreach ($navigators as $key => $value) {
+				if (is_array($value)) {
+					$navigatorText .= _NL.'<ul>'._NL;
+					$navigatorText .= $this->_renderNavigator($value);
+					$navigatorText .= _NL.'</ul>';
+				} else if (is_object($value)) {
+					$navigatorText .= $value->build();
+				} else {
+					$navigatorText .= '<li>'.$value.'</li>'._NL;
+				}
+			}
+			$navigatorText .= _NL;
+			return trim($navigatorText);
+		} else if (is_object($navigators)) {
+			// debugMsg($navigators,'$navigators');
+			$navigatorText .= $this->_renderEachChildWidget(NULL, $navigators);
+		} else {
+			$navigatorText .= $navigators;
 		}
-		return $ret;
-	}
 
-	function _renderNavigator_new() {
-		$children = [];
-		if (!is_array($this->navigator)) $children[] = $this->navigator;
-		else foreach ($this->navigator as $key => $value) $children[] = $value;
-
-		return new ScrollView([
-			'tagName' => 'nav',
-			'class' => '-nav',
-			'children' => $children,
-		]);
+		// $navigatorText = $navigatorText;
+		return $navigatorText ? $navigatorText : NULL;
 	}
 
 	// @override
 	function toString() {
+		if (is_array($this->navigator)) {
+			// Check navigator has array, set navigatorMultipleLevel to true
+			foreach ($this->navigator as $key => $value) {
+				if (is_array($value)) {
+					$this->navigatorMultipleLevel = true;
+					break;
+				}
+			}
+
+			foreach ($this->navigator as $key => $value) {
+				if (is_object($value) && $value->widgetName === 'Dropbox') {
+					$this->dropbox = $value;
+					unset($this->navigator[$key]);
+					break;
+				}
+			}
+		}
+
 		if ($this->showInBox && !preg_match('/header \-box/', $this->class)) $this->class .= ' header -box';
 		if ($this->showInBox && $this->boxHeaderBack) $this->leading = $this->boxHeaderBack;
+
+		if ($this->dropbox) $this->class .= ' -has-dropbox';
+
+		// On single level navigator, add tag ul
+		$navigatorResult = $this->_renderNavigator($this->navigator);
+		if (!$this->navigatorMultipleLevel && $navigatorResult) $navigatorResult = '<ul>'._NL.$navigatorResult._NL.'</ul>';
 
 		return $this->_renderWidgetContainerStart()
 			. ($this->leading ? '<div class="-leading">'.$this->_renderEachChildWidget(NULL, $this->leading).'</div>'._NL : '')
@@ -864,8 +953,9 @@ class AppBar extends Widget {
 			. ($this->subTitle ? '<div class="-sub">'.$this->_renderEachChildWidget(NULL, $this->subTitle).'</div>' : '')
 			. '</div>'._NL
 			. ($this->trailing ? '<div class="-trailing -no-print">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
-			. ($this->navigator && ($navigatorResult = $this->_renderNavigator()) ? '<nav class="-nav -no-print">'.$navigatorResult.'</nav>' : '')
-			. ($this->children || $this->child ? '<div class="-children">'.$this->_renderChildren().'</div>' : '')
+			. ($this->navigator && $navigatorResult ? '<nav class="-nav -no-print">'._NL.$navigatorResult._NL.'</nav>'._NL : '')
+			. ($this->dropbox ? '<div class="-dropbox">'.$this->dropbox->build().'</div><!-- end of -dropboox -->'._NL : '')
+			. ($this->children || $this->child ? '<div class="-children">'.$this->_renderChildren($this->children).'</div>' : '')
 			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class AppBar

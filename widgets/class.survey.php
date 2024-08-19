@@ -147,7 +147,7 @@ class Survey extends Widget {
 			);
 		}
 
-		$ret .= $this->_renderChildren();
+		$ret .= $this->_renderChildren($this->children());
 
 		if ($this->schema->remark) {
 			$ret .= '<div class="-remark">'.$this->schema->remark.'</div>';

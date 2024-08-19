@@ -284,7 +284,7 @@ class Report extends Widget {
 			),
 		]);
 
-		$ret .= $this->_renderChildren($this->children);
+		$ret .= $this->_renderChildren($this->children());
 		$ret .= $this->_renderWidgetContainerEnd().'<!-- -->';
 
 		return $ret;

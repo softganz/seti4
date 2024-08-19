@@ -26,7 +26,7 @@ class ProfilePhotoWidget extends Widget {
 				'<div class="-profile-photo">'
 					. '<img class="member-photo NO-CACHE" src="'.$this->photo.'" width="100%" height="100%" />'
 					. '</div>',
-				$this->_renderChildren(),
+				$this->_renderChildren($this->children()),
 			], // children
 		]);
 	}

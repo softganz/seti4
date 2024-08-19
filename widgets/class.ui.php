@@ -70,7 +70,7 @@ class Ui extends Widget {
 
 	function _renderChildren($childrens = [], $args = []) {
 		$ret = '';
-		foreach ($this->children as $key => $value) {
+		foreach ($childrens as $key => $value) {
 			if (is_array($value)) {
 				$child = (Object) $value;
 			} else if (is_object($value)) {
@@ -140,7 +140,7 @@ class Ui extends Widget {
 				. '</header>';
 			if ($headerClass) $this->header->attr->class = $headerClass;
 		}
-		$ret .= $this->_renderChildren();
+		$ret .= $this->_renderChildren($this->children());
 		$ret .= '</'.$joinTag.'>'._NL;
 
 		if ($this->config->nav) {
