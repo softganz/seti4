@@ -2,8 +2,8 @@
 /**
 * System  :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2024-06-24
-* Version :: 7
+* Modify  :: 2024-08-20
+* Version :: 8
 *
 * @return Widget
 *
@@ -122,6 +122,7 @@ class SystemIssueHome extends Page {
 													'Date : '.$item->reportDate,
 													'Referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
 													'Agent : '.$item->agent,
+													in_array($item->issueType, ['Fatal Error']) ? 'Message : '.$item->description : NULL,
 												]
 											]), // Column
 										]), // ScrollView
