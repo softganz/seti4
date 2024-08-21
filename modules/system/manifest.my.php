@@ -18,5 +18,8 @@
 cfg('my.version','4.00.00');
 cfg('my.release','18.9.19');
 
+menu('my/account/delete','My Account Delete Request','my.account.delete','__controller',1,true,'static');
 menu('my','My Account Management','my','__controller',1,i()->ok,'static');
+// menu('project/get','Get project from query','project.get','__controller',2,true,'static');
+// MyAccountDelete
 ?>
