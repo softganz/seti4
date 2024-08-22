@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-07-20
-* Version :: 34
+* Modify  :: 2024-08-22
+* Version :: 35
 *
 * @param Array $args
 * @return Widget
@@ -263,7 +263,7 @@ class Widget extends WidgetBase {
 				$extraArgs['class'] = $args['class'].' -sep';
 			} else if (is_string($child) && $child === '<spacer>') {
 				// Children is spacer
-				$extraArgs['class'] = $args['class'].($args['class'] ? ' ' : '').'-space';
+				$extraArgs['class'] = $args['class'].($args['class'] ? ' ' : '').'-spacer';
 				$child = '';
 			} else if (is_object($child) && get_class($child) === 'ChildrenWidget') {
 				// children is class of ChildrenWidget
