@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-08-11
-* Version :: 24
+* Modify  :: 2024-08-22
+* Version :: 25
 */
 
 'use strict'
@@ -1978,7 +1978,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 (function($) {	// sg-expand
 	$(document).on("click",".sg-expand",function() {
 		let $this = $(this)
-		let $icon = $(this).children()
+		let $icon = $(this).find('.icon')
 		if ($this.data('rel')) {
 			$($this.data('rel')).toggle()
 		} else {
