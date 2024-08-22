@@ -997,7 +997,7 @@ $SCREENS
 		.nav.-map-canvas a {background-color: #fff;}
 		.nav.-map-canvas a:hover {background-color: #e5e5e5;}
 
-	.nav.-app-menu {margin: 16px 8px; background-color: #fff; border-radius: 8px; display: flex; flex-wrap: wrap;}
+	.nav.-app-menu:not(.-hidden) {margin: 16px 8px; background-color: #fff; border-radius: 8px; display: flex; flex-wrap: wrap;}
 		.nav.-app-menu>ul {display: flex; flex-wrap: wrap; justify-content: flex-start;}
 		.nav.-app-menu p {padding: 16px 8px;}
 		.nav.-app-menu>.widget-listtile {flex: 1 0 100%; margin: 0; border-radius: 8px; align-items: center;}

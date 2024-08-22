@@ -18,6 +18,7 @@
 [class^="widget-"].-cross-axis-start {align-items: flex-start;}
 [class^="widget-"].-cross-axis-center {align-items: center;}
 [class^="widget-"].-cross-axis-end {align-items: flex-end;}
+.-spacer {flex: 1 !important;}
 
 
 
