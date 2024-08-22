@@ -57,7 +57,7 @@ class Docs extends PageController {
 							if ($this->args[0] == 'page') {
 								array_shift($this->args);
 								$page = implode('.',$this->args);
-								$ret .= R::Page($page);
+								$ret .= R::PageWidget($page)->build();
 							} else {
 								if (count($this->args) >= 3) {
 									$file = implode('/',array_slice($this->args,0,2)).'/'.implode('.',array_slice($this->args,2));
