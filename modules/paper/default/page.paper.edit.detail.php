@@ -2,8 +2,8 @@
 /**
 * Paper  :: Edit Detail
 * Created :: 2019-06-01
-* Modify  :: 2024-08-105
-* Version :: 6
+* Modify  :: 2024-08-22
+* Version :: 7
 *
 * @param String $nodeInfo
 * @return Widget

@@ -7,7 +7,7 @@
 * @author Panumas Nontapan <webmaster@softganz.com>
 * http://www.softganz.com
 * @created 2009-09-22
-* @modify  2024-08-10
+* @modify  2024-08-22
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -261,7 +261,6 @@ $(document).on('submit','form.signform', function(e) {
 
 
 
-// .sg-load,[data-load
 $(document).ready(function() {
 	$('body').append('<div id="notify" class="notify-main -no-print"></div><div id="tooltip" class="-noprint"></div>');
 	$("#notify").hide();
@@ -270,6 +269,7 @@ $(document).ready(function() {
 
 
 
+	// .sg-load,[data-load
 	$('.sg-load,[data-load]').each(function(index) {
 		let $this = $(this);
 		let loadUrl = $this.data('url');
@@ -294,8 +294,62 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	// Tab press, add tab to textarea
+	// const divs = document.querySelectorAll(".-monospace");
+
+	// divs.forEach(el => el.addEventListener("keydown", event => {
+	// 	console.log(event.target.getAttribute("data-el"));
+	// 	if (event.key == "Tab") {
+	// 		event.preventDefault();
+	// 		let target = event.target;
+	// 		var start = target.selectionStart;
+	// 		var end = target.selectionEnd;
+
+	// 		// set textarea value to: text before caret + tab + text after caret
+	// 		target.value = target.value.substring(0, start) + "\t" + target.value.substring(end);
+
+	// 		// put caret at right position again
+	// 		target.selectionStart = target.selectionEnd = start + 1;
+	// 	}
+	// }));
 });
 
+
+// Tab press, add tab to textarea
+$(document).on('keydown', '.-monospace', function(event) {
+	// console.log($(this));
+	if (event.key == "Tab") {
+		event.preventDefault();
+		let target = event.target;
+		var start = target.selectionStart;
+		var end = target.selectionEnd;
+
+		// set textarea value to: text before caret + tab + text after caret
+		target.value = target.value.substring(0, start) + "\t" + target.value.substring(end);
+
+		// put caret at right position again
+		target.selectionStart = target.selectionEnd = start + 1;
+	}
+})
+// const divs = document.querySelectorAll(".-monospace");
+
+// divs.forEach(el => el.addEventListener("keydown", event => {
+// 	console.log(event.target.getAttribute("data-el"));
+// 	if (event.key == "Tab") {
+// 		event.preventDefault();
+// 		let target = event.target;
+// 		var start = target.selectionStart;
+// 		var end = target.selectionEnd;
+
+// 		// set textarea value to: text before caret + tab + text after caret
+// 		target.value = target.value.substring(0, start) + "\t" + target.value.substring(end);
+
+// 		// put caret at right position again
+// 		target.selectionStart = target.selectionEnd = start + 1;
+// 	}
+
+// }));
 
 
 // Show tooltip on mouse move
