@@ -61,6 +61,7 @@ $include_path = ['/server/folder/seti4', '/local/folder/seti4', ini_get('include
 ini_set('include_path', implode(PATH_SEPARATOR, $include_path));
 require 'core/core.php';
 controller();
+? >
 </pre>
 History
 - @2022-12-17 Change model class from model => BasicModel and other module_model => ModuleModel
