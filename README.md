@@ -2,7 +2,7 @@
 
 Read Me
 
-##Folder structure
+## Folder structure
 
 <pre>
 seti4
@@ -28,12 +28,12 @@ seti4
     └── module2
 </pre>
 
-###Forder description
+### Forder description
 
 seti4/core/modules is for system modules
 seti4/modules is for user modules
 
-##Website structure
+## Website structure
 <pre>
 domain folder
 ├── index.php
@@ -54,7 +54,7 @@ domain folder
     └── pics
 </pre>
 
-###index.php
+### index.php
 ```
 <?php
 $include_path = ['/server/folder/seti4', '/local/folder/seti4', ini_get('include_path')];
@@ -63,5 +63,5 @@ require 'core/core.php';
 controller();
 ?>
 ```
-##History
+## History
 - @2022-12-17 Change model class from model => BasicModel and other module_model => ModuleModel
