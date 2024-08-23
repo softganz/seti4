@@ -18,8 +18,17 @@ new Button([
 	String class,
 	String type,
 	String href,
+	String text,
 	String title,
 	Widget icon,
+	String iconPosition,
+	String description,
+	String rel,
+	String before,
+	String done,
+	Strng target,
+	String style,
+	Object variable,
 	Array attribute,
 ]);
 </code>
@@ -28,9 +37,11 @@ new Button([
 <h4>Property :</h4>
 <code>
 type ↔ String : primary,secondary,success,info,warning,danger,link,cancel,floating,hidden, default NULL
-href ↔ String default NULL
-title ↔ String : default NULL
-icon ↔ Widget : default NULL,
+href ↔ String default is NULL
+title ↔ String : default is NULL
+icon ↔ Widget : default is NULL,
+iconPosition ↔ String : left,right,top,bottom default is left
+variable ↔ Object : use RIGHT
 attribute ↔ Array : default NULL,
 </code>
 
