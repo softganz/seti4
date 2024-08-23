@@ -1,13 +1,15 @@
-/*
+/**
 * SoftGanz JavaScript Library
 *
-* @package library
-* @version 4.00.06
-* @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
-* @author Panumas Nontapan <webmaster@softganz.com>
-* http://www.softganz.com
-* @created 2009-09-22
-* @modify  2024-08-22
+* library :: Javascript Library For SoftGanz
+* Created :: 2009-09-22
+* Modify  :: 2024-08-22
+* Version :: 2
+* Version :: 4.00.06
+*
+* Copyright :: Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+* Author    :: Panumas Nontapan <webmaster@softganz.com>
+* Website   :: http://www.softganz.com
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
