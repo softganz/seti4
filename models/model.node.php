@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2024-08-15
-* Version :: 7
+* Modify 	:: 2024-08-24
+* Version :: 8
 *
 * @param Array $args
 * @return Object
@@ -845,7 +845,7 @@ class NodeModel {
 		return $result;
 	}
 
-	public static function member($nodeId) {
+	public static function members($nodeId) {
 		return mydb::select(
 			'SELECT a.`uid`, UPPER(a.`membership`) `membership`
 			, u.`username`, u.`name`, u.`email`
