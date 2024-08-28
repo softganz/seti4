@@ -701,12 +701,12 @@
 	.widget-report .-toolbar>.-group>* {display: block;}
 	.widget-report .-toolbar>.-group .-content {padding: 8px;}
 
-	.widget-report .-toolbar>.-group>.group-nav {flex:0 0 29px; width: 29px; margin:0; padding:0; height:60px; text-align:center; font-size:20px; line-height:60px; z-index: 1; background-color: #fff;}
+	.widget-report .-toolbar>.-group>.group-nav {flex:0 0 29px; margin:0; padding:0; height:60px; text-align:center; font-size:20px; line-height:60px; z-index: 1; background-color: #fff;}
 	.widget-report .-toolbar>.-group>.group-nav.-left {left:4px; border-radius: 4px 0 0 4px; border-right: 1px #dddddd solid;}
 	.widget-report .-toolbar>.-group>.group-nav.-left:focus {outline:none;}
 	.widget-report .-toolbar>.-group>.group-nav.-right {right:4px; border-left: 1px #dddddd solid; border-radius: 0 4px 4px 0; position: absolute; right: 0;}
 	.widget-report .-toolbar>.-group>.group-nav.-right:focus {outline:none;}
-	.widget-report .-toolbar>.-group>.group-nav .icon {margin-top: 18px;}
+	.widget-report .-toolbar>.-group>.group-nav .icon {}
 
 	.widget-report .-toolbar>.-group>ul {display: flex; flex-wrap: nowrap; margin: 0; padding:0; position:relative; list-style-type: none;}
 	.widget-report .-toolbar>.-group>ul>li {flex: 0 0 90px; height: 100%; border-right: 1px #dddddd solid; position: relative; display: flex;  align-items: center;}
