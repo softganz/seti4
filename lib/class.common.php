@@ -13,8 +13,9 @@
 * the Free Software Foundation; either version 2 of the License.
 * ============================================
 
---- Created 2007-07-09
---- Modify  2020-10-21
+* Created :: 2007-07-09
+* Modify  :: 2024-08-28
+* Version :: 2
 */
 
 /********************************************
@@ -229,7 +230,7 @@ class Session implements SessionHandlerInterface {
 
 		if ($debug) echo 'Session write of '.$sess_id.'<br />data = '.$data.'<br />';
 
-		if(preg_match('/(user\|)(.*)/', $data, $out)) {
+		if(preg_match('/^(user\|)(.*)/', $data, $out)) {
 			$userInfo = unserialize($out[2]);
 		}
 		if ($debug) print_o($userInfo, '$userInfo', 1);
