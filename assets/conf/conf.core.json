@@ -28,6 +28,9 @@
 		"initialScale": 1.0,
 		"minimumScale": 1.0
 	},
+	"jwt": {
+		"secret": "Enter Secret Here"
+	},
 	"ban": {
 		"log": false
 	},
