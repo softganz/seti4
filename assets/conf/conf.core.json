@@ -1,8 +1,8 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2024-07-08",
-		"version": 2
+		"lastModify": "2024-08-29",
+		"version": 3
 	},
 	"autoLoader": {
 		"items": {
@@ -26,10 +26,11 @@
 		"logResizePhoto": false,
 		"maximumScale": 2.5,
 		"initialScale": 1.0,
-		"minimumScale": 1.0
-	},
-	"jwt": {
-		"secret": "Enter Secret Here"
+		"minimumScale": 1.0,
+		"loginToken": {
+			"tokenType": "jwt",
+			"jwtSecret": "Enter Secret Here"
+		}
 	},
 	"ban": {
 		"log": false

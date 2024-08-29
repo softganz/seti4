@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2024-08-28
-* Version :: 8
+* Modify  :: 2024-08-289
+* Version :: 9
 *
 * @param Int $userId
 * @return Object
@@ -355,7 +355,6 @@ class UserModel {
 		if (empty($cookielength)) $cookielength = cfg('member.signin.remembertime');
 		$remember_time = time()+$cookielength*60;
 
-		// $session_id = md5(uniqid(rand(), true));
 		// Create JWT token
 		$session_id = Jwt::generate(
 			[
@@ -363,8 +362,11 @@ class UserModel {
 				"alg" => "HS256"
 			],
 			['id' => intval($rs->uid), 'username' => $rs->username, 'name' => $rs->name, 'roles' => $rs->roles ? explode(',',$rs->roles) : [], 'exp' => $remember_time ],
-			cfg('jwt')->secret
+			cfg('system')->jwt->secret
 		);
+
+		if (strlen($session_id) >= 255) $session_id = md5(uniqid(rand(), true));
+
 		setcookie(cfg('cookie.id'),$session_id,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
 		setcookie(cfg('cookie.u'),$rs->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
 
