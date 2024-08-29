@@ -3,7 +3,7 @@
 * Admin   :: List of Cache Log
 * Created :: 2018-03-07
 * Modify  :: 2024-08-29
-* Version :: 1
+* Version :: 2
 *
 * @return Widget
 *
@@ -14,17 +14,19 @@ use Softganz\DB;
 use Softganz\SetDataModel;
 
 class AdminLogCache extends Page {
-	var $order;
 	var $clearCaches;
 	var $showData;
 	var $user;
+	var $order = 'expire';
+	var $sort = 'ASC';
 
 	function __construct($arg1 = NULL) {
 		parent::__construct([
-			'order' => SG\getFirst(post('o'),'expire'),
+			'order' => SG\getFirst(post('order'), $this->order),
 			'clearCaches' => post('cid'),
 			'showData' => post('data'),
-			'user' => post('user')
+			'user' => post('user'),
+			'sort' => SG\getFirst(post('sort'), $this->sort),
 		]);
 	}
 
@@ -35,7 +37,6 @@ class AdminLogCache extends Page {
 	function build() {
 		if ($this->clearCaches) $this->delete();
 
-		$ctime = time();
 		$data = $this->data();
 
 		return new Scaffold([
@@ -49,6 +50,7 @@ class AdminLogCache extends Page {
 						'user' => [
 							'type' => 'select',
 							'onChange' => 'submit',
+							'value' => $this->user,
 							'options' => ['' => '== Select user =='] + $this->getUser()
 						],
 					], // children
@@ -58,28 +60,30 @@ class AdminLogCache extends Page {
 		]);
 	}
 
-	function data() {
+	private function data() {
 		return DB::select([
 			'SELECT
-			c.*,
+			`cache`.*,
 			`expire` as `remain`,
-			u.`name`, u.`last_login`, u.`roles`
-			FROM %cache% c
-				LEFT JOIN %users% u ON u.`username` = c.`headers`
+			`user`.`name`, `user`.`last_login`, `user`.`roles`
+			FROM %cache% `cache`
+				LEFT JOIN %users% `user` ON `user`.`username` = `cache`.`headers`
 			%WHERE%
-			ORDER BY $ORDER$ ASC',
+			ORDER BY $ORDER$ $SORT$, `cache`.`headers` ASC',
 			'where' => [
 				'%WHERE%' => [
-					$this->user ? ['c.`headers` = :user', ':user' => $this->user] : NULL
+					$this->user ? ['`cache`.`headers` = :user', ':user' => $this->user] : NULL,
+					$this->order === 'roles' ? ['`user`.`roles` != ""'] : NULL
 				]
 			],
 			'var' => [
-				'$ORDER$' => addslashes($this->order)
+				'$ORDER$' => addslashes($this->order),
+				'$SORT$' => addslashes($this->sort)
 			]
 		]);
 	}
 
-	function getUser() {
+	private function getUser() {
 		return DB::select([
 			'SELECT `cache`.`headers`, `user`.`name`
 			FROM %cache% `cache`
@@ -90,7 +94,7 @@ class AdminLogCache extends Page {
 		])->items;
 	}
 
-	function delete() {
+	private function delete() {
 		if (empty($this->clearCaches)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่ระบุรายการที่ต้องการลบ');
 
 		DB::query([
@@ -103,6 +107,7 @@ class AdminLogCache extends Page {
 	}
 
 	function list($data) {
+		$ctime = time();
 		return new Form([
 			'class' => 'sg-form',
 			'action' => url('admin/log/cache'),
@@ -121,24 +126,27 @@ class AdminLogCache extends Page {
 						'caption' => 'Cache viewer',
 						'thead' => [
 							'',
-							'<a href="?o=headers">header</a>',
-							'<a href="?o=roles">roles</a>',
-							'remain -nowrap' => '<a href="?o=expire">remain in sec.</a>',
-							'created -nowrap' => '<a href="?o=created">created</a>',
-							'login -nowrap' => '<a href="?o=last_login">last login</a>',
-							'<a href="?o=cid">cid</a>'
+							'headers -nowrap' => '<a class="sg-action" href="'.url('admin/log/cache', ['user' => $this->user, 'order' => 'headers']).'" data-rel="#main">User</a>',
+							'roles -nowrap' => '<a class="sg-action" href="'.url('admin/log/cache', ['user' => $this->user, 'order' => 'roles']).'" data-rel="#main">Roles</a>',
+							'remain -nowrap' => '<a class="sg-action" href="'.url('admin/log/cache', ['user' => $this->user, 'order' => 'expire']).'" data-rel="#main">Remain time</a>',
+							'created -nowrap' => '<a class="sg-action" href="'.url('admin/log/cache', ['user' => $this->user, 'order' => 'created', 'sort' => 'DESC']).'" data-rel="#main">Cache create time</a>',
+							'login -nowrap' => '<a class="sg-action" href="'.url('admin/log/cache', ['user' => $this->user, 'order' => 'last_login', 'sort' => 'DESC']).'" data-rel="#main">Last login time</a>',
+							'cid -nowrap' => '<a class="sg-action" href="'.url('admin/log/cache', ['user' => $this->user, 'order' => 'cid']).'" data-rel="#main">Cache ID</a>',
 						],
 						'children' => array_map(
 							function($rs) use($ctime) {
 								return [
 									'<input type="checkbox" name="cid[]" value="'.$rs->cid.'" />',
-									'<strong>'.$rs->headers.'</strong><br />'.$rs->name,
+									'<strong><a class="sg-action" href="'.url('admin/log/cache', ['user' => $rs->headers]).'" data-rel="#main">'.$rs->headers.'</a></strong><br />'.$rs->name,
 									$rs->roles,
 									// $rs->remain .'-'. $ctime.'='.($rs->remain - $ctime),
 									sg_remain2day($rs->remain - $ctime),
 									date('Y-m-d H:i:s', $rs->created),
 									$rs->last_login,
-									$rs->cid
+									'<a class="sg-action" href="'.url('admin/log/cache..detail', ['detail' => $rs->cid]).'" data-rel="box" data-width="full">'.$rs->cid.'</a>'
+									// '<details><summary>'.$rs->cid.'</summary>'
+									// . '<pre>'.print_r(preg_match('/^\{/', $rs->data) ? json_decode($rs->data) : unserialize($rs->data), 1).'</pre>'
+									// . '</details>'
 								];
 							},
 							(Array) $data->items
@@ -147,6 +155,20 @@ class AdminLogCache extends Page {
 				]), // ScrollView
 				// 	if ($showData) $tables->rows[] = '<tr><td colspan="7">'.$rs->data.'</td></tr>';
 			], // children
+		]);
+	}
+
+	function detail() {
+		$token = post('detail');
+		if (empty($token)) return error(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุ');
+
+		$data = DB::select([
+			'SELECT `data` FROM %cache% WHERE `cid` = :token LIMIT 1',
+			'var' => [':token' => $token]
+		])->data;
+
+		return new ScrollView([
+			'child' => '<pre>'.print_r(preg_match('/^\{/', $data) ? json_decode($data) : unserialize($data), 1).'</pre>'
 		]);
 	}
 }
