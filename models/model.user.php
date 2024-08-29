@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2024-08-289
-* Version :: 9
+* Modify  :: 2024-08-29
+* Version :: 10
 *
 * @param Int $userId
 * @return Object
@@ -365,7 +365,7 @@ class UserModel {
 			cfg('system')->jwt->secret
 		);
 
-		if (strlen($session_id) >= 255) $session_id = md5(uniqid(rand(), true));
+		if (strlen($session_id) > 1000) $session_id = md5(uniqid(rand(), true));
 
 		setcookie(cfg('cookie.id'),$session_id,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
 		setcookie(cfg('cookie.u'),$rs->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
