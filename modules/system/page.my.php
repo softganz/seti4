@@ -2,8 +2,8 @@
 /**
 * My      :: My Home
 * Created :: 2021-12-14
-* Modify  :: 2024-02-29
-* Version :: 2
+* Modify  :: 2024-08-29
+* Version :: 3
 *
 * @return Widget
 *
@@ -19,7 +19,7 @@ class My extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => '{tr:Hello} @'.i()->name,
+				'title' => '@'.i()->name,
 				// 'boxHeader' => true,
 				'leading' => _HEADER_BACK,
 			]), // AppBar
