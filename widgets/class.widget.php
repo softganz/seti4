@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-08-22
-* Version :: 35
+* Modify  :: 2024-08-29
+* Version :: 36
 *
 * @param Array $args
 * @return Widget
@@ -81,6 +81,9 @@ class Widget extends WidgetBase {
 					if (is_null($childValue)) continue;
 					$this->children[$childName] = $childValue;
 				}
+			} else if ($argKey === 'child' && !is_null($argValue)) {
+				$this->children[] = $argValue;
+				$this->child = NULL;
 			} else if (preg_match('/^(data\-)(.*)/', $argKey, $out) || in_array($argKey, ['rel', 'before', 'done', 'boxWidth', 'boxHeight'])) {
 				if ($out) $argKey = $out[2];
 				$this->{$argKey} = $argValue;
@@ -955,7 +958,7 @@ class AppBar extends Widget {
 			. ($this->trailing ? '<div class="-trailing -no-print">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
 			. ($this->navigator && $navigatorResult ? '<nav class="-nav -no-print">'._NL.$navigatorResult._NL.'</nav>'._NL : '')
 			. ($this->dropbox ? '<div class="-dropbox">'.$this->dropbox->build().'</div><!-- end of -dropboox -->'._NL : '')
-			. ($this->children || $this->child ? '<div class="-children">'.$this->_renderChildren($this->children).'</div>' : '')
+			. ($this->children ? '<div class="-children">'.$this->_renderChildren($this->children).'</div>' : '')
 			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class AppBar
