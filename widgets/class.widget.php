@@ -3,7 +3,7 @@
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
 * Modify  :: 2024-08-29
-* Version :: 36
+* Version :: 37
 *
 * @param Array $args
 * @return Widget
@@ -83,7 +83,7 @@ class Widget extends WidgetBase {
 				}
 			} else if ($argKey === 'child' && !is_null($argValue)) {
 				$this->children[] = $argValue;
-				$this->child = NULL;
+				$this->child = $argValue;
 			} else if (preg_match('/^(data\-)(.*)/', $argKey, $out) || in_array($argKey, ['rel', 'before', 'done', 'boxWidth', 'boxHeight'])) {
 				if ($out) $argKey = $out[2];
 				$this->{$argKey} = $argValue;
@@ -140,7 +140,7 @@ class Widget extends WidgetBase {
 		if (isset($value)) $this->children[] = $value;
 
 		if ($this->body) $childrens = [$this->body];
-		else if ($this->child) $childrens = [$this->child];
+		// else if ($this->child) $childrens = [$this->child];
 		else if ($this->children) $childrens = $this->children;
 		else $childrens = [];
 		// debugMsg($childrens, 'CHILDRENS');
@@ -252,10 +252,6 @@ class Widget extends WidgetBase {
 	// @override
 	function _renderChildren($childrens = [], $args = []) {
 		$childrens = (Array) $childrens;
-		// if (empty($childrens)) $childrens = [];
-		// if ($this->body) $childrens[] = $this->body;
-		// if ($this->child) $childrens[] = $this->child;
-		// if ($this->children) $childrens = $childrens + $this->children;
 
 		$ret .= $this->_renderChildrenContainerStart();
 
@@ -302,7 +298,7 @@ class Widget extends WidgetBase {
 				$ret .= $this->header;
 			}
 		}
-		if (isset($this->children) || isset($this->child) || isset($this->body)) {
+		if ($this->children()) {
 			$ret .= $this->_renderChildren($this->children());
 		}
 		$ret .= $this->_renderWidgetContainerEnd();
@@ -344,9 +340,8 @@ class Container extends Widget {
 
 	// @override
 	function toString() {
-		// debugMsg($this->children(),'$this->children()');
 		$ret = $this->_renderWidgetContainerStart();
-		if (isset($this->children) || isset($this->child) || isset($this->body)) {
+		if ($this->children()) {
 			$ret .= $this->_renderChildren($this->children());
 		}
 		$ret .= $this->_renderWidgetContainerEnd();
@@ -417,7 +412,7 @@ class ListTile extends Widget {
 			. ($this->subtitle ? '<span class="-subtitle-text">'.$this->_renderEachChildWidget(NULL, $this->subtitle).'</span>' : '')
 			. '</div>'._NL
 			. ($this->trailing ? '<div class="-trailing">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
-			. $this->_renderChildren($this->children)
+			. $this->_renderChildren($this->children())
 			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class ListTile
@@ -710,7 +705,7 @@ class ListItem extends Widget {
 	}
 
 	function build() {
-		if (empty($this->children) && $this->forceBuild === false) return;
+		if (empty($this->children()) && $this->forceBuild === false) return;
 
 		// $uiType = ['action' => 'ui-action', 'card' => 'ui-card', 'menu' => 'ui-menu', 'album' => 'ui-album', 'nav' => 'ui-nav'];
 
@@ -751,7 +746,7 @@ class ListItem extends Widget {
 				. '</header>';
 			if ($headerClass) $this->header->attr->class = $headerClass;
 		}
-		$ret .= $this->_renderChildren($this->children);
+		$ret .= $this->_renderChildren($this->children());
 		$ret .= '</'.$joinTag.'>'._NL;
 
 		if ($this->config->nav) {
@@ -958,7 +953,7 @@ class AppBar extends Widget {
 			. ($this->trailing ? '<div class="-trailing -no-print">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
 			. ($this->navigator && $navigatorResult ? '<nav class="-nav -no-print">'._NL.$navigatorResult._NL.'</nav>'._NL : '')
 			. ($this->dropbox ? '<div class="-dropbox">'.$this->dropbox->build().'</div><!-- end of -dropboox -->'._NL : '')
-			. ($this->children ? '<div class="-children">'.$this->_renderChildren($this->children).'</div>' : '')
+			. ($this->children() ? '<div class="-children">'.$this->_renderChildren($this->children()).'</div>' : '')
 			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class AppBar
