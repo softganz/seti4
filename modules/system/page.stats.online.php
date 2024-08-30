@@ -2,8 +2,8 @@
 /**
 * Stats   :: Current User Online
 * Created :: 2018-09-01
-* Modify  :: 2024-07-08
-* Version :: 2
+* Modify  :: 2024-08-30
+* Version :: 3
 *
 * @param String $arg1
 * @return Widget
@@ -95,7 +95,7 @@ class StatsOnline extends Page {
 									date(($current_date != date('Y-m-d',$rs->access) ? 'Y-m-d ' : '').'H:i:s',$rs->access),
 									$rs->hits,
 									$rs->browser.' '.($this->right->fullView ? $rs->host : ''),
-									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('admin/ban/request', ['ip' => $full_ip, 'host' => $rs->host]).'" data-rel="box" data-width="480"><i class="icon -material">block</i></a>' : '',
+									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('admin/ban/request', ['ip' => $full_ip, 'host' => $rs->host]).'" data-rel="box" data-width="800"><i class="icon -material">block</i></a>' : '',
 								];
 							},
 							CounterModel::onlineUsers(['type' => $this->onlineType])

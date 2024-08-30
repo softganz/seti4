@@ -1,14 +1,13 @@
 <?php
 /**
-* Module  :: Description
+* Admin   :: Ban Request Form
 * Created :: 2024-07-08
-* Modify  :: 2024-07-08
-* Version :: 1
+* Modify  :: 2024-08-30
+* Version :: 2
 *
-* @param String $arg1
 * @return Widget
 *
-* @usage module/{id}/method
+* @usage admin/ban/request
 */
 
 class AdminBanRequest extends Page {
@@ -33,7 +32,7 @@ class AdminBanRequest extends Page {
 					'text' => 'List',
 				]), // Button
 			]), // AppBar
-			'body' => new Widget([
+			'body' => new Row([
 				'children' => [
 					new Form([
 						'class' => 'sg-form',
@@ -74,8 +73,47 @@ class AdminBanRequest extends Page {
 							]
 						]
 					]),
+					new Container([
+						'children' => [
+							new ListTile(['title' => 'Ban List']),
+							new Table([
+								'thead' => ['IP/Host', 'Start Time', 'End Time', ''],
+								'children' => array_map(
+									function($ban, $key) {
+										return [
+											$ban->ip.$ban->host,
+											$ban->start,
+											$ban->end,
+											new Nav([
+												'children' => [
+													new Button([
+														// 'href' => url(),
+														'class' => '-disabled',
+														'icon' => new Icon('edit'),
+													]),
+													new Button([
+														'class' => 'sg-action',
+														'href' => url('api/admin/ban/remove', ['id' => $key]),
+														'icon' => new Icon('cancel'),
+														'rel' => 'none',
+														'done' => 'remove: parent tr',
+														'attribute' => [
+															'data-title' => 'ลบรายการ',
+															'data-confirm' => 'ลบรายการ กรุณายืนยัน?'
+														]
+													])
+												], // children
+											]), // Nav
+										];
+									},
+									(Array) cfg('ban.ip'),
+									array_keys((Array) cfg('ban.ip'))
+								)
+							]), // Table
+						], // children
+					]), // Container
 				], // children
-			]), // Widget
+			]), // Row
 		]);
 	}
 }
