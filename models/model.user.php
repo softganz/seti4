@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2024-08-29
-* Version :: 10
+* Modify  :: 2024-08-30
+* Version :: 11
 *
 * @param Int $userId
 * @return Object
@@ -362,7 +362,7 @@ class UserModel {
 				"alg" => "HS256"
 			],
 			['id' => intval($rs->uid), 'username' => $rs->username, 'name' => $rs->name, 'roles' => $rs->roles ? explode(',',$rs->roles) : [], 'exp' => $remember_time ],
-			cfg('system')->jwt->secret
+			cfg('system')->loginToken->jwtSecret
 		);
 
 		if (strlen($session_id) > 1000) $session_id = md5(uniqid(rand(), true));
