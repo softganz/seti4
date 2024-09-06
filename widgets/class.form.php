@@ -708,7 +708,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-// Method _renderSelect_v1 not used/ not test
+	// Method _renderSelect_v1 not used/ not test
 	function _renderSelect_v1($tag_id, $name, $formElement) {
 		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
 		$selectStr = '	<select '
@@ -790,24 +790,42 @@ class Form extends Widget {
 
 	function _renderButton($tag_id, $name, $formElement) {
 		if (empty($formElement->items) && !empty($formElement->value)) {
-			$ret .= '	<button type="submit" '.(empty($formElement->name) ? '' : 'name="'.$name.'"').' class="btn '.\SG\getFirst($formElement->class, '-primary').'" value="'.htmlspecialchars(strip_tags($formElement->value)).'" '.($this->readonly || $formElement->readonly ? 'disabled="disabled" ' : '').'>'.\SG\getFirst($formElement->text, $formElement->value).'</button> ';
+			// Single button
+			$ret .= '<button type="submit" '
+				. (empty($formElement->name) ? '' : 'name="'.$name.'"')
+				. ' class="btn -primary'.($formElement->class ? ' '.$formElement->class : '').'"'
+				. ' value="'.htmlspecialchars(strip_tags($formElement->value)).'"'
+				. ($this->readonly || $formElement->readonly ? ' disabled="disabled" ' : '')
+				. '>'
+				. SG\getFirst($formElement->text, $formElement->value)
+				. '</button>';
 		} else if (is_array($formElement->items) && !empty($formElement->items['value'])) {
-			$ret .= '	<button'.(isset($formElement->items['type'])?' type="'.$formElement->items['type'].'"':'').' name="'.(isset($formElement->items['name'])?$formElement->items['name']:$name).'" class="btn'.($formElement->items['class']?' '.$formElement->items['class']:'').'" value="'.htmlspecialchars(strip_tags($formElement->items['value'])).'" '.($this->readonly || $formElement->readonly?'disabled="disabled" ':'').'>'.$formElement->items['value'].'</button> ';
+			$ret .= '<button'
+				. (isset($formElement->items['type']) ? ' type="'.$formElement->items['type'].'"' : '')
+				. ' name="'.(isset($formElement->items['name']) ? $formElement->items['name'] : $name).'"'
+				. ' class="btn'.($formElement->items['class'] ? ' '.$formElement->items['class'] : '').'"'
+				. ' value="'.htmlspecialchars(strip_tags($formElement->items['value'])).'"'
+				. ($this->readonly || $formElement->readonly ? ' disabled="disabled"' : '')
+				. ' >'
+				. $formElement->items['value']
+				. '</button>';
 		} else {
+			// Multiple button
 			foreach ($formElement->items as $key => $button) {
 				if (is_null($button)) {
 					continue;
 				} else if ($button['type'] == 'text') {
 					$ret .= $button['value'];
 				} else {
-					$ret .= '	<button'
-						. (isset($button['type'])?' type="'.$button['type'].'"':'')
-						. ' name="'.\SG\getFirst($button['name'],is_string($key) ? $key : $name).'" '
-						. 'class="btn'.($button['class']?' '.$button['class']:'').'" '
-						. 'value="'.\SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'" '
-						. ($this->readonly || $formElement->readonly?'disabled="disabled" ':'').'>'
+					$ret .= '<button'
+						. (isset($button['type']) ? ' type="'.$button['type'].'"' : '')
+						. ' name="'.\SG\getFirst($button['name'],is_string($key) ? $key : $name).'"'
+						. ' class="btn'.($button['class'] ? ' '.$button['class'] : '').'"'
+						. ' value="'.\SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'"'
+						. ($this->readonly || $formElement->readonly ? ' disabled="disabled"' : '')
+						.' >'
 						. $button['value']
-						. '</button> ';
+						. '</button>';
 				}
 			}
 		}
