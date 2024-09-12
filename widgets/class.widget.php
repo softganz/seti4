@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-08-29
-* Version :: 37
+* Modify  :: 2024-09-11
+* Version :: 38
 *
 * @param Array $args
 * @return Widget
@@ -1015,14 +1015,24 @@ class PageApi extends PageBase {
 	function __construct($args = []) {
 		parent::__construct($args);
 		if (empty($this->action)) $this->action = $this->actionDefault;
+		// Replace .a to .A
 		$this->actionMethod = (preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->action));
 	}
 
 	function build() {
 		if (method_exists($this, $this->actionMethod) && ($reflection = new ReflectionMethod($this, $this->actionMethod)) && $reflection->isPublic()) {
-			return $this->{$this->actionMethod}();
+			if (method_exists($this, 'rightToBuild')) {
+				$rightToBuild = $this->rightToBuild();
+				if ($rightToBuild === true) {
+					return $this->{$this->actionMethod}();
+				} else {
+					return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+				}
+			} else {
+				return $this->{$this->actionMethod}();
+			}
 		} else {
-			return error(_HTTP_ERROR_BAD_REQUEST, 'Action not found!!!');
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'Action not found!!!');
 		}
 	}
 } // End of class PageApi
