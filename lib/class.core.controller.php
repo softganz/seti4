@@ -1182,7 +1182,6 @@ class SgCore {
 				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 			}
 
-
 			if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
@@ -1200,7 +1199,11 @@ class SgCore {
 				}
 
 				// Build request result
-				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
+				if (is_object($pageBuildWidget) && $pageBuildWidget->responseCode) {
+					$requestResult = $pageBuildWidget;
+				} elseif (is_array($pageBuildWidget) && $pageBuildWidget['responseCode']) {
+					$requestResult = $pageBuildWidget;
+				} else if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
 					$requestResult = $pageBuildWidget->build();
 				} else {
 					$requestResult = $pageBuildWidget;
