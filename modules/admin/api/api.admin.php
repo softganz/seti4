@@ -20,11 +20,9 @@ class AdminApi extends PageApi {
 		]);
 	}
 
+	// function rightToBuild() {return true;}
 	function saveUserAccess() {
-		if (!$access = post('access')) return [
-			'responseCode' => _HTTP_ERROR_BAD_REQUEST,
-			'text' => 'ข้อมูลไม่ครบถ้วน',
-		];
+		if (!$access = post('access')) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
 
 		$roles = cfg('roles');
 
