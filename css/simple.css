@@ -19,6 +19,12 @@ Version     : 3
 @import url(jquery-confirm.css);
 @import url(sgui.css);
 
+:root {
+	--box-bg-color: aliceblue;
+	--box-title-bg-color: aliceblue;
+	--box-close-img: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23555555' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");
+}
+
 html {height: 100vh; font-size: 62.5%;}
 body {height: 100vh; font: 1.4rem/2.2rem sans-serif; color: #333;}
 p {margin-bottom: 8px;}
@@ -271,7 +277,7 @@ $SCREENS
 	.loading {width:120px; height:20px; margin:5px; padding:3px; position:absolute; text-align:center; background:#fff url(https://softganz.com/library/img/loading.gif) no-repeat 10px 5px; border:1px green solid; border-radius:10px;	}
 
 	/* Class look like bootstrap4 */
-	.btn {margin: 0px; padding: 6px 16px; font-size: 1em; font-weight: normal; line-height: 24px; color: #666; border: none; border-radius: 18px; display: inline-flex; background-color: #eee; cursor: pointer; justify-content: center; white-space: nowrap;}
+	.btn {margin: 0px; padding: 6px 16px; font-size: 1em; font-weight: normal; line-height: 1; color: #666; border: none; border-radius: 18px; display: inline-flex; background-color: #eee; cursor: pointer; justify-content: center; white-space: nowrap;}
 		.btn:hover {color: #555; background-color: #f0f0f0;}
 		.btn.-sg-16 {padding: 0;}
 		.btn.-sg-24 {padding: 0;}
@@ -302,7 +308,7 @@ $SCREENS
 		.btn.-danger {color: #FFE0E0; background-color: #D75452;}
 		.btn.-danger:hover {background-color: #E05755;}
 		.btn.-danger>.icon {color: #FFE0E0;}
-		.btn.-link {background-color: transparent; box-shadow: none;}
+		.btn.-link {background-color: transparent;}
 		.btn.-link:hover {background-color: #eee;}
 		.btn.-cancel {color: #999; margin-right: 16px;}
 		.btn.-cancel>.icon {color: #999;}
@@ -411,15 +417,6 @@ $SCREENS
 	.error {color:#666;}
 
 	.pagebreak {display: block;height:1px; opacity: 0;}
-
-
-	.card {margin:0 0 16px 0; padding:0; list-style-type: none; box-shadow: 1px 1px 2px #aaa;}
-		.card>li {margin:10px; box-shadow: 2px 2px 5px #aaa; position: relative;}
-		.card>li>a {display: block; padding:10px;font-size:1.0em; text-align: center;}
-
-		.card.-photo>li {position: relative;}
-		.card-item.-upload {padding:64px 0;box-shadow: none;}
-		.card.-photo .iconset {position: absolute; top: 0; right: 0; }
 
 
 	.debug {width: 100%; background: #fff; font-size: 9pt;}
@@ -758,15 +755,14 @@ $SCREENS
 		.form-item>.form-group>input {flex: 1;}
 		.form-item>.form-group>input:hover {box-shadow: none;}
 		.form-item>.form-group>input:focus {box-shadow: none;}
-		.form-item>.form-group>.form-text {padding: 2px 8px;}
 		.form-item>.form-group>*>.form-select {height: 36px;}
 
-		.form-item>.form-group>*>span>* {border: none; box-shadow: none; height: 100%;}
-		.form-item>.form-group>*>span>.btn {padding: 0; line-height: 38px; display: block; border-radius: 0;}
+		.form-item>.form-group>*>span>* {height: 100%;}
+		.form-item>.form-group>*>span>.btn {padding: 0; display: block; border-radius: 0;}
 		.form-item>.form-group>*>span>.btn.-primary {box-shadow: 0 0 0 1px #2179ff;}
 		.form-item>.form-group>*>span>.btn>.icon {padding: 7px 3px;}
-		.form-item>.form-group>*>span>.btn>span {padding: 0 4px; line-height: 38px;}
-		.form-item>.form-group>*>span>.btn>.icon.-sg-16 {padding: 11px 3px;}
+		.form-item>.form-group>*>span>.btn>span {padding: 0 4px; line-height: 36px;}
+		.form-item>.form-group>*>span>.btn>.icon.-sg-16 {padding: 10px 4px;}
 		.form-item>.form-group>.input-prepend {background-color: #f9f9f9; display: flex; line-height: 34px;}
 		.form-item>.form-group>.input-prepend>span {border-right: 1px #ccc solid;}
 		.form-item>.form-group>.input-prepend>span:first-child>* {border-radius: 2px 0 0 2px;}
@@ -1420,28 +1416,28 @@ $SCREENS
 	The following CSS is consistent between example themes and should not be altered.
 	*/
 	#colorbox {}
-		#colorbox, #cboxOverlay, #cboxWrapper{position:absolute; top:0; left:0; z-index:1100; overflow:hidden;}
-		#cboxWrapper {max-width:none;}
-		#cboxOverlay{position:fixed; width:100%; height:100%;}
-		#cboxMiddleLeft, #cboxBottomLeft{clear:left;}
-		#cboxContent{position:relative;}
-		#cboxLoadedContent{overflow: auto; -webkit-overflow-scrolling: auto !important;}
-		#cboxTitle{margin:0;}
-		#cboxLoadingOverlay, #cboxLoadingGraphic{position:absolute; top:0; left:0; width:100%; height:100%;}
-		#cboxPrevious, #cboxNext, #cboxClose, #cboxSlideshow{cursor:pointer;}
-		.cboxPhoto{float:left; margin:auto; border:0; display:block; max-width:none; -ms-interpolation-mode:bicubic; width: auto !important; height: auto !important;}
-		.cboxIframe{width:100%; height:100%; display:block; border:0; padding:0; margin:0;}
-		#colorbox, #cboxContent, #cboxLoadedContent{box-sizing:content-box; -moz-box-sizing:content-box; -webkit-box-sizing:content-box;}
+		#colorbox, #cboxOverlay, #cboxWrapper{position: absolute; top: 0; left: 0; z-index: 1100; overflow: hidden;}
+		#cboxWrapper {max-width: none;}
+		#cboxOverlay {position: fixed; width: 100%; height: 100%;}
+		#cboxMiddleLeft, #cboxBottomLeft {clear: left;}
+		#cboxContent {position: relative;}
+		#cboxLoadedContent {overflow: auto; -webkit-overflow-scrolling: auto !important;}
+		#cboxTitle {margin: 0;}
+		#cboxLoadingOverlay, #cboxLoadingGraphic {position: absolute; top: 0; left: 0; width: 100%; height: 100%;}
+		#cboxPrevious, #cboxNext, #cboxClose, #cboxSlideshow {cursor: pointer;}
+		.cboxPhoto {float: left; margin: auto; border: 0; display: block; max-width: none; -ms-interpolation-mode: bicubic; width: auto !important; height: auto !important;}
+		.cboxIframe {width: 100%; height: 100%; display: block; border: 0; padding: 0; margin: 0;}
+		#colorbox, #cboxContent, #cboxLoadedContent {box-sizing: content-box; -moz-box-sizing: content-box; -webkit-box-sizing: content-box;}
 
 		/*
 		    User Style:
 		    Change the following styles to modify the appearance of Colorbox.  They are
 		    ordered & tabbed in a way that represents the nesting of the generated HTML.
 		*/
-		#cboxOverlay {background:#000;}
-		#colorbox {outline:0; background: #fff; border-radius: 2px; border-radius: 10px;}
-		#cboxWrapper {border-radius: 2px; background-color: #f5f5f5;}
-		#cboxContent{margin-top:48px; overflow:visible; border:none; position: relative;}
+		#cboxOverlay {background-color: #000;}
+		#colorbox {outline: 0; border-radius: 2px; border-radius: 10px;}
+		#cboxWrapper {border-radius: 2px;}
+		#cboxContent {margin-top: 48px; overflow: visible; border: none; position: relative;}
 
 			#cboxLoadedContent .-hover {z-index: 1001;}
 
@@ -1454,7 +1450,7 @@ $SCREENS
 			#cboxLoadedContent .header>.nav form {display: inherit; vertical-align: middle;}
 			#cboxLoadedContent .header>.nav .sg-dropbox>a {box-shadow: none; background-color: transparent;}
 			#cboxLoadedContent .box-page>.header:first-of-type,
-			#cboxLoadedContent .box-page>*>.header:first-of-type {width: calc( 100% - 32px ); margin: 0; padding: 0 32px 0 0; position: absolute; color:#333; top: -48px; left:0; z-index: 10; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap;}
+			#cboxLoadedContent .box-page>*>.header:first-of-type {width: calc( 100% - 32px ); margin: 0; padding: 0 32px 0 0; position: absolute; color:#333; top: -48px; left: 0; z-index: 10; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap;}
 			#cboxLoadedContent .box-page .header:first-of-type>.nav {display: block;}
 			#cboxLoadedContent .box-page .header:first-of-type>.nav.-back {display: flex;}
 
@@ -1463,36 +1459,38 @@ $SCREENS
 			.box-page .form-item.-sg-box-bottom.-sg-text-right {right: 8px;}
 			.box-page>iframe {width: 100%; height: 100%;}
 
-			.cboxIframe {background: #fff;}
+			.cboxIframe {background-color: #fff;}
 			#cboxError {padding: 50px; border: 1px solid #ccc;}
-			#cboxLoadedContent {padding: 0; overscroll-behavior-y: contain;}
-			#cboxLoadingGraphic {background: url(https://softganz.com/library/img/loading.1.gif) no-repeat center center;}
-			#cboxLoadingOverlay {background: #fff;}
-			#cboxTitle {position: absolute; top: -48px; left: 0px; width: calc( 100% - 32px ); color: #333; height: 48px; line-height: 48px; padding: 0 0 0 32px; z-index: 0; background-color: #eee;}
+			#cboxLoadedContent {padding: 0; overscroll-behavior-y: contain; background-color: var(--box-bg-color);}
+			#cboxLoadingGraphic {background-image: url(https://softganz.com/library/img/loading.1.gif) no-repeat center center;}
+			#cboxLoadingOverlay {background-color: #fff;}
+			#cboxTitle {position: absolute; top: -48px; left: 0px; width: calc( 100% - 32px ); color: #333; height: 48px; line-height: 48px; padding: 0 0 0 32px; z-index: 0; background-color: var(--box-title-bg-color);}
 			#cboxCurrent {position: absolute; top: -22px; right: 205px; text-indent: -9999px; z-index: 2;}
 
 			/* these elements are buttons, and may need to have additional styles reset to avoid unwanted base styles */
-			#cboxPrevious, #cboxNext, #cboxSlideshow, #cboxClose {border:0; padding:0; margin:0; overflow:visible; text-indent:-9999px; width:24px; height:24px; position:absolute; top:-36px; z-index: 20;box-shadow: none; background-color: transparent;}
+			#cboxPrevious, #cboxNext, #cboxSlideshow, #cboxClose {border: 0; padding: 0; margin: 0; overflow: visible; text-indent: -9999px; width: 24px; height: 24px; position: absolute; top: -36px; z-index: 20; box-shadow: none; background-color: transparent;}
 
 			/* avoid outlines on :active (mouseclick), but preserve outlines on :focus (tabbed navigating) */
-			#cboxPrevious:active, #cboxNext:active, #cboxSlideshow:active, #cboxClose:active {outline:0;}
+			#cboxPrevious:active, #cboxNext:active, #cboxSlideshow:active, #cboxClose:active {outline: 0;}
 
 			#cboxPrevious {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23444444' viewBox='0 0 24 24'%3E%3Cpath d='M15.41 16.09l-4.58-4.59 4.58-4.59-1.41-1.41-6 6 6 6z'/%3E%3Cpath d='M0-.5h24v24h-24z' fill='none'/%3E%3C/svg%3E"); right: 88px;}
 			#cboxPrevious:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23808080' viewBox='0 0 24 24'%3E%3Cpath d='M15.41 16.09l-4.58-4.59 4.58-4.59-1.41-1.41-6 6 6 6z'/%3E%3Cpath d='M0-.5h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
 			#cboxNext {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23444444' viewBox='0 0 24 24'%3E%3Cpath d='M8.59 16.34l4.58-4.59-4.58-4.59 1.41-1.41 6 6-6 6z'/%3E%3Cpath d='M0-.25h24v24h-24z' fill='none'/%3E%3C/svg%3E"); right: 58px;}
 			#cboxNext:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23808080' viewBox='0 0 24 24'%3E%3Cpath d='M8.59 16.34l4.58-4.59-4.58-4.59 1.41-1.41 6 6-6 6z'/%3E%3Cpath d='M0-.25h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
-			#cboxClose {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23555555' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E"); right: 8px;}
+			#cboxClose {background-image: var(--box-close-img); right: 8px;}
 			#cboxClose:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23A0A0A0' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
-			.cboxSlideshow_on #cboxPrevious, .cboxSlideshow_off #cboxPrevious {right:66px;}
-			.cboxSlideshow_on #cboxSlideshow {background-position:-300px -25px; right:44px;}
-			.cboxSlideshow_on #cboxSlideshow:hover {background-position:-325px -25px;}
-			.cboxSlideshow_off #cboxSlideshow {background-position:-325px 0px; right:44px;}
-			.cboxSlideshow_off #cboxSlideshow:hover {background-position:-300px -25px;}
+			.cboxSlideshow_on #cboxPrevious, .cboxSlideshow_off #cboxPrevious {right: 66px;}
+			.cboxSlideshow_on #cboxSlideshow {background-position: -300px -25px; right: 44px;}
+			.cboxSlideshow_on #cboxSlideshow:hover {background-position: -325px -25px;}
+			.cboxSlideshow_off #cboxSlideshow {background-position: -325px 0px; right: 44px;}
+			.cboxSlideshow_off #cboxSlideshow:hover {background-position: -300px -25px;}
 
 			#cboxContent .login {width: auto; margin: 0; border: none; background-color: transparent;}
 
-	#cboxLoadedContent .widget-appbar>.-title {background-color: transparent;}
-	#cboxLoadedContent .widget-appbar>.-leading {background-color: transparent;}
+	#cboxLoadedContent .widget-appbar>.-title,
+	#cboxLoadedContent .widget-appbar>.-leading,
+	#cboxLoadedContent .widget-appbar>.-trailing
+	 {background-color: transparent;}
 
 	#colorbox.-full {margin: 0 auto;}
 	#colorbox.-full

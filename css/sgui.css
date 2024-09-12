@@ -513,8 +513,8 @@
 
 
 
-.ui-album {list-style-type: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: space-between;}
-	.ui-album>.ui-item {width: 206px; padding: 0; margin: 2px; position: relative; overflow: hidden; background-color: #eee;}
+.ui-album {list-style-type: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 4px;}
+	.ui-album>.ui-item {flex: 0 0 206px; padding: 0; margin: 0; position: relative; overflow: hidden; background-color: #eee;}
 	.ui-album>.ui-item::before {content: ""; float: left; padding-top: 100%;}
 	.ui-album>.ui-item.-sg-128 {width: 128px; padding-top: 128px;}
 	.ui-album>.ui-item .photoitem {height: 100%; width: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
@@ -571,7 +571,7 @@
 	.widget-dropbox.hover:hover .sg-dropbox--wrapper {display: block;}
 	.widget-dropbox.click .sg-dropbox--wrapper {margin-top: 4px;}
 	.widget-dropbox.leftside .sg-dropbox--wrapper {right:6px; left:auto;}
-	.widget-dropbox>a {display: block; padding: 6px; color:#ccc; border-radius: 50%; box-shadow: none; border: none;}
+	.widget-dropbox>a {display: block; padding: 6px; color:#ccc; border-radius: 50%; box-shadow: none; border: none; line-height: 1;}
 	.widget-dropbox>a:hover {color:#999; background-color: #eee;}
 	.widget-dropbox.-atright>a {}
 	.widget-dropbox .sg-dropbox--wrapper { padding:11px 0 8px; display: none; position: absolute; z-index:100; left:-10px; right:auto;}
@@ -757,7 +757,7 @@
 	.ui-statusbar .ui-item .status.-process-3.-active {background-color: magenta;}
 	.ui-statusbar .ui-item .status.-process-4.-active {background-color: blue;}
 	.ui-statusbar .ui-item .status.-process-5.-active {background-color: green;}
-	.ui-statusbar .ui-item .status>.icon {margin-top: 12px; color: grey;}
+	.ui-statusbar .ui-item .status>.icon {color: grey;}
 	.ui-statusbar .ui-item .status.-active>.icon {color: #fff;}
 	.nav>.ui-statusbar {margin: 8px 0 32px;}
 /* @end */
