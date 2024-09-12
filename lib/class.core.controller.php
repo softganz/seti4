@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-07-21
-* Version :: 18
+* Modify  :: 2024-09-12
+* Version :: 19
 */
 
 /*************************************************************
@@ -1199,11 +1199,7 @@ class SgCore {
 				}
 
 				// Build request result
-				if (is_object($pageBuildWidget) && $pageBuildWidget->responseCode) {
-					$requestResult = $pageBuildWidget;
-				} elseif (is_array($pageBuildWidget) && $pageBuildWidget['responseCode']) {
-					$requestResult = $pageBuildWidget;
-				} else if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
+				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
 					$requestResult = $pageBuildWidget->build();
 				} else {
 					$requestResult = $pageBuildWidget;
