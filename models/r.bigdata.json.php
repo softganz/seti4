@@ -25,7 +25,10 @@ function r_bigdata_json($action, $keyName, $keyId, $fldName, $dataGroup = NULL, 
 	$data->keyid = $keyId;
 	$data->fldname = $fldName;
 
-	$result->data = $data;
+	$result = (Object) [
+		'data' => $data,
+		'_query' => [],
+	];
 
 
 	$currentData = mydb::select('SELECT `bigid`, `flddata` FROM %bigdata% WHERE `keyname` =  :keyname AND `keyid` = :keyid AND `fldname` = :fldname LIMIT 1', $data);
