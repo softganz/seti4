@@ -994,8 +994,8 @@ function sg_cleanXlsSepString(&$str) {
 	$str = preg_replace("/\r?\n/", "", $str);
 	$str = preg_replace("/\n/", "", $str);
 	$str = preg_replace("/\r/", "", $str);
-	if(substr($str,0,1)!='=' && strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
-	$str=strip_tags($str);
+	if(is_string($str) && substr($str,0,1)!='=' && strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
+	if (is_string($str)) $str = strip_tags($str);
 }
 
 ?>
