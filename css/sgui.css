@@ -29,7 +29,7 @@
 
 
 /* widget-floatingactionbutton */
-.widget-floatingactionbutton {position: fixed; right: 16px; bottom: 16px; z-index: 1000; display: flex; flex-wrap: wrap;}
+.widget-floatingactionbutton {position: fixed; margin: 0 auto; bottom: 8px; z-index: 1000; display: flex; flex-wrap: wrap; width: calc(100% - 16px); padding: 0 8px;}
 	.widget-floatingactionbutton>* {flex: 1 0 100%; text-align: right; margin-top: 8px;}
 	.widget-floatingactionbutton:hover>.-item>a {display: inline-block;}
 	.widget-floatingactionbutton>.-hover-parent:hover {}
