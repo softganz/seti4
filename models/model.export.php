@@ -3,7 +3,7 @@
 * Model   :: Export File
 * Created :: 2024-09-14
 * Modify  :: 2024-09-14
-* Version :: 1
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -13,7 +13,7 @@
 * @usage ExportModel::function($conditions)
 */
 
-load_lib('SimpleXLSXGen.php', 'external/shuchkin');
+load_lib('SimpleXLSXGen.php', 'external/shuchkin'); // https://github.com/shuchkin/simplexlsxgen
 
 class ExportModel {
 	static function header($fileName, $fileType) {
