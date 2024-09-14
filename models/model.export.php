@@ -3,7 +3,7 @@
 * Model   :: Export File
 * Created :: 2024-09-14
 * Modify  :: 2024-09-14
-* Version :: 2
+* Version :: 3
 *
 * @param Array $args
 * @return Object
@@ -16,12 +16,10 @@
 load_lib('SimpleXLSXGen.php', 'external/shuchkin'); // https://github.com/shuchkin/simplexlsxgen
 
 class ExportModel {
-	static function header($fileName, $fileType) {
+	private static function header($fileName, $fileType) {
 			header("Content-Disposition: attachment; filename=\"$fileName\"");
 			header("Content-Type: application/'.$fileType");
 			header("Content-Type: text/xls; charset=UTF-8");
-			//header("Content-Type: application/csv");
-
 	}
 
 	static function cvs($args = []) {
@@ -37,18 +35,12 @@ class ExportModel {
 			],
 			(Array) $args
 		);
-		// $defaults = '{debug: false, delimiter: ",", cleanTag: true, convertLeadingZero: true}';
-		// $options = SG\json_decode($options,$defaults);
-		// $debug = $options->debug;
-		// debugMsg($args, '$args');
-		// return;
 
-		if (!$args->debug) ExportModel::header($args->fileName, 'cvs');
+		if (!$args->debug) self::header($args->fileName, 'cvs');
 
 		ob_start();
 		$df = fopen("php://output", 'w');
 		fputs($df, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
-		// fwrite($df, "sep=,\n");
 		fputcsv($df, (Array) $args->header);
 		foreach ($args->children as $row) {
 			fputcsv($df, (Array) $row);
@@ -71,18 +63,16 @@ class ExportModel {
 			(Array) $args
 		);
 
-		$books = [
-			['ISBN', 'title', 'author', 'publisher', 'ctry' ],
-			[618260307, 'The Hobbit', 'J. R. R. Tolkien', 'Houghton Mifflin', 'USA'],
-			[908606664, 'Slinky Malinki', 'Lynley Dodd', 'Mallinson Rendel', 'NZ']
-		];
+		// $books = [
+		// 	['ISBN', 'title', 'author', 'publisher', 'ctry' ],
+		// 	[618260307, 'The Hobbit', 'J. R. R. Tolkien', 'Houghton Mifflin', 'USA'],
+		// 	[908606664, 'Slinky Malinki', 'Lynley Dodd', 'Mallinson Rendel', 'NZ']
+		// ];
 		// $xlsx = Shuchkin\SimpleXLSXGen::fromArray( $books );
 		// $xlsx->saveAs('books.xlsx'); // or downloadAs('books.xlsx') or $xlsx_content = (string) $xlsx
 
-		// debugMsg(array_merge([$args->header], $args->children), '$value');
 		$xlsx = Shuchkin\SimpleXLSXGen::fromArray(array_merge([$args->header], $args->children));
 		$xlsx->downloadAs($args->fileName);
-		// return (String) $xlsx;
 	}
 
 	static function xls($args = []) {
@@ -99,21 +89,7 @@ class ExportModel {
 			(Array) $args
 		);
 
-		// $defaults = '{debug: false, cleanTag: true, convertLeadingZero: true}';
-		// $options = SG\json_decode($options,$defaults);
-		// $debug = $options->debug;
-
-		// // file name for download
-		// if (empty($fileName)) $fileName = cfg('domain.short').'-'.date('Y-m-d-H-i').".xls";
-
-		if (!$args->debug) ExportModel::header($args->fileName, 'vnd.ms-excel');
-
-		// {
-		// 	header("Content-Disposition: attachment; filename=\"$fileName\"");
-		// 	header("Content-Type: application/vnd.ms-excel");
-		// 	header("Content-Type: text/xls; charset=UTF-8");
-		// 	//header("Content-Type: application/csv");
-		// }
+		if (!$args->debug) self::header($args->fileName, 'vnd.ms-excel');
 
 		// Create header line
 		$ret.='<tr>';
@@ -123,7 +99,6 @@ class ExportModel {
 		foreach($args->children as $row) {
 			if(!$flag) {
 				// display field/column names as first row
-							//echo implode("\t", array_keys($row)) . "\n";
 				$flag = true;
 			}
 			$row = array_filter(
@@ -133,14 +108,13 @@ class ExportModel {
 			// array_walk($row, '__r_setValueType');
 			array_walk($row, 'sg_cleanXlsSepString');
 			array_walk($row, 'strip_tags');
-			// array_walk($row, 'strip_tags');
 			$ret .= '<tr><td>'.implode('</td><td class="text">', (Array) $row).'</td></tr>';
 		}
 		//if ($options->cleanTag) $ret=strip_tags($ret);
 
-		$ret = ExportModel::excelHeader()
+		$ret = self::xlsHeader()
 			. $ret
-			. ExportModel::excelFooter();
+			. self::xlsFooter();
 		return $ret;
 	}
 
@@ -149,13 +123,13 @@ class ExportModel {
 	* @param String $str
 	* @return
 	*/
-	function __r_setValueType(&$str) {
+	private static function setValueType(&$str) {
 		//$str=gettype($str).$str;
 		// if (gettype($str)=='string' && substr($str,0,1)=='0') $str='="'.$str.'"';
 		// if (gettype($str) == 'string' && substr($str,0,1) == '0') $str = '\''.$str;
 	}
 
-	static function excelHeader() {
+	private static function xlsHeader() {
 		$header = '<html xmlns:o="urn:schemas-microsoft-com:office:office"
 			xmlns:x="urn:schemas-microsoft-com:office:excel"
 			xmlns="http://www.w3.org/TR/REC-html40">
@@ -271,7 +245,7 @@ class ExportModel {
 		return $header;
 	}
 
-	static function excelFooter() {
+	static function xlsFooter() {
 		return "</table></body></html>";
 	}
 }
