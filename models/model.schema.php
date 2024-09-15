@@ -18,7 +18,7 @@ class SchemaModel {
 	function __construct($schemaName) {
 		$this->schemaName = $schemaName;
 		if ($schemaName) {
-			foreach(SchemaModel::get($schemaName) as $key => $value) {
+			foreach(self::get($schemaName) as $key => $value) {
 				$this->{$key} = $value;
 			}
 		}
@@ -50,7 +50,7 @@ class SchemaModel {
 				else if ($element->widget && $element->widget != 'ChildrenWidget') continue;
 				else if (in_array($element->type, ['textfield'])) continue;
 				else if ($element->widget === 'ChildrenWidget') {
-					$result = array_merge($result, SchemaModel::bodyOnly($element->children));
+					$result = array_merge($result, self::bodyOnly($element->children));
 				} else {
 					// debugMsg($element->inputName);
 					unset($element->options);
