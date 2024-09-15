@@ -1,5 +1,14 @@
 <?php
 /**
+* Core    :: Function Library
+* Created :: 2021-10-24
+* Modify  :: 2024-09-15
+* Version :: 2
+*
+* @usage functionName(parameter)
+*/
+
+/**
  * Get date and time of today
  *
  * @return Object
@@ -492,10 +501,10 @@ function print_o() {
 		$title = is_string($next_value) ? $next_value : '';
 		if ($echo) {
 			echo '<em>'.$title.'</em>';
-			echo arrays::value($value,$title);
+			echo Arrays::value($value,$title);
 		} else {
 			$ret .= '<em>'.$title.'</em>';
-			$ret .= arrays::value($value, $title, array('class' => $inline ? '-inline' : ''));
+			$ret .= Arrays::value($value, $title, array('class' => $inline ? '-inline' : ''));
 		}
 		unset($title);
 	}

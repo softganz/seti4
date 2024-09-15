@@ -16,8 +16,8 @@
 * ============================================
 
 Created :: 2019-12-08
-Modify  :: 2024-07-09
-Version :: 5
+Modify  :: 2024-09-15
+Version :: 6
 */
 
 namespace SG;
@@ -750,8 +750,8 @@ class Arrays {
 				$result .= '<li><span style="color:#ff9a56">'.$name.$prefix.$key.$suffix.'</font> <font color=gray>['.(is_object($value) ? get_class($value).' ' : '').$vtype.']</font> : ';
 				switch ($vtype) {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
-					case 'array' : $result .= Arrays::value($value,$name.$prefix.$key.$suffix); break;
-					case 'object' : $result .= Arrays::value($value,$name.$prefix.$key.$suffix); break;
+					case 'array' : $result .= self::value($value,$name.$prefix.$key.$suffix); break;
+					case 'object' : $result .= self::value($value,$name.$prefix.$key.$suffix); break;
 					default : $result .= '<font color="#ff9a56">'.$value.'</font>'; break;
 				}
 				$result .= '</li>'._NL;

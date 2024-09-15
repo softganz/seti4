@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2024-08-28
-* Version :: 2
+* Modify  :: 2024-09-15
+* Version :: 3
 */
 
 /********************************************
@@ -327,9 +327,9 @@ class Arrays {
 				$result .= '<li><span style="color:#ff9a56">'.$name.$prefix.$key.$suffix.'</font> <font color=gray>['.$vtype.']</font> : ';
 				switch ($vtype) {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
-					case 'array' : $result .= arrays::value($value,$name.$prefix.$key.$suffix); break;
-					case 'object' : $result .= arrays::value($value,$name.$prefix.$key.$suffix); break;
-					default : $result .= '<font color="#ff9a56">'.$value.'</font>'; break;
+					case 'array' : $result .= self::value($value,$name.$prefix.$key.$suffix); break;
+					case 'object' : $result .= self::value($value,$name.$prefix.$key.$suffix); break;
+					default : $result .= '<font color="#ff9a56">'.htmlSpecialChars($value).'</font>'; break;
 				}
 				$result .= '</li>'._NL;
 			}
