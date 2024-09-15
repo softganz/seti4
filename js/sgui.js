@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-08-22
-* Version :: 25
+* Modify  :: 2024-09-15
+* Version :: 26
 */
 
 'use strict'
@@ -2274,7 +2274,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$debugOutput.empty().show()
 			$debugOutput.append(
 				$('<a>')
-				.text('Query Link')
+				.text('Get data api url')
 				.attr({
 					'href': queryUrl + '?' + new URLSearchParams(para),
 					'target': '_blank'
