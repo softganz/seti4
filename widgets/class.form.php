@@ -793,7 +793,7 @@ class Form extends Widget {
 			// Single button
 			$ret .= '<button type="submit" '
 				. (empty($formElement->name) ? '' : 'name="'.$name.'"')
-				. ' class="btn -primary'.($formElement->class ? ' '.$formElement->class : '').'"'
+				. ' class="btn '.($formElement->class ? $formElement->class : '-primary').'"'
 				. ' value="'.htmlspecialchars(strip_tags($formElement->value)).'"'
 				. ($this->readonly || $formElement->readonly ? ' disabled="disabled" ' : '')
 				. '>'
