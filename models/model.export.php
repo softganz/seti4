@@ -2,8 +2,8 @@
 /**
 * Model   :: Export File
 * Created :: 2024-09-14
-* Modify  :: 2024-09-14
-* Version :: 3
+* Modify  :: 2024-09-15
+* Version :: 4
 *
 * @param Array $args
 * @return Object
@@ -13,7 +13,7 @@
 * @usage ExportModel::function($conditions)
 */
 
-load_lib('SimpleXLSXGen.php', 'external/shuchkin'); // https://github.com/shuchkin/simplexlsxgen
+import('package:external/shuchkin/SimpleXLSXGen.php'); // https://github.com/shuchkin/simplexlsxgen
 
 class ExportModel {
 	private static function header($fileName, $fileType) {
@@ -72,7 +72,11 @@ class ExportModel {
 		// $xlsx->saveAs('books.xlsx'); // or downloadAs('books.xlsx') or $xlsx_content = (string) $xlsx
 
 		$xlsx = Shuchkin\SimpleXLSXGen::fromArray(array_merge([$args->header], $args->children));
-		$xlsx->downloadAs($args->fileName);
+		if ($args->debug) {
+			return (string) $xlsx;
+		} else {
+			$xlsx->downloadAs($args->fileName);
+		}
 	}
 
 	static function xls($args = []) {
