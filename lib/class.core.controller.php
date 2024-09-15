@@ -1242,7 +1242,7 @@ class SgCore {
 			} else if (!_AJAX && is_array($requestResult) && isset($requestResult['location'])) {
 				location($body['location']);
  			} else if (_HTML && (is_array($requestResult) || is_object($requestResult))) {
- 				die(process_widget(print_o($requestResult,'$requestResult')));
+				die(SgCore::processIndex('index', print_o($requestResult, '$result')));
 			} else if (_HTML) {
 				die(process_widget($requestResult));
 			} else if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
