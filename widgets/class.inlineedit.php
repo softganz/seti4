@@ -301,7 +301,7 @@ class InlineEdit extends Widget {
 		$text = $widget->data[$widget->value];
 
 		if ($childEditMode) {
-			$ret .= '<span class="-for-input">'.$text.'<i class="icon -material -gray">expand_more</i></span>'._NL;
+			$ret .= '<span class="-for-input"><span class="-value">'.$text.'</span><i class="icon -material -gray">expand_more</i></span>'._NL;
 		} else {
 			$ret .= '<span class="-for-view">'.$text.'</span>'._NL;
 		}
