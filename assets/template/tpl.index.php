@@ -10,7 +10,7 @@
 <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=<?php echo cfg('system')->initialScale;?>, minimum-scale=<?php echo cfg('system')->minimumScale;?>, maximum-scale=<?php echo cfg('system')->maximumScale;?>, user-scalable=yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-tap-highlight" content="no">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
