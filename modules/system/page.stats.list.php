@@ -1,162 +1,177 @@
 <?php
 /**
-* Stats : List Counter Log
-* Created 2018-12-15
-* Modify  2020-10-22
+* Stats   :: List Counter Log
+* Created :: 2018-12-15
+* Modify  :: 2024-09-21
+* Version :: 2
 *
-* @param Object $self
-* @return String
+* @return Widget
 *
 * @usage stats/list
 */
 
-$debug = true;
+use Softganz\DB;
 
-function stats_list($self) {
-	$getId = \SG\getFirst(post('id'),0);
-	$getIp = post('ip');
-	$getUser = post('user');
-	$getDate = post('date');
-	$items = intval(\SG\getFirst(post('items'),100));
-	$page = intval(\SG\getFirst(post('page'),1));
-	$getEid = post('eid');
-	$getIncludeBot = post('bot');
+class StatsList extends Page {
+	var $id = 0;
+	var $ip;
+	var $user;
+	var $date;
+	// var $getEid;
+	var $includeBot = false;
+	var $items = 100;
+	var $page = 1;
+	var $right;
 
-	$is_administer_watchdogs = user_access('administer contents,administer watchdogs');
+	function __construct() {
+		parent::__construct([
+			'id' => SG\getFirstInt(post('id'), $this->id),
+			'ip' => post('ip'),
+			'user' => post('user'),
+			'date' => post('date'),
+			'items' => intval(SG\getFirst(post('items'), $this->items)),
+			'page' => intval(SG\getFirst(post('page'), $this->page)),
+			// 'getEid' => post('eid'),
+			'includeBot' => post('bot'),
+			'right' => (Object) [
+				'admin' => user_access('administer contents,administer watchdogs')
+			]
+		]);
+	}
 
-	$isEmptyPara = !$getIp && !$getUser && !$getDate;
-	//$ret .= '$isEmptyPara = '.$isEmptyPara;
+	function build() {
+		$counterLogStatus = DB::select(['SHOW TABLE STATUS LIKE "%counter_log%"'])->items[0];
+		$totalItems = $counterLogStatus->Rows;
+		// debugMsg($counterLogStatus,'$counterLogStatus');
 
-	$self->theme->title = 'Access log listing';
-	user_menu('list','list',url('stats/list'));
-	$self->theme->navigator = user_menu();
+		$pagePara = [
+			'user' => $this->user,
+			'ip' => $this->ip,
+			'date' => $this->date,
+			'id' => $this->id,
+			'bot' => $this->includeBot,
+		];
 
-	$dbs = mydb::select('show table status like "sgz_counter_log"');
-	$total_items = $dbs->items[0]->Rows;
-	//$ret .= print_o($dbs,'$dbs');
+		$dbs = $this->data();
 
-	if ($getIp) mydb::where('l.`ip` = :ip',':ip',ip2long($getIp));
-	if ($getUser) mydb::where('l.`user` = :user',':user',$getUser);
-	if ($getDate) mydb::where('DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date',':date',$getDate);
-	if (!$getIncludeBot) mydb::where('l.`referer` NOT LIKE "%bot%"');
+		$pagenv = new PageNavigator($this->items, $this->page, $totalItems, q(), NULL, $pagePara);
 
+		$no = 0;
 
-	$pagePara = array();
-	$pagePara['user'] = $getUser;
-	$pagePara['ip'] = $getIp;
-	$pagePara['date'] = $getDate;
-	if ($getId) $pagePara['id'] = $getId;
-	if ($getIncludeBot) $pagePara['bot'] = 'yes';
+		$tables = new Table([
+			'thead' => ['no' => 'no','logid','log date','user','ip']
+		]);
+		foreach ($dbs->items as $rs) {
+			$tables->rows[] = [
+				++$no,
+				'<font color=brown>'.$rs->id.'</font>',
+				'<em><font color=brown>'.$rs->log_date.'</font></em>'.($rs->new_user ? ' <i class="icon -material">new_releases</i>' : ''),
+				($this->right->admin ? '<font color=brown><a class="sg-action" href="'.url('stats/list',array('user'=>$rs->user)).'" data-rel="box" title="Statistics of user '.$rs->user_name.'">'.$rs->user_name.'</a></font>':'<font color=brown>'.$rs->user_name.'</font>'),
+				($this->right->admin ? '<a href="'.url('stats/list',array('ip'=>long2ip($rs->ip))).'" title="Statistics of ip '.long2ip($rs->ip).'">'.long2ip($rs->ip).'</a>' : sg_sub_ip(long2ip($rs->ip))),
+			];
 
-	if ($isEmptyPara) {
-		$rs = mydb::select('SELECT MIN(`id`) `minid`, MAX(`id`) `maxid` FROM %counter_log% LIMIT 1; -- {reset: false}');
-		$minId = $rs->minid;
-		$maxId = $rs->maxid;
+			$tables->rows[] = [
+				'<td></td>',
+				'',
+				'<td colspan="3">'
+				. ($this->right->admin ? '<font color=#A7A7A7>url:</font><a class="sg-action" href="'.$rs->url.'" data-rel="box" data-width="100%" data-height="100%">'.urldecode($rs->url).'</a><br />':'')
+				. (user_access(true) ? '<font color=#A7A7A7>referer:</font><a href="'.$rs->referer.'" target=_blank><font color=#A7A7A7>'.urldecode($rs->referer).'</font></a><br />':'')
+				. '<font color=#A7A7A7>browser:'.$rs->browser.'</font></td>',
+			];
+		}
 
-		//if ($isEmptyPara) {
-			$startId = $maxId - ($page * $items) + 1;
-			mydb::where('l.`id` >= :id', ':id', $startId);
-			mydb::value('$LIMIT$', 'LIMIT '.$items);
-		//} else {
-		//	$minId = \SG\getFirst($getEid,$rs->minid);
-		//	$startId = $minId + (($page - 1) * $items);
-		//	mydb::value('$LIMIT$', 'LIMIT '.$items);
-		//}
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'Access log listing',
+			]), // AppBar
+			'body' => new Widget([
+				'children' => [
+					!$para->option->no_page && $pagenv->show ? new Form([
+						'class' => 'form-report',
+						'action' => url(q(), $pagePara),
+						'children' => [
+							'bot' => ['type' => 'checkbox', 'value' => $this->includeBot, 'options' => ['yes' => 'Include Bot']],
+							'<button class="btn -link"><i class="icon -material">search</i></button>',
+							'<spacer style="flex:1;"></spacer>',
+							$pagenv
+						]
+					]) : NULL,
+					$tables,
+					!$para->option->no_page && $pagenv->show ? $pagenv->show : NULL,
+				], // children
+			]), // Widget
+		]);
+	}
 
-		//$ret .= 'Min id = '.$minId.' Max id = '.$maxId.' Srart id = '.$startId.'<br />';
+	private function data() {
+		$isEmptyPara = !$this->ip && !$this->user && !$this->date;
 
-		// FAST Query but bug on condition, cannot get all found rows
-		$stmt = 'SELECT log.*, u.`name` `user_name`
-			FROM
-			(
-				SELECT *
-				FROM %counter_log% l
-				%WHERE%
-				ORDER BY l.`id` ASC
-				$LIMIT$
-			) AS log
-			LEFT JOIN %users% AS u ON log.`user` = u.`uid`
-			ORDER BY `id` DESC;
-			-- {key: "id"}';
+		if ($this->ip) mydb::where('l.`ip` = :ip',':ip',ip2long($this->ip));
+		if ($this->user) mydb::where('l.`user` = :user',':user',$this->user);
+		if ($this->date) mydb::where('DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date',':date',$this->date);
+		if (!$this->includeBot) mydb::where('l.`referer` NOT LIKE "%bot%"');
 
-		$dbs = mydb::select($stmt);
+		if ($isEmptyPara) {
+			$rs = mydb::select('SELECT MIN(`id`) `minid`, MAX(`id`) `maxid` FROM %counter_log% LIMIT 1; -- {reset: false}');
+			$minId = $rs->minid;
+			$maxId = $rs->maxid;
 
-		//if ($isEmptyPara) {
-		//	$total_items = $maxId - $minId;
-		//} else {
-			//$total_items = $dbs->count() < $items ? $page*$items :  $maxId - $minId;
-		//}
-		$pagePara['eid'] = end($dbs->items)->id;
-	} else {
-		$start = ($page - 1) * $items;
-		mydb::value('$LIMIT$', 'LIMIT '.$start.','.$items);
+			//if ($isEmptyPara) {
+				$startId = $maxId - ($this->page * $this->items) + 1;
+				mydb::where('l.`id` >= :id', ':id', $startId);
+				mydb::value('$LIMIT$', 'LIMIT '.$this->items);
+			//} else {
+			//	$minId = \SG\getFirst($getEid,$rs->minid);
+			//	$startId = $minId + (($this->page - 1) * $this->items);
+			//	mydb::value('$LIMIT$', 'LIMIT '.$this->items);
+			//}
 
-		$stmt = 'SELECT
-			log.*
-			, u.`name` `user_name`
-			FROM
-			(SELECT
-				l.*
-				FROM %counter_log% AS l
-				%WHERE%
-				ORDER BY l.`id` DESC
-				$LIMIT$
-			) log
+			//$ret .= 'Min id = '.$minId.' Max id = '.$maxId.' Srart id = '.$startId.'<br />';
+
+			// FAST Query but bug on condition, cannot get all found rows
+			$dbs = mydb::select(
+				'SELECT log.*, u.`name` `user_name`
+				FROM
+				(
+					SELECT *
+					FROM %counter_log% l
+					%WHERE%
+					ORDER BY l.`id` ASC
+					$LIMIT$
+				) AS log
 				LEFT JOIN %users% AS u ON log.`user` = u.`uid`
-			';
+				ORDER BY `id` DESC;
+				-- {key: "id"}'
+			);
 
-		$dbs = mydb::select($stmt);
-		//$ret .= mydb()->_query.'<br />';
-		//$total_items = $dbs->_found_rows;
+			//if ($isEmptyPara) {
+			//	$totalItems = $maxId - $minId;
+			//} else {
+				//$totalItems = $dbs->count() < $this->items ? $this->page*$this->items :  $maxId - $minId;
+			//}
+			$pagePara['eid'] = end($dbs->items)->id;
+		} else {
+			$start = ($this->page - 1) * $this->items;
+			mydb::value('$LIMIT$', 'LIMIT '.$start.','.$this->items);
+
+			$dbs = mydb::select(
+				'SELECT
+				log.*
+				, u.`name` `user_name`
+				FROM
+				(SELECT
+					l.*
+					FROM %counter_log% AS l
+					%WHERE%
+					ORDER BY l.`id` DESC
+					$LIMIT$
+				) log
+					LEFT JOIN %users% AS u ON log.`user` = u.`uid`'
+			);
+		}
+		// debugMsg(mydb()->_query);
+
+		return $dbs;
 	}
-	//$ret .= mydb()->_query.'<br />';
-	//$ret .= 'TOTAL = '.$total_items.'<br />';
-	//$ret .= print_o($dbs,'$dbs');
-
-
-	$pagenv = new PageNavigator($items,$page,$total_items,q(),NULL,$pagePara);
-
-	if (!$para->option->no_page && $pagenv->show) {
-		$ret .= '<div class="-sg-flex">'
-			. '<div>'
-			. '<form method="post" action="'.url(q(), $pagePara).'">'
-			. '<label><input type="checkbox" name="bot" value="yes" '.($getIncludeBot ? 'checked="checked"' : '').' />Include Bot</label>'
-			. '<button class="btn -link"><i class="icon -material">search</i></button>'
-			. '</form>'
-			. '</div>'
-			. '<div>'
-			. $pagenv->show
-			. '</div>'
-			. '</div>';
-	}
-
-	$no = 0;
-
-	$tables = new Table();
-	$tables->thead = array('no' => 'no','logid','log date','user','ip');
-	foreach ($dbs->items as $rs) {
-		$tables->rows[] = array(
-			++$no,
-			'<font color=brown>'.$rs->id.'</font>',
-			'<em><font color=brown>'.$rs->log_date.'</font></em>'.($rs->new_user? '<img src="'._img.'new.1.gif" title="new user" alt="new" />':''),
-			($is_administer_watchdogs ? '<font color=brown><a class="sg-action" href="'.url('stats/list',array('user'=>$rs->user)).'" data-rel="box" title="Statistics of user '.$rs->user_name.'">'.$rs->user_name.'</a></font>':'<font color=brown>'.$rs->user_name.'</font>'),
-			($is_administer_watchdogs ? '<a href="'.url('stats/list',array('ip'=>long2ip($rs->ip))).'" title="Statistics of ip '.long2ip($rs->ip).'">'.long2ip($rs->ip).'</a>' : sg_sub_ip(long2ip($rs->ip))),
-		);
-
-		$tables->rows[] = array(
-			'<td></td>',
-			'',
-			'<td colspan="3">'
-			. ($is_administer_watchdogs ? '<font color=#A7A7A7>url:</font><a class="sg-action" href="'.$rs->url.'" data-rel="box" data-width="100%" data-height="100%">'.urldecode($rs->url).'</a><br />':'')
-			. (user_access(true) ? '<font color=#A7A7A7>referer:</font><a href="'.$rs->referer.'" target=_blank><font color=#A7A7A7>'.urldecode($rs->referer).'</font></a><br />':'')
-			. '<font color=#A7A7A7>browser:'.$rs->browser.'</font></td>',
-		);
-	}
-
-	$ret .= $tables->build();
-
-	if (!$para->option->no_page && $pagenv->show) $ret.=$pagenv->show;
-
-	return $ret;
 }
 ?>
