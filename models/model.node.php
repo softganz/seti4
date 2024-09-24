@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2024-08-24
-* Version :: 8
+* Modify 	:: 2024-09-24
+* Version :: 9
 *
 * @param Array $args
 * @return Object
@@ -224,7 +224,7 @@ class NodeModel {
 
 		if (in_array('doc', $fields) && $nodeList) {
 			$docList = DB::select([
-				'SELECT `fid` `fileId`, `tpid` `nodeId`, `file`, `folder`
+				'SELECT `fid` `fileId`, `tpid` `nodeId`, `file`, `folder`, `title`
 				FROM %topic_files%
 				WHERE `tpid` IN ( :nodeList ) AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc" AND `tagName` IS NULL
 				-- GROUP BY `tpid`
@@ -235,7 +235,10 @@ class NodeModel {
 			$result->debug['DOCS'] = mydb()->_query;
 
 			foreach ($docList as $doc) {
-				$result->items[$doc->nodeId]->doc[] = FileModel::docProperty($doc->file, $doc->folder);
+				$prop = FileModel::docProperty($doc->file, $doc->folder);
+				$prop->id = $doc->fileId;
+				$prop->title = $doc->title;
+				$result->items[$doc->nodeId]->doc[] = $prop;
 			}
 		}
 
