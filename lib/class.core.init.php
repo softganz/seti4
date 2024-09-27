@@ -2,8 +2,8 @@
 /**
 * Core Init :: Init Web
 * Created   :: 2023-08-01
-* Modify    :: 2024-07-08
-* Version   :: 5
+* Modify    :: 2024-09-27
+* Version   :: 6
 */
 
 global $R;
@@ -22,6 +22,7 @@ if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
 $R = new R();
 $R->request = $request;
 $R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
+$R->configFolder = isset($_GET['setting:conf']) ? $_GET['setting:conf'] : 'conf.d';
 
 $includeFileList = [
 	'lib/lib.define.php',
@@ -148,12 +149,11 @@ unset($_module_folder, $_folder); // clear unused variable
 
 // Load configuration file
 if ($R->core) foreach ($R->core as $key => $value) cfg($key, $value);
-SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
-SgCore::loadConfig('conf.core.json', 'conf.d'); // load core config file
-SgCore::loadConfig('conf.web.release.php', '.'); // load web config release
-SgCore::loadConfig(_CONFIG_FILE, ['conf.d','.']); // load web config file
-SgCore::loadConfig('conf.local.php', ['conf.local','.']); // load local config file
+
+initConfig($R->configFolder);
+
 error_reporting(cfg('error_reporting'));
+
 //echo 'error after load config '.error_reporting().' : '.decbin(error_reporting()).'<br />';
 
 // Create new mydb database constant
@@ -283,6 +283,15 @@ i()->am;
 // End of core process
 
 
+// Load all config file
+function initConfig($configFolder) {
+	SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
+	SgCore::loadConfig('conf.core.json', $configFolder); // load core config file
+	SgCore::loadConfig(_CONFIG_FILE, $configFolder); // load web config file
+	SgCore::loadConfig(_CONFIG_FILE, 'conf.local'); // load local config file
+}
+
+// Set auto loader file
 function sg_autoloader($class) {
 	$registerFileList = (Array) R()->core->autoLoader->items;
 
@@ -301,6 +310,8 @@ function sg_autoloader($class) {
 
 	$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
 	$endName = strToLower(end($pieces));
+
+	$import = '';
 
 	switch ($endName) {
 		case 'model':
