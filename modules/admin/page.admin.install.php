@@ -492,7 +492,7 @@ function __admin_install_create_table($prefix=null) {
 		`css` TEXT NULL DEFAULT NULL,
 		`phpBackend` LONGTEXT NULL DEFAULT NULL,
 		`script` LONGTEXT NULL DEFAULT NULL,
-		`data` JSON NOT NULL DEFAULT "{}"
+		`data` JSON NOT NULL DEFAULT "{}",
 		`timestamp` datetime default NULL,
 		PRIMARY KEY  (`revid`),
 		KEY `tpid` (`tpid`),
