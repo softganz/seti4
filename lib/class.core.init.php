@@ -2,8 +2,8 @@
 /**
 * Core Init :: Init Web
 * Created   :: 2023-08-01
-* Modify    :: 2024-09-27
-* Version   :: 6
+* Modify    :: 2024-09-29
+* Version   :: 7
 */
 
 global $R;
@@ -173,6 +173,13 @@ if (!$R->myDb->status) {
 	set_theme();
 	die(SgCore::processIndex('index', message('error','OOOPS!!! Database connection error')));
 }
+
+// Get mysql version from string eg "mysqlnd 8.2.19"
+$R->mysql = (Object) [
+	'clientInfo' => mysqli_get_client_info(),
+	'version' => preg_filter('/^\w*\s([\d\.].*)$/i', '$1', mysqli_get_client_info()),
+	'verionCode' => intval(preg_filter('/^\w*\s([\d])[\.\d]*/i', '$1', mysqli_get_client_info())),
+];
 
 // Load config variable from table
 SgCore::loadConfig(cfg_db());
