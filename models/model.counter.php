@@ -2,8 +2,8 @@
 /**
 * Counter :: Model
 * Created :: 2021-11-26
-* Modify  :: 2023-11-03
-* Version :: 2
+* Modify  :: 2024-09-30
+* Version :: 3
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -248,46 +248,48 @@ class CounterModel {
 				if ($debug) debugMsg('cfg(log.waiting)='.cfg('log.waiting'));
 			}
 			//echo '<h2>$stmt='.$stmt.'</h2>';
-		} else {
-			if ($debug) debugMsg('Write log to database');
-			if ($waitingLogMethod == 'file') {
-				if (file_exists($logWaitingFile) && !$logWritingToDb) {
-					// Mark flag for this process only
-					cfg_db('log.writing',1);
-
-					$logWaitingStmt = '';
-					// Read log waiting statement
-					$fp = fopen($logWaitingFile, "r");
-					if ($fp) {
-						while (!feof($fp)) {
-							$logWaitingStmt .= fgets($fp, 4096);
-						}
-						fclose($fp);
-					}
-					// Delete log waiting file
-					if ($deleteAfterWriting) unlink($logWaitingFile);
-				}
-			} else {
-				$logWaitingStmt = cfg('log.waiting');
-				if ($deleteAfterWriting) cfg_db_delete('log.waiting');
-			}
-			if ($logWaitingStmt) {
-				mydb()->setMultiQuery(true);
-
-				$i=0;
-				// Split and write each statement to counter_log table
-				foreach (explode('-- End of statement', $logWaitingStmt) as $logWaitingStmtItem) {
-					$logWaitingStmtItem = trim($logWaitingStmtItem);
-					if ($logWaitingStmtItem) mydb::query($logWaitingStmtItem);
-				}
-				cfg_db_delete('log.writing');
-				if ($debug) debugMsg('Write log waiting<br />'.$logWaitingStmt);
-			}
-
-			// Write current log into table
-			mydb::query($stmt,$log);
-			if ($debug) debugMsg('Write current log => '.mydb()->_query.'');
+			return;
 		}
+
+		if ($debug) debugMsg('Write log to database');
+		if ($waitingLogMethod == 'file') {
+			if (file_exists($logWaitingFile) && !$logWritingToDb) {
+				// Mark flag for this process only
+				cfg_db('log.writing',1);
+
+				$logWaitingStmt = '';
+				// Read log waiting statement
+				$fp = fopen($logWaitingFile, "r");
+				if ($fp) {
+					while (!feof($fp)) {
+						$logWaitingStmt .= fgets($fp, 4096);
+					}
+					fclose($fp);
+				}
+				// Delete log waiting file
+				if ($deleteAfterWriting) unlink($logWaitingFile);
+			}
+		} else {
+			$logWaitingStmt = cfg('log.waiting');
+			if ($deleteAfterWriting) cfg_db_delete('log.waiting');
+		}
+
+		if ($logWaitingStmt) {
+			mydb()->setMultiQuery(true);
+
+			$i=0;
+			// Split and write each statement to counter_log table
+			foreach (explode('-- End of statement', $logWaitingStmt) as $logWaitingStmtItem) {
+				$logWaitingStmtItem = trim($logWaitingStmtItem);
+				if ($logWaitingStmtItem) mydb::query($logWaitingStmtItem);
+			}
+			cfg_db_delete('log.writing');
+			if ($debug) debugMsg('Write log waiting<br />'.$logWaitingStmt);
+		}
+
+		// Write current log into table
+		mydb::query($stmt,$log);
+		if ($debug) debugMsg('Write current log => '.mydb()->_query.'');
 	}
 
 	/**
