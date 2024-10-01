@@ -123,7 +123,7 @@ $cfg['photo.slide.height']=269;
 
 $cfg['counter.enable']=true;
 $cfg['counter.new_user_method']='ip';
-$cfg['counter.online_time']=20; //in second
+$cfg['counter.online_time']=30; //in minutes
 
 $cfg['debug.timer.request']=false;
 $cfg['debug.query.all']=false;
