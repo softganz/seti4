@@ -343,6 +343,7 @@ $SCREENS
 		.btn.-upload>input.form-file {display: none;}
 		.btn.-upload>label {margin: 0;}
 		.btn.-sg-text-center .icon {display: block; margin: 0 auto;}
+		.btn>.icon-group {padding: 0;}
 
 
 

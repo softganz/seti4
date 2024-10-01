@@ -82,3 +82,7 @@
 .icon.-unchecked {color: #ddd;}
 .icon.-checked {color: green;}
 
+.icon-group {display: inline-block; padding: 0; margin: 0; position: relative; width: 24px; height: 24px;}
+.icon-group>.icon:nth-child(2) {position: absolute; color: #fff; background-color: red; border-radius: 50%; top: -6px; right: -10px; font-size: 14px; width: 14px; height: 14px; opacity: 0.8;}
+.icon-group>span {display: block; position: absolute; color: #fff; background-color: red; border-radius: 16px; top: -6px; right: -10px; padding: 0 2px; font-size: 0.7rem; line-height: 2;}
+

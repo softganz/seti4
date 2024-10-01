@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-09-11
-* Version :: 38
+* Modify  :: 2024-09-30
+* Version :: 39
 *
 * @param Array $args
 * @return Widget
@@ -603,6 +603,7 @@ class Button extends Widget {
 } // End of class Button
 
 // Usage: new Icon(iconName, property=[])
+// Usage: new Icon('iconName1,iconName2', property=[])
 class Icon extends Widget {
 	var $widgetName = 'Icon';
 	var $version = '0.02';
@@ -615,9 +616,18 @@ class Icon extends Widget {
 	}
 
 	function toString() {
+		// $secondaryIcon = NULL;
+		// debugMsg($this, '$this');
+		// if ($this->attributes['secondary']) {
+		// 	$secondaryIcon = $this->attribute['secondary'];
+		// 	unset($this->attribute['secondary']);
+		// }
+		// debugMsg('icon2 = '.$icon2);
+
 		if (is_string($this->icon) && preg_match('/$</', $this->icon)) return $this->icon;
 
 		if (is_object($this->icon)) return $this->icon;
+		if (!is_string($this->icon)) return;
 
 		$attribute = array_replace_recursive(
 			$this->attribute,
@@ -625,6 +635,33 @@ class Icon extends Widget {
 				'class' => trim('widget-'.strtolower($this->widgetName).' icon -material '.\SG\getFirst($this->class))
 			]
 		);
+
+		// 2 icons
+		if (preg_match('/\,/', $this->icon)) {
+			list($icon1, $icon2) = explode(',', $this->icon);
+
+			return '<span class="icon-group">'
+				. '<i '.sg_implode_attr($attribute).'>'
+				. $icon1
+				. '</i>'
+				. '<i '.sg_implode_attr($attribute).'>'
+				. $icon2
+				. '</i>'
+				. '</span>';
+		}
+
+		// debugMsg('icon2 = '.$icon2);
+		if ($this->secondary) {
+			return '<span class="icon-group">'
+				. '<i '.sg_implode_attr($attribute).'>'
+				. $this->icon
+				. '</i>'
+				// . '<i '.sg_implode_attr($attribute).'>'
+				. $this->secondary
+				// . '</i>'
+				. '</span>';
+		}
+
 		return '<i '.sg_implode_attr($attribute).'>'
 			. $this->icon
 			. '</i>';
