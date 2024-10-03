@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-09-15
-* Version :: 26
+* Modify  :: 2024-10-02
+* Version :: 27
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.14'
+let sgUiVersion = '4.00.15'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -359,17 +359,25 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 
 	doneData = doneData.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
 
+	if (debugSG) console.log('Done value : ', doneData);
+
 	doneData.split('|').map(function(doneItem) {
-		let doneExplode = doneItem.trim().split(':')
-		let doneType = doneExplode[0].split('->')[0]
-		let doneAction = doneExplode[0].split('->')[1]
-		let doneTarget = doneExplode.length > 1 ? doneExplode[1].trim() : ''
+		const doneExplode = doneItem
+			.trim()
+			.split(':')
+			.map(str => str.trim());
+
+		const doneType = doneExplode[0].trim().split('->')[0].trim()
+		const doneAction = doneExplode[0].trim().split('->')[1].trim()
+		const doneTarget = doneExplode.length > 1 ? doneExplode[1].trim() : ''
 
 		if (doneTarget == '') doneTarget = '#main';
 
-		// console.log(doneItem, doneExplode)
-		// console.log('doneType = ',doneType, 'doneAction = ',doneAction)
-		// console.log('doneTarget = ',doneTarget)
+		if (debugSG) console.log('Done item : ', doneItem);
+		if (debugSG) console.log('doneExplode : ',doneExplode);
+		if (debugSG) console.log('doneType = ['+doneType+']');
+		if (debugSG) console.log('doneAction = ['+doneAction+']');
+		if (debugSG) console.log('doneTarget = ['+doneTarget+']');
 		// console.log(data)
 
 		switch (doneType) {
