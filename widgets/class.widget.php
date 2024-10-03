@@ -3,7 +3,7 @@
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
 * Modify  :: 2024-09-30
-* Version :: 39
+* Version :: 40
 *
 * @param Array $args
 * @return Widget
@@ -322,6 +322,41 @@ class Widget extends WidgetBase {
 /**
 * Basic Widget
 */
+
+// new DOM(['tag' => 'img', 'class' => 'class-name', 'onClick' => 'script', 'child/children'])
+class DOM extends Widget {
+	var $widgetName;
+	var $version = '0.00.01';
+	var $tagName;
+	var $class;
+	var $settings = [];
+
+	function __construct($args = []) {
+		$this->tagName = array_shift($args);
+		$this->widgetName = 'dom-'.$this->tagName;
+		$this->settings = (Array) $args['settings'];
+		if ($args['children']) $this->children = $args['children'];
+		else if ($args['child']) $this->children[] = $args['child'];
+		$this->class = ($args['class'] ? $args['class'] : '');
+
+		unset($args['tag'], $args['settings'], $args['child'], $args['children'], $args['class']);
+
+		parent::__construct(['attribute' => $args]);
+
+		if ($this->settings['debug']) debugMsg($this, '$this');
+	}
+
+	// @override
+	function toString() {
+		$unpairedTags = ['img', 'br'];
+		$ret = $this->_renderWidgetContainerStart();
+		if ($this->children()) {
+			$ret .= $this->_renderChildren($this->children());
+		}
+		if (!in_array($this->tagName, $unpairedTags)) $ret .= $this->_renderWidgetContainerEnd();
+		return $ret;
+	}
+}
 
 class HtmlTemplate extends Widget {
 	var $widgetName = 'Template';
