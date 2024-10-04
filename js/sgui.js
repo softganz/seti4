@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-10-02
-* Version :: 27
+* Modify  :: 2024-10-04
+* Version :: 28
 */
 
 'use strict'
@@ -345,9 +345,9 @@ function sgUpdateData(html, relTarget, $this, options = {}) {
 * @param jQuery Object $this
 * @param Object options
 *
-* Using data-done="action[->doneAction][:target[ targetDom]:url] [| ...]"
+* Using data-done="action[->doneOption][:target[ targetDom]:url] [| ...]"
 * action => notify, javascript, back, close, moveto, remove, reload, load
-* doneAction (action = load) => replace, before, after, append, prepend, prev, next
+* doneOption (action = load) => replace, before, after, append, prepend, prev, next
 * target => this, #id, .class, tag, parent, before, after, prev, next
 * targetDom => #id, .class, tag
 * Eg
@@ -367,20 +367,20 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 			.split(':')
 			.map(str => str.trim());
 
-		const doneType = doneExplode[0].trim().split('->')[0].trim()
-		const doneAction = doneExplode[0].trim().split('->')[1].trim()
-		const doneTarget = doneExplode.length > 1 ? doneExplode[1].trim() : ''
+		const doneCommand = doneExplode[0].split('->')[0].trim();
+		const doneOption = doneExplode[0].split('->')[1] ? doneExplode[0].split('->')[1].trim() : null;
+		let doneTarget = doneExplode.length > 1 ? doneExplode[1].trim() : '';
 
 		if (doneTarget == '') doneTarget = '#main';
 
 		if (debugSG) console.log('Done item : ', doneItem);
 		if (debugSG) console.log('doneExplode : ',doneExplode);
-		if (debugSG) console.log('doneType = ['+doneType+']');
-		if (debugSG) console.log('doneAction = ['+doneAction+']');
+		if (debugSG) console.log('doneCommand = ['+doneCommand+']');
+		if (debugSG) console.log('doneOption = ['+doneOption+']');
 		if (debugSG) console.log('doneTarget = ['+doneTarget+']');
 		// console.log(data)
 
-		switch (doneType) {
+		switch (doneCommand) {
 
 			case 'notify':
 				notify(doneExplode[1], 20000)
@@ -467,13 +467,13 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 					let $loadTargetElement = sgFindTargetElement(doneTarget, $this)
 					let loadUrl = doneExplode.length > 2 ? doneExplode[2] : ($loadTargetElement.data('url') ? $loadTargetElement.data('url') : document.URL)
 					if (loadUrl && ($loadTargetElement.length || doneTarget == 'none')) {
-						// console.log('DONE TYPE = '+doneType + (doneAction ? '->'+doneAction : '') + ' : URL = ' + loadUrl)
+						// console.log('DONE TYPE = '+doneCommand + (doneOption ? '->'+doneOption : '') + ' : URL = ' + loadUrl)
 						// loadUrl = loadUrl.replace(/\{\{(\w+)\}\}/g, function($1,$2) {return data[$2];})
 						loadUrl = loadUrl.split('#')[0]
 						// console.log(loadUrl)
 
 						$.post(loadUrl,function(html){
-							switch (doneAction) {
+							switch (doneOption) {
 								case 'replace' : $loadTargetElement.replaceWith(html); break;
 								case 'before' : $loadTargetElement.before(html); break;
 								case 'after' : $loadTargetElement.after(html); break;
