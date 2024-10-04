@@ -2,8 +2,8 @@
 /**
 * Admin   :: Log Menu
 * Created :: 2016-11-08
-* Modify  :: 2024-07-08
-* Version :: 2
+* Modify  :: 2024-10-03
+* Version :: 3
 *
 * @return Widget
 *
@@ -153,6 +153,22 @@ class AdminMenuLogWidget extends Widget {
 								'type' => 'normal',
 								'href' => url('watchdog/analysis'),
 								'text' => 'Log analysis',
+							]),
+							'subtitle' => '',
+						]),
+					], // children
+				]), // Card
+
+				new Card([
+					'children' => [
+						new ListTile([
+							'crossAxisAlignment' => 'start',
+							'title' => 'Log Counter Count',
+							'leading' => new Icon(''),
+							'trailing' => new Button([
+								'type' => 'normal',
+								'href' => url('admin/log/counter/count'),
+								'text' => 'Log Counter Count',
 							]),
 							'subtitle' => '',
 						]),
