@@ -3,9 +3,9 @@
 *
 * library :: Javascript Library For SoftGanz
 * Created :: 2009-09-22
-* Modify  :: 2024-08-22
-* Version :: 2
-* Version :: 4.00.06
+* Modify  :: 2024-10-04
+* Version :: 3
+* Version :: 4.00.08
 *
 * Copyright :: Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * Author    :: Panumas Nontapan <webmaster@softganz.com>
@@ -25,7 +25,7 @@
 
 'use strict'
 
-let sgLibraryVersion = '4.00.07'
+let sgLibraryVersion = '4.00.08'
 let thaiMonthName = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 let debugSignIn = false
 let firebaseConfig
@@ -261,7 +261,19 @@ $(document).on('submit','form.signform', function(e) {
 	return false;
 });
 
+document.addEventListener('click', function(event) {
+	if (!event.target.classList.contains('-change-color-scheme')) return;
 
+	if (document.body.classList.contains('-app-theme-dark')) {
+		event.target.textContent = 'light_mode';
+		document.body.classList.remove("-app-theme-dark")
+		setCookie("color-scheme", 'light', 365);
+	} else {
+		event.target.textContent = 'dark_mode';
+		document.body.classList.add("-app-theme-dark")
+		setCookie("color-scheme", 'dark', 365);
+	}
+});
 
 $(document).ready(function() {
 	$('body').append('<div id="notify" class="notify-main -no-print"></div><div id="tooltip" class="-noprint"></div>');
