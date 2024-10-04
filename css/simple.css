@@ -1154,7 +1154,7 @@ $SCREENS
 	.topic-list .summary {margin:0; padding:0 0 0 10px;}
 	.topic-list .image {width:180px; margin:0 15px 10px 10px; float:left;
 		display:block;}
-	.topic-list .footer {margin:0 0 20px 0; padding:0 20px 5px 0; font-size:0.875em; font-style:italic; text-align:right; border-bottom:1px #eee solid;}
+	.topic-list .footer {margin: 0 0 20px 0; padding: 0 20px 5px 0; font-size: 0.875em; font-style: italic; text-align: right;}
 
 	ul.topic-list .title {padding:0;margin:0;font-size:0.9em;font-weight:normal;display:inline;}
 	ul.topic-list .timestamp {padding:0;font-size:0.8em;font-style:normal;}
