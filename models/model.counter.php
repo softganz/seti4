@@ -2,12 +2,14 @@
 /**
 * Counter :: Model
 * Created :: 2021-11-26
-* Modify  :: 2024-09-30
-* Version :: 3
+* Modify  :: 2024-10-04
+* Version :: 4
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
 */
+
+use Softganz\DB;
 
 class CounterModel {
 	public static function hit() {
@@ -80,98 +82,116 @@ class CounterModel {
 		if ($new_user) $counter->users_count++;
 
 		// update day & hour log
-		CounterModel::dayLog($today->date,$today->hours,$new_user);
+		if (cfg('system')->logDayHit) CounterModel::dayLog($today->date,$today->hours,$new_user);
+
 		if ( $counter->used_log == 1 ) CounterModel::addLog($today->datetime,$user_id,$new_user);
+
+		if (cfg('system')->logUserOnline) {
+			CounterModel::addOnlineUser();
+
+			$online = (Object) [
+				'keyid' => $onlinekey,
+				'host' => NULL,
+				'coming' => NULL,
+				'ip' => $real_ip,
+				'uid' => $user_id,
+				'name' => $user_name,
+				'access' => $today->time,
+				'browser' => NULL,
+			];
+			if ( $new_user ) {
+				$host = gethostbyaddr($real_ip);
+				if ( $host === $real_ip ) $host = 'unknown';
+				$online->host = $host;
+				$online->coming = $today->time;
+			}
+			$online->hits++;
+			list($online->browser) = str_replace('"', '', explode(' ',$browser));
+
+			mydb::query(
+				'INSERT INTO %users_online%
+					(`keyid`, `uid`, `name`, `coming`, `access`, `ip`, `host`, `browser`)
+					VALUES
+					(:keyid, :uid, :name, :coming, :access, :ip, :host, :browser)
+					ON DUPLICATE KEY UPDATE
+					`uid` = :uid
+					, `name` = :name
+					, `hits` = `hits` + 1
+					, `access` = :access
+					, `browser` = :browser',
+				$online
+			);
+			//debugMsg(mydb()->_query);
+
+			//--- add/update online user information
+			mydb::query('SET @@group_concat_max_len = 100000;');
+
+			$stmt = 'SELECT
+					COUNT(*) `online_count`
+					, COUNT(`uid`) `online_members`
+					, GROUP_CONCAT(`name`) `online_name`
+					FROM %users_online%
+					LIMIT 1';
+
+			$dbs = mydb::select($stmt);
+
+			$counter->online_members = $dbs->online_members;
+			$counter->online_name = $dbs->online_name;
+			$counter->online_count = $dbs->online_count;
+
+			//foreach ($online->items as $item) if ($item->name) $online_name[] = $item->name;
+
+			//debugMsg($counter,'$counter');
+
+			if (cfg('counter.enable') && $is_counter_ok) {
+				cfg_db('counter',$counter);
+			}
+		}
+
+		return $counter;
+	}
+
+	public static function dayLog($date,$hr,$new_user) {
+		$hr = sprintf('%02d', $hr);
+		$data['date'] = $date;
+		if ($new_user) {
+			$data['users'] = 1;
+			$data['todayHits'] =1;
+			$data['todayUsers'] = 1;
+		} else {
+			$data['users'] = 0;
+			$data['todayHits'] = 0;
+			$data['todayUsers'] = 0;
+		}
+
+		DB::query([
+			'INSERT INTO %counter_day%
+			(`log_date`, `hits`, `users`, `h_'.$hr.'`, `u_'.$hr.'`)
+			VALUES
+			(:date , 1 , :users, :todayHits, :todayUsers)
+			ON DUPLICATE KEY UPDATE
+				`hits`=`hits`+1
+				, '.($new_user ? '`users` = `users`+1,' : '').' `h_'.$hr.'` = `h_'.$hr.'`+1'.($new_user ? ', `u_'.$hr.'`=`u_'.$hr.'`+1' : ''),
+			'var' => [
+				':date' => $data['date'],
+				':users' => $data['users'],
+				':todayHits' => $data['todayHits'],
+				':todayUsers' => $data['todayUsers']
+			]
+		]);
+	}
+
+	public static function addOnlineUser(){
 		// update user hit count
 		if ( i()->ok ) {
 			mydb::query(
 				'UPDATE %users%
 				SET `hits` = `hits` + 1, `lastHitTime` = NOW()
-				WHERE uid = :uid LIMIT 1',
-				[':uid' => $user_id]
+				WHERE uid = :userId LIMIT 1',
+				[':userId' => i()->uid]
 			);
 		}
-
-		$online = (Object) [
-			'keyid' => $onlinekey,
-			'host' => NULL,
-			'coming' => NULL,
-			'ip' => $real_ip,
-			'uid' => $user_id,
-			'name' => $user_name,
-			'access' => $today->time,
-			'browser' => NULL,
-		];
-		if ( $new_user ) {
-			$host = gethostbyaddr($real_ip);
-			if ( $host === $real_ip ) $host = 'unknown';
-			$online->host = $host;
-			$online->coming = $today->time;
-		}
-		$online->hits++;
-		list($online->browser) = str_replace('"', '', explode(' ',$browser));
-
-		mydb::query(
-			'INSERT INTO %users_online%
-				(`keyid`, `uid`, `name`, `coming`, `access`, `ip`, `host`, `browser`)
-				VALUES
-				(:keyid, :uid, :name, :coming, :access, :ip, :host, :browser)
-				ON DUPLICATE KEY UPDATE
-				`uid` = :uid
-				, `name` = :name
-				, `hits` = `hits` + 1
-				, `access` = :access
-				, `browser` = :browser',
-			$online
-		);
-		//debugMsg(mydb()->_query);
-
-		//--- add/update online user information
-		mydb::query('SET @@group_concat_max_len = 100000;');
-
-		$stmt = 'SELECT
-				COUNT(*) `online_count`
-				, COUNT(`uid`) `online_members`
-				, GROUP_CONCAT(`name`) `online_name`
-				FROM %users_online%
-				LIMIT 1';
-
-		$dbs = mydb::select($stmt);
-
-		//debugMsg($dbs,'$dbs');
-
-		$counter->online_members = $dbs->online_members;
-		$counter->online_name = $dbs->online_name;
-		$counter->online_count = $dbs->online_count;
-
-		//foreach ($online->items as $item) if ($item->name) $online_name[] = $item->name;
-
-		//debugMsg($counter,'$counter');
-
-		if (cfg('counter.enable') && $is_counter_ok) {
-			cfg_db('counter',$counter);
-		}
-		return $counter;
-	}
-
-	public static function dayLog($date,$hr,$new_user) {
-		$hr=sprintf('%02d',$hr);
-		$data['date']=$date;
-		if ($new_user) {
-			$data['users']=1;
-			$data['todayhits']=1;
-			$data['todayusers']=1;
-		} else {
-			$data['users']=0;
-			$data['todayhits']=0;
-			$data['todayusers']=0;
-		}
-		$stmt='INSERT INTO %counter_day%
-						(`log_date`,`hits`,`users`,`h_'.$hr.'`,`u_'.$hr.'`)
-						VALUES
-						(:date , 1 , :users, :todayhits, :todayusers)
-					ON DUPLICATE KEY UPDATE `hits`=`hits`+1, '.($new_user?'`users`=`users`+1,':'').' `h_'.$hr.'`=`h_'.$hr.'`+1'.($new_user?', `u_'.$hr.'`=`u_'.$hr.'`+1':'');
-		mydb::query($stmt,$data);
+		debugMsg(mydb()->_query);
 	}
 
 	/**

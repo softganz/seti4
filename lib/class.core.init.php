@@ -2,8 +2,8 @@
 /**
 * Core Init :: Init Web
 * Created   :: 2023-08-01
-* Modify    :: 2024-09-29
-* Version   :: 7
+* Modify    :: 2024-10-04
+* Version   :: 8
 */
 
 global $R;
@@ -276,7 +276,7 @@ if (_AJAX) {
 }
 
 // Hit counter and store counter/online
-$logCounter = !(post('logCounter') === 'no') && mydb::table_exists('%counter_log%');
+$logCounter = cfg('system')->logCounter && !isset($_REQUEST['logCounter']) && mydb::table_exists('%counter_log%');
 if ($logCounter) CounterModel::hit();
 $R->counter = cfg('counter');
 
