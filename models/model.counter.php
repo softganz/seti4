@@ -3,7 +3,7 @@
 * Counter :: Model
 * Created :: 2021-11-26
 * Modify  :: 2024-10-04
-* Version :: 4
+* Version :: 5
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -191,7 +191,6 @@ class CounterModel {
 				[':userId' => i()->uid]
 			);
 		}
-		debugMsg(mydb()->_query);
 	}
 
 	/**
