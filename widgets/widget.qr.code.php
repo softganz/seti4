@@ -2,8 +2,8 @@
 /**
 * Widget  :: Qr Code Generator
 * Created :: 2024-07-28
-* Modify  :: 2024-07-28
-* Version :: 1
+* Modify  :: 2024-10-11
+* Version :: 2
 *
 * @param Array $args
 * @return Widget
@@ -44,11 +44,11 @@ class QrCodeWidget extends Widget {
 		}
 
 		$this->children[] = '<img class="-qrcode" '
-			. 'src="https://api.qrserver.com/v1/create-qr-code/?size='.$this->width.'x'.$this->height.'&data='.$this->domain.urlencode($this->url)
+			. 'src="https://api.qrserver.com/v1/create-qr-code/?size='.$this->width.'x'.$this->height.'&data='.$this->domain.urlencode($this->url).'" '
 			. 'alt="QR-Code" '
 			. 'width="'.$this->imgWidth.'" '
-			. 'height="'.$this->imgHeight.'"'
-			. ' />';
+			. 'height="'.$this->imgHeight.'" '
+			. '/>';
 
 		if ($this->showUrl) $this->children[] = '<div class="-url">'.$this->domain.$this->url.'</div>';
 		if (isset($this->text)) $this->children[] = $this->_renderEachChildWidget('text', $this->text);
