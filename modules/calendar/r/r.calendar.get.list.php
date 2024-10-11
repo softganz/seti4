@@ -1,6 +1,9 @@
 <?php
 /**
-* Model Name
+* Calendar:: Get Calendar Item List Model
+* Created :: 2007-03-06
+* Modify 	:: 2024-10-11
+* Version :: 2
 *
 * @param Object $conditions
 * @return Object $options
@@ -36,7 +39,7 @@ function r_calendar_get_list() {
 	} else if ($para->tpid == '*') {
 		mydb::where('c.`tpid` IS NOT NULL');
 	} else if ($para->tpid) {
-		mydb::where('c.`tpid` IN (:tpid)', ':tpid', 'SET:'.$para->tpid);
+		mydb::where('c.`tpid` IN ( :tpid )', ':tpid', 'SET:'.$para->tpid);
 	} else {
 		mydb::where('c.`tpid` IS NULL');		
 	}
