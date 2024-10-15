@@ -132,8 +132,10 @@ pre {tab-size: 1;}
 
 .sg-action {cursor: pointer;}
 
+/*
 .-new:not(body) {background-image:url(https://softganz.com/library/img/new.1.gif); background-repeat: no-repeat; background-position: right;}
 .-hot:not(body) {background-image:url(https://softganz.com/library/img/hot.1.gif); background-repeat: no-repeat; background-position: right;}
+*/
 
 .-disabled:not(body) {pointer-events: none !important; cursor: default; color:#ccc;}
 a.-disabled {color:#ccc;}
@@ -509,7 +511,7 @@ $SCREENS
 		.menu.-vertical a {padding:4px; display: block; background: #eee;}
 		.menu.-vertical>.ui-item.-sep {padding: 8px 0; background-color: transparent;}
 		.menu.-vertical>.ui-item.-sep>hr {display: none;}
-		.menu a.-new {background-image: url(https://softganz.com/library/img/new.1.gif); background-position: center right; background-repeat: no-repeat;}
+		/* .menu a.-new {background-image: url(https://softganz.com/library/img/new.1.gif); background-position: center right; background-repeat: no-repeat;} */
 	/* @end */
 
 
