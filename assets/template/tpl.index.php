@@ -38,7 +38,7 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 	echo '<link rel="stylesheet" type="text/css" href="https://softganz.com/themes/bw/bw.css">'._NL;
 }
 ?>
-<?php $jsLocation = '/js/';?>
+<?php $jsLocation = cfg('clean_url') ? _URL.'js/' : 'index.php?js/';?>
 <script src="<?php echo $jsLocation;?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
 <script src="<?php echo $jsLocation;?>jquery.ui.datepicker.js"></script>
 <script src="<?php echo $jsLocation;?>jquery.colorbox.js"></script>
@@ -54,8 +54,8 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 -->
 
-<script src="<?php echo $jsLocation.'library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js').cfg('theme.stylesheet.para');?>"></script>
-<script src="<?php echo $jsLocation.($_SESSION['devMode'] ? 'sgui.js':'sgui.min.js').cfg('theme.stylesheet.para');?>"></script>
+<script src="<?php echo $jsLocation.'library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js').(cfg('clean_url') ? cfg('theme.stylesheet.para') : '&'.substr(cfg('theme.stylesheet.para'), 1));?>"></script>
+<script src="<?php echo $jsLocation.($_SESSION['devMode'] ? 'sgui.js':'sgui.min.js').(cfg('clean_url') ? cfg('theme.stylesheet.para') : '&'.substr(cfg('theme.stylesheet.para'), 1));?>"></script>
 
 <?php if (!cfg('head.include.first')) echo implode(_NL,head());?>
 <?php
