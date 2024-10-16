@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2024-09-15
-* Version :: 3
+* Modify  :: 2024-10-16
+* Version :: 4
 */
 
 /********************************************
@@ -739,6 +739,58 @@ class Jwt {
 
 	public static function base64url_encode($str) {
 	    return rtrim(strtr(base64_encode($str), '+/', '-_'), '=');
+	}
+}
+
+class Url {
+	/**
+	 * Generate url for anchor
+	 * @param String $url
+	 * @param String $get
+	 * @param String $frement
+	 * @return String
+	 */
+	public function url($url = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
+		$ret = '';
+		if (isset($get) && is_array($get)) {
+			foreach ($get as $k => $v) if (!is_null($v)) $get_a .= $k.'='.$v.'&';
+			$get = rtrim($get_a, '&');
+			if (empty($get)) unset($get);
+		}
+		if (substr($url,0,2) === '//') ; // do nothing
+		else if (substr($url,0,1) === '/') $url = substr($url,1);
+
+		$url = preg_match('/^(\/\/|http\:\/\/|https\:\/\/)/', $url, $out) ? '' : cfg('url');
+
+		if (cfg('clean_url')) {
+			$ret .= isset($url) ? $url : cfg('clean_url_home');
+			if ( isset($get) ) $ret .= '?'.$get;
+		} else {
+			$ret .= $url ? '?'.$url : '';
+			if ( isset($get) ) $ret .= ($url ? '&' : '?').$get;
+		}
+		if ($frement) $ret .= '#'.$frement;
+		//	echo 'url alias of '.$ret.' = '.url_alias($ret)->system.'<br >';
+		if ($url_alias = url_alias_of_system($ret)) $ret = $url_alias->system;
+		$ret = cfg('url.domain').(cfg('url.domain') ? '' : $url) . $ret;
+		return $ret;
+	}
+
+	static function js($url, $get = NULL) {
+		$get = preg_replace('/^\?/', '', $get);
+		$ret = '';
+		if (cfg('clean_url')) {
+			$ret .= $url;
+			if (isset($get)) $ret .= '?'.$get;
+		} else {
+			$ret .= '?'.$url;
+			if (isset($get)) $ret .= '&'.$get;
+		}
+		if ($frement) $ret .= '#'.$frement;
+		//	echo 'url alias of '.$ret.' = '.url_alias($ret)->system.'<br >';
+		if ($url_alias = url_alias_of_system($ret)) $ret = $url_alias->system;
+		$ret = cfg('url') . $ret;
+		return $ret;
 	}
 }
 ?>
