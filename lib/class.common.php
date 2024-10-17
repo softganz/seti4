@@ -15,7 +15,7 @@
 
 * Created :: 2007-07-09
 * Modify  :: 2024-10-16
-* Version :: 4
+* Version :: 5
 */
 
 /********************************************
@@ -750,7 +750,7 @@ class Url {
 	 * @param String $frement
 	 * @return String
 	 */
-	public function url($url = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
+	static function link($url = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
 		$ret = '';
 		if (isset($get) && is_array($get)) {
 			foreach ($get as $k => $v) if (!is_null($v)) $get_a .= $k.'='.$v.'&';
@@ -760,7 +760,7 @@ class Url {
 		if (substr($url,0,2) === '//') ; // do nothing
 		else if (substr($url,0,1) === '/') $url = substr($url,1);
 
-		$url = preg_match('/^(\/\/|http\:\/\/|https\:\/\/)/', $url, $out) ? '' : cfg('url');
+		$fullUrl = preg_match('/^(\/\/|http\:\/\/|https\:\/\/)/', $url, $out) ? '' : cfg('url');
 
 		if (cfg('clean_url')) {
 			$ret .= isset($url) ? $url : cfg('clean_url_home');
@@ -772,12 +772,22 @@ class Url {
 		if ($frement) $ret .= '#'.$frement;
 		//	echo 'url alias of '.$ret.' = '.url_alias($ret)->system.'<br >';
 		if ($url_alias = url_alias_of_system($ret)) $ret = $url_alias->system;
-		$ret = cfg('url.domain').(cfg('url.domain') ? '' : $url) . $ret;
+		$ret = cfg('url.domain').(cfg('url.domain') ? '' : $fullUrl) . $ret;
+		return $ret;
+	}
+
+	static function file($url, $get = NULL) {
+		if (isset($get)) $get = preg_replace('/^\?/', '', $get);
+		$ret = '';
+		$ret .= $url;
+		if (isset($get)) $ret .= '?'.$get;
+		if ($frement) $ret .= '#'.$frement;
+		$ret = cfg('url') . $ret;
 		return $ret;
 	}
 
 	static function js($url, $get = NULL) {
-		$get = preg_replace('/^\?/', '', $get);
+		if (isset($get)) $get = preg_replace('/^\?/', '', $get);
 		$ret = '';
 		if (cfg('clean_url')) {
 			$ret .= $url;
