@@ -38,13 +38,12 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 	echo '<link rel="stylesheet" type="text/css" href="https://softganz.com/themes/bw/bw.css">'._NL;
 }
 ?>
-<?php $jsLocation = cfg('clean_url') ? _URL.'js/' : 'index.php?js/';?>
-<script src="<?php echo $jsLocation;?>jquery<?php echo cfg('jquery.version')?'-'.cfg('jquery.version'):'';?>.js"></script>
-<script src="<?php echo $jsLocation;?>jquery.ui.datepicker.js"></script>
-<script src="<?php echo $jsLocation;?>jquery.colorbox.js"></script>
-<script src="<?php echo $jsLocation;?>jquery.jeditable.js"></script>
-<script src="<?php echo $jsLocation;?>jquery.form.js"></script>
-<script src="<?php echo $jsLocation;?>jquery.confirm.js"></script>
+<script src="<?php echo Url::js('js/jquery'.(cfg('jquery.version') ? '-'.cfg('jquery.version') : '').'.js');?>"></script>
+<script src="<?php echo Url::js('js/jquery.ui.datepicker.js');?>"></script>
+<script src="<?php echo Url::js('js/jquery.colorbox.js');?>"></script>
+<script src="<?php echo Url::js('js/jquery.jeditable.js');?>"></script>
+<script src="<?php echo Url::js('js/jquery.form.js');?>"></script>
+<script src="<?php echo Url::js('js/jquery.confirm.js');?>"></script>
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css"> -->
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script> -->
 
@@ -54,8 +53,8 @@ if (isset($_REQUEST['bw']) && $_REQUEST['bw']=='0') {
 <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 -->
 
-<script src="<?php echo $jsLocation.'library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js').(cfg('clean_url') ? cfg('theme.stylesheet.para') : '&'.substr(cfg('theme.stylesheet.para'), 1));?>"></script>
-<script src="<?php echo $jsLocation.($_SESSION['devMode'] ? 'sgui.js':'sgui.min.js').(cfg('clean_url') ? cfg('theme.stylesheet.para') : '&'.substr(cfg('theme.stylesheet.para'), 1));?>"></script>
+<script src="<?php echo Url::js('js/library'.(cfg('library.version') ? '-'.cfg('library.version') : '').($_SESSION['devMode'] ? '.js' : '.min.js'), cfg('theme.stylesheet.para'));?>"></script>
+<script src="<?php echo Url::js(($_SESSION['devMode'] ? 'js/sgui.js':'js/sgui.min.js'), cfg('theme.stylesheet.para'));?>"></script>
 
 <?php if (!cfg('head.include.first')) echo implode(_NL,head());?>
 <?php
