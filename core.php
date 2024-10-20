@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2024-07-25
- * @version :: 16
+ * @modify  :: 2024-10-20
+ * @version :: 17
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +194,8 @@ function requestString() {
 
 		// debugMsg('__FILE__ = '.__FILE__);
 	}
+
+	$request = trim($request, '/');
 	// preg_replace('pattern', replacement, subject)
 	// $request = preg_replace('/happy\/communeinfo\.com\//', '', $request);
 
