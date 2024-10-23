@@ -1,10 +1,10 @@
 <?php
 /**
-* My API :: My Information API
-* Created 2021-12-14
-* Modify  2021-12-14
+* My API  :: My Information API
+* Created :: 2021-12-14
+* Modify  :: 2024-10-23
+* Version :: 2
 *
-* @param Int $mainId
 * @param String $action
 * @param Int $tranId
 * @return String
@@ -17,7 +17,7 @@ class MyApi extends Page {
 	var $action;
 	var $tranId;
 
-	function __construct($action, $tranId = NULL) {
+	function __construct($action = NULL, $tranId = NULL) {
 		$this->userId = \SG\getFirst(post('userId'), i()->uid);
 		$this->action = $action;
 		$this->tranId = $tranId;
