@@ -113,11 +113,18 @@ class PaperEditDetail extends Page {
 					'name' => 'detail[body]',
 					'label' => $type->body_label,
 					'class' => '-fill',
-					'rows' => 16,
+					'style' => 'height: 30vh',
+					'rows' => 10,
 					'value' => $this->nodeInfo->info->body,
 					'pretext' => editor::softganz_editor('edit-detail-body'),
-					'description' => 'คำแนะนำ : เนื่องจากได้มีการเปลี่ยนแปลงวิธีการขึ้นบรรทัดใหม่ ซึ่งมีรายละเอียดดังนี้<ul><li>วิธีการขึ้นบรรทัดใหม่โดยไม่เว้นช่องว่างระหว่างบรรทัด ให้เคาะเว้นวรรค (Space bar) ที่ท้ายบรรทัดจำนวนหนึ่งครั้ง</li><li>วิธีการขึ้นย่อหน้าใหม่ซึ่งจะมีการเว้นช่องว่างห่างจากบรรทัดด้านบนเล็กน้อย ให้เคาะ Enter จำนวน 2 ครั้ง</li><li>หากข้อความของท่านยาวเกินไป จะทำให้ไม่สามารถนำข้อความทั้งหมดไปแสดงในหน้าแรก ให้ใส่ &lt;!--break--&gt แทรกไว้ในตำแหน่งที่ต้องการให้ตัดไปแสดงผล</li></ul>',
 				] : NULL,
+				'save' => [
+					'type' => 'button',
+					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+					'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'container' => '{class: "-sg-text-right"}',
+				],
+				'คำแนะนำ : เนื่องจากได้มีการเปลี่ยนแปลงวิธีการขึ้นบรรทัดใหม่ ซึ่งมีรายละเอียดดังนี้<ul><li>วิธีการขึ้นบรรทัดใหม่โดยไม่เว้นช่องว่างระหว่างบรรทัด ให้เคาะเว้นวรรค (Space bar) ที่ท้ายบรรทัดจำนวนหนึ่งครั้ง</li><li>วิธีการขึ้นย่อหน้าใหม่ซึ่งจะมีการเว้นช่องว่างห่างจากบรรทัดด้านบนเล็กน้อย ให้เคาะ Enter จำนวน 2 ครั้ง</li><li>หากข้อความของท่านยาวเกินไป จะทำให้ไม่สามารถนำข้อความทั้งหมดไปแสดงในหน้าแรก ให้ใส่ &lt;!--break--&gt แทรกไว้ในตำแหน่งที่ต้องการให้ตัดไปแสดงผล</li></ul>',
 				$this->nodeInfo->photos ? (function($topicInfo) {
 					$photo_list = _NL.'<div id="edit-topic-body-control-photo" class="editor" title="edit-detail-body">';
 					foreach ($topicInfo->photos as $photo) {
@@ -156,13 +163,6 @@ class PaperEditDetail extends Page {
 					}
 					return $doc_list ? $doc_list : NULL;
 				})($this->nodeId),
-
-				'save' => [
-					'type' => 'button',
-					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-					'container' => '{class: "-sg-text-right"}',
-				],
 			], // children
 		]);
 	}
