@@ -335,7 +335,8 @@
 
 
 /* widget-column */
-.widget-column {}
+.widget-column {display: flex; flex-wrap: wrap; gap: 8px;}
+	.widget-column>* {flex: 1 0 100%;}
 	.widget-column.-sg-text-ceter>* {text-align: center;}
 
 
