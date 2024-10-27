@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-09-12
-* Version :: 19
+* Modify  :: 2024-10-27
+* Version :: 20
 */
 
 /*************************************************************
@@ -347,7 +347,7 @@ class SgCore {
 	* @return String Result from template file
 	*/
 	static function loadTemplate($filename = NULL, $ext_folder = NULL, $show_result = true) {
-		$template_file = SgCore::getTemplate($filename, $ext_folder);
+		$template_file = self::getTemplate($filename, $ext_folder);
 		if (!$template_file) return;
 		$ret = '';
 		if ($show_result) {
@@ -623,13 +623,13 @@ class SgCore {
 			$cfgFileDevelop = 'conf.local.'.$module.'.json';
 
 			// debugMsg('<b>START LOAD CONFIG WEB :: '.$cfgFileProduction.' :: </b> from '.implode(';',$cfgPaths));
-			SgCore::loadConfig($cfgFileProduction, $cfgPaths);
+			self::loadConfig($cfgFileProduction, $cfgPaths);
 			// foreach ($cfgPaths as $path) {
 			// 	debugMsg('<b>START LOAD CONFIG WEB :: '.$cfgFileProduction.' :: </b>'.$path.'/'.$cfgFileProduction);
-			//  	SgCore::loadConfig($cfgFileProduction, $path);
+			//  	self::loadConfig($cfgFileProduction, $path);
 			// }
 			// debugMsg('<b>START LOAD CONFIG LOCAL :: '.$cfgFileDevelop.' :: </b> ./'.$cfgFileDevelop);
-			SgCore::loadConfig($cfgFileDevelop, ['conf.local', '.']);
+			self::loadConfig($cfgFileDevelop, ['conf.local', '.']);
 			$loadCfg[] = $module;
 			// debugMsg($loadCfg, '$loadCfg');
 		}
@@ -849,7 +849,7 @@ class SgCore {
 	static function processIndex($page = 'index', $text = NULL) {
 		global $request_result;
 		$request_result = $text;
-		$result = SgCore::loadTemplate($page, NULL, false);
+		$result = self::loadTemplate($page, NULL, false);
 		return $result;
 	}
 
@@ -1035,10 +1035,10 @@ class SgCore {
 					// debugMsg($funcArg,'$funcArg');
 
 					if ($debugLoadfile) {
-						debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in SgCore::processMenu()</div>');
+						debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in self::processMenu()</div>');
 					}
 
-					$loadResult = list($retClass, $found, $filename) = SgCore::loadResourceFile($pageFile);
+					$loadResult = list($retClass, $found, $filename) = self::loadResourceFile($pageFile);
 
 					if ($debugLoadfile) {
 						// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
@@ -1079,9 +1079,9 @@ class SgCore {
 	}
 
 	/**
-	 * Do request process from url address and return result in string
-	 * @return String
-	 */
+	* Do request process from url address and return result in string
+	* @return String
+	*/
 	static function processController($loadTemplate = true, $pageTemplate = NULL) {
 		global $page,$request_time,$request_process_time;
 		$request = R()->request;
@@ -1090,6 +1090,7 @@ class SgCore {
 		$requestFilePrefix = 'page';
 		$isDebugProcess = debug('process');
 		$buildMethod = 'build'; // Default build method
+		$templateVar = [];
 
 		if ($isDebugProcess) $process_debug = 'process debug of <b>'.$request.'</b> request<br />'._NL;
 
@@ -1114,7 +1115,7 @@ class SgCore {
 			$isLoadHomePage = true;
 			if (empty($home)) {
 				ob_start();
-				SgCore::loadTemplate('home');
+				self::loadTemplate('home');
 				$requestResult .= ob_get_contents();
 				ob_end_clean();
 				$request = '';
@@ -1170,7 +1171,7 @@ class SgCore {
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 		}
 
-		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = SgCore::processMenu($menu, $buildMethod, $requestFilePrefix);
+		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = self::processMenu($menu, $buildMethod, $requestFilePrefix);
 		// debugMsg('$buildMethod = '.$buildMethod);
 
 		// Set page id to home
@@ -1242,7 +1243,7 @@ class SgCore {
 			} else if (!_AJAX && is_array($requestResult) && isset($requestResult['location'])) {
 				location($body['location']);
  			} else if (_HTML && (is_array($requestResult) || is_object($requestResult))) {
-				die(SgCore::processIndex('index', print_o($requestResult, '$result')));
+				die(self::processIndex('index', print_o($requestResult, '$result')));
 			} else if (_HTML) {
 				die(process_widget($requestResult));
 			} else if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
@@ -1307,9 +1308,15 @@ class SgCore {
 
 		// Start Render Page, result is string
 		// debugMsg($pageClass, '$pageClass');
+		// debugMsg($pageBuildWidget, '$pageBuildWidget');
 		// debugMsg($requestResult, $requestResult);
+
+		if (is_object($pageBuildWidget) && isset($pageBuildWidget->var)) {
+			$templateVar = array_merge($templateVar, (Array) $pageBuildWidget->var);
+		}
+
 		if (is_object($pageClass) && is_object($pageClass->appBar) && $pageClass->appBar->title && is_string($pageClass->appBar->title)) {
-			$GLOBALS['title'] = $pageClass->appBar->title;
+			$templateVar['Title'] = self::processTemplate($pageClass->appBar->title, $templateVar);
 		}
 		$requestTextResult = (new PageRenderWidget($pageClass, $requestResult))->build();
 
@@ -1337,8 +1344,29 @@ class SgCore {
 
 		if ($pageTemplate) $page = $pageTemplate;
 		else if (empty($page)) $page = 'index';
-		if ($loadTemplate) echo SgCore::processIndex($page, $requestTextResult);
+		if ($loadTemplate) {
+			$webResult = self::processIndex($page, $requestTextResult);
+			$webResult = self::processTemplate($webResult, $templateVar);
+			echo $webResult;
+		}
 		return $requestTextResult;
+	}
+
+	/**
+	* Process Template
+	* 	- Replace {{ .Name }} with value
+	* @param String $html
+	* @param Array $var
+	* @return String
+	*/
+	static function processTemplate($html, $var = []) {
+		// Replace .Name in {{ }} with value of key in variable
+		$html = preg_replace_callback(
+			'/\{\{\s*\.([\w]*)\s*\}\}/s',
+			function ($m) use ($var) {
+				return isset($var[$m[1]]) ? $var[$m[1]] : $m[0];
+			}, $html);
+		return $html;
 	}
 
 	/**
