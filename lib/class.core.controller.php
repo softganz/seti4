@@ -3,7 +3,7 @@
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
 * Modify  :: 2024-10-27
-* Version :: 20
+* Version :: 21
 */
 
 /*************************************************************
@@ -1216,10 +1216,9 @@ class SgCore {
 						}
 					} else if (is_object($pageBuildWidget->appBar->title)) {
 						$pageClass->theme->toolbar = $pageBuildWidget->appBar->title;
-						$pageClass->theme->title = $pageBuildWidget->appBar->title;
 					} else {
-						$pageClass->theme->title = $pageBuildWidget->appBar->title;
 					}
+					$templateVar['Title'] = $pageBuildWidget->appBar->title;
 					$pageClass->appBar = $pageBuildWidget->appBar;
 					$pageClass->sideBar = $pageBuildWidget->sideBar;
 				}
@@ -1315,9 +1314,10 @@ class SgCore {
 			$templateVar = array_merge($templateVar, (Array) $pageBuildWidget->var);
 		}
 
-		if (is_object($pageClass) && is_object($pageClass->appBar) && $pageClass->appBar->title && is_string($pageClass->appBar->title)) {
-			$templateVar['Title'] = self::processTemplate($pageClass->appBar->title, $templateVar);
-		}
+		$templateVar['Title'] .= ' | '.cfg('web.title');
+		$templateVar['Title'] = self::processTemplate(strip_tags($templateVar['Title']), $templateVar);
+		$templateVar['Title'] = trim(trim($templateVar['Title']), '|');
+
 		$requestTextResult = (new PageRenderWidget($pageClass, $requestResult))->build();
 
 		// Replace widget container with associate widget

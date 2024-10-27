@@ -3,7 +3,7 @@
 <head>
 <?php if (cfg('web.init')) {ob_start();eval ('?>'.cfg('web.init'));echo ob_get_clean()._NL;}?>
 <meta charset="<?php echo cfg('client.characterset');?>">
-<title><?php echo ("{{ .Title }}" ? strip_tags("{{ .Title }}") : '').("{{ .Title }}" && cfg('web.title') ? ' | ':'').strip_tags(cfg('web.title'));?></title>
+<title>{{ .Title }}</title>
 <meta name="generator" content="www.softganz.com">
 <meta name="formatter" content="Little Bear by SoftGanz Group">
 <meta name="author" content="<?php echo cfg('web.title');?>">
