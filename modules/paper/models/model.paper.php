@@ -2,8 +2,8 @@
 /**
 * Paper   :: Paper Model
 * Created :: 2007-11-21
-* Modify  :: 2024-08-10
-* Version :: 6
+* Modify  :: 2024-10-28
+* Version :: 7
 *
 * @usage import('model:paper.php');
 * @usage new PaperModel([])
@@ -11,6 +11,8 @@
 */
 
 namespace Paper\Model;
+
+use Softganz\DB;
 
 class PaperModel extends \NodeModel {
 
@@ -112,8 +114,11 @@ class PaperModel extends \NodeModel {
 			$result->membership[$item->uid] = $item->membership;
 		}
 
-		if ($result->orgid) {
-			foreach (\mydb::select('SELECT * FROM %org_officer% WHERE `orgid` = :orgid',':orgid',$result->orgid)->items as $item) {
+		if ($result->orgid && \mydb::table_exists('%org_officer%')) {
+			foreach (DB::select([
+				'SELECT `uid`, `membership` FROM %org_officer% WHERE `orgId` = :orgId',
+				'var' => [':orgId' => $result->orgid]
+			])->items as $item) {
 				$result->officers[$item->uid] = strtoupper($item->membership);
 			}
 		}
