@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2024-10-20
- * @version :: 17
+ * @modify  :: 2024-10-31
+ * @version :: 18
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,29 +58,18 @@ cfg('core.config',              _CONFIG_FILE);
 // Current version will compare with version.install for upgrade database table
 cfg('core.version.install', '4.0');
 
-if (!cfg('domain')) cfg('domain', ($_SERVER["REQUEST_SCHEME"] ? $_SERVER["REQUEST_SCHEME"] : 'http').'://'.$_SERVER['HTTP_HOST']);
-if (!cfg('domain.short')) cfg('domain.short', $_SERVER['HTTP_HOST']);
-//if (!cfg('cookie.domain')) cfg('cookie.domain', $_SERVER['HTTP_HOST']);
-
-cfg('folder.abs', dirname(isset($_SERVER['PATH_TRANSLATED']) ? $_SERVER['PATH_TRANSLATED'] : $_SERVER['SCRIPT_FILENAME']).'/');
-cfg('url', in_array(dirname($_SERVER['PHP_SELF']), ['/','\\']) ? '/' : dirname($_SERVER['PHP_SELF']).'/');
-
-define('_DOMAIN',              cfg('domain'));
-define('_DOMAIN_SHORT',        cfg('domain.short'));
-define('_ON_LOCAL',            cfg('domain.short') == 'localhost');
-define('_ON_HOST',             cfg('domain.short') != 'localhost');
-define('_URL',                 cfg('url'));
-define('_url',                 cfg('url'));
-
 // set to the user defined error handler
 set_error_handler('sgErrorHandler');
 register_shutdown_function('sgShutdown');
+spl_autoload_register('sg_autoloader');
 
 // Test error trigger
-//echo 'error_reporting()='.error_reporting().'('.E_ALL.')'.'<br />';
+// echo 'error_reporting()='.error_reporting().'('.E_ALL.')'.'<br />';
 //trigger_error("This is a test of trigger error", E_USER_WARNING);
 
 unset($include_path, $coreFolder, $setCore);
+
+if ($_SERVER['SERVER_SOFTWARE'] === 'FrankenPHP') return;
 
 $request = requestString();
 
@@ -101,7 +90,7 @@ if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && b
 /* Core Process Load End */
 
 
-
+/* Core Function */
 
 /**
  * Generate file not found from include file
@@ -199,12 +188,62 @@ function requestString() {
 	// preg_replace('pattern', replacement, subject)
 	// $request = preg_replace('/happy\/communeinfo\.com\//', '', $request);
 
-	// debugMsg('$request = ['.$request.']');
+	// debugMsg('$request = ['.$request.'] @'.date('Y-m-d H:i:s'));
 	// debugMsg('<pre>'.print_r($_SERVER,1).'</pre>');
 
 	// $_SERVER['SCRIPT_FILENAME']
 	// $_SERVER['DOCUMENT_URI']
 	return $request;
+}
+
+// Load all config file
+function initConfig($configFolder) {
+	SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
+	SgCore::loadConfig('conf.core.json', $configFolder); // load core config file
+	SgCore::loadConfig(_CONFIG_FILE, $configFolder); // load web config file
+	SgCore::loadConfig(_CONFIG_FILE, 'conf.local'); // load local config file
+}
+
+// Set auto loader file
+function sg_autoloader($class) {
+	$registerFileList = (Array) R()->core->autoLoader->items;
+
+	if (preg_match('/\\\\/', $class)) {
+		$class = end(explode('\\', $class));
+	}
+
+	$lowerClass = strtolower($class);
+	if (in_array($lowerClass, array_keys($registerFileList))) {
+		load_lib($registerFileList[$lowerClass]);
+		if (debug('auto')) {
+			debugMsg('AUTOLOAD '.$class.' from <b style="color: green">'.$registerFileList[$lowerClass].'</b>');
+		}
+		return;
+	}
+
+	$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
+	$endName = strToLower(end($pieces));
+
+	$import = '';
+
+	switch ($endName) {
+		case 'model':
+			array_pop($pieces);
+			$import = 'model:'.implode('.', $pieces).'.php';
+			break;
+		case 'widget':
+			array_pop($pieces);
+			$import = 'widget:'.implode('.', $pieces).'.php';
+			break;
+	}
+	$import = strToLower($import);
+
+	if (debug('auto')) {
+		debugMsg('AUTOLOAD '.$class.' '.($import ? 'TO <b style="color: green">'.$import.'</b>' : 'not load.'));
+		// debugMsg($pieces, '$pieces');
+	}
+
+	if ($import) import($import);
 }
 
 /**

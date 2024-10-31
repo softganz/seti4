@@ -2,13 +2,25 @@
 /**
 * Core Init :: Init Web
 * Created   :: 2023-08-01
-* Modify    :: 2024-10-04
-* Version   :: 9
+* Modify    :: 2024-10-31
+* Version   :: 10
 */
 
 global $R;
 
-spl_autoload_register('sg_autoloader');
+if (!cfg('domain')) cfg('domain', ($_SERVER["REQUEST_SCHEME"] ? $_SERVER["REQUEST_SCHEME"] : 'https').'://'.$_SERVER['HTTP_HOST']);
+if (!cfg('domain.short')) cfg('domain.short', $_SERVER['HTTP_HOST']);
+//if (!cfg('cookie.domain')) cfg('cookie.domain', $_SERVER['HTTP_HOST']);
+
+cfg('folder.abs', dirname(isset($_SERVER['PATH_TRANSLATED']) ? $_SERVER['PATH_TRANSLATED'] : $_SERVER['SCRIPT_FILENAME']).'/');
+cfg('url', in_array(dirname($_SERVER['PHP_SELF']), ['/','\\']) ? '/' : dirname($_SERVER['PHP_SELF']).'/');
+
+define('_DOMAIN',              cfg('domain'));
+define('_DOMAIN_SHORT',        cfg('domain.short'));
+define('_ON_LOCAL',            cfg('domain.short') == 'localhost');
+define('_ON_HOST',             cfg('domain.short') != 'localhost');
+define('_URL',                 cfg('url'));
+define('_url',                 cfg('url'));
 
 // Extract template from request url using url format (template)/module/path
 if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
@@ -131,6 +143,7 @@ define('_API',     isset($_REQUEST['api']));
 
 // die(_AJAX?'AJAX Call':'Normal call');
 // echo (_AJAX?'AJAX Call':'Normal call').'<br />';
+// debugMsg('HTTP_X_REQUESTED_WITH = '.$_SERVER['HTTP_X_REQUESTED_WITH'].' , domain = '.cfg('domain').' , httpDomain = '.$httpDomain.' , httpReferer = '.$httpReferer.' , HTTP_HOST = '.$_SERVER['HTTP_HOST']);
 
 q($R->request);
 
@@ -290,55 +303,4 @@ cfg('core.message',core_version_check());
 i()->am;
 
 // End of core process
-
-
-// Load all config file
-function initConfig($configFolder) {
-	SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
-	SgCore::loadConfig('conf.core.json', $configFolder); // load core config file
-	SgCore::loadConfig(_CONFIG_FILE, $configFolder); // load web config file
-	SgCore::loadConfig(_CONFIG_FILE, 'conf.local'); // load local config file
-}
-
-// Set auto loader file
-function sg_autoloader($class) {
-	$registerFileList = (Array) R()->core->autoLoader->items;
-
-	if (preg_match('/\\\\/', $class)) {
-		$class = end(explode('\\', $class));
-	}
-
-	$lowerClass = strtolower($class);
-	if (in_array($lowerClass, array_keys($registerFileList))) {
-		load_lib($registerFileList[$lowerClass]);
-		if (debug('auto')) {
-			debugMsg('AUTOLOAD '.$class.' from <b style="color: green">'.$registerFileList[$lowerClass].'</b>');
-		}
-		return;
-	}
-
-	$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
-	$endName = strToLower(end($pieces));
-
-	$import = '';
-
-	switch ($endName) {
-		case 'model':
-			array_pop($pieces);
-			$import = 'model:'.implode('.', $pieces).'.php';
-			break;
-		case 'widget':
-			array_pop($pieces);
-			$import = 'widget:'.implode('.', $pieces).'.php';
-			break;
-	}
-	$import = strToLower($import);
-
-	if (debug('auto')) {
-		debugMsg('AUTOLOAD '.$class.' '.($import ? 'TO <b style="color: green">'.$import.'</b>' : 'not load.'));
-		// debugMsg($pieces, '$pieces');
-	}
-
-	if ($import) import($import);
-}
 ?>
