@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-10-04
-* Version :: 28
+* Modify  :: 2024-10-31
+* Version :: 29
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.15'
+let sgUiVersion = '4.00.16'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -147,7 +147,7 @@ function sgShowBox(html, $this, options, e) {
 
 	options.onClosed = function() {
 		window.onscroll=function(){}
-		// console.log('ON BOX CLOSE')
+		console.log('ON BOX CLOSE')
 		sgBoxBack({close: true})
 	}
 
@@ -192,7 +192,7 @@ async function sgBoxBack(options = {}) {
 	let $boxElement = $('#cboxLoadedContent')
 	let $boxPage = $('.box-page')
 
-	// console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options)
+	console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options)
 
 	// if ($this.closest('.sg-dropbox.box').length != 0) {
 	// 	$('.sg-dropbox.box').children('div').hide()
@@ -203,18 +203,19 @@ async function sgBoxBack(options = {}) {
 
 	if (options.close) {
 		// console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
-		if (isFlutterInAppWebViewReady) {
-			window.flutter_inappwebview.callHandler("closeWebView");
-		} else if (isAndroidWebViewReady) {
-			Android.reloadWebView('Yes')
-		} else if ($boxElement.length) {
+		if (sgBoxPageCount) {
+			console.log("HAVE BOX LENGTH")
 			if (options.historyBack) {
 				for (let historyCount = 0; historyCount < sgBoxPageCount; historyCount++) {
-					// console.log('historyCount = ', historyCount)
+					console.log('historyCount = ', historyCount)
 					history.back()
 				}
 			}
 			$.colorbox.close()
+		} else if (isFlutterInAppWebViewReady) {
+			window.flutter_inappwebview.callHandler("closeWebView");
+		} else if (isAndroidWebViewReady) {
+			Android.reloadWebView('Yes')
 		}
 		sgBoxPageCount = 0
 	} else if (sgBoxPageCount === 1) {
