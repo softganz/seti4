@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-09-30
-* Version :: 40
+* Modify  :: 2024-11-08
+* Version :: 41
 *
 * @param Array $args
 * @return Widget
@@ -964,17 +964,19 @@ class AppBar extends Widget {
 			$navigatorText = '';
 			foreach ($navigators as $key => $value) {
 				if (is_array($value)) {
-					$navigatorText .= _NL.'<ul>'._NL;
-					$navigatorText .= $this->_renderNavigator($value);
-					$navigatorText .= _NL.'</ul>';
+					$w = new Nav(['children' => $value]);
+					$navigatorText .= $this->_renderEachChildWidget(['class' => $key], $w);
+				// 	$navigatorText .= _NL.'<ul>'._NL;
+				// 	$navigatorText .= $this->_renderNavigator($value);
+				// 	$navigatorText .= _NL.'</ul>';
 				} else if (is_object($value)) {
-					$navigatorText .= $value->build();
+				// 	$navigatorText .= $value->build();
 				} else {
-					$navigatorText .= '<li>'.$value.'</li>'._NL;
+					$navigatorText .= $value._NL;
 				}
 			}
-			$navigatorText .= _NL;
-			return trim($navigatorText);
+			// $navigatorText .= _NL;
+			// return trim($navigatorText);
 		} else if (is_object($navigators)) {
 			// debugMsg($navigators,'$navigators');
 			$navigatorText .= $this->_renderEachChildWidget(NULL, $navigators);
