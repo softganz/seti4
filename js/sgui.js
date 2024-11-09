@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-10-31
-* Version :: 29
+* Modify  :: 2024-11-09
+* Version :: 30
 */
 
 'use strict'
@@ -3286,14 +3286,17 @@ let sgDrawMap = function(thisMap, options = {}) {
 	}
 
 	function createMarker(marker) {
-		currentMarkerText = marker.lat.toFixed(settings.gisDigit)+','+marker.lng.toFixed(settings.gisDigit)
+		let pinText = ''
 		let saveNavText = '<nav class="nav -sg-flex">'
 			+ '<a class="sg-action btn -link -cancel" href="#current-location" data-rel="none" data-title="ลบหมุด" data-confirm="ลบหมุด กรุณายืนยัน?" data-done="javascript:'+thisMap+'.clearMap()"><i class="icon -material">cancel</i><span>ลบหมุด</span></a>'
 			+ '<a class="btn -primary" onClick=\''+thisMap+'.locationUpdate($("#current-location>.value").text());return false;\'><i class="icon -material">done</i><span>บันทึกตำแหน่ง</span></a>'
 			+ '</nav>';
-		let pinText = ''
-		//console.log(marker.currentLocation)
-		if (marker.currentLocation && settings.locationText != undefined) {
+
+		currentMarkerText = marker.lat.toFixed(settings.gisDigit)+','+marker.lng.toFixed(settings.gisDigit)
+
+		if (marker.info) {
+			pinText = marker.info;
+		} else if (marker.currentLocation && settings.locationText != undefined) {
 			//console.log("SET TO locationText")
 			pinText = settings.locationText
 		} else if (settings.pin && settings.pin.content != undefined) {
@@ -3424,6 +3427,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 
 	return {
 		clearMap: clearMap,
+		createMarker: createMarker,
 		locationUpdate: locationUpdate,
 		editLocation: editLocation,
 		currentMarker: getCurrentMarker,
