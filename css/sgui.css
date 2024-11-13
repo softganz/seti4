@@ -23,8 +23,9 @@
 
 
 /* widget-button */
-.widget-button {}
+.widget-button {flex-wrap: wrap;}
 	.widget-button>span>em {font-weight: normal; font-size: 1.2rem; font-style: normal; display: block;}
+	.widget-button>.-desc {flex: 0 0 100%; text-align: center; font-size: 1.2rem;}
 
 
 
