@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-11-08
-* Version :: 41
+* Modify  :: 2024-11-13
+* Version :: 42
 *
 * @param Array $args
 * @return Widget
@@ -630,7 +630,8 @@ class Button extends Widget {
 			. ($this->onClick ? ' onClick=\''.$this->onClick.'\'' : '')
 			. '>'
 			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
-			. ($this->text ? '<span class="-label">' . $this->text . ($this->description ? $this->description : '') . '</span>' : '')
+			. ($this->text ? '<span class="-label">' . $this->_renderChildren([$this->text]) . '</span>' : '')
+			. ($this->description ? '<span class="-desc">'. $this->_renderChildren([$this->description]) : '')
 			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
 			. '</a>';
 		return $button;
@@ -707,7 +708,7 @@ class ExpandButton extends Widget {
 	var $icon = 'chevron_right';
 	function toString() {
 		return '<a'
-			. ' class="sg-expand btn -link -no-print"'
+			. ' class="sg-expand btn -link -no-print'.($this->class ? ' '.$this->class : '').'"'
 			. ' href="javascript:void(0)"'
 			. sg_implode_attr($this->attribute)
 			. '>'
