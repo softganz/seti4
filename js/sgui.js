@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-11-09
-* Version :: 30
+* Modify  :: 2024-11-13
+* Version :: 31
 */
 
 'use strict'
@@ -3426,6 +3426,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 	function getCurrentMarker() {return currentMarkerText}
 
 	return {
+		map: $map,
 		clearMap: clearMap,
 		createMarker: createMarker,
 		locationUpdate: locationUpdate,
