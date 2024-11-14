@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-10-27
-* Version :: 21
+* Modify  :: 2024-11-14
+* Version :: 22
 */
 
 /*************************************************************
@@ -129,10 +129,10 @@ class R {
 
 			// Build widget, if not in reservedMethod and buildMethod is public
 			if (
-					!in_array($buildMethod, $reservedMethod)
-			    && ($reflection = new ReflectionMethod($pageResult, $buildMethod))
-			    && $reflection->isPublic()
-			  ) {
+				!in_array($buildMethod, $reservedMethod)
+				&& ($reflection = new ReflectionMethod($pageResult, $buildMethod))
+				&& $reflection->isPublic()
+			) {
 				// $pageResult->extension();
 
 				return $pageResult->{$buildMethod}();
@@ -975,7 +975,6 @@ class SgCore {
 		$debugLoadfile = debug('load');
 
 		// Create self object
-		// debugMsg('$module = '.$module);
 		if (class_exists($module)) {
 			$pageClass = new $module($module);
 			$pageClass->module = $module;
@@ -1002,70 +1001,64 @@ class SgCore {
 
 		$menuArgs = array_merge([$module], is_array($menu['call']['arg']) ? $menu['call']['arg'] : [] );
 
-		// debugMsg($menuArgs, '$menuArgsA');
+		// Load request from package function file page.package.method[.method].php
+		$funcName = $funcArg = [];
+		foreach ($menuArgs as $value) {
+			if (is_numeric($value) || $value == '*' || preg_match('/^[0-9]/', $value)) break;
+			$funcName[] = $value;
+		}
 
-				// Load request from package function file page.package.method[.method].php
-				$funcName = $funcArg = [];
-				foreach ($menuArgs as $value) {
-					if (is_numeric($value) || $value == '*' || preg_match('/^[0-9]/', $value)) break;
-					$funcName[] = $value;
-				}
-				// debugMsg($funcName, '$funcNameA');
-				// debugMsg(end($funcName));
+		// Find method in function name
+		if (preg_match('/([\w].*)(['._MS_.']|\.\.)([\w\.].*)$/', end($funcName), $out)) {
+			$funcName[count($funcName) - 1] = $out[1]; // Last argument
+			$buildMethod = $out[3]; // After method separator
+			$buildMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $buildMethod);
+		}
 
-				// Find method in function name
-				if (preg_match('/([\w].*)(['._MS_.']|\.\.)([\w\.].*)$/', end($funcName), $out)) {
-				// if (preg_match('/(.*)(['._MS_.']|\.\.)(\w*)$/', end($funcName), $out)) {
-					// debugMsg($out, '$out');
-					$funcName[count($funcName) - 1] = $out[1]; // Last argument
-					$buildMethod = $out[3]; // After method separator
-					$buildMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $buildMethod);
-				}
-				// debugMsg($out, '$out');
-				// debugMsg('$buildMethod = '.$buildMethod);
-				// debugMsg($funcName, '$funcNameB');
+		$found = false;
 
-				$found = false;
+		do {
+			$funcArg = array_slice($menuArgs, count($funcName));
+			$pageFile = $prefix.'.'.implode('.', $funcName);
 
-				do {
-					$funcArg = array_slice($menuArgs, count($funcName));
-					$pageFile = $prefix.'.'.implode('.', $funcName);
+			if ($debugLoadfile) {
+				debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in self::processMenu()</div>');
+			}
 
-					// debugMsg($funcName,'$funcName');
-					// debugMsg($funcArg,'$funcArg');
+			$loadResult = list($retClass, $found, $filename) = self::loadResourceFile($pageFile);
 
-					if ($debugLoadfile) {
-						debugMsg('<div style="color: blue;">Load Page <b>'.$pageFile.'.php</b> in self::processMenu()</div>');
-					}
+			if ($debugLoadfile) {
+				// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
+				// debugMsg($loadResult,'$loadResult');
+				debugMsg('<div style="color: green;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
+			}
 
-					$loadResult = list($retClass, $found, $filename) = self::loadResourceFile($pageFile);
-
-					if ($debugLoadfile) {
-						// debugMsg(''.($found?'Found ':'Not found ').'<b>'.$retClass.'</b> in <b>'.$pageFile.'</b><br />');
-						// debugMsg($loadResult,'$loadResult');
-						debugMsg('<div style="color: green;">Load Page <b>'.$pageFile.'.php</b> complete.</div>');
-					}
-
-					array_pop($funcName);
-				} while (!$found && count($funcName) >= 1);
+			array_pop($funcName);
+		} while (!$found && count($funcName) >= 1);
 
 		// debugMsg($retClass);
 		// debugMsg($menuArgs, '$menuArgs-after');
 		// debugMsg($funcName, '$funcName');
 		// debugMsg($funcArg, '$funcArg');
-
-
-
 		// debugMsg($funcArg, '$funcArg');
 
 		if ($found && class_exists($retClass) && method_exists($retClass, $buildMethod)) {
 			$pageClassWidget = new $retClass(...$funcArg);
-			$pageBuildWidget = $pageClassWidget->$buildMethod();
 			// debugMsg($pageClassWidget, '$pageClassWidget');
-			// debugMsg($pageBuildWidget, '$pageBuildWidget');
-			if ($pageBuildWidget->exeClass) {
-				$pageClass = $pageBuildWidget->exeClass;
-				$pageClass->module = $module;
+
+			// Check methid is public
+			if (($pageBuildReflection = new ReflectionMethod($pageClassWidget, $buildMethod))
+				&& $pageBuildReflection->isPublic()
+			) {
+				$pageBuildWidget = $pageClassWidget->$buildMethod();
+				// debugMsg($pageClassWidget, '$pageClassWidget');
+				// debugMsg($pageBuildWidget, '$pageBuildWidget');
+				if ($pageBuildWidget->exeClass) {
+					$pageClass = $pageBuildWidget->exeClass;
+					$pageClass->module = $module;
+				}
+			} else {
+				$found = false;
 			}
 		} else if ($found && function_exists($retClass)) {
 			$pageBuildWidget = $retClass(...array_merge([$pageClass], $funcArg));
