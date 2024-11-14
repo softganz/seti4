@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2024-09-24
-* Version :: 9
+* Modify 	:: 2024-11-14
+* Version :: 10
 *
 * @param Array $args
 * @return Object
@@ -56,6 +56,18 @@ class NodeModel {
 				$data->data = json_encode(json_decode($data->data), JSON_PRETTY_PRINT  + JSON_UNESCAPED_UNICODE);
 			}
 		]);
+	}
+
+	public static function getData($nodeId) {
+		return DB::select([
+			'SELECT `json` FROM %topic_data% WHERE `tpid` = :nodeId LIMIT 1',
+			'var' => [':nodeId' => $nodeId],
+			'options' => [
+				'jsonDecode' => [
+					['field' => 'json']
+				]
+			]
+		])->json;
 	}
 
 	public static function items($conditions) {
