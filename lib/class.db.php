@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2024-06-28
-* Version :: 8
+* Modify  :: 2024-11-14
+* Version :: 9
 *
 * @param Array $args
 * @return Object
@@ -157,7 +157,7 @@ class DB {
 			}
 		}
 
-		if ($args['onComplete'] && is_callable($args['onComplete'])) $args['onComplete']($result);
+		if (is_array($args) && $args['onComplete'] && is_callable($args['onComplete'])) $args['onComplete']($result);
 
 		if ($select->options->sum) $result->sum = $select->options->sum;
 
