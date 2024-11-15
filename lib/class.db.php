@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2024-11-14
-* Version :: 9
+* Modify  :: 2024-11-15
+* Version :: 10
 *
 * @param Array $args
 * @return Object
@@ -545,7 +545,7 @@ class DB {
 	}
 
 	private function jsonVersionConvert() {
-		// Convert --> to JSON_UNQUOTE(JSON_EXTRACT()) in mariadb to mySQL 5.7
+		// Convert ->> to JSON_UNQUOTE(JSON_EXTRACT()) in mariadb to mySQL 5.7
 		if (preg_match('/\-\>\>/', $this->stmt, $out)) {
 			// debugMsg('SRC STMT');
 			// debugMsg($this->stmt);

@@ -6,8 +6,9 @@
 * @version 4.00
 * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
-* @created 2009-07-06
-* @modify  2021-10-06
+* @created :: 2009-07-06
+* @modify  :: 2024-11-15
+* @version :: 2
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -329,7 +330,7 @@ class MyDb {
 	}
 
 	public static function jsonVersionConvert($stmt) {
-		// Convert --> to JSON_UNQUOTE(JSON_EXTRACT()) in mariadb to mySQL 5.7
+		// Convert ->> to JSON_UNQUOTE(JSON_EXTRACT()) in mariadb to mySQL 5.7
 		if (preg_match('/\-\>\>/', $stmt, $out)) {
 			// debugMsg('SRC STMT');
 			// debugMsg($stmt);
