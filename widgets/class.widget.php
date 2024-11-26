@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-11-13
-* Version :: 42
+* Modify  :: 2024-11-26
+* Version :: 43
 *
 * @param Array $args
 * @return Widget
@@ -970,8 +970,8 @@ class AppBar extends Widget {
 				// 	$navigatorText .= _NL.'<ul>'._NL;
 				// 	$navigatorText .= $this->_renderNavigator($value);
 				// 	$navigatorText .= _NL.'</ul>';
-				} else if (is_object($value)) {
-				// 	$navigatorText .= $value->build();
+				} else if (is_object($value) && method_exists($value, 'build')) {
+					$navigatorText .= $value->build();
 				} else {
 					$navigatorText .= $value._NL;
 				}
