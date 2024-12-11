@@ -2,8 +2,8 @@
 /**
 * Counter :: Model
 * Created :: 2021-11-26
-* Modify  :: 2024-10-04
-* Version :: 5
+* Modify  :: 2024-12-11
+* Version :: 6
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -207,8 +207,8 @@ class CounterModel {
 
 		// Not insert log on counter_log is table lock
 		$isCounterTableLock = mydb::table_is_lock('%counter_log%');
-		if ($isCounterTableLock && user_access('access administrator pages')) {
-			cfg('web.message','<p class="notify" style="position: absolute; top: 0; right: 0; z-index: 999999;">Table <strong>counter_log</strong> was locked!!!.</p>');
+		if ($isCounterTableLock && is_admin()) {
+			cfg('web.message', '<p class="notify" style="position: absolute; top: 0; right: 0; z-index: 999999; opacity: 0.6; pointer-events: none;">Table <strong>counter_log</strong> was locked!!!.</p>');
 			return false;
 		}
 
