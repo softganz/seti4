@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-11-14
-* Version :: 22
+* Modify  :: 2024-12-11
+* Version :: 23
 */
 
 /*************************************************************
@@ -165,11 +165,15 @@ class R {
 		// assetName Format : project:name.ext
 		// assetFile Format : {module}.name.ext
 		// Location Folder : modules/{}/template/assets, modules/{module}/assets, core/assets
+
 		list($moduleName, $assetName) = explode(':', $assetName);
-		// debugMsg($assetName);
 		$packageName = 'asset:'.$moduleName.'/'.$assetName;
-		// $found = false;
 		list($funcName, $found, $fileName, $resourceType, $resultContent) = SgCore::loadResourceFile($packageName);
+
+		if (preg_match('/.json$/i', $assetName)) {
+			$resultContent = preg_replace('/\s+\/\/.*/', '', $resultContent);
+		}
+
 		return $resultContent;
 	}
 }
