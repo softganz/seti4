@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-11-13
-* Version :: 31
+* Modify  :: 2024-12-11
+* Version :: 32
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.16'
+let sgUiVersion = '4.00.17'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -1278,7 +1278,15 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// called before reset
 			onreset: function(settings, original) {},
 			// called before submit
-			onsubmit: function(settings, original) {return true},
+			onsubmit: function(settings, original) {
+				let options = $inlineField.data('options')
+				let callbackFunction = options != undefined && options.hasOwnProperty('onSubmit') ? options.onSubmit : null
+				if (callbackFunction && typeof window[callbackFunction] === 'function') {
+					window[callbackFunction](settings, original);
+				}
+
+				return true;
+			},
 			data: function(value, settings) {
 				if ($inlineField.data('data')) return $inlineField.data('data');
 				else if ($inlineField.data('value') != undefined) return $inlineField.data('value');
@@ -1587,7 +1595,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 						return value
 					}
 
-					self.saveToServer($inlineField, value, onSaveFieldCallback)
+					if (settings.saveData) {
+						self.saveToServer($inlineField, value, onSaveFieldCallback)
+					}
 					return value
 				} ,
 				settings
@@ -1596,9 +1606,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 
 		// Save value immediately when radio or checkbox click
-		if (inputType == 'radio') saveRadio()
+		if (inputType == 'radio') saveRadio();
 		else if (inputType == 'checkbox') saveCheckbox()
-		else saveEditable()
+		else saveEditable();
 
 		// RETURN that can call from outside
 		return {
@@ -1701,6 +1711,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		inputcssclass		: '',
 		autocomplete 		: {},
 		datepicker 			: {},
+		saveData        : true,
 	}
 
 	// Process show/hide element when radio or checkbox was click
