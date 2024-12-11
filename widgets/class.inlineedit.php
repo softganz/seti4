@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-07-25
-* Version :: 8
+* Modify  :: 2024-12-11
+* Version :: 9
 *
 * @param Array $args
 * @return Widget
@@ -218,6 +218,7 @@ class InlineEdit extends Widget {
 			case 'radio':
 			case 'checkbox': $ret .= $this->_renderTypeRadio($widget); break;
 			case 'select': $ret .= $this->_renderTypeSelect($widget); break;
+			case 'label': $ret .= $this->_renderTypeLabel($widget); break;
 			default: $ret .= $this->_renderTypeText($text, $widget); break;
 		}
 		$ret .= $this->_renderEachChildWidget(NULL, $widget->description);
@@ -231,7 +232,7 @@ class InlineEdit extends Widget {
 		return $ret;
 	}
 
-	private function _renderLabel($widget) {
+	private function _renderLabel($widget, $postText = NULL) {
 		if (empty($widget->label)) return;
 
 		return '<label class="-label'
@@ -240,12 +241,17 @@ class InlineEdit extends Widget {
 			. ($widget->labelStyle ? ' style="'.$widget->labelStyle.'"' : '')
 			. '>'
 			. $widget->label
+			. $postText
 			. ($widget->unit ? ' ('.$widget->unit.')' : '')
 			. '</label>'._NL;
 	}
 
 	function _renderTypeTextField($widget) {
-		return $this->_renderLabel($widget).'<span>'.$widget->text.'</span>';
+		return $this->_renderLabel($widget).(isset($widget->text) ? '<span>'.$widget->text.'</span>' : '');
+	}
+
+	function _renderTypeLabel($widget) {
+		return $this->_renderLabel($widget);
 	}
 
 	function _renderTypeText($text, $widget) {
@@ -296,12 +302,12 @@ class InlineEdit extends Widget {
 		$widget->data = $this->processChoice(SG\getFirst($widget->choices, $widget->data));
 
 		$ret = '';
-		$ret .= $this->_renderLabel($widget);
+		$ret .= $this->_renderLabel($widget, ':');
 
 		$text = $widget->data[$widget->value];
 
 		if ($childEditMode) {
-			$ret .= '<span class="-for-input"><span class="-value">'.$text.'</span><i class="icon -material -gray">expand_more</i></span>'._NL;
+			$ret .= '<span class="-for-input">'.$text.'</span>'._NL;
 		} else {
 			$ret .= '<span class="-for-view">'.$text.'</span>'._NL;
 		}
@@ -317,7 +323,7 @@ class InlineEdit extends Widget {
 			$result = $choices;
 		} else if (preg_match('/\.\./', $choices)) {
 			list($start, $end) = explode('..', $choices);
-			for ($choice=$start; $choice <= $end; $choice++) {
+			for ($choice = $start; $choice <= $end; $choice++) {
 				$result[$choice] = $choice;
 			}
 		}
@@ -355,7 +361,7 @@ class InlineEdit extends Widget {
 	function _renderTypeRadio($widget) {
 		$childEditMode = $this->editMode || $widget->editMode;
 
-		$ret = $this->_renderLabel($widget);
+		$ret = $this->_renderLabel($widget, ':');
 
 		if ($childEditMode) {
 			$ret .= $this->_renderRadioItem($widget)._NL;
