@@ -9,9 +9,12 @@
 * @return Widget
 *
 * @usage new Album([
+* 	'id' => String,
+* 	'class' => String,
 * 	'img' => String,
 * 	'link' => Widget,
 * 	'title' => Widget,
+* 	'itemClass' => String,
 * 	'navigator' => Widget,
 * 	'children' => [],
 * ])
