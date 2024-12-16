@@ -16,8 +16,8 @@
 * ============================================
 
 Created :: 2019-12-08
-Modify  :: 2024-09-15
-Version :: 6
+Modify  :: 2024-12-16
+Version :: 7
 */
 
 namespace SG;
@@ -296,25 +296,6 @@ function json_encode($input) {
 function isJson($string) {
 	json_decode($string);
 	return json_last_error() === JSON_ERROR_NONE;
-
-			if (empty($config)) {
-			// Delete on empty
-			mydb::query(
-				'DELETE FROM %property% WHERE `module` = "PROJECT" AND `name` = "SETTING" AND `propId` = :projectId LIMIT 1',
-				[':projectId' => $this->projectId]
-			);
-		} else if (preg_match('/^[\[\{]/', $config)) {
-			// Check JSON Valid
-			$configDecode = json_decode($config);
-			if (empty($configDecode)) {
-				return ['responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'รูปแบบของ JSON ไม่ถูกต้อง'];
-			} else {
-				// JSON Valid then save
-				property($propertyKey, \SG\json_encode($configDecode));
-			}
-		} else {
-			return ['responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'รูปแบบของ JSON ไม่ถูกต้อง'];
-		}
 }
 
 /**
