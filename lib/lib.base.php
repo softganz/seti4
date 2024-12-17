@@ -16,8 +16,8 @@
 * ============================================
 
 Created :: 2019-12-08
-Modify  :: 2024-12-16
-Version :: 7
+Modify  :: 2024-12-17
+Version :: 8
 */
 
 namespace SG;
@@ -27,9 +27,9 @@ if (!defined('_NL')) define('_NL', "\r\n");
 
 function uniqid($len = 10) {
 	$token_id = '0'.substr(
-		md5(
+		// md5(
 			str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-		)
+		// )
 		,0, $len
 	);
 	return $token_id;
