@@ -2,8 +2,8 @@
 /**
 * System  :: Resend Waiting API
 * Created :: 2023-12-06
-* Modify  :: 2023-12-06
-* Version :: 1
+* Modify  :: 2024-12-17
+* Version :: 2
 *
 * @return Widget
 *
@@ -73,7 +73,7 @@ class SystemApiQueue extends Page {
 								$apiItem->apiModel,
 								$apiItem->status,
 								$apiItem->sendRetry,
-								$apiItem->curlParam,
+								preg_replace('/\"ChfR12\-Api\-Key\:.*\"\,|\\\"/', '', $apiItem->curlParam),
 								// new DebugMsg($apiItem, '$apiItem')
 							];
 						},
