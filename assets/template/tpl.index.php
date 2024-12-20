@@ -95,11 +95,11 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 <body<?php echo
 	(cfg('page_id') ? ' id="'.cfg('page_id').'"' : '')
 	. ' class="module module-'.cfg('page_id')
-	. (q(1) ? (is_numeric(q(1)) ? ' -'.q(0).'-'.q(1) : ' -'.q(1)) : '')
+	. (q(1) ? (is_numeric(q(1)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(0)).'-'.preg_replace('/[\.]{1,}/','-',q(1)) : ' -'.preg_replace('/[\.]{1,}/','-',q(1))) : '')
 	//. (preg_match('/^softganz\/app/i', $_SERVER['HTTP_USER_AGENT']) ? ' -app' : '')
 	. (cfg('page_class') ? ' '.cfg('page_class') : '')
-	. (q(2) && !is_numeric(q(2)) ? ' --'.str_replace('.','-',q(2)) : '')
-	. (q(3) && !is_numeric(q(3)) ? ' --'.str_replace('.','-',q(3)) : '')
+	. (q(2) && !is_numeric(q(2)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(2)).' --'.preg_replace('/[\.]{1,}/','-',q(2)) : '')
+	. (q(3) && !is_numeric(q(3)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(3)).' --'.preg_replace('/[\.]{1,}/','-',q(3)) : '')
 	. ' -'.str_replace('.','-',str_replace('www.','',cfg('domain.short')))
 	. '"'
 	. (cfg('body_attr') ? ' '.cfg('body_attr'):'')
