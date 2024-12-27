@@ -16,8 +16,8 @@
 * ============================================
 
 Created :: 2019-12-08
-Modify  :: 2024-12-17
-Version :: 8
+Modify  :: 2024-12-27
+Version :: 9
 */
 
 namespace SG;
@@ -488,7 +488,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 					.($info ? '<sup class="sg-info" title="'.$info.'">?</sup>' : '')
 					.$posttext;
 			} else {
-				$ret .= '<span class="inline-edit-field '
+				$ret .= '<span class="inline-edit-field -text '
 					.'-'.$input_type
 					.($class ? ' '.$class : '')
 					.'" '
@@ -499,7 +499,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 					.'data-value="'.htmlspecialchars($value).'" '
 					.($data ? ' data-data="'.htmlspecialchars(\json_encode($data)).'"' : '')
 					.' title="คลิกเพื่อแก้ไข">'
-					.'<span>'.$text.'</span>'
+					.'<span class="-for-input">'.$text.'</span>'
 					.'</span>'
 					.$require
 					.$posttext;

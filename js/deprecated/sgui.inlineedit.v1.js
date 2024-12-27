@@ -240,7 +240,7 @@
 					window.location = window.location
 				} else if ($this.data('type') == 'autocomplete') {
 					$this.data('value',para.value)
-					$this.html('<span>'+data.value+'</span>');
+					$this.html('<span class="-for-input">'+data.value+'</span>');
 				} else if ($this.data('type') == 'radio') {
 				} else if ($this.data('type') == 'checkbox') {
 				} else if ($this.data('type') == 'select') {
@@ -250,10 +250,10 @@
 					} else {
 						selectValue = data.value
 					}
-					$this.html('<span>'+selectValue+'</span>')
+					$this.html('<span class="-for-input">'+selectValue+'</span>')
 				} else {
 					// console.log('VALUE = ',data.value)
-					$this.html('<span>'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
+					$this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
 				}
 
 
