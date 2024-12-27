@@ -2,8 +2,8 @@
 /**
 * Calendar:: Get Calendar Item List Model
 * Created :: 2007-03-06
-* Modify 	:: 2024-10-11
-* Version :: 2
+* Modify 	:: 2024-12-27
+* Version :: 3
 *
 * @param Object $conditions
 * @return Object $options
@@ -15,6 +15,7 @@ function r_calendar_get_list() {
 	$para = para(func_get_args());
 
 	$is_category = mydb::table_exists('%calendar_category%');
+	$joins = $fields = [];
 
 
 	if ($para->get == '*') {
@@ -59,6 +60,12 @@ function r_calendar_get_list() {
 
 	//if ($para->main) mydb::where('c.`tpid` IS NULL');
 
+	if ($para->module === 'project') {
+		$joins[] = 'LEFT JOIN %project_tr% `activity` ON `activity`.`formId` = "info" AND `activity`.`part` = "activity" AND `activity`.`calId` = `c`.`id`';
+		mydb::where('`activity`.`tagName` IS NULL OR `activity`.`tagName` != "group"');
+		$fields[] = '`activity`.`tagName`';
+	}
+
 	if (!i()->ok) {
 		// get only public privacy
 		mydb::where('c.`privacy` = "public"');
@@ -76,8 +83,13 @@ function r_calendar_get_list() {
 		mydb::where('(c.`privacy` = "public" OR c.`owner` = :myuid)'.($role_sql ? ' OR '.$role_sql:''),':myuid', i()->uid);
 	}
 
-	mydb::value('$CATFIELD$', $is_category ? ' , cat.`category_shortname` , cat.`category_name` ' : '');
-	mydb::value('$CATJOIN$', $is_category ? '  LEFT JOIN %calendar_category% AS cat ON c.`category` = cat.`category_id` ' : '');
+	if ($is_category) {
+		$joins[] = 'LEFT JOIN %calendar_category% AS cat ON c.`category` = cat.`category_id`';
+		$fields[] = 'cat.`category_shortname` , cat.`category_name`';
+	}
+
+	mydb::value('$FIELD$', ($fields ? ', ' : '') . implode(_NL.'		, ', $fields), false);
+	mydb::value('$JOIN$', implode(_NL, $joins), false);
 	mydb::value('$ORDER$', $para->order ? $para->order : 'c.`from_date` ASC');
 
 	$stmt = 'SELECT
@@ -86,19 +98,19 @@ function r_calendar_get_list() {
 		, t.`title` `topicTitle`
 		, u.`username`
 		, u.`name` `owner_name`
-		$CATFIELD$
+		$FIELD$
 		FROM %calendar% c
 		LEFT JOIN %topic% t USING(`tpid`)
 		LEFT JOIN %users% u ON c.`owner` = u.`uid`
-		$CATJOIN$
+		$JOIN$
 		%WHERE%
-		ORDER BY $ORDER$
-		';
+		GROUP BY `c`.`id`
+		ORDER BY $ORDER$';
 
 	$dbs = mydb::select($stmt);
-	//debugMsg('<pre>'.str_replace("\t", ' ', mydb()->_query).'</pre>');
-	//print_o($para,'$para',1);
-	//debugMsg($dbs,'$dbs');
+	// debugMsg('<pre>'.str_replace("\t", ' ', mydb()->_query).'</pre>');
+	// debugMsg($para,'$para');
+	// debugMsg($dbs,'$dbs');
 	//return;
 
 	//debugMsg('<pre>'.str_replace("\t", ' ', mydb()->_query).'</pre>');
