@@ -2,8 +2,8 @@
 /**
 * Admin   :: Install Basic Database Table
 * Created :: 2016-11-08
-* Modify  :: 2024-08-10
-* Version :: 3
+* Modify  :: 2025-01-03
+* Version :: 4
 *
 * @return Widget
 *
@@ -595,10 +595,16 @@ function __admin_install_create_table($prefix=null) {
 	)';
 
 	$query->topic_user='CREATE TABLE IF NOT EXISTS %topic_user% (
-		`tpid` int(11) NOT NULL DEFAULT 0,
-		`uid` int(11) NOT NULL DEFAULT 0,
+		`tpid` int(11) UNSIGNED NOT NULL DEFAULT 0,
+		`uid` int(11) UNSIGNED NOT NULL DEFAULT 0,
 		`membership` enum("Admin","Manager","Follower","Trainer","Owner","Regular member","Commentator","Viewer","Editor") NOT NULL DEFAULT "Regular member",
 		PRIMARY KEY (`tpid`,`uid`)
+	)';
+
+	$query->topic_data='CREATE TABLE IF NOT EXISTS %topic_data% (
+		`tpid` int(11) UNSIGNED NOT NULL,
+		`json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`json`)),
+		PRIMARY KEY (`tpid`)
 	)';
 
 	$query->url_alias='CREATE TABLE IF NOT EXISTS %url_alias% (
