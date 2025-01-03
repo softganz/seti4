@@ -795,7 +795,7 @@ function core_version_check() {
 	$upgrade_folder = _CORE_FOLDER.'/core/upgrade/';
 	if (!file_exists($upgrade_folder)) return 'Upgrade folder not extsts.';
 
-	set_time_limit(0); // run very long time
+	// set_time_limit(0); // run very long time
 
 	$d = dir($upgrade_folder);
 	while (false !== ($entry = $d->read())) {
