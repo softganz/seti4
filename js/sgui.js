@@ -1071,13 +1071,20 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				sgUpdateData(data.responseText, relTarget,$this)
 			}
 		})
-
 	} else {
+		let para = $this.serialize();
+		// let $clickButton = $(document.activeElement);
+
+		// if ($clickButton.attr("name") != undefined) {
+		// 	para += '&' + $clickButton.attr("name") + "=" + $clickButton.val();
+		// }
+
 		// Start post form
-		// console.log('FORM DATA ',$this.serialize())
+		// console.log('FORM DATA ',$this.serialize());
+
 		$.post(
 			$this.attr('action'),
-			$this.serialize(),
+			para,
 			function(html) {
 				// console.log(html)
 				doneResult = html
