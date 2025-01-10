@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2024-08-15
-* Version :: 13
+* Modify  :: 2025-01-10
+* Version :: 14
 *
 * @param Int $nodeId
 * @param String $action
@@ -53,10 +53,13 @@ class PaperApi extends PageApi {
 	function nodeApi() {
 		$apiMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->tranId); // Change .\w to uppercase
 		$apiClassName = 'Paper'.$this->nodeId.'Api';
-			// 'modelClassName' => 'Paper'.$nodeInfo->nodeId.'Model',
 
 		$apiCode = DB::select([
-			'SELECT `phpBackend` FROM %topic_revisions% WHERE `tpid` = :nodeId LIMIT 1',
+			'SELECT `rev`.`phpBackend`
+			FROM %topic% `topic`
+				LEFT JOIN %topic_revisions% `rev` ON `topic`.`tpid` = `rev`.`tpid` AND `topic`.`revId` = `rev`.`revId`
+			WHERE `topic`.`tpid` = :nodeId
+			LIMIT 1',
 			'var' => [':nodeId' => $this->nodeId]
 		])->phpBackend;
 
@@ -64,11 +67,11 @@ class PaperApi extends PageApi {
 
 		eval('?>'.$apiCode.'<?php'._NL);
 
-		if (!class_exists($apiClassName)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+		if (!class_exists($apiClassName)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API class not found');
 
 		$api = new $apiClassName($this->nodeInfo);
 
-		if (!method_exists($api, $apiMethod)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+		if (!method_exists($api, $apiMethod)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API method not found');
 
 		return $api->{$apiMethod}();
 	}
