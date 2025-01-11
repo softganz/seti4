@@ -94,6 +94,10 @@ class PaperModel extends \NodeModel {
 			'admin' => false,
 			'owner' => false,
 			'edit' => false,
+			'editBackend' => is_admin(),
+			'editCss' => is_admin(),
+			'editScript' => is_admin(),
+			'editData' => is_admin()
 		];
 		$result->options = NULL;
 		$result->is = NULL;

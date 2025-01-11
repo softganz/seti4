@@ -30,15 +30,7 @@ class PaperApi extends PageApi {
 			'tranId' => $tranId,
 			'nodeInfo' => $nodeInfo = (is_numeric($nodeId) ? PaperModel::get($nodeId) : NULL),
 			'nodeId' => $nodeInfo->nodeId,
-			'right' => (Object) array_merge(
-				(Array) $nodeInfo->right,
-				[
-					'editBackend' => is_admin(),
-					'editCss' => is_admin(),
-					'editScript' => is_admin(),
-					'editData' => is_admin()
-				]
-			)
+			'right' => $nodeInfo->right,
 		]);
 	}
 

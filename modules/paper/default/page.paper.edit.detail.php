@@ -21,15 +21,7 @@ class PaperEditDetail extends Page {
 			'nodeId' => $nodeInfo->nodeId,
 			'nodeInfo' => $nodeInfo,
 			'backend' => NodeModel::getBackend($nodeInfo->nodeId),
-			'right' => (Object) array_merge(
-				(Array) $nodeInfo->right,
-				[
-					'editBackend' => is_admin(),
-					'editCss' => is_admin(),
-					'editScript' => is_admin(),
-					'editData' => is_admin()
-				]
-			)
+			'right' => $nodeInfo->right,
 		]);
 		load_lib('class.editor.php','lib');
 		// print_o($this->right, '$this->right',1);
