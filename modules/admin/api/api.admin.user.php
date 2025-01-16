@@ -2,8 +2,8 @@
 /**
 * Admin   :: Admin User API
 * Created :: 2022-10-22
-* Modify  :: 2023-09-29
-* Version :: 2
+* Modify  :: 2025-01-16
+* Version :: 3
 *
 * @param Int $userId
 * @param String $action
@@ -21,7 +21,7 @@ class AdminUserApi extends PageApi {
 	function __construct($userId, $action) {
 		parent::__construct([
 			'action' => $action,
-			'userInfo' => $userId ? UserModel::get($userId) : NULL,
+			'userInfo' => is_numeric($userId) ? UserModel::get($userId) : NULL,
 		]);
 		$this->userId = $this->userInfo->uid;
 	}
@@ -111,6 +111,8 @@ class AdminUserApi extends PageApi {
 	}
 
 	public function edit() {
+		if ($this->userId === 1) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+
 		$data = (Object) post('profile');
 		// debugMsg($data, '$data');
 		// debugMsg($this, '$this');
