@@ -3,7 +3,7 @@
 * Admin   :: Admin User API
 * Created :: 2022-10-22
 * Modify  :: 2025-01-16
-* Version :: 3
+* Version :: 4
 *
 * @param Int $userId
 * @param String $action
@@ -12,7 +12,7 @@
 * @usage api/admin/user/{userId}/{action}
 */
 
-import('model:user.php');
+use Softganz\DB;
 
 class AdminUserApi extends PageApi {
 	var $userId;
@@ -30,84 +30,73 @@ class AdminUserApi extends PageApi {
 	* Block/UnBlock User
 	*/
 	function block() {
-		if (!$this->userId || !\SG\confirm()) {
-			return [
-				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
-				'ข้อมูลไม่ครบถ้วน',
-			];
-		}
+		if (empty($this->userId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		if ($this->userId === 1) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
 
 		$status = $this->userInfo->status == 'block' ? 'enable' : 'block';
 
 		// Delete cache when block or roles change
-		mydb::query(
+		DB::query([
 			'UPDATE %users% SET `status` = :status WHERE `uid` = :uid LIMIT 1',
-			[
+			'var' => [
 				':uid' => $this->userId,
 				':status' => $status,
 			]
-		);
+		]);
 
-		mydb::query(
+		DB::query([
 			'DELETE FROM %cache% WHERE `headers` = :username',
-			[ ':username' => $this->userInfo->username ]
-		);
+			'var' => [ ':username' => $this->userInfo->username ]
+		]);
 
 		R::model('watchdog.log','Admin','User '.($status == 'block' ? 'Block' : 'Active'),'User '.$uid.' ('.$this->userInfo->username.') was '.($status == 'block' ? 'blocked' : 'active').'.', i()->uid, $uid);
 
-		return 'User '.$username.' was '.($status == 'block' ? 'blocked' : 'active').'.';
+		return apiSuccess('User '.$username.' was '.($status == 'block' ? 'blocked' : 'active').'.');
 	}
 
 	/**
 	* Block user and delete all topic
 	*/
 	public function blockAndDelete() {
-		import('model:node.php');
+		// import('model:node.php');
 
-		if (!$this->userId) {
-			return new ErrorMessage([
-				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
-				'text' => 'ไม่มีข้อมูลสมาชิก',
-			]);
-		} else if (!\SG\confirm()) {
-			return new ErrorMessage([
-				'responseCode' => _HTTP_ERROR_BAD_REQUEST,
-				'text' => 'กรุณายืนยัน',
-			]);
-		}
+		if (empty($this->userId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีข้อมูลสมาชิก');
+		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
+		if ($this->userId === 1) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
 
-		mydb::query(
+		DB::query([
 			'UPDATE %users% SET `status` = "block" WHERE `uid` = :uid LIMIT 1',
-			[':uid' => $this->userId]
-		);
+			'var' => [':uid' => $this->userId]
+		]);
 
-		mydb::query(
+		DB::query([
 			'DELETE FROM %cache% WHERE `headers` = :username',
-			[':username' => $this->userInfo->username]
-		);
+			'var' => [':username' => $this->userInfo->username]
+		]);
 
-		$dbs = mydb::select(
+		$dbs = DB::select([
 			'SELECT `tpid`, `type`, `title`, `created`, `view`, `reply`, `last_reply`
 			 FROM %topic%
 			 WHERE `uid` = :uid
 			 ORDER BY `created` DESC',
-			 [':uid' => $this->userId]
-		);
-		// debugMsg($dbs,'$dbs');
+			 'var' => [':uid' => $this->userId]
+		]);
 
 		// Delete node
 		foreach ($dbs->items as $rs) {
-			if (in_array($rs->type, ['story', 'page', 'forum'])) {
-				$nodeDeleteResult = NodeModel::delete($rs->tpid);
-				if ($nodeDeleteResult->complete) {
-					$ret .= 'Topic '.$rs->tpid.' DELETED<br />';
-				}
+			if (!in_array($rs->type, ['story', 'page', 'forum'])) continue;
+			if (empty($rs->tpid)) continue;
+
+			$nodeDeleteResult = NodeModel::delete($rs->tpid);
+			if ($nodeDeleteResult->complete) {
+				$ret .= 'Topic '.$rs->tpid.' DELETED<br />';
 			}
 		}
 
 		R::model('watchdog.log','Admin','User Block','User '.$this->userId.' was blocked and delete topics.', i()->uid, $this->userId);
 
-		return 'Blocked and delete '.$dbs->_num_rows.' topics';
+		return apiSuccess('Blocked and delete '.$dbs->_num_rows.' topics');
 	}
 
 	public function edit() {

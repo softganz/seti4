@@ -2,14 +2,16 @@
 /**
 * Profile :: View User Information
 * Created :: 2021-01-01
-* Modify  :: 2024-07-23
-* Version :: 3
+* Modify  :: 2025-01-16
+* Version :: 4
 *
 * @param Int $userInfo
 * @return Widget
 *
 * @usage profile/{userId}
 */
+
+use Softganz\DB;
 
 class ProfileView extends Page {
 	var $userId;
@@ -21,7 +23,10 @@ class ProfileView extends Page {
 			'userId' => $userInfo->userId,
 			'userInfo' => $userInfo,
 			'right' => (Object) [
+				'admin' => is_admin(),
+				'adminUser' => user_access('administer users'),
 				'canLogAs' => user_access('access administrator pages'),
+				'access' => user_access('administer users,access user profiles','change own profile', $userInfo->uid)
 			]
 		]);
 	}
@@ -29,7 +34,7 @@ class ProfileView extends Page {
 	function rightToBuild() {
 		if ($this->userInfo->uid == 1) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		if (empty($this->userId)) return error(_HTTP_ERROR_NOT_FOUND, 'User <em>'.$this->userId.'</em> not exists.');
-		if (!user_access('administer users,access user profiles','change own profile', $this->userInfo->uid)) return message('error','Access denied');
+		if (!$this->right->access) return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
 		return true;
 	}
 
@@ -39,7 +44,11 @@ class ProfileView extends Page {
 		if ($this->userId == i()->uid) location('my');
 
 		// Increase profile view
-		mydb::query('UPDATE %users% SET `views`=`views`+1 WHERE `uid` = :uid LIMIT 1',':uid',$this->userId);
+		DB::query([
+			'UPDATE %users% SET `views`=`views`+1 WHERE `uid` = :uid LIMIT 1',
+			'var' => [':uid' => $this->userId]
+		]);
+
 		$this->userInfo->views++;
 
 		event_tricker('profile.view.start',$this,$this->userInfo);
@@ -62,16 +71,25 @@ class ProfileView extends Page {
 		]); // Scaffold
 	}
 
-	function info() {
+	private function info() {
 		return new Container([
 			'class' => '-sg-view -sg-paddingnorm',
 			'children' => [
 				new Container([
 					'class' => 'my-profile-wrapper',
 					'children' => [
-						'<div class="-photo"><img src="'.BasicModel::user_photo($this->userInfo->username).'" width="100%" height="100%" /></a></div>',
-						'<div class="-name">'.$this->userInfo->name.'</div>',
-						user_access('administer users') ? '<div class="-sg-text-center">ชื่อที่ใช้ในการเข้าระบบ : <strong><a href="'.url('admin/user/edit/'.$this->userInfo->uid).'">'.$this->userInfo->username.'</a></strong></div>':NULL,
+						new Container([
+							'class' => '-photo',
+							'child' => '<img src="'.BasicModel::user_photo($this->userInfo->username).'" width="100%" height="100%" />',
+						]), // Container
+						new Column([
+							'class' => '-sg-text-center',
+							'children' => [
+								'<b>'.$this->userInfo->name.'</b>',
+								$this->right->adminUser ? 'Username : <strong><a href="'.url('admin/user/edit/'.$this->userInfo->uid).'">'.$this->userInfo->username.'</a></strong>' : NULL,
+								$this->right->adminUser ? 'E-mail : '.$this->userInfo->email : NULL,
+							], // children
+						]), // Column
 					], // children
 				]),// Container
 
@@ -81,11 +99,11 @@ class ProfileView extends Page {
 						$this->userInfo->occupation ? 'อาชีพ : '.$this->userInfo->occupation : NULL,
 						$this->userInfo->position ? 'ตำแหน่ง : '.$this->userInfo->position : NULL,
 						$this->userInfo->organization ? 'องค์กร / บริษัท : '.$this->userInfo->organization:NULL,
-						($this->userInfo->address || $this->userInfo->amphur || $this->userInfo->province) && (user_access('administer users') || i()->uid == $this->userInfo->uid) ? 'ที่อยู่ : '.$this->userInfo->address.' '.$this->userInfo->amphur.' '.$this->userInfo->province.' '.$this->userInfo->zipcode.' '.$this->userInfo->country : NULL,
+						($this->userInfo->address || $this->userInfo->amphur || $this->userInfo->province) && ($this->right->adminUser || i()->uid == $this->userInfo->uid) ? 'ที่อยู่ : '.$this->userInfo->address.' '.$this->userInfo->amphur.' '.$this->userInfo->province.' '.$this->userInfo->zipcode.' '.$this->userInfo->country : NULL,
 						// $this->userInfo->latitude ? 'ละติจูด : '.$this->userInfo->latitude : NULL,
 						// $this->userInfo->longitude ? 'ลองกิจูด : '.$this->userInfo->longitude : NULL,
-						$this->userInfo->phone && (user_access('administer users') || i()->uid == $this->userInfo->uid) ? 'โทรศัพท์ : '.$this->userInfo->phone : NULL,
-						$this->userInfo->mobile && (user_access('administer users') || i()->uid==$this->userInfo->uid) ? 'โทรศัพท์เคลื่อนที่ : '.$this->userInfo->mobile : NULL,
+						$this->userInfo->phone && ($this->right->adminUser || i()->uid == $this->userInfo->uid) ? 'โทรศัพท์ : '.$this->userInfo->phone : NULL,
+						$this->userInfo->mobile && ($this->right->adminUser || i()->uid==$this->userInfo->uid) ? 'โทรศัพท์เคลื่อนที่ : '.$this->userInfo->mobile : NULL,
 						$this->userInfo->fax ? 'แฟกซ์ : '.$this->userInfo->fax :NULL,
 						$this->userInfo->website ? 'เว็บไซท์ : '.'<a href="'.$this->userInfo->website.'" target="_blank">'.$this->userInfo->website.'</a>':NULL,
 						$this->userInfo->about ? 'ประวัติย่อ'.' : <br />'.nl2br($this->userInfo->about) : NULL,
@@ -101,7 +119,7 @@ class ProfileView extends Page {
 			'class' => '-sg-view -sg-paddingnorm',
 			'children' => [
 				// Admin menu
-				user_access('access administrator pages,administer users') ? new Nav([
+				$this->right->adminUser ? new Nav([
 					'direction' => 'vertical',
 					'children' => [
 						$this->right->canLogAs ? new Button([
@@ -124,12 +142,12 @@ class ProfileView extends Page {
 							'icon' => new Icon($this->userInfo->status == 'enable' ? 'done' : 'block'),
 							'text' => 'This user is <b>'.($this->userInfo->status == 'block' ? 'Blocked' : 'Active').'</b>',
 						]), // Button
-						user_access('access administrator pages') ? new Button([
+						$this->right->admin ? new Button([
 							'type' => 'link',
 							'class' => 'sg-action',
 							'href' => url('api/admin/user/'.$this->userInfo->uid.'/blockanddelete'),
 							'icon' => new Icon('delete'),
-							'text' => '<b>BLOCK AND DELETE TOPICS</b>',
+							'text' => '<b>BLOCK AND DELETE</b>',
 							'rel' => 'notify',
 							'done' => 'load->replace:#profile-status:'.url('profile/'.$this->userInfo->uid.'/view..status'),
 							'attribute' => [

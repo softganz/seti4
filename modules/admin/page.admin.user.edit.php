@@ -3,7 +3,7 @@
 * Admin   :: Edit User Information
 * Created :: 2023-03-31
 * Modify  :: 2025-01-16
-* Version :: 3
+* Version :: 4
 *
 * @param String $userId
 * @return Widget
@@ -23,7 +23,7 @@ class AdminUserEdit extends Page {
 	}
 
 	function rightToBuild() {
-		if (empty($this->userId)) return error(_HTTP_ERROR_BAD_REQUEST,'User <em>'.$this->userId.'</em> not exists.');
+		if (empty($this->userId)) return error(_HTTP_ERROR_BAD_REQUEST, 'User <em>'.$this->userId.'</em> not exists.');
 		if ($this->userId === 1) return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
 		return true;
 	}
