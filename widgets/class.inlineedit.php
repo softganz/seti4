@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2024-12-11
-* Version :: 9
+* Modify  :: 2025-01-23
+* Version :: 10
 *
 * @param Array $args
 * @return Widget
@@ -38,6 +38,7 @@ class InlineEdit extends Widget {
 	var $inputName;
 	var $title = 'คลิกเพื่อแก้ไข';
 	var $placeholder = '...';
+	var $numbering = 0;
 	var $onBlur;
 	var $choices = [];
 	var $options = []; // debug,place
@@ -240,7 +241,9 @@ class InlineEdit extends Widget {
 			. '"'
 			. ($widget->labelStyle ? ' style="'.$widget->labelStyle.'"' : '')
 			. '>'
+			. ($widget->options->numbering ? '<span class="-numbering">'.(++$this->numbering).'.</san>' : '')
 			. $widget->label
+			. ($widget->options->labelSubfix ? '<span class="-label-subfix">'.$widget->options->labelSubfix.'</span>' : '')
 			. $postText
 			. ($widget->unit ? ' ('.$widget->unit.')' : '')
 			. '</label>'._NL;
