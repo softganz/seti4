@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2024-12-11
-* Version :: 32
+* Modify  :: 2025-01-24
+* Version :: 33
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.17'
+let sgUiVersion = '4.00.18'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -3253,7 +3253,78 @@ let sgDrawMap = function(thisMap, options = {}) {
 		})
 	}
 
+	if (settings.pin.lat && settings.pin.lng) {
+		currentMarker = createMarker(settings.pin)
+		let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+		infoWindow.open($map, currentMarker)
+	}
 
+	if (settings.markers) {
+		$.each( settings.markers, function(i, item) {
+			if (item.lat && item.lng) {
+				$map.addMarker({
+					lat: item.lat,
+					lng: item.lng,
+					draggable: item.draggable == undefined ? false : item.draggable,
+					icon: item.icon == undefined ? 'https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|CCCCCC|FFFFFF' : item.icon,
+					infoWindow: {content: (item.content == undefined ? '' : item.content)},
+				})
+			}
+		});
+	}
+
+	if (settings.address) {
+		$.each( settings.address, function(i, address) {
+			// console.log(address)
+			GMaps.geocode({
+				address: address,
+				callback: function(results, status) {
+					if (status == "OK") {
+						let latlng = results[0].geometry.location;
+						if (!is_point && i == 0) $map.setCenter(latlng.lat(), latlng.lng());
+						$map.addMarker({
+							lat: latlng.lat(),
+							lng: latlng.lng(),
+							icon: "https://softganz.com/library/img/geo/circle-green.png",
+							infoWindow: {content: address}
+						});
+					}
+				}
+			})
+		})
+	}
+
+	$("#getgis").click(function() {
+		notify("กำลังหาตำแหน่งปัจจุบัน");
+		// Try HTML5 geolocation.
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(
+				// Complete
+				function(position) {
+					notify()
+					$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
+					if (currentMarker == undefined) {
+						currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
+						let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+						infoWindow.open($map, currentMarker)
+						is_point = true
+					}
+					currentMarker.setPosition($map.getCenter())
+					updateLocationValue(position.coords.latitude, position.coords.longitude)
+				},
+				// Error
+				function(e) {
+					notify("Error: The Geolocation service failed.", 5000);
+				},
+				{ timeout: 7000, enableHighAccuracy: true, maximumAge: 0 }
+			);
+		} else {
+			// Browser doesnt support Geolocation
+			notify("Error: Browser doesnt support Geolocation.", 5000);
+		}
+
+		return false;
+	});
 
 	function clearMap() {
 		is_point = false
@@ -3261,37 +3332,39 @@ let sgDrawMap = function(thisMap, options = {}) {
 		currentMarker.setMap(null);
 	}
 
-	let locationUpdate = function(latLng) {
-		if (updateUrl == undefined) return false
+	function locationUpdate(latLng) {
+		if (updateUrl == undefined) return false;
 
-		let para = settings.updatePara == undefined ? {} : settings.updatePara
-		para.location = latLng
-		if (settings.debug) console.log("SAVE Location "+updateUrl,para)
+		let para = settings.updatePara == undefined ? {} : settings.updatePara;
+		para.location = latLng;
+		if (settings.debug) console.log("SAVE Location "+updateUrl,para);
+
 		$.post(updateUrl, para, function(data) {
-			let googleMapUrl = "https://www.google.com/maps/place/"+latLng
-			let googleNavUrl = "geo:?q="+latLng
+			let googleMapUrl = "https://www.google.com/maps/place/"+latLng;
+			let googleNavUrl = "geo:?q="+latLng;
 
-			$("#googlemap").attr("href", googleMapUrl).removeClass("-hidden")
-			$("#googlenav").attr("href", googleNavUrl).removeClass("-hidden")
+			$("#googlemap").attr("href", googleMapUrl).removeClass("-hidden");
+			$("#googlenav").attr("href", googleNavUrl).removeClass("-hidden");
 
-			let mapIcon = latLng != "" ? "where_to_vote" : "room"
-			let mapActive = latLng != "" ? "-active" : ""
+			let mapIcon = latLng != "" ? "where_to_vote" : "room";
+			let mapActive = latLng != "" ? "-active" : "";
 			if (settings.updateIcon) {
 				$(settings.updateIcon)
-					//.text(mapIcon)
-					.removeClass("-active")
-					.addClass(mapActive)
+				.removeClass("-active")
+				.addClass(mapActive)
+				//.text(mapIcon)
 			}
-			}).fail(function(response) {
-				notify(response.responseJSON.text, 3000)
-			})
-			.done(function(data) {
-				notify(data.text, 3000)
-				sgActionDone(settings.done, null, latLng)
-			})
+		})
+		.done(function(data) {
+			notify(data.text, 3000)
+			if (settings.done) sgActionDone(settings.done, null, latLng)
+		})
+		.fail(function(response) {
+			notify(response.responseJSON.text, 3000)
+		});
 	}
 
-	let editLocation = function(latLng) {
+	function editLocation(latLng) {
 		if (updateUrl == undefined) return false
 		// console.log("EDIT", latLng)
 	}
@@ -3367,79 +3440,6 @@ let sgDrawMap = function(thisMap, options = {}) {
 			// }
 		})
 	}
-
-	if (settings.pin.lat && settings.pin.lng) {
-		currentMarker = createMarker(settings.pin)
-		let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
-		infoWindow.open($map, currentMarker)
-	}
-
-	if (settings.markers) {
-		$.each( settings.markers, function(i, item) {
-			if (item.lat && item.lng) {
-				$map.addMarker({
-					lat: item.lat,
-					lng: item.lng,
-					draggable: item.draggable == undefined ? false : item.draggable,
-					icon: item.icon == undefined ? 'https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|CCCCCC|FFFFFF' : item.icon,
-					infoWindow: {content: (item.content == undefined ? '' : item.content)},
-				})
-			}
-		});
-	}
-
-	if (settings.address) {
-		$.each( settings.address, function(i, address) {
-			// console.log(address)
-			GMaps.geocode({
-				address: address,
-				callback: function(results, status) {
-					if (status == "OK") {
-						let latlng = results[0].geometry.location;
-						if (!is_point && i == 0) $map.setCenter(latlng.lat(), latlng.lng());
-						$map.addMarker({
-							lat: latlng.lat(),
-							lng: latlng.lng(),
-							icon: "https://softganz.com/library/img/geo/circle-green.png",
-							infoWindow: {content: address}
-						});
-					}
-				}
-			})
-		})
-	}
-
-	$("#getgis").click(function() {
-		notify("กำลังหาตำแหน่งปัจจุบัน");
-		// Try HTML5 geolocation.
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
-				// Complete
-				function(position) {
-					notify()
-					$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
-					if (currentMarker == undefined) {
-						currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
-						let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
-						infoWindow.open($map, currentMarker)
-						is_point = true
-					}
-					currentMarker.setPosition($map.getCenter())
-					updateLocationValue(position.coords.latitude, position.coords.longitude)
-				},
-				// Error
-				function(e) {
-					notify("Error: The Geolocation service failed.", 5000);
-				},
-				{ timeout: 7000, enableHighAccuracy: true, maximumAge: 0 }
-			);
-		} else {
-			// Browser doesnt support Geolocation
-			notify("Error: Browser doesnt support Geolocation.", 5000);
-		}
-
-		return false;
-	});
 
 	function getCurrentMarker() {return currentMarkerText}
 
