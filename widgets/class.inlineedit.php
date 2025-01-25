@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-01-23
-* Version :: 10
+* Modify  :: 2025-01-25
+* Version :: 11
 *
 * @param Array $args
 * @return Widget
@@ -220,6 +220,7 @@ class InlineEdit extends Widget {
 			case 'checkbox': $ret .= $this->_renderTypeRadio($widget); break;
 			case 'select': $ret .= $this->_renderTypeSelect($widget); break;
 			case 'label': $ret .= $this->_renderTypeLabel($widget); break;
+			case 'method': $ret .= $this->_renderTypeMethod($widget); break;
 			default: $ret .= $this->_renderTypeText($text, $widget); break;
 		}
 		$ret .= $this->_renderEachChildWidget(NULL, $widget->description);
@@ -405,8 +406,17 @@ class InlineEdit extends Widget {
 		// return $ret;
 	}
 
+	function _renderTypeMethod($widget) {
+		// $childEditMode = $this->editMode || $widget->editMode;
+
+		$ret = $this->_renderLabel($widget);
+		$ret .= $this->_renderEachChildWidget(NULL, $widget->method);
+
+		// $ret .= print_o($widget, '$widget');
+		return $ret;
+	}
+
 	function _renderNotField() {
-		debugMsg('START RENDER NOT FIELD');
 		$ret = '';
 		if (is_object($this) && method_exists($this, 'build')) {
 		// debugMsg($this, '$this_renderNotField');
