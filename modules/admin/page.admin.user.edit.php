@@ -2,8 +2,8 @@
 /**
 * Admin   :: Edit User Information
 * Created :: 2023-03-31
-* Modify  :: 2025-01-16
-* Version :: 4
+* Modify  :: 2025-01-30
+* Version :: 5
 *
 * @param String $userId
 * @return Widget
@@ -29,7 +29,6 @@ class AdminUserEdit extends Page {
 	}
 
 	function build() {
-
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'Edit User Information',
@@ -76,6 +75,7 @@ class AdminUserEdit extends Page {
 						'maxlength'=>20,
 						'description'=>'To change the current user password, enter the new password in both fields.',
 					],
+					'<a data-gen="'.SG\uniqid().'" onClick=\'$("#edit-profile-password").val($(this).data("gen"));$("#edit-profile-repassword").val($(this).data("gen"));\'>Generate password</a>',
 					'status' => [
 						'type'=>'radio',
 						'label'=>'Status :',
