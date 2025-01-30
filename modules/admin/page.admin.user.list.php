@@ -2,8 +2,8 @@
 /**
 * Admin   :: List All Member
 * Created :: 2019-09-01
-* Modify  :: 2024-08-19
-* Version :: 2
+* Modify  :: 2025-01-30
+* Version :: 3
 *
 * @return Widget
 *
@@ -67,6 +67,7 @@ class AdminUserList extends Page {
 			u.`uid`, u.`username`, u.`name`
 			, u.`status`
 			, u.`email`, u.`roles`, u.`datein`, u.`login_time`, u.`last_login`
+			, u.`hits`
 			, u.`admin_remark`
 			FROM %users% AS u
 			%WHERE%
@@ -108,6 +109,7 @@ class AdminUserList extends Page {
 								'name -nowrap'=>'Name <a href="'.url($currentUrl, ['order' => 'name']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'name' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'email'=>'Email <a href="'.url($currentUrl, ['order' => 'email']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'email' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'roles'=>'Roles <a href="'.url($currentUrl, ['order' => 'role']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'role' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'hits -center' => 'Hits',
 								'reg -date'=>'Register date <a href="'.url($currentUrl, ['order' => 'reg']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'reg' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'currentIn -date' => 'Current Login',
 								'last -date' => 'Last login <a href="'.url($currentUrl, ['order' => 'login']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'login' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
@@ -131,6 +133,7 @@ class AdminUserList extends Page {
 										'<strong>'.$rs->name.'</strong><br />'.$rs->username.'('.$rs->uid.')',
 										$rs->email,
 										$rolesList ? implode(', ', $rolesList) : '',
+										number_format($rs->hits),
 										sg_date($rs->datein,'M j, Y @G:i'),
 										$rs->login_time ? sg_date($rs->login_time,'M j, Y @G:i') : '',
 										$rs->last_login ? sg_date($rs->last_login,'M j, Y @G:i') : '',
