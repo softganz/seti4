@@ -2,8 +2,8 @@
 /**
 * API     :: API Model
 * Created :: 2023-11-13
-* Modify  :: 2023-11-23
-* Version :: 2
+* Modify  :: 2025-01-30
+* Version :: 3
 *
 * @param Array $args
 * @return Object
@@ -44,7 +44,7 @@ class ApiModel {
 		$options = [
 			CURLOPT_URL => $args['url'],
 			CURLOPT_RETURNTRANSFER => isset($args['returnTransfer']) ? $args['returnTransfer'] : true,
-			CURLOPT_SSL_VERIFYHOST => 0,
+			CURLOPT_SSL_VERIFYHOST => 1,
 			CURLOPT_VERBOSE => 0,
 			CURLOPT_HTTPHEADER => $headers,
 			// CURLOPT_HEADER => true,
@@ -53,6 +53,7 @@ class ApiModel {
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 			CURLOPT_CUSTOMREQUEST => strtoupper(SG\getFirst($args['method'], 'GET')),
+			CURLOPT_SSL_VERIFYPEER => false,
 		];
 
 		if ($args['method'] == 'post') $options[CURLOPT_POST] = 1;
@@ -92,7 +93,7 @@ class ApiModel {
 		//curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		// curl_setopt($ch, CURLOPT_FILE, $fh);
 
-		// debugMsg($options, '$options');
+		if ($args['debug']) debugMsg($options, '$options');
 
 		curl_setopt_array($ch, $options);
 
@@ -101,11 +102,12 @@ class ApiModel {
 		$info['error'] = curl_error($ch);
 		curl_close($ch);
 
-		// debugMsg($result, '$result');
+		if ($args['debug']) debugMsg($result, '$result');
+		if ($args['debug']) debugMsg($info, '$info');
 
 		if ($args['result'] === 'json') {
-			if (debug()) debugMsg($result);
-			return \json_decode($result);
+			// if (debug()) debugMsg($result);
+			return json_decode($result);
 		} else if ($args['result'] === 'text') {
 			return $result;
 		} else {

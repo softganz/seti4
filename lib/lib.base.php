@@ -16,8 +16,8 @@
 * ============================================
 
 Created :: 2019-12-08
-Modify  :: 2024-12-27
-Version :: 9
+Modify  :: 2025-01-30
+Version :: 10
 */
 
 namespace SG;
@@ -151,6 +151,7 @@ function api($args = []) {
 		// CURLOPT_RETURNTRANSFER => true,
 
 		CURLOPT_SSL_VERIFYHOST => 0,
+		CURLOPT_SSL_VERIFYPEER => false,
 		CURLOPT_VERBOSE => 0,
 	];
 
