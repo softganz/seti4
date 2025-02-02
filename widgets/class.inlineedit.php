@@ -325,6 +325,19 @@ class InlineEdit extends Widget {
 			$result = (Array) $choices;
 		} else if (preg_match('/^\{/', $choices)) {
 			$result = $choices;
+		} else if (preg_match('/^BC|DC\:/', $choices, $out)) {
+			preg_match('/^(BC|DC)\:([0-9a-z]*)(\.\.)([0-9a-z]*)(.*)/i', $choices, $out);
+			$yearType = $out[1];
+			$start = $out[2];
+			$end = $out[4];
+			$direction = $out[5];
+
+			if ($end === 'NOW') $end = date('Y');
+			// debugMsg($out, '$out');
+			for ($choice = $start; $choice <= $end; $choice++) {
+				$result[$choice] = $yearType === 'BC' ? $choice + 543 : $choice;
+			}
+			// debugMsg($result, '$result');
 		} else if (preg_match('/\.\./', $choices)) {
 			list($start, $end) = explode('..', $choices);
 			for ($choice = $start; $choice <= $end; $choice++) {
