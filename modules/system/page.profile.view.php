@@ -2,8 +2,8 @@
 /**
 * Profile :: View User Information
 * Created :: 2021-01-01
-* Modify  :: 2025-01-16
-* Version :: 4
+* Modify  :: 2025-02-06
+* Version :: 5
 *
 * @param Int $userInfo
 * @return Widget
@@ -178,7 +178,7 @@ class ProfileView extends Page {
 					'children' => [
 						'เริ่มเป็นสมาชิกตั้งแต่ '.sg_date($this->userInfo->datein,'ว ดด ปป H:i').' น.',
 						$this->userInfo->login_time ? 'เข้าระบบล่าสุดเมื่อ '.sg_date($this->userInfo->login_time,'ว ดด ปปปป H:i').' น.' : NULL,
-						'เข้าชมเว็บไซท์ : '.number_format($this->userInfo->hits).' ครั้ง',
+						'เข้าชมเว็บไซท์ : '.($this->right->admin ? '<a class="sg-action" href="'.url('stats/list', ['user' => $this->userId]).'" data-rel="box" data-width="full">'.number_format($this->userInfo->hits).'</a>' : number_format($this->userInfo->hits)).' ครั้ง',
 						'อ่าน : '.number_format($this->userInfo->views).' ครั้ง'
 					], // children
 				]), // Column
