@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-01-25
-* Version :: 11
+* Modify  :: 2025-02-14
+* Version :: 12
 *
 * @param Array $args
 * @return Widget
@@ -61,6 +61,8 @@ class InlineEdit extends Widget {
 		if (!is_array($child)) return;
 		// debugMsg($childKey, '$childKey');
 		// debugMsg($child, '$child');
+
+		if ($child['type'] === 'method') return;
 
 		if ($this->editMode) {
 			$attributes['class'] = $this->editFieldClassName;
@@ -149,6 +151,8 @@ class InlineEdit extends Widget {
 	// @override
 	function _renderChildContainerEnd($childKey = NULL, $child = []) {
 		if (!is_array($child)) return;
+		if ($child['type'] === 'method') return;
+
 		return parent::_renderChildContainerEnd($childKey, $child);
 	}
 
@@ -420,12 +424,9 @@ class InlineEdit extends Widget {
 	}
 
 	function _renderTypeMethod($widget) {
-		// $childEditMode = $this->editMode || $widget->editMode;
-
 		$ret = $this->_renderLabel($widget);
 		$ret .= $this->_renderEachChildWidget(NULL, $widget->method);
 
-		// $ret .= print_o($widget, '$widget');
 		return $ret;
 	}
 
