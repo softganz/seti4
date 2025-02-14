@@ -1,13 +1,13 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-01-24
-* Version :: 33
+* Modify  :: 2025-02-14
+* Version :: 34
 */
 
 'use strict'
 
-let sgUiVersion = '4.00.18'
+let sgUiVersion = '4.00.19'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -3138,6 +3138,8 @@ let sgDrawMap = function(thisMap, options = {}) {
 		updateIcon: null,
 		mapCanvas: "#map-canvas",
 		height: '100%',
+		mapHeight: '100%',
+		showGetCurrent: true,
 		pin: [],
 		markers: [],
 		address: [],
@@ -3163,7 +3165,7 @@ let sgDrawMap = function(thisMap, options = {}) {
 
 	$(".box-page").css({width: "100%", height: "100%", minWidth: "100%", minHeight: "100%"})
 	$(".page.-map").css({height: settings.height, minWidth: "100%", minHeight: settings.height})
-	$(settings.mapCanvas).css({width: "100%", height: "100%", minWidth: "100%", minHeight: "100%"})
+	$(settings.mapCanvas).css({width: "100%", height: settings.mapHeight, minWidth: "100%", minHeight: "100%"})
 
 	if (settings.dropPin) {
 		if (is_point) notify(dragText, dragNotifyTime)
@@ -3294,37 +3296,40 @@ let sgDrawMap = function(thisMap, options = {}) {
 		})
 	}
 
-	$("#getgis").click(function() {
-		notify("กำลังหาตำแหน่งปัจจุบัน");
-		// Try HTML5 geolocation.
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
-				// Complete
-				function(position) {
-					notify()
-					$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
-					if (currentMarker == undefined) {
-						currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
-						let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
-						infoWindow.open($map, currentMarker)
-						is_point = true
-					}
-					currentMarker.setPosition($map.getCenter())
-					updateLocationValue(position.coords.latitude, position.coords.longitude)
-				},
-				// Error
-				function(e) {
-					notify("Error: The Geolocation service failed.", 5000);
-				},
-				{ timeout: 7000, enableHighAccuracy: true, maximumAge: 0 }
-			);
-		} else {
-			// Browser doesnt support Geolocation
-			notify("Error: Browser doesnt support Geolocation.", 5000);
-		}
+	if (settings.showGetCurrent) {
+		$("#getgis").click(function() {
+			notify("กำลังหาตำแหน่งปัจจุบัน");
+			// Try HTML5 geolocation.
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					// Complete
+					function(position) {
+						notify()
+						$map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude})
+						if (currentMarker == undefined) {
+							currentMarker = createMarker({lat: position.coords.latitude, lng: position.coords.longitude, currentLocation: true})
+							let infoWindow = new google.maps.InfoWindow({content: currentInfoText});
+							infoWindow.open($map, currentMarker)
+							is_point = true
+						}
+						currentMarker.setPosition($map.getCenter())
+						updateLocationValue(position.coords.latitude, position.coords.longitude)
+					},
+					// Error
+					function(e) {
+						console.log(e)
+						notify("Error: The Geolocation service failed. ("+e.message+")", 5000);
+					},
+					{ timeout: 7000, enableHighAccuracy: true, maximumAge: 0 }
+				);
+			} else {
+				// Browser doesnt support Geolocation
+				notify("Error: Browser doesnt support Geolocation.", 5000);
+			}
 
-		return false;
-	});
+			return false;
+		});
+	}
 
 	function clearMap() {
 		is_point = false
