@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-02-14
-* Version :: 34
+* Modify  :: 2025-02-18
+* Version :: 35
 */
 
 'use strict'
@@ -1612,6 +1612,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 
+		self.saveValue = ($inlineField, value, callback) => {
+			console.log($inlineField, value);
+		}
+
 		// Save value immediately when radio or checkbox click
 		if (inputType == 'radio') saveRadio();
 		else if (inputType == 'checkbox') saveCheckbox()
@@ -1698,6 +1702,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			// SAVE DATA IN FORM TO TARGET
 			update: function($inlineField, value, callback) {
 				self.saveToServer($inlineField, value, callback)
+			},
+
+			saveValue: function($inlineField, value, callback) {
+				console.log("SAVE VALUE", $inlineField, value);
 			}
 		}
 	}
@@ -2303,7 +2311,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				$('<a>')
 				.text('Get data api url')
 				.attr({
-					'href': queryUrl + '?' + new URLSearchParams(para),
+					'href': queryUrl + '&' + new URLSearchParams(para),
 					'target': '_blank'
 				})
 			)
