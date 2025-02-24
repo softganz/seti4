@@ -2,8 +2,8 @@
 /**
 * Paper save post comment
 * Created :: 2019-06-05
-* Modify  :: 2023-10-04
-* Version :: 2
+* Modify  :: 2025-02-24
+* Version :: 3
 *
 * @param Object $self
 * @param Int $tpid
@@ -13,7 +13,7 @@
 
 $debug = true;
 
-function paper_comment_post($self, $topicInfo) {
+function paper_comment_post($self, $topicInfo = NULL) {
 	if (!$topicInfo) return message('error', 'TOPIC NOT FOUND.');
 
 	$tpid = $topicInfo->tpid;

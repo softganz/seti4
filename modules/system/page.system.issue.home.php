@@ -2,8 +2,8 @@
 /**
 * System  :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2024-08-23
-* Version :: 10
+* Modify  :: 2025-02-24
+* Version :: 11
 *
 * @return Widget
 *
@@ -14,11 +14,13 @@ use Softganz\DB;
 
 class SystemIssueHome extends Page {
 	var $issueType;
+	var $items = 1000;
 	var $right;
 
  	function __construct() {
 		parent::__construct([
 			'issueType' => post('type'),
+			'items' => SG\getFirstInt(post('items'), $this->items),
 			'right' => (Object) [
 				'access' => is_admin(),
 			],
@@ -39,13 +41,16 @@ class SystemIssueHome extends Page {
 			FROM %system_issue% `issue`
 			%WHERE%
 			ORDER BY `issueId` DESC
-			LIMIT 1000',
+			LIMIT $ITEMS$',
 			'where' => [
 				'%WHERE%' => [
 					['`issue`.`status` != :complete', ':complete' => _COMPLETE],
 					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
 				]
-			]
+			],
+			'var' => [
+				'$ITEMS$' => $this->items
+				]
 		]);
 
 		return new Scaffold([

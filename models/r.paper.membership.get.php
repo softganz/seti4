@@ -1,6 +1,11 @@
 <?php
+/**
+* Modify  :: 2025-02-24
+* Version :: 2
+*/
+
 function r_paper_membership_get($tpid, $uid = NULL) {
-	$members = NULL;
+	$members = (Object) [];
 	if ($tpid && $uid) {
 		// Get owner or membership for user of tpid
 		$stmt = 'SELECT "OWNER" `membership`

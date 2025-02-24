@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2024-08-30
-* Version :: 11
+* Modify  :: 2025-02-24
+* Version :: 12
 *
 * @param Int $userId
 * @return Object
@@ -530,6 +530,7 @@ class UserModel {
 		$user = (Object) [
 			'ok' => false,
 			'signInResult' => NULL,
+			'roles' => [],
 		];
 
 		// echo ('Get login '.print_o($_COOKIE,'$_COOKIE'));
