@@ -2,8 +2,8 @@
 /**
 * System  :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2025-02-24
-* Version :: 12
+* Modify  :: 2025-02-25
+* Version :: 13
 *
 * @return Widget
 *
@@ -75,13 +75,25 @@ class SystemIssueHome extends Page {
 								'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : NULL,
 							], // children
 						]),
-						'<a class="sg-action btn" href="'.url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host]).'" data-rel="notify" data-done="reload" data-title="ล้างรายการ" data-confirm="ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?"><i class="icon -material">done_all</i></a>',
 						new Button([
+							'type' => 'secondary',
+							'class' => 'sg-action',
+							'href' => url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host]),
+							'rel' => 'notify',
+							'done' => 'reload',
+							'icon' => new Icon('done_all'),
+							'attribute' => [
+								'data-title' => 'ล้างรายการ',
+								'data-confirm' => 'ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?',
+							]
+						]), // Button
+						new Button([
+							'type' => 'secondary',
 							// 'class' => 'sg-action',
 							'href' => url('system/issue', ['type' => $this->issueType, 'host' => $this->host]),
 							// 'rel' => '#main',
 							'icon'=> new Icon('refresh'),
-						])
+						]),  // Button
 					], // children
 				]), // Row
 			]), // AppBar
