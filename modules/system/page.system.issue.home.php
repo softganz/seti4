@@ -3,7 +3,7 @@
 * System  :: Issue Home Page
 * Created :: 2022-10-14
 * Modify  :: 2025-02-25
-* Version :: 13
+* Version :: 14
 *
 * @return Widget
 *
@@ -28,74 +28,21 @@ class SystemIssueHome extends Page {
 			],
 		]);
 	}
+
+	function rightToBuild() {
+		if (!$this->right->access) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		return true;
+	}
+
 	function build() {
 		head('googlead','<script></script>');
 
-		if (!$this->right->access) {
-			return new ErrorMessage([
-				'responseCode' => _HTTP_ERROR_FORBIDDEN,
-				'text' => 'Access Denied',
-			]);
-		}
-
-		$dbs = DB::select([
-			'SELECT *
-			FROM %system_issue% `issue`
-			%WHERE%
-			ORDER BY `issueId` DESC
-			LIMIT $ITEMS$',
-			'where' => [
-				'%WHERE%' => [
-					['`issue`.`status` != :complete', ':complete' => _COMPLETE],
-					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
-					$this->host ? ['`issue`.`host` = :host', ':host' => $this->host] : NULL,
-				]
-			],
-			'var' => [
-				'$ITEMS$' => $this->items
-				]
-		]);
+		$dbs = $this->getData();
 
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => $dbs->count.' Issues Report',
-				'trailing' => new Row([
-					'crossAxisAlignment' => 'center',
-					'children' => [
-						new Form([
-							'action' => url('system/issue'),
-							'method' => 'GET',
-							'children' => [
-								'type' => [
-									'type' => 'select',
-									'onChange' => 'submit',
-									'value' => $this->issueType,
-									'options' => ['' => 'All', 'Fatal Error' => 'Fatal Error', 'Create user' => 'Create user'],
-								],
-								'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : NULL,
-							], // children
-						]),
-						new Button([
-							'type' => 'secondary',
-							'class' => 'sg-action',
-							'href' => url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host]),
-							'rel' => 'notify',
-							'done' => 'reload',
-							'icon' => new Icon('done_all'),
-							'attribute' => [
-								'data-title' => 'ล้างรายการ',
-								'data-confirm' => 'ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?',
-							]
-						]), // Button
-						new Button([
-							'type' => 'secondary',
-							// 'class' => 'sg-action',
-							'href' => url('system/issue', ['type' => $this->issueType, 'host' => $this->host]),
-							// 'rel' => '#main',
-							'icon'=> new Icon('refresh'),
-						]),  // Button
-					], // children
-				]), // Row
+				'trailing' => $this->trailing(),
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
@@ -201,6 +148,65 @@ class SystemIssueHome extends Page {
 		]);
 	}
 
+	private function getData() {
+		return DB::select([
+			'SELECT *
+			FROM %system_issue% `issue`
+			%WHERE%
+			ORDER BY `issueId` DESC
+			LIMIT $ITEMS$',
+			'where' => [
+				'%WHERE%' => [
+					['`issue`.`status` != :complete', ':complete' => _COMPLETE],
+					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
+					$this->host ? ['`issue`.`host` = :host', ':host' => $this->host] : NULL,
+				]
+			],
+			'var' => [
+				'$ITEMS$' => $this->items
+				]
+		]);
+	}
+
+	private function trailing() {
+		return new Row([
+			'crossAxisAlignment' => 'center',
+			'children' => [
+				new Form([
+					'action' => url('system/issue'),
+					'method' => 'GET',
+					'children' => [
+						'type' => [
+							'type' => 'select',
+							'onChange' => 'submit',
+							'value' => $this->issueType,
+							'options' => ['' => 'All', 'Fatal Error' => 'Fatal Error', 'Create user' => 'Create user'],
+						],
+						'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : NULL,
+					], // children
+				]),
+				new Button([
+					'type' => 'secondary',
+					'class' => 'sg-action',
+					'href' => url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host]),
+					'rel' => 'notify',
+					'done' => 'reload',
+					'icon' => new Icon('done_all'),
+					'attribute' => [
+						'data-title' => 'ล้างรายการ',
+						'data-confirm' => 'ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?',
+					]
+				]), // Button
+				new Button([
+					'type' => 'secondary',
+					// 'class' => 'sg-action',
+					'href' => url('system/issue', ['type' => $this->issueType, 'host' => $this->host]),
+					// 'rel' => '#main',
+					'icon'=> new Icon('refresh'),
+				]),  // Button
+			], // children
+		]);
+	}
 	private function issueIcon($issueType) {
 		$icons = [
 			'Fatal Error' => 'error',
