@@ -3,7 +3,7 @@
 * System  :: Issue Home Page
 * Created :: 2022-10-14
 * Modify  :: 2025-02-24
-* Version :: 11
+* Version :: 12
 *
 * @return Widget
 *
@@ -14,12 +14,14 @@ use Softganz\DB;
 
 class SystemIssueHome extends Page {
 	var $issueType;
+	var $host;
 	var $items = 1000;
 	var $right;
 
  	function __construct() {
 		parent::__construct([
 			'issueType' => post('type'),
+			'host' => post('host'),
 			'items' => SG\getFirstInt(post('items'), $this->items),
 			'right' => (Object) [
 				'access' => is_admin(),
@@ -46,6 +48,7 @@ class SystemIssueHome extends Page {
 				'%WHERE%' => [
 					['`issue`.`status` != :complete', ':complete' => _COMPLETE],
 					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
+					$this->host ? ['`issue`.`host` = :host', ':host' => $this->host] : NULL,
 				]
 			],
 			'var' => [
@@ -61,22 +64,30 @@ class SystemIssueHome extends Page {
 					'children' => [
 						new Form([
 							'action' => url('system/issue'),
+							'method' => 'GET',
 							'children' => [
 								'type' => [
 									'type' => 'select',
 									'onChange' => 'submit',
 									'value' => $this->issueType,
 									'options' => ['' => 'All', 'Fatal Error' => 'Fatal Error', 'Create user' => 'Create user'],
-								]
+								],
+								'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : NULL,
 							], // children
 						]),
-						'<a class="sg-action btn" href="'.url('api/system/issue.close/*', ['type' => $this->issueType]).'" data-rel="notify" data-done="reload" data-title="ล้างรายการ" data-confirm="ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?"><i class="icon -material">done_all</i></a>',
-						'<a class="sg-action btn" href="'.url('system/issue').'" data-rel="#main"><i class="icon -material">refresh</i></a>'
+						'<a class="sg-action btn" href="'.url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host]).'" data-rel="notify" data-done="reload" data-title="ล้างรายการ" data-confirm="ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?"><i class="icon -material">done_all</i></a>',
+						new Button([
+							// 'class' => 'sg-action',
+							'href' => url('system/issue', ['type' => $this->issueType, 'host' => $this->host]),
+							// 'rel' => '#main',
+							'icon'=> new Icon('refresh'),
+						])
 					], // children
 				]), // Row
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
+					empty($this->host) ? $this->domainCount() : NULL,
 					new Widget([
 						// 'thead' => ['ID', 'Host', 'Url', 'Report By', 'report-date -date' => 'Date', '', ''],
 						'children' => array_map(
@@ -93,7 +104,7 @@ class SystemIssueHome extends Page {
 												'children' => [
 													new Button([
 														'type' => 'link',
-														'href' => url('api/system/issue.close/'.$item->issueId),
+														'href' => url('api/system/issue/close/'.$item->issueId),
 														'icon' => new Icon('done'),
 														'class' => 'sg-action',
 														'rel' => 'none',
@@ -146,6 +157,35 @@ class SystemIssueHome extends Page {
 					]), // Table
 				], // children
 			]), // Widget
+		]);
+	}
+
+	function domainCount() {
+		return new Table([
+			'thead' => ['Domain', 'error-count -amt' => 'Error Count'],
+			'children' => array_map(
+				function($domain) {
+					return [
+						new Button([
+							'href' => url('system/issue', ['type' => $this->issueType, 'host' => $domain->host]),
+							'text' => $domain->host,
+						]),
+						number_format($domain->amt)
+					];
+				},
+				(Array) DB::select([
+					'SELECT `issue`.`host`, COUNT(*) `amt`
+					FROM %system_issue% `issue`
+					%WHERE%
+					GROUP BY `issue`.`host`',
+					'where' => [
+						'%WHERE%' => [
+							['`issue`.`status` != :status', ':status' => _COMPLETE],
+							$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
+						]
+					]
+				])->items
+			),
 		]);
 	}
 

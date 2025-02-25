@@ -2,15 +2,15 @@
 /**
 * System  :: System API
 * Created :: 2022-10-14
-* Modify  :: 2024-06-13
-* Version :: 2
+* Modify  :: 2025-02-25
+* Version :: 3
 *
 * @param Int $mainId
 * @param String $action
 * @param Int $tranId
 * @return String
 *
-* @usage module/api/{id}/{action}[/{tranId}]
+* @usage api/system/{action}[/{tranId}]
 */
 
 use Softganz\DB;
@@ -39,27 +39,6 @@ class SystemApi extends PageApi {
 
 	function date() {
 		return date('Y-m-d H:i:s');
-	}
-
-	public function issueClose() {
-		if (!$this->right->admin) return $this->_accessDenied();
-
-		$issueType = post('type');
-
-		if ($issueId = $this->tranId) {
-			DB::query([
-				'UPDATE %system_issue%
-				SET `status` = :status
-				%WHERE%',
-				'where' => [
-					'%WHERE%' => [
-						$issueId === '*' ? ['`status` = :draft', ':draft' => _START] : ['`issueId` = :issueId', ':issueId' => $issueId],
-						$issueType ? ['`issueType` = :issueType', ':issueType' => $issueType] : NULL,
-					]
-				], // where
-				'var' => [':status' => _COMPLETE]
-			]);
-		}
 	}
 }
 ?>

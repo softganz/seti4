@@ -43,7 +43,7 @@ class SystemIssueView extends Page {
 					'style' => 'padding: 0 16px 0 0;',
 					'child' => new Button([
 						'type' => 'link',
-						'href' => url('api/system/issue.close/'.$this->issueId),
+						'href' => url('api/system/issue/close/'.$this->issueId),
 						'icon' => new Icon('done'),
 						'class' => 'sg-action',
 						'rel' => 'none',
