@@ -2,8 +2,8 @@
 /**
 * Node    :: Node Info API
 * Created :: 2023-07-26
-* Modify  :: 2023-07-26
-* Version :: 1
+* Modify  :: 2025-02-25
+* Version :: 2
 *
 * @param Int $nodeId
 * @param String $action
@@ -56,9 +56,10 @@ class NodeInfoApi extends PageApi {
 	}
 
 	function reviewSave() {
+		$getRating = SG\getFirstInt(post('rate'));
 		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 
-		if (empty($getRating = post('rate'))) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลการให้คะแนน');
+		if (empty($getRating)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลการให้คะแนน');
 
 		if ($this->nodeInfo->info->ratetimes) {
 			$reviewInfo = \mydb::select(
