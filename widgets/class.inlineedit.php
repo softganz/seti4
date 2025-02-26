@@ -175,7 +175,7 @@ class InlineEdit extends Widget {
 	private function _renderChildType($key, $widget = '{}') {
 		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
 		$text = SG\getFirst($widget->value, $widget->text);
-		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.$widget->placeholder.'</span>';
+		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.SG\getFirst($widget->options->placeholder, $widget->placeholder).'</span>';
 		else if ($widget->retType === 'nl2br') $text = trim(nl2br($text));
 		else if ($widget->retType === 'html') $text = trim(sg_text2html($text));
 		else if ($widget->retType === 'text') $text = trim(str_replace("\n",'<br />',$text));
