@@ -437,7 +437,7 @@ function para() {
 
 
 function _crypt_key_ed($txt,$encrypt_key) {
-	$encrypt_key = md5($encrypt_key);
+	$encrypt_key = md5((String) $encrypt_key);
 	$ctr=0;
 	$tmp = '';
 	for ($i=0;$i<strlen($txt);$i++){
