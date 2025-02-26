@@ -2,8 +2,8 @@
 /**
 * Function:: Common Function
 * Created :: 2007-07-09
-* Modify  :: 2024-06-14
-* Version :: 4
+* Modify  :: 2024-06-25
+* Version :: 5
 *
 * @param Array $args
 * @return Widget
@@ -99,6 +99,7 @@ function sg_date($para1 = NULL, $para2 = NULL) {
 		//debugMsg('date ='.$date.'=>'.$d.'<br />'.print_o(preg_split('/[-\/]+/',$d),'split'));
 		if (list($yy, $mm, $dd) = preg_split('/[-\/]+/', $d)) {
 			if (strlen($dd) == 4) list($yy, $dd) = [$dd, $yy];
+			$yy = intval($yy);
 			if ($yy > 2400) $yy -= 543;
 		}
 		if (!empty($t) && preg_match('/[\.\:]/', $t)) {
