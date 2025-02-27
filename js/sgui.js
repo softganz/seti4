@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-02-18
-* Version :: 35
+* Modify  :: 2025-02-27
+* Version :: 36
 */
 
 'use strict'
@@ -1579,6 +1579,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				let value = $this.is(':checked') ? $this.attr('value') : ''
 				self.saveToServer($inlineField, value, onSaveFieldCallback)
 			}
+			if ('showOn' in fieldOptions) showHideElement(null, fieldOptions, $inlineField);
 			// console.log('CHECKBOX VALUE ',checkboxValue)
 		}
 
@@ -1733,10 +1734,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	function showHideElement(value, fieldOptions, $inlineField) {
 		let showOn = fieldOptions.showOn;
 
-		// console.log("SHOW ON:", value, showOn)
+		// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn)
 
 		self.processShow = (property, showValue) => {
 			// console.log("SHOW/HIDE ", property, showValue)
+			// Hide element
 			if (showValue.hide) {
 				// console.log("HIDE ", showValue.hide)
 				let hideElement = showValue.hide
@@ -1744,6 +1746,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				$(hideElement).addClass('-hidden').hide()
 			}
 
+			// Sow element
 			if (showValue.show) {
 				// console.log("SHOW ", showValue.show)
 				let showElement = showValue.show
@@ -1758,11 +1761,33 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		if (showOn.value) {
 			// Show/hide single value
+			// console.log("Show On Single Value")
+			// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn)
 			if (value == showOn.value) processShow(value, {"show": showOn.element});
 			else processShow(value, {"hide": showOn.element});
 		} else if (showOn.values) {
 			// Show/hide multiple values
-			if (value in showOn.values) processShow(value, showOn.values[value]);
+			let checkedBoxes = document.querySelectorAll('input[name='+$inlineField.data("inputName")+']:checked');
+
+			// console.log("Show On Multiple Values");
+			// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn, "showOn.values = ", showOn.values);
+			// console.log("fieldOptions:", fieldOptions, "$inlineField:", $inlineField);
+			// console.log("checked ",checkedBoxes)
+
+			checkedBoxes.forEach((eachChecked) => {
+				// console.log(eachChecked.value)
+				if (showOn.values[eachChecked.value]) {
+					// console.log("FOUND ",eachChecked.value)
+					processShow(eachChecked.value, showOn.values[eachChecked.value]);
+				}
+				// processShow(valueKey, showOn.values[valueKey]);
+			});
+
+			// Object.keys(showOn.values).map((valueKey) => {
+			// 	console.log(showOn.values[valueKey])
+
+			// });
+			// if (value in showOn.values) processShow(value, showOn.values[value]);
 		}
 	}
 
