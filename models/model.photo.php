@@ -2,8 +2,8 @@
 /**
 * Photo   :: Photo Model
 * Created :: 2024-11-02
-* Modify  :: 2024-11-02
-* Version :: 1
+* Modify  :: 2025-02-27
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -39,6 +39,8 @@ class PhotoModel {
 		$srcWidth = $srcTypes[0];
 		$srcHeight = $srcTypes[1];
 		$srcType = $srcTypes['mime'];
+
+		if (empty($srcWidth)) return false;
 
 		if ( empty($dstFile) ) $dstFile = $srcFile;
 		// if ( !$options['autoSave'] ) $dstFile = dirname($srcFile)."/auto_image_resize.jpg";
