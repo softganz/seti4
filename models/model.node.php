@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify 	:: 2024-11-14
-* Version :: 10
+* Modify  :: 2025-02-28
+* Version :: 11
 *
 * @param Array $args
 * @return Object
@@ -78,6 +78,22 @@ class NodeModel {
 		unset($conditions->options);
 
 		if (empty($options->page)) $options->page = 1;
+
+		$conditions = (Object) array_merge(
+			[
+				'nodeId' => NULL,
+				'tags' => NULL,
+				'type' => NULL,
+				'sticky' => NULL,
+				'format' => NULL,
+				'user' => NULL,
+				'ip' => NULL,
+				'year' => NULL,
+				'searchText' => NULL,
+			],
+			(Array) $conditions
+		);
+
 		if ($conditions->type === '*') unset($conditions->type);
 		else if (!$conditions->type) $conditions->type = 'story';
 		if ($conditions->tag) {
@@ -153,6 +169,7 @@ class NodeModel {
 		if ($conditions->user) \mydb::where('`topic`.`uid` = :userId', ':userId', $conditions->user);
 		if ($conditions->ip) \mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
 		if ($conditions->year) \mydb::where('YEAR(`topic`.`created`) = :year', ':year', $conditions->year);
+		if ($conditions->format) \mydb::where('`revision`.`property` ->> "$.input_format" = :inputFormat', ':inputFormat', $conditions->format);
 		if ($conditions->searchText) \mydb::where('`topic`.`title` LIKE :searchText', ':searchText', '%'.$conditions->searchText.'%');
 		if (i()->ok) {
 			if (!user_access('administer contents,administer papers')) \mydb::where('(`topic`.`status` IN ('._PUBLISH.','._LOCK.') || (`topic`.`status` IN ('._DRAFT.','._WAITING.') AND `topic`.`uid` = '.i()->uid.'))');

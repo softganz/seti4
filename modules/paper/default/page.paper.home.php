@@ -2,8 +2,8 @@
 /**
 * Paper   :: Home Page
 * Created :: 2019-01-01
-* Modify  :: 2023-11-18
-* Version :: 4
+* Modify  :: 2025-02-28
+* Version :: 5
 *
 * @return Widget
 *
@@ -15,6 +15,7 @@ use Paper\Widget\PaperListWidget;
 
 class PaperHome extends Page {
 	var $tags;
+	var $inputFormat;
 	var $listStyle;
 	var $page;
 	var $items;
@@ -28,6 +29,7 @@ class PaperHome extends Page {
 	function __construct() {
 		parent::__construct([
 			'tags' => post('tags'),
+			'inputFormat' => post('format'),
 			'listStyle' => \SG\getFirst(post('listStyle'), self::LISTSTYLE),
 			'page' => \SG\getFirst(post('page'), self::PAGE),
 			'items' => \SG\getFirst(post('items'), self::ITEMS),
@@ -45,6 +47,7 @@ class PaperHome extends Page {
 
 		$topics = PaperModel::items([
 			'tags' => $this->tags,
+			'format' => $this->inputFormat,
 			'options' => [
 				'debug' => false,
 				'field' => 'detail,photo',
