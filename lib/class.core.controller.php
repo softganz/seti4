@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2024-12-11
-* Version :: 23
+* Modify  :: 2025-03-21
+* Version :: 24
 */
 
 /*************************************************************
@@ -1180,17 +1180,24 @@ class SgCore {
 				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
 			}
 
-			if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
+ 			// Page function that return widget and has build method
+			if (!is_object($pageClassWidget) && is_object($pageBuildWidget) && method_exists($pageBuildWidget, $buildMethod)) {
+				$pageClassWidget = new Widget([
+					'child' => $pageBuildWidget
+				]);
+			}
+
+			if ( (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) ) {
+			    // || (is_object($pageBuildWidget) && method_exists($pageBuildWidget, $buildMethod)) ) {
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
 
-				$reservedMethod = ['rightToBuild'];
 				// debugMsg($pageClass, '$pageClass');
 				// debugMsg($pageClassWidget, '$pageClassWidget');
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
 
 				// Check right to build widget
-				if (method_exists($pageClassWidget, 'rightToBuild')) {
+				if (is_object($pageClassWidget) && method_exists($pageClassWidget, 'rightToBuild')) {
 					// debugMsg('RIGHT TO BUILD');
 					$rightToBuildError = $pageClassWidget->rightToBuild();
 					if (is_object($rightToBuildError)) $pageBuildWidget = $rightToBuildError;
