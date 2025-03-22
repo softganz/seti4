@@ -2,8 +2,8 @@
 /**
 * Stats   :: Main Page
 * Created :: 2022-02-13
-* Modify  :: 2022-12-20
-* Version :: 2
+* Modify  :: 2025-03-22
+* Version :: 3
 *
 * @return Widget
 *
@@ -11,12 +11,37 @@
 */
 
 class Stats extends Page {
+	var $right;
+
+	function __construct() {
+		parent::__construct([
+			'right' => (Object) [
+				'accessReport' => is_admin(),
+			]
+		]);
+	}
+
 	function build() {
 		cfg('web.title', 'Stats - '.cfg('web.title'));
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'Current online <b>'.number_format(CounterModel::onlineCount()).'</b> users @'.sg_date(cfg('dateformat')),
 				'leading' => '<i class="icon -material">pie_chart</i>',
+				'trailing' => new Row([
+					'children' => [
+						new Dropbox([
+							'children' => [
+								$this->right->accessReport ? new Button([
+									'class' => 'sg-action',
+									'href' => url('stats/report/min10'),
+									'text' => 'Hits in 10 min.',
+									'icon' => new Icon('insights'),
+									'rel' => '#main'
+								]) : NULL,
+							], // children
+						]), // Dropbox
+					], // children
+				]), // Row
 				'navigator' => [
 					'<a href="'.url('stats').'"><i class="icon -material">pie_chart</i><span>STAT</span></a>',
 					'<a class="sg-action" href="'.url('stats/online').'" data-rel="#main"><i class="icon -material">people</i><span>ALL</span></a>',
