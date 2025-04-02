@@ -783,6 +783,7 @@ function sgWebViewDomProcess(id) {
 
 			// console.log('URL = '+url)
 			let urlMatch = url.match(/^(function|javascript)\:(.*)/)
+
 			if (urlMatch) {
 				let urlFunction = urlMatch[2]
 				// console.log(urlFunction,urlMatch)
@@ -801,6 +802,8 @@ function sgWebViewDomProcess(id) {
 				// console.log("9.END EXECUTE FUNCTION")
 				return
 			}
+
+			if (settings.fragment) history.pushState({}, document.title, '#'+url);
 
 			$.post(url, para, function(html) {
 				doneResult = html
@@ -865,7 +868,6 @@ function sgWebViewDomProcess(id) {
 				notify(errorMsg)
 				if (debugSG) console.log(response)
 				return false
-
 			});
 
 			// console.log('sg-action done')
