@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2024-11-26
-* Version :: 43
+* Modify  :: 2025-04-20
+* Version :: 44
 *
 * @param Array $args
 * @return Widget
@@ -511,6 +511,58 @@ class Nav extends Widget {
 		}
 		return parent::_renderChildren($childrens, $args);
 	}
+} // End of class Nav
+
+class SideBar extends Widget {
+	var $widgetName = 'SideBar';
+	var $tagName = 'div';
+	// var $class = 'nav';
+	// var $multipleLevel = false;
+	// var $childrenContainer = ['tagName' => 'ul'];
+	// var $childContainer = ['tagName' => 'li', 'class' => '-item'];
+
+	function __construct($args = []) {
+		parent::__construct($args);
+
+		// if ($args['direction']) $this->class .= ' -'.$args['direction'];
+	}
+
+	// // @override
+	// function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
+	// 	return parent::_renderEachChildWidget($key, $widget, [
+	// 		'array' => function($key, $widget) {
+	// 			$result = '<ul>'._NL;
+	// 			foreach ($widget as $eachKey => $eachWidget) {
+	// 				$result .= '<li class="-item">'.trim($this->_renderEachChildWidget($eachKey, $eachWidget)).'</li>'._NL;
+	// 			}
+	// 			$result .= '</ul>'._NL;
+	// 			return $result;
+	// 		},
+	// 		'object' => function($key, $widget) {
+	// 			return trim($widget->build());
+	// 		},
+	// 		'text' => function($key, $text) {
+	// 			return $text;
+	// 		}
+	// 	]);
+	// 	return $result;
+	// }
+
+	// // @override
+	// function _renderChildren($childrens = [], $args = []) {
+	// 	// debugMsg($childrens, '$childrens');
+	// 	foreach ($childrens as $key => $value) {
+	// 		if (is_array($value)) {
+	// 			$this->multipleLevel = true;
+	// 			break;
+	// 		}
+	// 	}
+	// 	if (!$this->multipleLevel) {
+	// 		$this->childrenContainer = ['tagName' => 'ul'];
+	// 		$this->childContainer = ['tagName' => 'li', 'class' => '-item'];
+	// 	}
+	// 	return parent::_renderChildren($childrens, $args);
+	// }
 } // End of class Nav
 
 class ScrollView extends Widget {
