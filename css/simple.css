@@ -8,8 +8,8 @@ Template    : options
 Author      : Panumas Nontapan
 Author URI  : http://softganz.com
 Created     : 2018-10-15
-Last Modify : 2027-07-07
-Version     : 3
+Last Modify : 2028-04-20
+Version     : 4
 */
 
 @import url(reset.css);
@@ -23,6 +23,10 @@ Version     : 3
 	--box-bg-color: aliceblue;
 	--box-title-bg-color: aliceblue;
 	--box-close-img: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23555555' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");
+}
+.widget-button, .btn {
+	--primary-text-color: #E5F2FF;
+	--primary-bg-color: #057BFF;
 }
 
 .module.-app-theme-dark {
@@ -296,7 +300,7 @@ $SCREENS
 		.btn.-big {padding-top: 16px; padding-bottom: 16px;}
 		.btn.-normal {background-color: transparent;}
 		.btn.-normal:hover {color: unset; background-color: transparent;}
-		.btn.-primary {font-weight: normal; color: #E5F2FF; cursor: pointer; background-color: #057BFF;}
+		.btn.-primary {font-weight: normal; color: var(--primary-text-color); cursor: pointer; background-color: var(--primary-bg-color);}
 		.btn.-primary:hover {background-color: #1672ff;}
 		.btn.-primary>.icon {opacity: 0.8;}
 		.btn.-primary>.icon.-material {color: #f5f5f5;}
