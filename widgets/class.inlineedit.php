@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-02-14
-* Version :: 12
+* Modify  :: 2025-04-20
+* Version :: 13
 *
 * @param Array $args
 * @return Widget
@@ -62,7 +62,7 @@ class InlineEdit extends Widget {
 		// debugMsg($childKey, '$childKey');
 		// debugMsg($child, '$child');
 
-		if ($child['type'] === 'method') return;
+		if ($child['type'] === 'method') return '<span class="inlineedit-field -method">';
 
 		if ($this->editMode) {
 			$attributes['class'] = $this->editFieldClassName;
@@ -151,7 +151,7 @@ class InlineEdit extends Widget {
 	// @override
 	function _renderChildContainerEnd($childKey = NULL, $child = []) {
 		if (!is_array($child)) return;
-		if ($child['type'] === 'method') return;
+		if ($child['type'] === 'method') '</span>';
 
 		return parent::_renderChildContainerEnd($childKey, $child);
 	}
@@ -160,8 +160,13 @@ class InlineEdit extends Widget {
 	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
 		return parent::_renderEachChildWidget($key, $widget, [
 			'array' => function($key, $widget) {
-				return $this->_renderChildType($key, (Object) $widget); //'<div>RENDER ARRAY '.$key.$widget['label'].'<div>'._NL;
+				return $this->_renderChildType($key, (Object) $widget);
+					// .'<div>RENDER ARRAY key='.$key.' label='.$widget['label'].'</div>'._NL;
 			},
+			// 'object' => function($key, $widget) {
+			// 	return $this->_renderChildType($key, (Object) $widget)
+			// 		.'<div>RENDER OBJECT key='.$key.' label='.$widget->label.'</div>'._NL;
+			// },
 			// 'object' => function($key, $widget) {
 			// 	debugMsg('RENDER OBJECT '.$key);
 			// 	debugMsg($widget, '$widget');
@@ -221,7 +226,13 @@ class InlineEdit extends Widget {
 			case "comment": break;
 			case 'textfield': $ret .= $this->_renderTypeTextField($widget); break;
 			case 'radio':
-			case 'checkbox': $ret .= $this->_renderTypeRadio($widget); break;
+			case 'checkbox':
+				$ret .= $this->_renderTypeRadio($widget);
+				// if ($childrens && isset($childrens->children)) {
+				// 	$ret .= print_o((Array) $childrens->children, '$childrens');
+				// 	$ret .= '=====<br>'.$this->_renderChildren((Array) $childrens->children).'<br>====<br>';
+				// }
+				break;
 			case 'select': $ret .= $this->_renderTypeSelect($widget); break;
 			case 'label': $ret .= $this->_renderTypeLabel($widget); break;
 			case 'method': $ret .= $this->_renderTypeMethod($widget); break;
@@ -353,18 +364,26 @@ class InlineEdit extends Widget {
 
 	private function _renderRadioItem($widget) {
 		$ret = '';
-		foreach($widget->choices as $key => $value) {
-			if (is_string($value) && preg_match('/^</', $value)) {
-				$ret .= $value;
+
+		foreach($widget->choices as $key => $optionText) {
+			$isCheck = NULL;
+			$childrens = NULL;
+
+			if (is_string($optionText) && preg_match('/^</', $optionText)) {
+				$ret .= $optionText;
 				continue;
+			} else if (is_object($optionText)) {
+				$childrens = $optionText;
+				$optionText = $optionText->text;
+				// && isset($optionText->children);
 			}
 
-			$isCheck = NULL;
 			if (is_array($widget->value)) {
 				$isCheck = in_array($key, $widget->value);
 			} else {
 				$isCheck = $key == $widget->value;
 			}
+
 			$ret .= '<abbr class="checkbox -block">'
 				. '<label>'
 				. '<input class="-for-input" type="'.$widget->type.'"'
@@ -372,10 +391,11 @@ class InlineEdit extends Widget {
 				. ' value="'.$key.'"'
 				. ($isCheck ? ' checked="checked"' : '')
 				. ' />'
-				. '<span>'.$value.'</span>'
+				. '<span>'.$optionText.'</span>'
 				. '</label>'
 				. '</abbr>';
 		}
+
 		return $ret;
 	}
 
