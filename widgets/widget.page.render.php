@@ -2,8 +2,8 @@
 /**
 * Widget  :: Page Render Widget
 * Created :: 2023-0-01
-* Modify  :: 2023-07-28
-* Version :: 2
+* Modify  :: 2025-04-20
+* Version :: 4
 *
 * @param Object $self
 * @param String $body
@@ -62,28 +62,6 @@ class PageRenderWidget extends Widget {
 			return $body;
 		}
 		//if (_HOST=='nadrec.softganz.com' || (_HOST=='softganz.com' && i()->username='softganz')) echo '<h1>Show body</h1>';
-
-
-		// Get Scaffold SideBar from property sideBar
-		$sideBar = \SG\getFirst($self->sideBar, $self->theme->sidebar);
-		// print_o($sideBar, '$sideBar', 1);
-		// echo 'SIDEBAR = '.$sideBar;
-
-		if (is_object($sideBar) && method_exists($sideBar, 'build')) {
-			do {
-				$sideBar = $sideBar->build();
-			} while (is_object($sideBar) && method_exists($sideBar, 'build'));
-		} else if (is_string($sideBar)) {
-			// $sideBar = $self->sideBar;
-		} else {
-			$sideBar = '';
-		}
-		// else if ($self->theme->sidebar) {
-		// 	$sideBar = $self->theme->sidebar;
-		// }
-		// print_o($sideBar, '$sideBar', 1);
-		// echo $sideBar;
-		// debugMsg($self,'$selfRender');
 
 		if (isset($self->menu)) $GLOBALS['module_menu'] = $self->menu;
 		$id = isset($self->theme->id) ? $self->theme->id : 'content-'.$self->module;
@@ -176,11 +154,30 @@ class PageRenderWidget extends Widget {
 			if ($option->toolbar) $ret .= '<div id="ribbon-toolbar"></div>'._NL;
 		}
 
+		// Get Scaffold SideBar from property sideBar
+		$sideBar = SG\getFirst($self->sideBar, $self->theme->sidebar);
+		$sideBarWidget = false;
+
+		if (is_object($sideBar) && method_exists($sideBar, 'build')) {
+			$sideBarWidget = get_class($sideBar) === 'SideBar';
+			// do {
+				$sideBar = $sideBar->build();
+			// } while (is_object($sideBar) && method_exists($sideBar, 'build'));
+		} else if (is_string($sideBar)) {
+			// do nothing
+		} else {
+			$sideBar = NULL;
+		}
+
 		if (!empty($sideBar)) {
 			page_class('-module-has-sidebar');
-			$ret .= '<div id="sidebar" class="page -sidebar">'._NL;
-			$ret .= $sideBar._NL;
-			$ret .= '</div><!--sidebar-->'._NL;
+			if ($sideBarWidget) {
+				$ret .= $sideBar;
+			} else {
+				$ret .= '<div id="sidebar" class="page -sidebar">'._NL;
+				$ret .= $sideBar._NL;
+				$ret .= '</div><!--sidebar-->'._NL;
+			}
 		}
 
 		$container_id=is_string($option->container)?$option->container:'main';
