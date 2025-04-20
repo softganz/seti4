@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2024-08-10
-* Version :: 6
+* Modify  :: 2025-04-20
+* Version :: 7
 *
 * @param Object $register
 * @return Widget
@@ -255,18 +255,32 @@ class UserRegisterFormWidget extends Widget {
 
 				function userExists(para) {
 					let exists = false
+					jQuery.ajaxSetup({async:false});
 
-					$.ajax({
-						type: "GET",
-						url: SG.url("api/user/exists"),
-						async: false,
-						data: para,
-						error: function(response) {
-							console.clear()
-							// console.log("response ERROR", response)
-							exists = response.responseJSON.text
-						}
-					})
+					// $.ajax({
+					// 	type: "GET",
+					// 	url: SG.url("api/user/exists"),
+					// 	async: false,
+					// 	data: para,
+					// 	error: function(response) {
+					// 		console.clear()
+					// 		// console.log("response ERROR", response)
+					// 		exists = response.responseJSON.text
+					// 	}
+					// });
+					$.get(
+						SG.url("api/user/exists"),
+						para,
+					).fail(function(response) {
+						console.clear()
+						// console.log("response ERROR", response)
+						exists = response.responseJSON.text
+					});
+					// .done(function(data) {
+					// 	// console.log("DONE", data)
+					// 	exists = data.text
+					// });
+
 					return exists
 				}
 
@@ -399,24 +413,40 @@ class UserRegisterFormWidget extends Widget {
 					if (acceptChecked) {
 						$verifyElement
 						.css("display", "flex")
-						.find("input").attr("type", "text")
+						.find("input").attr("type", "text");
+
+						// console.log(SG.url("user/register..verify"));
 
 						// Check spam word
 						if (!$("#spamword").text()) {
-							$.ajax({
-								type: "GET",
-								url: SG.url("user/register'._MS_.'verify"),
-								async: false,
-								error: function(response) {
-									console.clear()
-									// console.log("response ERROR", response)
-									exists = response.responseJSON.text
-								}
+							jQuery.ajaxSetup({async:false});
+							$.get(
+								SG.url("user/register..verify"),
+							).fail(function(response) {
+								// console.clear();
+								// console.log("response ERROR", response);
+								// statusText
+								exists = response.responseJSON.text
 							})
 							.done(function(data) {
-								// console.log("VERIFY DONE", data)
+								// console.log(data);
 								$("#spamword").text(data)
-							})
+							});
+								// $.ajax({
+								// 	type: "GET",
+								// 	url: SG.url("user/register..verify"),
+								// 	async: false,
+								// 	error: function(response) {
+								// 		// console.clear();
+								// 		console.log("response ERROR", response);
+								// 		// statusText
+								// 		// exists = response.responseJSON.text								
+								// 	}
+								// })
+								// .done(function(data) {
+								// 	console.log("VERIFY DONE", data)
+								// 	$("#spamword").text(data)
+								// })
 						}
 					} else {
 						$verifyElement.hide()
