@@ -2,7 +2,7 @@
 * SoftGanz Ui CSS
 * Created :: 2020-10-01
 * Modify  :: 2025-04-20
-* Version :: 4
+* Version :: 5
 */
 
 @charset "UTF-8";
@@ -273,7 +273,7 @@
 
 	.inline-edit-view.-text {display: inline-block; padding: 0px 8px;}
 	.inline-edit-view.-primary {font-weight: bold;}
-	.inline-edit-view.-fill:not('-hidden'); {display: block;}
+	.inline-edit-view.-fill:not(.-hidden) {display: block;}
 
 
 	/* widget-inlineedit version 2 */
@@ -335,7 +335,7 @@
 
 	.inlineedit-view.-text {display: inline-block; padding: 0px 8px;}
 	.inlineedit-view.-primary {font-weight: bold;}
-	.inlineedit-view.-fill:not('-hidden'); {display: block;}
+	.inlineedit-view.-fill:not(.-hidden) {display: block;}
 	.inlineedit-view .-for-view label {pointer-events: none;}
 
 
