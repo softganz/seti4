@@ -1,9 +1,9 @@
 <?php
 /**
 * Widget  :: Page Render Widget
-* Created :: 2023-0-01
-* Modify  :: 2025-04-20
-* Version :: 4
+* Created :: 2023-01-01
+* Modify  :: 2025-04-21
+* Version :: 5
 *
 * @param Object $self
 * @param String $body
@@ -160,9 +160,9 @@ class PageRenderWidget extends Widget {
 
 		if (is_object($sideBar) && method_exists($sideBar, 'build')) {
 			$sideBarWidget = get_class($sideBar) === 'SideBar';
-			// do {
+			do {
 				$sideBar = $sideBar->build();
-			// } while (is_object($sideBar) && method_exists($sideBar, 'build'));
+			} while (is_object($sideBar) && method_exists($sideBar, 'build'));
 		} else if (is_string($sideBar)) {
 			// do nothing
 		} else {
