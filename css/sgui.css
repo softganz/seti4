@@ -151,7 +151,8 @@
 	.widget-sidebar>nav.-vertical {flex: initial;}
 	.widget-sidebar>nav>ul {gap: 8px;}
 	.widget-sidebar>nav .widget-button {border-radius: 8px;}
-	.widget-sidebar>nav.-vertical .widget-button {text-align: center;}
+	.widget-sidebar>nav.-vertical.-icon-center .widget-button {text-align: center; flex-direction: column;}
+	.widget-sidebar>nav.-vertical.-icon-center .widget-button>.icon {margin: 0 auto;}
 
 /* widget-dropbox */
 .widget-dropbox {}
