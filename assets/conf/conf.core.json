@@ -17,6 +17,7 @@
 			"survey": "widgets/class.survey.php",
 			"report": "widgets/class.report.php",
 			"inlineedit": "widgets/class.inlineedit.php",
+			"signinwidget": "widgets/widget.signin.php",
 
 			"changwatmodel": "models/model.code.php",
 			"ampurmodel": "models/model.code.php"
