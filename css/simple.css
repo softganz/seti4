@@ -1398,7 +1398,7 @@ $SCREENS
 
 
 	.apps-list {}
-		.apps-list>ul {padding: 4px; gap: 16px; flex-wrap: wrap; justify-content: flex-start;}
+		.apps-list>ul {padding: 0px; gap: 16px; flex-wrap: wrap; justify-content: flex-start;}
 		.apps-list>ul>li {border-radius: 8px; overflow: hidden; padding: 0 !important;}
 		.apps-list>ul>li>a {width: 150px; height: 64px; padding: 8px; background-color: #eaeaea; display: flex; flex-wrap: wrap; justify-content: flex-start; font-size: 1.6rem;}
 		.apps-list>ul>li>a>.icon {font-size: 2.8rem;}
