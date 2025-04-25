@@ -136,7 +136,7 @@
 	.widget-nav>ul>li {position: relative;}
 	.widget-nav>ul>li:not(:last-child) {padding: 0 4px 0 0;}
 	.widget-nav.-vertical {flex: 1 0 100%; flex-wrap: wrap; flex-direction: column;}
-	.widget-nav.-vertical>ul {flex: 1 0 100%; flex-wrap: wrap; width: 100%;}
+	.widget-nav.-vertical>ul {flex: 1 0 100%; flex-wrap: wrap; width: 100%; gap: 8px}
 	.widget-nav.-vertical>ul>li {flex: 0 0 100%; flex-wrap: wrap; padding: 0;}
 	.widget-nav.-vertical>ul>li>a {display: flex; padding: 6px 8px; gap: 8px;}
 	.widget-nav.-vertical>ul>li>a>span {flex: 1;}
