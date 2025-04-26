@@ -1015,7 +1015,7 @@ $SCREENS
 		.nav.-app-menu .-item, .nav.-app-menu .ui-item {margin: 8px; min-width: 84px; flex: 0 0 auto; text-align: center; background-color: #f5fff3; border-radius: 8px; position: relative; overflow: hidden;}
 		.nav.-app-menu .-item:hover, .nav.-app-menu .ui-item:hover {background-color: #dfffd8;}
 		.nav.-app-menu .-item>a, .nav.-app-menu .ui-item>a {height: calc(100% - 16px); padding: 8px; display: block;}
-		.nav.-app-menu .-item>a>.icon, .nav.-app-menu .ui-item>a>.icon {display: block; margin: 0 auto 6px; color: green; width: 32px; height: 32px; font-size: 32px; border-radius: 50%; padding: 6px;}
+		.nav.-app-menu .-item>a>.icon, .nav.-app-menu .ui-item>a>.icon {display: block; margin: 0 auto 6px; color: green; width: 32px; height: 32px; font-size: 32px; border-radius: 50%; padding: 0;}
 
 		.nav.-app-menu.-banner {margin: 32px 8px; padding: 0; background-color: transparent;}
 		.nav.-app-menu.-banner .ui-item {flex: 0 0 100%; margin: 0 0 16px 0; padding: 0;}
@@ -1476,7 +1476,7 @@ $SCREENS
 			#cboxLoadedContent {padding: 0; overscroll-behavior-y: contain; background-color: var(--box-bg-color);}
 			#cboxLoadingGraphic {background-image: url(https://softganz.com/library/img/loading.1.gif) no-repeat center center;}
 			#cboxLoadingOverlay {background-color: #fff;}
-			#cboxTitle {position: absolute; top: -48px; left: 0px; width: calc( 100% - 32px ); color: #333; height: 48px; line-height: 48px; padding: 0 0 0 32px; z-index: 0; background-color: var(--box-title-bg-color);}
+			#cboxTitle {position: absolute; top: -48px; left: 0px; width: calc( 100% - 32px ); color: #333; height: 48px; line-height: 48px; padding: 0 0 0 32px; z-index: 0; background-color: var(--box-title-bg-color); box-sizing: border-box; width: 100%;}
 			#cboxCurrent {position: absolute; top: -22px; right: 205px; text-indent: -9999px; z-index: 2;}
 
 			/* these elements are buttons, and may need to have additional styles reset to avoid unwanted base styles */
