@@ -39,7 +39,11 @@ echo implode(_NL,head());
 ?>
 </head>
 
-<body<?php echo cfg('page_id') ? ' id="'.cfg('page_id').'"':'';?> class="module -<?php echo cfg('page_id').(cfg('page_class') ? ' -'.cfg('page_class'):'').' -'.str_replace('.','-',str_replace('www.','',cfg('domain.short')));?>"<?php echo cfg('body_attr') ? ' '.cfg('body_attr'):'';?>>
+<body<?php echo
+	(cfg('page_id') ? ' id="'.cfg('page_id').'"' : '')
+	. ' class="'.page_class().'"'
+	. (cfg('body_attr') ? ' '.cfg('body_attr'):'')
+	;?>>
 <?php if (cfg('web.fullpage'))  {echo $GLOBALS['request_result'].'</body>'._NL.'</html>';return;}?>
 <?php if (cfg('web.navigator')) echo is_string(cfg('web.navigator'))?cfg('web.navigator'):'<ul><li><a href="'.url().'">Home</a></li><li><a href="'.url('help').'">Help</a></li><li><a href="'.url('user').'">Login</a></li><li><a href="'.url('user/register').'">Register</a></li></ul>';?>
 <div id="page-wrapper" class="page -page">

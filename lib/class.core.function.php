@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2024-08-10
-* Version :: 7
+* Modify  :: 2025-05-08
+* Version :: 8
 */
 
 //---------------------------------------
@@ -382,18 +382,20 @@ function db($key = NULL, $new_value = NULL, $prefix = NULL, $db = NULL) {
  */
 function q($from = NULL, $to = NULL, $return_type = 'array') {
 	static $q = [];
-	static $rq=NULL;
+	static $rq = NULL;
 	if (is_string($from)) {
-		$rq=$from;
-		$q= explode('/',$from);
-		foreach ($q as $k=>$v) if (trim($v)=='') unset($q[$k]); else $q[$k]=trim($v);
+		$rq = $from;
+		$q = explode('/', $from);
+		foreach ($q as $k => $v) if (trim($v) == '') unset($q[$k]); else $q[$k] = trim($v);
 		return;
 	}
-	if ($to==='all') $to=count($q);
-	if (isset($from) && !isset($to)) $ret = array_key_exists($from,$q) ? $q[$from]:NULL;
-	else if (isset($from) && isset($to)) $ret = array_slice($q,$from,$to);
+	if ($to === 'all') $to = count($q);
+	if (isset($from) && !isset($to)) $ret = array_key_exists($from, $q) ? $q[$from] : NULL;
+	else if (isset($from) && isset($to)) $ret = array_slice($q, $from, $to);
 	else $ret = $rq;
-	if ($return_type==='string' && is_array($ret)) $ret = implode('/',$ret);
+
+	if ($return_type === 'string' && is_array($ret)) $ret = implode('/', $ret);
+
 	return $ret;
 }
 
@@ -697,11 +699,12 @@ function url_alias_of_system($request) {
  * @return String
  */
 function page_class($addClass = NULL) {
-	$currentClass = trim(cfg('page_class'));
-	if ($addClass) $currentClass .= ' '.$addClass;
-	$currentClass = trim($currentClass);
-	cfg('page_class', $currentClass);
-	return $currentClass;
+	if (isset($addClass)) {
+		R()->pageClass[] = $addClass;
+		R()->pageClass = array_unique(R()->pageClass);
+	}
+
+	return implode(' ', R()->pageClass);
 }
 
 /**
@@ -763,7 +766,7 @@ function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 
 function pageInfo() {
 	$ret = '<h3>Page information @'.date('H:i:s').'</h3>';
-	$ret .= 'Page class = '.cfg('page_class').'<br />';
+	$ret .= 'Page class = '.page_class().'<br />';
 	$ret .= 'HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].'<br />';
 	$ret .= 'isMobileDevice = '.isMobileDevice().'<br />';
 	$ret .= print_o(R()->appAgent, 'appAgent');

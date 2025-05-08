@@ -94,16 +94,9 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 
 <body<?php echo
 	(cfg('page_id') ? ' id="'.cfg('page_id').'"' : '')
-	. ' class="module module-'.cfg('page_id')
-	. (q(1) ? (is_numeric(q(1)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(0)).'-'.preg_replace('/[\.]{1,}/','-',q(1)) : ' -'.preg_replace('/[\.]{1,}/','-',q(1))) : '')
-	//. (preg_match('/^softganz\/app/i', $_SERVER['HTTP_USER_AGENT']) ? ' -app' : '')
-	. (cfg('page_class') ? ' '.cfg('page_class') : '')
-	. (q(2) && !is_numeric(q(2)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(2)).' --'.preg_replace('/[\.]{1,}/','-',q(2)) : '')
-	. (q(3) && !is_numeric(q(3)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(3)).' --'.preg_replace('/[\.]{1,}/','-',q(3)) : '')
-	. ' -'.str_replace('.','-',str_replace('www.','',cfg('domain.short')))
-	. '"'
+	. ' class="'.page_class().'"'
 	. (cfg('body_attr') ? ' '.cfg('body_attr'):'')
-	;?>>
+;?>>
 <?php if (R::option('fullpage') || cfg('web.fullpage')) {echo $GLOBALS['request_result'].'</body>'._NL.'</html>';return;}?>
 <?php if (cfg('web.navigator')) echo is_string(cfg('web.navigator')) ? cfg('web.navigator') : '<ul><li><a href="'.url().'">Home</a></li><li><a href="'.url('help').'">Help</a></li><li><a href="'.url('my').'">Login</a></li><li><a href="'.url('user/register').'">Register</a></li></ul>';?>
 <div id="page-wrapper" class="page -page">

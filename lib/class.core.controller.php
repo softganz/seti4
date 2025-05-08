@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-03-21
-* Version :: 24
+* Modify  :: 2025-05-08
+* Version :: 25
 */
 
 /*************************************************************
@@ -24,6 +24,8 @@ class R {
 	public $counter;
 	public $timer;
 	public $user;
+	public $pageClass = [];
+	public $pageAttribute = [];
 	public $core;
 	public $myDb;
 	public $DB;
@@ -1091,6 +1093,8 @@ class SgCore {
 
 		if ($isDebugProcess) $process_debug = 'process debug of <b>'.$request.'</b> request<br />'._NL;
 
+		self::setPageClass(q(0, 'all'));
+
 		if (isset($GLOBALS['message'])) $requestResult .= $GLOBALS['message'];
 		if (cfg('web.readonly')) $requestResult .= message('status',cfg('web.readonly_message'));
 
@@ -1395,6 +1399,38 @@ class SgCore {
 		cfg('lang',$lang);
 		// echo '<br><br><br>setLang<br>_GET = '.$_GET['lang'].'<br>_REQUEST = '.$_REQUEST['lang'].'<br>post = '.post('lang').'<br>_COOKIE = '.$_COOKIE['lang'].'<br>$lang = '.$lang;
 		return $lang;
+	}
+
+	static function setPageClass($q) {
+		page_class('module');
+		page_class('module-'.$q[0]);
+
+		// Remove element that value is numeric or * or leading with 0
+		$subModule = array_filter($q, function($v){if (!(is_numeric($v) || $v==='*' || preg_match('/^0/', $v))) return $v;});
+		// Replace . with -
+		$subModule = explode('-', preg_replace('/\.{1,}/', '-', implode('-',$subModule)));
+		// Get from begin to 2nd -
+		$subModule = implode('-', array_slice($subModule, 0, 2));
+		page_class('module-'.$subModule);
+	
+		if (isset($q[1])) {
+			if (is_numeric($q[1])) {
+				page_class('-'.preg_replace('/[\.]{1,}/','-',$q[0]).'-'.preg_replace('/[\.]{1,}/','-',$q[1]));
+			 } else {
+				page_class('-'.preg_replace('/[\.]{1,}/','-', $q[1]));
+			 }
+		}
+
+		page_class('-'.str_replace('.','-',str_replace('www.','',cfg('domain.short'))));
+
+		// . ' class="module module-'.cfg('page_id')
+		// . ' module-'.q(0, 'all', 'submodule')
+		// . (q(1) ? (is_numeric(q(1)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(0)).'-'.preg_replace('/[\.]{1,}/','-',q(1)) : ' -'.preg_replace('/[\.]{1,}/','-',q(1))) : '')
+		// //. (preg_match('/^softganz\/app/i', $_SERVER['HTTP_USER_AGENT']) ? ' -app' : '')
+		// . (q(2) && !is_numeric(q(2)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(2)).' --'.preg_replace('/[\.]{1,}/','-',q(2)) : '')
+		// . (q(3) && !is_numeric(q(3)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(3)).' --'.preg_replace('/[\.]{1,}/','-',q(3)) : '')
+		// . ' -'.str_replace('.','-',str_replace('www.','',cfg('domain.short')))
+		// . '"'
 	}
 }
 ?>

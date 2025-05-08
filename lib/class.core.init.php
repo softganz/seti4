@@ -2,8 +2,8 @@
 /**
 * Core Init :: Init Web
 * Created   :: 2023-08-01
-* Modify    :: 2024-10-31
-* Version   :: 10
+* Modify    :: 2025-05-08
+* Version   :: 11
 */
 
 global $R;
@@ -36,7 +36,7 @@ $R->request = $request;
 $R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
 $R->configFolder = isset($_GET['setting:conf']) ? $_GET['setting:conf'] : 'conf.d';
 $R->colorScheme = isset($_COOKIE['color-scheme']) ? $_COOKIE['color-scheme'] : NULL;
-if ($R->colorScheme === 'dark') cfg('page_class', '-app-theme-dark');
+if ($R->colorScheme === 'dark') page_class('-app-theme-dark');
 
 $includeFileList = [
 	'lib/lib.define.php',
@@ -129,7 +129,7 @@ $ret .= 'HTTP_X_REQUESTED_WITH = '.$_SERVER['HTTP_X_REQUESTED_WITH'].'<br />';
 //$ret .= print_o($_SERVER,'$_SERVER');
 
 if ($callFromApp) page_class('-app'));
-$ret .= cfg('page_class');
+$ret .= page_class();
 */
 
 define('_HOST',    $httpDomain);
