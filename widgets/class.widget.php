@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2025-04-20
-* Version :: 44
+* Modify  :: 2025-05-08
+* Version :: 45
 *
 * @param Array $args
 * @return Widget
@@ -628,7 +628,12 @@ class ErrorMessage extends Message {
 	// }
 } // End of class ErrorMessage
 
-// Element wiget
+/**
+ * Button widget
+ * @param Array $args
+ * @return Object
+ * @usage new Button([key => value,...])
+ */
 class Button extends Widget {
 	var $widgetName = 'Button';
 	var $version = '0.01';
@@ -689,6 +694,66 @@ class Button extends Widget {
 		return $button;
 	}
 } // End of class Button
+
+/**
+ * BackButton widget
+ * @param Array $args
+ * @return Object
+ * @usage new BackButton([key => value,...])
+ */
+class BackButton extends Widget {
+	var $widgetName = 'BackButton';
+	var $version = '0.01';
+	var $tagName = 'a';
+	var $href = 'javascript:history.back()';
+	var $type; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
+	var $text;
+	var $icon = '<i class="icon -material">arrow_back</i>';
+	var $iconPosition = 'left'; // left,right,top,bottom
+	var $description;
+	var $onClick;
+
+	function __construct($args = [], $variable = NULL) {
+		parent::__construct($args);
+	}
+
+	function toString() {
+		$attribute = array_replace_recursive(
+			[
+				'href' => $this->href,
+				'id' => $this->id,
+				'class' => trim(
+					'widget-'.strtolower($this->widgetName)
+					. (empty($this->type) ? '' : ' btn')
+					. ($this->type ? ' -'.$this->type : '')
+					. ($this->class ? ' '.$this->class : '')
+				),
+				'title' => \SG\getFirst($this->title),
+				'data-rel' => \SG\getFirst($this->rel),
+				'data-before' => \SG\getFirst($this->before),
+				'data-done' => \SG\getFirst($this->done),
+				'target' => \SG\getFirst($this->target),
+				'style' => $this->style,
+			],
+			(Array) $this->attribute
+		);
+
+		if (is_null($attribute['href'])) {
+			unset($attribute['href']);
+		}
+
+		$button = '<'.$this->tagName.' '
+			. sg_implode_attr($attribute)
+			. ($this->onClick ? ' onClick=\''.$this->onClick.'\'' : '')
+			. '>'
+			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
+			. ($this->text ? '<span class="-label">' . $this->_renderChildren([$this->text]) . '</span>' : '')
+			. ($this->description ? '<span class="-desc">'. $this->_renderChildren([$this->description]) : '')
+			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
+			. '</'.$this->tagName.'>';
+		return $button;
+	}
+} // End of class BackButton
 
 // Usage: new Icon(iconName, property=[])
 // Usage: new Icon('iconName1,iconName2', property=[])
