@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2024-10-16
-* Version :: 5
+* Modify  :: 2025-05-14
+* Version :: 6
 */
 
 /********************************************
@@ -801,6 +801,40 @@ class Url {
 		if ($url_alias = url_alias_of_system($ret)) $ret = $url_alias->system;
 		$ret = cfg('url') . $ret;
 		return $ret;
+	}
+}
+
+class Request {
+	/**
+	 * Get post value from $_POST
+	 * @param String $key
+	 * @param Integer $flag
+	 *
+	 * @return Array
+	 */
+	public static function post($key = NULL, $flag = _TRIM) {
+		static $count = 0;
+		$post = $_POST;
+		if ( is_long($key) ) {
+			$flag = $key;
+			unset($key);
+		}
+
+		// Function deprecated in php 8
+		// $magic_quote = get_magic_quotes_gpc();
+		// if ( $magic_quote == 1 ) $post = arrays::convert($post,_STRIPSLASHES);
+
+		// echo (++$count).'. '.date('H:i:s').' key = '.$key.' flag = '.$flag.' access = '.user_access('input format type script').'<br>';
+
+		if (!user_access('input format type script')) $flag = $flag + _STRIPTAG;
+
+		if ($flag) $post = Arrays::convert($post, $flag);
+
+		if ( isset($key) ) {
+			return isset($post[$key]) ? $post[$key] : NULL;
+		} else {
+			return (Object) $post;
+		}
 	}
 }
 ?>
