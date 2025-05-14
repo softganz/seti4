@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-02-27
-* Version :: 36
+* Modify  :: 2025-05-14
+* Version :: 37
 */
 
 'use strict'
@@ -118,7 +118,7 @@ function sgShowBox(html, $this, options, e) {
 		width: "95%",
 		maxHeight: "95%",
 		maxWidth: "95%",
-		className: 'colorbox' + ($this && $this.data('width') == 'full' ? ' -full' : ''),
+		className: 'colorbox' + ($this && ['full', 'appbar'].includes($this.data('width')) ? ' -'+$this.data('width') : ''),
 		//iframe: false,
 		onComplete: function() {}
 	}
