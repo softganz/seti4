@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-05-08
-* Version :: 25
+* Modify  :: 2025-05-15
+* Version :: 26
 */
 
 /*************************************************************
@@ -1420,6 +1420,10 @@ class SgCore {
 				page_class('-'.preg_replace('/[\.]{1,}/','-', $q[1]));
 			 }
 		}
+
+		$callFromMobile = isMobileDevice();
+
+		page_class($callFromMobile ? '-from-mobile -mobile-'.strtolower($callFromMobile) : '-from-desktop');
 
 		page_class('-'.str_replace('.','-',str_replace('www.','',cfg('domain.short'))));
 
