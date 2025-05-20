@@ -2,7 +2,7 @@
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
 * Modify  :: 2025-05-20
-* Version :: 38
+* Version :: 40
 */
 
 'use strict'
@@ -120,6 +120,14 @@ function sgShowBox(html, $this, options, e) {
 		maxWidth: "95%",
 		className: 'colorbox' + ($this && ['full', 'appbar'].includes($this.data('width')) ? ' -'+$this.data('width') : ''),
 		//iframe: false,
+		onCleanup: async function() {
+			let $firstBoxPage = $(".box-page[data-page=1]");
+			let done = $firstBoxPage.data('done');
+
+			if (done) {
+				await sgActionDone(done, $firstBoxPage);
+			}
+		},
 		onComplete: function() {}
 	}
 
@@ -145,14 +153,19 @@ function sgShowBox(html, $this, options, e) {
 		$boxElement.empty()
 	}
 
+	// options.
+
 	options.onClosed = function() {
 		window.onscroll=function(){}
-		console.log('ON BOX CLOSE')
-		sgBoxBack({close: true})
+		console.log('ON BOX CLOSE');
+
+		sgBoxBack({close: true});
 	}
 
 	// lock scroll position, but retain settings for later
 	window.onscroll = function(){window.scrollTo(currentX, currentY);};
+
+	let done = $this.data('boxClose') ? ' data-done="' + $this.data('boxClose')+'"' : '';
 
 	if (thisIsJ && $this.data('rel') === 'img') {
 		sgBoxPageCount = 0
@@ -171,11 +184,11 @@ function sgShowBox(html, $this, options, e) {
 		if (debugSG) console.log('Link Url =',linkUrl)
 		$boxElement.find('.box-page').hide()
 		sgBoxPageCount++
-		let pageHtml = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'">'+html+'</div>'
+		let pageHtml = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'"' + done + '>'+html+'</div>'
 		$boxElement.append(pageHtml)
 	}	else {
 		sgBoxPageCount++
-		options.html = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'">'+html+'</div>'
+		options.html = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'"' + done + '>'+html+'</div>'
 
 		$.colorbox(options)
 	}
@@ -202,7 +215,7 @@ async function sgBoxBack(options = {}) {
 	// if ($boxElement.length == 0) return
 
 	if (options.close) {
-		// console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
+		console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
 		if (sgBoxPageCount) {
 			console.log("HAVE BOX LENGTH")
 			if (options.historyBack) {
