@@ -696,6 +696,26 @@ function implode_address($rs, $type = 'long') {
 }
 
 
+/**
+ * Extract name into name and lastname seperate by space
+ *
+ * @param String $name
+ * @param String $sep
+ * @return (Object)(preName, firstName, lastName)
+ */
+function explodeName(String $name = NULL, String $sep = ' ') {
+	$name = preg_replace('/['.$sep.']{2,}/', $sep, $name);
+
+	// preg_match('/(*)'.$sep.'(*)/', $name, $out);
+	// debugMsg($out, '$out');
+	
+	list($firstName) = explode($sep, $name);
+	$preName = '';
+	$firstName = trim($firstName);
+	$lastName = trim(substr($name, strlen($firstName)+1));
+
+	return (Object) ['preName' => $preName, 'firstName' => $firstName, 'lastName' => $lastName];
+}
 
 /**
 * Convert parameter Array/JSON/Object to Object

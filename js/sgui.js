@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-05-14
-* Version :: 37
+* Modify  :: 2025-05-20
+* Version :: 38
 */
 
 'use strict'
@@ -474,27 +474,29 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 						// console.log(loadUrl)
 
 						$.post(loadUrl,function(html){
-							switch (doneOption) {
-								case 'replace' : $loadTargetElement.replaceWith(html); break;
-								case 'before' : $loadTargetElement.before(html); break;
-								case 'after' : $loadTargetElement.after(html); break;
-								case 'append' : $loadTargetElement.append(html); break;
-								case 'prepend': $loadTargetElement.prepend(html); break;
-								case 'prev' : $loadTargetElement.prev().html(html); break;
-								case 'next' : $loadTargetElement.next().html(html); break;
-								case 'clear' :
-									if (doneTarget == 'box') {
-										//console.log("CLEAR BOX WITH CLEAR");
-										sgShowBox(html, $this, {clearBoxContent: true});
-									}
-									break;
-								default: $loadTargetElement.html(html); break;
-							}
-							if (doneTarget == 'box' && $this.data('boxResize')) {
-								$.fn.colorbox.resize({})
-							}
 						})
-						.fail(function() {console.log('Refresh url fail')})
+							.done(html => {
+								switch (doneOption) {
+									case 'replace' : $loadTargetElement.replaceWith(html); break;
+									case 'before' : $loadTargetElement.before(html); break;
+									case 'after' : $loadTargetElement.after(html); break;
+									case 'append' : $loadTargetElement.append(html); break;
+									case 'prepend': $loadTargetElement.prepend(html); break;
+									case 'prev' : $loadTargetElement.prev().html(html); break;
+									case 'next' : $loadTargetElement.next().html(html); break;
+									case 'clear' :
+										if (doneTarget == 'box') {
+											//console.log("CLEAR BOX WITH CLEAR");
+											sgShowBox(html, $this, {clearBoxContent: true});
+										}
+										break;
+									default: $loadTargetElement.html(html); break;
+								}
+								if (doneTarget == 'box' && $this.data('boxResize')) {
+									$.fn.colorbox.resize({})
+								}
+							})
+							.fail(function() {console.log('Refresh url fail')})
 					}
 				}, 200);
 				break
