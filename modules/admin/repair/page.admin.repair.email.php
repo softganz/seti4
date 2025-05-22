@@ -3,7 +3,7 @@
 * Admin   :: Repair Email Page
 * Created :: 2025-05-22
 * Modify  :: 2025-05-22
-* Version :: 1
+* Version :: 2
 *
 * @return Widget
 *
@@ -93,10 +93,23 @@ class AdminRepairEmail extends Page {
 	}
 
 	function fixEmpty() {
+		if (!SG\confirm()) return new Button([
+			'type' => 'primary',
+			'class' => 'sg-action',
+			'href' => url('admin/repair/email..fix.empty'),
+			'text' => 'Confirm to fix empty email',
+			'rel' => '#main',
+			'attribute' => [
+				'data-title' => 'Confirm to fix empty email',
+				'data-confirm' => 'Are you sure to fix empty email?',
+			]
+		]);
+
 		DB::query([
 			'UPDATE `sgz_users` SET `email` = NULL WHERE `email` = ""',
 		]);
-		debugMsg(mydb()->_query);
+
+		return mydb()->_query;
 	}
 
 	// SELECT *,LEFT(`email`,1) `first` FROM `sgz_users` WHERE `email` IS NOT NULL HAVING `first` NOT BETWEEN "0" AND "z" ORDER BY `first` ASC;
