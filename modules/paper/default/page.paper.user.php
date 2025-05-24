@@ -3,13 +3,15 @@
 * Paper   :: List Paper of user
 * Created :: 2023-08-27
 * Modify  :: 2025-05-24
-* Version :: 3
+* Version :: 4
 *
 * @param Int $userId
 * @return Widget
 *
 * @usage paper/user/{userId}
 */
+
+ini_set('memory_limit', -1);
 
 class PaperUser extends Page {
 	function __construct($userId = NULL) {
@@ -25,8 +27,8 @@ class PaperUser extends Page {
 			'user' => $this->userId,
 			'type' => '*',
 			'options' => [
-				'debug' => true,
-				'field' => 'detail,photo',
+				'debug' => false,
+				'field' => '',
 				'page' => 1,
 				'items' => 100000,
 				'order' => 'nodeId',
@@ -58,6 +60,7 @@ class PaperUser extends Page {
 								'text' => 'View',
 								'href' => $url,
 								'icon' => new Icon('chevron_right'),
+								'iconPosition' => 'right',
 							]),
 							'href' => $url,
 						]);
