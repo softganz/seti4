@@ -3,7 +3,7 @@
 * Paper   :: List Paper of user
 * Created :: 2023-08-27
 * Modify  :: 2025-05-24
-* Version :: 2
+* Version :: 3
 *
 * @param Int $userId
 * @return Widget
@@ -49,6 +49,7 @@ class PaperUser extends Page {
 							$url = url('paper/'.$node->nodeId);
 						}
 						return new ListTile([
+							'class' => 'sg-action',
 							'title' => $node->title,
 							'subtitle' => $node->type,
 							'leading' => new Icon('topic'),
@@ -58,6 +59,7 @@ class PaperUser extends Page {
 								'href' => $url,
 								'icon' => new Icon('chevron_right'),
 							]),
+							'href' => $url,
 						]);
 					},
 					$topics->items
