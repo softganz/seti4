@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-02-28
-* Version :: 11
+* Modify  :: 2025-05-24
+* Version :: 12
 *
 * @param Array $args
 * @return Object
@@ -24,11 +24,11 @@ class NodeModel {
 
 		$result = (Object) ['nodeId' => NULL, 'title' => '', 'info' => NULL];
 
-		$result->info = mydb::select(
-			'SELECT t.`tpid` `nodeId`, t.* FROM %topic% t WHERE t.`tpid` = :nodeId LIMIT 1;
-			-- {fieldOnly: true}',
-			[':nodeId' => $id]
-		);
+		$result->info = DB::select([
+			'SELECT t.`tpid` `nodeId`, t.* FROM %topic% t WHERE t.`tpid` = :nodeId LIMIT 1',
+			'var' => [':nodeId' => $id]
+		]);
+
 		// debugMsg(mydb()->_query);
 
 		if (empty($result->info->nodeId)) return NULL;
@@ -150,7 +150,7 @@ class NodeModel {
 		// }
 
 		// Field
-		$fld_cmd = '`topic`.`tpid` `nodeId`, `topic`.`title`, `topic`.`access`, `topic`.`status`, `topic`.`view`, `topic`.`last_view` `lastView`, `topic`.`comment`, `topic`.`reply`, `topic`.`last_reply` `lastReply`, `topic`.`created`'._NL;
+		$fld_cmd = '`topic`.`tpid` `nodeId`, `topic`.`type`, `topic`.`title`, `topic`.`access`, `topic`.`status`, `topic`.`view`, `topic`.`last_view` `lastView`, `topic`.`comment`, `topic`.`reply`, `topic`.`last_reply` `lastReply`, `topic`.`created`'._NL;
 		$fld_cmd .= '  , `user`.`username`, `user`.`name` `ownerName` '._NL;
 		if (in_array('detail', $fields)) $fld_cmd .= '    , `revision`.`format` , `revision`.`body` , `revision`.`property` , `revision`.`email` , `revision`.`homepage`'._NL;
 		if (in_array('comment', $fields)) $fld_cmd .= ' ,(SELECT COUNT(*) FROM %topic_comments% `comment` WHERE `comment`.`tpid` = `topic`.`tpid`) comments'._NL;
