@@ -3,7 +3,7 @@
 * Model.  :: Node Model
 * Created :: 2021-09-30
 * Modify  :: 2025-05-24
-* Version :: 12
+* Version :: 13
 *
 * @param Array $args
 * @return Object
@@ -162,11 +162,11 @@ class NodeModel {
 		if ($conditions->category) $joins[] = '  LEFT JOIN %tag% `category` ON `category`.tid = `tag_topic`.`tid` '._NL;
 
 		// Condition
-		if ($conditions->type) mydb::where('`topic`.`type` IN ( :type )', ':SET-STRING:type', $conditions->type);
+		if ($conditions->type) \mydb::where('`topic`.`type` IN ( :type )', ':SET-STRING:type', $conditions->type);
 		if ($conditions->nodeId) \mydb::where('`topic`.`tpid` IN ( :nodeId )', ':SET:nodeId', $conditions->nodeId);
 		if ($conditions->tags) \mydb::where('`tag_topic`.`tid` IN ( :tags )', ':SET-STRING:tags', $conditions->tags);
 		if ($conditions->sticky) \mydb::where('`topic`.`sticky` = :sticky', ':sticky', $conditions->sticky);
-		if ($conditions->user) \mydb::where('`topic`.`uid` = :userId', ':userId', $conditions->user);
+		if ($conditions->user) \mydb::where('(`topic`.`uid` = :userId || `topic`.`tpid` IN (SELECT `tpid` FROM %topic_user% WHERE `uid` = :userId))', ':userId', $conditions->user);
 		if ($conditions->ip) \mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
 		if ($conditions->year) \mydb::where('YEAR(`topic`.`created`) = :year', ':year', $conditions->year);
 		if ($conditions->format) \mydb::where('`revision`.`property` ->> "$.input_format" = :inputFormat', ':inputFormat', $conditions->format);
