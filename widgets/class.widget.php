@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2025-05-08
-* Version :: 45
+* Modify  :: 2025-05-25
+* Version :: 46
 *
 * @param Array $args
 * @return Widget
@@ -1224,7 +1224,7 @@ class PageApi extends PageBase {
 				return $this->{$this->actionMethod}();
 			}
 		} else {
-			return apiError(_HTTP_ERROR_BAD_REQUEST, 'Action not found!!!');
+			return apiError(_HTTP_ERROR_NOT_FOUND, 'Action not found!!!');
 		}
 	}
 } // End of class PageApi
