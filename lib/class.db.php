@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2024-11-15
-* Version :: 10
+* Modify  :: 2025-05-26
+* Version :: 11
 *
 * @param Array $args
 * @return Object
@@ -91,7 +91,8 @@ class DB {
 	private $debugMessage = [];
 	private $var = [];
 	private $where = [];
-	private $options;
+	private $options; // key, value, group, sum, jsonDecode, multiple
+	private $multipleQuery = false; // Use for multiple query in one statement, default is single query
 
 	public $count = 0;
 	public $items = [];
@@ -126,31 +127,32 @@ class DB {
 
 	// Call by static method
 	public static function select($args) {
-		$select = new DB($args);
-		$select->selectResult();
+		$selectResult = new DB($args);
+		$selectResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $selectResult->multipleQuery);
+		$selectResult->selectResult();
 
-		if ($select->errorMsg) {
-			$select->setDebugMessage('PREPARE', $select->stmt.'; <span style="color:red;">-- ERROR :: '.$select->errorMsg.'</font>');
-			return new DbSelect(['errorMsg' => $select->errorMsg, 'DB' => $select]);
+		if ($selectResult->errorMsg) {
+			$selectResult->setDebugMessage('PREPARE', $selectResult->stmt.'; <span style="color:red;">-- ERROR :: '.$selectResult->errorMsg.'</font>');
+			return new DbSelect(['errorMsg' => $selectResult->errorMsg, 'DB' => $selectResult]);
 		}
 
-		// debugMsg($select, '$select');
-		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $select->stmt)) {
-			$result = new DbSelect(reset($select->items)); // + ['DB' => $select]]);
-			$result->DB($select);
-			// debugMsg('LIMIT 1: '.$select->stmt);
-			// debugMsg($select, '$select');
+		// debugMsg($selectResult, '$selectResult');
+		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $selectResult->stmt)) {
+			$result = new DbSelect(reset($selectResult->items)); // + ['DB' => $selectResult]]);
+			$result->DB($selectResult);
+			// debugMsg('LIMIT 1: '.$selectResult->stmt);
+			// debugMsg($selectResult, '$selectResult');
 			// debugMsg($args,'$args');
 		} else {
-			// debugMsg('LIMIT *: '.$select->stmt);
+			// debugMsg('LIMIT *: '.$selectResult->stmt);
 			$result = new DbSelect([
-				'count' => $select->count,
+				'count' => $selectResult->count,
 				'foundRows' => NULL,
-				'items' => $select->items,
-				'DB' => $select
+				'items' => $selectResult->items,
+				'DB' => $selectResult
 			]);
 
-			if (preg_match('/SQL_CALC_FOUND_ROWS/', $select->stmt)) {
+			if (preg_match('/SQL_CALC_FOUND_ROWS/', $selectResult->stmt)) {
 				$result->foundRows = DB::select('SELECT FOUND_ROWS() `totals` LIMIT 1')->totals;
 			} else {
 				unset($result->foundRows);
@@ -159,10 +161,10 @@ class DB {
 
 		if (is_array($args) && $args['onComplete'] && is_callable($args['onComplete'])) $args['onComplete']($result);
 
-		if ($select->options->sum) $result->sum = $select->options->sum;
+		if ($selectResult->options->sum) $result->sum = $selectResult->options->sum;
 
-		// debugMsg($select->errorMsg);
-		// debugMsg($select->errors, 'error');
+		// debugMsg($selectResult->errorMsg);
+		// debugMsg($selectResult->errors, 'error');
 		return $result;
 	}
 
@@ -170,6 +172,8 @@ class DB {
 		$queryResult = new DB($args);
 		$queryResult->queryResult();
 		unset($queryResult->items, $queryResult->count);
+		$queryResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $queryResult->multipleQuery);
+
 		$result = new DbQuery([
 			'query' => mydb()->_query,
 			'DB' => $queryResult
@@ -395,7 +399,7 @@ class DB {
 
 		try {
 			$pdoOptions = [
-				\PDO::ATTR_EMULATE_PREPARES   => false, // turn off emulation mode for "real" prepared statements
+				\PDO::ATTR_EMULATE_PREPARES   => $this->multipleQuery, // turn off emulation mode for "real" prepared statements
 				\PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION, //turn on errors in the form of exceptions
 				\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC, //make the default fetch be an associative array
 				\PDO::MYSQL_ATTR_FOUND_ROWS		=> true
@@ -438,6 +442,10 @@ class DB {
 			foreach (explode(',', $this->args['options']['sum']) as $value) {
 			 	$this->options->sum->{$value} = 0;
 			 }
+		}
+
+		if (isset($this->args['options']['multiple'])) {
+			$this->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $this->args['options']['multiple']);
 		}
 	}
 
