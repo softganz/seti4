@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2025-05-14
-* Version :: 6
+* Modify  :: 2025-05-26
+* Version :: 7
 */
 
 /********************************************
@@ -815,25 +815,57 @@ class Request {
 	public static function post($key = NULL, $flag = _TRIM) {
 		static $count = 0;
 		$post = $_POST;
+		$count++;
+
+		return self::getValue($post, $key, $flag);
+	}
+
+	/**
+	 * Get value from $_GET
+	 * @param String $key
+	 * @param Integer $flag
+	 *
+	 * @return Array
+	 */
+	public static function get($key = NULL, $flag = _TRIM) {
+		static $count = 0;
+		$get = (Array) array_replace_recursive([], $_GET); // Clone array to avoid reference issues
+		array_shift($get); // remove first element which is controller command
+		$count++;
+
+		return self::getValue($get, $key, $flag);
+	}
+
+	/**
+	 * Get value from $_REQUEST
+	 * @param String $key
+	 * @param Integer $flag
+	 *
+	 * @return Array
+	 */
+	public static function all($key = NULL, $flag = _TRIM) {
+		static $count = 0;
+		$request = (Array) array_replace_recursive([], $_REQUEST); // Clone array to avoid reference issues
+		array_shift($request); // remove first element which is controller command
+		$count++;
+
+		return self::getValue($request, $key, $flag);
+	}
+
+	static private function getValue($values, $key, $flag = _TRIM) {
 		if ( is_long($key) ) {
 			$flag = $key;
 			unset($key);
 		}
 
-		// Function deprecated in php 8
-		// $magic_quote = get_magic_quotes_gpc();
-		// if ( $magic_quote == 1 ) $post = arrays::convert($post,_STRIPSLASHES);
-
-		// echo (++$count).'. '.date('H:i:s').' key = '.$key.' flag = '.$flag.' access = '.user_access('input format type script').'<br>';
-
 		if (!user_access('input format type script')) $flag = $flag + _STRIPTAG;
 
-		if ($flag) $post = Arrays::convert($post, $flag);
+		if ($flag) $values = Arrays::convert($values, $flag);
 
 		if ( isset($key) ) {
-			return isset($post[$key]) ? $post[$key] : NULL;
+			return isset($values[$key]) ? $values[$key] : NULL;
 		} else {
-			return (Object) $post;
+			return (Object) $values;
 		}
 	}
 }
