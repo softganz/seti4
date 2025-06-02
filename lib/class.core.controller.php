@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-05-15
-* Version :: 26
+* Modify  :: 2025-06-02
+* Version :: 27
 */
 
 /*************************************************************
@@ -218,7 +218,6 @@ class SgCore {
 	}
 
 	function mergeConfig() {
-
 	}
 
 	/**
@@ -1284,16 +1283,15 @@ class SgCore {
 					$requestResult = \SG\json_encode($requestResult);
 				}
 
-				// Show AppBar as Box Header
-				if (is_object($pageBuildWidget->appBar) && $pageBuildWidget->appBar->boxHeader && method_exists($pageBuildWidget->appBar, $buildMethod)) {
+				// Show AppBar as Box Header when has appBar and boxHeader is true
+				if (is_object($pageBuildWidget->appBar) && $pageBuildWidget->appBar->boxHeader) {
 					$pageBuildWidget->appBar->showInBox = true;
 					$requestResult = $pageBuildWidget->appBar->build() . $requestResult;
 				}
-				// die($buildMethod.'@'.date('H:i:s'));
 
 				die(debugMsg().process_widget($requestResult));
 			} else {
-				//
+				// Do nothing
 			}
 		} else {
 			// Page not found
