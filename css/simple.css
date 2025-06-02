@@ -1367,14 +1367,17 @@ $SCREENS
 	#calendar-mapcanvas {width:320px;height:320px; margin:10px 0; border:1px #ccc solid; background: #eee;}
 
 
-	.form-report {display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; background-color: #fff; box-shadow: 0 0 0 1px #eee inset; margin-bottom: 8px; border-radius: 8px; padding: 4px;}
-		.form-report .form-item {padding: 4px;}
-		.form-report label:not(.-hidden) {display: inline-block;}
-		.form-report .form-text
-		, .form-report .form-select {border-radius: 32px; max-width: 100px;}
-		.form-report .form-item>.form-group {border-radius: 32px;}
-		.form-report .form-item>.form-group>*:first-child {border-radius: 32px 0 0 32px;}
-		.form-report .form-item>.form-group>*:last-child {border-radius: 0 32px 32px 0;}
+	.form-report {
+		display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; background-color: #fff; box-shadow: 0 0 0 1px #eee inset; margin-bottom: 8px; border-radius: 8px; padding: 4px; gap: 8px;
+		.form-item {padding: 4px;}
+		label:not(.-hidden) {display: inline-block;}
+		.form-text, .form-select {border-radius: 32px; max-width: 100px;}
+		.form-item {
+			>.form-group {border-radius: 32px;}
+			>.form-group>*:first-child {border-radius: 32px 0 0 32px;}
+			>.form-group>*:last-child {border-radius: 0 32px 32px 0;}
+		}
+	}
 
 	.admin-panel {}
 		.admin-panel.-home>.widget-column {padding-left: 16px;}
