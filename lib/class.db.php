@@ -153,7 +153,10 @@ class DB {
 			]);
 
 			if (preg_match('/SQL_CALC_FOUND_ROWS/', $selectResult->stmt)) {
-				$result->foundRows = DB::select('SELECT FOUND_ROWS() `totals` LIMIT 1')->totals;
+				$result->foundRows = DB::select([
+					'SELECT FOUND_ROWS() `totals` LIMIT 1',
+					'options' => ['history' => false]
+				])->totals;
 			} else {
 				unset($result->foundRows);
 			}
@@ -709,6 +712,9 @@ class DB {
 	}
 
 	private function updateLastQueryStmt($stmt, $error = NULL) {
+		if ($this->options->history === false) return; // Do not save query history
+
+		// Save query history
 		if (function_exists('mydb')) {
 			mydb()->_query = $stmt;
 			mydb()->_query_items[] = $stmt;
