@@ -3,7 +3,7 @@
 * Widget  :: Form Widget
 * Created :: 2020-10-01
 * Modify  :: 2025-06-03
-* Version :: 27
+* Version :: 29
 *
 * @param Array $args
 * @return Widget
@@ -402,7 +402,9 @@ class Form extends Widget {
 		// choice begin with RANGE:
 		if (is_string($formElement->choice) && preg_match('/^RANGE\:(.*)/', $formElement->choice, $out)) {
 			$formElement->choice = [];
-			if (preg_match('/\,/', $out[1])) {
+			if (preg_match('/\.\./', $out[1])) {
+				// TODO: range from start to end
+			} else {
 				foreach (explode(',', $out[1]) as $value) $formElement->choice[trim($value)] = trim($value);
 			}
 		}
