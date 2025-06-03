@@ -1,8 +1,8 @@
 /**
 * SoftGanz Ui CSS
 * Created :: 2020-10-01
-* Modify  :: 2025-04-20
-* Version :: 5
+* Modify  :: 2025-06-03
+* Version :: 6
 */
 
 @charset "UTF-8";
@@ -694,69 +694,85 @@
 		.toolbar.-report>.-options>ul {display: flex; flex: 1; list-style-type: none; margin: 0; padding: 0; align-items: center; border: 1px #ccc solid; border-radius: 4px;}
 		.toolbar.-report>.-options>ul>li {border-right: 1px #ccc solid; padding: 2px;}
 		.toolbar.-report>.-options>ul>li:last-child {border-right: none;}
+/* @end */
 
 
+/* @group widget-toolbar */
+.widget-report {
+	.report-output {
+		min-height: 300px;
 
+		>* {overflow: auto; overflow: hidden; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */}
+		>*::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
+		>.report-output-chart {min-height: 300px;}
+		>.report-output-debug {max-height: 200px; overflow: scroll;}
+	}
 
-.widget-report {}
-	.widget-report .report-output {min-height: 300px;}
-	.widget-report .report-output>* {overflow: auto; overflow: hidden; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */}
-	.widget-report .report-output>*::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
-	.widget-report .report-output>.report-output-chart {min-height: 300px;}
-	.widget-report .report-output>.report-output-debug {max-height: 200px; overflow: scroll;}
+	.-toolbar>.-filter {
+		display: flex;
+		margin-bottom: 8px;
 
-	.widget-report .-toolbar>.-filter {display: flex; margin-bottom: 8px;}
-	.widget-report .-toolbar>.-filter>* {display: block;}
-	.widget-report .-toolbar>.-filter .form-text {padding: 0 8px;}
-	.widget-report .-toolbar>.-filter .-text {background-color: #eee; padding: 4px; border-radius: 4px 0 0 4px; border: 1px #ddd solid; white-space: nowrap;}
-	.widget-report .-toolbar>.-filter .-select {margin: 0 16px 0 0; padding: 4px; border-radius: 0 4px 4px 0; border: 1px #ddd solid; border-left: none; flex: 1; display: flex;}
-	.widget-report .-toolbar>.-filter .-select>.-item {display: flex; flex-wrap: wrap; flex: 1;}
-	.widget-report .-toolbar>.-filter .-select>.-item>span {padding: 2px 0 2px 6px; margin: 1px 8px 1px 0; font-size: 0.85em; background-color: #eee; border-radius: 4px; }
+		>* {display: block;}
+		.form-item {display: flex; gap: 8px; padding: 0;}
+		.form-text {padding: 0 8px; border-radius: 24px;}
+		.form-select { border-radius: 24px;}
+		.-text {background-color: #eee; padding: 4px; border-radius: 4px 0 0 4px; border: 1px #ddd solid; white-space: nowrap;}
+		.-select {margin: 0 16px 0 0; padding: 4px; border-radius: 0 4px 4px 0; border: 1px #ddd solid; border-left: none; flex: 1; display: flex; gap: 8px;}
+		.-select>.-item {display: flex; flex-wrap: wrap; flex: 1;}
+		.-select>.-item>span {padding: 2px 0 2px 6px; margin: 1px 8px 1px 0; font-size: 0.85em; background-color: #eee; border-radius: 4px;}
+	}
 
-	.widget-report .-toolbar>.-group {position:relative; height: 60px; margin: 0 0 9px 0; display: flex; border: 1px #ccc solid; border-bottom: 2px #dddddd solid; border-radius: 4px;}
-	.widget-report .-toolbar>.-group>* {display: block;}
-	.widget-report .-toolbar>.-group .-content {padding: 8px;}
+	.-toolbar>.-group {
+		position:relative; height: 60px; margin: 0 0 9px 0; display: flex; border: 1px #ccc solid; border-bottom: 2px #dddddd solid; border-radius: 4px;
 
-	.widget-report .-toolbar>.-group>.group-nav {flex:0 0 29px; margin:0; padding:0; height:60px; text-align:center; font-size:20px; line-height:60px; z-index: 1; background-color: #fff;}
-	.widget-report .-toolbar>.-group>.group-nav.-left {left:4px; border-radius: 4px 0 0 4px; border-right: 1px #dddddd solid;}
-	.widget-report .-toolbar>.-group>.group-nav.-left:focus {outline:none;}
-	.widget-report .-toolbar>.-group>.group-nav.-right {right:4px; border-left: 1px #dddddd solid; border-radius: 0 4px 4px 0; position: absolute; right: 0;}
-	.widget-report .-toolbar>.-group>.group-nav.-right:focus {outline:none;}
-	.widget-report .-toolbar>.-group>.group-nav .icon {}
+		>* {display: block;}
+		.-content {padding: 8px;}
 
-	.widget-report .-toolbar>.-group>ul {display: flex; flex-wrap: nowrap; margin: 0; padding:0; position:relative; list-style-type: none;}
-	.widget-report .-toolbar>.-group>ul>li {flex: 0 0 90px; height: 100%; border-right: 1px #dddddd solid; position: relative; display: flex;  align-items: center;}
-	.widget-report .-toolbar>.-group>ul>li:last-child {}
-	.widget-report .-toolbar>.-group>ul>li:hover {border-bottom:2px #FF7D13 solid; background-color: #eee;}
-	.widget-report .-toolbar>.-group>ul>li.-active {border-bottom:2px #66BD29 solid; background-color: #f5f5f5;}
-	.widget-report .-toolbar>.-group>ul>li.-active:hover {background-color: #eee;}
+		>.group-nav {flex:0 0 29px; margin:0; padding:0; height:60px; text-align:center; font-size:20px; line-height:60px; z-index: 1; background-color: #fff;}
+		>.group-nav.-left {left:4px; border-radius: 4px 0 0 4px; border-right: 1px #dddddd solid;}
+		>.group-nav.-left:focus {outline:none;}
+		>.group-nav.-right {right:4px; border-left: 1px #dddddd solid; border-radius: 0 4px 4px 0; position: absolute; right: 0;}
+		>.group-nav.-right:focus {outline:none;}
+		>.group-nav .icon {}
 
-	.widget-report .-toolbar>.-group .-group-name {height: 100%; flex: 1; padding-right: 24px;}
-	.widget-report .-toolbar>.-group .-group-name>a { display: flex; align-items: center; height: 100%;padding: 0px 0 0 15px; font-size: 0.9em; background: transparent; color: #666;}
-	.widget-report .-toolbar>.-group .-group-name>a:hover {color:#444; border:none;}
+		>ul {display: flex; flex-wrap: nowrap; margin: 0; padding:0; position:relative; list-style-type: none;}
+		>ul>li {flex: 0 0 90px; height: 100%; border-right: 1px #dddddd solid; position: relative; display: flex;  align-items: center;}
+		>ul>li:last-child {}
+		>ul>li:hover {border-bottom:2px #FF7D13 solid; background-color: #eee;}
+		>ul>li.-active {border-bottom:2px #66BD29 solid; background-color: #f5f5f5;}
+		>ul>li.-active:hover {background-color: #eee;}
 
-	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox.rightside .sg-dropbox--wrapper {left: 0;}
-	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox {height: 100%; flex: 1 0 100%; position: relative;}
-	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox>a {display: flex; align-items: center; position: relative;}
-	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox>a>span {padding: 0 24px 0 8px; color: #666; font-size: 0.9em;}
-	.widget-report .-toolbar>.-group>ul>li.-no-name .widget-dropbox>.icon {position: relative;}
+		.-group-name {height: 100%; flex: 1; padding-right: 24px;}
+		.-group-name>a { display: flex; align-items: center; height: 100%;padding: 0px 0 0 15px; font-size: 0.9em; background: transparent; color: #666;}
+		.-group-name>a:hover {color:#444; border:none;}
 
-	.widget-report .-toolbar>.-group .-checkbox {height: calc(240px - 80px); overflow: auto;}
-	.widget-report .-toolbar>.-group .-checkbox abbr {padding-left: 4px; display: block; padding: 4px; white-space: nowrap;}
-	.widget-report .-toolbar>.-group .-checkbox>abbr abbr {padding-left: 16px;}
-	.widget-report .-toolbar>.-group .-check-count {flex: 1; position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 0.7em; color: #bbbbbb; pointer-events: none;}
-	.widget-report .-toolbar>.-group .-check-count>* {display: inline-block;}
-	.widget-report .-toolbar>.-group .-check-count>.-amt {padding-right: 4px;}
-	.widget-report .-toolbar>.-group .nav.-footer {display: flex; justify-content: end;}
+		>ul>li.-no-name .widget-dropbox.rightside .sg-dropbox--wrapper {left: 0;}
+		>ul>li.-no-name .widget-dropbox {height: 100%; flex: 1 0 100%; position: relative;}
+		>ul>li.-no-name .widget-dropbox>a {display: flex; align-items: center; position: relative;}
+		>ul>li.-no-name .widget-dropbox>a>span {padding: 0 24px 0 8px; color: #666; font-size: 0.9em;}
+		>ul>li.-no-name .widget-dropbox>.icon {position: relative;}
 
-	.widget-report .-toolbar>.-options {display: flex; align-items: center; border: 1px #ccc solid; border-radius: 4px;}
-	.widget-report .-toolbar>.-options>.-item {border-right: 1px #ccc solid; padding: 2px;}
-	.widget-report .-toolbar>.-options>.-item:last-child {border-right: none;}
+		.-checkbox {height: calc(240px - 80px); overflow: auto;}
+		.-checkbox abbr {padding-left: 4px; display: block; padding: 4px; white-space: nowrap;}
+		.-checkbox>abbr abbr {padding-left: 16px;}
+		.-check-count {flex: 1; position: absolute; bottom: 0; left: 0; right: 0; text-align: center; font-size: 0.7em; color: #bbbbbb; pointer-events: none;}
+		.-check-count>* {display: inline-block;}
+		.-check-count>.-amt {padding-right: 4px;}
+		.nav.-footer {display: flex; justify-content: end;}
+	}
 
-	.widget-report .-toolbar .widget-dropbox .sg-dropbox--wrapper {left: 0; min-width: 200px;}
+	.-toolbar>.-options {
+		display: flex; align-items: center; border: 1px #ccc solid; border-radius: 4px;
 
-	.widget-report .report-output-summary {width: 100%; padding: 0; overflow: scroll; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */}
-		.widget-report .report-output-summary::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
+		>.-item {border-right: 1px #ccc solid; padding: 2px;}
+		>.-item:last-child {border-right: none;}
+	}
+
+	.-toolbar .widget-dropbox .sg-dropbox--wrapper {left: 0; min-width: 200px;}
+
+	.report-output-summary {width: 100%; padding: 0; overflow: scroll; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */}
+	.report-output-summary::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
+}
 /* @end */
 
 
