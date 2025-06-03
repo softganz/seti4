@@ -2,8 +2,8 @@
 /**
 * Widget  :: Report Widget
 * Created :: 2020-10-01
-* Modify  :: 2024-01-15
-* Version :: 3
+* Modify  :: 2025-06-03
+* Version :: 4
 *
 * @param Array $args
 * @return Widget
@@ -171,56 +171,56 @@ class Report extends Widget {
 			return sg_implode_attr($attributes, "\r");
 		});
 
-		$form = '<form class="form" id="report-form" data-rel="none" method="get" action="">'._NL
-			. '<input type="hidden" name="dataType" value="'.$this->dataType.'" />'._NL
-			. '<input type="hidden" name="r" id="reporttype" value="" />'._NL
-			. '<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />'._NL
-			. ($this->config->showPage ? '<input id="page" type="hidden" name="page" value="" />'._NL : '')
-			. (post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />'._NL : '');
+		// $form = '<form class="form" id="report-form" data-rel="none" method="get" action="">'._NL
+		// 	. '<input type="hidden" name="dataType" value="'.$this->dataType.'" />'._NL
+		// 	. '<input type="hidden" name="r" id="reporttype" value="" />'._NL
+		// 	. '<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />'._NL
+		// 	. ($this->config->showPage ? '<input id="page" type="hidden" name="page" value="" />'._NL : '')
+		// 	. (post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />'._NL : '');
 
-		$form .= '<div class="-toolbar">';
+		// $form .= '<div class="-toolbar">';
 
-		$form .= '<div class="-filter">'
-			. '<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
-			. ($this->filterBar ? (
-				function() {
-					$form = '';
-					foreach ($this->filterBar['children'] as $key => $widget) {
-						$form .= '<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
-					}
-					return $form;
-				}
-			)() : '')
-			. '<span id="toolbar-report-filter" class="-select">'
-			. ($this->config->filterPretext ? $this->config->filterPretext : '')
-			. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item" style="flex: 1;"></span>'
-			. '</span><!-- toolbar-report-filter -->'
-			. '<span class="">'
-			. '<button class="btn -primary -submit" type="submit">'.($this->submitIcon ? $this->submitIcon : '<i class="icon -material">search</i>').''.($this->submitText ? '<span>'.$this->submitText.'</span>' : '').'</button>'
-			. '</span>'._NL
-			. '</div><!-- -filter -->'._NL;
+		// $form .= '<div class="-filter">'
+		// 	. '<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
+		// 	. ($this->filterBar ? (
+		// 		function() {
+		// 			$form = '';
+		// 			foreach ($this->filterBar['children'] as $key => $widget) {
+		// 				$form .= '<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
+		// 			}
+		// 			return $form;
+		// 		}
+		// 	)() : '')
+		// 	. '<span id="toolbar-report-filter" class="-select">'
+		// 	. ($this->config->filterPretext ? $this->config->filterPretext : '')
+		// 	. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item" style="flex: 1;"></span>'
+		// 	. '</span><!-- toolbar-report-filter -->'
+		// 	. '<span class="">'
+		// 	. '<button class="btn -primary -submit" type="submit">'.($this->submitIcon ? $this->submitIcon : '<i class="icon -material">search</i>').''.($this->submitText ? '<span>'.$this->submitText.'</span>' : '').'</button>'
+		// 	. '</span>'._NL
+		// 	. '</div><!-- -filter -->'._NL;
 
-		if ($groupUi->count()) {
-			$form .= '<div class="-group">'._NL;
-			if ($this->config->showArrowLeft) $form .= '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>';
-			$form .= $groupUi->build()._NL;
-			if ($this->config->showArrowRight) $form .= '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL;
-			$form .= '</div>'._NL;
-		}
+		// if ($groupUi->count()) {
+		// 	$form .= '<div class="-group">'._NL;
+		// 	if ($this->config->showArrowLeft) $form .= '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>';
+		// 	$form .= $groupUi->build()._NL;
+		// 	if ($this->config->showArrowRight) $form .= '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL;
+		// 	$form .= '</div>'._NL;
+		// }
 
-		if ($this->optionBar) {
-			// $form .= '<div class="-options">'._NL;
-			$form .= (new Widget([
-				'tagName' => 'div',
-				'class' => '-options',
-				'children' => $this->optionBar,
-			]))->build();
-			// $this->optionsUi->build()._NL;
-			// $form .= '</div>'._NL;
-		}
+		// if ($this->optionBar) {
+		// 	// $form .= '<div class="-options">'._NL;
+		// 	$form .= (new Widget([
+		// 		'tagName' => 'div',
+		// 		'class' => '-options',
+		// 		'children' => $this->optionBar,
+		// 	]))->build();
+		// 	// $this->optionsUi->build()._NL;
+		// 	// $form .= '</div>'._NL;
+		// }
 
-		$form .= '</div><!-- toolbar -report -->'._NL;
-		$form .= '</form>'._NL._NL;
+		// $form .= '</div><!-- toolbar -report -->'._NL;
+		// $form .= '</form>'._NL._NL;
 
 		$this->children['form'] = new Form([
 			'class' => 'form',
@@ -246,7 +246,7 @@ class Report extends Widget {
 						}
 					)() : '')
 					. '<span id="toolbar-report-filter" class="-select">'
-					. ($this->config->filterPretext ? $this->config->filterPretext : '')
+					. ($this->config->filterPretext ? $this->_renderEachChildWidget(NULL, $this->config->filterPretext) : '')
 					. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item" style="flex: 1;"></span>'
 					. '</span><!-- toolbar-report-filter -->'
 					. '<span class="">'
