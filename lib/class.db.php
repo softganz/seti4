@@ -715,9 +715,9 @@ class DB {
 		if ($this->options->history === false) return; // Do not save query history
 
 		// Save query history
-		if (function_exists('mydb')) {
-			mydb()->_query = $stmt;
-			mydb()->_query_items[] = $stmt;
+		if (function_exists('R')) {
+			R()->_query = $stmt;
+			R()->_query_items[] = $stmt;
 		}
 	}
 

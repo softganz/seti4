@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-06-02
-* Version :: 27
+* Modify  :: 2025-06-03
+* Version :: 28
 */
 
 /*************************************************************
@@ -29,6 +29,7 @@ class R {
 	public $core;
 	public $myDb;
 	public $DB;
+	public $_query;
 
 	function __construct() {
 		$this->setting = (Object) [];
@@ -36,6 +37,7 @@ class R {
 		$this->message = (Object) [];
 	}
 
+	
 	public static function Option($key = NULL, $value = NULL) {
 		if (isset($key) && isset($value)) $GLOBALS['R']->options->{$key} = $key;
 		return isset($GLOBALS['R']->options->{$key}) ? $GLOBALS['R']->options->{$key} : NULL;

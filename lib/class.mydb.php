@@ -7,8 +7,8 @@
 * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
 * @created :: 2009-07-06
-* @modify  :: 2024-11-15
-* @version :: 2
+* @modify  :: 2025-06-03
+* @version :: 3
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -410,7 +410,7 @@ class MyDb {
 	*/
 	public static function query($stmt, $resultmode = NULL) {
 		$is_simulate = false;
-		$optionDefault = '{debug: false, reset:true}';
+		$optionDefault = '{debug: false, reset:true, history: true}';
 		$optionPara = '{}';
 		$debug = false;
 		$myDb = isset($this) && $this->mydb ? $this : mydb();
@@ -543,7 +543,7 @@ class MyDb {
 
 			$data->_query = $myDb->_query = $queryMsg;
 			$myDb->_query_items[] = $queryMsg;
-			mydb()->_query = $queryMsg;
+			mydb()->_query = R()->_query = $queryMsg;
 
 			if ($error) {
 				mydb()->_watchlog = false;
@@ -565,7 +565,7 @@ class MyDb {
 	*/
 	public static function select($queryStmt = NULL) {
 		static $selectCountTimes = 0;
-		$optionDefault = '{debug: false, reset: true, key: null, showCount: null, resultType: "object", fieldType: false, value: null, group: null, fieldOnly: false}';
+		$optionDefault = '{debug: false, reset: true, history: true, key: null, showCount: null, resultType: "object", fieldType: false, value: null, group: null, fieldOnly: false}';
 		$optionPara = '{}';
 		$selectResult = new MyDbResult();
 		$stmtResult = new stdClass();
@@ -681,7 +681,13 @@ class MyDb {
 		$selectResult->_num_rows = 0;
 		$selectResult->_start_row = 0;
 		$selectResult->_times = $myDb->_last_query_time;
-		$selectResult->_query = $prepareStmt->_query; //preg_replace('/\t/Sm', ' ', $prepareStmt->_query).';';
+
+		// Update last query statemet
+		if ($options->history) {
+			$selectResult->_query = $prepareStmt->_query;
+			R()->_query = $prepareStmt->_query; //preg_replace('/\t/Sm', ' ', $prepareStmt->_query).';';
+		}
+
 		$selectResult->_vars = array_merge_recursive($myDb->_values, array_slice($args,1));
 		if ($sumFields) {
 			$selectResult->sum = new stdClass();
@@ -697,7 +703,10 @@ class MyDb {
 
 		// If error then watchdog log
 		if (isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg && mydb()->_watchlog) {
-			mydb()->_query = $queryMsg;
+			if ($options->history) {
+				mydb()->_query = $queryMsg;
+				R()->_query = $queryMsg;
+			}
 			$selectResult->_query = $queryMsg;
 			$myDb->_error = $selectResult->_errno;
 			$myDb->_error_msg = $selectResult->_error_msg;
@@ -873,7 +882,7 @@ class MyDb {
 		//echo 'DB = '.$myDb->db.'<br />'.print_o($myDb,'$myDb');
 		//if (!isset($tables)) {
 			$tables = array();
-			$query = 'SHOW TABLES FROM `'.$myDb->db.'`; -- {reset:false}';
+			$query = 'SHOW TABLES FROM `'.$myDb->db.'`; -- {reset:false, history: false}';
 			mydb()->_watchlog = false;
 			$dbs = $myDb->select($query);
 			foreach ($dbs->items as $rs) {
