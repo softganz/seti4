@@ -71,8 +71,8 @@ class AdminConfigEdit extends Page {
 	}
 
 	function formElementValue() {
-		if (is_array($this->configValue)) return new FormGroup([
-			'type' => 'array',
+		if (is_array($this->configValue)) return (Object) [
+			'tagName' => 'div',
 			'children' => [
 				'value' => [
 					'label'=>'Variable value of  : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" ): ',
@@ -93,9 +93,9 @@ class AdminConfigEdit extends Page {
 					'rows'=>3
 				],
 			], // children
-		]);
+		];
 
-		if (is_object($this->configValue)) return new FormGroup([
+		if (is_object($this->configValue)) return (Object) [
 			'children' => [
 				'value' => [
 					'type' => 'textarea',
@@ -105,19 +105,15 @@ class AdminConfigEdit extends Page {
 					'value' => SG\json_encode($this->configValue)
 				],
 			], // children
-		]);
+		];
 
-		return new FormGroup([
-			'children' => [
-				'value' => [
-					'type' => 'textarea',
-					'label' => 'Variable value : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" ): ',
-					'class' => '-fill',
-					'rows' => 10,
-					'value' => $this->configValue
-				],
-			], // children
-		]);
+		return [
+			'type' => 'textarea',
+			'label' => 'Variable value : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" ): ',
+			'class' => '-fill',
+			'rows' => 10,
+			'value' => $this->configValue
+		];
 	}
 
 	function restore() {
