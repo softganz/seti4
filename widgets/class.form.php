@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2024-02-29
-* Version :: 24
+* Modify  :: 2025-06-03
+* Version :: 25
 *
 * @param Array $args
 * @return Widget
@@ -395,13 +395,17 @@ class Form extends Widget {
 		static $itemIndex = 0;
 		$ret = '';
 		if (!isset($formElement->display)) $formElement->display = '-block';
-		// $ret .= print_o($formElement, '$formElement');
-		// $ret .= print_o($formElement->options, '$formElement->options');
+
+		// options begin with RANGE:
+		if (is_string($formElement->options) && preg_match('/^RANGE\:(.*)/', $formElement->options, $out)) {
+			$formElement->options = [];
+			if (preg_match('/\,/', $out[1])) {
+				foreach (explode(',', $out[1]) as $value) $formElement->options[trim($value)] = trim($value);
+			}
+		}
 
 		foreach ($formElement->options as $optionKey => $optionValue) {
 			if (is_null($optionValue)) continue;
-			// $ret .= '[key='.$optionKey.']';
-			// $ret .= '[value='.(is_object($optionValue) ? print_o($optionValue, '$optionValue') : $optionValue).']<br />';
 
 			if (is_array($optionValue) || is_object($optionValue)) {
 				$optionValue = (Array) $optionValue;
