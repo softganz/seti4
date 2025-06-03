@@ -3,7 +3,7 @@
 * Widget  :: Form Widget
 * Created :: 2020-10-01
 * Modify  :: 2025-06-03
-* Version :: 26
+* Version :: 27
 *
 * @param Array $args
 * @return Widget
@@ -18,17 +18,6 @@
 		- new Widget([])
 		- (Object) [tagName => String, children = Array]
 */
-
-class FormGroup {
-	var $type;
-	var $children;
-
-	function __construct($args = []) {
-		foreach($args as $key => $value) {
-			$this->{$key} = $value;
-		}
-	}
-}
 
 class Form extends Widget {
 	var $widgetName = 'Form';
