@@ -8,8 +8,8 @@ Template    : options
 Author      : Panumas Nontapan
 Author URI  : http://softganz.com
 Created     : 2018-10-15
-Last Modify : 2025-05-08
-Version     : 6
+Last Modify : 2025-06-04
+Version     : 7
 */
 
 @import url(reset.css);
@@ -1417,7 +1417,7 @@ $SCREENS
 		.apps-list>ul {padding: 0px; gap: 16px; flex-wrap: wrap; justify-content: flex-start;}
 		.apps-list>ul>li {border-radius: 8px; overflow: hidden; padding: 0 !important;}
 		.apps-list>ul>li>a {width: 150px; height: 64px; padding: 8px; background-color: #eaeaea; display: flex; flex-wrap: wrap; justify-content: flex-start; font-size: 1.6rem;}
-		.apps-list>ul>li>a>.icon {font-size: 2.8rem;}
+		.apps-list>ul>li>a>.icon {font-size: 2.8rem; width: 2.8rem; height: 2.8rem;}
 		.apps-list>ul>li>a>span {flex: 1 0 100%;}
 
 
