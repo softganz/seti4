@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2024-10-31
- * @version :: 18
+ * @modify  :: 2025-06-07
+ * @version :: 19
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -415,13 +415,21 @@ function sgMapErrorCode($code) {
 function sgSendLog($data = []) {
 	$data = array_replace_recursive(
 		[
-			'force' => false,
+			'force' => true,
 			'url' => _DOMAIN.$_SERVER['REQUEST_URI'],
 			'referer' => $_SERVER["HTTP_REFERER"],
 			'agent' => $_SERVER['HTTP_USER_AGENT'],
 			'date' => date('Y-m-d H:i:s'),
 			'user' => function_exists('i') ? i()->uid : NULL,
 			'name' => function_exists('i') ? i()->name : NULL,
+			'type' => NULL,
+			'file' => NULL,
+			'line' => NULL,
+			'description' => NULL,
+			'data' => (Object) [
+				'get' => (Object) Request::get(),
+				'post' => (Object) Request::post(),
+			]
 		],
 		(Array) $data
 	);
@@ -433,14 +441,15 @@ function sgSendLog($data = []) {
 		);
 	}
 
-	if ($data['force'] || !in_array(_DOMAIN_SHORT, ['localhost', 'www.softganz.com', 'softganz.com'])) {
-		$result = \SG\api([
-			'url' => 'https://softganz.com/system/issue/new',
+	if ($data['force'] || !in_array(_DOMAIN_SHORT, ['localhost', 'service.softganz.com'])) {
+		ApiModel::send([
+			'url' => 'https://service.softganz.com/system/issue/new',
 			'method' => 'post',
-			'postField' => $data,
+			'postFields' => $data,
 			'returnTransfer' => true,
 			'result' => 'json',
-		]);
+			'debug' => false,
+		], $curlOptions);
 	}
 }
 
