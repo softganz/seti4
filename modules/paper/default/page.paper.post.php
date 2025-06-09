@@ -165,7 +165,7 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 
 	$form = R::View('paper.post.form',$topic);
 
-// debugMsg($form->children['tabs'],'$form');
+	// debugMsg($form->children['tabs'],'$form');
 
 	// do external module post form
 	R::On($moduleName.'.paper.post.form',$self,$topic,$form);

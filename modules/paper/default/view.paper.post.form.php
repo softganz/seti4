@@ -62,22 +62,22 @@ function view_paper_post_form($topic) {
 			'vid' => _vid($topic),
 
 			'areacode' => $topic->type->type && $areaTypeCode ? (function($areaTypeCode) {
-				$fields = ['children' => []];
+				$fields = (Object)['children' => []];
 				if ($areaTypeCode != 'all') {
 					$stmt = 'SELECT `provid`, `provname` FROM %co_province% WHERE `provid` IN ( :areacode )';
 					$areaSelectOptions[''] = '==เลือกพื้นที่==';
 					foreach (mydb::select($stmt, ':areacode', 'SET:'.$areaTypeCode)->items as $rs) {
 						$areaSelectOptions[$rs->provid] = $rs->provname;
 					}
-					$fields['children']['areacode'] = [
+					$fields->children['areacode'] = [
 						'type' => 'select',
 						'label' => 'พื้นที่',
 						'class' => '-fill',
-						'options' => $areaSelectOptions
+						'choice' => $areaSelectOptions
 					];
 				} else {
-					$fields['children']['areacode'] = ['type' => 'hidden'];
-					$fields['children']['areaname'] = [
+					$fields->children['areacode'] = ['type' => 'hidden'];
+					$fields->children['areaname'] = [
 						'type' => 'text',
 						'label' => 'พื้นที่',
 						'class' => 'sg-address -fill',
@@ -248,7 +248,7 @@ function view_paper_post_form($topic) {
 }
 
 function _vid($topic) {
-	$fields = [
+	$fields = (Object) [
 		'type' => 'group',
 		'children' => [],
 	];
@@ -283,7 +283,7 @@ function _vid($topic) {
 					var as_xml = new AutoSuggest(\'taxonomy-freetags\', options_xml);
 				</script>',
 			];
-			$fields['children'][$vocab->name] = $form;
+			$fields->children[$vocab->name] = $form;
 			head('<script type="text/javascript" src="/css/autocomplete/bsn.AutoSuggest_c_2.0.js"></script>
 				<link rel="stylesheet" href="/css/autocomplete/css/autosuggest_inquisitor.css" type="text/css" media="screen" charset="utf-8" />');
 		} else {
@@ -314,7 +314,7 @@ function _vid($topic) {
 				}
 			}
 			$form['value'] = \SG\getFirst($topic->post->taxonomy[$vocab->vid],$topic->tid);
-			$fields['children'][$vid] = $form;
+			$fields->children[$vid] = $form;
 		}
 	}
 	return $fields;

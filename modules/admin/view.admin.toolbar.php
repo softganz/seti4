@@ -15,7 +15,6 @@ function view_admin_toolbar($self,$title=NULL,$nav='default',$info=NULL,$options
 	if (empty($nav)) $nav='default';
 
 	cfg('social.googleplus',false);
-	cfg('social.facebook',false);
 	
 	$ret='';
 

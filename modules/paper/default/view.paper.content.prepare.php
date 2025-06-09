@@ -244,7 +244,6 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 		&& !is_home()
 		&& $topicInfo->property->option->social) {
 		$body->social .= view::social(url('paper/'.$topicInfo->tpid));
-		cfg('social.facebook',true);
 		cfg('social.googleplus',true);
 	}
 

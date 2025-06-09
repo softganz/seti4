@@ -200,7 +200,6 @@ $cfg['comment.close.day']=0; // Day to close comment ,0 is alway show
 
 $cfg['spam.word']='บาคาร่า,bacara,playerwin88com,gamblevipcom,กลูตาไธโอน,Glutathione'; // เฉพาะตัวอักษรและตัวเลขเท่านั้น ไม่ต้องใส่เครื่องหมายอื่น ๆ ทั้งสิ้น
 
-$cfg['social.facebook']=false;
 $cfg['social.googleplus']=false;
 
 $cfg['social.share.type']='story,forum';
