@@ -6,8 +6,9 @@
  * @version 0.20
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2007-12-25
- * @modify 2009-11-25
+ * @created :: 2007-12-25
+ * @modify  :: 2025-06-08
+ * Version  :: 2
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -601,24 +602,15 @@ class View {
 		//$link=preg_replace('/http\:\/\/www./i','http://',$link);
 		$ret.='
 		<div class="social -clear-fix">
-		<!-- Facebook share button -->
-		<div class="fb-share-button subview" data-href="'.$link.'" data-layout="box_count"></div>
 		<!-- Twitter share button -->
 		<div class="subview"><a href="https://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="" data-url="'.$link.'" >Tweet</a></div>
-		<!-- Fackbook like button -->
-		<div class="fb-like" data-href="'.$link.'" data-send="true" data-width="450" data-show-faces="true"></div>
 		</div><!-- social -->
 		<style type="text/css">
 		.subview {margin:0 5px 0 0;display:inline-block;}
-		.fb_share_count_top,.fb_share_count_inner,.FBConnectButton_Small,.FBConnectButton_RTL_Small,.FBConnectButton_Small .FBConnectButton_Text {border-radius:4px;}
-		.fb_share_count_top {width:48px !important;}
-		.FBConnectButton_Small,.FBConnectButton_RTL_Small {width:49px !important;margin:2px 0 0 0;}
-		.FBConnectButton_Small .FBConnectButton_Text {padding:2px 2px 3px !important;font-size:10px;font-weight:normal !important;}
 		</style>
 		';
 		if (_ON_HOST) {
 			head('widgets.js','<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>');
-			//head('FB.Share','<script type="text/javascript" src="https://static.ak.fbcdn.net/connect.php/js/FB.Share"></script>');
 		}
 		return $ret;
 	}

@@ -272,9 +272,6 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 			if ($showAd && isset($GLOBALS['ad']->comment_after)) $body->comment .= '<div id="ad-comment_after" class="ads">'.$GLOBALS['ad']->comment_after.'</div>';
 		}
 
-		if (in_array($topicInfo->info->type,explode(',',cfg('social.comment.facebook.type')))) {
-			$body->comment .= '<div class="fb-comments" data-href="'.$fb_url.'" data-numposts="'.cfg('social.comment.facebook.posts').'" data-width="'.cfg('social.comment.facebook.width').'" data-colorscheme="light"></div>';
-		}
 		// Show comment form and comment ad
 
 		if (!$topicInfo->archived && $topicInfo->info->comment == _COMMENT_READWRITE) {

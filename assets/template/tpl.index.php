@@ -153,7 +153,6 @@ if (debug('query')) {
 }
 echo eval_php(cfg('web.complete'),_NL,_NL);
 ?>
-<div id="fb-root"></div>
 <?php
 if (cfg('firebase')) {
 	echo '<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>'._NL;

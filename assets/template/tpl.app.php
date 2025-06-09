@@ -87,7 +87,6 @@ if (debug('query')) {
 }
 echo eval_php(cfg('web.complete'),_NL,_NL);
 ?>
-<div id="fb-root"></div>
 <script type="text/javascript">
 <?php
 if (cfg('tracking') && _ON_HOST) {

@@ -203,9 +203,6 @@ $cfg['spam.word']='บาคาร่า,bacara,playerwin88com,gamblevipcom,ก�
 $cfg['social.googleplus']=false;
 
 $cfg['social.share.type']='story,forum';
-$cfg['social.comment.facebook.type']='';
-$cfg['social.comment.facebook.width']='100%';
-$cfg['social.comment.facebook.posts']=25;
 
 $cfg['files.extension.allow']=array('pdf','odt','ppt','rar','zip','tar','gz','iso','jpg','png','gif','mmap','mm');
 $cfg['files.extension.notallow']=array('php','html','htm','jsp','py');
