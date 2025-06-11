@@ -1,8 +1,8 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2024-10-04",
-		"version": 4
+		"lastModify": "2025-06-11",
+		"version": 5
 	},
 	"autoLoader": {
 		"items": {
@@ -34,6 +34,12 @@
 		"loginToken": {
 			"tokenType": "jwt",
 			"jwtSecret": "Enter Secret Here"
+		}
+	},
+	"error": {
+		"sendLog": {
+			"toUrl": null,
+			"domainNotSend": ["localhost"]
 		}
 	},
 	"ban": {

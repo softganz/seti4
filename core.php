@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-06-07
- * @version :: 19
+ * @modify  :: 2025-06-11
+ * @version :: 20
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -413,9 +413,14 @@ function sgMapErrorCode($code) {
 }
 
 function sgSendLog($data = []) {
+	$forceSend = Request::get('forceSendLog');
+	$sendLogToUrl = cfg('error')->sendLog->toUrl;
+	$domainNotSendLog = (Array) cfg('error')->sendLog->domainNotSend;
+	
+	if (empty($sendLogToUrl)) return;
+
 	$data = array_replace_recursive(
 		[
-			'force' => true,
 			'url' => _DOMAIN.$_SERVER['REQUEST_URI'],
 			'referer' => $_SERVER["HTTP_REFERER"],
 			'agent' => $_SERVER['HTTP_USER_AGENT'],
@@ -441,15 +446,18 @@ function sgSendLog($data = []) {
 		);
 	}
 
-	if ($data['force'] || !in_array(_DOMAIN_SHORT, ['localhost', 'service.softganz.com'])) {
-		ApiModel::send([
-			'url' => 'https://service.softganz.com/system/issue/new',
-			'method' => 'post',
-			'postFields' => $data,
-			'returnTransfer' => true,
-			'result' => 'json',
-			'debug' => false,
-		], $curlOptions);
+	if ($forceSend || !in_array(_DOMAIN_SHORT, $domainNotSendLog)) {
+		ApiModel::send(
+			[
+				'url' => $sendLogToUrl,
+				'method' => 'post',
+				'postFields' => $data,
+				'returnTransfer' => true,
+				'result' => 'json',
+				'debug' => false,
+			],
+			$curlOptions
+		);
 	}
 }
 
