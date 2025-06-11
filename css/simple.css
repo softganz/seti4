@@ -8,8 +8,8 @@ Template    : options
 Author      : Panumas Nontapan
 Author URI  : http://softganz.com
 Created     : 2018-10-15
-Last Modify : 2025-06-04
-Version     : 7
+Last Modify : 2025-06-11
+Version     : 8
 */
 
 @import url(reset.css);
@@ -189,15 +189,16 @@ div.photo {margin:10px 0;clear:both;}
 	.page.-footer p {margin: 0; padding: 0;}
 
 
-.page.-sidebar {}
-	.page.-sidebar .header {background-color: #b5b5b5; text-align: center;}
-	.page.-sidebar .header>h3 {height: auto; line-height: 1.8em; padding: 0; color: #333;}
-	.page.-sidebar h4 {padding: 4px 10px; background-color: #ccc; color: #333;}
-	.page.-sidebar select {width:100%;overflow:hidden;}
-	.page.-sidebar .button {width:100%;}
-	.page.-sidebar .form-select {margin:0 0 10px 0;}
-	.page.-sidebar .box {padding: 10px; margin:0 0 20px 0; background:#dadada;}
-	.page.-sidebar form {margin:4px;padding:0;}
+.page.-sidebar {
+	.header {background-color: #b5b5b5; text-align: center;}
+	.header>h3 {height: auto; line-height: 1.8em; padding: 0; color: #333;}
+	h4 {padding: 4px 10px; background-color: #ccc; color: #333;}
+	select {width:100%;overflow:hidden;}
+	.button {width:100%;}
+	.form-select {margin:0 0 10px 0;}
+	.box {padding: 10px; margin:0 0 20px 0; background:#dadada;}
+	form {margin:4px;padding:0;}
+}
 
 .page.-map {width: 100%; height: 100%; min-height: 700px; position: relative;}
 
@@ -1395,7 +1396,6 @@ $SCREENS
 
 
 	.social {min-height: 64px; margin: 16px 0;}
-		.social .fb-share-button {width: 59px; height: 40px;}
 
 	.who-access {}
 		.who-access .-members td:nth-child(2) {width: 100%;}
