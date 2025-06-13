@@ -557,10 +557,11 @@
 	}
 
 	.-toolbar>.-options {
-		display: flex; align-items: center; border: 1px #ccc solid; border-radius: 4px;
+		display: flex; align-items: center; border-radius: 4px; gap: 8px; margin: 0 0 8px 0;
 
 		>.-item {border-right: 1px #ccc solid; padding: 2px;}
 		>.-item:last-child {border-right: none;}
+		>div {display: flex; background-color: #fff; border-radius: 8px; gap: 8px; padding: 8px;}
 	}
 
 	.-toolbar .widget-dropbox .sg-dropbox--wrapper {left: 0; min-width: 200px;}
