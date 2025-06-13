@@ -2,8 +2,8 @@
 /**
 * Model   :: File Model
 * Created :: 2021-12-21
-* Modify  :: 2024-07-01
-* Version :: 6
+* Modify  :: 2025-06-13
+* Version :: 7
 *
 * @return Object
 *
@@ -214,7 +214,7 @@ class FileModel {
 
 		//$ret.=print_o(post(),'post').print_o($uploadPhotoFiles,'$uploadPhotoFiles');
 
-		$docExtension = ['pdf', 'doc', 'docx'];
+		$docExtension = (Array) cfg('topic.doc.file_ext');
 		$photoExtension = ['jpg', 'jpeg', 'png'];
 		foreach ($uploadPhotoFiles as $postFile) {
 			//debugMsg($postFile,'$postFile');
