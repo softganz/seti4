@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2025-01-10
-* Version :: 14
+* Modify  :: 2025-06-13
+* Version :: 15
 *
 * @param Int $nodeId
 * @param String $action
@@ -262,21 +262,11 @@ class PaperApi extends PageApi {
 	}
 
 	function docAdd() {
-		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-		if (!file_exists($_FILES['doc']['tmp_name'])) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'No upload file');
-
-		// $desc = (Object) post('info',_TRIM+_STRIPTAG);
-		// $desc->tpid = $this->nodeId;
-		// $desc->type = 'doc';
-
-		// $desc = (Object) [
-		// 	...post('info',_TRIM+_STRIPTAG),
-		// 	'tpid' => $this->nodeId,
-		// 	'type' => 'doc',
-		// ];
+		if (!$this->right->edit) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!file_exists($_FILES['doc']['tmp_name'])) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'No upload file');
 
 		$desc = (Object) array_merge(
-			(Array) post('info',_TRIM+_STRIPTAG),
+			(Array) post('info', _TRIM+_STRIPTAG),
 			[
 				'nodeId' => $this->nodeId,
 				'type' => 'doc',
@@ -290,31 +280,7 @@ class PaperApi extends PageApi {
 
 		$result = FileModel::upload($_FILES['doc'], $desc, $options);
 
-		// $result = R::Model('doc.upload', $_FILES['doc'], $desc, $options);
-
-		// debugMsg($desc,'$desc');
-		// debugMsg($result,'$result');
-		// debugMsg(post(),'post()');
-		// debugMsg($_FILES,'$_FILES');
-		// debugMsg($_POST, '$_POST');
-
-		if ($result->error) return error(_HTTP_ERROR_NOT_ACCEPTABLE, implode(',', $result->error));
-		// debugMsg([
-		// 	'items' => array_map(
-		// 		function($doc) {
-		// 			$docProperty = FileModel::docProperty($doc->file, $doc->folder);
-		// 			return (Object) [
-		// 				'fileId' => $doc->fileId,
-		// 				'url' => _DOMAIN.$docProperty->src,
-		// 				'exists' => $docProperty->exists,
-		// 				'size' => $docProperty->size,
-		// 				// 'link' => $doc->link,
-		// 				// 'property' => $docProperty,
-		// 			];
-		// 		},
-		// 		$result->items
-		// 	),
-		// ],'aaa');
+		if ($result->error) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, implode(',', $result->error));
 
 		return [
 			'items' => array_map(
