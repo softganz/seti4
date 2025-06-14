@@ -14,9 +14,11 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2025-05-26
-* Version :: 7
+* Modify  :: 2025-06-14
+* Version :: 8
 */
+
+use Softganz\DB;
 
 /********************************************
 * Class :: sgClass
@@ -216,9 +218,12 @@ class Session implements SessionHandlerInterface {
 	public function close() {return true;}
 
 	public function read($sess_id) {
-		$res = mydb::select('SELECT `sess_data` FROM %session% WHERE `sess_id` = :id LIMIT 1',':id',$sess_id);
-		$sess_data = $res->_num_rows && $res->sess_data ? $res->sess_data : '';
-		//echo 'Session read '.print_o($res,'$res');
+		$res = DB::select([
+			'SELECT `sess_data` FROM %session% WHERE `sess_id` = :id LIMIT 1',
+			'var' => [':id' => $sess_id]
+		]);
+		$sess_data = $res->sess_data ? $res->sess_data : '';
+		// echo 'Session read '.print_o($res,'$res');
 		return $sess_data;
 	}
 
@@ -390,13 +395,13 @@ class Arrays {
 	}
 
 	/**
-	Method :: Search
-	purpose : search string or string in array from any array
-
-	use :
-	string arrays::search(string needle , array haystack )
-
-	return needle string if found in array
+	 * Method :: Search
+	 * purpose : search string or string in array from any array
+	 * 
+	 * use :
+	 * string arrays::search(string needle , array haystack )
+	 * 
+	 * return needle string if found in array
 	*/
 	static function search($needle=NULL,$haystack=array()) {
 		$result=false;
@@ -444,9 +449,11 @@ class Cache {
 	}
 
 	public static function get($cid) {
-		$result = mydb::select('SELECT * FROM %cache% c WHERE c.`cid` = :cid LIMIT 1', [':cid' => $cid]);
-		if ($result->count()) {
-			mydb::clearProp($result);
+		$result = DB::select([
+			'SELECT * FROM %cache% c WHERE c.`cid` = :cid LIMIT 1',
+			'var' => [':cid' => $cid]
+		]);
+		if ($result->headers) {
 			$result->data = preg_match('/^{/', $result->data) ? \SG\json_decode($result->data) : unserialize($result->data);
 			$result->data->token = $result->data->session;
 			$result->remain = $result->expire - time();
@@ -455,12 +462,18 @@ class Cache {
 	}
 
 	public static function clear($cid) {
-		mydb::query('DELETE FROM %cache% WHERE cid = :cid LIMIT 1', [':cid' => $cid]);
+		DB::query([
+			'DELETE FROM %cache% WHERE cid = :cid LIMIT 1',
+			'var' => [':cid' => $cid]
+		]);
 	}
 
 	public static function clear_expire() {
 		$ctime = time();
-		mydb::query('DELETE FROM %cache% WHERE (expire > 0) and (expire - '.$ctime.' < 0)');
+		DB::query([
+			'DELETE FROM %cache% WHERE expire > 0 AND expire - :ctime < 0',
+			'var' => [':ctime' => $ctime]
+		]);
 		// *** Cause sign in error
 		//mydb::query('OPTIMIZE TABLE %cache%');
 	}

@@ -2,8 +2,8 @@
 /**
 * Counter :: Model
 * Created :: 2021-11-26
-* Modify  :: 2024-12-11
-* Version :: 6
+* Modify  :: 2025-06-14
+* Version :: 7
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -15,7 +15,7 @@ class CounterModel {
 	public static function hit() {
 		// debugMsg('COUNTER HIT');
 		$today = today();
-
+Cache::clear_expire();
 		$counter = cfg('counter');
 		if (isset($counter->online)) unset($counter->online);
 		if (cfg('online')) {cfg_db_delete('online');}
@@ -47,13 +47,14 @@ class CounterModel {
 
 		//$checked_online_time = $today->time - 1 * 60;
 
-		$stmt = 'DELETE FROM %users_online% WHERE `access` < :checktime';
-		mydb::query($stmt, ':checktime', $checked_online_time);
-		//debugMsg(mydb()->_query);
+		$deleteUser = DB::query([
+			'DELETE FROM %users_online% WHERE `access` < :checktime',
+			'var' => [':checktime' => $checked_online_time]
+		]);
 
 		// Create user online table if table not exists
-		if (mydb()->_error) {
-			mydb::query(
+		if ($deleteUser->errorMsg()) {
+			DB::query([
 				'CREATE TABLE %users_online% (
 					`keyid` varchar(100) NOT NULL,
 					`uid` int(11) DEFAULT NULL,
@@ -68,13 +69,15 @@ class CounterModel {
 					KEY `uid` (`uid`),
 					KEY `coming` (`coming`),
 					KEY `access` (`access`)
-				);'
-			);
-			//debugMsg(mydb()->_query);
+				)'
+			]);
 		}
 
 
-		$new_user = !mydb::select('SELECT `keyid` FROM %users_online% WHERE `keyid` = :keyid LIMIT 1', ':keyid', $onlinekey)->keyid;
+		$new_user = !DB::select([
+			'SELECT `keyid` FROM %users_online% WHERE `keyid` = :keyid LIMIT 1',
+			'var' => [':keyid' => $onlinekey]
+			])->keyid;
 		//debugMsg($new_user ? 'NEW USER' : 'OLD USER');
 		//debugMsg(mydb()->_query);
 
@@ -108,7 +111,7 @@ class CounterModel {
 			$online->hits++;
 			list($online->browser) = str_replace('"', '', explode(' ',$browser));
 
-			mydb::query(
+			DB::query([
 				'INSERT INTO %users_online%
 					(`keyid`, `uid`, `name`, `coming`, `access`, `ip`, `host`, `browser`)
 					VALUES
@@ -119,21 +122,21 @@ class CounterModel {
 					, `hits` = `hits` + 1
 					, `access` = :access
 					, `browser` = :browser',
-				$online
-			);
+				'var' => $online
+			]);
 			//debugMsg(mydb()->_query);
 
 			//--- add/update online user information
-			mydb::query('SET @@group_concat_max_len = 100000;');
+			DB::query(['SET @@group_concat_max_len = 100000']);
 
-			$stmt = 'SELECT
+			$dbs = DB::select([
+				'SELECT
 					COUNT(*) `online_count`
 					, COUNT(`uid`) `online_members`
 					, GROUP_CONCAT(`name`) `online_name`
 					FROM %users_online%
-					LIMIT 1';
-
-			$dbs = mydb::select($stmt);
+					LIMIT 1'
+			]);
 
 			$counter->online_members = $dbs->online_members;
 			$counter->online_name = $dbs->online_name;
@@ -184,12 +187,12 @@ class CounterModel {
 	public static function addOnlineUser(){
 		// update user hit count
 		if ( i()->ok ) {
-			mydb::query(
+			DB::query([
 				'UPDATE %users%
 				SET `hits` = `hits` + 1, `lastHitTime` = NOW()
 				WHERE uid = :userId LIMIT 1',
-				[':userId' => i()->uid]
-			);
+				'var' => [':userId' => i()->uid]
+			]);
 		}
 	}
 
@@ -307,7 +310,10 @@ class CounterModel {
 		}
 
 		// Write current log into table
-		mydb::query($stmt,$log);
+		DB::query([
+			$stmt,
+			'var' => $log
+		]);
 		if ($debug) debugMsg('Write current log => '.mydb()->_query.'');
 	}
 

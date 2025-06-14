@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2025-02-24
-* Version :: 12
+* Modify  :: 2025-06-214
+* Version :: 13
 *
 * @param Int $userId
 * @return Object
@@ -632,9 +632,15 @@ class UserModel {
 				$remember_time = time()+$data->remember;
 				setcookie(cfg('cookie.id'),$data->session,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
 				setcookie(cfg('cookie.u'),$data->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
-				$stmt = 'UPDATE %cache% SET `expire` = :expire WHERE `cid` = :cid LIMIT 1';
 				//echo '$remember_time='.$remember_time.'<br />';
-				mydb::query($stmt,':cid','user:'.$data->session, ':expire',$remember_time);
+
+				DB::query([
+					'UPDATE %cache% SET `expire` = :expire WHERE `cid` = :cid LIMIT 1',
+					'var' => [
+						':cid' => 'user:'.$data->session,
+						':expire' => $remember_time
+					]
+				]);
 				//echo mydb()->_query.'<br />';
 			}
 			return $data;

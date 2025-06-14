@@ -2,13 +2,15 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2025-05-08
-* Version :: 8
+* Modify  :: 2025-06-14
+* Version :: 9
 */
 
 //---------------------------------------
 // Core Function
 //---------------------------------------
+
+use Softganz\DB;
 
 /**
  * function R :: Access core resource
@@ -294,14 +296,20 @@ function cfg_db($name = NULL, $value = NULL) {
 		if (is_object($value)) $write_value =  sg_json_encode($value);
 		else if (is_array($value) || is_bool($value) || is_numeric($value)) $write_value = serialize($value);
 		else $write_value = $value;
-		mydb::query('INSERT INTO %variable% ( `name` , `value` ) VALUES ( :name, :value) ON DUPLICATE KEY UPDATE `value` = :value',':name',$name,':value',$write_value);
-		$result=$value;
+
+		DB::query([
+			'INSERT INTO %variable% ( `name` , `value` ) VALUES ( :name, :value)
+			ON DUPLICATE KEY UPDATE `value` = :value',
+			'var' => [':name' => $name, ':value' => $write_value]
+		]);
+
+		$result = $value;
 		cfg($name,$value);
 	} else if (isset($name)) {
 		$rs = mydb::select('SELECT `name`, `value` FROM %variable% WHERE name = :name LIMIT 1; -- {reset: true}',':name',$name);
 		$result = ($rs->_num_rows) ? __is_serialized($rs->value)?unserialize($rs->value) : $rs->value : NULL;
 	} else {
-		$dbs = mydb::select('SELECT `name`, `value` FROM %variable%');
+		$dbs = DB::select(['SELECT `name`, `value` FROM %variable%']);
 		$conf = [];
 		if (isset($dbs->items) && $dbs->items) {
 			foreach ($dbs->items as $item) {
@@ -649,7 +657,7 @@ function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
  */
 function url_alias($request = NULL) {
 	static $alias = NULL;
-	if (!isset($alias)) $alias = mydb::select('SELECT * FROM %url_alias% ORDER BY `alias` ASC');
+	if (!isset($alias)) $alias = DB::select(['SELECT * FROM %url_alias% ORDER BY `alias` ASC']);
 	if (!isset($request)) return $alias;
 
 	$result = (Object) [];
