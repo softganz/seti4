@@ -3,54 +3,46 @@
 * Watchdog:: Analysis
 * Created :: 2020-01-01
 * Modify  :: 2025-06-14
-* Version :: 3
+* Version :: 4
 *
 * @return Widget
 *
 * @usage watchdog/analysis
 */
 
+use Softganz\DB;
+
 class WatchdogAnalysis extends Page {
 	var $module;
 	var $keyword;
-	var $days;
-	var $whatDelete;
-	var $items;
+	var $userId;
+	var $message;
+	var $delete;
+	var $days = 30;
+	var $items =  1000;
 	var $right;
 
 	function __construct() {
 		parent::__construct([
 			'module' => post('module'),
 			'keyword' => post('keyword'),
-			'days' => intval(\SG\getFirst(post('d'),30)),
-			'whatDelete' => post('delete'),
-			'items' => \SG\getFirst(post('items'),1000),
+			'userId' => post('user'),
+			'message' => post('message'),
+			'delete' => post('delete'),
+			'days' => SG\getFirst(post('d'), $this->days),
+			'items' => SG\getFirstInt(post('items'), $this->items),
 			'right' => (Object)[
 				'admin' => user_access('administer watchdogs')
 			]
 		]);
 	}
 
+	function rightToBuild() {
+		return true;
+	}
+
 	function build() {
-		if ($this->right->admin && $this->whatDelete) return $this->deleteLogItems();
-		else if ($this->module || $this->keyword) return $this->showLogItems();
-
 		$summaryDbs = $this->getSummary();
-
-		// mydb::where('TIMESTAMPDIFF(DAY, `date`, NOW()) < :days', ':days', $this->days);
-		mydb::where('`date` >= :date', ':date', date('Y-m-d', strtotime('today - '.$this->days.' days')));
-
-		$dbs = mydb::select(
-			'SELECT
-			`module`
-			, `keyword`
-			, COUNT(*) `totals`
-			FROM %watchdog%
-			%WHERE%
-			GROUP BY `module`, `keyword`'
-		);
-
-		// debugMsg(mydb()->_query);
 
 		return new Scaffold([
 			'appBar' => new AppBar([
@@ -76,14 +68,14 @@ class WatchdogAnalysis extends Page {
 								return [
 									new Button([
 										'class' => 'sg-action',
-										'href' => Url::link('watchdog/analysis', ['module' => $rs->module]),
+										'href' => Url::link('watchdog/analysis..logs', ['module' => $rs->module]),
 										'text' => $rs->module,
 										'rel' => 'box',
 										'data-width' => 'full',
 									]),
 									new Button([
 										'class' => 'sg-action',
-										'href' => Url::link('watchdog/analysis', ['module' => $rs->module, 'keyword' => urlencode($rs->keyword)]),
+										'href' => Url::link('watchdog/analysis..logs', ['module' => $rs->module, 'keyword' => urlencode($rs->keyword)]),
 										'text' => $rs->keyword,
 										'rel' => 'box',
 										'data-width' => 'full',
@@ -91,7 +83,7 @@ class WatchdogAnalysis extends Page {
 									number_format($rs->totals),
 									$this->right->admin ? new Button([
 										'class' => 'sg-action',
-										'href' => Url::link('watchdog/analysis', ['delete' => $rs->module.':'.$rs->keyword]),
+										'href' => Url::link('watchdog/analysis..delete', ['delete' => $rs->module.':'.$rs->keyword]),
 										'data-title' => 'Delete logs',
 										'data-confirm' => 'ต้องการลบ log ชุดนี้ กรุณายืนยัน?',
 										'rel' => 'none',
@@ -100,7 +92,20 @@ class WatchdogAnalysis extends Page {
 									]) : NULL,
 								];
 							},
-							$dbs->items
+							(Array) DB::select([
+								'SELECT
+								`module`
+								, `keyword`
+								, COUNT(*) `totals`
+								FROM %watchdog%
+								%WHERE%
+								GROUP BY `module`, `keyword`',
+								'where' => [
+									'%WHERE%' => [
+										is_numeric($this->days) ? ['`date` >= :date', ':date' => date('Y-m-d 00:00:00', strtotime('today - '.$this->days.' days'))] : NULL,
+									]
+								]
+							])->items
 						),
 					]), // Table
 				], // children
@@ -108,45 +113,59 @@ class WatchdogAnalysis extends Page {
 		]);
 	}
 
-	function getSummary() {
-		return mydb::select(
+	private function getSummary() {
+		return DB::select([
 			'SELECT
 			COUNT(*) `totalLog`, COUNT(DISTINCT DATE_FORMAT(`date`, "%Y-%m-%d")) `totalDate`
 			FROM %watchdog%
 			LIMIT 1'
-		);
+		]);
 	}
 
-	function showLogItems() {
-			if ($this->module) mydb::where('w.`module` = :module',':module',$this->module);
-			if ($this->keyword) mydb::where('w.`keyword` = :keyword',':keyword',$this->keyword);
-			if (post('u')) mydb::where('w.`uid` = :uid',':uid',post('u'));
-			if (post('msg')) mydb::where('w.`message` LIKE :msg',':msg','%'.post('msg').'%');
-
-			$logs = mydb::select(
-				'SELECT SQL_CALC_FOUND_ROWS w.*, u.`uid`, u.`username`
+	function logs() {
+			$logs = DB::select([
+				'SELECT w.*, u.`uid`, u.`username`
 				FROM %watchdog% w
 					LEFT JOIN %users% u USING(uid)
 				%WHERE%
 				ORDER BY wid DESC
-				LIMIT '.$this->items
-			);
+				LIMIT '.$this->items,
+				'where' =>[
+					'%WHERE%' => [
+						$this->module ? ['w.`module` = :module', ':module' => $this->module] : NULL,
+						$this->keyword ? ['w.`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
+						$this->userId ? ['w.`uid` = :userId',':userId' => $this->userId] : NULL,
+						$this->message ? ['w.`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
+					]
+				]
+			]);
 
-			$ret .= '<header class="header -box"><h3>Watchdog List '.$logs->count().($logs->count() == $this->items ? ' of '.$logs->_found_rows : '').' items</h3></header>';
-
-			$ret .= R::View('watchdog.listing',$logs);
-			return $ret;
+			return new Scaffold([
+				'appBar' => new AppBar([
+					'title' => 'Watchdog List '.$logs->count.' items'.($logs->count === $this->items ? ' and mores ' : ''),
+					'boxHeader' => true,
+				]),
+				'body' => R::View('watchdog.listing',$logs),
+			]);
 	}
 
-	function deleteLogItems() {
-		if ($this->whatDelete == 'emptymodule') {
-			mydb::query('DELETE FROM %watchdog% WHERE `module` IS NULL OR `module` = ""');
+	function delete() {
+		if ($this->delete == 'emptymodule') {
+			DB::query(['DELETE FROM %watchdog% WHERE `module` IS NULL OR `module` = ""']);
 		} else {
-			list($module, $keyword) = explode(':', $this->whatDelete);
-			mydb::query('DELETE FROM %watchdog% WHERE '.($module ? '`module` = :module' : '`module` IS NULL').' AND `keyword` = :keyword', ':module', $module, ':keyword', $keyword);
+			list($module, $keyword) = explode(':', $this->delete);
+			DB::query([
+				'DELETE FROM %watchdog%
+				%WHERE%',
+				'where' => [
+					'%WHERE%' => [
+ 						$module ? ['`module` = :module', ':module' => $module] : ['`module` IS NULL'],
+						$keyword ? ['`keyword` = :keyword', ':keyword' => $keyword] : NULL,
+					]
+				]
+			]);
 		}
-		$ret .= 'Delete watchdog completed.';
-		return $ret;
+		return apiSuccess('Delete watchdog completed.');
 	}
 }
 ?>
