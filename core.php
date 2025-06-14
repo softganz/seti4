@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-06-11
- * @version :: 20
+ * @modify  :: 2025-06-13
+ * @version :: 21
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,11 @@ cfg('core.version.install', '4.0');
 set_error_handler('sgErrorHandler');
 register_shutdown_function('sgShutdown');
 spl_autoload_register('sg_autoloader');
+
+// Set Garbage Collection
+ini_set('session.gc_divisor', 1000);
+ini_set('session.gc_maxlifetime', 1440);
+ini_set('session.gc_probability', 1);
 
 // Test error trigger
 // echo 'error_reporting()='.error_reporting().'('.E_ALL.')'.'<br />';
