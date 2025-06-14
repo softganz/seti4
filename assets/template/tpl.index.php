@@ -148,8 +148,12 @@ if (cfg('web.footer')) {
 <?php
 if (debug('query')) {
 	echo '<strong>Query time = '.$GLOBALS['R']->myDb->_query_times.' ms.</strong><br />';
-	print_o($GLOBALS['R']->mysql->query_items,'$mysql',1);
-	print_o(mydb()->_query_items,'$mydb',1);
+	echo '<b>$DB</b><ul>';
+	foreach (R()->_query_items as $query) echo '<li>'.$query.'</li>';
+	echo '</ul>';
+	echo '<b>$mydb</b><ul>';
+	foreach (mydb()->_query_items as $query) echo '<li>'.$query.'</li>';
+	echo '</ul>';
 }
 echo eval_php(cfg('web.complete'),_NL,_NL);
 ?>
