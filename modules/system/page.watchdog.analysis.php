@@ -2,8 +2,8 @@
 /**
 * Watchdog:: Analysis
 * Created :: 2020-01-01
-* Modify  :: 2023-07-06
-* Version :: 2
+* Modify  :: 2025-06-14
+* Version :: 3
 *
 * @return Widget
 *
@@ -74,10 +74,30 @@ class WatchdogAnalysis extends Page {
 						'children' => array_map(
 							function($rs) {
 								return [
-									'<a class="sg-action" href="'.url('watchdog/analysis',array('module'=>$rs->module)).'" data-rel="box" data-width="full">'.$rs->module.'</a>',
-									'<a class="sg-action" href="'.url('watchdog/analysis',array('module'=>$rs->module,'keyword'=>urlencode($rs->keyword))).'" data-rel="box" data-width="full">'.$rs->keyword.'</a>',
-									$rs->totals,
-									$this->right->admin?'<a class="sg-action" href="'.url('watchdog/analysis','delete='.$rs->module.':'.$rs->keyword).'" data-title="Delete logs" data-confirm="ต้องการลบข้อมูล กรุณายืนยัน?" data-rel="this" data-done="remove:parent tr"><i class="icon -material">delete</i></a>':'',
+									new Button([
+										'class' => 'sg-action',
+										'href' => Url::link('watchdog/analysis', ['module' => $rs->module]),
+										'text' => $rs->module,
+										'rel' => 'box',
+										'data-width' => 'full',
+									]),
+									new Button([
+										'class' => 'sg-action',
+										'href' => Url::link('watchdog/analysis', ['module' => $rs->module, 'keyword' => urlencode($rs->keyword)]),
+										'text' => $rs->keyword,
+										'rel' => 'box',
+										'data-width' => 'full',
+									]),
+									number_format($rs->totals),
+									$this->right->admin ? new Button([
+										'class' => 'sg-action',
+										'href' => Url::link('watchdog/analysis', ['delete' => $rs->module.':'.$rs->keyword]),
+										'data-title' => 'Delete logs',
+										'data-confirm' => 'ต้องการลบ log ชุดนี้ กรุณายืนยัน?',
+										'rel' => 'none',
+										'done' => 'remove:parent tr',
+										'icon' => new Icon('delete'),
+									]) : NULL,
 								];
 							},
 							$dbs->items
