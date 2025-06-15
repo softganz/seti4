@@ -2,8 +2,8 @@
 /**
 * Watchdog:: Analysis
 * Created :: 2020-01-01
-* Modify  :: 2025-06-14
-* Version :: 4
+* Modify  :: 2025-06-15
+* Version :: 5
 *
 * @return Widget
 *
@@ -53,6 +53,7 @@ class WatchdogAnalysis extends Page {
 					'method' => 'GET',
 					'children' => [
 						'd' => ['type' => 'text', 'label' => 'Show Last ', 'class' => '-numeric', 'size' => 6, 'value' => $this->days, 'posttext' => ' days'],
+						'debug' => ['type' => 'hidden', 'value' => post('debug')],
 						'go' => ['type' => 'button', 'value' => '<i class="icon -material">search</i><span>GO</span>'],
 						// $this->right->admin ? '<a class="sg-action btn -link" href="'.url('watchdog/analysis',array('delete'=>'emptymodule')).'" data-confirm="ต้องการลบข้อมูล กรุณายืนยัน?" data-rel="notify"><i class="icon -material">delete</i><span>Clear empty module on watchlog</span></a>&nbsp;' : NULL,
 					], // children
@@ -68,14 +69,14 @@ class WatchdogAnalysis extends Page {
 								return [
 									new Button([
 										'class' => 'sg-action',
-										'href' => Url::link('watchdog/analysis..logs', ['module' => $rs->module]),
+										'href' => Url::link('watchdog/analysis..logs', ['d' => $this->days, 'module' => $rs->module]),
 										'text' => $rs->module,
 										'rel' => 'box',
 										'data-width' => 'full',
 									]),
 									new Button([
 										'class' => 'sg-action',
-										'href' => Url::link('watchdog/analysis..logs', ['module' => $rs->module, 'keyword' => urlencode($rs->keyword)]),
+										'href' => Url::link('watchdog/analysis..logs', ['d' => $this->days, 'module' => $rs->module, 'keyword' => urlencode($rs->keyword)]),
 										'text' => $rs->keyword,
 										'rel' => 'box',
 										'data-width' => 'full',
@@ -116,7 +117,7 @@ class WatchdogAnalysis extends Page {
 	private function getSummary() {
 		return DB::select([
 			'SELECT
-			COUNT(*) `totalLog`, COUNT(DISTINCT DATE_FORMAT(`date`, "%Y-%m-%d")) `totalDate`
+			COUNT(*) `totalLog`, COUNT(DISTINCT DATE(`date`)) `totalDate`
 			FROM %watchdog%
 			LIMIT 1'
 		]);
@@ -124,20 +125,33 @@ class WatchdogAnalysis extends Page {
 
 	function logs() {
 			$logs = DB::select([
-				'SELECT w.*, u.`uid`, u.`username`
-				FROM %watchdog% w
-					LEFT JOIN %users% u USING(uid)
+				'SELECT
+					`w`.`wid`, `w`.`date`, `w`.`module`, `w`.`keyword`, `w`.`message`
+					, `w`.`ip`, `w`.`keyid`, `w`.`fldname`, `w`.`url`, `w`.`referer`, `w`.`browser`
+					, `user`.`uid`, `user`.`username`
+				FROM %watchdog% `w`
+					-- FORCE INDEX (PRIMARY, module, keyword)
+					LEFT JOIN %users% `user` ON `w`.`uid` = `user`.`uid`
 				%WHERE%
-				ORDER BY wid DESC
-				LIMIT '.$this->items,
+				ORDER BY `w`.`wid` DESC
+				LIMIT $ITEMS$',
 				'where' =>[
 					'%WHERE%' => [
-						$this->module ? ['w.`module` = :module', ':module' => $this->module] : NULL,
-						$this->keyword ? ['w.`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
-						$this->userId ? ['w.`uid` = :userId',':userId' => $this->userId] : NULL,
-						$this->message ? ['w.`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
-					]
-				]
+						// ['`w`.`wid` > (SELECT MAX(`wid`) - 10000 FROM %watchdog% %WHEREMAX%)'],
+						is_numeric($this->days) ? ['`w`.`date` >= :date', ':date' => date('Y-m-d 00:00:00', strtotime('today - '.$this->days.' days'))] : NULL,
+						$this->module ? ['`module` = :module', ':module' => $this->module] : NULL,
+						$this->keyword ? ['`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
+						$this->userId ? ['`uid` = :userId',':userId' => $this->userId] : NULL,
+						$this->message ? ['`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
+					],
+					// '%WHEREMAX%' => [
+					// 	$this->module ? ['`w`.`module` = :module', ':module' => $this->module] : NULL,
+					// 	$this->keyword ? ['`w`.`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
+					// 	$this->userId ? ['`w`.`uid` = :userId',':userId' => $this->userId] : NULL,
+					// 	$this->message ? ['`w`.`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
+					// ],
+				],
+				'var' => ['$ITEMS$' => $this->items]
 			]);
 
 			return new Scaffold([
