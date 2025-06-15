@@ -2,8 +2,8 @@
 /**
 * Admin   :: Install Basic Database Table
 * Created :: 2016-11-08
-* Modify  :: 2025-01-03
-* Version :: 4
+* Modify  :: 2025-06-15
+* Version :: 5
 *
 * @return Widget
 *
@@ -643,6 +643,7 @@ function __admin_install_create_table($prefix=null) {
 	$query->watchdog='CREATE TABLE IF NOT EXISTS %watchdog% (
 		`wid` bigint(20) NOT NULL auto_increment,
 		`date` datetime default NULL,
+		-- `logDate` date default NULL,
 		`uid` int(10) unsigned default NULL,
 		`ip` int(11) NOT NULL default 0,
 		`module` varchar(20) default NULL,
@@ -657,10 +658,12 @@ function __admin_install_create_table($prefix=null) {
 		KEY `uid` (`uid`),
 		KEY `ip` (`ip`),
 		KEY `date` (`date`),
+		-- KEY `logDate` (`logDate`),
 		KEY `module` (`module`),
 		KEY `keyword` (`keyword`),
 		KEY `keyid` (`keyid`),
-		KEY `fldname` (`fldname`)
+		KEY `fldname` (`fldname`),
+		KEY `modulekeyword` (`module`, `keyword`)
 	);';
 
 	$query->reaction='CREATE TABLE IF NOT EXISTS %reaction% (
