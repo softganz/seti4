@@ -2,8 +2,8 @@
 /**
 * Upgrade :: Upgrade table structor for version 4
 * Created :: 2024-01-01
-* Modify  :: 2024-08-10
-* Version :: 2
+* Modify  :: 2025-06-11
+* Version :: 3
 *
 * @return Array
 *
@@ -36,4 +36,11 @@ if (!mydb::columns('topic_revisions','css')) {
 	);
 	$result[$version][] = ['Add field css,phpBackend,script,data to topic_revisions.', mydb()->_query, mydb()->_error, mydb()->_error_no];
 }
+
+// if (!mydb::columns('watchdog','logDate')) {
+// 	mydb::query(
+// 		'ALTER TABLE %watchdog% ADD `logDate` DATE NULL DEFAULT NULL AFTER `date`, ADD INDEX (`logDate`)'
+// 	);
+// 	$result[$version][] = ['Add field logDate to watchdog.', mydb()->_query, mydb()->_error, mydb()->_error_no];
+// }
 ?>

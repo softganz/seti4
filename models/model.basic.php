@@ -7,7 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * @created 2007-07-09
- * @modify 2009-06-23
+ * @modify 2025-06-15
+ * Version 2
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -449,32 +450,15 @@ sg_text2html($topic->post->body).'
 		return array_key_exists($cid,$categorys)?$categorys[$cid]:NULL;
 	}
 
-	public static function watch_log($module=NULL,$keyword=NULL,$message=NULL,$uid=NULL,$keyid=NULL,$fldname=NULL) {
-		mydb()->_watchlog = false;
-		if (!mydb()->table_exists('watchdog')) return;
-
-		$watch = (Object) [
-			'date' => 'func.NOW()',
-			'uid' => \SG\getFirst($uid, i()->uid),
-			'ip' => ip2long(GetEnv('REMOTE_ADDR')),
-			'module' => \SG\getFirst($module),
+	public static function watch_log($module = NULL, $keyword = NULL, $message = NULL, $userId = NULL, $keyId = NULL, $fieldName = NULL) {
+		LogModel::save([
+			'module' => $module,
 			'keyword' => $keyword,
-			'keyid' => $keyid,
-			'fldname' => $fldname,
-			'message' => \SG\getFirst($message),
-			'url' => preg_match('/IIS/i',$_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'],
-			'referer' => \SG\getFirst($_SERVER['HTTP_REFERER']),
-			'browser' => $_SERVER['HTTP_USER_AGENT'],
-		];
-
-		mydb()->_watchlog = false;
-		mydb::query(
-			'INSERT INTO %watchdog%
-			( `date` , `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser`'.($keyid?', `keyid`':'').($fldname?', `fldname`':'').' )
-			VALUES
-			(:date, :uid, :ip, :module, :keyword, :message, :url, :referer, :browser'.($keyid?',:keyid':'').($fldname?',:fldname':'').' );',
-		$watch
-		);
+			'message' => $message,
+			'userId' => $userId,
+			'keyId' => $keyId,
+			'fieldName' => $fieldName,
+		]);
 	}
 
 	/**

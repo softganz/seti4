@@ -2,8 +2,8 @@
 /**
 * Log     :: Log Model
 * Created :: 2024-06-26
-* Modify  :: 2024-06-26
-* Version :: 1
+* Modify  :: 2025-06-15
+* Version :: 2
 *
 * @param Array $args
 * @return Object
@@ -13,31 +13,11 @@
 * @usage LogModel::function($conditions)
 */
 
+use Softganz\DB;
+
 class LogModel {
 	function __construct($args = []) {
 	}
-
-	// public static function get($id, $options = '{}') {
-	// 	$defaults = '{debug: false}';
-	// 	$options = \SG\json_decode($options, $defaults);
-	// 	$debug = $options->debug;
-
-	// 	$result = NULL;
-
-	// 	return $result;
-	// }
-
-	// public static function items($conditions, $options = '{}') {
-	// 	$conditions = (Object) $conditions;
-	// 	$defaults = '{debug: false}';
-	// 	$options = \SG\json_decode($conditions->options, $defaults);
-	// 	$debug = $options->debug;
-	// 	unset($conditions->options);
-
-	// 	$result = (Object) [];
-
-	// 	return $result;
-	// }
 
 	public static function save($args = []) {
 		// $module = NULL, $keyword = NULL, $message = NULL, $uid = NULL, $keyid = NULL, $fldname = NULL) {
@@ -51,6 +31,7 @@ class LogModel {
 
 		$data = (Object) [
 			'date' => date('Y-m-d H:i:s'),
+			// 'logDate' => date('Y-m-d'),
 			'uid' => SG\getFirst($args->userId, i()->uid),
 			'ip' => ip2long(i()->ip),
 			'module' => SG\getFirst($args->module),
@@ -63,19 +44,14 @@ class LogModel {
 			'fieldName' => $args->fieldName,
 		];
 
-		// debugMsg($data, '$data');
-		// if (i()->username == 'softganz') echo 'LOG : '.mydb()->_query.'<br />';
-
-		mydb()->_watchlog = false;
-		$r = mydb::query(
+		$r = DB::query([
 			'INSERT INTO %watchdog%
-			( `date` , `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser`, `keyid`, `fldname` )
+			( `date`, `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser`, `keyid`, `fldname` )
 			VALUES
 			(:date, :uid, :ip, :module, :keyword, :message, :url, :referer, :browser, :keyId, :fieldName );',
-			$data
-		);
-		// debugMsg(mydb()->_query);
-		mydb()->_watchlog = true;
+			'var' => $data,
+			'options' => ['log' => false, 'history' => false]
+		]);
 
 		// if (i()->username == 'softganz') echo 'WATCH : '.$stmt.print_o($data,'$data').print_o($r,'$r').'<br />';
 	}

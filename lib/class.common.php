@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2025-06-14
-* Version :: 8
+* Modify  :: 2025-06-15
+* Version :: 9
 */
 
 use Softganz\DB;
@@ -284,32 +284,16 @@ class Session implements SessionHandlerInterface {
 	public function gc($ttl = 86400) {
 		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
 		$end = date('Y-m-d H:i:s',time()-$ttl);
-		mydb::query('DELETE FROM %session% WHERE sess_last_acc < :end',':end',$end);
+		DB::query([
+			'DELETE FROM %session% WHERE sess_last_acc < :end',
+			'var' => [':end' => $end]
+		]);
 
-		$watch = (Object) [
-			'date' => 'func.NOW()',
-			'uid' => \SG\getFirst(i()->uid,'func.NULL'),
-			'ip' => ip2long(i()->ip),
+		LogModel::save([
 			'module' => 'session',
 			'keyword' => 'gc',
 			'message' => 'gc was execute',
-			'url' => preg_match('/IIS/i',$_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'],
-			'referer' => $_SERVER['HTTP_REFERER'],
-			'browser' => $_SERVER['HTTP_USER_AGENT'],
-		];
-
-		mydb()->_watchlog = false;
-		mydb::query(
-			'INSERT INTO %watchdog%
-			( `date` , `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser` )
-			VALUES
-			(:date, :uid, :ip, :module, :keyword, :message, :url, :referer, :browser );',
-			$watch
-		);
-
-		// echo 'end '.$end.' '.mydb()->_query;die;
-		return true;
-		return true;
+		]);
 	}
 }
 
