@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2025-05-26
-* Version :: 11
+* Modify  :: 2025-06-15
+* Version :: 12
 *
 * @param Array $args
 * @return Object
@@ -91,7 +91,7 @@ class DB {
 	private $debugMessage = [];
 	private $var = [];
 	private $where = [];
-	private $options; // key, value, group, sum, jsonDecode, multiple
+	private $options; // key, value, group, sum, jsonDecode, multiple, history, log, debug
 	private $multipleQuery = false; // Use for multiple query in one statement, default is single query
 
 	public $count = 0;
@@ -112,7 +112,7 @@ class DB {
 		unset($args[0]);
 		$this->args = $args;
 
-		$this->setOptions();
+		$this->setOptions((Array) $args['options']);
 
 		// if ($this->srcStmt) {
 		// 	$this->setDebugMessage('SRC', $this->srcStmt);
@@ -132,7 +132,9 @@ class DB {
 		$selectResult->selectResult();
 
 		if ($selectResult->errorMsg) {
-			$selectResult->setDebugMessage('PREPARE', $selectResult->stmt.'; <span style="color:red;">-- ERROR :: '.$selectResult->errorMsg.'</font>');
+			$errorMessage = $selectResult->stmt.'; <span style="color:red;">-- ERROR :: '.$selectResult->errorMsg.'</font>';
+			$selectResult->setDebugMessage('PREPARE', $errorMessage);
+
 			return new DbSelect(['errorMsg' => $selectResult->errorMsg, 'DB' => $selectResult]);
 		}
 
@@ -183,7 +185,6 @@ class DB {
 		]);
 
 		return $result;
-		return $queryResult;
 	}
 
 
@@ -285,7 +286,7 @@ class DB {
 						}
 						// debugMsg($before, '$before');
 						// debugMsg($after, '$after');
-						$value = (Object) array_merge_recursive(
+						$value = (Object) array_replace_recursive(
 							(Array) $before,
 							(Array) $jsonDecodeResult,
 							(Array) $after
@@ -438,18 +439,35 @@ class DB {
 		}
 	}
 
-	private function setOptions() {
-		if (isset($this->args['options'])) $this->options = (Object) $this->args['options'];
-		if (isset($this->options->sum)) {
+	private function setOptions(Array $options) {
+		$this->options = (Object) array_replace_recursive(
+			[
+				'log' => true,
+				'history' => true,
+				'key' => NULL,
+				'value' => NULL,
+				'group' => NULL,
+				'sum' => [],
+				'jsonDecode' => [],
+				'multiple' => false,
+				'debug' => false,
+			],
+			(Array) $options
+		);
+
+		if ($this->options->sum) {
+			$sumFields = $this->options->sum;
 			$this->options->sum = (Object) [];
-			foreach (explode(',', $this->args['options']['sum']) as $value) {
+			foreach (explode(',', $sumFields) as $value) {
 			 	$this->options->sum->{$value} = 0;
 			 }
 		}
 
-		if (isset($this->args['options']['multiple'])) {
-			$this->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $this->args['options']['multiple']);
+		if ($this->options->multiple) {
+			$this->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, true);
 		}
+
+		if ($this->options->debug) debugMsg($this->options, '$this->options');
 	}
 
 	private function setDebugMessage($key, $message) {
@@ -613,11 +631,15 @@ class DB {
 		$errorMessage = '<span style="color: red">ERROR::'.$code.'::'.$message.'</span>';
 		$this->setDebugMessage(NULL, $errorMessage);
 
-		if (class_exists('mydb') && class_exists('R')) {
-			if (function_exists('R')) R()->DB->queryItems($stmt.'; -- '.$errorMessage);
-			\mydb()->_watchlog = false;
-			\R::Model('watchdog.log', $module, $method, $stmt.'; -- '.$errorMessage);
-		}
+		// Save error to log
+		if ($this->options->log && class_exists('\LogModel')) {
+			\LogModel::save([
+				'module' => $module,
+				'keyword' => $method,
+				'message' => $stmt.'; -- '.$errorMessage,
+			]);
+		}		
+		if (function_exists('R')) R()->DB->queryItems($stmt.'; -- '.$errorMessage);
 	}
 
 	private function quote($value, $type = NULL) {return $this->PDO->quote($value, $type);}
