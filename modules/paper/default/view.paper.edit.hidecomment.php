@@ -1,6 +1,8 @@
 <?php
 /**
 * View Paper Hide Comment
+* Modify  :: 2025-06-15
+* Version :: 2
 *
 * @param Object $topicInfo
 * @param Int $commentId
@@ -17,7 +19,11 @@ function view_paper_edit_hidecomment($topicInfo, $commentId) {
 
 	$ret .= R::View('paper.comment.render',$rs);
 
-	BasicModel::watch_log('paper','Paper comment '.$rs->status,'Comment '.$rs->cid.' of <a href="'.url('paper/'.$rs->tpid.'#comment-'.$rs->cid).'">paper/'.$rs->tpid.'</a> was '.sg_status_text($rs->status));
+	LogModel::save([
+		'module' => 'paper',
+		'keyword' => 'Paper comment '.$rs->status,
+		'message' => 'Comment '.$rs->cid.' of <a href="'.url('paper/'.$rs->tpid.'#comment-'.$rs->cid).'">paper/'.$rs->tpid.'</a> was '.sg_status_text($rs->status)
+	]);
 
 	//$ret .= print_o($rs,'$rs');
 	// $ret .= 'Status = '.$result;

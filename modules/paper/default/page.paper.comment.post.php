@@ -2,8 +2,8 @@
 /**
 * Paper save post comment
 * Created :: 2019-06-05
-* Modify  :: 2025-02-24
-* Version :: 3
+* Modify  :: 2025-06-15
+* Version :: 4
 *
 * @param Object $self
 * @param Int $tpid
@@ -92,7 +92,11 @@ function paper_comment_post($self, $topicInfo = NULL) {
 		//debugMsg(mydb()->_query);
 
 		$post_id = mydb()->insert_id;
-		BasicModel::watch_log('paper','Paper comment post','<a href="'.url('paper/'.$tpid.'#comment-'.$post_id).'">paper/'.$tpid.'comment-#'.$post_id.'</a>:'.$topicInfo->title);
+		LogModel::save([
+			'module' => 'paper',
+			'keyword' => 'Paper comment post',
+			'message' => '<a href="'.url('paper/'.$tpid.'#comment-'.$post_id).'">paper/'.$tpid.'comment-#'.$post_id.'</a>:'.$topicInfo->title
+		]);
 	}
 
 	// Update topic comments

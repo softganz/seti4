@@ -1,4 +1,8 @@
 <?php
+/**
+ * Modify  :: 2025-06-15
+ * Version :: 2
+ */
 function r_gallery_remove($gallery) {
 	debugMsg('DELETE gallery '.$gallery);
 
@@ -14,7 +18,11 @@ function r_gallery_remove($gallery) {
 				if (!$is_photo_inused) {
 					unlink($filename);
 					debugMsg($is_photo_inused?'ภาพถูกใช้โดยคนอื่น':'ลบภาพ '.basename($filename).' เรียบร้อยแล้ว');
-					BasicModel::watch_log('project','remove photo','Photo id '.$rs->fid.' - '.$rs->file.' was removed from gallery by '.i()->name.'('.i()->uid.')');
+					LogModel::save([
+						'module' => 'project',
+						'keyword' => 'remove photo',
+						'message' => 'Photo id '.$rs->fid.' - '.$rs->file.' was removed from gallery by '.i()->name.'('.i()->uid.')'
+					]);
 				}
 			}
 		} else if ($rs->type=='doc') {
@@ -22,7 +30,11 @@ function r_gallery_remove($gallery) {
 			if (file_exists($filename) and is_file($filename)) {
 				unlink($filename);
 				debugMsg('ลบไฟล์ '.basename($filename).' เรียบร้อย');
-				BasicModel::watch_log('project','remove doc','File id '.$rs->fid.' - '.$rs->file.' was removed from gallery by '.i()->name.'('.i()->uid.')');
+				LogModel::save([
+					'module' => 'project',
+					'keyword' => 'remove doc',
+					'message' => 'File id '.$rs->fid.' - '.$rs->file.' was removed from gallery by '.i()->name.'('.i()->uid.')'
+				]);
 			}
 		}
 	}

@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-05-24
-* Version :: 13
+* Modify  :: 2025-06-15
+* Version :: 14
 *
 * @param Array $args
 * @return Object
@@ -863,7 +863,11 @@ class NodeModel {
 		$result->process[] = mydb()->_query;
 
 		// save delete log
-		BasicModel::watch_log('paper','Paper delete','paper/'.$nodeId.' - '.$result->data->title.' was delete');
+		LogModel::save([
+			'module' => 'paper',
+			'keyword' => 'Paper delete',
+			'message' => 'paper/'.$nodeId.' - '.$result->data->title.' was delete'
+		]);
 
 		// delete was complete
 		$result->complete = true;

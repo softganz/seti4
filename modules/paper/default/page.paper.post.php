@@ -1,6 +1,8 @@
 <?php
 /**
 * Create new paper
+* Modify  :: 2025-06-15
+* Version :: 2
 *
 * @param Object $self
 * @param String $type
@@ -122,7 +124,11 @@ function paper_post($self, $type = NULL, $tid = NULL) {
 		} else {
 			R::On($moduleName.'.paper.post.save', $self,$topic,$form,$result);
 
-			BasicModel::watch_log('paper','Paper post','<a href="'.url('paper/'.$topic->tpid).'">paper/'.$topic->tpid.'</a>:'.$topic->post->title);
+			LogModel::save([
+				'module' => 'paper',
+				'keyword' => 'Paper post',
+				'message' => '<a href="'.url('paper/'.$topic->tpid).'">paper/'.$topic->tpid.'</a>:'.$topic->post->title
+			]);
 
 			/*
 			if (_ON_HOST && cfg('alert.email')) {

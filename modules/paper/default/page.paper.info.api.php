@@ -2,8 +2,8 @@
 /**
 * Paper   :: Information API
 * Created :: 2021-11-22
-* Modify  :: 2023-12-27
-* Version :: 5
+* Modify  :: 2025-06-15
+* Version :: 6
 *
 * @param Int $nodeId
 * @param String $action
@@ -136,7 +136,11 @@ class PaperInfoApi extends Page {
 					}
 				}
 
-				BasicModel::watch_log('paper','Paper comment edit','Edit comment id '.$tranId.' of <a href="'.url('paper/'.$tpid.'#comment-'.$tranId).'">paper/'.$tpid.'</a>');
+				LogModel::save([
+					'module' => 'paper',
+					'keyword' => 'Paper comment edit',
+					'message' => 'Edit comment id '.$tranId.' of <a href="'.url('paper/'.$tpid.'#comment-'.$tranId).'">paper/'.$tpid.'</a>'
+				]);
 				// if ($_SERVER['HTTP_REFERER']) location($_SERVER['HTTP_REFERER']); else location('paper/'.$tpid);
 
 				break;

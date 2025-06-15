@@ -1,6 +1,8 @@
 <?php
 /**
 * View Paper Edit Comment
+* Modify  :: 2025-06-15
+* Version :: 2
 *
 * @param Object $topicInfo
 * @param Int $commentId
@@ -71,7 +73,11 @@ function view_paper_edit_editcomment($topicInfo, $commentId) {
 		}
 
 
-		BasicModel::watch_log('paper','Paper comment edit','Edit comment id '.$comment->cid.' of <a href="'.url('paper/'.$comment->tpid.'#comment-'.$comment->cid).'">paper/'.$comment->tpid.'</a>');
+		LogModel::save([
+			'module' => 'paper',
+			'keyword' => 'Paper comment edit',
+			'message' => 'Edit comment id '.$comment->cid.' of <a href="'.url('paper/'.$comment->tpid.'#comment-'.$comment->cid).'">paper/'.$comment->tpid.'</a>'
+		]);
 
 		$comment = PaperModel::getCommentById($commentId);
 		$ret .= R::View('paper.comment.render', $comment);

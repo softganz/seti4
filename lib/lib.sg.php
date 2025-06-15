@@ -2,8 +2,8 @@
 /**
 * Function:: Common Function
 * Created :: 2007-07-09
-* Modify  :: 2024-06-25
-* Version :: 5
+* Modify  :: 2025-06-15
+* Version :: 6
 *
 * @param Array $args
 * @return Widget
@@ -699,7 +699,11 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 		$result = false;
 		if ($srcWidth >= $dstWidth && $srcHeight >= $dstHeight) {
 			// ini_set('memory_limit', '1024MB');
-			BasicModel::watch_log('system', 'Photo Resize', \SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
+			LogModel::save([
+				'module' => 'system',
+				'keyword' => 'Photo Resize',
+				'message' => \SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile])
+			]);
 
 			// Copy file that size over 6MB to upload/error folder
 			if ($srcSize > 6000000) {
@@ -717,7 +721,11 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 					$handle = @imagecreatefromgif($srcFile);
 				else return false;
 			} catch (Exception $e) {
-				BasicModel::watch_log('system', 'Photo Resize', \SG\json_encode(['error' => 'YES', 'imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
+				LogModel::save([
+					'module' => 'system',
+					'keyword' => 'Photo Resize',
+					'message' => \SG\json_encode(['error' => 'YES', 'imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile])
+				]);
 				return false;
 			}
 			if (!$handle) return false;

@@ -1,6 +1,8 @@
 <?php
 /**
 * Delete comment
+* Modify  :: 2025-06-15
+* Version :: 2
 *
 * @param Integer/Array $commentId
 * @return Object $options
@@ -92,7 +94,11 @@ function r_paper_comment_delete($commentId, $options = '{}') {
 
 
 
-		BasicModel::watch_log('paper','Paper comment delete','Delete comment id '.$delete->id.' of <a href="'.url('paper/'.$delete->tpid).'">paper/'.$delete->tpid.'</a>');
+		LogModel::save([
+			'module' => 'paper',
+			'keyword' => 'Paper comment delete',
+			'message' => 'Delete comment id '.$delete->id.' of <a href="'.url('paper/'.$delete->tpid).'">paper/'.$delete->tpid.'</a>'
+		]);
 
 		/*
 		// get last post date

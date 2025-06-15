@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2025-06-214
-* Version :: 13
+* Modify  :: 2025-06-15
+* Version :: 14
 *
 * @param Int $userId
 * @return Object
@@ -235,7 +235,11 @@ class UserModel {
 
 		$userName = mydb::select('SELECT `username` FROM %users% WHERE `uid` = :userId LIMIT 1', [':userId' => $userId])->username;
 
-		BasicModel::watch_log('user','Password change','User '.$userName.' ('.$userId.') was change password');
+		LogModel::save([
+			'module' => 'user',
+			'keyword' => 'Password change',
+			'message' => 'User '.$userName.' ('.$userId.') was change password'
+		]);
 	}
 
 	// delete user information
@@ -330,7 +334,11 @@ class UserModel {
 		//TODO: Bug ตอนลงทะเบียนสมาชิกใหม่ จะไม่สามารถดึงค่าจากฐานข้อมูลผ่าน function ได้
 
 		if (!in_array($rs->status, ['enable',1])) {
-			BasicModel::watch_log('user','Invalid signin','user '.$username.' not exists or disabled');
+			LofModel::save([
+				'module' => 'user',
+				'keyword' => 'Invalid signin',
+				'message' => 'user '.$username.' not exists or disabled'
+			]);
 			return false;
 		}
 
@@ -346,7 +354,11 @@ class UserModel {
 					':username' => $username
 				]
 			]);
-			BasicModel::watch_log('user', 'Invalid signin', $username.' incorrect password');
+			LogModel::save([
+				'module' => 'user',
+				'keyword' => 'Invalid signin',
+				'message' => $username.' incorrect password'
+			]);
 			return false;
 		}
 
@@ -411,7 +423,12 @@ class UserModel {
 			]
 		);
 
-		BasicModel::watch_log('user','Signin','user '.$username.' was signin',$user->uid);
+		LogModel::save([
+			'module' => 'user',
+			'keyword' => 'Signin',
+			'message' => 'user '.$username.' was signin',
+			'userId' => $user->uid
+		]);
 
 		$debug_str .= '<p>query='.mydb()->_query.'</p>';
 		$debug_str .= print_o($_COOKIE,'$COOKIE');
@@ -521,7 +538,12 @@ class UserModel {
 					':uid' => $result->uid,
 				]
 			);
-			BasicModel::watch_log('user','Signin by Google','Email '.$result->email.' ('.$result->username.') was signin with Google',$result->uid);
+			LogModel::save([
+				'module' => 'user',
+				'keyword' => 'Signin by Google',
+				'message' => 'Email '.$result->email.' ('.$result->username.') was signin with Google',
+				'userId' => $result->uid
+			]);
 		}
 		return $result;
 	}
@@ -599,12 +621,21 @@ class UserModel {
 					'token' => $jwt->payload->jti
 				]);
 				if (!$result->uid) {
-					BasicModel::watch_log('user','Invalid signin','Email '.$result->email.' ('.$result->username.') signin with Google error',$result->uid);
+					LogModel::save([
+						'module' => 'user',
+						'keyword' => 'Invalid signin',
+						'message' => 'Email '.$result->email.' ('.$result->username.') signin with Google error',
+						'userId' => $result->uid
+					]);
 				}
 
 				return $result->uid ? $result : (Object) ['signInErrorMessage' => 'Google account '.$jwt->payload->email.' is not recognized for Google Sign-In on this site. Please make sure you are using the same account that you have previously linked.'];
 			} else {
-				BasicModel::watch_log('user','Invalid signin','Invalid credential => '.$credential);
+				LogModel::save([
+					'module' => 'user',
+					'keyword' => 'Invalid signin',
+					'message' => 'Invalid credential => '.$credential
+				]);
 				return (Object) ['signInResult' => 'Invalid user signin'];
 			}
 		} else if ($authHeader) {

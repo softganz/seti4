@@ -2,8 +2,8 @@
 /**
 * Photo   :: Photo Model
 * Created :: 2024-11-02
-* Modify  :: 2025-02-27
-* Version :: 2
+* Modify  :: 2025-06-15
+* Version :: 3
 *
 * @param Array $args
 * @return Object
@@ -53,7 +53,11 @@ class PhotoModel {
 			if ($srcWidth >= $options['width'] && $srcHeight >= $options['height']) {
 				// ini_set('memory_limit', '1024MB');
 				if ($options['log']) {
-					BasicModel::watch_log('system', 'Photo Resize', \SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
+					LogModel::save([
+						'module' => 'system',
+						'keyword' => 'Photo Resize',
+						'message' => \SG\json_encode(['imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile])
+					]);
 				}
 
 				// Copy file that size over 6MB to upload/error folder
@@ -75,7 +79,11 @@ class PhotoModel {
 					}
 				} catch (Exception $e) {
 					if ($options['log']) {
-						BasicModel::watch_log('system', 'Photo Resize', \SG\json_encode(['error' => 'YES', 'imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile]));
+						LogModel::save([
+							'module' => 'system',
+							'keyword' => 'Photo Resize',
+							'message' => \SG\json_encode(['error' => 'YES', 'imageType' => $srcType, 'width' => $srcWidth, 'height' => $srcHeight,'size' => $srcSize, 'file' => $srcFile])
+						]);
 					}
 					return false;
 				}

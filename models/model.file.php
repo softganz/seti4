@@ -2,8 +2,8 @@
 /**
 * Model   :: File Model
 * Created :: 2021-12-21
-* Modify  :: 2025-06-13
-* Version :: 7
+* Modify  :: 2025-06-15
+* Version :: 8
 *
 * @return Object
 *
@@ -396,7 +396,11 @@ class FileModel {
 				$result->msg = $result->photoInused ? 'ภาพถูกใช้โดยคนอื่น' : 'ลบภาพเรียบร้อยแล้ว';
 			}
 
-			BasicModel::watch_log('photo', 'remove photo', 'Photo id '.$fileId.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')');
+			LogModel::save([
+				'module' => 'photo',
+				'keyword' => 'remove photo',
+				'message' => 'Photo id '.$fileId.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')'
+			]);
 		} else if ($fileInfo->info->type == 'doc') {
 			// Delete doc record
 			if ($options->deleteRecord) {
@@ -418,7 +422,11 @@ class FileModel {
 			}
 
 			// Create log
-			BasicModel::watch_log('photo', 'remove doc', 'File id '.$fileInfo->info->fid.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')');
+			LogModel::save([
+				'module' => 'photo',
+				'keyword' => 'remove doc',
+				'message' => 'File id '.$fileInfo->info->fid.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')'
+			]);
 		}
 		return $result;
 	}

@@ -1,6 +1,9 @@
 <?php
 /**
  * Delete document
+ * Modify  :: 2025-06-15
+ * Version :: 2
+ * 
  *
  * @param Integer $fid - file id
  * @param Object $options
@@ -32,7 +35,11 @@ function r_doc_delete($fid, $options = '{}') {
 			unlink($filename);
 		}
 
-		BasicModel::watch_log('photo', 'remove doc', 'File id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')');
+		LogModel::save([
+			'module' => 'photo',
+			'keyword' => 'remove doc',
+			'message' => 'File id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')'
+		]);
 	}
 	return $result;
 }

@@ -1,6 +1,8 @@
 <?php
 /**
  * Delete photo
+ * Modify  :: 2025-06-15
+ * Version :: 2
  *
  * @param Integer $fid - file id
  * @param Object $options
@@ -42,7 +44,11 @@ function r_photo_delete($fid, $options = '{}') {
 				$result->msg = $is_photo_inused?'ภาพถูกใช้โดยคนอื่น':'ลบภาพเรียบร้อยแล้ว';
 			}
 
-			BasicModel::watch_log('photo', 'remove photo', 'Photo id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')');
+			LogModel::save([
+				'module' => 'photo',
+				'keyword' => 'remove photo',
+				'message' => 'Photo id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')'
+			]);
 		} else if ($rs->type == 'doc') {
 			if ($options->deleteRecord) {
 				$stmt = 'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1';
@@ -55,7 +61,11 @@ function r_photo_delete($fid, $options = '{}') {
 				unlink($filename);
 			}
 
-			BasicModel::watch_log('photo', 'remove doc', 'File id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')');
+			LogModel::save([
+				'module' => 'photo',
+				'keyword' => 'remove doc',
+				'message' => 'File id '.$rs->fid.' - '.$rs->file.' was removed from topic '.$rs->tpid.' by '.i()->name.'('.i()->uid.')'
+			]);
 		}
 	}
 	return $result;

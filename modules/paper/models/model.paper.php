@@ -2,8 +2,8 @@
 /**
 * Paper   :: Paper Model
 * Created :: 2007-11-21
-* Modify  :: 2024-10-28
-* Version :: 7
+* Modify  :: 2025-06-15
+* Version :: 8
 *
 * @usage import('model:paper.php');
 * @usage new PaperModel([])
@@ -390,7 +390,11 @@ class PaperModel extends \NodeModel {
 		}
 
 		// Save delete log
-		\BasicModel::watch_log('paper','Paper delete','Paper/'.$tpid.' was delete');
+		\LogModel::save([
+			'module' => 'paper',
+			'keyword' => 'Paper delete',
+			'message' => 'Paper/'.$tpid.' was delete'
+		]);
 
 		// delete was complete
 		$result->complete = true;
