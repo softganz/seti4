@@ -239,7 +239,7 @@
 
 
 /* widget-inlineedit */
-.widget-inlineedit {
+.widget-inlineedit, .sg-inline-edit {
 	&.-fill {display: block;}
 	&.-hots>label {font-weight: bold;}
 	&.-single-line {display: block; line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;}
