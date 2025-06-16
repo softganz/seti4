@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-06-13
-* Version :: 41
+* Modify  :: 2025-06-16
+* Version :: 42
 */
 
 'use strict'
@@ -2365,7 +2365,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 		// RETURN function that can call from outside
 		self.doAction = function() {
-			let outputOpacity = $(".report-output").css("opacity")
+			// let outputOpacity = $(".report-output").css("opacity")
 
 			if ($this.hasClass('-submit-group')) {
 				$this.closest('ul').children().removeClass("-active")
@@ -2375,7 +2375,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				$("#graphtype").val($this.val())
 			}
 
-			$(".report-output").css("opacity", 0.5)
+			// $(".report-output").css("opacity", 0.5)
 
 			// Create post parameter
 			let para = apiParameter()
@@ -2387,21 +2387,42 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			if (debug) startDebug(para)
 
+			const waiting = document.createElement('div');
+			waiting.id = 'draw-report-waiting';
+			waiting.innerHTML = '<span style="text-align: center;"><div class="loader -rotate" style="width: 64px; height: 64px;"></div><br><br>กรุณารอสักครู่ กำลังประมวลผลข้อมูล</span>';
+			waiting.style.display = 'flex';
+			waiting.style.position = 'absolute';
+			waiting.style.top = 0;
+			waiting.style.bottom = 0;
+			waiting.style.left = 0;
+			waiting.style.right = 0;
+			waiting.style.alignItems = 'center';
+			waiting.style.justifyContent = 'center';
+			waiting.style.backgroundColor = '#FFFFFF';
+			waiting.style.opacity = 0.9;
+			waiting.style.zIndex = 1000;
+
+			document.body.appendChild(waiting);
+
+			// notify('กำลังประมวลผลข้อมูล');
 			$.post(
 				queryUrl,
 				para,
 				function(data) {
-					notify()
+					// notify()
 					//console.log(data)
 					//console.log('GET DATA')
 				},
 				settings.dataType
 			).fail(function(data) {
 				notify('Error on getting report data. Please Contact Admin.');
-				$(".report-output").css("opacity", outputOpacity)
+				// $(".report-output").css("opacity", outputOpacity)
+				waiting.remove();
 				// console.log('DONE WITH data = ',data)
 			}).done(function(data) {
-				$(".report-output").css("opacity", outputOpacity)
+				notify();
+				// $(".report-output").css("opacity", outputOpacity)
+				waiting.remove();
 				if (debugSG && data.debug) console.log('DONE WITH data = ',data)
 				// if (debugSG) console.log('DONE WITH data = ',data)
 				// Process callback function
