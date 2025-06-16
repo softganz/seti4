@@ -2,8 +2,8 @@
 /**
 * Model   :: User Information
 * Created :: 2021-07-22
-* Modify  :: 2025-06-15
-* Version :: 14
+* Modify  :: 2025-06-17
+* Version :: 15
 *
 * @param Int $userId
 * @return Object
@@ -334,7 +334,7 @@ class UserModel {
 		//TODO: Bug ตอนลงทะเบียนสมาชิกใหม่ จะไม่สามารถดึงค่าจากฐานข้อมูลผ่าน function ได้
 
 		if (!in_array($rs->status, ['enable',1])) {
-			LofModel::save([
+			LogModel::save([
 				'module' => 'user',
 				'keyword' => 'Invalid signin',
 				'message' => 'user '.$username.' not exists or disabled'
