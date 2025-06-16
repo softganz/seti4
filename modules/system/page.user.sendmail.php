@@ -1,6 +1,8 @@
 <?php
 /**
-* Module Method
+* User    :: Send mail
+* Modify  :: 2025-06-16
+* Version :: 2
 *
 * @param Object $self
 * @param Int $var
@@ -15,7 +17,11 @@ function user_sendmail($self) {
 	$post = post();
 
 	$logMsg = 'Send mail request mailto:'.$post['mailto'].' title:'.$post['title'];
-	R::Model('watchdog.log','user','sendmail',$logMsg);
+	LogModel::save([
+		'module' => 'user',
+		'keyword' => 'sendmail',
+		'message' => $logMsg
+	]);
 
 
 	// send mail

@@ -1,6 +1,8 @@
 <?php
 /**
-* Module Method
+* User    :: Reset Password
+* Modify  :: 2025-06-16
+* Version :: 2
 *
 * @param Object $self
 * @param Int $var
@@ -29,12 +31,20 @@ function user_resetpassword($self) {
 				mydb::query($stmt,':uid',$rs->uid, ':password',$password);
 				$ret.=message('notify','บันทึกรหัสผ่านใหม่เรียบร้อย กรุณาเข้าสู่ระบบสมาชิกอีกครั้งด้วยรหัสใหม่');
 				$ret.='<p><a class="btn" href="'.url('user').'">คลิกที่นี่ เพื่อเข้าสู่ระบบสมาชิกด้วยรหัสใหม่</a></p>';
-				R::model('watchdog.log','user','Password request confirm','Password request of '.$rs->username.' was changed.');
+				LogModel::sav([
+					'module' => 'user',
+					'keyword' => 'Password request confirm',
+					'message' => 'Password request of '.$rs->username.' was changed.'
+				]);
 				return $ret;
 			}
 		}
 
-		R::model('watchdog.log','user','Password request click','Password request of '.$rs->username.' was click.');
+		LogModel::save([
+			'module' => 'user',
+			'keyword' => 'Password request click',
+			'message' => 'Password request of '.$rs->username.' was click.'
+		]);
 		$ret.='<h2>Enter new password</h2>';
 		$form=new Form('resetpassword',url(q()),'user-resetpassword','sg-form');
 		$form->addData('checkValid',true);

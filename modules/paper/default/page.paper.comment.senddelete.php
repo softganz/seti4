@@ -2,8 +2,8 @@
 /**
 * Paper   :: Send Delete Request Via Email
 * Created :: 2024-07-07
-* Modify  :: 2024-07-07
-* Version :: 2
+* Modify  :: 2025-06-16
+* Version :: 3
 *
 * @param String $commentId
 * @return Widget
@@ -130,7 +130,11 @@ class PaperCommentSenddelete extends Page {
 		}
 
 
-		R::Model('watchdog.log', 'paper', 'Send delete comment', 'Paper id : '.$commentInfo->tpid.' : Comment id '.$commentInfo->cid.' : '.$commentInfo->title.'<br />'.$post->detail);
+		LogModel::save([
+			'module' => 'paper',
+			'keword' => 'Send delete comment',
+			'message' => 'Paper id : '.$commentInfo->tpid.' : Comment id '.$commentInfo->cid.' : '.$commentInfo->title.'<br />'.$post->detail
+		]);
 
 		//BasicModel::sendmail($mail);
 		//$ret .= $mailTitle.$mailMessage;

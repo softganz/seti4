@@ -2,8 +2,8 @@
 /**
 * Admin   :: Admin User API
 * Created :: 2022-10-22
-* Modify  :: 2025-06-15
-* Version :: 5
+* Modify  :: 2025-06-16
+* Version :: 6
 *
 * @param Int $userId
 * @param String $action
@@ -50,7 +50,12 @@ class AdminUserApi extends PageApi {
 			'var' => [ ':username' => $this->userInfo->username ]
 		]);
 
-		R::model('watchdog.log','Admin','User '.($status == 'block' ? 'Block' : 'Active'),'User '.$uid.' ('.$this->userInfo->username.') was '.($status == 'block' ? 'blocked' : 'active').'.', i()->uid, $uid);
+		LogModel::save([
+			'module' => 'Admin',
+			'keyword' => 'User '.($status == 'block' ? 'Block' : 'Active'),
+			'message' => 'User '.$uid.' ('.$this->userInfo->username.') was '.($status == 'block' ? 'blocked' : 'active').'.',
+			'keyId' => $uid
+		]);
 
 		return apiSuccess('User '.$username.' was '.($status == 'block' ? 'blocked' : 'active').'.');
 	}
@@ -94,7 +99,12 @@ class AdminUserApi extends PageApi {
 			}
 		}
 
-		R::model('watchdog.log','Admin','User Block','User '.$this->userId.' was blocked and delete topics.', i()->uid, $this->userId);
+		LogModel::save([
+			'module' => 'Admin',
+			'keyword' => 'User Block',
+			'message' => 'User '.$this->userId.' was blocked and delete topics.',
+			'keyId' => $this->userId
+		]);
 
 		return apiSuccess('Blocked and delete '.$dbs->_num_rows.' topics');
 	}

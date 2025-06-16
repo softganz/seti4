@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2025-06-14
-* Version :: 9
+* Modify  :: 2025-06-16
+* Version :: 12
 */
 
 //---------------------------------------
@@ -1172,7 +1172,10 @@ function htmlview($html, $title = NULL, $line_no = true) {
  */
 function error($code, String $message) {
 	if (strtolower($message) === 'access denied') {
-		R::Model('watchdog.log', NULL, 'Access denied');
+		LogModel::save([
+			'module' => 'system',
+			'keyword' => 'Access denied'
+		]);
 	}
 	if ($code) http_response_code($code);
 	if (_AJAX) return ['responseCode' => $code, 'text' => $message];
@@ -1207,7 +1210,10 @@ function success($message) {
  */
 function apiError($code, String $message) {
 	if (strtolower($message) === 'access denied') {
-		R::Model('watchdog.log', NULL, 'Access denied');
+		LogModel::save([
+			'module' => 'system',
+			'message' => 'Access denied'
+		]);
 	}
 	if ($code) http_response_code($code);
 	return (Object) ['responseCode' => $code, 'text' => $message];
@@ -1255,11 +1261,6 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 
 	$is_accessdenied = false;
 
-	// /* add watchdog log on Access denied */
-	// if (is_string($args['text']) && strtolower($args['text']) == 'access denied') R::Model('watchdog.log',$args['module'],'Access denied');
-
-	// debugMsg($args,'$args');
-
 	$ret = '';
 	if ($args['type']) {
 		$ret .= '<div class="messages -'.($args['type'] ? $args['type'] : 'status').'">'._NL;
@@ -1296,7 +1297,10 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 		} else {
 			return R::View('signform', $options);
 		}
-		R::Model('watchdog.log',$args['module'],'Access denied');
+		LogModel::save([
+			'module' => $args['module'],
+			'keyword' => 'Access denied'
+		]);
 	}
 	// echo $args['text'];
 	// echo $ret;

@@ -6,9 +6,9 @@
 * @version 4.00
 * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
-* @created :: 2009-07-06
-* @modify  :: 2024-11-15
-* @version :: 2
+* Created :: 2009-07-06
+* Modify  :: 2025-06-16
+* Version :: 3
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -548,7 +548,11 @@ class MyDb {
 			if ($error) {
 				mydb()->_watchlog = false;
 				$myDb->_errors[] = $myDb->_error;
-				R::Model('watchdog.log','mydb','query', $queryMsg);
+				LogModel::save([
+					'module' => 'mydb',
+					'keyword' => 'query',
+					'message' => $queryMsg
+				]);
 			}
 		}
 		if (mydb()->_watchlog && $debug) debugMsg('<p>===== QUERY DONE =====</p>');
@@ -703,7 +707,11 @@ class MyDb {
 			$myDb->_error_msg = $selectResult->_error_msg;
 			if (mydb()->_watchlog) {
 				mydb()->_watchlog = false;
-				R::Model('watchdog.log','mydb','select',$queryMsg);
+				LogModel::save([
+					'module' => 'mydb',
+					'keyword' => 'select',
+					'message' =>$queryMsg
+				]);
 			}
 			mydb()->_watchlog = true;
 			return $selectResult;

@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-06-15
-* Version :: 29
+* Modify  :: 2025-06-16
+* Version :: 30
 */
 
 /*************************************************************
@@ -1298,7 +1298,10 @@ class SgCore {
 		} else {
 			// Page not found
 			http_response_code(_HTTP_ERROR_NOT_FOUND);
-			R::Model('watchdog.log','system','Page not found');
+			LogModel::save([
+				'module' => 'system',
+				'keyword' => 'Page not found'
+			]);
 			// Set header to no found and noacrchive when url address is load function page
 			if ($q == str_replace('.', '/', $package)) {
 				header('HTTP/1.0 404 Not Found');

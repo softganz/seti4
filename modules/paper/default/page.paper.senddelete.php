@@ -1,6 +1,8 @@
 <?php
 /**
-* Module Method
+* Paper   :: Send Delete
+* Modify  :: 2025-06-16
+* Version :: 2
 *
 * @param Object $self
 * @param Int $var
@@ -67,7 +69,11 @@ function paper_senddelete($self, $tpid = NULL) {
 			}
 
 
-			R::Model('watchdog.log', 'paper', 'Send delete paper', 'Paper : '.$tpid.' : '.$topicInfo->title.'<br />'.$post->detail);
+			LogModel::save([
+				'module' => 'paper',
+				'keyword' => 'Send delete paper',
+				'message' => 'Paper : '.$tpid.' : '.$topicInfo->title.'<br />'.$post->detail
+			]);
 
 			//BasicModel::sendmail($mail);
 			//$ret .= print_o($mail,'$mail');

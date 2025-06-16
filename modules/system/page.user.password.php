@@ -2,8 +2,8 @@
 /**
 * User    :: Reset Passsword Request Form
 * Created :: 2021-11-26
-* Modify  :: 2023-08-23
-* Version :: 2
+* Modify  :: 2025-06-16
+* Version :: 3
 *
 * @return Widget
 *
@@ -107,12 +107,20 @@ class UserPassword extends Page {
 					// $ret.=message('error','ไม่สามารถส่งอีเมล์ได้ในตอนนี้ กรุณาลองใหม่ในโอกาสต่อไป');
 					$logMsg.=' But email send was error.';
 				}
-				R::model('watchdog.log','user','Password request',$logMsg);
+				LogModel::save([
+					'module' => 'user',
+					'keyword' => 'Password request',
+					'message' => $logMsg
+				]);
 			} else {
 				$ret .= 'ท่านได้ร้องขอรหัสผ่านจากเว็บ แต่ท่านไม่ได้ระบุอีเมล์ไว้ในข้อมูลของสมาชิก จึงไม่สามารถส่งข้อมูลให้ท่านทางอีเมล์ได้.';
 				// $ret .= message('error','ท่านได้ร้องขอรหัสผ่านจากเว็บ แต่ท่านไม่ได้ระบุอีเมล์ไว้ในข้อมูลของสมาชิก จึงไม่สามารถส่งข้อมูลให้ท่านทางอีเมล์ได้.');
 				$logMsg.=' But email is invalid.';
-				R::model('watchdog.log','user','Password request',$logMsg);
+				LogModel::sav([
+					'module' => 'user',
+					'keyword' => 'Password request',
+					'message' => $logMsg
+				]);
 			}
 		}
 
