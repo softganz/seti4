@@ -31,7 +31,7 @@ function user_resetpassword($self) {
 				mydb::query($stmt,':uid',$rs->uid, ':password',$password);
 				$ret.=message('notify','บันทึกรหัสผ่านใหม่เรียบร้อย กรุณาเข้าสู่ระบบสมาชิกอีกครั้งด้วยรหัสใหม่');
 				$ret.='<p><a class="btn" href="'.url('user').'">คลิกที่นี่ เพื่อเข้าสู่ระบบสมาชิกด้วยรหัสใหม่</a></p>';
-				LogModel::sav([
+				LogModel::save([
 					'module' => 'user',
 					'keyword' => 'Password request confirm',
 					'message' => 'Password request of '.$rs->username.' was changed.'

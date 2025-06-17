@@ -116,7 +116,7 @@ class UserPassword extends Page {
 				$ret .= 'ท่านได้ร้องขอรหัสผ่านจากเว็บ แต่ท่านไม่ได้ระบุอีเมล์ไว้ในข้อมูลของสมาชิก จึงไม่สามารถส่งข้อมูลให้ท่านทางอีเมล์ได้.';
 				// $ret .= message('error','ท่านได้ร้องขอรหัสผ่านจากเว็บ แต่ท่านไม่ได้ระบุอีเมล์ไว้ในข้อมูลของสมาชิก จึงไม่สามารถส่งข้อมูลให้ท่านทางอีเมล์ได้.');
 				$logMsg.=' But email is invalid.';
-				LogModel::sav([
+				LogModel::save([
 					'module' => 'user',
 					'keyword' => 'Password request',
 					'message' => $logMsg
