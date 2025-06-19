@@ -247,7 +247,7 @@
 	&.-textarea {display: block;}
 	&.-disabled {opacity: 0.5;}
 	/* @group inline-edit-field */
-	.inline-edit-field {
+	.inline-edit-field, .inlineedit-field {
 		padding: 0; margin: 0; color: #333; display: inline-block; min-width: 100px; width: auto; min-height: 1.4em; vertical-align: middle;
 
 		>.-for-input {display: block; line-height: 2.3rem; min-height: 25px;}

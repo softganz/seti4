@@ -1347,21 +1347,27 @@ $SCREENS
 
 
 
-	.widget-item {margin:20px 10px; background-color: #fff; box-shadow: 1px 1px 2px #aaa; position: relative;}
-		.widget-item h2 {margin:0; padding:5px; color: green;}
-		.widget-item .summary {margin:0 10px; padding:0; overflow: hidden; pointer-events: none;}
-		.widget-item div.photo {margin:10px 0; padding:0; border:none;}
-		.widget-item .photo-th {width:100%; width: calc(100% + 14px); margin-left: calc(-7px); overflow:hidden;}
-		.widget-item img.image {width:100%;height:auto; margin:0; padding:0; border:none;}
-		.widget-item p {margin:0; padding:0;}
-		.widget-item h3 {margin:0; padding:5px; font-size: 1.6em;}
-		.widget-item .timestamp {position: absolute; left:10px; bottom:0;}
-
-		.widget.-col2 {}
-		.widget.-col3 {}
-			.widget.-col2 .widget-item {}
-			.widget.-col3 .widget-item {}
-
+	.widget-item {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin: 0;
+		gap: 8px;
+		box-shadow: none;
+		p {margin:0; padding:0;}
+		.photo-th {width: auto; margin: 0;}
+		img.image {width: 100%; height:auto; margin: 0; padding: 0; border: none; border-radius: 8px;}
+		>.photo {order: -1; margin: 0;}
+		>.timestamp {order: 2; flex: 0 0 40%; padding: 0 8px;}
+		>.footer {order: 3; flex: 1; padding: 0 8px;}
+		
+		/* >.summary {margin:0 10px; padding:0; overflow: hidden; pointer-events: none;}
+		>.photo {margin:10px 0; padding:0; border:none;}
+		.photo-th {width:100%; width: calc(100% + 14px); margin-left: calc(-7px); overflow:hidden;}
+		img.image {width:100%;height:auto; margin:0; padding:0; border:none;}
+		h3 {margin:0; padding:5px; font-size: 1.6em;}
+		.timestamp {position: absolute; left:10px; bottom:0;} */
+	}
 
 	.actionbar {margin:10px 0; text-align: right;}
 
@@ -1603,19 +1609,16 @@ $SCREENS
 		.item__card>tbody>tr>td {display: table-cell; float:none; width:auto;}
 		.item__card>tbody>tr>td:first-child {width:30%; font-weight:normal; border-bottom: 1px #efefef solid;}
 		.item__card col {width:auto;}
+		.widget.-col2 .widget-item {width:45%; height:280px; margin:0 2.5% 30px; float: left; overflow:hidden;}
+		.widget.-col3 .widget-item {width:45%; height:280px; margin:0 2.5% 30px; float: left;}
 
-		.widget.-col2 {}
-			.widget.-col2 .widget-item {width:45%; height:280px; margin:0 2.5% 30px; float: left; overflow:hidden;}
-		.widget.-col3 {}
-			.widget.-col3 .widget-item {width:45%; height:280px; margin:0 2.5% 30px; float: left;}
-
-		.widget-item {min-height:100px; overflow: hidden;}
+		/* .widget-item {min-height:100px; overflow: hidden;}
 		.widget-item h3 {width: 100%; max-height: 2em; position: absolute; background-color: #aaa; opacity: 0.8; overflow: hidden; z-index:1;}
 		.widget-item .summary {margin:0; padding: 0 10px;height: 5.5em; overflow: hidden; position: absolute; bottom: 0; background: #fff; opacity: 0.8;}
 		.widget-item div.photo {margin:0;}
 		.widget-item .photo-th {width:100%; margin-left:0; overflow:hidden;}
 		.widget-item .timestamp {width:100%; margin:0; left:0; z-index: 1; background: #fff;}
-		.widget-item .footer {margin:0; position: absolute; bottom: 0; right:10px;z-index:1;}
+		.widget-item .footer {margin:0; position: absolute; bottom: 0; right:10px;z-index:1;} */
 	}
 
 	@media (min-width:56.25em) {    /* 900/16 = 56.25 */
@@ -1624,9 +1627,7 @@ $SCREENS
 
 	@media (min-width:56.25em) {		/* 960/16 = 56.25 */
 			.widget.-col2 .widget-item {height:360px;}
-			.widget.-col3 {}
 			.widget.-col3 .widget-item {width:30%; height:280px; margin:0 1.5% 30px;}
-			.widget-item .summary {width: 100%;}
 	}
 
 
