@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-06-16
-* Version :: 30
+* Modify  :: 2025-06-19
+* Version :: 31
 */
 
 /*************************************************************
@@ -1177,7 +1177,7 @@ class SgCore {
 		// debugMsg('$buildMethod = '.$buildMethod);
 
 		// Set page id to home
-		if ($isLoadHomePage) cfg('page_id','home');
+		if ($isLoadHomePage) page_class('module-home');
 
 		if ($found) {
 			// Set splash page was show
