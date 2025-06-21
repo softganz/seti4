@@ -1,16 +1,16 @@
 @charset "UTF-8";
 
-/*
-Theme Name  : Simple
-Theme URI   : http://softganz.com
-Description : A simple theme.
-Template    : options
-Author      : Panumas Nontapan
-Author URI  : http://softganz.com
-Created     : 2018-10-15
-Last Modify : 2025-06-11
-Version     : 8
-*/
+/**
+ * Theme Name  :: Simple
+ * Theme URI   :: httsp://softganz.com
+ * Description :: A simple theme.
+ * Template    :: options
+ * Author      :: Panumas Nontapan
+ * Author URI  :: https://softganz.com
+ * Created     :: 2018-10-15
+ * Last Modify :: 2025-06-21
+ * Version     :: 9
+ */
 
 @import url(reset.css);
 @import url(modules.css);
@@ -23,10 +23,6 @@ Version     : 8
 	--box-bg-color: aliceblue;
 	--box-title-bg-color: aliceblue;
 	--box-close-img: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23555555' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");
-}
-.widget-button, .btn {
-	--primary-text-color: #E5F2FF;
-	--primary-bg-color: #057BFF;
 }
 
 .module.-app-theme-dark {
@@ -300,74 +296,6 @@ $SCREENS
 
 	.loading {width:120px; height:20px; margin:5px; padding:3px; position:absolute; text-align:center; background:#fff url(https://softganz.com/library/img/loading.gif) no-repeat 10px 5px; border:1px green solid; border-radius:10px;	}
 
-	/* Class look like bootstrap4 */
-	.btn {margin: 0px; padding: 6px 16px; font-size: 1em; font-weight: normal; line-height: 1; color: #666; border: none; border-radius: 18px; display: inline-flex; background-color: #eee; cursor: pointer; justify-content: center; white-space: nowrap;}
-		.btn:hover {color: #555; background-color: #f0f0f0;}
-		.btn.-sg-16 {padding: 0;}
-		.btn.-sg-24 {padding: 0;}
-		.btn.-sg-32 {padding: 0;}
-		.btn.-sg-32>.icon {margin-top: 4px;}
-		.btn.-sg-48 {padding: 0;}
-		.btn.-sg-48>.icon {margin-top: 12px;}
-		.btn.-sg-64 {padding: 0;}
-		.btn.-sg-64>.icon {margin-top: 20px;}
-		.btn.-big {padding-top: 16px; padding-bottom: 16px;}
-		.btn.-normal {background-color: transparent;}
-		.btn.-normal:hover {color: unset; background-color: transparent;}
-		.btn.-primary {font-weight: normal; color: var(--primary-text-color); cursor: pointer; background-color: var(--primary-bg-color);}
-		.btn.-primary:hover {background-color: #1672ff;}
-		.btn.-primary>.icon {opacity: 0.8;}
-		.btn.-primary>.icon.-material {color: #f5f5f5;}
-		.btn.-primary>span {opacity: 0.9;}
-		.btn.-secondary {}
-		.btn.-secondary:hover {}
-		.btn.-success {color: #c5ffc6; background-color: #5FB660;}
-		.btn.-success:hover {background-color: #67C768;}
-		.btn.-success>.icon {color: #c5ffc6;}
-		.btn.-info {color: #E5F2FF; background-color: #60C0DC;}
-		.btn.-info:hover {background-color: #65C7E4;}
-		.btn.-info>.icon {color: #E5F2FF;}
-		.btn.-warning {color: #FFEEDB; background-color: #EEAC57;}
-		.btn.-warning:hover {background-color: #F9B45A;}
-		.btn.-danger {color: #FFE0E0; background-color: #D75452;}
-		.btn.-danger:hover {background-color: #E05755;}
-		.btn.-danger>.icon {color: #FFE0E0;}
-		.btn.-link {background-color: transparent;}
-		.btn.-link:hover {background-color: #eee;}
-		.btn.-cancel {color: #999; margin-right: 16px;}
-		.btn.-cancel>.icon {color: #999;}
-
-		.btn.-floating {color: #FFE0E0; background-color: #DB4437; border: none; box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)}
-		.btn.-floating:hover {background-color: #f60;}
-		.btn.-floating.-right {right: 16px; position: absolute;}
-		.btn.-floating.-bottom {bottom: 16px; position: fixed;}
-		.btn.-floating .icon.-material {color: #ffc8c3;}
-
-		.btn.-circle24 {width: 24px; height: 24px; padding: 0px; border-radius: 50%;}
-		.btn.-circle32 {width: 24px; height: 24px; padding: 4px; border-radius: 50%;}
-		.btn.-circle48 {width: 24px; height: 24px; padding: 12px; border-radius: 50%;}
-		button.btn.-circle32 {width: 32px; height: 32px; padding: 0;}
-		button.btn.-circle48 {width: 48px; height: 48px; padding: 0;}
-
-		.btn.-hidden {display: none;}
-		.btn:has(:only-child) {padding: 6px;}
-		.btn>.icon {margin: 0;}
-		.btn>.icon:only-child {margin: 0;}
-		.btn>.icon:not(:only-child) {}
-		.btn>span {padding: 0 6px; line-height: 24px; vertical-align: middle; display: inline-block;}
-		.btn>span.-hidden {display: none;}
-		.btn>.icon+span {padding-left: 4px;}
-		.btn.-fill {width: 100%; padding-left: 0; padding-right: 0;}
-		.btn.-wrap {white-space: normal;}
-		.btn.-disabled {background-color: #d0d0d0; color: #a0a0a0;}
-		.btn.-disabled.-link {color: #c3c3c3;}
-		.btn.-disabled>.icon.-material {color: #a0a0a0;}
-		.btn.-active {box-shadow: 0 0 0 1px #ffba8c inset;}
-
-		.btn.-upload>input.form-file {display: none;}
-		.btn.-upload>label {margin: 0;}
-		.btn.-sg-text-center .icon {display: block; margin: 0 auto;}
-		.btn>.icon-group {padding: 0;}
 
 
 

@@ -1,4 +1,10 @@
-/* Page Layout */
+/**
+ * SoftGanz Ui CSS
+ * Created :: 2020-10-01
+ * Modify  :: 2025-06-21
+ * Version :: 2
+ */
+
 .page.-page {margin: 0 auto; padding: 0;}
 
 .page.-header {
@@ -25,6 +31,7 @@
 			>ul>li>a {padding: 0 8px; white-space: nowrap;}
 			>ul ul {min-width: 240px; font-weight: normal;}
 		}
+
 		&.sg-responsivemenu {
 			>.sg-navtoggle {box-shadow: none; background-color: transparent; margin-right: 16px; padding: 0; border-radius: 50%; width: 32px; height: 32px; align-items: center; justify-content: center;}
 			>ul {display: none;}
@@ -37,12 +44,13 @@
 
 		&.-owner {
 			order: 10; padding-right: 0; position: relative; z-index: 1101;
-			>*>*>a {padding: 4px; margin: 0 4px; border-radius: 16px;}
+			>ul {gap: 8px;}
+			>*>*>a {padding: 4px; border-radius: 16px;}
 			>*>*>a>.icon {color: #666;}
 			>*>*>a>.icon:only-child {padding: 0; width: 24px; height: 24px}
-			li.-profile>a {padding: 0; line-height: 24px; max-width: 110px; overflow: hidden; white-space: nowrap; font-weight: bold;}
+			li.-profile>a {padding: 0; max-width: 110px; overflow: hidden; white-space: nowrap; font-weight: bold;}
 			li.-profile>a>.profile-photo {margin: 0;}
-			li.-profile>a>.icon {padding: 4px;}
+			li.-profile>a>.icon {width: 32px; height: 32px; padding: 4px;}
 			li.-profile>a>span {display: none; padding: 0 8px 0 4px;}
 			li.-profile>a>.profile-photo {width: 32px; height: 32px; margin: 0; padding: 0; display: inline-block; border-radius: 50%; border: none;}
 			li.-profile>ul {border-radius: 8px; overflow: hidden;}
@@ -50,7 +58,7 @@
 			li.-signout span {display: none;}
 			li.-signout>a {padding: 0; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;}
 
-			li.-signup>a {border-radius: 16px; padding: 1px 8px; line-height: 30px; font-weight: bold;}
+			li.-signup>a {border-radius: 16px; padding: 1px 8px; line-height: 30px; font-weight: bold; white-space: nowrap;}
 			li.-signup>a>.icon {padding: 4px;}
 		}
 
@@ -61,15 +69,16 @@
 		}
 	}
 
-	.signform {margin:0; padding: 16px 16px 0 16px; border-radius: 8px;}
-		.signform .form-item {padding: 0 0 8px 0;}
-		.signform .form-item>label {top: 0; left: 10px; font-size: 0.7em; color: #999;}
-		.signform .form-text,
-		.signform .form-password {padding: 10px 12px 0; width: calc(100% - 24px); border-radius: 32px;}
-		.signform .form-select {background-color: #fff; text-align: center; border-radius: 32px; padding: 14px 24px 14px 12px; height: auto;}
-		.signform .btn.-primary {width: 100%; padding: 10px 0; border-radius: 32px;}
-		.signform a {display: block; padding: 8px; text-align: center;}
-		.-signup {white-space: nowrap;}
+	.signform {
+		display: flex; flex-direction: column; padding: 16px 16px 0 16px; border-radius: 8px; gap: 8px;
+		.form-item {padding: 0;}
+		.form-item>label {top: 0; left: 10px; font-size: 0.7em; color: #999;}
+		.form-text,
+		.form-password {padding: 10px 12px 0; width: auto; border-radius: 32px; height: 44px;}
+		.form-select {background-color: #fff; text-align: center; border-radius: 32px; padding: 14px 24px 14px 12px; height: auto;}
+		.btn.-primary {width: 100%; padding: 10px 0; border-radius: 32px;}
+		a {display: block; padding: 8px; text-align: center;}
+	}
 }
 
 @media (min-width: 43.75em) { /* 700/16 = 43.75 @responsive menu */
@@ -93,11 +102,13 @@
 
 	.module-home {
 		.ribbon {width:24px; position: absolute; border: none; background: transparent; top: 58px; left: 4px; z-index: 1000;}
-		.user-menu {width: 200px;}
-		.user-menu>li {display: none;}
-		.user-menu>li:first-child {display: block;}
-		.user-menu>li>a {border: none;}
-		.user-menu>li>a {border: none; background-color: #b5b5b5; padding: 2px; border-radius: 50%;}
+		.user-menu {
+			width: 200px;
+			>li {display: none;}
+			>li:first-child {display: block;}
+			>li>a {border: none;}
+			>li>a {border: none; background-color: #b5b5b5; padding: 2px; border-radius: 50%;}
+		}
 	}
 }
 /* @end */
