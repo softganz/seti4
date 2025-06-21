@@ -2,7 +2,7 @@
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
  * Modify  :: 2025-06-21
- * Version :: 9
+ * Version :: 10
  */
 
 @charset "UTF-8";
@@ -61,9 +61,9 @@
 
 .widget-button, .btn {
 	box-sizing: border-box;
-	display: inline-flex;
+	display: flex;
 	justify-content: center;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	margin: 0px;
 	padding: 6px 8px;
 	font-size: 1.4rem;
@@ -72,7 +72,6 @@
 	border: none;
 	border-radius: 24px;
 	cursor: pointer;
-	white-space: nowrap;
 
 	&:hover {filter: brightness(1.1);}
 	&.-normal {color: var(--normal-text-color); background-color: var(--normal-bg-color);}
