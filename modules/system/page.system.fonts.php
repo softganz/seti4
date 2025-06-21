@@ -1,5 +1,5 @@
 <?php
-function fonts($self = NULL) {
+function system_fonts($self = NULL) {
 	head('<link href="https://fonts.googleapis.com/css?family=Athiti|Chonburi|Itim|Kanit|Maitree|Mitr|Pattaya|Pridi|Prompt|Sriracha|Taviraj|Trirong" rel="stylesheet">');
 	$ret.='<p class="font Mitr">สวัสดี Mitr</p>';
 	$ret.='<p class="font Pattaya">สวัสดี Pattaya</p>';

@@ -2,8 +2,8 @@
 /**
 * Docs    :: Docs Page Controller
 * Created :: 2024-07-14
-* Modify  :: 2024-07-14
-* Version :: 2
+* Modify  :: 2025-06-21
+* Version :: 3
 *
 * @param String $args
 * @return Widget
@@ -57,7 +57,7 @@ class Docs extends PageController {
 							if ($this->args[0] == 'page') {
 								array_shift($this->args);
 								$page = implode('.',$this->args);
-								$ret .= R::PageWidget($page)->build();
+								return R::PageWidget($page);
 							} else {
 								if (count($this->args) >= 3) {
 									$file = implode('/',array_slice($this->args,0,2)).'/'.implode('.',array_slice($this->args,2));
