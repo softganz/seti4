@@ -2,8 +2,8 @@
 /**
 * System  :: Show mobile style Page
 * Created :: 2025-06-21
-* Modify  :: 2025-06-21
-* Version :: 1
+* Modify  :: 2025-06-22
+* Version :: 2
 *
 * @return Widget
 *
@@ -257,8 +257,8 @@ class SystemMobile extends Page {
 
 			trackIframeNavigation({
 				"iframe": document.getElementById("mainframe"),
-				"onStart": (url) => {},
-				"onFinish": (url) => {
+				"onStart": url => {},
+				"onFinish": url => {
 					document.getElementById("edit-domain").value = url;
 				}
 			});
@@ -301,14 +301,43 @@ class SystemMobile extends Page {
 
 				let lastHref = null;
 
+				function fixLinks(doc) {
+					try {
+						const links = doc.querySelectorAll("a[target=_blank]");
+						links.forEach(link => link.setAttribute("target", "_self"));
+					} catch (e) {
+						// Ignore cross-origin iframes
+					}
+				}
+
+				function observeLinks(doc) {
+					try {
+						// Observe DOM changes to fix links added by AJAX
+						const observer = new doc.defaultView.MutationObserver(() => fixLinks(doc));
+						observer.observe(doc.body, { childList: true, subtree: true });
+					} catch (e) {
+						// Ignore cross-origin iframes
+					}
+				}
+
 				function onLoad() {
-					const href = options.iframe.contentWindow.location.href;
+					const win = options.iframe.contentWindow;
+					const doc = options.iframe.contentDocument;
+					if (!doc) return;
+
+					// Fix links immediately
+					fixLinks(doc);
+					// Observe for AJAX changes
+					observeLinks(doc);
+
+					const href = win.location.href;
 					if (href !== lastHref) {
 						if (options.onFinish) options.onFinish(href);
 						lastHref = href;
 					}
+
 					// Attach beforeunload for next navigation
-					options.iframe.contentWindow.addEventListener("beforeunload", onBeforeUnload);
+					win.addEventListener("beforeunload", onBeforeUnload);
 				}
 
 				function onBeforeUnload() {
