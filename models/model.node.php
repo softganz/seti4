@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-06-15
-* Version :: 14
+* Modify  :: 2025-06-24
+* Version :: 15
 *
 * @param Array $args
 * @return Object
@@ -276,6 +276,20 @@ class NodeModel {
 		return $result;
 	}
 
+	public static function countNodeByUserId($userId) {
+		return DB::select([
+			'SELECT COUNT(*) `count` FROM %topic% WHERE `uid` = :userId LIMIT 1',
+			'var' => [':userId' => $userId]
+		])->count;
+	}
+
+	public static function countCommentByUserId($userId) {
+		return DB::select([
+			'SELECT COUNT(*) `count` FROM %topic_comments% WHERE `uid` = :userId LIMIT 1',
+			'var' => [':userId' => $userId]
+		])->count;
+	}
+	
 	public static function items_v1($conditions) {
 		$defaults = '{debug: false, items: 10}';
 

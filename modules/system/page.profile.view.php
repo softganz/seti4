@@ -2,8 +2,8 @@
 /**
 * Profile :: View User Information
 * Created :: 2021-01-01
-* Modify  :: 2025-02-26
-* Version :: 7
+* Modify  :: 2025-06-24
+* Version :: 8
 *
 * @param Int $userInfo
 * @return Widget
@@ -160,8 +160,15 @@ class ProfileView extends Page {
 							'href' => url('paper/user/'.$this->userInfo->uid),
 							'target' => '_blank',
 							'icon' => new Icon('view_list'),
-							'text' => 'หัวข้อที่เขียน'
+							'text' => '<b>'.NodeModel::countNodeByUserId($this->userInfo->uid).'</b> หัวข้อที่เขียน'
 						]),
+						$this->right->admin ? new Button([
+							'type' => 'link',
+							'href' => url('paper/user/'.$this->userInfo->uid),
+							'target' => '_blank',
+							'icon' => new Icon('comment'),
+							'text' => '<b>'.NodeModel::countCommentByUserId($this->userInfo->uid).'</b> ความคิดเห็น',
+						]) : NULL, // Button
 						new Button([
 							'type' => 'link',
 							'class' => 'sg-action',
@@ -176,10 +183,10 @@ class ProfileView extends Page {
 				// General information
 				new Column([
 					'children' => [
-						'เริ่มเป็นสมาชิก: '.sg_date($this->userInfo->datein,'ว ดด ปป H:i').' น.',
-						$this->userInfo->login_time ? 'เข้าระบบล่าสุด: '.sg_date($this->userInfo->login_time,'ว ดด ปป H:i').' น.' : NULL,
-						'เข้าชมเว็บไซท์: '.($this->right->admin ? '<a class="sg-action" href="'.url('stats/list', ['user' => $this->userId]).'" data-rel="box" data-width="full">'.number_format($this->userInfo->hits).'</a>' : number_format($this->userInfo->hits)).' ครั้ง',
-						'อ่าน: '.number_format($this->userInfo->views).' ครั้ง'
+						'เริ่มเป็นสมาชิก '.sg_date($this->userInfo->datein,'ว ดด ปป H:i').' น.',
+						$this->userInfo->login_time ? 'เข้าระบบล่าสุด '.sg_date($this->userInfo->login_time,'ว ดด ปป H:i').' น.' : NULL,
+						'เข้าชมเว็บไซท์ '.($this->right->admin ? '<a class="sg-action" href="'.url('stats/list', ['user' => $this->userId]).'" data-rel="box" data-width="full"><b>'.number_format($this->userInfo->hits).'</b></a>' : '<b>'.number_format($this->userInfo->hits)).'</b> ครั้ง',
+						'อ่าน <b>'.number_format($this->userInfo->views).'</b> ครั้ง'
 					], // children
 				]), // Column
 			], // children

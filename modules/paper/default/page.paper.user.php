@@ -11,8 +11,6 @@
 * @usage paper/user/{userId}
 */
 
-use Paper\Model\PaperModel;
-
 ini_set('memory_limit', -1);
 
 class PaperUser extends Page {
@@ -50,7 +48,7 @@ class PaperUser extends Page {
 					'children' => [
 						$this->right->admin ? new Button([
 							'type' => 'secondary',
-							'text' => PaperModel::countCommentByUserId($this->userId).' Comments'
+							'text' => NodeModel::countCommentByUserId($this->userId).' Comments'
 						]) : NULL, // Button
 					], // children
 				]), // Nav

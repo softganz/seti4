@@ -416,13 +416,6 @@ class PaperModel extends \NodeModel {
 		return $rs;
 	}
 
-	public static function countCommentByUserId($userId) {
-		return DB::select([
-			'SELECT COUNT(*) `count` FROM %topic_comments% WHERE `uid` = :userId LIMIT 1',
-			'var' => [':userId' => $userId]
-		])->count;
-	}
-	
 	public static function createArchive() {
 		/*
 		SELECT tpid,created  FROM `sgz_topic` WHERE DATE_FORMAT(`created`,"%Y-%m-%d")<"2008-07-01" ORDER BY created DESC LIMIT 1
