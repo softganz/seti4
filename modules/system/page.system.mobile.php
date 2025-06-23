@@ -167,7 +167,7 @@ class SystemMobile extends Page {
 					background: #fff;
 					max-width: 100vw;
 				}
-				.page.-header, .page.-footer {display: none;}
+				.page.-header, .page.-secondary, .page.-footer {display: none;}
 				.mobile {
 					width: calc(var(--device-width) + 2 * var(--border-width));
 					height: calc(var(--device-height) - 32px);
@@ -176,7 +176,7 @@ class SystemMobile extends Page {
 					flex-wrap: wrap;
 					flex-direction: column;
 					background-color: #000;
-					box-shadow: 0 0 24px rgba(0, 0, 0, 0.8);
+					box-shadow: 0 0 24px #0009;
 					border-radius: var(--device-radius);
 					overflow: hidden;
 					.-header {
@@ -213,6 +213,7 @@ class SystemMobile extends Page {
 							height: 100%;
 							border: none;
 							margin: 0 auto;
+							background-color: #fff;
 							display: block;
 							overflow: hidden;
 							flex: 1;
