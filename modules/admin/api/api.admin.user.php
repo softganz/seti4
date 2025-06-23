@@ -2,8 +2,8 @@
 /**
 * Admin   :: Admin User API
 * Created :: 2022-10-22
-* Modify  :: 2025-06-16
-* Version :: 6
+* Modify  :: 2025-06-23
+* Version :: 7
 *
 * @param Int $userId
 * @param String $action
@@ -21,7 +21,7 @@ class AdminUserApi extends PageApi {
 	function __construct($userId, $action) {
 		parent::__construct([
 			'action' => $action,
-			'userInfo' => is_numeric($userId) ? UserModel::get($userId) : NULL,
+			'userInfo' => SG\getFirstInt($userId) ? UserModel::get($userId) : NULL,
 		]);
 		$this->userId = $this->userInfo->uid;
 	}
@@ -64,40 +64,24 @@ class AdminUserApi extends PageApi {
 	* Block user and delete all topic
 	*/
 	public function blockAndDelete() {
-		// import('model:node.php');
-
 		if (empty($this->userId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีข้อมูลสมาชิก');
 		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
 		if ($this->userId === 1) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
 
+		// Block user
 		DB::query([
-			'UPDATE %users% SET `status` = "block" WHERE `uid` = :uid LIMIT 1',
-			'var' => [':uid' => $this->userId]
+			'UPDATE %users% SET `status` = "block" WHERE `uid` = :userId LIMIT 1',
+			'var' => [':userId' => $this->userId]
 		]);
 
+		// Delete user cache
 		DB::query([
 			'DELETE FROM %cache% WHERE `headers` = :username',
 			'var' => [':username' => $this->userInfo->username]
 		]);
 
-		$dbs = DB::select([
-			'SELECT `tpid`, `type`, `title`, `created`, `view`, `reply`, `last_reply`
-			 FROM %topic%
-			 WHERE `uid` = :uid
-			 ORDER BY `created` DESC',
-			 'var' => [':uid' => $this->userId]
-		]);
-
-		// Delete node
-		foreach ($dbs->items as $rs) {
-			if (!in_array($rs->type, ['story', 'page', 'forum'])) continue;
-			if (empty($rs->tpid)) continue;
-
-			$nodeDeleteResult = NodeModel::delete($rs->tpid);
-			if ($nodeDeleteResult->complete) {
-				$ret .= 'Topic '.$rs->tpid.' DELETED<br />';
-			}
-		}
+		NodeModel::deleteAllUserNode($this->userId);
+		NodeModel::deleteAllUserComment($this->userId);
 
 		LogModel::save([
 			'module' => 'Admin',
@@ -106,7 +90,7 @@ class AdminUserApi extends PageApi {
 			'keyId' => $this->userId
 		]);
 
-		return apiSuccess('Blocked and delete '.$dbs->_num_rows.' topics');
+		return apiSuccess('Blocked and delete topics');
 	}
 
 	public function edit() {
