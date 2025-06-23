@@ -2,8 +2,8 @@
 /**
 * Paper   :: Paper Model
 * Created :: 2007-11-21
-* Modify  :: 2025-06-15
-* Version :: 8
+* Modify  :: 2025-06-24
+* Version :: 9
 *
 * @usage import('model:paper.php');
 * @usage new PaperModel([])
@@ -416,6 +416,13 @@ class PaperModel extends \NodeModel {
 		return $rs;
 	}
 
+	public static function countCommentByUserId($userId) {
+		return DB::select([
+			'SELECT COUNT(*) `count` FROM %topic_comments% WHERE `uid` = :userId LIMIT 1',
+			'var' => [':userId' => $userId]
+		])->count;
+	}
+	
 	public static function createArchive() {
 		/*
 		SELECT tpid,created  FROM `sgz_topic` WHERE DATE_FORMAT(`created`,"%Y-%m-%d")<"2008-07-01" ORDER BY created DESC LIMIT 1

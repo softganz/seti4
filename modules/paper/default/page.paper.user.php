@@ -2,8 +2,8 @@
 /**
 * Paper   :: List Paper of user
 * Created :: 2023-08-27
-* Modify  :: 2025-05-24
-* Version :: 4
+* Modify  :: 2025-06-24
+* Version :: 5
 *
 * @param Int $userId
 * @return Widget
@@ -11,12 +11,20 @@
 * @usage paper/user/{userId}
 */
 
+use Paper\Model\PaperModel;
+
 ini_set('memory_limit', -1);
 
 class PaperUser extends Page {
+	var $userId;
+	var $right;
+
 	function __construct($userId = NULL) {
 		parent::__construct([
 			'userId' => $userId,
+			'right' => (Object) [
+				'admin' => user_access('admin paper'),
+			]
 		]);
 	}
 
@@ -38,7 +46,15 @@ class PaperUser extends Page {
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'User Node List',
-			]),
+				'navigator' => new Nav([
+					'children' => [
+						$this->right->admin ? new Button([
+							'type' => 'secondary',
+							'text' => PaperModel::countCommentByUserId($this->userId).' Comments'
+						]) : NULL, // Button
+					], // children
+				]), // Nav
+			]), // AppBar
 			'body' => new Widget([
 				'children' => array_map(
 					function($node) {
@@ -50,19 +66,21 @@ class PaperUser extends Page {
 						} else {
 							$url = url('paper/'.$node->nodeId);
 						}
-						return new ListTile([
-							'class' => 'sg-action',
-							'title' => $node->title,
-							'subtitle' => $node->type,
-							'leading' => new Icon('topic'),
-							'trailing' => new Button([
-								'type' => 'link',
-								'text' => 'View',
+						return new Card([
+							'child' => new ListTile([
+								'class' => 'sg-action',
+								'title' => $node->title,
+								'subtitle' => $node->type,
+								'leading' => new Icon('topic'),
+								'trailing' => new Button([
+									'type' => 'link',
+									'text' => 'View',
+									'href' => $url,
+									'icon' => new Icon('chevron_right'),
+									'iconPosition' => 'right',
+								]),
 								'href' => $url,
-								'icon' => new Icon('chevron_right'),
-								'iconPosition' => 'right',
-							]),
-							'href' => $url,
+							]), // ListTile
 						]);
 					},
 					$topics->items
@@ -70,7 +88,5 @@ class PaperUser extends Page {
 			]), // body
 		]);
 	}
-
-
 }
 ?>
