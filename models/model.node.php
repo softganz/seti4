@@ -3,7 +3,7 @@
 * Model.  :: Node Model
 * Created :: 2021-09-30
 * Modify  :: 2025-06-23
-* Version :: 17
+* Version :: 18
 *
 * @param Array $args
 * @return Object
@@ -965,5 +965,21 @@ class NodeModel {
 		return $pagenv;
 	}
 
+	public static function hideCommentById(Int $commentId) {
+		if (empty($commentId)) return false;
+
+		DB::query([
+			'UPDATE %topic_comments% SET
+			`status` = IF(`status` = :block, :publish, :block)
+			WHERE `cid` = :commentId
+			LIMIT 1',
+			'var' => [
+				':commentId' => $commentId,
+				':block' => _BLOCK,
+				':publish' => _PUBLISH
+			]
+		]);
+		return true;
+	}
 }
 ?>

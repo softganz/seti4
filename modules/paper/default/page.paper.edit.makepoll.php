@@ -2,8 +2,8 @@
 /**
 * Paper   :: Make Paper as Poll
 * Created :: 2019-06-02
-* Modify  :: 2024-03-20
-* Version :: 2
+* Modify  :: 2025-06-23
+* Version :: 3
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -27,7 +27,7 @@ function paper_edit_makepoll($self, $topicInfo) {
 	$dbs = mydb::select($stmt,':tpid',$tpid);
 
 
-	$form = new Form('poll', url('paper/info/api/'.$tpid.'/poll.update'), 'edit-topic');
+	$form = new Form('poll', url('api/paper/'.$tpid.'/poll.update'), 'edit-topic');
 
 	for ($i = 1; $i <= 10; $i++) {
 		$choice_name=$i;

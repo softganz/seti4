@@ -3,7 +3,7 @@
 * Paper   :: Info API
 * Created :: 2023-07-23
 * Modify  :: 2025-06-23
-* Version :: 16
+* Version :: 17
 *
 * @param Int $nodeId
 * @param String $action
@@ -464,6 +464,75 @@ class PaperApi extends PageApi {
 		return $backend;
 	}
 
+	function commentUpdate() {
+		$nodeId = $this->nodeId;
+		$commentId = $this->tranId;
+
+		$comment = NodeModel::getCommentById($commentId);
+
+		if (empty($commentId)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลความเห็นที่ต้องการลบ');
+		if (empty($comment->cid)) return apiError(_HTTP_ERROR_NOT_FOUND, 'ไม่พบความเห็นที่ต้องการลบ');
+		if (!($this->right->edit || (i()->ok && $comment->uid === i()->uid))) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
+		$post = (Object) post('comment');
+		$stmt = mydb::create_update_cmd('%topic_comments%',$post,'cid='.$commentId);
+		mydb::query($stmt,$post);
+
+		if (post('delete_photo')) {
+			$deletePhoto = DB::select([
+				'SELECT * FROM %topic_files% WHERE `tpid` = :tpid AND `cid` = :commentId AND `type`="photo" LIMIT 1',
+				'var' => [
+					':tpid' => $nodeId,
+					':commentId' => $commentId
+				]
+			]);
+			if ($deletePhoto->fid && $deletePhoto->file) $a=FileModel::delete($deletePhoto->fid, ['deleteRecord' => true]);
+		}
+
+		// save upload photo
+		if (is_uploaded_file($_FILES['photo']['tmp_name'])) {
+			$photo = mydb::select('SELECT * FROM %topic_files% WHERE `tpid` = :tpid AND `cid` = :commentId AND `type`="photo" LIMIT 1', ':tpid', $nodeId, ':commentId', $commentId);
+			$folder = cfg('paper.upload.photo.folder');
+
+			$upload = new classFile($_FILES['photo'],$folder,cfg('photo.file_type'));
+			if (!$upload->valid_format()) $error[] = 'Invalid upload file format';
+
+			if (!user_access('administer contents,administer papers') && !$upload->valid_size(cfg('photo.max_file_size')*1024)) $error[]='Invalid upload file size :maximun file size is '.cfg('photo.max_file_size').' KB.';
+
+			if (!$error) {
+				if ($upload->duplicate()) $upload->generate_nextfile();
+				if (!$upload->copy()) $error[] = 'Save file error (unknown error)';
+				if ($error) return $ret.message('error',$error);
+				$photo_upload = $upload->filename;
+
+				if ($photo->_num_rows) {
+					$oldfile = cfg('paper.upload.photo.folder').$photo->file;
+					// debugMsg('Remove photo '.$oldfile);
+					if (file_exists($oldfile) && is_file($oldfile)) unlink($oldfile);
+
+					mydb::query('UPDATE %topic_files% SET `file` = :filename WHERE `fid` = :fid LIMIT 1', ':filename', $photo_upload, ':fid', $photo->fid);
+				} else {
+					$photo->tpid = $nodeId;
+					$photo->cid = $commentId;
+					$photo->type = 'photo';
+					$photo->uid = i()->uid;
+					$photo->file = $photo_upload;
+					$photo->timestamp = 'func.NOW()';
+					$photo->ip = ip2long(GetEnv('REMOTE_ADDR'));
+					mydb::query(mydb::create_insert_cmd('%topic_files%',$photo),$photo);
+				}
+			}
+		}
+
+		LogModel::save([
+			'module' => 'paper',
+			'keyword' => 'Paper comment edit',
+			'message' => 'Edit comment id '.$commentId.' of <a href="'.url('paper/'.$nodeId.'#comment-'.$commentId).'">paper/'.$nodeId.'</a>'
+		]);
+		// if ($_SERVER['HTTP_REFERER']) location($_SERVER['HTTP_REFERER']); else location('paper/'.$nodeId);
+		return apiSuccess('บันทึกความเห็นเรียบร้อย');
+	}
+
 	function commentDelete() {
 		$commentId = SG\getFirstInt(post('commentId'));
 
@@ -479,6 +548,51 @@ class PaperApi extends PageApi {
 		if ($result->error) return apiError(_HTTP_ERROR_BAD_REQUEST, $result->message);
 
 		return apiSuccess('ลบความเห็นเรียบร้อย');
+	}
+
+	function commentHide() {
+		$commentId = SG\getFirstInt(post('commentId'));
+
+		$comment = NodeModel::getCommentById($commentId);
+
+		if (empty($commentId)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลความเห็นที่ต้องการซ่อน');
+		if (empty($comment->cid)) return apiError(_HTTP_ERROR_NOT_FOUND, 'ไม่พบความเห็นที่ต้องการซ่อน');
+		if (!(is_admin())) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
+		NodeModel::hideCommentById($commentId);
+
+		return apiSuccess('ซ่อนความเห็นเรียบร้อย');
+	}
+
+	// TODO: This method is work in progress
+	function pollUpdate() {
+		$nodeId = $this->nodeId;
+		if (!$this->right->edit) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
+		$data = (Object) post('poll',_TRIM+_STRIPTAG);
+		if (!mydb::select('SELECT `tpid` FROM %poll% WHERE `tpid` = :tpid LIMIT 1', ':tpid', $nodeId)->tpid) {
+			$stmt = 'INSERT INTO %poll% (`tpid`, `start_date`, `end_date`, `created`) VALUES (:tpid, :start_date, :end_date, :created)';
+
+			mydb::query($stmt,':tpid',$nodeId, ':start_date',date('Y-m-d H:i:s'), ':end_date', 'func.NULL', ':created',date('Y-m-d H:i:s'));
+			//$ret .= mydb()->_query.'<br />';
+		}
+
+		foreach ($data as $k=>$v) {
+			if (mydb::select('SELECT `choice` FROM %poll_choice% WHERE `tpid`=:tpid AND `choice`=:choice LIMIT 1', ':tpid',$nodeId, ':choice',$k)->choice) {
+				if ($v=='') { // Delete on empty
+					mydb::query('DELETE FROM %poll_choice% WHERE  `tpid`=:tpid AND `choice`=:choice LIMIT 1', ':tpid',$nodeId, ':choice',$k);
+				} else { // Update
+					mydb::query('UPDATE %poll_choice% SET `detail`=:detail WHERE  `tpid`=:tpid AND `choice`=:choice LIMIT 1', ':tpid',$nodeId, ':choice',$k,':detail',$v);
+				}
+				//$ret.='Update '.mydb()->_query.'<br />';
+			} else {
+				if ($v=='') {
+				} else {
+					mydb::query('INSERT INTO %poll_choice% (`tpid`, `choice`, `detail`) VALUES (:tpid, :choice, :detail)',':tpid',$nodeId, ':choice',$k, ':detail',$v);
+					//$ret.='Insert '.mydb()->_query.'<br />';
+				}
+			}
+		}
 	}
 }
 ?>

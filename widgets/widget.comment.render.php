@@ -3,7 +3,7 @@
 * Widget  :: Render Comment
 * Created :: 2023-04-06
 * Modify  :: 2025-06-23
-* Version :: 2
+* Version :: 3
 *
 * @param Array $args
 * @return Widget
@@ -118,7 +118,7 @@ class CommentRenderWidget extends Widget {
 					'children' => [
 						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->tpid.'/edit.comment/'.$rs->cid).'" data-rel="#message-id-'.$rs->cid.' .message-body" title="Edit comment"><i class="icon -material -grey">edit</i></a>',
 						'<a class="sg-action btn -link" href="'.url('api/paper/'.$rs->tpid.'/comment.delete', ['commentId' => $rs->cid]).'" data-rel="none" data-done="remove:#comment-id-'.$rs->cid.'" data-title="Delete this comment" data-confirm="Delete this comment. Are you sure?" title="Delete comment"><i class="icon -material">delete</i></a>',
-						user_access('administer contents,administer comments,administer papers') ? '<a class="sg-action btn -link" href="'.url('paper/info/api/'.$rs->tpid.'/comment.hide/'.$rs->cid).'" data-rel="refresh" title="Hide this comment"><i class="icon -material -gray">visibility</i></a>' : NULL,
+						user_access('administer contents,administer comments,administer papers') ? '<a class="sg-action btn -link" href="'.url('api/paper/'.$rs->tpid.'/comment.hide', ['commentId' => $rs->cid]).'" data-rel="refresh" title="Hide this comment"><i class="icon -material -gray">visibility</i></a>' : NULL,
 					],
 				]) : NULL,
 			]))->build();

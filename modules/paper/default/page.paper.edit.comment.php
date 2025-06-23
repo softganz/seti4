@@ -3,7 +3,7 @@
 * Paper   :: Edit comment Form
 * Created :: 2019-06-02
 * Modify  :: 2025-06-23
-* Version :: 3
+* Version :: 4
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -16,6 +16,12 @@ function paper_edit_comment($self, $topicInfo = NULL, $commentId = NULL) {
 	if (empty($topicInfo->tpid)) return error(_HTTP_ERROR_NOT_FOUND, 'PARAMETER ERROR');
 	if (empty($commentId)) return error(_HTTP_ERROR_NOT_FOUND, 'PARAMETER ERROR');
 
+	$comment = NodeModel::getCommentById($commentId);
+
+	if (empty($commentId)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลความเห็นที่ต้องการลบ');
+	if (empty($comment->cid)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่พบความเห็นที่ต้องการลบ');
+	if (!($topicInfo->right->edit || (i()->ok && $comment->uid === i()->uid))) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
 	$tpid = $topicInfo->tpid;
 
 	$ret = '<header class="header -box"><nav class="nav -back"><a class="" href="'.url('paper/'.$tpid.'/edit').'"><i class="icon -material">arrow_back</i></a></nav><h3>EDIT COMMENT</h3></header>';
@@ -26,13 +32,11 @@ function paper_edit_comment($self, $topicInfo = NULL, $commentId = NULL) {
 
 	$ret = '<h2>Edit comment</h2>';
 
-	$comment = NodeModel::getCommentById($commentId);
-
 	$form = new Form([
 		'variable' => 'comment',
-		'action' => url('paper/info/api/'.$tpid.'/comment.save/'.$commentId),
+		'action' => url('api/paper/'.$tpid.'/comment.update/'.$commentId),
 		'id' => 'edit-topic',
-		'class' => 'sg-form',
+		// 'class' => 'sg-form',
 		'rel' => 'none',
 		'done' => 'load',
 		'enctype' => 'multipart/form-data',
