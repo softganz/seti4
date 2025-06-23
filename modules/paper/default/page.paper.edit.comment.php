@@ -1,8 +1,9 @@
 <?php
 /**
-* Paper :: Edit comment Form
-* Created 2019-06-02
-* Modify  2021-09-02
+* Paper   :: Edit comment Form
+* Created :: 2019-06-02
+* Modify  :: 2025-06-23
+* Version :: 2
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -11,8 +12,9 @@
 
 use Paper\Model\PaperModel;
 
-function paper_edit_comment($self, $topicInfo, $commentId) {
-	if (!$topicInfo->tpid) return message('error', 'PARAMETER ERROR');
+function paper_edit_comment($self, $topicInfo = NULL, $commentId = NULL) {
+	if (empty($topicInfo->tpid)) return error(_HTTP_ERROR_NOT_FOUND, 'PARAMETER ERROR');
+	if (empty($commentId)) return error(_HTTP_ERROR_NOT_FOUND, 'PARAMETER ERROR');
 
 	$tpid = $topicInfo->tpid;
 
