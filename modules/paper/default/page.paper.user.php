@@ -3,7 +3,7 @@
 * Paper   :: List Paper of user
 * Created :: 2023-08-27
 * Modify  :: 2025-06-24
-* Version :: 5
+* Version :: 6
 *
 * @param Int $userId
 * @return Widget
@@ -45,7 +45,7 @@ class PaperUser extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'User Node List',
+				'title' => UserModel::get($this->userId)->name.'\'s Node List',
 				'navigator' => new Nav([
 					'children' => [
 						$this->right->admin ? new Button([
