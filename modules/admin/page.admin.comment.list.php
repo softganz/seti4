@@ -1,13 +1,14 @@
 <?php
 /**
-* Admin : List Topic and Comment
-* Created 2020-01-01
-* Modify  2020-04-03
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Admin   :: List Topic and Comment
+ * Created :: 2020-01-01
+ * Modify  :: 2025-06-23
+ * Version :: 2
+ *
+ * @param Object $self
+ * @param Int $var
+ * @return String
+ */
 
 $debug = true;
 
@@ -95,7 +96,7 @@ function admin_comment_list($self) {
 	foreach ($dbs->items as $rs) {
 		if ($isEdit) {
 			if ($rs->cid) {
-				$deleteBtn = '<a class="sg-action" href="'.url('paper/info/api/'.$rs->tpid.'/comment.delete/'.$rs->cid, ['confirm' => $getNoConfirm ? 'yes' : NULL]).'" title="Delete this comment" data-rel="notify" '.($getNoConfirm ? '' : 'data-confirm="Delete this comment?"').' data-before="remove:parent tr"><i class="icon -material">cancel</i></a>';
+				$deleteBtn = '<a class="sg-action" href="'.url('api/paper/'.$rs->tpid.'/comment.delete', ['commentId' => $rs->cid, 'confirm' => $getNoConfirm ? 'yes' : NULL]).'" title="Delete this comment" data-rel="notify" '.($getNoConfirm ? '' : 'data-confirm="Delete this comment?"').' data-before="remove:parent tr"><i class="icon -material">cancel</i></a>';
 			} else if ($rs->type == 'forum') {
 				$deleteBtn = '<a class="sg-action" href="'.url('paper/'.$rs->tpid.'/delete', ['confirm' => $getNoConfirm ? 'yes' : NULL]).'" title="Delete this paper" data-rel="none" '.($getNoConfirm ? '' : 'data-confirm="Delete this paper?"').' data-before="remove:parent tr"><i class="icon -material">delete</i></a>';
 			} else {

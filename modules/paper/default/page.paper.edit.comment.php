@@ -3,7 +3,7 @@
 * Paper   :: Edit comment Form
 * Created :: 2019-06-02
 * Modify  :: 2025-06-23
-* Version :: 2
+* Version :: 3
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -26,7 +26,7 @@ function paper_edit_comment($self, $topicInfo = NULL, $commentId = NULL) {
 
 	$ret = '<h2>Edit comment</h2>';
 
-	$comment = PaperModel::getCommentById($commentId);
+	$comment = NodeModel::getCommentById($commentId);
 
 	$form = new Form([
 		'variable' => 'comment',

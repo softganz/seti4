@@ -2,8 +2,8 @@
 /**
 * View Paper Comment Form
 * Created :: 2019-06-05
-* Modify  :: 2023-10-04
-* Version :: 2
+* Modify  :: 2025-06-23
+* Version :: 3
 *
 * @param Object $topicInfo
 * @return String
@@ -40,7 +40,7 @@ function view_paper_comment_form($topicInfo) {
 		$ret .= $para->_comment_post;
 
 	if ($_GET['quote']) {
-		$quote = PaperModel::getCommentById($_GET['quote']);
+		$quote = NodeModel::getCommentById($_GET['quote']);
 		$comment->comment = '[quote author='.\SG\getFirst($quote->name,$quote->owner).' link=paper/'.$quote->tpid.'#comment-10831 date='.sg_date($quote->timestamp,'U').']'._NL;
 		$comment->comment .= trim(strip_tags(sg_text2html($quote->comment),'<p><ul><ol><li>,<strong><em><u>'))._NL;
 		$comment->comment .= '[/quote]'._NL._NL;

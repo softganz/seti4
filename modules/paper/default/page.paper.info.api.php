@@ -2,8 +2,8 @@
 /**
 * Paper   :: Information API
 * Created :: 2021-11-22
-* Modify  :: 2025-06-15
-* Version :: 6
+* Modify  :: 2025-06-23
+* Version :: 7
 *
 * @param Int $nodeId
 * @param String $action
@@ -143,13 +143,6 @@ class PaperInfoApi extends Page {
 				]);
 				// if ($_SERVER['HTTP_REFERER']) location($_SERVER['HTTP_REFERER']); else location('paper/'.$tpid);
 
-				break;
-
-			case 'comment.delete':
-				if ($tranId && \SG\confirm()) {
-					$result = R::Model('paper.comment.delete',$tranId);
-					$ret = $result->complete ? new Message(['responseCode' => _HTTP_OK, 'text' => 'Comment deleted.']) : new ErrorMessage(['responseCode' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'มีข้อผิดพลาดในการลบความเห็น']);
-				}
 				break;
 
 			case 'comment.hide':

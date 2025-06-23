@@ -2,8 +2,8 @@
 /**
 * Paper   :: Send Delete Request Via Email
 * Created :: 2024-07-07
-* Modify  :: 2025-06-16
-* Version :: 3
+* Modify  :: 2025-06-23
+* Version :: 4
 *
 * @param String $commentId
 * @return Widget
@@ -93,7 +93,7 @@ class PaperCommentSenddelete extends Page {
 		if (empty($post->sender)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'กรุณาป้อนชื่อผู้ส่ง');
 		if (!i()->ok && !sg_valid_daykey(5,post('daykey'))) apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'Invalid Anti-spam word');
 
-		$commentInfo = R::Model('paper.comment.get', $this->commentId);
+		$commentInfo = NodeModel::getCommentById($this->commentId);
 
 		if (load_lib('class.mail.php', 'lib')) {
 			$mail = new Mail();

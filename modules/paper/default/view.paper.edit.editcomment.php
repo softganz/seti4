@@ -1,8 +1,8 @@
 <?php
 /**
-* View Paper Edit Comment
-* Modify  :: 2025-06-15
-* Version :: 2
+* Paper   :: View Paper Edit Comment
+* Modify  :: 2025-06-23
+* Version :: 3
 *
 * @param Object $topicInfo
 * @param Int $commentId
@@ -14,10 +14,9 @@ use Paper\Model\PaperModel;
 function view_paper_edit_editcomment($topicInfo, $commentId) {
 	load_lib('class.editor.php','lib');
 
-	$comment = PaperModel::getCommentById($commentId);
+	$comment = NodeModel::getCommentById($commentId);
 
 	if (post('cancel')) {
-		$comment = PaperModel::getCommentById($commentId);
 		$ret .= R::View('paper.comment.render', $comment);
 		return $ret;
 	} else if (post('comment')) {
@@ -79,7 +78,7 @@ function view_paper_edit_editcomment($topicInfo, $commentId) {
 			'message' => 'Edit comment id '.$comment->cid.' of <a href="'.url('paper/'.$comment->tpid.'#comment-'.$comment->cid).'">paper/'.$comment->tpid.'</a>'
 		]);
 
-		$comment = PaperModel::getCommentById($commentId);
+		$comment = NodeModel::getCommentById($commentId);
 		$ret .= R::View('paper.comment.render', $comment);
 		return $ret;
 	}

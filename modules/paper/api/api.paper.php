@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2025-06-13
-* Version :: 15
+* Modify  :: 2025-06-23
+* Version :: 16
 *
 * @param Int $nodeId
 * @param String $action
@@ -462,6 +462,23 @@ class PaperApi extends PageApi {
 		if (!$this->right->admin) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		$backend = NodeModel::getBackend($this->nodeId);
 		return $backend;
+	}
+
+	function commentDelete() {
+		$commentId = SG\getFirstInt(post('commentId'));
+
+		$comment = NodeModel::getCommentById($commentId);
+
+		if (empty($commentId)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลความเห็นที่ต้องการลบ');
+		if (!SG\confirm()) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'กรุณายืนยันการลบความเห็น');
+		if (empty($comment->cid)) return apiError(_HTTP_ERROR_NOT_FOUND, 'ไม่พบความเห็นที่ต้องการลบ');
+		if (!($this->right->edit || (i()->ok && $comment->uid === i()->uid))) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+
+		$result = NodeModel::deleteCommentById($commentId);
+
+		if ($result->error) return apiError(_HTTP_ERROR_BAD_REQUEST, $result->message);
+
+		return apiSuccess('ลบความเห็นเรียบร้อย');
 	}
 }
 ?>

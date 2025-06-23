@@ -1,8 +1,8 @@
 <?php
 /**
-* View Paper Hide Comment
-* Modify  :: 2025-06-15
-* Version :: 2
+* Paper   :: View Paper Hide Comment
+* Modify  :: 2025-06-23
+* Version :: 3
 *
 * @param Object $topicInfo
 * @param Int $commentId
@@ -15,7 +15,7 @@ function view_paper_edit_hidecomment($topicInfo, $commentId) {
 	//$ret .= '$commentId = '.$commentId.'<br />';
 	$result = R::Model('paper.comment.status.toggle', $commentId);
 
-	$rs = PaperModel::getCommentById($commentId);
+	$rs = NodeModel::getCommentById($commentId);
 
 	$ret .= R::View('paper.comment.render',$rs);
 

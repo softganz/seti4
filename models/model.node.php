@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-06-24
-* Version :: 16
+* Modify  :: 2025-06-23
+* Version :: 17
 *
 * @param Array $args
 * @return Object
@@ -874,23 +874,41 @@ class NodeModel {
 		}
 	}
 
-	public static function deleteAllUserComment($userId) {
+	public static function deleteAllUserComment(Int $userId) {
 		if (empty($userId)) return false;
 
-		$dbs = DB::select([
+		$comments = DB::select([
 			'SELECT `cid` `commentId`, `tpid`
 			 FROM %topic_comments%
 			 WHERE `uid` = :userId',
 			 'var' => [':userId' => $userId]
-		]);
+		])->items;
 
-		foreach ($dbs->items as $rs) {
-			self::deleteComment($rs->commentId);
-			// DB::query([
-			// 	'DELETE FROM %topic_comments% WHERE `cid` = :cid LIMIT 1',
-			// 	'var' => [':cid' => $rs->cid]
-			// ]);
+		foreach ($comments as $comment) {
+			$result = self::deleteCommentById($comment->commentId);
 		}
+	}
+
+	/**
+	 * Get comment by comment ID
+	 * @param Int $commentId
+	 * @return Object
+	 */
+	public static function getCommentById(Int $commentId) {
+		return DB::select([
+			'SELECT
+				c.`cid` `commentId`, c.`tpid` `nodeId`
+				, c.tpid AS tpid , t.title
+				, c.*
+				, u.name AS owner
+				, p.fid , p.file AS photo , p.title AS photo_title , p.description AS photo_description
+			FROM %topic_comments% AS c
+				LEFT JOIN %topic% AS t ON t.tpid=c.tpid
+				LEFT JOIN %topic_files% as p ON p.tpid=c.tpid AND p.cid=c.cid AND p.`type`="photo"
+				LEFT JOIN %users% AS u ON u.uid=c.uid
+			WHERE c.`cid` = :commentId LIMIT 1',
+			'var' => [':commentId' => $commentId]
+		]);
 	}
 
 	public static function photoInUsed($fileName, $fileId) {

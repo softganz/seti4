@@ -2,8 +2,8 @@
 /**
 * Paper   :: Paper Model
 * Created :: 2007-11-21
-* Modify  :: 2025-06-24
-* Version :: 9
+* Modify  :: 2025-06-23
+* Version :: 10
 *
 * @usage import('model:paper.php');
 * @usage new PaperModel([])
@@ -400,20 +400,6 @@ class PaperModel extends \NodeModel {
 		$result->complete = true;
 		$result->process[] = 'PaperModel::delete completed';
 		return $result;
-	}
-
-	public static function getCommentById($cid) {
-		$stmt = 'SELECT
-				c.tpid AS tpid , t.title , c.*
-				, u.name AS owner
-				, p.fid , p.file AS photo , p.title AS photo_title , p.description AS photo_description
-			FROM %topic_comments% AS c
-				LEFT JOIN %topic% AS t ON t.tpid=c.tpid
-				LEFT JOIN %topic_files% as p ON p.tpid=c.tpid AND p.cid=c.cid AND p.`type`="photo"
-				LEFT JOIN %users% AS u ON u.uid=c.uid
-			WHERE c.`cid` = :cid LIMIT 1';
-		$rs=\mydb::select($stmt, ':cid', $cid);
-		return $rs;
 	}
 
 	public static function createArchive() {
