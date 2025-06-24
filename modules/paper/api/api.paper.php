@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2025-06-23
-* Version :: 17
+* Modify  :: 2025-06-24
+* Version :: 18
 *
 * @param Int $nodeId
 * @param String $action
@@ -486,7 +486,7 @@ class PaperApi extends PageApi {
 					':commentId' => $commentId
 				]
 			]);
-			if ($deletePhoto->fid && $deletePhoto->file) $a=FileModel::delete($deletePhoto->fid, ['deleteRecord' => true]);
+			if ($deletePhoto->fid) FileModel::delete($deletePhoto->fid, ['deleteRecord' => true]);
 		}
 
 		// save upload photo
