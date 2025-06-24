@@ -2,8 +2,8 @@
 /**
 * Paper save post comment
 * Created :: 2019-06-05
-* Modify  :: 2025-06-15
-* Version :: 4
+* Modify  :: 2025-06-24
+* Version :: 5
 *
 * @param Object $self
 * @param Int $tpid
@@ -130,14 +130,14 @@ function paper_comment_post($self, $topicInfo = NULL) {
 		}
 	}
 
-	$mail->to=cfg('alert.email');
-	$mail->title='Re: ++'.strip_tags($topicInfo->title).' : '.$topicInfo->tags[0]->name;
-	$mail->name = SG\getFirst(i()->name,$comment->name);
-	$mail->from='alert@'.cfg('domain.short');
-	if (cfg('alert.cc')) $mail->cc=cfg('alert.cc');
-	if (cfg('alert.bcc')) $mail->bcc=cfg('alert.bcc');
-
-	$mail->body='
+	$mail = (Object) [
+		'to' => cfg('alert.email'),
+		'title' => 'Re: ++'.strip_tags($topicInfo->title).' : '.$topicInfo->tags[0]->name,
+		'name' => SG\getFirst(i()->name,$comment->name),
+		'from' => 'alert@'.cfg('domain.short'),
+		'cc' => cfg('alert.cc') ? cfg('alert.cc') : NULL,
+		'bcc' => cfg('alert.bcc') ? cfg('alert.bcc') : NULL,
+		'body' => '
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -152,8 +152,9 @@ Submit by <b>'.($comment->name?$comment->name.(i()->name && i()->name!=$comment-
 <hr size=1>'.
 sg_text2html($comment->comment).'
 </body>
-</html>
-';
+</html>'
+	];
+
 	//BasicModel::sendmail($mail);
 
 	$ret .= message('status','Comment post complete');
