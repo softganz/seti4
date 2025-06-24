@@ -36,6 +36,13 @@
 			"jwtSecret": "Enter Secret Here"
 		}
 	},
+	"mail": {
+		"host": "mail.example.com",
+		"username": "noreply@example.com",
+		"password": "password",
+		"SMTPSecure": "tls",
+		"port": 587
+	},
 	"error": {
 		"sendLog": {
 			"toUrl": null,
