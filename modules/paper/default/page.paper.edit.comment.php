@@ -2,8 +2,8 @@
 /**
 * Paper   :: Edit comment Form
 * Created :: 2019-06-02
-* Modify  :: 2025-06-23
-* Version :: 4
+* Modify  :: 2025-06-24
+* Version :: 5
 *
 * @param Object $self
 * @param Object $topicInfo
@@ -36,7 +36,7 @@ function paper_edit_comment($self, $topicInfo = NULL, $commentId = NULL) {
 		'variable' => 'comment',
 		'action' => url('api/paper/'.$tpid.'/comment.update/'.$commentId),
 		'id' => 'edit-topic',
-		// 'class' => 'sg-form',
+		'class' => 'sg-form',
 		'rel' => 'none',
 		'done' => 'load',
 		'enctype' => 'multipart/form-data',
