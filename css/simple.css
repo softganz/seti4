@@ -937,12 +937,13 @@ $SCREENS
 
 
 
-	.page-nv {margin:8px 0;padding: 4px 0;text-align:right;font-size:10pt;}
-		.page-nv span {padding: 0em;display: inline;}
-		.page-nv .page-current, .page-nv a { padding: 2px 8px; margin: 0 2px 0 0; font-weight:bold;}
-		.page-nv .page-current {}
-		.page-nv .page-items {font-weight:bold;font-style:italic;margin:0 8px 0 0;}
-
+	.page-nv {
+		margin: 8px 0; padding: 4px 0; text-align: right; font-size: 10pt;
+		display: flex; align-items: center; justify-content: flex-end;
+		span {padding: 0em;display: inline;}
+		.page-current, .page-nv a { padding: 2px 8px; margin: 0 2px 0 0; font-weight: bold;}
+		.page-items {font-weight: bold; font-style: italic; margin: 0 8px 0 0;}
+	}
 
 
 
