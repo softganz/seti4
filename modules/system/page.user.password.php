@@ -3,7 +3,7 @@
 * User    :: Reset Passsword Request Form
 * Created :: 2021-11-26
 * Modify  :: 2025-06-24
-* Version :: 4
+* Version :: 5
 *
 * @return Widget
 *
@@ -163,7 +163,8 @@ class UserPassword extends Page {
 				]);
 			} catch (Exception $e) {
 				$message = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-				$message = 'ท่านได้ร้องขอรหัสผ่านจากเว็บ แต่ท่านไม่ได้ระบุอีเมล์ไว้ในข้อมูลของสมาชิก จึงไม่สามารถส่งข้อมูลให้ท่านทางอีเมล์ได้.'.$mail->ErrorInfo;
+				$message = 'ท่านได้ร้องขอรหัสผ่านจากเว็บ แต่ท่านไม่ได้ระบุอีเมล์ไว้ในข้อมูลของสมาชิก จึงไม่สามารถส่งข้อมูลให้ท่านทางอีเมล์ได้.';
+				// $mail->ErrorInfo;
 				$logMsg .= ' But email is invalid.';
 			}
 			// debugMsg($user, '$user');
