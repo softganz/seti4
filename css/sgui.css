@@ -636,10 +636,10 @@
 			>input:hover {box-shadow: none;}
 			>input:focus {box-shadow: none;}
 			>*>.form-select {height: 36px;}
-			>*>span>* {height: 100%;}
+			>*>span>* {height: 100%; border: none; box-shadow: none;}
 			>*>span>.btn {padding: 0; display: block; border-radius: 0;}
 			>*>span>.btn.-primary {box-shadow: 0 0 0 1px #2179ff;}
-			>*>span>.btn>.icon {padding: 7px 3px;}
+			>*>span>.btn>.icon {padding: 0;}
 			>*>span>.btn>span {padding: 0 4px; line-height: 36px;}
 			>*>span>.btn>.icon.-sg-16 {padding: 10px 4px;}
 			>.input-prepend {background-color: #f9f9f9; display: flex; line-height: 34px;}
@@ -683,11 +683,11 @@
 /* widget-statusbar */
 .widget-statusbar {
 	margin:8px 0 32px 0 !important; padding: 0; list-style-type: none; height:24px; border-bottom: 1px #ccc solid; display: flex; flex-wrap: nowrap; justify-content: space-between;
+	* {box-sizing: border-box;}
 	>li {display: block; flex: 0 0 48px; text-align: center;}
-	>li .status {display: block; width: 48px; height: 48px; margin: 0 auto; background-color: #eee; line-height: 48px; border-radius: 50%;}
-	>li .status:hover {background-color: #f5f5f5;}
-	>li .status.-active {background-color: green; color:#fff;}
-	>li .status.-active:hover {background-color: #008912;}
+	>li .status {display: block; width: 48px; height: 48px; padding: 12px; margin: 0 auto; background-color: #eee; line-height: normal; border-radius: 50%;}
+	>li .status:hover {filter: brightness(0.95);}
+	>li .status.-active {background-color: green; color:#fff; border: none; box-shadow: none;}
 	>li .status.-process-1.-active {background-color: yellow; color: #333;}
 	>li .status.-process-2.-active {background-color: orange;}
 	>li .status.-process-3.-active {background-color: magenta;}
