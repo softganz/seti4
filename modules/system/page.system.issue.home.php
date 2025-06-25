@@ -2,8 +2,8 @@
 /**
 * System  :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2025-02-25
-* Version :: 14
+* Modify  :: 2025-06-25
+* Version :: 15
 *
 * @return Widget
 *
@@ -93,11 +93,11 @@ class SystemIssueHome extends Page {
 												'children' => [
 													'<b>Link : '.$item->host.$item->path.($item->query ? '?'.$item->query : '').'</b>',
 													$item->reportBy ? 'By : '.$item->reportBy : NULL,
-													$item->issueType === 'Create user' ? $this->showCreateUserInfo($item) : NULL,
+													// $item->issueType === 'Create user' ? $this->showCreateUserInfo($item) : NULL,
 													'Date : '.$item->reportDate,
 													'Referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
 													'Agent : '.$item->agent,
-													in_array($item->issueType, ['Fatal Error']) ? '<details><summary>'.preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : '.$item->description.'</details>' : NULL,
+													$item->description ? 'Description: <details><summary>'.preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : '.$item->description.'</details>' : NULL,
 												]
 											]), // Column
 										]), // ScrollView
