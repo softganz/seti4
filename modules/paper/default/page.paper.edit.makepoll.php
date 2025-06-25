@@ -1,60 +1,83 @@
 <?php
 /**
-* Paper   :: Make Paper as Poll
-* Created :: 2019-06-02
-* Modify  :: 2025-06-23
-* Version :: 3
-*
-* @param Object $self
-* @param Object $topicInfo
-* @return String
-*/
+ * Paper   :: Make Paper as Poll
+ * Created :: 2019-06-02
+ * Modify  :: 2025-06-25
+ * Version :: 4
+ *
+ * @param String $topicInfo
+ * @return Widget
+ *
+ * @usage paper/{Id}/edit.makepoll
+ */
 
-$debug = true;
+use Softganz\DB;
 
-function paper_edit_makepoll($self, $topicInfo) {
-	if (!$topicInfo->tpid) return message('error', 'PARAMETER ERROR');
-	if (!$topicInfo->right->edit) return message('error', 'Access Denied');
+class PaperEditMakepoll extends Page {
+	var $nodeId;
+	var $right;
+	var $topicInfo;
 
-	$tpid = $topicInfo->tpid;
-
-	$ret = '<header class="header -box"><nav class="nav -back"><a class="" href="'.url('paper/'.$tpid.'/edit').'"><i class="icon -material">arrow_back</i></a></nav><h3>MAKE POLL</h3></header>';
-
-	$ret .= '<h3>สร้างแบบสำรวจความคิดเห็น</h3>';
-
-	$stmt = 'SELECT * FROM %poll_choice% WHERE `tpid` = :tpid ORDER BY `choice` ASC; -- {key: "choice"}';
-
-	$dbs = mydb::select($stmt,':tpid',$tpid);
-
-
-	$form = new Form('poll', url('api/paper/'.$tpid.'/poll.update'), 'edit-topic');
-
-	for ($i = 1; $i <= 10; $i++) {
-		$choice_name=$i;
-		$form->addField(
-				$i,
-				array(
-					'type' => 'text',
-					'label' => 'ตัวเลือกที่ '.$i,
-					'class' => '-fill',
-					'value' => $dbs->items[$i]->detail,
-				)
-			);
+	function __construct($topicInfo = NULL) {
+		parent::__construct([
+			'nodeId' => $topicInfo->nodeId,
+			'topicInfo' => $topicInfo,
+			'right' => (Object) [
+				'edit' => $topicInfo->right->edit
+			]
+		]);
 	}
 
-	$form->addField(
-			'save',
-			array(
-				'type' => 'button',
-				'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-				'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$tpid.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-				'container' => '{class: "-sg-text-right"}',
-			)
-		);
+	function rightToBuild() {
+		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		return true;
+	}
 
-	$ret .= $form->build();
+	function build() {
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'สร้างแบบสำรวจความคิดเห็น',
+				'leading' => _HEADER_BACK,
+				'boxHeader' => true,
+			]), // AppBar
+			'body' => new Form([
+				'vaiable' => 'poll',
+				'action' => url('api/paper/'.$this->nodeId.'/poll.update'),
+				'id' => 'edit-topic',
+				'children' => [
+					new ChildrenWidget([
+						'children' => (function() {
+							$polls = [];
+							$pollAnswer = DB::select([
+								'SELECT * FROM %poll_choice% WHERE `tpid` = :tpid ORDER BY `choice` ASC',
+								'var' => [':tpid' => $this->nodeId],
+								'options' => ['key' => 'choice']
+							])->items;
 
-
-	return $ret;
+							for ($i = 1; $i <= 10; $i++) {
+								$polls[$i] = [
+									'type' => 'text',
+									'label' => 'คำตอบที่ '.$i,
+									'class' => '-fill',
+									'name' => 'poll['.$i.']',
+									'value' => $pollAnswer[$i]->detail,
+									'placeholder' => 'ระบุคำตอบ'
+								];
+							}
+							// debugMsg($polls, '$polls');
+							return $polls;
+						})()
+					]),
+					'save' => [
+						'type' => 'button',
+						'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+						'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+						'container' => '{class: "-sg-text-right"}',
+					]
+				], // children
+			]), // Form
+		]);
+	}
 }
 ?>

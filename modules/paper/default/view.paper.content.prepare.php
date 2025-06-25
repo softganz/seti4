@@ -2,8 +2,8 @@
 /**
 * Paper   :: Render Paper Content
 * Created :: 2023-07-24
-* Modify  :: 2023-07-24
-* Version :: 1
+* Modify  :: 2025-06-25
+* Version :: 2
 *
 * @param Object $$topicInfo
 * @param Object $options
@@ -233,7 +233,7 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 		if ($topicInfo->info->reply) $body->footer.='<b>'.$topicInfo->info->reply.'</b> comments @'.sg_date($topicInfo->info->last_reply,cfg('dateformat'));
 		$body->footer .= '</span>';
 		if (cfg('email.delete_message')) {
-			$body->footer .= '&nbsp;&nbsp;<a class="sg-action btn -link" href="'.url('paper/senddelete/'.$topicInfo->tpid).'" data-rel="box" data-width="480"><i class="icon -material -gray">report</i><span>แจ้งลบหัวข้อ</span></a>';
+			$body->footer .= '&nbsp;&nbsp;<a class="sg-action btn -link" href="'.url('paper/'.$topicInfo->tpid.'/send.delete').'" data-rel="box" data-width="480"><i class="icon -material -gray">report</i><span>แจ้งลบหัวข้อ</span></a>';
 		}
 		$body->footer.='</nav><!--footer-->'._NL._NL;
 	}
