@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-06-13
- * @version :: 21
+ * @modify  :: 2025-06-25
+ * @version :: 22
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -443,6 +443,11 @@ function sgSendLog($data = []) {
 		],
 		(Array) $data
 	);
+
+	if (isset($data['forceSend'])) {
+		$forceSend = true;
+		unset($data['forceSend']);
+	}
 
 	if ($data['description'] && (is_object($data['description']) || is_array($data['description']))) {
 		$data['description'] = json_encode(
