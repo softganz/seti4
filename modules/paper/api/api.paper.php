@@ -3,7 +3,7 @@
 * Paper   :: Info API
 * Created :: 2023-07-23
 * Modify  :: 2025-06-25
-* Version :: 19
+* Version :: 20
 *
 * @param Int $nodeId
 * @param String $action
@@ -625,7 +625,6 @@ class PaperApi extends PageApi {
 			'user' => i()->uid,
 			'name' => SG\getFirst(i()->name, $post->sender),
 			'description' => $post->detail,
-			'forceSend' => true,
 		]);
 		//BasicModel::sendmail($mail);
 		//$ret .= print_o($mail,'$mail');
