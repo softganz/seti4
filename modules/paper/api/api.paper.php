@@ -2,8 +2,8 @@
 /**
 * Paper   :: Info API
 * Created :: 2023-07-23
-* Modify  :: 2025-06-24
-* Version :: 18
+* Modify  :: 2025-06-25
+* Version :: 19
 *
 * @param Int $nodeId
 * @param String $action
@@ -562,6 +562,76 @@ class PaperApi extends PageApi {
 		NodeModel::hideCommentById($commentId);
 
 		return apiSuccess('ซ่อนความเห็นเรียบร้อย');
+	}
+
+	function sendDelete() {
+		$post = (Object) post('contact');
+
+		if (empty($post->detail)) return apiError(_HTTP_ERROR_NOT_FOUND, 'กรุณาระบุความไม่เหมาะสมของเนื้อหา');
+		if (empty($post->sender)) return apiError(_HTTP_ERROR_NOT_FOUND, 'กรุณาป้อนชื่อผู้ส่ง');
+		if (!i()->ok && !sg_valid_daykey(5,post('daykey'))) apiError(_HTTP_ERROR_NOT_FOUND, 'Invalid Anti-spam word');
+
+		// if (load_lib('class.mail.php', 'lib')) {
+		// 	$mail = new Mail();
+
+		// 	$mail->FromName('noreply');
+		// 	$mail->FromEmail('noreply@'.cfg('domain.short'));
+
+		// 	$mailTo = cfg('email.delete_message');
+		// 	$mailTitle = 'แจ้งลบหัวข้อ : '.strip_tags($this->nodeInfo->title);
+		// 	$mailMessage = '
+		// 	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+		// 	<html>
+		// 	<head>
+		// 	<meta content="text/html;charset='.cfg('client.characterset').'" http-equiv="Content-Type">
+		// 	<title>'.$this->nodeInfo->title.'</title>
+		// 	</head>
+		// 	<body>
+		// 	<h2><a href="'.cfg('domain').url('paper/'.$this->nodeInfo->tpid).'" target=_blank><strong>'.$this->nodeInfo->title.'</strong></a></h2>'
+		// 	. '<p>Submit by <strong>'.\SG\getFirst($this->nodeInfo->info->owner, $this->nodeInfo->info->poster)
+		// 	. ($this->nodeInfo->uid ? '('.$this->nodeInfo->uid.')' : '')
+		// 	. '</strong> '
+		// 	. ' on <strong>'.$this->nodeInfo->info->created.'</strong> | ip : '.GetEnv('REMOTE_ADDR')
+		// 	. ' | paper id : <strong><a href="'.cfg('domain').url('paper/'.$this->nodeInfo->tpid).'" target=_blank>'.$this->nodeInfo->tpid.'</a></strong><p>
+		// 	<hr size=1>
+		// 	<h3>แจ้งโดย : '.$post->sender.' &lt;'.$post->email.'&gt;</h3>
+		// 	<h3>ความไม่เหมาะสมของเนื้อหา</h3><p>'.$post->detail.'<p>
+		// 	<h3>ข้อความ</h3>'
+		// 	. $this->nodeInfo->info->body
+		// 	.'
+		// 	</body>
+		// 	</html>';
+
+
+		// 	if ( $mailTo ) {
+		// 		$mail_result = $mail->Send($mailTo, $mailTitle, $mailMessage, false, 'https://service.softganz.com');
+		// 		if ($mail_result) {
+		// 			//$ret .= 'Send mail complete';
+		// 		}
+		// 	}
+		// }
+
+		LogModel::save([
+			'module' => 'paper',
+			'keyword' => 'Send delete paper',
+			'message' => 'Paper : '.$this->nodeId.' : '.$this->nodeInfo->title.'<br />'.$post->detail
+		]);
+
+		sgSendLog([
+			'file' => __FILE__,
+			'line' => __LINE__,
+			'url' => _DOMAIN.url('paper/'.$this->nodeId),
+			'type' => 'Report deletion',
+			'user' => i()->uid,
+			'name' => SG\getFirst(i()->name, $post->sender),
+			'description' => $post->detail,
+			'forceSend' => true,
+		]);
+		//BasicModel::sendmail($mail);
+		//$ret .= print_o($mail,'$mail');
+
+		$ret .= message('success','ส่งข้อความแจ้งลบหัวข้อที่ไม่เหมาะสมเรียบร้อย');
+		return $ret;
 	}
 
 	// TODO: This method is work in progress
