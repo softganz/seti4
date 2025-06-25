@@ -37,7 +37,7 @@ class NodeShareWidget extends Widget {
 
 				// Share by copy link
 				$this->copyLink ? new Card([
-					'class' => 'copy-link',
+					'class' => 'widget-form copy-link',
 					'style' => 'margin: 8px;',
 					'children' => [
 						new ListTile([
