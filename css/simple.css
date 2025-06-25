@@ -1324,7 +1324,7 @@ $SCREENS
 	#colorbox.-photo #cboxLoadedContent>img {width: 100% !important;}
 
 	#colorbox.-transparent {background-color: transparent;}
-		#colorbox.-transparent #cboxTitle {background-color: #fff; border-radius: 8px;}
+		#colorbox.-transparent #cboxTitle {background-color: #fff;}
 		#colorbox.-transparent .box-page {background-color: transparent; padding-left: 0; padding-right: 0;}
 		#colorbox.-transparent .box-page>.widget-appbar>.-leading {background-color: transparent;}
 		#colorbox.-transparent .box-page>.widget-appbar>.-title {background-color: transparent;}
