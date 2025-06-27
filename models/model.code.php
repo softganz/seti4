@@ -1,17 +1,16 @@
 <?php
 /**
-* Code Model :: Code Collection Model
-* Created 2021-09-11
-* Modify  2021-09-11
-*
-* @usage import('model:code')
-*/
+ * Code    :: Code Collection Model
+ * Created :: 2021-09-11
+ * Modify  :: 2025-06-27
+ * Version :: 2
+ *
+ * @usage import('model:code')
+ */
 
 class ChangwatModel {
 	public static function items($conditions = NULL, $options = '{}') {
 		$defaults = '{debug: false, result: "record", zone: "changwat", selectText: null}';
-		$options = \SG\json_decode($options, $defaults);
-		$debug = $options->debug;
 
 		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
 			$conditions = \SG\json_decode($conditions);
@@ -22,6 +21,10 @@ class ChangwatModel {
 		} else {
 			$conditions = (Object) ['id' => $conditions];
 		}
+
+		$options = SG\json_decode($conditions->options, $options, $defaults);
+		$debug = $options->debug;
+		debugMsg($options, '$options');
 
 		$result = [];
 		if ($conditions->idLike) mydb::where('`provId` LIKE :idLike', ':idLike', $conditions->idLike.'%');
@@ -36,6 +39,12 @@ class ChangwatModel {
 
 		if ($options->zone === 'country') {
 			$result = $result + [
+				'ระดับภูมิภาค' => [
+					// 'ASIAN' => '++ อาเซียน',
+					'SEA' => '++ เอเชียตะวันออกเฉียงใต้ (South East Asia)',
+					'ASIA' => '++ ทวีปเอเชีย (Asia)',
+					'EU' => '++ ทวีปยุโรป (Europe)',
+				],
 				'TH' => '++ ทั้งประเทศ',
 				'ระดับภาค' => [
 					1 => '++ ภาคกลาง',
