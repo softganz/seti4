@@ -2,8 +2,8 @@
 /**
 * Person   :: Person Model
 * Created :: 2022-09-27
-* Modify  :: 2023-11-07
-* Version :: 2
+* Modify  :: 2025-06-27
+* Version :: 3
 *
 * @param Array $args
 * @return Object
@@ -40,6 +40,7 @@ class PersonModel {
 			, IFNULL(cosub.`subdistname`,p.`t_tambon`) subdistname
 			, IFNULL(codist.`distname`,p.`t_ampur`) `distname`
 			, IFNULL(copv.`provname`,p.`t_changwat`) `provname`
+			, copv.`provname` `changwatName`
 			, p.`zip`
 			, p.`rhouse`, p.`rvillage`
 			, p.`rtambon`, rcosub.`subdistname` rsubdistname
@@ -59,7 +60,7 @@ class PersonModel {
 				LEFT JOIN %co_occu% cooc ON cooc.`occu_code`=p.`occupa`
 				LEFT JOIN %tag% com ON com.`taggroup`="mstatus" AND p.`mstatus`=com.`catid`
 
-				LEFT JOIN %co_province% copv ON p.`changwat`=copv.`provid`
+				LEFT JOIN %co_province% copv ON LEFT(p.`areacode`, 2) = copv.`provid`
 				LEFT JOIN %co_district% codist ON codist.`distid`=CONCAT(p.`changwat`,p.`ampur`)
 				LEFT JOIN %co_subdistrict% cosub ON cosub.`subdistid`=CONCAT(p.`changwat`,p.`ampur`,p.`tambon`)
 				LEFT JOIN %co_village% covi ON covi.`villid`=CONCAT(p.`changwat`,p.`ampur`,p.`tambon`,IF(LENGTH(p.`village`)=1,CONCAT("0",p.`village`),p.`village`))
