@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-06-24
- * Version :: 11
+ * Modify  :: 2025-06-27
+ * Version :: 12
  */
 
 @charset "UTF-8";
@@ -71,6 +71,7 @@
 	border: none;
 	border-radius: 24px;
 	cursor: pointer;
+	align-items: center;
 
 	&:hover {filter: brightness(1.1);}
 	&.-normal {color: var(--normal-text-color); background-color: var(--normal-bg-color);}
@@ -122,7 +123,7 @@
 	&.-hidden {display: none;}
 	&:has(:only-child) {padding: 6px;}
 	&:has(.-desc) {border-radius: 128px;}
-	&.-fill {width: 100%; padding-left: 0; padding-right: 0;}
+	&.-fill {width: 100%; padding-left: 0; padding-right: 0; justify-content: center;}
 	&.-wrap {white-space: normal;}
 	&.-disabled {
 		color: var(--disabled-text-color); background-color: var(--disabled-bg-color);
@@ -138,7 +139,7 @@
 	>.-desc {flex: 0 0 100%; text-align: center; font-size: 1.2rem;}
 	>.icon {margin: 0;}
 	>.icon:only-child {margin: 0;}
-	>span {padding: 0 6px; line-height: 24px; vertical-align: middle; display: inline-block;}
+	>span {padding: 0 6px; white-space: nowrap;}
 	>span.-hidden {display: none;}
 	>.icon+span {padding-left: 4px;}
 	>.icon-group {padding: 0;}
