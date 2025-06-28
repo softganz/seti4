@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-06-27
- * Version :: 12
+ * Modify  :: 2025-06-28
+ * Version :: 13
  */
 
 @charset "UTF-8";
@@ -205,31 +205,31 @@
 	&::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;}
 	&.-report>.-nav {background-color: transparent;}
 
-	>.-title {flex: 1; margin:0; padding: 0 8px; height: 4.8rem; font-size: 1.8rem; line-height: 4.8rem; overflow: hidden; position: relative;}
-	>.-title>.-text {margin: 0; padding: 0; font-size: 1.8rem; height: -webkit-fill-available; font-weight: normal; line-height: 3.8rem;}
+	>.-title {flex: 1; margin:0; padding: 0 8px; height: 4.8rem; font-size: 1.8rem; line-height: 4.8rem; overflow: hidden; position: relative; background-color: var(--appbar-bg-color);}
+	>.-title>.-text {margin: 0; padding: 0; font-size: 1.8rem; height: -webkit-fill-available; font-weight: normal; line-height: 3.8rem; color: var(--appbar-text-color);}
 	>.-title>.-text:only-child {line-height: 4.8rem;}
-	>.-title>.-sub {position: absolute; bottom: 4px; font-size: 1.2rem; line-height: 1.2rem;}
+	>.-title>.-sub {position: absolute; bottom: 2px; font-size: 1.2rem; line-height: 1.6rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: var(--appbar-text-color);}
 
-	>.-leading {height: 4.8rem; display: flex; align-items: center; padding: 0 4px;}
+	>.-leading {height: 4.8rem; display: flex; align-items: center; padding: 0 4px; background-color: var(--appbar-bg-color);}
 	>.-leading>.nav.-back {display: none;}
 	>.-leading>.nav.-back>a {display: block; width: 36px; height: 36px; padding: 8px; box-sizing: border-box;}
 
-	>.-nav {flex: 1 0 100%; margin: 0; padding: 0; position: relative; display: flex; overflow: auto; -ms-overflow-style: none; scrollbar-width: none;}
+	>.-nav {flex: 1 0 100%; margin: 0; padding: 0; position: relative; display: flex; overflow: auto; -ms-overflow-style: none; scrollbar-width: none; background-color: var(--appbar-nav-bg-color);}
 	>.-nav::-webkit-scrollbar {display: none; width: 0 !important; height:0 !important; background: transparent;}
 	.-has-dropbox>.-nav {flex: 1 0 calc(100% - 48px);}
-	>.-nav a {white-space: nowrap; display: block; color: #666; background-color: #eee; margin: 2px 2px 0 0; padding: 4px 8px; border-radius: 0px; text-align: center;}
-	>.-nav a:hover {background-color: #f5f5f5;}
+	>.-nav a {white-space: nowrap; display: block; color: var(--appbar-nav-text-color); background-color: var(--appbar-nav-btn-bg-color); margin: 2px 2px 0 0; padding: 4px 8px; border-radius: 0px; text-align: center;}
+	>.-nav a:hover {background-color: var(--appbar-nav-btn-hover-color);}
 	>.-nav a>.icon {display: block; margin: 0 auto;}
 	>.-nav>ul {display: flex; flex-wrap: nowrap; flex: none; margin: 0 8px 0 0; padding: 0; overflow: auto; list-style-type: none;}
 	>.-nav>ul:last-child {margin-right: 0;}
 	>.-nav.-is-more-nav>.ui-nav {flex-basis: calc(100% - 32px);}
 	>.-nav>.-more {position: absolute; right: 8px; top: 8px; overflow: visible;}
 
-	>.-trailing {height: 4.8rem; display: flex; align-items: center;}
+	>.-trailing {height: 4.8rem; display: flex; align-items: center; background-color: var(--appbar-bg-color);}
 	>.-trailing .widget-nav>ul {align-items: center;}
 	>.-trailing .widget-row>.-item>.btn {box-shadow: none; margin: 0 4px;}
 	>.-trailing .widget-dropbox>a {background-color: transparent; box-shadow: none;}
-	>.-trailing .widget-dropbox>a:hover {background-color: #fff; opacity: 0.5;}
+	>.-trailing .widget-dropbox>a:hover {background-color: var(--appbar-dropbox-bg-hover-color); opacity: 0.5;}
 	>.-children {flex: 1 0 100%;}
 	.form-report {background-color: transparent; box-shadow: none; margin: 0; padding: 0;}
 }
@@ -282,9 +282,14 @@
 	display: flex; flex-direction: column; width: 100px;
 	>nav.-vertical {flex: initial;}
 	>nav>ul {gap: 8px;}
-	>nav .widget-button {border-radius: 8px;}
+	>nav.-vertical>ul>li .widget-button {border-radius: 8px; padding: 3px 8px;}
 	>nav.-vertical.-icon-center .widget-button {text-align: center; flex-direction: column;}
 	>nav.-vertical.-icon-center .widget-button>.icon {margin: 0 auto;}
+	>nav nav.-vertical {
+		padding-left: 1rem;
+		ul>li>a {padding: 2px 8px;}
+		.icon {width: 1.6rem; height: 1.6rem; font-size: 1.6rem;}
+	}
 }
 
 /* widget-table */
