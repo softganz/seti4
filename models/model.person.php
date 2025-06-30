@@ -2,8 +2,8 @@
 /**
 * Person   :: Person Model
 * Created :: 2022-09-27
-* Modify  :: 2025-06-27
-* Version :: 3
+* Modify  :: 2025-06-30
+* Version :: 4
 *
 * @param Array $args
 * @return Object
@@ -175,6 +175,11 @@ class PersonModel {
 		if (property_exists($data, 'prename')) $data->preName = $data->prename;
 		if (property_exists($data, 'firstname')) $data->firstName = $data->firstname;
 		if (property_exists($data, 'lastname')) $data->lastName = $data->lastname;
+
+		// Extract firstName and lastName from fullName
+		if ($data->fullName && empty($data->firstName)) {
+			list($data->firstName, $data->lastName) = SG::explode_name(' ', $data->fullName);
+		}
 
 		if(property_exists($data, 'preName')) $updateFields[] = '`preName` = :preName';
 		if(property_exists($data, 'firstName')) $updateFields[] = '`name` = :firstName';
