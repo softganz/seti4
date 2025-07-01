@@ -3,7 +3,7 @@
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
 * Modify  :: 2025-07-01
-* Version :: 48
+* Version :: 49
 *
 * @param Array $args
 * @return Widget
@@ -592,7 +592,7 @@ class Button extends Widget {
 	var $version = '0.01';
 	var $tagName = 'a';
 	var $href;
-	var $type; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
+	var $type = 'default'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
 	var $text;
 	var $icon;
 	var $iconPosition = 'left'; // left,right,top,bottom
@@ -616,7 +616,7 @@ class Button extends Widget {
 			'id' => $this->id,
 			'class' => trim(
 				'widget-'.strtolower($this->widgetName)
-				. (empty($this->type) ? ' -default' : ' btn')
+				. ($this->type === 'default' ? '' : ' btn')
 				. ($this->type ? ' -'.$this->type : '')
 				. ($this->class ? ' '.$this->class : '')
 			),
