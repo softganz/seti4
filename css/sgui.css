@@ -2,7 +2,7 @@
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
  * Modify  :: 2025-07-01
- * Version :: 14
+ * Version :: 15
  */
 
 @charset "UTF-8";
@@ -74,35 +74,55 @@
 	&:hover {filter: brightness(1.1);}
 	&.-normal {color: var(--normal-text-color); background-color: var(--normal-bg-color);}
 
-	&.-primary {color: var(--primary-text-color); background-color: var(--primary-bg-color);}
-	&.-primary>.icon {color: var(--primary-text-color);}
+	&.-primary {
+		color: var(--primary-text-color); background-color: var(--primary-bg-color);
+		>.icon {color: var(--primary-text-color);}
+	}
 
-	&.-secondary {color: var(--secondary-text-color); background-color: var(--secondary-bg-color);}
-	&.-secondary>.icon {color: var(--secondary-text-color);}
+	&.-secondary {
+		color: var(--secondary-text-color); background-color: var(--secondary-bg-color);
+		>.icon {color: var(--secondary-text-color);}
+	}
 
-	&.-success {color: var(--success-text-color); background-color: var(--success-bg-color);}
-	&.-success>.icon {color: var(--success-text-color);}
+	&.-success {
+		color: var(--success-text-color); background-color: var(--success-bg-color);
+		>.icon {color: var(--success-text-color);}
+	}
 
-	&.-info {color: var(--info-text-color); background-color: var(--info-bg-color);}
-	&.-info>.icon {color: var(--info-text-color);}
+	&.-info {
+		color: var(--info-text-color); background-color: var(--info-bg-color);
+		>.icon {color: var(--info-text-color);}
+	}
 
-	&.-warning {color: var(--warning-text-color); background-color: var(--warning-bg-color);}
-	&.-warning>.icon {color: var(--warning-text-color);}
+	&.-warning {
+		color: var(--warning-text-color); background-color: var(--warning-bg-color);
+		>.icon {color: var(--warning-text-color);}
+	}
 
-	&.-danger {color: var(--danger-text-color); background-color: var(--danger-bg-color);}
-	&.-danger>.icon {color: var(--danger-text-color);}
+	&.-danger {
+		color: var(--danger-text-color); background-color: var(--danger-bg-color);
+		>.icon {color: var(--danger-text-color);}
+	}
 
-	&.-link {color: var(--link-text-color); background-color: var(--link-bg-color);}
-	&.-link>.icon {color: var(--link-text-color);}
+	&.-link {
+		color: var(--link-text-color); background-color: var(--link-bg-color);
+		>.icon {color: var(--link-text-color);}
+	}
 
-	&.-cancel {color: var(--cancel-text-color); background-color: var(--cancel-bg-color); margin-right: 16px;}
-	&.-cancel>.icon {color: var(--cancel-text-color);}
+	&.-cancel {
+		color: var(--cancel-text-color); background-color: var(--cancel-bg-color); margin-right: 16px;
+		>.icon {color: var(--cancel-text-color);}
+	}
 
-	&.-floating {color: var(--floating-text-color); background-color: var(--floating-bg-color); box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)}
-	&.-floating>.icon {color: var(--floating-text-color);}
+	&.-floating {
+		color: var(--floating-text-color); background-color: var(--floating-bg-color); box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+		>.icon {color: var(--floating-text-color);}
+	}
 
 	&.-default {
-		>span {white-space: wrap;}
+		padding: 0;
+		&:has(:only-child) {padding: 0;}
+		>span {white-space: wrap; padding: 0;}
 	}
 
 	&.-circle24 {width: 24px; height: 24px; padding: 0px; border-radius: 50%;}
