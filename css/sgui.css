@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-06-28
- * Version :: 13
+ * Modify  :: 2025-07-01
+ * Version :: 14
  */
 
 @charset "UTF-8";
@@ -65,11 +65,9 @@
 	flex-wrap: nowrap;
 	margin: 0px;
 	padding: 6px 8px;
-	font-size: 1.4rem;
 	font-weight: normal;
-	line-height: 1;
 	border: none;
-	border-radius: 24px;
+	border-radius: 36px;
 	cursor: pointer;
 	align-items: center;
 
@@ -102,6 +100,10 @@
 
 	&.-floating {color: var(--floating-text-color); background-color: var(--floating-bg-color); box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)}
 	&.-floating>.icon {color: var(--floating-text-color);}
+
+	&.-default {
+		>span {white-space: wrap;}
+	}
 
 	&.-circle24 {width: 24px; height: 24px; padding: 0px; border-radius: 50%;}
 	&.-circle32 {width: 32px; height: 32px; padding: 4px !important; border-radius: 50%;}
@@ -280,6 +282,7 @@
 
 .widget-sidebar {
 	display: flex; flex-direction: column; width: 100px;
+	z-index: 1;
 	>nav.-vertical {flex: initial;}
 	>nav>ul {gap: 8px;}
 	>nav.-vertical>ul>li .widget-button {border-radius: 8px; padding: 3px 8px;}

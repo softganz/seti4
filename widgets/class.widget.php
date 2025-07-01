@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2025-06-20
-* Version :: 47
+* Modify  :: 2025-07-01
+* Version :: 48
 *
 * @param Array $args
 * @return Widget
@@ -616,7 +616,7 @@ class Button extends Widget {
 			'id' => $this->id,
 			'class' => trim(
 				'widget-'.strtolower($this->widgetName)
-				. (empty($this->type) ? '' : ' btn')
+				. (empty($this->type) ? ' -default' : ' btn')
 				. ($this->type ? ' -'.$this->type : '')
 				. ($this->class ? ' '.$this->class : '')
 			),
