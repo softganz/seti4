@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-04-20
-* Version :: 13
+* Modify  :: 2025-07-03
+* Version :: 14
 *
 * @param Array $args
 * @return Widget
@@ -180,7 +180,7 @@ class InlineEdit extends Widget {
 	private function _renderChildType($key, $widget = '{}') {
 		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
 		$text = SG\getFirst($widget->value, $widget->text);
-		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.SG\getFirst($widget->options->placeholder, $widget->placeholder).'</span>';
+		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.SG\getFirst($widget->options['placeholder'], $widget->placeholder).'</span>';
 		else if ($widget->retType === 'nl2br') $text = trim(nl2br($text));
 		else if ($widget->retType === 'html') $text = trim(sg_text2html($text));
 		else if ($widget->retType === 'text') $text = trim(str_replace("\n",'<br />',$text));
@@ -190,7 +190,6 @@ class InlineEdit extends Widget {
 			if (!$retFormat) $retFormat = 'ว ดดด ปปปป';
 			$text = sg_date($widget->value, $retFormat);
 		}
-
 		// if (is_string($widget->selectOptions)) $selectOptions = explode(',', '==เลือก==,' . $widget->selectOptions);
 		// else if (is_array($widget->selectOptions) && count($widget->selectOptions) > 0) $selectOptions = ['==เลือก=='] + $widget->selectOptions;
 
@@ -256,6 +255,7 @@ class InlineEdit extends Widget {
 			. ($widget->labelClass ? ' '.$widget->labelClass : '')
 			. '"'
 			. ($widget->labelStyle ? ' style="'.$widget->labelStyle.'"' : '')
+			. ' for=""'
 			. '>'
 			. ($widget->options->numbering ? '<span class="-numbering">'.(++$this->numbering).'.</san>' : '')
 			. $widget->label
@@ -365,17 +365,17 @@ class InlineEdit extends Widget {
 	private function _renderRadioItem($widget) {
 		$ret = '';
 
-		foreach($widget->choices as $key => $optionText) {
+		foreach($widget->choices as $key => $choiceText) {
 			$isCheck = NULL;
 			$childrens = NULL;
 
-			if (is_string($optionText) && preg_match('/^</', $optionText)) {
-				$ret .= $optionText;
+			if (is_string($choiceText) && preg_match('/^</', $choiceText)) {
+				$ret .= $choiceText;
 				continue;
-			} else if (is_object($optionText)) {
-				$childrens = $optionText;
-				$optionText = $optionText->text;
-				// && isset($optionText->children);
+			} else if (is_object($choiceText)) {
+				$childrens = $choiceText;
+				$choiceText = $choiceText->text;
+				// && isset($choiceText->children);
 			}
 
 			if (is_array($widget->value)) {
@@ -391,7 +391,7 @@ class InlineEdit extends Widget {
 				. ' value="'.$key.'"'
 				. ($isCheck ? ' checked="checked"' : '')
 				. ' />'
-				. '<span>'.$optionText.'</span>'
+				. '<span>'.$choiceText.'</span>'
 				. '</label>'
 				. '</abbr>';
 		}
