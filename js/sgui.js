@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-06-16
-* Version :: 42
+* Modify  :: 2025-07-02
+* Version :: 43
 */
 
 'use strict'
@@ -1191,13 +1191,14 @@ $(document).on('submit', 'form.sg-form', function(event) {
 */
 (function($) {
 	let inlineEditDom;
-	let version = '2.01'
-	let sgInlineEditAction = 'click'
-	let updatePending = 0
-	let updateQueue = 0
+	let version = '2.01';
+	let sgInlineEditAction = 'click';
+	let updatePending = 0;
+	let updateQueue = 0;
+	// let debug = 1; // debugSG
 	let database;
-	let ref
-	let radioClickCount = 0
+	let ref;
+	let radioClickCount = 0;
 	let settings = {}
 
 
@@ -1207,11 +1208,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	let inputType = ''
 
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
-		console.log('$.sgInlineEdit version ' + version + ' start')
+		let debug = false
+
+		if (debug) console.log('$.sgInlineEdit version ' + version + ' start')
 
 		// default configuration properties
 		if (typeof $.fn.editable === 'undefined') {
-			console.log('ERROR :: $.editable is not load')
+			console.error('ERROR :: $.editable is not load')
 			return
 		}
 
@@ -1247,13 +1250,12 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let showSubmitButton = (fieldOptions && 'button' in fieldOptions) || $inlineField.data('button') == 'yes'
 		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
 		let disableInputOnSave = false
-		let debug = false
 
 		if (postUrl === undefined) {
 			postUrl = $inlineWidget.data('action') ? $inlineWidget.data('action') : $inlineWidget.data('updateUrl')
 		}
 
-		if (debugSG) console.log('=== SG-INLINE-EDIT DEBUG for "(' + inputType + ') ' + $inlineField.data("inputName") + '" ===>')
+		if (debug) console.log('=== SG-INLINE-EDIT DEBUG for inputType "(' + inputType + ') inputName ' + $inlineField.data("inputName") + '" ===>')
 
 		// console.log('POST URL = ',postUrl)
 		// console.log($inlineWidget.data('updateUrl'))
@@ -1351,7 +1353,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$this.data('options')
 		)
 
-		if (debugSG) console.log('SG-INLINE-EDIT SETTING:',settings)
+		if (debug) console.log('SG-INLINE-EDIT SETTING:',settings)
 
 		// console.log('value of container = ', settings.container.data('value'))
 		// console.log('typeof container', typeof settings.container)
@@ -1368,7 +1370,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		self.validValue = (value, settings) => {
 			let errorMsg = ''
 
-			if (debugSG) console.log('VALID VALUE:', value, settings)
+			if (debug) console.log('VALID VALUE:', value, settings)
 
 			// Valid min value
 			if (settings.minValue != undefined) {
@@ -1444,8 +1446,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			//if (settings.blank === null && para.value === "") para.value = null
 			//console.log(settings.blank)
 
-			// console.log(postUrl)
-			if (debugSG) console.log('SENDING PARA:', para)
+			if (debug) console.log('SENDING TO ', postUrl)
+			if (debug) console.log('SENDING PARA:', para)
 
 			updatePending++
 			updateQueue++
@@ -1472,7 +1474,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				//if (data == '' || data == '<p>&nbsp;</p>')
 				//	data = '...';
 
-				if (debugSG) console.log('RETURN DATA:', data)
+				if (debug) console.log('RETURN DATA:', data)
 
 				if (returnType == 'refresh') {
 					window.location = window.location
@@ -1518,8 +1520,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				)
 			}, settings.result)
 			.fail(function(response) {
-				notify('Error on update inline edit daat. Please Contact Admin.');
-				// console.log(response)
+				notify('Error on update inline edit data. Please Contact Admin.');
+				console.log(response)
 			})
 			.done(function(response) {
 				// console.log('response', response)
@@ -1527,7 +1529,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// Process widget callback function
 				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
 
-				if (debugSG) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
+				if (debug && onSaveFunction) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
 				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
 					window[onSaveFunction](settings, $inlineField, response);
 					// window[onSaveFunction]($inlineField, response, $inlineWidget);
@@ -1536,7 +1538,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// Process callback function on each save field
 				let callbackFunction = callback
 
-				if (debugSG) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
+				if (debug && callbackFunction) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
 					if (typeof window[callbackFunction] === 'function') {
 						window[callbackFunction]($inlineField, response, $inlineWidget);
@@ -1551,7 +1553,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 				// Process action done
 				if (settings.done) {
-					if (debugSG) console.log('PROCESSING DONE:', settings.done)
+					if (debug) console.log('PROCESSING DONE:', settings.done)
 					sgActionDone(settings.done, $inlineField, response);
 				}
 				editActive = false
@@ -1605,10 +1607,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		// case TAB => tab valid
 		// case Blur => click outside
 		self.saveEditable = () => {
-			if (debugSG) console.log('ENTER EDITABLE MODE')
+			if (debug) console.log('ENTER EDITABLE MODE')
 			$this.editable(
 				function(value, settings) {
-					if (debugSG) console.log('SAVE EDITABLE FUNCTION for "' + settings.container.data('inputName') + '"')
+					if (debug) console.log('SAVE EDITABLE FUNCTION for "' + settings.container.data('inputName') + '"')
 					let errorMsg = validValue(value, settings)
 					if (true != errorMsg) {
 						notify(errorMsg, 2000)
@@ -2423,8 +2425,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				notify();
 				// $(".report-output").css("opacity", outputOpacity)
 				waiting.remove();
-				if (debugSG && data.debug) console.log('DONE WITH data = ',data)
-				// if (debugSG) console.log('DONE WITH data = ',data)
+				if (debug && data.debug) console.log('DONE WITH data = ',data)
+				// if (debug) console.log('DONE WITH data = ',data)
 				// Process callback function
 				//console.log("CALLBACK = ", callback)
 				if (callback && typeof window[callback] === 'function') {
