@@ -364,7 +364,7 @@
 }
 
 /* widget-inlineedit */
-.widget-inlineedit, .sg-inline-edit {
+.widget-inlineedit {
 	* {box-sizing: border-box;}
 	&.-fill {display: block;}
 	&.-single-line {display: block; line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;}
@@ -372,7 +372,7 @@
 	&.-textarea {display: block;}
 	&.-disabled {opacity: 0.5;}
 	/* @group inlineedit-field */
-	.inlineedit-field, .inline-edit-field {
+	.inlineedit-field {
 		padding: 0; margin: 0; color: #333; display: inline-block; min-width: 100px; width: auto; min-height: 1.4em; vertical-align: middle;
 
 		.placeholder {color: #ccc; font-style: italic; font-size: 0.9em;}

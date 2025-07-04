@@ -439,7 +439,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 		if (is_array($text)) {
 			$ret .= '<ul>'._NL;
 			foreach ($text as $k => $v) {
-				$ret .= '<li><span class="inline-edit-field" data-fld="'.$k.':'.$fld.'" data-type="'.$input_type.'" '._NL.'data-data="'.htmlspecialchars(json_encode($data)).'" data-value="'.htmlspecialchars($v).'">'.getFirst(trim($v),$emptytext).'</span></li>'._NL;
+				$ret .= '<li><span class="inlineedit-field inline-edit-field" data-fld="'.$k.':'.$fld.'" data-type="'.$input_type.'" '._NL.'data-data="'.htmlspecialchars(json_encode($data)).'" data-value="'.htmlspecialchars($v).'">'.getFirst(trim($v),$emptytext).'</span></li>'._NL;
 			}
 			$ret .= '</ul>'._NL;
 		} else {
@@ -470,7 +470,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 				$name = getFirst($fld['name'], $fld['fld']);
 				if ($label == '' && strpos($text, ':') == false) $label = $choice;
 				$label = trim($label);
-				$ret .= '<label><input class="inline-edit-field '
+				$ret .= '<label><input class="inlineedit-field inline-edit-field '
 					.'-'.$input_type
 					.($class ? ' '.$class : '').'" '
 					.($dataOptions->id ? 'id="'.$dataOptions->id.'"' : '')
@@ -489,7 +489,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 					.($info ? '<sup class="sg-info" title="'.$info.'">?</sup>' : '')
 					.$posttext;
 			} else {
-				$ret .= '<span class="inline-edit-field -text '
+				$ret .= '<span class="inlineedit-field inline-edit-field -text '
 					.'-'.$input_type
 					.($class ? ' '.$class : '')
 					.'" '
