@@ -8,8 +8,8 @@
  * Author      :: Panumas Nontapan
  * Author URI  :: https://softganz.com
  * Created     :: 2018-10-15
- * Last Modify :: 2025-06-28
- * Version     :: 11
+ * Last Modify :: 2025-07-05
+ * Version     :: 12
  */
 
 @import url(reset.css);
@@ -21,7 +21,6 @@
 
 :root {
 	--box-bg-color: aliceblue;
-	--box-title-bg-color: aliceblue;
 	--box-close-img: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23555555' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");
 }
 
@@ -300,14 +299,14 @@ $SCREENS
 
 
 
-		/* TODO: Replace btn-floating with widget */
-		.btn-floating {position: fixed; right: 0; z-index: 1000;}
-		.btn-floating.-right-top {width: 100%; padding-right:72px; text-align:right;}
-		.btn-floating.-right-top>.btn {position: fixed; z-index: 1;}
-		.btn-floating.-right-bottom {padding-right:72px; text-align:right;}
-		.btn-floating.-right-bottom>.btn {position: fixed; bottom: 16px; z-index: 2;}
-		.btn-floating.-right-bottom>.btn:nth-child(2) {bottom: 78px;}
-		.btn-floating>span.btn.-floating:hover>ul {display: block; position: absolute; bottom: 48px; right: 0;}
+	/* TODO: Replace btn-floating with widget */
+	.btn-floating {position: fixed; right: 0; z-index: 1000;}
+	.btn-floating.-right-top {width: 100%; padding-right:72px; text-align:right;}
+	.btn-floating.-right-top>.btn {position: fixed; z-index: 1;}
+	.btn-floating.-right-bottom {padding-right:72px; text-align:right;}
+	.btn-floating.-right-bottom>.btn {position: fixed; bottom: 16px; z-index: 2;}
+	.btn-floating.-right-bottom>.btn:nth-child(2) {bottom: 78px;}
+	.btn-floating>span.btn.-floating:hover>ul {display: block; position: absolute; bottom: 48px; right: 0;}
 
 	/* End of class look like bootstrap4 */
 
@@ -1231,14 +1230,17 @@ $SCREENS
 
 	/* Other Module */
 
-	.jconfirm .jconfirm-box .jconfirm-buttons>button.-cancel {margin-right: 32px;}
+	.jconfirm {
+		.jconfirm-box .jconfirm-buttons>button.-cancel {margin-right: 32px;}
+		.jconfirm-content-pane em {color: red;}
+	}
 
 	/*
 	Colorbox Core Style:
 	The following CSS is consistent between example themes and should not be altered.
 	*/
 	#colorbox {}
-		#colorbox, #cboxOverlay, #cboxWrapper{position: absolute; top: 0; left: 0; z-index: 1100; overflow: hidden;}
+		#colorbox, #cboxOverlay, #cboxWrapper {position: absolute; top: 0; left: 0; z-index: 1100; overflow: hidden;}
 		#cboxWrapper {max-width: none;}
 		#cboxOverlay {position: fixed; width: 100%; height: 100%;}
 		#cboxMiddleLeft, #cboxBottomLeft {clear: left;}
@@ -1247,104 +1249,112 @@ $SCREENS
 		#cboxTitle {margin: 0;}
 		#cboxLoadingOverlay, #cboxLoadingGraphic {position: absolute; top: 0; left: 0; width: 100%; height: 100%;}
 		#cboxPrevious, #cboxNext, #cboxClose, #cboxSlideshow {cursor: pointer;}
+		#colorbox, #cboxContent, #cboxLoadedContent {box-sizing: content-box; -moz-box-sizing: content-box; -webkit-box-sizing: content-box;}
 		.cboxPhoto {float: left; margin: auto; border: 0; display: block; max-width: none; -ms-interpolation-mode: bicubic; width: auto !important; height: auto !important;}
 		.cboxIframe {width: 100%; height: 100%; display: block; border: 0; padding: 0; margin: 0;}
-		#colorbox, #cboxContent, #cboxLoadedContent {box-sizing: content-box; -moz-box-sizing: content-box; -webkit-box-sizing: content-box;}
 
 		/*
-		    User Style:
-		    Change the following styles to modify the appearance of Colorbox.  They are
-		    ordered & tabbed in a way that represents the nesting of the generated HTML.
+			User Style:
+			Change the following styles to modify the appearance of Colorbox.  They are
+			ordered & tabbed in a way that represents the nesting of the generated HTML.
 		*/
-		#cboxOverlay {background-color: #000;}
+		.cboxIframe {background-color: #fff;}
+		#cboxOverlay {background-color: #000; max-width: none !important;}
 		#colorbox {outline: 0; border-radius: 2px; border-radius: 10px;}
 		#cboxWrapper {border-radius: 2px;}
-		#cboxContent {margin-top: 48px; overflow: visible; border: none; position: relative;}
+		#cboxContent {margin-top: 48px; overflow: visible; border: none;}
+		#cboxContent .login {width: auto; margin: 0; border: none; background-color: transparent;}
+		#cboxError {padding: 50px; border: 1px solid #ccc;}
+		#cboxLoadedContent {padding: 0; overscroll-behavior-y: contain; background-color: var(--box-bg-color);}
+		#cboxLoadingGraphic {background-image: url(https://softganz.com/library/img/loading.1.gif) no-repeat center center;}
+		#cboxLoadingOverlay {background-color: #fff;}
+		#cboxTitle {position: absolute; top: -48px; left: 0px; color: #333; height: 48px; line-height: 48px; padding: 0; z-index: 0; background-color: var(--appbar-bg-color); box-sizing: border-box; width: 100%;}
+		#cboxCurrent {position: absolute; top: -22px; right: 205px; text-indent: -9999px; z-index: 2;}
 
-			#cboxLoadedContent {
-				.-hover {z-index: 1001;}
-				.header {
-					>.nav.-back {display: none;}
-					h2:not(.-text),
-					h3 {line-height: 48px; overflow: hidden; padding: 0 8px;}
-					>.nav:not(.-back) {padding: 6px 0 6px 0;}
-					>.nav:not(.-back) .ui-item>a {padding: 6px;}
-					>.nav form {display: inherit; vertical-align: middle;}
-					>.nav .sg-dropbox>a {box-shadow: none; background-color: transparent;}
-				}
-				.box-page>.header:first-of-type,
-				.box-page>*>.header:first-of-type {width: calc( 100% - 32px ); margin: 0; padding: 0; position: absolute; color:#333; top: -48px; left: 0; z-index: 10; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap;}
-				.box-page .header:first-of-type>.nav {display: block;}
-				.box-page .header:first-of-type>.nav.-back {display: flex;}
-			}
+	#cboxLoadedContent {
+		.-hover {z-index: 1001;}
+		.header {
+			>.nav.-back {display: none;}
+			h2:not(.-text),
+			h3 {line-height: 48px; overflow: hidden; padding: 0 8px;}
+			>.nav:not(.-back) {padding: 6px 0 6px 0;}
+			>.nav:not(.-back) .ui-item>a {padding: 6px;}
+			>.nav form {display: inherit; vertical-align: middle;}
+			>.nav .sg-dropbox>a {box-shadow: none; background-color: transparent;}
+		}
+	}
 
-			.box-page {width: 100%; height: 100%;}
-			.box-page .form-item.-sg-box-bottom {position: absolute; bottom: 0; display: inline-block;}
-			.box-page .form-item.-sg-box-bottom.-sg-text-right {right: 8px;}
-			.box-page>iframe {width: 100%; height: 100%;}
-
-			.cboxIframe {background-color: #fff;}
-			#cboxError {padding: 50px; border: 1px solid #ccc;}
-			#cboxLoadedContent {padding: 0; overscroll-behavior-y: contain; background-color: var(--box-bg-color);}
-			#cboxLoadingGraphic {background-image: url(https://softganz.com/library/img/loading.1.gif) no-repeat center center;}
-			#cboxLoadingOverlay {background-color: #fff;}
-			#cboxTitle {position: absolute; top: -48px; left: 0px; width: calc( 100% - 32px ); color: #333; height: 48px; line-height: 48px; padding: 0 0 0 32px; z-index: 0; background-color: var(--box-title-bg-color); box-sizing: border-box; width: 100%;}
-			#cboxCurrent {position: absolute; top: -22px; right: 205px; text-indent: -9999px; z-index: 2;}
-
-			/* these elements are buttons, and may need to have additional styles reset to avoid unwanted base styles */
-			#cboxPrevious, #cboxNext, #cboxSlideshow, #cboxClose {border: 0; padding: 0; margin: 0; overflow: visible; text-indent: -9999px; width: 24px; height: 24px; position: absolute; top: -36px; z-index: 20; box-shadow: none; background-color: transparent;}
-
-			/* avoid outlines on :active (mouseclick), but preserve outlines on :focus (tabbed navigating) */
-			#cboxPrevious:active, #cboxNext:active, #cboxSlideshow:active, #cboxClose:active {outline: 0;}
-
-			#cboxPrevious {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23444444' viewBox='0 0 24 24'%3E%3Cpath d='M15.41 16.09l-4.58-4.59 4.58-4.59-1.41-1.41-6 6 6 6z'/%3E%3Cpath d='M0-.5h24v24h-24z' fill='none'/%3E%3C/svg%3E"); right: 88px;}
-			#cboxPrevious:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23808080' viewBox='0 0 24 24'%3E%3Cpath d='M15.41 16.09l-4.58-4.59 4.58-4.59-1.41-1.41-6 6 6 6z'/%3E%3Cpath d='M0-.5h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
-			#cboxNext {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23444444' viewBox='0 0 24 24'%3E%3Cpath d='M8.59 16.34l4.58-4.59-4.58-4.59 1.41-1.41 6 6-6 6z'/%3E%3Cpath d='M0-.25h24v24h-24z' fill='none'/%3E%3C/svg%3E"); right: 58px;}
-			#cboxNext:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23808080' viewBox='0 0 24 24'%3E%3Cpath d='M8.59 16.34l4.58-4.59-4.58-4.59 1.41-1.41 6 6-6 6z'/%3E%3Cpath d='M0-.25h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
-			#cboxClose {background-image: var(--box-close-img); right: 8px;}
-			#cboxClose:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23A0A0A0' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
-			.cboxSlideshow_on #cboxPrevious, .cboxSlideshow_off #cboxPrevious {right: 66px;}
-			.cboxSlideshow_on #cboxSlideshow {background-position: -300px -25px; right: 44px;}
-			.cboxSlideshow_on #cboxSlideshow:hover {background-position: -325px -25px;}
-			.cboxSlideshow_off #cboxSlideshow {background-position: -325px 0px; right: 44px;}
-			.cboxSlideshow_off #cboxSlideshow:hover {background-position: -300px -25px;}
-
-			#cboxContent .login {width: auto; margin: 0; border: none; background-color: transparent;}
-
-	#cboxLoadedContent .widget-appbar>.-title,
-	#cboxLoadedContent .widget-appbar>.-leading,
-	#cboxLoadedContent .widget-appbar>.-trailing
-	 {background-color: transparent;}
-
-	#colorbox.-full {margin: 0 auto;}
-	#colorbox.-full
-	, #colorbox.-full #cboxWrapper
-	, #colorbox.-full #cboxContent
-	, #colorbox.-full #cboxLoadedContent {width: 100% !important; height: 100% !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; float: none !important; border-radius: 0;}
-		#colorbox.-full #cboxWrapper>div:nth-child(2) {height: 100% !important;}
-		#colorbox.-full #cboxLoadedContent {height: calc(100vh - 48px) !important;}
-
-	#colorbox.-photo #cboxLoadedContent {display: flex !important; background-color: #333; height: 100% !important;}
-	#colorbox.-photo #cboxLoadedContent>img {width: 100% !important;}
-
-	#colorbox.-transparent {background-color: transparent;}
-		#colorbox.-transparent #cboxTitle {background-color: #fff;}
-		#colorbox.-transparent .box-page {background-color: transparent; padding-left: 0; padding-right: 0;}
-		#colorbox.-transparent .box-page>.widget-appbar>.-leading {background-color: transparent;}
-		#colorbox.-transparent .box-page>.widget-appbar>.-title {background-color: transparent;}
-		#colorbox.-transparent .widget-card {border-radius: 8px;}
-		#colorbox.-transparent .widget-table:last-child {border-radius: 8px;}
-		#colorbox.-transparent .widget-table tr:last-child>td {border-bottom: none;}
-
-	#cboxOverlay {max-width: none !important;}
-
-	.colorbox.-map #cboxLoadedContent {padding: 0;}
-
-	.jconfirm-content-pane em {color: red;}
+	.box-page {
+		width: 100%; height: calc(100% - 48px);
+		/* padding-top: 48px; */
+		>.header:first-of-type,
+		>*>.header:first-of-type {width: calc( 100% - 32px ); margin: 0; padding: 0; position: absolute; color:#333; top: -48px; left: 0; z-index: 10; text-align: left; border: none; box-shadow: none; display: flex; flex-wrap: nowrap;}
+		.header:first-of-type>.nav {display: block;}
+		.header:first-of-type>.nav.-back {display: flex;}
+		.form-item.-sg-box-bottom {position: absolute; bottom: 0; display: inline-block;}
+		.form-item.-sg-box-bottom.-sg-text-right {right: 8px;}
+		>iframe {width: 100%; height: 100%;}
+	}
 
 
+	/* these elements are buttons, and may need to have additional styles reset to avoid unwanted base styles */
+	#cboxPrevious, #cboxNext, #cboxSlideshow, #cboxClose {border: 0; padding: 0; margin: 0; overflow: visible; text-indent: -9999px; width: 24px; height: 24px; position: absolute; top: -36px; z-index: 20; box-shadow: none; background-color: transparent;}
 
-	/* Light Theme Color */
+	/* avoid outlines on :active (mouseclick), but preserve outlines on :focus (tabbed navigating) */
+	#cboxPrevious:active, #cboxNext:active, #cboxSlideshow:active, #cboxClose:active {outline: 0;}
+
+	#cboxPrevious {
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23444444' viewBox='0 0 24 24'%3E%3Cpath d='M15.41 16.09l-4.58-4.59 4.58-4.59-1.41-1.41-6 6 6 6z'/%3E%3Cpath d='M0-.5h24v24h-24z' fill='none'/%3E%3C/svg%3E");
+		right: 88px;
+		&:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23808080' viewBox='0 0 24 24'%3E%3Cpath d='M15.41 16.09l-4.58-4.59 4.58-4.59-1.41-1.41-6 6 6 6z'/%3E%3Cpath d='M0-.5h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
+	}
+	#cboxNext {
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23444444' viewBox='0 0 24 24'%3E%3Cpath d='M8.59 16.34l4.58-4.59-4.58-4.59 1.41-1.41 6 6-6 6z'/%3E%3Cpath d='M0-.25h24v24h-24z' fill='none'/%3E%3C/svg%3E");
+		right: 58px;
+		&:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23808080' viewBox='0 0 24 24'%3E%3Cpath d='M8.59 16.34l4.58-4.59-4.58-4.59 1.41-1.41 6 6-6 6z'/%3E%3Cpath d='M0-.25h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
+	}
+	#cboxClose {
+		background-image: var(--box-close-img); right: 8px;
+		&:hover {background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23A0A0A0' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");}
+	}
+
+	.cboxSlideshow_on, .cboxSlideshow_off {
+		#cboxPrevious {right: 66px;}
+		#cboxSlideshow {background-position: -300px -25px; right: 44px;}
+		#cboxSlideshow:hover {background-position: -325px -25px;}
+		#cboxSlideshow {background-position: -325px 0px; right: 44px;}
+		#cboxSlideshow:hover {background-position: -300px -25px;}
+	}
+
+	#colorbox.-full {
+		margin: 0 auto;
+		width: 100% !important; height: 100vh !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; margin-top: 0; float: none !important; border-radius: 0;
+		#cboxWrapper
+		, #cboxContent
+		, #cboxLoadedContent {width: 100% !important; height: 100vh !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; margin-top: 0; float: none !important; border-radius: 0;}
+		#cboxWrapper>div:nth-child(2) {height: 100vh !important;}
+		#cboxTitle {top: 0;}
+		#cboxLoadedContent .widget-appbar {top: 0;}
+		#cboxPrevious, #cboxNext, #cboxSlideshow, #cboxClose {top: 12px;}
+		.box-page {padding-top: 48px;}
+	}
+
+	#colorbox.-photo {
+		#cboxLoadedContent {display: flex !important; background-color: #333; height: 100% !important;}
+		#cboxLoadedContent>img {width: 100% !important;}
+	}
+
+	#colorbox.-transparent {
+		background-color: transparent;
+		.box-page {background-color: transparent; padding-left: 0; padding-right: 0;}
+		.widget-card {border-radius: 8px;}
+		.widget-table:last-child {border-radius: 8px;}
+		.widget-table tr:last-child>td {border-bottom: none;}
+	}
+
+	.colorbox.-map {
+		#cboxLoadedContent {padding: 0;}
+	}
 
 
 	/* Dark Theme Color */
