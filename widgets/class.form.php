@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-06-03
-* Version :: 29
+* Modify  :: 2025-07-05
+* Version :: 30
 *
 * @param Array $args
 * @return Widget
@@ -208,6 +208,7 @@ class Form extends Widget {
 
 	function _renderChild($fieldKey, $formElement) {
 		if (is_string($formElement)) {
+			if ($formElement === '<spacer>') $formElement = '<div class="form-item -spacer"></div>';
 			return [NULL, $formElement._NL._NL];
 		}
 
