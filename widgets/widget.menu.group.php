@@ -2,8 +2,8 @@
 /**
 * Widget  :: Menu Group Widget
 * Created :: 2022-09-07
-* Modify  :: 2022-09-07
-* Version :: 1
+* Modify  :: 2025-07-05
+* Version :: 2
 *
 * @param Array $args
 * @return Widget
@@ -50,7 +50,7 @@ class MenuGroupWidget extends Widget {
 				}
 
 				// Show Dropbox menu in follow appBar config
-				if ($this->dropbox) {
+				if ($this->dropbox && $this->dropbox['use']) {
 					$childrens['dropbox'] = new Dropbox([
 						'children' => (function() {
 							foreach (explode(',', $this->dropbox['use']) as $navKey) {
