@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-07-05
-* Version :: 30
+* Modify  :: 2025-07-06
+* Version :: 31
 *
 * @param Array $args
 * @return Widget
@@ -162,7 +162,7 @@ class Form extends Widget {
 				// Form element is object
 				self::changeOptionsToChoice($formElement->children);
 				if ($formElement->tagName) {
-					$ret .= '<'.$formElement->tagName.' class="form-container -type-'.$formElement->tagName.($formElement->class ? ' '.$formElement->class : '').'">'
+					$ret .= '<'.$formElement->tagName.' id="'.$formElement->id.'" class="form-container -type-'.$formElement->tagName.($formElement->class ? ' '.$formElement->class : '').'">'
 						. ($formElement->label ? '<label>'.$formElement->label.'</label>' : '');
 				}
 				$ret .= $this->_renderFormChild($formElement->children);
