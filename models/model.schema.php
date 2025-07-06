@@ -47,9 +47,9 @@ class SchemaModel {
 			if (is_object($element)) {
 				// Create widget
 				if ($element->method) continue;
-				else if ($element->widget && $element->widget != 'ChildrenWidget') continue;
+				else if ($element->widget && $element->widget != 'Children') continue;
 				else if (in_array($element->type, ['textfield'])) continue;
-				else if ($element->widget === 'ChildrenWidget') {
+				else if ($element->widget === 'Children') {
 					$result = array_merge($result, self::bodyOnly($element->children));
 				} else {
 					// debugMsg($element->inputName);
@@ -59,7 +59,7 @@ class SchemaModel {
 				// if ($element->widgetName) {
 				// 	$widgetName = $element->widget;
 				// 	unset($element->widget);
-				// 	if ($widgetName === "ChildrenWidget") {
+				// 	if ($widgetName === "Children") {
 				// 		foreach ($element->children as $childrenKey => $childrenValue) {
 				// 			if (is_string($childrenValue) && preg_match('/^</', $childrenValue)) {
 				// 				$element->children[$childrenKey] = $childrenValue;
@@ -112,7 +112,7 @@ class SchemaModel {
 			// 		$elements[$elementId] = (Array) $elementParam;
 			// 	}
 			// 	// debugMsg($elements, '$elements');
-			// 	$schema->body[$key] = new ChildrenWidget([
+			// 	$schema->body[$key] = new Children([
 			// 		'tagName' => 'div',
 			// 		'class' => 'widget-card personal-edit',
 			// 		'children' => $elements,

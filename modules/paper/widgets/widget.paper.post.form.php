@@ -119,7 +119,7 @@ class PaperPostFormWidget extends Widget {
 					'description' => '<strong>ข้อกำหนดในการส่งไฟล์วีดิโอ</strong><ul><li>ไฟล์ประเภท <strong>flv</strong> ขนาดไม่เกิน <strong>'.ini_get('upload_max_filesize').'B</strong>. </li><li>หากวีดิโอเป็นไฟล์นามสกุลอื่น จะต้องทำการแปลงให้เป็นนามสกุล .flv ก่อนส่งขึ้นเว็บ</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์วีดิโอที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
 				] : NULL,
 
-				'tabs' => new ChildrenWidget([
+				'tabs' => new Children([
 					'children' => [
 						'tabs_start' => '<div class="sg-tabs"><ul class="tabs tabs_input">',
 						'tabs_1' => '<li class="-active"><a href="#tabs_1">'.tr('Poster').'</a></li>',
@@ -226,7 +226,7 @@ class PaperPostFormWidget extends Widget {
 
 						'tabs_end' => '</div>',
 						], // children
-				]), // ChildrenWidget
+				]), // Children
 
 				'submit' => [
 					'type'=>'button',

@@ -46,7 +46,7 @@ class PaperEditMakepoll extends Page {
 				'action' => url('api/paper/'.$this->nodeId.'/poll.update'),
 				'id' => 'edit-topic',
 				'children' => [
-					new ChildrenWidget([
+					new Children([
 						'children' => (function() {
 							$polls = [];
 							$pollAnswer = DB::select([
