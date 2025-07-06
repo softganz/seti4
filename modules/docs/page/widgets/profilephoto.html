@@ -1,0 +1,66 @@
+<!--
+Inlineedit Widget
+Created :: 2025-07-04
+Modify  :: 2025-07-04
+Version :: 1
+-->
+<h3>Class ProfilePhoto Widget</h3>
+
+<ul class="docs-page-nav-list">
+<li>Contents</li>
+<li>Before you begin</li>
+<li><a href="{widget/widget}">Extends from Widget</a></li>
+<li><a href="#Property">Property</a></li>
+<li><a href="#Method">Method</a></li>
+</ul>
+
+<h4>Class constructor</h4>
+<code>
+new ProfilePhoto(
+	String username,
+	[
+		Int size,
+		String title,
+		Array attribute,
+	]
+);
+</code>
+
+<a name="Property"></a>
+<h4>Property :</h4>
+<code>
+Child and children element
+
+All input type property
+[
+	'editMode' : Boolean default false
+	'type' : 'text,textarea,datepicker,radio,checkbox,select'
+	'inputName' : String
+	'label' : String
+	'value': Mixed
+	'ret': String
+	'convert': String
+	'variable1' : Mixed
+	'variable2' : Mixed
+	'options' : Array
+		key:
+			debug : Boolean default false
+			placeholder: String
+			done : String
+]
+
+Additionall for type radio,checkbox,select:
+[
+	'choices' => ['value' => Text, ...],
+]
+</code>
+<code>
+editMode ↔ Boolean
+action ↔ String
+</code>
+
+<a name="Method"></a>
+<h4>Method :</h4>
+<code>
+Inlineedit::build() → String
+</code>
