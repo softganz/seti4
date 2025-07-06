@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2025-07-01
-* Version :: 49
+* Modify  :: 2025-07-06
+* Version :: 50
 *
 * @param Array $args
 * @return Widget
@@ -58,6 +58,7 @@ class Widget extends WidgetBase {
 	var $rel; // String
 	var $done; // String
 	var $action; // String
+	var $debug; // String
 	var $child; // Any
 	var $children = []; // Array
 	var $attribute = []; // Array
@@ -183,6 +184,7 @@ class Widget extends WidgetBase {
 	// Container cover all children
 	// @override
 	function _renderChildrenContainerStart() {
+		// debugMsg($this->childrenContainer,'$this->childrenContainer');
 		if (empty($this->childrenContainer)) return;
 		return '<'.$this->childrenContainer['tagName']
 			. ($this->childrenContainer['class'] ? ' class="'.$this->childrenContainer['class'].'"' : '')
@@ -199,15 +201,33 @@ class Widget extends WidgetBase {
 	function _renderChildContainerStart($childKey, $attributes = [], $child = []) {
 		foreach ($attributes as $key => $value) if (is_null($value)) unset($attributes[$key]);
 
+		$container = (Array) $this->container;
+
 		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
 		$attributes['class'] = ($this->childContainer['class'] ? $this->childContainer['class'] : '')
 			. ($this->itemClass ? ' '.$this->itemClass : '')
 			. (!is_numeric($childKey) ? ' -'.$childKey : '')
-			. ($attributes['class'] ? ' '.$attributes['class'] : '');
+			. ($attributes['class'] ? ' '.$attributes['class'] : '')
+			. ($container['class'] ? ' '.$container['class'] : '');
 
-		// debugMsg('$childTagName = '.$childTagName);
-		// debugMsg($attributes, '$attributes-_renderChildContainerStart');
-		return $childTagName ? '<'.$childTagName.' '.sg_implode_attr($attributes).'>' : '';
+		$childAttribute = isset($container['children'][$childKey]) ? (Array) $container['children'][$childKey] : [];
+
+		unset($container['class'], $container['children']);
+
+		$attributes = array_replace_recursive(
+			[
+				'id' => NULL,
+				'class' => NULL,
+				'style' => NULL,
+				// And other attributes
+			],
+			$container,
+			$childAttribute,
+			$attributes
+		);
+
+		return $childTagName ? '<'.$childTagName.' '.sg_implode_attr($attributes).'>'
+			.($this->debug === 'container' ? 'Child tag name = '.$childTagName.'<br>Child key = '.$childKey.'<br>'.print_o($container, '$container').print_o($attributes, '$attributes') : '') : '';
 	}
 
 	// @override
@@ -266,7 +286,7 @@ class Widget extends WidgetBase {
 				$child = '';
 			} else if (is_object($child) && get_class($child) === 'ChildrenWidget') {
 				// children is class of ChildrenWidget
-				if ($child->tagName) $ret .= '<'.$child->tagName.' class="-children-widget '.$child->class.'">';
+				if ($child->tagName) $ret .= '<'.$child->tagName.' id="'.$child->id.'" class="-children-widget '.$child->class.'">';
 				foreach ($child->children as $subKey => $subChild) {
 					if (is_string($subKey)) $subChild['inputName'] = $subKey;
 					$ret .= $this->_renderChildContainerStart($subKey, [], $subChild);
