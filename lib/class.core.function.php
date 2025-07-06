@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2025-06-16
-* Version :: 12
+* Modify  :: 2025-07-06
+* Version :: 13
 */
 
 //---------------------------------------
@@ -15,7 +15,8 @@ use Softganz\DB;
 /**
  * function R :: Access core resource
  */
-function R($resourceKey = NULL) {
+function R($resourceKey = NULL, $value = NULL) {
+	if (isset($resourceKey) && isset($value)) $GLOBALS['R']->{$resourceKey} = $value;
 	return $resourceKey ? $GLOBALS['R']->{$resourceKey} : $GLOBALS['R'];
 }
 

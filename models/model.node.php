@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-06-23
-* Version :: 18
+* Modify  :: 2025-07-06
+* Version :: 19
 *
 * @param Array $args
 * @return Object
@@ -646,7 +646,7 @@ class NodeModel {
 			'DELETE FROM %topic% WHERE `tpid` = :tpid LIMIT 1',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		// delete detail
 		$result->process[] = 'Delete paper detail';
@@ -654,7 +654,7 @@ class NodeModel {
 			'DELETE FROM %topic_revisions% WHERE `tpid` = :tpid LIMIT 1',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		// delete tag topic
 		$result->process[] = 'Delete Tag Topic';
@@ -662,25 +662,25 @@ class NodeModel {
 			'DELETE FROM %tag_topic% WHERE `tpid` = :tpid',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		DB::query([
 			'DELETE FROM %topic_user% WHERE `tpid` = :tpid',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		DB::query([
 			'DELETE FROM %topic_parent% WHERE `tpid` = :tpid',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		DB::query([
 			'DELETE FROM %reaction% WHERE `action` LIKE "TOPIC.%" AND `refid` = :tpid',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		// Delete topic property
 		$result->process[] = 'Delete topic property';
@@ -688,7 +688,7 @@ class NodeModel {
 			'DELETE FROM %property% WHERE `module` = "paper" AND `propid` = :tpid',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		// delete photos
 		$result->process[] = 'Start delete all photo';
@@ -696,13 +696,13 @@ class NodeModel {
 			'SELECT * FROM %topic_files% WHERE tpid = :tpid AND `type` = "photo"',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		DB::query([
 			'DELETE FROM %topic_files% WHERE tpid = :tpid AND `type` = "photo"',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		foreach ($photoDbs->items as $photo) {
 			$filename = cfg('folder.abs').cfg('upload_folder').'pics/'.$photo->file;
@@ -723,13 +723,13 @@ class NodeModel {
 			'SELECT `file` FROM %topic_files% WHERE tpid = :tpid AND `type` = "doc"',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		DB::query([
 			'DELETE FROM %topic_files% WHERE tpid = :tpid AND `type` = "doc"',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		foreach ( $docDbs->items as $rs ) {
 			$filename = cfg('folder.abs').cfg('upload_folder').'forum/'.$rs->file;
@@ -743,7 +743,7 @@ class NodeModel {
 			$result->process[]='Delete video';
 			$stmt = 'DELETE FROM %topic_files% WHERE `tpid` = :tpid AND `type`="movie"';
 			mydb::query($stmt, ':tpid', $nodeId);
-			$result->process[]=R()->_query;
+			$result->process[]=R('query');
 
 			if ($topic->video->_location && file_exists($topic->video->_location) && is_file($topic->video->_location)) {
 				if (!$simulate) unlink($topic->video->_location);
@@ -759,7 +759,7 @@ class NodeModel {
 			'DELETE FROM %topic_comments% WHERE tpid = :tpid',
 			'var' => [':tpid' => $nodeId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		// save delete log
 		LogModel::save([
@@ -815,7 +815,7 @@ class NodeModel {
 		]);
 
 		// Delete comment file
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 		foreach ($photoDbs->items as $photo) {
 			$result->process[] = 'Delete comment file '.$photo->fileId.' : '.$photo->file;
 			$fileResult = FileModel::delete($photo->fileId, $photo->file);
@@ -827,7 +827,7 @@ class NodeModel {
 			'DELETE FROM %topic_comments% WHERE `cid` = :commentId LIMIT 1',
 			'var' => [':commentId' => $commentId]
 		]);
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		// Update topic comment count and last reply
 		DB::query([
@@ -838,7 +838,7 @@ class NodeModel {
 			'var' => [':nodeId' => $toDelete->nodeId]
 		]);
 
-		$result->process[] = R()->_query;
+		$result->process[] = R('query');
 
 		$result->process[] = '== DELETE COMMENT COMPLETED ==';
 

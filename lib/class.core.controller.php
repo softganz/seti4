@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-06-19
-* Version :: 31
+* Modify  :: 2025-07-06
+* Version :: 32
 */
 
 /*************************************************************
@@ -29,8 +29,8 @@ class R {
 	public $core;
 	public $myDb;
 	public $DB;
-	public $_query;
-	public $_query_items = [];
+	public $query;
+	public $query_items = [];
 
 	function __construct() {
 		$this->setting = (Object) [];

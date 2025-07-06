@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2025-06-15
-* Version :: 12
+* Modify  :: 2025-07-06
+* Version :: 13
 *
 * @param Array $args
 * @return Object
@@ -738,8 +738,8 @@ class DB {
 
 		// Save query history
 		if (function_exists('R')) {
-			R()->_query = $stmt;
-			R()->_query_items[] = $stmt;
+			R('query', $stmt);
+			R()->query_items[] = $stmt;
 		}
 	}
 

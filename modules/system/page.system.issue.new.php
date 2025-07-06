@@ -2,8 +2,8 @@
 /**
 * System  :: Save New Issue
 * Created :: 2022-10-14
-* Modify  :: 2025-06-07
-* Version :: 3
+* Modify  :: 2025-07-06
+* Version :: 4
 *
 * @return Widget
 *
@@ -106,7 +106,7 @@ class SystemIssueNew extends Page {
 			]
 		]);
 
-		// debugMsg(R()->_query);
+		// debugMsg(R('query'));
 		// debugMsg($this, '$this');
 
 		return [
@@ -114,7 +114,7 @@ class SystemIssueNew extends Page {
 			'url' => $this->reportUrl,
 			// 'post' => post(),
 			// 'this'=> $this,
-			// 'query' => '<pre>'.R()->_query.'</pre>'
+			// 'query' => '<pre>'.R('query').'</pre>'
 		];
 	}
 }
