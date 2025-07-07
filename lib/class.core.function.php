@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2025-07-06
-* Version :: 13
+* Modify  :: 2025-07-07
+* Version :: 14
 */
 
 //---------------------------------------
@@ -1213,7 +1213,7 @@ function apiError($code, String $message) {
 	if (strtolower($message) === 'access denied') {
 		LogModel::save([
 			'module' => 'system',
-			'message' => 'Access denied'
+			'keyword' => 'Access denied'
 		]);
 	}
 	if ($code) http_response_code($code);
