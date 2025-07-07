@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2025-07-06
-* Version :: 13
+* Modify  :: 2025-07-07
+* Version :: 14
 *
 * @param Array $args
 * @return Object
@@ -113,22 +113,13 @@ class DB {
 		$this->args = $args;
 
 		$this->setOptions((Array) $args['options']);
-
-		// if ($this->srcStmt) {
-		// 	$this->setDebugMessage('SRC', $this->srcStmt);
-		// 	// Start query
-		// 	if (preg_match('/^SELECT/i', $this->srcStmt)) {
-		// 		$this->selectResult();
-		// 	} else {
-		// 		$this->queryResult();
-		// 	}
-		// }
 	}
 
 	// Call by static method
 	public static function select($args) {
 		$selectResult = new DB($args);
 		$selectResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $selectResult->multipleQuery);
+		$selectResult->callerFrom = get_caller(__FUNCTION__)['from'];
 		$selectResult->selectResult();
 
 		if ($selectResult->errorMsg) {
@@ -138,15 +129,10 @@ class DB {
 			return new DbSelect(['errorMsg' => $selectResult->errorMsg, 'DB' => $selectResult]);
 		}
 
-		// debugMsg($selectResult, '$selectResult');
 		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $selectResult->stmt)) {
-			$result = new DbSelect(reset($selectResult->items)); // + ['DB' => $selectResult]]);
+			$result = new DbSelect(reset($selectResult->items));
 			$result->DB($selectResult);
-			// debugMsg('LIMIT 1: '.$selectResult->stmt);
-			// debugMsg($selectResult, '$selectResult');
-			// debugMsg($args,'$args');
 		} else {
-			// debugMsg('LIMIT *: '.$selectResult->stmt);
 			$result = new DbSelect([
 				'count' => $selectResult->count,
 				'foundRows' => NULL,
@@ -168,19 +154,18 @@ class DB {
 
 		if ($selectResult->options->sum) $result->sum = $selectResult->options->sum;
 
-		// debugMsg($selectResult->errorMsg);
-		// debugMsg($selectResult->errors, 'error');
 		return $result;
 	}
 
 	public static function query($args) {
 		$queryResult = new DB($args);
+		$queryResult->callerFrom = get_caller(__FUNCTION__)['from'];
 		$queryResult->queryResult();
 		unset($queryResult->items, $queryResult->count);
 		$queryResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $queryResult->multipleQuery);
 
 		$result = new DbQuery([
-			'query' => mydb()->_query,
+			'query' => $queryResult->stmt,
 			'DB' => $queryResult
 		]);
 
@@ -218,7 +203,7 @@ class DB {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
-			$this->logError('mydb', 'select', $this->stmt, $queryError[1], $queryError[2]);
+			$this->logError('DB', 'Select', $this->stmt, $queryError[1], $queryError[2]);
 			$this->updateLastQueryStmt($this->stmt());
 
 			return false;
@@ -227,8 +212,6 @@ class DB {
 		// Select complete
 		$end = microtime(true);
 		$this->updateLastQueryStmt($this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start]));
-		$this->queryItems($this->stmt);
-		if (function_exists('R')) R()->DB->queryItems($this->stmt);
 
 		$this->items = $this->fetchRow($query);
 
@@ -250,7 +233,7 @@ class DB {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
-			$this->logError('mydb', 'query', $this->stmt, $queryError[1], $queryError[2]);
+			$this->logError('DB', 'Query', $this->stmt, $queryError[1], $queryError[2]);
 			$this->updateLastQueryStmt($this->stmt(), $queryError);
 
 			return false;
@@ -259,8 +242,6 @@ class DB {
 		// Query complete
 		$end = microtime(true);
 		$this->updateLastQueryStmt($this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start]));
-		$this->queryItems($this->stmt);
-		if (function_exists('R')) R()->DB->queryItems($this->stmt);
 
 		if ($this->args['onComplete'] && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
 	}
@@ -284,14 +265,11 @@ class DB {
 							if (!$foundField) $before[$itemKey] = $itemValue;
 							else $after[$itemKey] = $itemValue;
 						}
-						// debugMsg($before, '$before');
-						// debugMsg($after, '$after');
 						$value = (Object) array_replace_recursive(
 							(Array) $before,
 							(Array) $jsonDecodeResult,
 							(Array) $after
 						);
-						// debugMsg($value, '$value');
 					} else {
 						$value->{$jsonDecode['field']} = $jsonDecodeResult;
 					}
@@ -380,8 +358,6 @@ class DB {
 
 	// Private method
 	private function createDbConnection($connection) {
-		// debugMsg('CREATE CONNECTION');
-		// debugMsg($connection, '$connection');
 		if (is_string($connection['uri'])) {
 			preg_match('/(mysql)\:\/\/([^:]*)\:([^@]*)\@([^\/]*)\/(.*)/i', $connection['uri'], $out);
 			$connection['type'] = $out[1];
@@ -397,8 +373,6 @@ class DB {
 			$connection['database'] = $connection['uri']['database'];
 		}
 
-		// debugMsg($connection, '$connection');
-
 		$dsn = $connection['type'].':dbname='.$connection['database'].';host='.$connection['host'];
 
 		try {
@@ -412,7 +386,6 @@ class DB {
 			// $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		} catch (\PDOException $e) {
 			$this->errors[] = $this->errorMsg = $e->getMessage();
-			// debugMsg($e->getMessage());
 			return false;
 		}
 
@@ -504,7 +477,6 @@ class DB {
 		foreach ($variable as $key => $value) {
 			self::setEachVariable($key, $value);
 		}
-		// debugMsg($this->var, '$this->var');
 	}
 
 	private function setEachVariable($key, $value) {
@@ -636,7 +608,7 @@ class DB {
 			\LogModel::save([
 				'module' => $module,
 				'keyword' => $method,
-				'message' => $stmt.'; -- '.$errorMessage,
+				'message' => $stmt.';<br>-- '.$errorMessage.'<br>-- Call DB from '.$this->callerFrom,
 			]);
 		}		
 		if (function_exists('R')) R()->DB->queryItems($stmt.'; -- '.$errorMessage);
@@ -736,8 +708,11 @@ class DB {
 	private function updateLastQueryStmt($stmt, $error = NULL) {
 		if ($this->options->history === false) return; // Do not save query history
 
+		$this->queryItems($stmt);
+
 		// Save query history
 		if (function_exists('R')) {
+			$stmt = $stmt.'<br><font color="gray">-- Call <b>DB</b> from '.$this->callerFrom.'</font>';
 			R('query', $stmt);
 			R()->query_items[] = $stmt;
 		}

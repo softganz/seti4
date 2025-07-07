@@ -7,8 +7,8 @@
 * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
 * Created :: 2009-07-06
-* Modify  :: 2025-06-16
-* Version :: 3
+* Modify  :: 2025-07-07
+* Version :: 4
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -104,23 +104,23 @@ class MyDb {
 			if (cfg('db.character_set_client')) {
 				$characterSetClientSql = 'SET character_set_client="'.cfg('db.character_set_client').'" ';
 				$mysqli->query($characterSetClientSql);
-				$this->_query_items[] = $characterSetClientSql;
+				// $this->_query_items[] = $characterSetClientSql;
 
 				$characterSetResultsSql = 'SET character_set_results="'.cfg('db.character_set_client').'" ';
 				$mysqli->query($characterSetResultsSql);
-				$this->_query_items[] = $characterSetResultsSql;
+				// $this->_query_items[] = $characterSetResultsSql;
 			}
 
 			if (cfg('db.character_set_connection')) {
 				$characterSetConnectionSql = 'SET character_set_connection="'.cfg('db.character_set_connection').'" ';
 				$mysqli->query($characterSetConnectionSql);
-				$this->_query_items[] = $characterSetConnectionSql;
+				// $this->_query_items[] = $characterSetConnectionSql;
 			}
 
 			if (cfg('db.collation_connection')) {
 				$collationConnectionSql = 'SET collation_connection="'.cfg('db.collation_connection').'" ';
 				$mysqli->query($collationConnectionSql);
-				$this->_query_items[] = $collationConnectionSql;
+				// $this->_query_items[] = $collationConnectionSql;
 			}
 			if (cfg('db.character_set_client')) $mysqli->set_charset(cfg('db.character_set_client'));
 			$mysqli->select_db($this->db);
@@ -544,13 +544,15 @@ class MyDb {
 			$data->_query = $myDb->_query = $queryMsg;
 			$myDb->_query_items[] = $queryMsg;
 			mydb()->_query = $queryMsg;
+			R('query', $queryMsg);
+			R()->query_items[] = $queryMsg;
 
 			if ($error) {
 				mydb()->_watchlog = false;
 				$myDb->_errors[] = $myDb->_error;
 				LogModel::save([
-					'module' => 'mydb',
-					'keyword' => 'query',
+					'module' => 'DB',
+					'keyword' => 'Query',
 					'message' => $queryMsg
 				]);
 			}
@@ -668,13 +670,17 @@ class MyDb {
 
 		$queryMsg .= '<br /><font color="green">-- '.($is_simulate ? 'was simulate ' : '').'in <b>'.$myDb->_last_query_time.'</b> ms.</font>';
 		$queryMsg .= ($affected_rows ? ' <strong>'.$affected_rows.'</strong> affected rows' : '');
-		$queryMsg .= (isset($caller['from']) ? '<br /><font color="gray">-- Call from '.$caller['from'].'</font><br />' : '');
+		$queryMsg .= (isset($caller['from']) ? '<br /><font color="gray">-- Call <b>MYDB</b> from '.$caller['from'].'</font><br />' : '');
 
 		if ($debug && $prepareStmt->_error_msg) debugMsg('<font color="red"><b>SELECT ERROR :</b><hr />'.$queryMsg.'</font>');
 
-		if (mydb()->_watchlog) mydb()->_query = $queryMsg;
+		if (mydb()->_watchlog) {
+			mydb()->_query = $queryMsg;
+			R('query', $queryMsg);
+		}
 
 		$myDb->_query_items[] = $queryMsg;
+		R()->query_items[] = $queryMsg;
 
 		$selectResult->_type = 'record set';
 		$selectResult->_empty = true;
@@ -702,15 +708,16 @@ class MyDb {
 		// If error then watchdog log
 		if (isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg && mydb()->_watchlog) {
 			mydb()->_query = $queryMsg;
+			R('query', $queryMsg);
 			$selectResult->_query = $queryMsg;
 			$myDb->_error = $selectResult->_errno;
 			$myDb->_error_msg = $selectResult->_error_msg;
 			if (mydb()->_watchlog) {
 				mydb()->_watchlog = false;
 				LogModel::save([
-					'module' => 'mydb',
-					'keyword' => 'select',
-					'message' =>$queryMsg
+					'module' => 'DB',
+					'keyword' => 'Select',
+					'message' => $queryMsg
 				]);
 			}
 			mydb()->_watchlog = true;
