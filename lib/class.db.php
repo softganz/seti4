@@ -3,7 +3,7 @@
 * DB      :: Database Management
 * Created :: 2023-07-28
 * Modify  :: 2025-07-07
-* Version :: 14
+* Version :: 15
 *
 * @param Array $args
 * @return Object
@@ -608,7 +608,7 @@ class DB {
 			\LogModel::save([
 				'module' => $module,
 				'keyword' => $method,
-				'message' => $stmt.';<br>-- '.$errorMessage.'<br>-- Call DB from '.$this->callerFrom,
+				'message' => $stmt.';<br>-- '.$errorMessage.'<br><font color="gray">-- Call DB from '.$this->callerFrom.'</b>',
 			]);
 		}		
 		if (function_exists('R')) R()->DB->queryItems($stmt.'; -- '.$errorMessage);

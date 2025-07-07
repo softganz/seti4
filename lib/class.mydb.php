@@ -8,7 +8,7 @@
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
 * Created :: 2009-07-06
 * Modify  :: 2025-07-07
-* Version :: 4
+* Version :: 5
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -493,22 +493,29 @@ class MyDb {
 				$myDb->mysqli->next_result();
 			}
 		} else {
-			$res = $myDb->mysqli->query($stmt);
-			$data->_query = $stmt;
-			if (is_object($res) && $res) {
-				if ($debug) debugMsg('QUERY RESULT of '.$stmt.'<br />$res = ');
-				// Cycle through results
-				while ($row = $res->fetch_array(MYSQLI_ASSOC)){
-					$data->items[] = (Object) $row;
+			try {
+				$res = $myDb->mysqli->query($stmt);
+				$data->_query = $stmt;
+				if (is_object($res) && $res) {
+					if ($debug) debugMsg('QUERY RESULT of '.$stmt.'<br />$res = ');
+					// Cycle through results
+					while ($row = $res->fetch_array(MYSQLI_ASSOC)){
+						$data->items[] = (Object) $row;
+					}
+					// print_o($res, '$res',1);
+					// $res->free();
+					// Free result set
+					$res->close();
+					$myDb->mysqli->next_result();
+					if ($debug) debugMsg($data, '$data');
 				}
-				// print_o($res, '$res',1);
-				// $res->free();
-				// Free result set
-				$res->close();
-				$myDb->mysqli->next_result();
-				if ($debug) debugMsg($data, '$data');
-			} else {
+			} catch (mysqli_sql_exception $e) {
 				if ($debug) debugMsg('QUERY NO RESULT of '.$stmt.'<br />$res = ');
+					// $queryError = $this->PDO->errorInfo();
+					// $this->logError('DB', 'Select', $this->stmt, $queryError[1], $queryError[2]);
+					// $this->updateLastQueryStmt($this->stmt());
+
+					//return false;
 			}
 		}
 		$timer->stop('query');
@@ -531,14 +538,14 @@ class MyDb {
 			$myDb->_error = $data->_error = $myDb->mysqli->error;
 			$myDb->_error_no = $data->_error_no = $myDb->mysqli->errno;
 			$myDb->_affected_rows = $data->_affected_rows = $affected_rows = $myDb->mysqli->affected_rows;
-			$error = isset($myDb->mysqli->error) && $myDb->mysqli->error ? ';<font color="red">-- '.$myDb->mysqli->error.'</font>' : NULL;
+			$error = isset($myDb->mysqli->error) && $myDb->mysqli->error ? '<font color="red">-- '.$myDb->mysqli->error.'</font>' : NULL;
 
 			if ($error || post('debug') == 'query') $caller = get_caller(__FUNCTION__);
 
 			$queryMsg = preg_replace('/\t/Sm', ' ', $stmt).';';
-			$queryMsg .= ' <font color="green">-- '.($is_simulate?'was simulate ':'').'in <b>'.$myDb->_last_query_time.'</b> ms.</font>';
+			$queryMsg .= '<br><font color="green">-- '.($is_simulate?'was simulate ':'').'in <b>'.$myDb->_last_query_time.'</b> ms.</font>';
 			$queryMsg .= ($affected_rows?' <strong>'.$affected_rows.'</strong> affected rows':'');
-			$queryMsg .= $error ? $error : '';
+			$queryMsg .= $error ? '<br>'.$error : '';
 			$queryMsg .= (isset($caller['from']) ? '<br /><font color="gray">-- Call from '.$caller['from'].'</font>':'');
 
 			$data->_query = $myDb->_query = $queryMsg;
@@ -666,7 +673,7 @@ class MyDb {
 		if ((isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg) || post('debug')=='query') $caller = get_caller(__FUNCTION__);
 
 		$queryMsg = $prepareStmt->_query.';';
-		$queryMsg .= (isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg) ? '<font color="red">-- '.$prepareStmt->_errno.':'.$prepareStmt->_error_msg.'</font>' : '';
+		$queryMsg .= (isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg) ? '<br><font color="red">-- '.$prepareStmt->_errno.':'.$prepareStmt->_error_msg.'</font>' : '';
 
 		$queryMsg .= '<br /><font color="green">-- '.($is_simulate ? 'was simulate ' : '').'in <b>'.$myDb->_last_query_time.'</b> ms.</font>';
 		$queryMsg .= ($affected_rows ? ' <strong>'.$affected_rows.'</strong> affected rows' : '');
@@ -839,7 +846,8 @@ class MyDb {
 	*/
 	public static function found_rows() {
 		$stmt = 'SELECT FOUND_ROWS() `totals`;
-			-- {reset:false}';
+			-- {reset:false}
+			';
 		$dbs = mydb::select($stmt);
 		$totals = $dbs->items[0]->totals;
 		return $totals;
@@ -852,12 +860,14 @@ class MyDb {
 	*/
 	public static function count_rows($table, $condition) {
 		$args[] = 'SELECT COUNT(*) `totals` FROM '.$table.' WHERE '.$condition.';
-			-- {reset:false}';
+			-- {reset:false}
+			';
 		$stmt = call_user_func_array(array(mydb(), 'prepare'), $args);
 		//echo '<br /><br /><br />'.$stmt;
 
 		$stmt = 'SELECT COUNT(*) `totals` FROM '.$table.' WHERE '.$condition.';
-			-- {reset:false}';
+			-- {reset:false}
+			';
 		$dbs = mydb::select($stmt);
 		//echo '<br /><br /><br />'.mydb()->_query;
 		$totals = $dbs->items[0]->totals;
