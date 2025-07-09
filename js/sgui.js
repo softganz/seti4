@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-07-02
-* Version :: 43
+* Modify  :: 2025-07-09
+* Version :: 44
 */
 
 'use strict'
@@ -2815,14 +2815,24 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 			para.q=$this.val();
 			//console.log("Query "+$this.data('query'))
 			notify("กำลังค้นหา");
-			$.get($this.data('query'),para, function(data){
+			$.get($this.data('query'), para, "json")
+			.done((data) => {
 				notify();
 				response(data);
 				let renderComplete = $this.data('renderComplete')
 				if (renderComplete && typeof window[renderComplete] === 'function') {
 					return window[renderComplete]($this);
 				}
-			}, "json");
+			})
+			.fail((response) => {
+				let errorMsg = 'ERROR : '
+				if (response.responseJSON != undefined && response.responseJSON.text) {
+					errorMsg += response.responseJSON.text+' ('+response.status+')'
+				} else {
+					errorMsg += response.statusText+' ('+response.status+')'
+				}
+				notify(errorMsg)
+			});
 		},
 		open: function() {
 			$(".ui-autocomplete:visible").css({top:"+=5"});
