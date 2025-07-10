@@ -155,7 +155,7 @@
 	&.-no-wrap {flex-wrap: nowrap;}
 	&.-big {padding-top: 16px; padding-bottom: 16px; border-radius: 64px; font-size: 1.8rem;}
 	&.-hidden {display: none;}
-	&:has(:only-child) {padding: 6px;}
+	&:has(:only-child) {padding: 4px;}
 	&:has(.-desc) {border-radius: 128px;}
 	&.-fill {width: 100%; padding-left: 0; padding-right: 0; justify-content: center;}
 	&.-wrap {white-space: normal;}
@@ -788,16 +788,18 @@
 	.ui-item a:hover {color: #999; background-color: #f5f5f5;}
 	a.-disabled {color: #ccc;}
 	a.-disabled .icon {opacity: 0.4;}
-	.sg-dropbox--content {overflow: auto;}
-	.sg-dropbox--content>ul {padding: 0;}
-	.sg-dropbox--content>ul>li {padding: 0;}
-	.sg-dropbox--content>ul>li>a {padding: 4px 24px 4px 16px; white-space: nowrap; display: flex; flex-wrap: nowrap;}
-	.sg-dropbox--content>ul>li>a>.icon {margin-right: 4px;}
-	.sg-dropbox--content>ul>li>.iconset {padding: 0;}
-	.sg-dropbox--content>ul>li>.iconset>a {padding: 0;}
-	.sg-dropbox--content>ul>li.-sep {height: 4px; margin: 0; padding: 0;}
-	.sg-dropbox--content>.ui-action>.ui-item.-sep {width: auto;}
-
+	.sg-dropbox--content {
+		overflow: auto;
+		>ul {padding: 0;}
+		>ul>li {padding: 0;}
+		>ul>li>a {padding: 4px 24px 4px 16px; white-space: nowrap; display: flex; flex-wrap: nowrap;}
+		>ul>li>a>span {white-space: nowrap;}
+		>ul>li>a>.icon {margin-right: 4px;}
+		>ul>li>.iconset {padding: 0;}
+		>ul>li>.iconset>a {padding: 0;}
+		>ul>li.-sep {height: 4px; margin: 0; padding: 0;}
+		>.ui-action>.ui-item.-sep {width: auto;}
+	}
 	.sg-dropbox--arrow {
 		height: 8px;
 		width: 12px;
