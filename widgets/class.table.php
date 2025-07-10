@@ -2,8 +2,8 @@
 /**
 * Widget  :: Table Widget
 * Created :: 2020-10-01
-* Modify  :: 2024-07-25
-* Version :: 3
+* Modify  :: 2025-07-10
+* Version :: 4
 *
 * @param Array $args
 * @return Widget
@@ -197,7 +197,7 @@ class Table extends Widget {
 							}
 						}
 						if (!$already_class) {
-							$ret .= $headerkey[$colNo] ? ' class="col '.$headerkey[$colNo].' col-'.$headerkey[$colNo].'"' : '';
+							$ret .= $headerkey[$colNo] ? ' class="col -'.$headerkey[$colNo].' col-'.$headerkey[$colNo].'"' : '';
 						}
 						$ret .= '>'.$colValue.'</td>'._NL;
 					} else if (strtolower(substr($colData, 0, 3)) == '<th') {
