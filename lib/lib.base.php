@@ -1,24 +1,24 @@
 <?php
 /**
-* SOFTGANZ :: lib.base.php
-*
-* Softganz Base Library
-*
-* Copyright (c) 2000-2020 The SoftGanz Group By Panumas Nontapan
-* Authors : Panumas Nontapan <webmaster@softganz.com>
-*         : http://www.softganz.com/
-* ============================================
-* This module is core of web application
-*
-* This program is free software. You can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License.
-* ============================================
-
-Created :: 2019-12-08
-Modify  :: 2025-01-30
-Version :: 10
-*/
+ * SOFTGANZ :: lib.base.php
+ *
+ * Softganz Base Library
+ *
+ * Copyright (c) 2000-2020 The SoftGanz Group By Panumas Nontapan
+ * Authors : Panumas Nontapan <webmaster@softganz.com>
+ *         : http://www.softganz.com/
+ * ============================================
+ * This module is core of web application
+ *
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ *
+ * Created :: 2019-12-08
+ * Modify  :: 2025-07-11
+ * Version :: 11
+ */
 
 namespace SG;
 
@@ -200,19 +200,20 @@ function api($args = []) {
 * @return Object
 */
 function object_merge_recursive() {
+	$debug = R('debug');
 	$args = func_get_args();
 	//$flag = is_numeric($args[count($args) - 1]) ? array_pop($args) : 0;
 	$firstArg = array_shift($args);
 	$result = is_object($firstArg) ? clone $firstArg : $firstArg;
-	if (debug()) debugMsg($firstArg, '\SG\ObjectMerge $firstArg');
-	if (debug()) debugMsg($args,'\SG\ObjectMerge $args');
+	if ($debug) debugMsg($firstArg, '\SG\ObjectMerge $firstArg');
+	if ($debug) debugMsg($args,'\SG\ObjectMerge $args');
 
 	foreach ($args as $arg) {
 		if (gettype($arg) == 'NULL') continue;
 		foreach ($arg as $key => $value) {
 			if (is_object($value)) {
-				//debugMsg('Merge object key '.$key);
-				if (!isset($result->{$key})) $result->{$key} = new \stdClass();
+				if ($debug) debugMsg('Merge object key '.$key);
+				if (!isset($result->{$key})) $result->{$key} = (Object) [];
 				$result->{$key} = object_merge_recursive($result->{$key}, $value);
 			} else if (is_array($value)) {
 				//debugMsg('ARRAY KEY = '.$key);
@@ -231,7 +232,7 @@ function object_merge_recursive() {
 				//debugMsg($result,'is_array($result)');
 				$result[$key] = $value;
 			} else {
-				if (debug()) debugMsg('SET $result->'.$key.' = '.$value.' ('.gettype($value).')');
+				if ($debug) debugMsg('SET $result->'.$key.' = '.$value.' ('.gettype($value).')');
 				$result->{$key} = $value;
 			}
 		}
