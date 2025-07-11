@@ -2,8 +2,8 @@
 /**
 * Model   :: File Model
 * Created :: 2021-12-21
-* Modify  :: 2025-06-15
-* Version :: 8
+* Modify  :: 2025-07-11
+* Version :: 9
 *
 * @return Object
 *
@@ -443,7 +443,8 @@ class FileModel {
 			'SELECT `fid`, `tpid` `nodeId`, `folder`, `file`
 			FROM %topic_files%
 			%WHERE%;
-			-- {key: "fid"}'
+			-- {key: "fid"}
+			'
 		)->items;
 	}
 
