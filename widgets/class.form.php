@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-07-06
-* Version :: 31
+* Modify  :: 2025-07-11
+* Version :: 32
 *
 * @param Array $args
 * @return Widget
@@ -259,7 +259,11 @@ class Form extends Widget {
 				. ' '.sg_implode_attr($formElement->container)
 				. '>'._NL;
 		if ($formElement->label) {
-			$ret .= '	<label for="'.$tag_id.'" class="'.($formElement->config->label == 'hide' ? '-hidden' : '').'">'.$formElement->label.($formElement->require?' <span class="form-required" title="This field is required.">*</span>':'').'</label>'._NL;
+			$ret .= '	<label for="'.$tag_id.'" class="'.($formElement->config->label == 'hide' ? '-hidden' : '').'">'
+				. $formElement->label.(in_array($formElement->type, ['select', 'radio', 'checkbox']) && !preg_match('/\:$/', $formElement->label) ? ':' : '')
+				. ($formElement->require ? ' <span class="form-required" title="This field is required.">*</span>':'')
+				. '</label>'
+				. _NL;
 		}
 
 		if ($isFormGroup) $ret .= '<span class="form-group">'._NL;
