@@ -89,18 +89,6 @@ function print_o() {
 
 
 /**
-* Store debug message and display in div class="debug" of page
-*
-* @param String $msg
-* @return String
-*/
-function debugMsg($msg = NULL, $varname = NULL) {
-	\debugMsg($msg, $varname);
-}
-
-
-
-/**
 * Get first value of parameter that not null and not empty string
 *
 * @param Mixed $arg1..$argn
