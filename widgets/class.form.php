@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-07-06
-* Version :: 31
+* Modify  :: 2025-07-12
+* Version :: 33
 *
 * @param Array $args
 * @return Widget
@@ -259,7 +259,11 @@ class Form extends Widget {
 				. ' '.sg_implode_attr($formElement->container)
 				. '>'._NL;
 		if ($formElement->label) {
-			$ret .= '	<label for="'.$tag_id.'" class="'.($formElement->config->label == 'hide' ? '-hidden' : '').'">'.$formElement->label.($formElement->require?' <span class="form-required" title="This field is required.">*</span>':'').'</label>'._NL;
+			$ret .= '	<label for="'.$tag_id.'" class="'.($formElement->config->label == 'hide' ? '-hidden' : '').'">'
+				. $formElement->label.(in_array($formElement->type, ['select', 'radio', 'checkbox']) && !preg_match('/\:$/', $formElement->label) ? ':' : '')
+				. ($formElement->require ? ' <span class="form-required" title="This field is required.">*</span>':'')
+				. '</label>'
+				. _NL;
 		}
 
 		if ($isFormGroup) $ret .= '<span class="form-group">'._NL;
@@ -576,10 +580,18 @@ class Form extends Widget {
 	function _renderFile($tag_id, $name, $formElement) {
 		if ($formElement->count) {
 			for ($i = 1; $i <= $formElement->count; $i++) {
-				$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'['.$i.']" id="'.$tag_id.'-'.$i.'" class="form-'.$formElement->type.($formElement->require?' -require':'').'" type="'.$formElement->type.'">';
+				$ret .= '<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'['.$i.']" id="'.$tag_id.'-'.$i.'" class="form-'.$formElement->type.($formElement->require?' -require':'').'" type="'.$formElement->type.'">';
 			}
 		} else {
-			$ret .= '	<input '.($formElement->size?'size="'.$formElement->size.'" ':'').' name="'.$name.'" id="'.$tag_id.'" class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'" type="'.$formElement->type.'"'.($formElement->multiple?'multiple="multiple"':'').'>';
+			$ret .= '<input '
+				. ($formElement->size ? 'size="'.$formElement->size.'" ' : '')
+				. 'name="'.$name.'" '
+				. 'id="'.$tag_id.'" '
+				. 'class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require?' -require':'').'" '
+				. 'type="'.$formElement->type.'" '
+				. ($formElement->multiple ? 'multiple="multiple"' : '')
+				. ($formElement->accept ? 'accept="'.$formElement->accept.'" ' : '')
+				. '>';
 		}
 		return $ret;
 	}

@@ -2,8 +2,8 @@
 /**
 * Model   :: File Model
 * Created :: 2021-12-21
-* Modify  :: 2025-06-15
-* Version :: 8
+* Modify  :: 2025-07-12
+* Version :: 10
 *
 * @return Object
 *
@@ -155,19 +155,19 @@ class FileModel {
 
 		$useSourceFilename = $options->useSourceFilename;
 
-		$data = (Object) array_merge(
+		$data = (Object) array_replace_recursive(
 			[
 				'nodeId' => NULL, // Int
-				'folder' => NULL, // String
-				'preName' => NULL, // String
-				'deleteUrl' => NULL, // String,
 				'fileId' => NULL, // Int,
 				'cid' => NULL, // Int
 				'title' => NULL, // String
-				'tagName' => NULL, // String
 				'orgId' => NULL, // Int
 				'uid' => NULL, // Int
 				'refId' => NULL, // Int
+				'tagName' => NULL, // String
+				'folder' => NULL, // String
+				'preName' => NULL, // String
+				'deleteUrl' => NULL, // String,
 				'link' => NULL, // String
 				'description' => NULL, // String
 				'onComplete' => function($data) {}
@@ -180,42 +180,61 @@ class FileModel {
 		if ($data->folder && !preg_match('/\//$', $data->folder)) $data->folder .= '/';
 
 		$result = (Object) [
+			'fileId' => NULL,
 			'link' => NULL,
 			'photofile' => NULL,
 			'uploadfile' => NULL,
 			'error' => [],
 			'items' => [],
-			'_query' => [],
+			'query' => [],
 		];
 
 		$photoPrename = SG\getFirst($data->preName, $data->prename, 'paper_'.$data->nodeId.'_');
 		$photoFilenameLength = SG\getFirst($options->fileNameLength, 30);
 		$isUploadSingleFile = true;
+		$docExtension = (Array) cfg('topic.doc.file_ext');
+		$photoExtension = ['jpg', 'jpeg', 'png'];
 
 		$deleteUrl = SG\getFirst($data->deleteUrl, $data->deleteurl);
 		// debugMsg('Upload photo of orgId '.$data->orgId.' tagName='.$data->tagName.' photoPrename '.$photoPrename);
 
 
-		// Multiphoto file upload
+		// Convert upload file to array of each file
 		if (is_array($photoFiles['name'])) {
 			$isUploadSingleFile = false;
 			foreach ($photoFiles['name'] as $key => $value) {
-				$uploadPhotoFiles[$key] = array(
+				if (!is_uploaded_file($photoFiles['tmp_name'][$key])) continue;
+				$uploadPhotoFiles[$key] = [
 					'name' => $photoFiles['name'][$key],
 					'type' => $photoFiles['type'][$key],
 					'tmp_name' => $photoFiles['tmp_name'][$key],
 					'error' => $photoFiles['error'][$key],
 					'size' => $photoFiles['size'][$key],
-				);
+				];
 			}
-		} else {
+		} else if (is_uploaded_file($photoFiles['tmp_name'])) {
 			$uploadPhotoFiles[] = $photoFiles;
 		}
 
-		//$ret.=print_o(post(),'post').print_o($uploadPhotoFiles,'$uploadPhotoFiles');
+		// Update table record only, when no upload file
+		if ($data->fileId && empty($uploadPhotoFiles)) {
+			DB::query([
+				'UPDATE %topic_files%
+				SET
+				`title` = IFNULL(:title, `title`)
+				, `tagName` = IFNULL(:tagName, `tagName`)
+				WHERE `fid` = :fileId LIMIT 1',
+				'var' => [
+					':fileId' => $data->fileId,
+					':title' => $data->title,
+					':tagName' => $data->tagName,
+				]
+			]);
+			$result->fileId = $data->fileId;
+			$result->query[] = R('query');
+			return $result;
+		}
 
-		$docExtension = (Array) cfg('topic.doc.file_ext');
-		$photoExtension = ['jpg', 'jpeg', 'png'];
 		foreach ($uploadPhotoFiles as $postFile) {
 			//debugMsg($postFile,'$postFile');
 			if (!is_uploaded_file($postFile['tmp_name'])) {
@@ -303,13 +322,14 @@ class FileModel {
 				, :title, :description
 				, :timestamp, :ip
 				) ON DUPLICATE KEY UPDATE
-				`file` = :file',
+				`file` = :file
+				, `title` = :title',
 				$picsData
 			);
 
 			if (empty($picsData->fileId)) $fileId = $picsData->fileId = mydb()->insert_id;
 
-			$result->_query[] = mydb()->_query;
+			$result->query[] = R('query');
 
 
 			if ($picsData->type == 'photo') {
@@ -352,10 +372,10 @@ class FileModel {
 		}
 
 
-		if ($result->link)
+		if ($result->link) {
 			$result->link = rtrim($result->link,'</li><li id="photo-'.$fileId.'" class="ui-item -hover-parent">');
+		}
 
-		$result->photofile = $photoFiles;
 		$result->uploadfile = $uploadPhotoFiles;
 		return $result;
 	}
@@ -443,7 +463,8 @@ class FileModel {
 			'SELECT `fid`, `tpid` `nodeId`, `folder`, `file`
 			FROM %topic_files%
 			%WHERE%;
-			-- {key: "fid"}'
+			-- {key: "fid"}
+			'
 		)->items;
 	}
 

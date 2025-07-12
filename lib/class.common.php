@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2025-06-15
-* Version :: 9
+* Modify  :: 2025-07-12
+* Version :: 10
 */
 
 use Softganz\DB;
@@ -318,7 +318,13 @@ class Arrays {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
 					case 'array' : $result .= self::value($value,$name.$prefix.$key.$suffix); break;
 					case 'object' : $result .= self::value($value,$name.$prefix.$key.$suffix); break;
-					default : $result .= '<font color="#ff9a56">'.htmlSpecialChars($value).'</font>'; break;
+					default :
+						if (preg_match('/^(SELECT|UPDATE|INSERT|DELETE)/i', $value)) {
+							$result = '<pre>'.$value.'</pre>';
+						} else {
+							$result .= '<font color="#ff9a56">'.htmlSpecialChars($value).'</font>';
+						}
+						break;
 				}
 				$result .= '</li>'._NL;
 			}

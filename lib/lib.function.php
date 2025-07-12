@@ -2,8 +2,8 @@
 /**
 * Core    :: Function Library
 * Created :: 2021-10-24
-* Modify  :: 2024-09-15
-* Version :: 2
+* Modify  :: 2025-07-12
+* Version :: 3
 *
 * @usage functionName(parameter)
 */
@@ -490,11 +490,11 @@ function print_o() {
 	if ($last_arg === 1 || $last_arg === true) {
 		$echo = true;
 		array_pop($args);
-		}
-	if ($last_arg === 2) {
+	} else if ($last_arg === 2) {
 		$inline = true;
 		array_pop($args);
-		}
+	}
+
 	foreach ($args as $key => $value) {
 		if (is_string($value)) continue;
 		$next_value = isset($args[$key+1]) ? $args[$key + 1] : NULL;

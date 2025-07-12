@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-07-09
-* Version :: 44
+* Modify  :: 2025-07-11
+* Version :: 45
 */
 
 'use strict'
@@ -985,6 +985,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	let errorMsg = ''
 	let doneResult
 
+	function showError(response) {
+		console.log(response);
+		let errorMsg = 'ERROR : ';
+		if (response.responseJSON.text) {
+			errorMsg += response.responseJSON.text+' ('+response.status+')';
+		} else {
+			errorMsg += response.statusText+' ('+response.status+')';
+		}
+		notify(errorMsg);
+	}
+
 	console.log('sg-form :: Submit');
 	// console.log('rel', relTarget)
 	// Check field valid
@@ -1080,14 +1091,15 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				if (relTarget != 'notify') notify()
 				$this.replaceWith($this.clone(true))
 			},
-			error: function(data) {
-				//console.log('ERROR AJAX SUBMIT')
-				//console.log(data)
-				notify(data.statusText)
-				if (debugSG) console.log(data)
-				sgUpdateData(data.responseText, relTarget,$this)
+			error: function(response) {
+				showError(response);
+
+				if (debugSG) {
+					console.log(response);
+					sgUpdateData(data.responseText, relTarget,$this);
+				}
 			}
-		})
+		});
 	} else {
 		let para = $this.serialize();
 		// let $clickButton = $(document.activeElement);
@@ -1144,21 +1156,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				}
 			}, $this.data('dataType') == undefined ? null : $this.data('dataType')
 		).fail(function(response) {
-			let errorMsg = 'ERROR : '
-			if (response.responseJSON.text) {
-				errorMsg += response.responseJSON.text+' ('+response.status+')'
-			} else {
-				errorMsg += response.statusText+' ('+response.status+')'
-			}
-			notify(errorMsg)
-			if (debugSG) console.log(response)
-			return false
+			showError(response);
 		}).done(function(response) {
-			if (response.responseCode && response.text) notify(response.text, 3000)
+			if (response.responseCode && response.text) notify(response.text, 3000);
 			sgActionDone($this.data('done'), $this, doneResult);
 		})
 	}
-	return false
+	return false;
 })
 .on('keydown', 'form.sg-form input:text', function(event) {
 	let $input = $(this).closest('form').find("input:text")
