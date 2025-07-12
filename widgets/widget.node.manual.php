@@ -2,8 +2,8 @@
 /**
  * Node    :: Page
  * Created :: 2025-07-11
- * Modify  :: 2025-07-11
- * Version :: 1
+ * Modify  :: 2025-07-12
+ * Version :: 2
  *
  * @param Array $args
  * @return Widget
@@ -15,11 +15,11 @@ class NodeManualWidget extends Page {
 	protected $tagName = 'node,manual,';
 	protected $class = 'node-manual';
 	var $nodeId;
+	var $docId;
 	var $right;
 
 	function __construct(Array $args = NULL) {
-		parent::__construct();
-		foreach($args as $key => $value) $this->{$key} = $value;
+		parent::__construct($args);
 		unset($this->theme);
 	}
 
@@ -39,27 +39,24 @@ class NodeManualWidget extends Page {
 			'body' => new Container([
 				'class' => $this->class,
 				'children' => [
-					new Nav([
-						'mainAxisAlignment' => 'end',
-						'children' => [
-							$args['uploadButton']
-						], // children
-					]), // Nav
 					new ListTile([
 						'title' => 'คู่มือ',
 						'leading' => new Icon('menu_book'),
+						'trailing' => $args['uploadButton']('manual'),
 					]),
 					$this->showDocs('manual', $docs),
 
 					new ListTile([
 						'title' => 'แบบฟอร์ม',
 						'leading' => new Icon('menu_book'),
+						'trailing' => $args['uploadButton']('form'),
 					]),
 					$this->showDocs('form', $docs),
 
 					new ListTile([
 						'title' => 'เอกสาร',
 						'leading' => new Icon('menu_book'),
+						'trailing' => $args['uploadButton']('document'),
 					]),
 					$this->showDocs('document', $docs),
 				], // children
@@ -68,6 +65,14 @@ class NodeManualWidget extends Page {
 	}
 
 	function upload(Array $args = NULL) {
+		$data = $args['data'] ? $args['data'] : NodeModel::getManual($this->docId, $this->nodeId);
+
+		if ($data->tagName) {
+			list(, , $docType) = explode(',', $data->tagName);
+		} else {
+			$docType = Request::get('type');
+		}
+
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'อัพโหลดเอกสาร',
@@ -76,17 +81,20 @@ class NodeManualWidget extends Page {
 			]),
 			'body' => new Form([
 				'class' => 'sg-form -upload',
-				'action' => SG\getFirst($args['action'], Url::link('api/node/info/'.$this->nodeId.'/manual.add')),
+				'action' => SG\getFirst($args['action'], Url::link('api/node/info/'.$this->nodeId.'/manual.save')),
 				'enctype' => 'multipart/form-data',
 				'checkValid' => true,
 				'rel' => 'none',
 				'done' => 'close | load',
 				'children' => [
+					'docId' => ['type' => 'hidden', 'value' => $data->docId],
+					'coverId' => ['type' => 'hidden', 'value' => $data->coverId],
 					'docType' => [
-						'type' => 'select',
+						'type' => $docType ? 'hidden' : 'select',
 						'class' => '-fill',
 						'label' => 'ประเภทเอกสาร',
 						'require' => true,
+						'value' => $docType,
 						'choice' => ['manual' => 'คู่มือ', 'form' => 'แบบฟอร์ม', 'document' => 'เอกสาร'],
 					],
 					'docName' => [
@@ -94,18 +102,20 @@ class NodeManualWidget extends Page {
 						'label' => 'ชื่อเอกสาร',
 						'class' => '-fill',
 						'require' => true,
+						'value' => $data->title,
 						'placeholder' => 'ระบุชื่อเอกสาร',
 					],
 					'docFile' => [
 						'type' => 'file',
 						'class' => '-fill',
 						'label' => 'ไฟล์เอกสาร',
-						'require' => true,
+						'require' => $this->docId ? false : true,
 					],
 					'coverFile' => [
 						'type' => 'file',
 						'class' => '-fill',
 						'label' => 'ภาพปก',
+						'accept' => 'image/jpeg,image/png;capture=camcorder',
 					],
 					'submit' => [
 						'type' => 'button',
@@ -157,11 +167,11 @@ class NodeManualWidget extends Page {
 		]);
 	}
 
-	private static function getCoverPhoto(Int $fileId, Array $docs) {
+	private static function getCoverPhoto(Int $docId, Array $docs) {
 		$coverPhoto = NULL;
 
 		foreach ($docs as $doc) {
-			if ($doc->refId === $fileId) {
+			if ($doc->refId === $docId) {
 				$coverPhoto = (Object) [
 					'fileName' => $doc->fileName,
 					'folder' => $doc->folder
