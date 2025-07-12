@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-12
- * Version :: 2
+ * Version :: 3
  *
  * @param Array $args
  * @return Widget
@@ -48,14 +48,14 @@ class NodeManualWidget extends Page {
 
 					new ListTile([
 						'title' => 'แบบฟอร์ม',
-						'leading' => new Icon('menu_book'),
+						'leading' => new Icon('fact_check'),
 						'trailing' => $args['uploadButton']('form'),
 					]),
 					$this->showDocs('form', $docs),
 
 					new ListTile([
 						'title' => 'เอกสาร',
-						'leading' => new Icon('menu_book'),
+						'leading' => new Icon('article'),
 						'trailing' => $args['uploadButton']('document'),
 					]),
 					$this->showDocs('document', $docs),
