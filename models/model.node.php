@@ -3,7 +3,7 @@
 * Model.  :: Node Model
 * Created :: 2021-09-30
 * Modify  :: 2025-07-12
-* Version :: 20
+* Version :: 21
 *
 * @param Array $args
 * @return Object
@@ -279,13 +279,13 @@ class NodeModel {
 	public static function getManual($docId, $projectId = NULL) {
 		return DB::select([
 			'SELECT
-			`doc`.`fid` `fileId`
-			, `doc`.`tpid` `nodeId`
+			`doc`.`tpid` `nodeId`
+			, `doc`.`fid` `docId`
+			, `photo`.`fid` `coverId`
 			, `doc`.`folder` `docFolder`
 			, `doc`.`file` `docFile`
 			, `doc`.`tagName`
 			, `doc`.`title` `title`
-			, `photo`.`fid` `coverId`
 			, `photo`.`folder` `coverFolder`
 			, `photo`.`file` `coverPhoto`
 			FROM %topic_files% `doc`
