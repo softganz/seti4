@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-07-06
-* Version :: 19
+* Modify  :: 2025-07-12
+* Version :: 20
 *
 * @param Array $args
 * @return Object
@@ -274,6 +274,31 @@ class NodeModel {
 		if (!$debug) unset($result->debug);
 
 		return $result;
+	}
+
+	public static function getManual($docId, $projectId = NULL) {
+		return DB::select([
+			'SELECT
+			`doc`.`fid` `fileId`
+			, `doc`.`tpid` `nodeId`
+			, `doc`.`folder` `docFolder`
+			, `doc`.`file` `docFile`
+			, `doc`.`tagName`
+			, `doc`.`title` `title`
+			, `photo`.`fid` `coverId`
+			, `photo`.`folder` `coverFolder`
+			, `photo`.`file` `coverPhoto`
+			FROM %topic_files% `doc`
+				LEFT JOIN %topic_files% `photo` ON `photo`.`tpid` = `doc`.`tpid` AND `photo`.`refId` = `doc`.`fid`
+			%WHERE%
+			LIMIT 1',
+			'where' => [
+				'%WHERE%' => [
+					['`doc`.`fid` = :docId AND `doc`.`type` = "doc"', ':docId' => $docId],
+					$projectId ? ['`doc`.`tpid` = :projectId', ':projectId' => $projectId] : NULL,
+				]
+			]
+		]);
 	}
 
 	public static function countNodeByUserId($userId) {
