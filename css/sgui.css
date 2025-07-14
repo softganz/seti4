@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-07-08
- * Version :: 18
+ * Modify  :: 2025-07-14
+ * Version :: 19
  */
 
 @charset "UTF-8";
@@ -537,7 +537,8 @@
 
 /* widget-album */
 .widget-album {
-	list-style-type: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-start; width: initial !important; gap: 4px;
+	list-style-type: none; margin: 0; padding: 0; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; width: initial !important; gap: 4px;
+	* {box-sizing: border-box;}
 	>* {flex: 0 0 206px; padding: 0; position: relative; overflow: hidden; background-color: #eee;}
 	>*::before {content: ""; float: left; padding-top: 100%;}
 	>* .-photo {height: 100%; width: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
@@ -546,9 +547,10 @@
 	>* .title {position: absolute; bottom: 0; left: 0; right: 0; text-align: center;}
 	>* .widget-inlineedit.-photodetail {position: absolute; bottom: 0; left: 0; right: 0;}
 	>*.-upload {background-color: transparent;}
-	>*.-upload>* {position: absolute; margin: 0; padding: 0; top: 0; left: 0; right: 0; bottom: 0; text-align: center; height: auto;}
+	>*.-upload>* {position: absolute; margin: 0; padding: 0; top: 0; left: 0; right: 0; bottom: 0; text-align: center; height: auto; display: block; align-content: center;}
 	>*.-upload .btn {margin: 0; padding: 0; padding-top: calc(50% - 24px); box-shadow: none; border: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 8px; background-color: var(--secondary-bg-color);}
 	>*.-upload>form .btn>span {display: block; flex: 1 0 100%; padding: 0;}
+	>*>a {display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
 	>*>.-hover {position: absolute; top: 4px; right: 4px;}
 	.widget-inlineedit {position: absolute; z-index: 1; left: 0; right: 0; bottom: 0;}
 }
@@ -894,6 +896,31 @@
 	.report-output-summary::-webkit-scrollbar {display: none; width: 0 !important; height: 0 !important; background-color: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
 }
 /* @end */
+
+/* @group widget-tabbar */
+.widget-tabbar {
+	div.tabs {padding: 2px; border: 1px #D3D3D3 solid; border-radius: 3px; }
+	ul.tabs {
+		padding: 0; margin: 0; list-style-type: none; text-align: left; background-color: transparent; border-bottom: 1px #ccc solid;
+		>li { margin: 0 0 -1px 0; padding: 0; display: inline-block; border: 1px transparent solid; border-bottom: 1px #ccc solid; border-radius: 4px 4px 0 0;}
+		>li>a {margin: 0; padding: 4px 10px !important; display: inline-block; color: #666; border-radius: 4px 4px 0 0;}
+		>li>a:hover {background-color: #fafafa; color: #222;}
+		>li.-active {border: 1px #ccc solid; border-bottom: 1px #fff solid;}
+		>li.-active>a:hover {color: #222; background-color: #fafafa;}
+	}
+
+	/* @group tabs_Input */
+	div.tabs_input {display: none;}
+	/* @end */
+
+}
+	/* @end */
+
+
+
+
+
+
 
 
 /* Old style widget */
