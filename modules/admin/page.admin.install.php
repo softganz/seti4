@@ -2,8 +2,8 @@
 /**
 * Admin   :: Install Basic Database Table
 * Created :: 2016-11-08
-* Modify  :: 2025-06-15
-* Version :: 5
+* Modify  :: 2025-07-14
+* Version :: 6
 *
 * @return Widget
 *
@@ -170,7 +170,7 @@ function __admin_install_create_table($prefix=null) {
 
 
 	$query->cache='CREATE TABLE IF NOT EXISTS %cache% (
-		`cid` varchar(200) NOT NULL default "",
+		`cid` varchar(1000) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL default "",
 		`data` text,
 		`expire` int(11) NOT NULL default 0,
 		`created` int(11) NOT NULL default 0,
