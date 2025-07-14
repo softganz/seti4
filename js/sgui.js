@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-07-11
-* Version :: 45
+* Modify  :: 2025-07-14
+* Version :: 46
 */
 
 'use strict'
@@ -2900,8 +2900,6 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 			return false;
 		},
 		response: function(event, ui) {
-			//console.log('RESPONSE')
-			//console.log('EVENT', event)
 			let renderStart = $this.data('renderStart')
 			if (renderStart && typeof window[renderStart] === 'function') {
 				window[renderStart]($this, ui);
