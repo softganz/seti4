@@ -2,18 +2,18 @@
 /**
  * Node    :: Page
  * Created :: 2025-07-11
- * Modify  :: 2025-07-12
- * Version :: 3
+ * Modify  :: 2025-07-14
+ * Version :: 4
  *
  * @param Array $args
  * @return Widget
  *
- * @usage extends NodeManualWidget
+ * @usage extends NodeAlbumWidget
  */
 
-class NodeManualWidget extends Page {
-	protected $tagName = 'node,manual,';
-	protected $class = 'node-manual';
+class NodeAlbumWidget extends Page {
+	protected $tagName = 'node,album,';
+	protected $class = 'node-album';
 	var $nodeId;
 	var $docId;
 	var $right;
@@ -56,16 +56,16 @@ class NodeManualWidget extends Page {
 					new ListTile([
 						'title' => 'เอกสาร',
 						'leading' => new Icon('article'),
-						'trailing' => $args['uploadButton']('document'),
+						'trailing' => $args['uploadButton']('doc'),
 					]),
-					$this->showDocs('document', $docs),
+					$this->showDocs('doc', $docs),
 				], // children
 			]), // Widget
 		]);
 	}
 
 	function upload(Array $args = NULL) {
-		$data = $args['data'] ? $args['data'] : NodeModel::getManual($this->docId, $this->nodeId);
+		$data = $args['data'] ? $args['data'] : NodeModel::getAlbum($this->docId, $this->nodeId);
 
 		if ($data->tagName) {
 			list(, , $docType) = explode(',', $data->tagName);
@@ -81,7 +81,7 @@ class NodeManualWidget extends Page {
 			]),
 			'body' => new Form([
 				'class' => 'sg-form -upload',
-				'action' => SG\getFirst($args['action'], Url::link('api/node/info/'.$this->nodeId.'/manual.save')),
+				'action' => SG\getFirst($args['action'], Url::link('api/node/info/'.$this->nodeId.'/album.save')),
 				'enctype' => 'multipart/form-data',
 				'checkValid' => true,
 				'rel' => 'none',
@@ -95,7 +95,7 @@ class NodeManualWidget extends Page {
 						'label' => 'ประเภทเอกสาร',
 						'require' => true,
 						'value' => $docType,
-						'choice' => ['manual' => 'คู่มือ', 'form' => 'แบบฟอร์ม', 'document' => 'เอกสาร'],
+						'choice' => ['manual' => 'คู่มือ', 'form' => 'แบบฟอร์ม', 'doc' => 'เอกสาร'],
 					],
 					'docName' => [
 						'type' => 'text',

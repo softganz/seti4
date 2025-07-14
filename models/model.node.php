@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-07-12
-* Version :: 21
+* Modify  :: 2025-07-14
+* Version :: 22
 *
 * @param Array $args
 * @return Object
@@ -276,7 +276,7 @@ class NodeModel {
 		return $result;
 	}
 
-	public static function getManual($docId, $projectId = NULL) {
+	public static function getAlbum($docId, $projectId = NULL) {
 		return DB::select([
 			'SELECT
 			`doc`.`tpid` `nodeId`
