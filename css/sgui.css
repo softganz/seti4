@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-07-14
- * Version :: 19
+ * Modify  :: 2025-07-15
+ * Version :: 20
  */
 
 @charset "UTF-8";
@@ -315,11 +315,12 @@
 	>ul>li {position: relative;}
 	>ul>li:not(:last-child) {padding: 0 4px 0 0;}
 	&.-vertical {flex: 1 0 100%; flex-wrap: wrap; flex-direction: column;}
-	&.-vertical>ul {flex: 1 0 100%; flex-wrap: wrap; width: 100%; gap: 8px}
+	&.-vertical>ul {flex: 1 0 100%; flex-wrap: wrap; width: 100%; gap: 4px}
 	&.-vertical>ul>li {flex: 0 0 100%; flex-wrap: wrap; padding: 0;}
-	&.-vertical>ul>li>a {display: flex; padding: 6px 8px; gap: 8px; align-items: center;}
+	&.-vertical>ul>li>a {display: flex; padding: 4px 8px; gap: 8px; align-items: center; font-weight: bold;}
 	&.-vertical>ul>li>a>span {flex: 1; padding: 0; line-height: unset;}
 	&.-vertical .-sep>hr {display: none;}
+	&.-vertical .widget-nav a {font-weight: normal;}
 	&.-main-axis-end>ul {margin-left: auto;}
 
 	&.-button-menu>ul>li>a {line-height: 4.8rem; border-radius: 4.8rem; margin: 8px 0; align-items: center; padding: 0;}
@@ -330,14 +331,15 @@
 .widget-sidebar {
 	display: flex; flex-direction: column; width: 100px;
 	z-index: 1;
+	* {box-sizing: border-box;}
+	.-header>.icon {width: 32px; height: 32px; display: block; padding: 4px;}
 	>nav.-vertical {flex: initial;}
 	>nav>ul {gap: 8px;}
-	>nav.-vertical>ul>li .widget-button {border-radius: 8px; padding: 3px 8px;}
+	>nav.-vertical>ul>li .widget-button {border-radius: 0;}
 	>nav.-vertical.-icon-center .widget-button {text-align: center; flex-direction: column;}
 	>nav.-vertical.-icon-center .widget-button>.icon {margin: 0 auto;}
 	>nav nav.-vertical {
-		padding-left: 1rem;
-		ul>li>a {padding: 2px 8px;}
+		ul>li>a {padding: 2px 0 2px 16px;}
 		.icon {width: 1.6rem; height: 1.6rem; font-size: 1.6rem;}
 	}
 }
