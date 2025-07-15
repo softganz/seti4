@@ -2,8 +2,8 @@
 /**
  * Node    :: Page
  * Created :: 2025-07-11
- * Modify  :: 2025-07-14
- * Version :: 4
+ * Modify  :: 2025-07-15
+ * Version :: 5
  *
  * @param Array $args
  * @return Widget
@@ -33,6 +33,23 @@ class NodeAlbumWidget extends Page {
 			'nodeId' => $this->nodeId,
 			'tagNameLike' => $this->tagName.'%',
 		])->items;
+
+		if ($this->name) {
+			return new Scaffold([
+				'appBar' => $args['appBar'],
+				'body' => new Container([
+					'class' => $this->class,
+					'children' => [
+						new ListTile([
+							// 'title' => 'คู่มือ',
+							'leading' => new Icon('menu_book'),
+							// 'trailing' => $args['uploadButton']('manual'),
+						]),
+						$this->showDocs($this->name, $docs),
+					], // children
+				]), // Widget
+			]);
+		}
 
 		return new Scaffold([
 			'appBar' => $args['appBar'],
