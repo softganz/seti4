@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-07-12
-* Version :: 33
+* Modify  :: 2025-07-15
+* Version :: 34
 *
 * @param Array $args
 * @return Widget
@@ -89,13 +89,13 @@ class Form extends Widget {
 		if ($this->debug) debugMsg($this, '$this');
 
 		$this->config = is_array($this->config) ? (Object) $this->config : $this->config;
-		$this->readonly = \SG\getFirst($this->config->readonly, $this->readonly);
-		$this->variable = \SG\getFirst($this->variable, $this->config->variable);
-		$formEncrypt = $this->enctype = \SG\getFirst($this->enctype, $this->config->enctype);
-		$formMethod = $this->method = \SG\getFirst($this->config->method, $this->method);
-		$formAction = $this->action = \SG\getFirst($this->action, $this->config->action);
-		$formCheckValid = \SG\getFirst($this->checkValid, $this->data['data-checkValid'], $this->data['data-checkvalid']);
-		$formTitle = \SG\getFirst($this->title, $this->config->title);
+		$this->readonly = SG\getFirst($this->config->readonly, $this->readonly);
+		$this->variable = SG\getFirst($this->variable, $this->config->variable);
+		$formEncrypt = $this->enctype = SG\getFirst($this->enctype, $this->config->enctype);
+		$formMethod = $this->method = SG\getFirst($this->config->method, $this->method);
+		$formAction = $this->action = SG\getFirst($this->action, $this->config->action);
+		$formCheckValid = SG\getFirst($this->checkValid, $this->data['data-checkValid'], $this->data['data-checkvalid']);
+		$formTitle = SG\getFirst($this->title, $this->config->title);
 
 		if ($this->action) {
 			$ret .= _NL.'<!-- sg-form -->'._NL;
@@ -135,7 +135,7 @@ class Form extends Widget {
 
 		// Render form title
 		if ($formTitle) {
-			if (\SG\isWidget($formTitle)) {
+			if (SG\isWidget($formTitle)) {
 				$ret .= $formTitle->build();
 			} else {
 				$ret .= '<h3 class="title">'.$formTitle.'</h3>'._NL;
@@ -219,7 +219,7 @@ class Form extends Widget {
 		$containerClass = '';
 
 		if ($formElement->config) {
-			$formElement->config = \SG\json_decode($formElement->config);
+			$formElement->config = SG\json_decode($formElement->config);
 		}
 
 		if ($formElement->id) {
@@ -238,7 +238,7 @@ class Form extends Widget {
 		if (isset($formElement->container) && is_object($formElement->container)) {
 			$formElement->container = (Array) $formElement->container;
 		} else if (isset($formElement->container) && is_string($formElement->container) && substr($formElement->container,0,1) == '{') {
-			$formElement->container = (Array) \SG\json_decode($formElement->container);
+			$formElement->container = (Array) SG\json_decode($formElement->container);
 		}
 
 		$isFormGroup = preg_match('/-group/', $formElement->container['class']);
@@ -268,11 +268,11 @@ class Form extends Widget {
 
 		if ($isFormGroup) $ret .= '<span class="form-group">'._NL;
 
-		$ret .= $this->_renderAttribute(\SG\getFirst($formElement->preText, $formElement->pretext));
+		$ret .= $this->_renderAttribute(SG\getFirst($formElement->preText, $formElement->pretext));
 
 		// Item attribute from key attribute, if not define use key attr
 		// Implode attribute to string
-		$formElement->attribute = \SG\getFirst($formElement->attribute, $formElement->attr, []);
+		$formElement->attribute = SG\getFirst($formElement->attribute, $formElement->attr, []);
 		if ($formElement->attribute && (is_array($formElement->attribute) || is_object($formElement->attribute))) {
 			$formElement->attribute = sg_implode_attr($formElement->attribute);
 		}
@@ -295,7 +295,7 @@ class Form extends Widget {
 			case 'colorpicker' : $ret .= $this->_renderColorPicker($tag_id, $name, $formElement); break;
 		}
 
-		$ret .= $this->_renderAttribute(\SG\getFirst($formElement->postText, $formElement->posttext));
+		$ret .= $this->_renderAttribute(SG\getFirst($formElement->postText, $formElement->posttext));
 
 		if ($isFormGroup) $ret .= '</span><!-- form-group -->'._NL;
 		if ($formElement->description) $ret .= _NL.'<div class="description">'.$formElement->description.'</div>';
@@ -591,6 +591,7 @@ class Form extends Widget {
 				. 'type="'.$formElement->type.'" '
 				. ($formElement->multiple ? 'multiple="multiple"' : '')
 				. ($formElement->accept ? 'accept="'.$formElement->accept.'" ' : '')
+				. ($formElement->attribute ? ' '.$formElement->attribute : '')
 				. '>';
 		}
 		return $ret;
@@ -604,6 +605,7 @@ class Form extends Widget {
 				. ' class="btn '.($formElement->class ? $formElement->class : '-primary').'"'
 				. ' value="'.htmlspecialchars(strip_tags($formElement->value)).'"'
 				. ($this->readonly || $formElement->readonly ? ' disabled="disabled" ' : '')
+				. ($formElement->attribute ? ' '.$formElement->attribute : '')
 				. '>'
 				. SG\getFirst($formElement->text, $formElement->value)
 				. '</button>';
@@ -614,6 +616,7 @@ class Form extends Widget {
 				. ' class="btn'.($formElement->items['class'] ? ' '.$formElement->items['class'] : '').'"'
 				. ' value="'.htmlspecialchars(strip_tags($formElement->items['value'])).'"'
 				. ($this->readonly || $formElement->readonly ? ' disabled="disabled"' : '')
+				. $formElement->attribute
 				. ' >'
 				. $formElement->items['value']
 				. '</button>';
@@ -627,10 +630,11 @@ class Form extends Widget {
 				} else {
 					$ret .= '<button'
 						. (isset($button['type']) ? ' type="'.$button['type'].'"' : '')
-						. ' name="'.\SG\getFirst($button['name'],is_string($key) ? $key : $name).'"'
+						. ' name="'.SG\getFirst($button['name'],is_string($key) ? $key : $name).'"'
 						. ' class="btn'.($button['class'] ? ' '.$button['class'] : '').'"'
-						. ' value="'.\SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'"'
+						. ' value="'.SG\getFirst($button['btnvalue'],htmlspecialchars(strip_tags($button['value']))).'"'
 						. ($this->readonly || $formElement->readonly ? ' disabled="disabled"' : '')
+						. ($button['attribute'] && (is_array($button['attribute']) || is_object($button['attribute'])) ? ' '.sg_implode_attr($button['attribute']) : $button['attribute'])
 						.' >'
 						. $button['value']
 						. '</button>';
@@ -687,9 +691,9 @@ class Form extends Widget {
 
 	function _renderTime($tag_id, $name, $formElement) {
 		$times = [];
-		$start_time = \SG\getFirst($formElement->start, 0);
-		$end_time = \SG\getFirst($formElement->end ,24);
-		$step_time = \SG\getFirst($formElement->step, 15);
+		$start_time = SG\getFirst($formElement->start, 0);
+		$end_time = SG\getFirst($formElement->end ,24);
+		$step_time = SG\getFirst($formElement->step, 15);
 		for ($hr = $start_time; $hr < $end_time; $hr++) {
 			for ($min = 0; $min < 60; $min += $step_time) {
 				$times[] = sprintf('%02d',$hr).':'.sprintf('%02d',$min);
@@ -704,9 +708,9 @@ class Form extends Widget {
 	}
 
 	function _renderHour($tag_id, $name, $formElement) {
-		$start_time = \SG\getFirst($formElement->start, 0);
-		$end_time = \SG\getFirst($formElement->end, 24);
-		$step_time = \SG\getFirst($formElement->step, 15);
+		$start_time = SG\getFirst($formElement->start, 0);
+		$end_time = SG\getFirst($formElement->end, 24);
+		$step_time = SG\getFirst($formElement->step, 15);
 		$ret = '<select id="'.$tag_id.'" class="form-select" name="'.$name.'[hour]">'._NL;
 		for ($hr = $start_time; $hr < $end_time; $hr++) {
 			$ret .= '<option value="'.sprintf('%02d',$hr).'"'.($hr == $formElement->value->hour?' selected="selected"':'').'>'.sprintf('%02d',$hr).'</option>';
