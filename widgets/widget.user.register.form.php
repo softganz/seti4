@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2025-04-20
-* Version :: 7
+* Modify  :: 2025-07-15
+* Version :: 8
 *
 * @param Object $register
 * @return Widget
@@ -13,12 +13,14 @@
 */
 
 class UserRegisterFormWidget extends Widget {
+	protected $captchaKey;
 	var $register;
 	var $cfgUserRegister;
 	var $validCheck;
 
 	function __construct($register = []) {
 		parent::__construct([
+			'captchaKey' => cfg('captcha'),
 			'register' => (Object) $register,
 			'cfgUserRegister' => $cfgUserRegister = cfg('user')->register,
 			'validCheck' => explode(',', $cfgUserRegister->valid),
@@ -26,7 +28,9 @@ class UserRegisterFormWidget extends Widget {
 	}
 
 	function build() {
-		$emailDesc = '<ul><li>กรุณาป้อนอี-เมล์ของท่านให้ถูกต้อง ทางเว็บไซท์จะไม่มีการแสดงอีเมล์นี้ของท่านในหน้าเว็บไซท์ แต่จะใช้ในกรณีดังต่อไปนี้<ol><li>ท่านลืมรหัสผ่าน ระบบจะส่งรหัสผ่านไปให้ท่านตามอีเมล์ที่ระบุนี้</li><li>มีการติดต่อจากแบบฟอร์มที่ให้กรอกในหน้าเว็บไซท์เพื่อส่งถึงท่าน</li></ol></li>';
+		if ($this->captchaKey) head(' <script src="https://www.google.com/recaptcha/api.js"></script>');
+
+			$emailDesc = '<ul><li>กรุณาป้อนอี-เมล์ของท่านให้ถูกต้อง ทางเว็บไซท์จะไม่มีการแสดงอีเมล์นี้ของท่านในหน้าเว็บไซท์ แต่จะใช้ในกรณีดังต่อไปนี้<ol><li>ท่านลืมรหัสผ่าน ระบบจะส่งรหัสผ่านไปให้ท่านตามอีเมล์ที่ระบุนี้</li><li>มีการติดต่อจากแบบฟอร์มที่ให้กรอกในหน้าเว็บไซท์เพื่อส่งถึงท่าน</li></ol></li>';
 
 		switch (cfg('member.registration.method')) {
 			case 'email' :
@@ -185,8 +189,13 @@ class UserRegisterFormWidget extends Widget {
 						],
 						'next' => [
 							'type' => 'submit',
-							'class' => '-primary -next -disabled',
-							'value' => '<i class="icon -material">navigate_next</i><span><b>{tr:Sign up now}</b></span>'
+							'class' => '-primary -next -disabled g-recaptcha',
+							'value' => '<i class="icon -material">navigate_next</i><span><b>{tr:Sign up now}</b></span>',
+							'attribute' => [
+								'data-sitekey' => $this->captchaKey,
+								'data-callback' => 'onSubmit',
+								'data-action' => 'submit'
+							]
 						],
 					],
 					'container' => ['class' => '-sg-text-right'],
@@ -204,6 +213,12 @@ class UserRegisterFormWidget extends Widget {
 
 	private function script() {
 		return '<script type="text/javascript">
+			function onSubmit(token) {
+				// console.log("Submit", token);
+				// document.getElementById("edit-register").submit();
+				checkComplete.registerSubmit($("#edit-register"));
+			}
+
 			checkComplete = new function() {
 				let checkValids = '.json_encode($this->validCheck).'
 				let usernameValid = true
