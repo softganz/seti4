@@ -1,16 +1,16 @@
 <?php
 /**
-* Paper   :: Post Form Widget
-* Created :: 2019-06-10
-* Modify  :: 2025-06-24
-* Version :: 4
-*
-* @param Array $topic
-* @return Object
-*
-* @usage import('widget:paper.post.form.php')
-* @usage new PaperPostFormWidgetl([])
-*/
+ * Paper   :: Post Form Widget
+ * Created :: 2019-06-10
+ * Modify  :: 2025-07-15
+ * Version :: 5
+ *
+ * @param Array $topic
+ * @return Object
+ *
+ * @usage import('widget:paper.post.form.php')
+ * @usage new PaperPostFormWidgetl([])
+ */
 
 class PaperPostFormWidget extends Widget {
 	var $topic;
@@ -121,7 +121,7 @@ class PaperPostFormWidget extends Widget {
 
 				'tabs' => new Children([
 					'children' => [
-						'tabs_start' => '<div class="sg-tabs"><ul class="tabs tabs_input">',
+						'tabs_start' => '<div class="widget-tabbar sg-tabs"><ul class="tabs tabs_input">',
 						'tabs_1' => '<li class="-active"><a href="#tabs_1">'.tr('Poster').'</a></li>',
 						'tabs_2' => user_access('upload photo')?'<li><a href="#tabs_2">'.tr('Photo').'</a></li>':'',
 						'tabs_3' => user_access('upload document')?'<li><a href="#tabs_3">'.tr('Documents').'</a></li>':'',

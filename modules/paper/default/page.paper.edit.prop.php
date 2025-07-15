@@ -1,15 +1,15 @@
 <?php
 /**
-* Paper   :: Edit Property
-* Created :: 2019-06-02
-* Modify  :: 2024-03-20
-* Version :: 2
-*
-* @param String $topicInfo
-* @return Widget
-*
-* @usage module/{id}/method
-*/
+ * Paper   :: Edit Property
+ * Created :: 2019-06-02
+ * Modify  :: 2025-07-15
+ * Version :: 3
+ *
+ * @param String $topicInfo
+ * @return Widget
+ *
+ * @usage module/{id}/method
+ */
 
 class PaperEditProp extends Page {
 	var $nodeId;
@@ -38,7 +38,7 @@ class PaperEditProp extends Page {
 			'rel' => 'none',
 			// $form->addData('callback', url('paper/'.$this->nodeId.'/edit'));
 			'children' => [
-				'<div class="sg-tabs"><ul class="tabs"><li class="-active"><a href="#prop-show">การแสดงภาพ</a></li><li><a href="#prop-options">'.tr('Options').'</a></li><li><a href="#prop-format">Input Format</a></li></ul>',
+				'<div class="widget-tabbar sg-tabs"><ul class="tabs"><li class="-active"><a href="#prop-show">การแสดงภาพ</a></li><li><a href="#prop-options">'.tr('Options').'</a></li><li><a href="#prop-format">Input Format</a></li></ul>',
 				'<div id="prop-show"><h4>การแสดงภาพ</h4>',
 				'show_photo' => [
 					'label' => 'แสดงภาพอัตโนมัติ',

@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2025-07-06
-* Version :: 501
+* Modify  :: 2025-07-15
+* Version :: 52
 *
 * @param Array $args
 * @return Widget
@@ -934,7 +934,7 @@ class ListItem extends Widget {
 class TabBar extends Widget {
 	var $widgetName = 'TabBar';
 	var $tagName = 'div';
-	var $class = 'sg-tabs';
+	var $class = 'widget-tabbar sg-tabs';
 
 	function _renderChildren($childrens = [], $args = []) {
 		$tabItems = '<ul class="tabs">';
