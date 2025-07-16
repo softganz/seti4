@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-07-14
-* Version :: 22
+* Modify  :: 2025-07-15
+* Version :: 23
 *
 * @param Array $args
 * @return Object
@@ -294,11 +294,43 @@ class NodeModel {
 			LIMIT 1',
 			'where' => [
 				'%WHERE%' => [
-					['`doc`.`fid` = :docId AND `doc`.`type` = "doc"', ':docId' => $docId],
+					['`doc`.`fid` = :docId AND `doc`.`refId` IS NULL', ':docId' => $docId],
 					$projectId ? ['`doc`.`tpid` = :projectId', ':projectId' => $projectId] : NULL,
 				]
 			]
 		]);
+	}
+
+	public static function getAlbums($conditions = []) {
+		$conditions = (Object) array_replace_recursive(
+			[
+				'nodeId' => NULL, // Int
+				'tagNameLike' => NULL, // String
+			],
+			(Array) $conditions
+		);
+
+		return (Array) DB::select([
+			'SELECT
+			`doc`.`tpid` `nodeId`
+			, `doc`.`fid` `docId`
+			, `cover`.`fid` `coverId`
+			, `doc`.`tagName`
+			, `doc`.`title` `title`
+			, `doc`.`folder` `docFolder`
+			, `doc`.`file` `docFile`
+			, `cover`.`file` `coverPhoto`
+			, `cover`.`folder` `coverFolder`
+			FROM %topic_files% `doc`
+				LEFT JOIN %topic_files% `cover` ON `cover`.`tpid` = `doc`.`tpid` AND `cover`.`refId` = `doc`.`fid`
+			%WHERE%',
+			'where' => [
+				'%WHERE%' => [
+					['`doc`.`tpid` = :nodeId AND `doc`.`refId` IS NULL', ':nodeId' => $conditions->nodeId],
+					['`doc`.`tagName` LIKE :tagNameLike', ':tagNameLike' => $conditions->tagNameLike]
+				]
+			],
+		])->items;
 	}
 
 	public static function countNodeByUserId($userId) {
