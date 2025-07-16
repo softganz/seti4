@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-16
- * Version :: 7
+ * Version :: 8
  *
  * @param Array $args
  * @return Widget
@@ -44,19 +44,19 @@ class NodeAlbumWidget extends Page {
 				'class' => $this->class,
 				'attribute' => ['data-url' => $args['albumUrl']],
 				'children' => array_map(
-					function($album) use($albumNames, $docs, $args) {
+					function($albumName) use($albumNames, $docs, $args) {
 						// Check invalid album name
 						// debugMsg($album);
-						if (!$this->validAlbumName($album)) return 'Invalid album name <b>'.$album.'</b>';
+						if (!$this->validAlbumName($albumName)) return 'Invalid album name <b>'.$albumName.'</b>';
 						// debugMsg($out, '$out');
 						return new Widget([
 							'children' => [
 								new ListTile([
-									'title' => SG\getFirst($albumNames[$album], $album),
+									'title' => SG\getFirst($albumNames[$albumName], $albumName),
 									'leading' => new Icon('menu_book'),
-									'trailing' => $args['uploadButton']($album),
+									'trailing' => $args['uploadButton']($albumName),
 								]),
-								$this->showDocs($album, $docs),
+								$this->showDocs($albumName, $docs),
 							]
 						]);
 					},
@@ -66,7 +66,7 @@ class NodeAlbumWidget extends Page {
 		]);
 	}
 
-	private function validAlbumName(String $albumName) {
+	private function validAlbumName(String $albumName = NULL) {
 		return preg_match('/^[a-z0-9]{1,6}$/', $albumName);
 	}
 
@@ -74,16 +74,16 @@ class NodeAlbumWidget extends Page {
 		$data = $args['data'] ? $args['data'] : NodeModel::getAlbum($this->docId, $this->nodeId);
 
 		if ($data->tagName) {
-			list(, , $docType) = explode(',', $data->tagName);
+			list(, , $albumName) = explode(',', $data->tagName);
 		} else {
-			$docType = Request::get('type');
+			$albumName = $this->albumName;
 		}
 
-		if (!$this->validAlbumName($docType)) return error(_HTTP_ERROR_BAD_REQUEST, 'Invalid album name <b>'.$docType.'</b>');
+		if (!$this->validAlbumName($albumName)) return error(_HTTP_ERROR_BAD_REQUEST, 'Invalid album name <b>'.$albumName.'</b>');
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'อัพโหลดเอกสาร',
+				'title' => 'อัพโหลดเอกสาร: '.$this->albumName,
 				'leading' => new Icon('cloud_upload'),
 				'boxHeader' => true
 			]),
@@ -98,11 +98,11 @@ class NodeAlbumWidget extends Page {
 					'docId' => ['type' => 'hidden', 'value' => $data->docId],
 					'coverId' => ['type' => 'hidden', 'value' => $data->coverId],
 					'docType' => [
-						'type' => $docType ? 'hidden' : 'select',
+						'type' => $albumName ? 'hidden' : 'select',
 						'class' => '-fill',
 						'label' => 'ประเภทเอกสาร',
 						'require' => true,
-						'value' => $docType,
+						'value' => $albumName,
 						'choice' => ['manual' => 'คู่มือ', 'form' => 'แบบฟอร์ม', 'doc' => 'เอกสาร'],
 					],
 					'docName' => [
@@ -136,11 +136,11 @@ class NodeAlbumWidget extends Page {
 		]);
 	}
 
-	protected function showDocs(String $type, Array $docs, Array $args = []) {
+	protected function showDocs(String $albumName, Array $docs, Array $args = []) {
 		return new Container([
 			'children' => array_map(
-				function($item) use($type, $docs, $args) {
-					if ($item->tagName != $this->tagName.$type) return NULL;
+				function($item) use($albumName, $docs, $args) {
+					if ($item->tagName != $this->tagName.$albumName) return NULL;
 
 					$docInfo = FileModel::docProperty($item->docFile, $item->docFolder);
 	
@@ -170,22 +170,6 @@ class NodeAlbumWidget extends Page {
 				$docs
 			)
 		]);
-	}
-
-	private static function getCoverPhoto(Int $docId, Array $docs) {
-		$coverPhoto = NULL;
-
-		foreach ($docs as $doc) {
-			if ($doc->refId === $docId) {
-				$coverPhoto = (Object) [
-					'fileName' => $doc->fileName,
-					'folder' => $doc->folder
-				];
-				break;
-			}
-		}
-
-		return $coverPhoto;
 	}
 }
 ?>
