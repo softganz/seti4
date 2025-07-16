@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-16
- * Version :: 11
+ * Version :: 12
  *
  * @param Array $args
  * @return Widget
@@ -37,6 +37,12 @@ class NodeAlbumWidget extends Page {
 			'tagNameLike' => $this->tagName.'%',
 		]);
 
+		foreach ($docs as $key => $value) {
+			$name = $this->getAlbumNameFromTag($key);
+			if (array_key_exists($name, $albumNames)) continue;
+			$albumNames[$name] = $name;
+		}
+
 		return new Scaffold([
 			'appBar' => $args['appBar'],
 			'body' => new Container([
@@ -44,13 +50,13 @@ class NodeAlbumWidget extends Page {
 				'class' => $this->class,
 				'attribute' => ['data-url' => $args['albumUrl']],
 				'children' => array_map(
-					function($albumName) use($albumNames, $docs, $args) {
+					function($albumTitle, $albumName) use($docs, $args) {
 						// Check invalid album name
 						if (!$this->validAlbumName($albumName)) return 'Invalid album name <b>'.$albumName.'</b>';
 						return new Widget([
 							'children' => [
 								new ListTile([
-									'title' => SG\getFirst($albumNames[$albumName], $albumName),
+									'title' => $albumTitle,
 									'leading' => new Icon('menu_book'),
 									'trailing' => $args['uploadButton']($albumName),
 								]),
@@ -58,7 +64,7 @@ class NodeAlbumWidget extends Page {
 							]
 						]);
 					},
-					explode(',', $this->albumName)
+					$albumNames, array_keys($albumNames)
 				), // childrn
 			]), // Widget
 		]);
@@ -66,6 +72,10 @@ class NodeAlbumWidget extends Page {
 
 	private function validAlbumName(String $albumName = NULL) {
 		return preg_match('/^[a-z0-9]{1,6}$/', $albumName);
+	}
+
+	private function getAlbumNameFromTag(String $tag = NULL) {
+		return preg_match('/\,(\w+)$/', $tag, $out) ? $out[1] : NULL;
 	}
 
 	function upload(Array $args = NULL) {
