@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-16
- * Version :: 12
+ * Version :: 13
  *
  * @param Array $args
  * @return Widget
@@ -53,7 +53,8 @@ class NodeAlbumWidget extends Page {
 					function($albumTitle, $albumName) use($docs, $args) {
 						// Check invalid album name
 						if (!$this->validAlbumName($albumName)) return 'Invalid album name <b>'.$albumName.'</b>';
-						return new Widget([
+						return new Container([
+							'class' => '-album-'.$albumName,
 							'children' => [
 								new ListTile([
 									'title' => $albumTitle,
