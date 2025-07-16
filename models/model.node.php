@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-07-15
-* Version :: 23
+* Modify  :: 2025-07-16
+* Version :: 24
 *
 * @param Array $args
 * @return Object
@@ -323,7 +323,8 @@ class NodeModel {
 			, `cover`.`folder` `coverFolder`
 			FROM %topic_files% `doc`
 				LEFT JOIN %topic_files% `cover` ON `cover`.`tpid` = `doc`.`tpid` AND `cover`.`refId` = `doc`.`fid`
-			%WHERE%',
+			%WHERE%
+			ORDER BY `doc`.`fid` ASC',
 			'where' => [
 				'%WHERE%' => [
 					['`doc`.`tpid` = :nodeId AND `doc`.`refId` IS NULL', ':nodeId' => $conditions->nodeId],
