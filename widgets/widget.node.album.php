@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-16
- * Version :: 8
+ * Version :: 9
  *
  * @param Array $args
  * @return Widget
@@ -146,9 +146,15 @@ class NodeAlbumWidget extends Page {
 	
 					$coverUrl = NULL;
 					if ($item->coverPhoto) {
+						// Show photo as cover
 						$coverPhotoInfo = FileModel::photoProperty($item->coverPhoto, $item->coverFolder);
 						$coverUrl = $coverPhotoInfo->url;
+					} else if (in_array(strtolower(sg_file_extension($item->docFile)), ['jpg', 'jpeg', 'png', 'gif'])) {
+						// Show document photo as cover
+						$coverPhotoInfo = FileModel::photoProperty($item->docFile, $item->docFolder);
+						$coverUrl = $coverPhotoInfo->url;
 					} else {
+						// Show icon as cover
 						$coverUrl = '//img.softganz.com/icon/pdf-icon.png';
 					}
 
