@@ -2,8 +2,8 @@
 /**
  * Node    :: Page
  * Created :: 2025-07-11
- * Modify  :: 2025-07-15
- * Version :: 5
+ * Modify  :: 2025-07-16
+ * Version :: 6
  *
  * @param Array $args
  * @return Widget
@@ -14,6 +14,7 @@
 class NodeAlbumWidget extends Page {
 	protected $tagName = 'node,album,';
 	protected $class = 'node-album';
+	var $albumName = 'manual,form,doc,photo';
 	var $nodeId;
 	var $docId;
 	var $right;
@@ -29,54 +30,34 @@ class NodeAlbumWidget extends Page {
 
 	#[\Override]
 	function build($args = NULL) {
-		$docs = is_callable($args['docs']) ? $args['docs']() : FileModel::items([
+		$albumNames = ['manual' => 'คู่มือ', 'form' => 'แบบฟอร์ม', 'doc' => 'เอกสาร', 'photo' => 'ภาพถ่าย'];
+
+		$docs = is_callable($args['docs']) ? $args['docs']() : NodeModel::getAlbums([
 			'nodeId' => $this->nodeId,
 			'tagNameLike' => $this->tagName.'%',
-		])->items;
-
-		if ($this->name) {
-			return new Scaffold([
-				'appBar' => $args['appBar'],
-				'body' => new Container([
-					'class' => $this->class,
-					'children' => [
-						new ListTile([
-							// 'title' => 'คู่มือ',
-							'leading' => new Icon('menu_book'),
-							// 'trailing' => $args['uploadButton']('manual'),
-						]),
-						$this->showDocs($this->name, $docs),
-					], // children
-				]), // Widget
-			]);
-		}
+		]);
 
 		return new Scaffold([
 			'appBar' => $args['appBar'],
 			'body' => new Container([
+				'id' => 'node-album',
 				'class' => $this->class,
-				'children' => [
-					new ListTile([
-						'title' => 'คู่มือ',
-						'leading' => new Icon('menu_book'),
-						'trailing' => $args['uploadButton']('manual'),
-					]),
-					$this->showDocs('manual', $docs),
-
-					new ListTile([
-						'title' => 'แบบฟอร์ม',
-						'leading' => new Icon('fact_check'),
-						'trailing' => $args['uploadButton']('form'),
-					]),
-					$this->showDocs('form', $docs),
-
-					new ListTile([
-						'title' => 'เอกสาร',
-						'leading' => new Icon('article'),
-						'trailing' => $args['uploadButton']('doc'),
-					]),
-					$this->showDocs('doc', $docs),
-				], // children
+				'attribute' => ['data-url' => $args['albumUrl']],
+				'children' => array_map(
+					function($album) use($albumNames, $docs, $args) {
+						return new Widget([
+							'children' => [
+								new ListTile([
+									'title' => $albumNames[$album],
+									'leading' => new Icon('menu_book'),
+									'trailing' => $args['uploadButton']($album),
+								]),
+								$this->showDocs($album, $docs),
+							]
+						]);
+					},
+					explode(',', $this->albumName)
+				), // childrn
 			]), // Widget
 		]);
 	}
@@ -102,7 +83,7 @@ class NodeAlbumWidget extends Page {
 				'enctype' => 'multipart/form-data',
 				'checkValid' => true,
 				'rel' => 'none',
-				'done' => 'close | load',
+				'done' => 'close | load->replace:#node-album',
 				'children' => [
 					'docId' => ['type' => 'hidden', 'value' => $data->docId],
 					'coverId' => ['type' => 'hidden', 'value' => $data->coverId],
@@ -149,15 +130,13 @@ class NodeAlbumWidget extends Page {
 		return new Container([
 			'children' => array_map(
 				function($item) use($type, $docs, $args) {
-					if ($item->type != 'doc') return NULL;
 					if ($item->tagName != $this->tagName.$type) return NULL;
 
-					$docInfo = FileModel::docProperty($item->fileName, $item->folder);
-					$coverPhoto = self::getCoverPhoto($item->id, $docs);
+					$docInfo = FileModel::docProperty($item->docFile, $item->docFolder);
 	
 					$coverUrl = NULL;
-					if ($coverPhoto) {
-						$coverPhotoInfo = FileModel::photoProperty($coverPhoto->fileName, $coverPhoto->folder);
+					if ($item->coverPhoto) {
+						$coverPhotoInfo = FileModel::photoProperty($item->coverPhoto, $item->coverFolder);
 						$coverUrl = $coverPhotoInfo->url;
 					} else {
 						$coverUrl = '//img.softganz.com/icon/pdf-icon.png';
@@ -173,7 +152,6 @@ class NodeAlbumWidget extends Page {
 							new DOM(['img', 'src' => $coverUrl, 'width' => 128, 'height' => 128, 'class' => '-cover-photo']),
 							new DOM(['span', 'child' => $item->title]),
 							$menu,
-							// new DebugMsg($coverPhoto, '$coverPhoto'),
 							// new DebugMsg($docInfo, '$docInfo'),
 							// new DebugMsg($item, '$item')
 						], // children
