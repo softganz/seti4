@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-16
- * Version :: 6
+ * Version :: 7
  *
  * @param Array $args
  * @return Widget
@@ -45,10 +45,14 @@ class NodeAlbumWidget extends Page {
 				'attribute' => ['data-url' => $args['albumUrl']],
 				'children' => array_map(
 					function($album) use($albumNames, $docs, $args) {
+						// Check invalid album name
+						// debugMsg($album);
+						if (!$this->validAlbumName($album)) return 'Invalid album name <b>'.$album.'</b>';
+						// debugMsg($out, '$out');
 						return new Widget([
 							'children' => [
 								new ListTile([
-									'title' => $albumNames[$album],
+									'title' => SG\getFirst($albumNames[$album], $album),
 									'leading' => new Icon('menu_book'),
 									'trailing' => $args['uploadButton']($album),
 								]),
@@ -62,6 +66,10 @@ class NodeAlbumWidget extends Page {
 		]);
 	}
 
+	private function validAlbumName(String $albumName) {
+		return preg_match('/^[a-z0-9]{1,6}$/', $albumName);
+	}
+
 	function upload(Array $args = NULL) {
 		$data = $args['data'] ? $args['data'] : NodeModel::getAlbum($this->docId, $this->nodeId);
 
@@ -70,6 +78,8 @@ class NodeAlbumWidget extends Page {
 		} else {
 			$docType = Request::get('type');
 		}
+
+		if (!$this->validAlbumName($docType)) return error(_HTTP_ERROR_BAD_REQUEST, 'Invalid album name <b>'.$docType.'</b>');
 
 		return new Scaffold([
 			'appBar' => new AppBar([
