@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-16
- * Version :: 9
+ * Version :: 10
  *
  * @param Array $args
  * @return Widget
@@ -56,7 +56,7 @@ class NodeAlbumWidget extends Page {
 									'leading' => new Icon('menu_book'),
 									'trailing' => $args['uploadButton']($albumName),
 								]),
-								$this->showDocs($albumName, $docs),
+								$this->showAlbum($albumName, $docs),
 							]
 						]);
 					},
@@ -136,7 +136,7 @@ class NodeAlbumWidget extends Page {
 		]);
 	}
 
-	protected function showDocs(String $albumName, Array $docs, Array $args = []) {
+	protected function showAlbum(String $albumName, Array $docs, Array $args = []) {
 		return new Container([
 			'children' => array_map(
 				function($item) use($albumName, $docs, $args) {
