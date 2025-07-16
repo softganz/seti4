@@ -3,7 +3,7 @@
  * Node    :: Page
  * Created :: 2025-07-11
  * Modify  :: 2025-07-16
- * Version :: 10
+ * Version :: 11
  *
  * @param Array $args
  * @return Widget
@@ -46,9 +46,7 @@ class NodeAlbumWidget extends Page {
 				'children' => array_map(
 					function($albumName) use($albumNames, $docs, $args) {
 						// Check invalid album name
-						// debugMsg($album);
 						if (!$this->validAlbumName($albumName)) return 'Invalid album name <b>'.$albumName.'</b>';
-						// debugMsg($out, '$out');
 						return new Widget([
 							'children' => [
 								new ListTile([
@@ -56,7 +54,7 @@ class NodeAlbumWidget extends Page {
 									'leading' => new Icon('menu_book'),
 									'trailing' => $args['uploadButton']($albumName),
 								]),
-								$this->showAlbum($albumName, $docs),
+								$this->showAlbum($albumName, (Array) $docs[$this->tagName.$albumName]),
 							]
 						]);
 					},
@@ -140,7 +138,7 @@ class NodeAlbumWidget extends Page {
 		return new Container([
 			'children' => array_map(
 				function($item) use($albumName, $docs, $args) {
-					if ($item->tagName != $this->tagName.$albumName) return NULL;
+					// if ($item->tagName != $this->tagName.$albumName) return NULL;
 
 					$docInfo = FileModel::docProperty($item->docFile, $item->docFolder);
 	

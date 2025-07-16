@@ -3,7 +3,7 @@
 * Model.  :: Node Model
 * Created :: 2021-09-30
 * Modify  :: 2025-07-16
-* Version :: 24
+* Version :: 25
 *
 * @param Array $args
 * @return Object
@@ -331,6 +331,7 @@ class NodeModel {
 					['`doc`.`tagName` LIKE :tagNameLike', ':tagNameLike' => $conditions->tagNameLike]
 				]
 			],
+			'options' => ['group' => 'tagName']
 		])->items;
 	}
 
