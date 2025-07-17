@@ -2,8 +2,8 @@
 /**
 * Stats   :: List Counter Log
 * Created :: 2018-12-15
-* Modify  :: 2024-09-21
-* Version :: 2
+* Modify  :: 2025-07-17
+* Version :: 3
 *
 * @return Widget
 *
@@ -25,43 +25,43 @@ class StatsList extends Page {
 
 	function __construct() {
 		parent::__construct([
-			'id' => SG\getFirstInt(post('id'), $this->id),
 			'ip' => post('ip'),
-			'user' => post('user'),
+			'user' => SG\getFirstInt(post('user')),
 			'date' => post('date'),
-			'items' => intval(SG\getFirst(post('items'), $this->items)),
-			'page' => intval(SG\getFirst(post('page'), $this->page)),
+			'items' => $items = SG\getFirst(post('items'), $this->items),
+			'page' => $page = SG\getFirst(post('page'), $this->page),
+			'id' => $this->getStartId(SG\getFirstInt(post('id'), $this->id), $page, $items),
 			// 'getEid' => post('eid'),
 			'includeBot' => post('bot'),
 			'right' => (Object) [
 				'admin' => user_access('administer contents,administer watchdogs')
 			]
 		]);
+
 	}
 
 	function build() {
-		$counterLogStatus = DB::select(['SHOW TABLE STATUS LIKE "%counter_log%"'])->items[0];
-		$totalItems = $counterLogStatus->Rows;
-		// debugMsg($counterLogStatus,'$counterLogStatus');
+		$totalItems = DB::select(['SHOW TABLE STATUS LIKE "%counter_log%"'])->items[0]->Rows;
+
+		$counters = $this->data();
 
 		$pagePara = [
 			'user' => $this->user,
 			'ip' => $this->ip,
 			'date' => $this->date,
 			'id' => $this->id,
+			'items' => $this->items,
 			'bot' => $this->includeBot,
 		];
-
-		$dbs = $this->data();
 
 		$pagenv = new PageNavigator($this->items, $this->page, $totalItems, q(), NULL, $pagePara);
 
 		$no = 0;
 
 		$tables = new Table([
-			'thead' => ['no' => 'no','logid','log date','user','ip']
+			'thead' => ['no' => 'no', 'Id', 'Log Date', 'User','IP']
 		]);
-		foreach ($dbs->items as $rs) {
+		foreach ($counters->items as $rs) {
 			$tables->rows[] = [
 				++$no,
 				'<font color=brown>'.$rs->id.'</font>',
@@ -103,75 +103,112 @@ class StatsList extends Page {
 		]);
 	}
 
+	private function getStartId($id, $page, $items) {
+		if (empty($id)) $id = DB::select(['SELECT MAX(`id`) `maxId` FROM %counter_log% LIMIT 1'])->maxId;
+		$id = $id - ($page * $items);
+		return $id > 0 ? $id : 0;
+	}
+
 	private function data() {
-		$isEmptyPara = !$this->ip && !$this->user && !$this->date;
-
-		if ($this->ip) mydb::where('l.`ip` = :ip',':ip',ip2long($this->ip));
-		if ($this->user) mydb::where('l.`user` = :user',':user',$this->user);
-		if ($this->date) mydb::where('DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date',':date',$this->date);
-		if (!$this->includeBot) mydb::where('l.`referer` NOT LIKE "%bot%"');
-
-		if ($isEmptyPara) {
-			$rs = mydb::select('SELECT MIN(`id`) `minid`, MAX(`id`) `maxid` FROM %counter_log% LIMIT 1; -- {reset: false}');
-			$minId = $rs->minid;
-			$maxId = $rs->maxid;
-
-			//if ($isEmptyPara) {
-				$startId = $maxId - ($this->page * $this->items) + 1;
-				mydb::where('l.`id` >= :id', ':id', $startId);
-				mydb::value('$LIMIT$', 'LIMIT '.$this->items);
-			//} else {
-			//	$minId = \SG\getFirst($getEid,$rs->minid);
-			//	$startId = $minId + (($this->page - 1) * $this->items);
-			//	mydb::value('$LIMIT$', 'LIMIT '.$this->items);
-			//}
-
-			//$ret .= 'Min id = '.$minId.' Max id = '.$maxId.' Srart id = '.$startId.'<br />';
-
-			// FAST Query but bug on condition, cannot get all found rows
-			$dbs = mydb::select(
-				'SELECT log.*, u.`name` `user_name`
-				FROM
-				(
-					SELECT *
-					FROM %counter_log% l
-					%WHERE%
-					ORDER BY l.`id` ASC
-					$LIMIT$
-				) AS log
+		return DB::select([
+			'SELECT log.*, u.`name` `user_name`
+			FROM
+			(
+				SELECT *
+				FROM %counter_log% l
+				%WHERE%
+				ORDER BY l.`id` ASC
+				$LIMIT$
+			) AS log
 				LEFT JOIN %users% AS u ON log.`user` = u.`uid`
-				ORDER BY `id` DESC;
-				-- {key: "id"}'
-			);
+			ORDER BY `id` DESC',
+			'where' => [
+				'%WHERE%' => [
+					['l.`id` >= :id', ':id' => $this->id],
+					$this->ip ? ['l.`ip` = :ip', ':ip' => ip2long($this->ip)] : NULL,
+					$this->user ? ['l.`user` = :user', ':user' => $this->user] : NULL,
+					$this->date ? ['DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date', ':date' => $this->date] : NULL,
+					!$this->includeBot ? ['l.`referer` NOT LIKE "%bot%"'] : NULL,
+				]
+			],
+			'var' => [
+				'$LIMIT$' => 'LIMIT '.$this->items,
+			],
+			'options' => ['key' => 'id']
+		]);
 
-			//if ($isEmptyPara) {
-			//	$totalItems = $maxId - $minId;
-			//} else {
-				//$totalItems = $dbs->count() < $this->items ? $this->page*$this->items :  $maxId - $minId;
-			//}
-			$pagePara['eid'] = end($dbs->items)->id;
-		} else {
-			$start = ($this->page - 1) * $this->items;
-			mydb::value('$LIMIT$', 'LIMIT '.$start.','.$this->items);
 
-			$dbs = mydb::select(
-				'SELECT
-				log.*
-				, u.`name` `user_name`
-				FROM
-				(SELECT
-					l.*
-					FROM %counter_log% AS l
-					%WHERE%
-					ORDER BY l.`id` DESC
-					$LIMIT$
-				) log
-					LEFT JOIN %users% AS u ON log.`user` = u.`uid`'
-			);
-		}
-		// debugMsg(mydb()->_query);
 
-		return $dbs;
+		// Unused code
+		// $isEmptyPara = !$this->ip && !$this->user && !$this->date;
+
+		// if ($this->ip) mydb::where('l.`ip` = :ip',':ip',ip2long($this->ip));
+		// if ($this->user) mydb::where('l.`user` = :user',':user',$this->user);
+		// if ($this->date) mydb::where('DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date',':date',$this->date);
+		// if (!$this->includeBot) mydb::where('l.`referer` NOT LIKE "%bot%"');
+
+		// if ($isEmptyPara) {
+		// 	$rs = mydb::select('SELECT MIN(`id`) `minid`, MAX(`id`) `maxid` FROM %counter_log% LIMIT 1; -- {reset: false}');
+		// 	$minId = $rs->minid;
+		// 	$maxId = $rs->maxid;
+
+		// 	//if ($isEmptyPara) {
+		// 		$startId = $maxId - ($this->page * $this->items) + 1;
+		// 		mydb::where('l.`id` >= :id', ':id', $startId);
+		// 		mydb::value('$LIMIT$', 'LIMIT '.$this->items);
+		// 	//} else {
+		// 	//	$minId = \SG\getFirst($getEid,$rs->minid);
+		// 	//	$startId = $minId + (($this->page - 1) * $this->items);
+		// 	//	mydb::value('$LIMIT$', 'LIMIT '.$this->items);
+		// 	//}
+
+		// 	//$ret .= 'Min id = '.$minId.' Max id = '.$maxId.' Srart id = '.$startId.'<br />';
+
+		// 	// FAST Query but bug on condition, cannot get all found rows
+		// 	$dbs = mydb::select(
+		// 		'SELECT log.*, u.`name` `user_name`
+		// 		FROM
+		// 		(
+		// 			SELECT *
+		// 			FROM %counter_log% l
+		// 			%WHERE%
+		// 			ORDER BY l.`id` ASC
+		// 			$LIMIT$
+		// 		) AS log
+		// 		LEFT JOIN %users% AS u ON log.`user` = u.`uid`
+		// 		ORDER BY `id` DESC;
+		// 		-- {key: "id"}
+		// 		'
+		// 	);
+
+		// 	//if ($isEmptyPara) {
+		// 	//	$totalItems = $maxId - $minId;
+		// 	//} else {
+		// 		//$totalItems = $dbs->count() < $this->items ? $this->page*$this->items :  $maxId - $minId;
+		// 	//}
+		// 	$pagePara['eid'] = end($dbs->items)->id;
+		// } else {
+		// 	$start = ($this->page - 1) * $this->items;
+		// 	mydb::value('$LIMIT$', 'LIMIT '.$start.','.$this->items);
+
+		// 	$dbs = mydb::select(
+		// 		'SELECT
+		// 		log.*
+		// 		, u.`name` `user_name`
+		// 		FROM
+		// 		(SELECT
+		// 			l.*
+		// 			FROM %counter_log% AS l
+		// 			%WHERE%
+		// 			ORDER BY l.`id` DESC
+		// 			$LIMIT$
+		// 		) log
+		// 			LEFT JOIN %users% AS u ON log.`user` = u.`uid`'
+		// 	);
+		// }
+		// // debugMsg(mydb()->_query);
+
+		// return $dbs;
 	}
 }
 ?>
