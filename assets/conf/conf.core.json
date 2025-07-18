@@ -1,8 +1,8 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2025-06-11",
-		"version": 5
+		"lastModify": "2025-07-18",
+		"version": 6
 	},
 	"autoLoader": {
 		"items": {
@@ -50,7 +50,8 @@
 		}
 	},
 	"ban": {
-		"log": false
+		"log": false,
+		"botContain": "bot,crawler,Zabbix,facebook,Spider"
 	},
 	"user": {
 		"register": {

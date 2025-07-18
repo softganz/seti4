@@ -2,8 +2,8 @@
 /**
 * Counter :: Model
 * Created :: 2021-11-26
-* Modify  :: 2025-06-14
-* Version :: 7
+* Modify  :: 2025-07-18
+* Version :: 8
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -15,7 +15,7 @@ class CounterModel {
 	public static function hit() {
 		// debugMsg('COUNTER HIT');
 		$today = today();
-Cache::clear_expire();
+		Cache::clear_expire();
 		$counter = cfg('counter');
 		if (isset($counter->online)) unset($counter->online);
 		if (cfg('online')) {cfg_db_delete('online');}
@@ -47,13 +47,13 @@ Cache::clear_expire();
 
 		//$checked_online_time = $today->time - 1 * 60;
 
-		$deleteUser = DB::query([
+		$deleteOnlineUser = DB::query([
 			'DELETE FROM %users_online% WHERE `access` < :checktime',
 			'var' => [':checktime' => $checked_online_time]
 		]);
 
 		// Create user online table if table not exists
-		if ($deleteUser->errorMsg()) {
+		if ($deleteOnlineUser->errorMsg()) {
 			DB::query([
 				'CREATE TABLE %users_online% (
 					`keyid` varchar(100) NOT NULL,
@@ -221,18 +221,33 @@ Cache::clear_expire();
 			$request_url = $_SERVER['REQUEST_URI'];
 		}
 
-
 		// insert counter log
-		$log = new sgClass();
-		$log->date = $date;
-		$log->uid = $userId;
-		$log->ip = ip2long(getenv('REMOTE_ADDR'));
-		$log->new_user = $newUser?1:NULL;
-		$log->url = $request_url;
-		$log->referer = $_SERVER['HTTP_REFERER'];
-		$log->browser = $_SERVER['HTTP_USER_AGENT'];
+		$log = (Object) [
+			'date' => $date,
+			'uid' => $userId,
+			'ip' => ip2long(getenv('REMOTE_ADDR')),
+			'new_user' => $newUser ? 1 : NULL,
+			'url' => $request_url,
+			'referer' => $_SERVER['HTTP_REFERER'],
+			'browser' => $_SERVER['HTTP_USER_AGENT'],
+		];
 
-		$stmt = 'INSERT INTO %counter_log% (
+		// For test bot
+		// $log->browser = 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36';
+
+		$counterLogTable = preg_match('/'.str_replace(',', '|',cfg('ban')->botContain.'/i'), $log->browser, $out) ? '%counter_bot%' : '%counter_log%';
+
+		// DB::query(['DROP TABLE `sgz_counter_bot`']);
+		// debugMsg(R('query'));
+
+		// Create table if not exists
+		if ($counterLogTable === '%counter_bot%' && !mydb::table_exists('%counter_bot%')) {
+			DB::query(['CREATE TABLE %counter_bot% LIKE %counter_log%']);
+			$nextId = DB::select(['SELECT MAX(`id`) `maxId` FROM %counter_log% LIMIT 1'])->maxId + 1;
+			DB::query(['ALTER TABLE %counter_bot% AUTO_INCREMENT = :nextId', 'var' => [':nextId' => $nextId]]);
+		}
+
+		$stmt = 'INSERT INTO '.$counterLogTable.' (
 			 log_date
 			, user
 			, ip
@@ -255,8 +270,9 @@ Cache::clear_expire();
 		$deleteAfterWriting = true;
 		$logWritingToDb = cfg('log.writing');
 
+		// Save query statement if table counter is lock
 		if ($isCounterTableLock) {
-			$stmt = mydb::prepare_stmt(NULL,$stmt,array($log))._NL;
+			$stmt = mydb::prepare_stmt(NULL, $stmt, array($log))._NL;
 			// Statement separator
 			$stmt .= '-- End of statement'._NL;
 			if ($waitingLogMethod == 'file') {
@@ -274,6 +290,8 @@ Cache::clear_expire();
 		}
 
 		if ($debug) debugMsg('Write log to database');
+
+		// Write log text to database
 		if ($waitingLogMethod == 'file') {
 			if (file_exists($logWaitingFile) && !$logWritingToDb) {
 				// Mark flag for this process only
