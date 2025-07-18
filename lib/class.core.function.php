@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2025-07-07
-* Version :: 14
+* Modify  :: 2025-07-18
+* Version :: 15
 */
 
 //---------------------------------------
@@ -294,8 +294,8 @@ function i($key = NULL, $value = NULL) {
 function cfg_db($name = NULL, $value = NULL) {
 	if (isset($name) && isset($value)) {
 		// Update $value to db config by key $name
-		if (is_object($value)) $write_value =  sg_json_encode($value);
-		else if (is_array($value) || is_bool($value) || is_numeric($value)) $write_value = serialize($value);
+		if (is_object($value) || is_array($value)) $write_value =  sg_json_encode($value);
+		// else if (is_bool($value) || is_numeric($value)) $write_value = serialize($value);
 		else $write_value = $value;
 
 		DB::query([
