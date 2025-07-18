@@ -3,7 +3,7 @@
 * Core    :: Core Function
 * Created :: 2023-08-01
 * Modify  :: 2025-07-18
-* Version :: 15
+* Version :: 16
 */
 
 //---------------------------------------
@@ -794,14 +794,15 @@ function callFromApp() {
 function core_version_check() {
 	if (!user_access('access administrator pages')) return;
 	if (!mydb()->status) return 'MySql maybe down.';
-	$version_current=cfg('core.version.install');
-	$version_install=cfg('version.install');
-	$version_force='';
-	if (post('force')) {
-		$version_force=post('force');
-	}
-	if ($version_install===$version_current && $version_force=='') return;
-	if (post('upgrade')=='yes' || $version_force) cfg('version.autoupgrade',true);
+	if (!DB::tableExists('%variable%')) return;
+
+	$version_current = cfg('core.version.install');
+	$version_install = cfg('version.install');
+	$version_force = '';
+
+	if (post('force')) $version_force = post('force');
+	if ($version_install === $version_current && $version_force === '') return;
+	if (post('upgrade') === 'yes' || $version_force) cfg('version.autoupgrade',true);
 	if (!cfg('version.autoupgrade')) return 'ระบบมีความต้องการปรับปรุงจากรุ่น <strong>'.$version_install.'</strong> เป็นรุ่น <strong>'.$version_current.'</strong> แต่การปรับปรุงอัตโนมัติถูกปิด. <a href="'.url(q(),'upgrade=yes').'">เริ่มปรับปรุงรุ่น?</a>';
 
 	$upgrade_folder = _CORE_FOLDER.'/core/upgrade/';
