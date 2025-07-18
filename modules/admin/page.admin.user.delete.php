@@ -1,8 +1,8 @@
 <?php
 /**
- * Admin :: Delete User Information
+ * Admin   :: Delete User Information
  * Modify  :: 2025-07-18
- * Version :: 2
+ * Version :: 3
  */
 
 use Softganz\DB;
@@ -31,7 +31,7 @@ function admin_user_delete($self,$uid) {
 				[':uid' => $uid]
 			);
 
-			if (DB::tableExists('org_officer')) {
+			if (DB::tableExists('%org_officer%')) {
 				mydb::query(
 					'DELETE FROM %org_officer% WHERE `uid` = :uid',
 					[':uid' => $uid]

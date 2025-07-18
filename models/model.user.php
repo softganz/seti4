@@ -3,7 +3,7 @@
  * Model   :: User Information
  * Created :: 2021-07-22
  * Modify  :: 2025-07-18
- * Version :: 16
+ * Version :: 17
  *
  * @param Int $userId
  * @return Object
@@ -274,7 +274,7 @@ class UserModel {
 				[':uid' => $uid]
 			);
 
-			if (DB::tableExists('org_officer')) {
+			if (DB::tableExists('%org_officer%')) {
 				mydb::query(
 					'DELETE FROM %org_officer% WHERE `uid` = :uid',
 					[':uid' => $uid]
