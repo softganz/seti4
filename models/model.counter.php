@@ -3,7 +3,7 @@
 * Counter :: Model
 * Created :: 2021-11-26
 * Modify  :: 2025-07-18
-* Version :: 8
+* Version :: 9
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -47,32 +47,10 @@ class CounterModel {
 
 		//$checked_online_time = $today->time - 1 * 60;
 
-		$deleteOnlineUser = DB::query([
+		DB::query([
 			'DELETE FROM %users_online% WHERE `access` < :checktime',
 			'var' => [':checktime' => $checked_online_time]
 		]);
-
-		// Create user online table if table not exists
-		if ($deleteOnlineUser->errorMsg()) {
-			DB::query([
-				'CREATE TABLE %users_online% (
-					`keyid` varchar(100) NOT NULL,
-					`uid` int(11) DEFAULT NULL,
-					`name` varchar(255) DEFAULT NULL,
-					`coming` bigint(20) DEFAULT NULL,
-					`access` bigint(20) DEFAULT NULL,
-					`hits` int(11) DEFAULT 0,
-					`ip` varchar(50) DEFAULT NULL,
-					`host` varchar(255) DEFAULT NULL,
-					`browser` varchar(255) DEFAULT NULL,
-					PRIMARY KEY (`keyid`),
-					KEY `uid` (`uid`),
-					KEY `coming` (`coming`),
-					KEY `access` (`access`)
-				)'
-			]);
-		}
-
 
 		$new_user = !DB::select([
 			'SELECT `keyid` FROM %users_online% WHERE `keyid` = :keyid LIMIT 1',
