@@ -3,7 +3,7 @@
 * DB      :: Database Management
 * Created :: 2023-07-28
 * Modify  :: 2025-07-18
-* Version :: 16
+* Version :: 17
 *
 * @param Array $args
 * @return Object
@@ -83,7 +83,7 @@ class DB {
 	private $srcStmt;
 	private $stmt;
 	private $args = [];
-	private $errors = [];
+	private static $errors = [];
 	private $errorMsg;
 	private $PDO;
 	private $queryItems = [];
@@ -161,6 +161,8 @@ class DB {
 		$queryResult = new DB($args);
 		$queryResult->callerFrom = get_caller(__FUNCTION__)['from'];
 		$queryResult->queryResult();
+		// debugMsg('QUERY RESULT');
+		// debugMsg($queryResult);
 		unset($queryResult->items, $queryResult->count);
 		$queryResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $queryResult->multipleQuery);
 
@@ -212,15 +214,21 @@ class DB {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
-			$this->logError('DB', 'Select', $this->stmt, $queryError[1], $queryError[2]);
-			$this->updateLastQueryStmt($this->stmt());
+			$this->updateLastQueryStmt(
+				'Select',
+				$this->stmt(['errorCode' => $queryError[1], 'errorMessage' => $queryError[2]]),
+				$queryError
+			);
 
 			return false;
 		}
 
 		// Select complete
 		$end = microtime(true);
-		$this->updateLastQueryStmt($this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start]));
+		$this->updateLastQueryStmt(
+			'Select',
+			$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
+		);
 
 		$this->items = $this->fetchRow($query);
 
@@ -238,19 +246,26 @@ class DB {
 		$this->setDebugMessage('VAR', $this->args['var']);
 
 		$start = microtime(true);
+
 		try {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
-			$this->logError('DB', 'Query', $this->stmt, $queryError[1], $queryError[2]);
-			$this->updateLastQueryStmt($this->stmt(), $queryError);
+			$this->updateLastQueryStmt(
+				'Query',
+				$this->stmt(['errorCode' => $queryError[1], 'errorMessage' => $queryError[2]]),
+				$queryError
+			);
 
-			return false;
+			return $queryError;
 		}
 
 		// Query complete
 		$end = microtime(true);
-		$this->updateLastQueryStmt($this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start]));
+		$this->updateLastQueryStmt(
+			'Query',
+			$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
+		);
 
 		if ($this->args['onComplete'] && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
 	}
@@ -323,17 +338,20 @@ class DB {
 
 	function PDO() {return $this->PDO;}
 
-	function stmt($addMessage = []) {
+	// Create statement with message and error code
+	private function stmt($addMessage = []) {
 		$stmt = $this->stmt;
-		if ($this->errorMsg) {
-			$stmt .= '; <span style="color:red;">-- ERROR :: '.$this->errorMsg.'</span>';
-		} else {
-			$stmt .= '; <span style="color:green">-- '
+		if ($addMessage['errorCode']) {
+			$stmt .= ';<br><span style="color:red;">-- ERROR :: ('.$addMessage['errorCode'].') '.$addMessage['errorMessage'].'</span>';
+		}
+
+		if ($addMessage['rowCount']) {
+			$stmt .= '<br><span style="color:green">-- '
 				. (isset($addMessage['rowCount']) ? '<b>'.number_format($addMessage['rowCount']).'</b> affected rows' : '')
 				. (isset($addMessage['time']) ? ' in <b>'.number_format($addMessage['time'] * 1000, 2).'</b> ms' : '')
 				. '</span>';
 		}
-		$stmt .= '.';
+		$stmt .= '<br><font color="gray">-- Call <b>DB</b> from '.$this->callerFrom.'</font>';
 		return $stmt;
 	}
 
@@ -461,6 +479,7 @@ class DB {
 		if ($this->debug) {
 			if (function_exists('debugMsg')) debugMsg($message); else echo '<div class="debug-msg">'.$message.'</div>';
 		}
+		return $this->debugMessage;
 	}
 
 	private function setWhere() {
@@ -605,24 +624,6 @@ class DB {
 		return $result;
 	}
 
-	private function logError($module, $method, $stmt, $code, $message) {
-		$this->errors[] = (Object) ['code' => $code, 'message' => $message];
-		$this->errorMsg = $message;
-
-		$errorMessage = '<span style="color: red">ERROR::'.$code.'::'.$message.'</span>';
-		$this->setDebugMessage(NULL, $errorMessage);
-
-		// Save error to log
-		if ($this->options->log && class_exists('\LogModel')) {
-			\LogModel::save([
-				'module' => $module,
-				'keyword' => $method,
-				'message' => $stmt.';<br>-- '.$errorMessage.'<br><font color="gray">-- Call DB from '.$this->callerFrom.'</b>',
-			]);
-		}		
-		if (function_exists('R')) R()->DB->queryItems($stmt.'; -- '.$errorMessage);
-	}
-
 	private function quote($value, $type = NULL) {return $this->PDO->quote($value, $type);}
 
 	/**
@@ -714,16 +715,33 @@ class DB {
 		return $jsonString;
 	}
 
-	private function updateLastQueryStmt($stmt, $error = NULL) {
+	private function updateLastQueryStmt($method, $stmt, $error = []) {
 		if ($this->options->history === false) return; // Do not save query history
+
+		$this->setDebugMessage(NULL, $stmt);
+
+		// Add message to error
+		if ($error) {
+			$this->errors[] = (Object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt];
+			$this->errorMsg = $errorMessage;
+
+			// Save error to log
+			if ($this->options->log && class_exists('\LogModel')) {
+				\LogModel::save([
+					'module' => 'DB',
+					'keyword' => $method,
+					'message' => $stmt,
+				]);
+			}		
+		}
 
 		$this->queryItems($stmt);
 
 		// Save query history
 		if (function_exists('R')) {
-			$stmt = $stmt.'<br><font color="gray">-- Call <b>DB</b> from '.$this->callerFrom.'</font>';
 			R('query', $stmt);
 			R()->query_items[] = $stmt;
+			R('error', $error ? (Object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt] : '');
 		}
 	}
 
