@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2025-07-07
-* Version :: 15
+* Modify  :: 2025-07-18
+* Version :: 16
 *
 * @param Array $args
 * @return Object
@@ -170,6 +170,15 @@ class DB {
 		]);
 
 		return $result;
+	}
+
+	public static function tableExists($table) {
+		return DB::select([
+			'SHOW TABLES LIKE :table',
+			'var' => [
+				':table'=> preg_replace('/`/', '', db($table)), // Remove `
+			]
+		])->count;
 	}
 
 
