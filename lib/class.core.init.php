@@ -1,12 +1,14 @@
 <?php
 /**
-* Core Init :: Init Web
-* Created   :: 2023-08-01
-* Modify    :: 2025-05-08
-* Version   :: 11
-*/
+ * Core    :: Init Web
+ * Created :: 2023-08-01
+ * Modify  :: 2025-07-18
+ * Version :: 12
+ */
 
 global $R;
+
+use Softganz\DB;
 
 if (!cfg('domain')) cfg('domain', ($_SERVER["REQUEST_SCHEME"] ? $_SERVER["REQUEST_SCHEME"] : 'https').'://'.$_SERVER['HTTP_HOST']);
 if (!cfg('domain.short')) cfg('domain.short', $_SERVER['HTTP_HOST']);
@@ -291,7 +293,7 @@ if (_AJAX) {
 }
 
 // Hit counter and store counter/online
-$logCounter = cfg('system')->logCounter && !isset($_REQUEST['logCounter']) && mydb::table_exists('%counter_log%');
+$logCounter = cfg('system')->logCounter && !isset($_REQUEST['logCounter']) && DB::tableExists('%counter_log%');
 if ($logCounter) CounterModel::hit();
 $R->counter = cfg('counter');
 

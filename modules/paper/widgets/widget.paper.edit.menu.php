@@ -1,16 +1,18 @@
 <?php
 /**
-* Paper   :: Edit Menu
-* Created :: 2019-01-01
-* Modify  :: 2023-12-26
-* Version :: 3
-*
-* @param Array $args
-* @return Widget
-*
-* @usage import('widget:module.widgetname.php')
-* @usage new PaperEditMenuWidget([])
-*/
+ * Paper   :: Edit Menu
+ * Created :: 2019-01-01
+ * Modify  :: 2025-07-18
+ * Version :: 4
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @usage import('widget:module.widgetname.php')
+ * @usage new PaperEditMenuWidget([])
+ */
+
+use Softganz\DB;
 
 class PaperEditMenuWidget extends Widget {
 	var $nodeId;
@@ -22,8 +24,8 @@ class PaperEditMenuWidget extends Widget {
 			'editPhoto' => user_access('upload photo'),
 			'editDoc' => user_access('upload document'),
 			'adminPaper' => user_access('administer contents,administer papers'),
-			'makePoll' => mydb::table_exists('%poll%'),
-			'archive' => mydb::table_exists('%archive_topic%'),
+			'makePoll' => DB::tableExists('%poll%'),
+			'archive' => DB::tableExists('%archive_topic%'),
 			'delete' => user_access('administer contents,administer papers','edit own paper', $topic->uid),
 		];
 	}
@@ -47,11 +49,11 @@ class PaperEditMenuWidget extends Widget {
 			$ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.weight').'" data-rel="#main"><i class="icon -material">swap_vert</i><span>Weight</span></a>');
 			$ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.repaircomment').'" data-rel="#main"><i class="icon -material">bug_report</i><span>Repair Comment</span></a>');
 
-			if (mydb::table_exists('%poll%')) {
+			if (DB::tableExists('%poll%')) {
 				$ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.makepoll').'" data-rel="#main"><i class="icon -material">poll</i><span>Make Poll</span></a>');
 			}
 
-			if (mydb::table_exists('%archive_topic%')) {
+			if (DB::tableExists('%archive_topic%')) {
 				$ui->add('<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/edit.archive').'" data-rel="#main"><i class="icon -material">archive</i><span>Move to Archive</span></a>');
 			}
 		}

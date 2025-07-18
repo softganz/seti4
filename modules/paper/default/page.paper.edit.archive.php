@@ -1,14 +1,16 @@
 <?php
 /**
- * Paper   :: Move Paper to Archive
+* Paper   :: Move Paper to Archive
  * Created :: 2019-06-02
- * Modify  :: 2025-06-25
- * Version :: 4
+ * Modify  :: 2025-07-18
+ * Version :: 5
  *
  * @param Object $self
  * @param Object $topicInfo
  * @return String
  */
+
+ use Softganz\DB;
 
 $debug = true;
 
@@ -40,7 +42,7 @@ function paper_edit_archive($self, $topicInfo) {
 
 	if (!user_access('administer papers')) return message('error','Access denied');
 
-	if (!mydb::table_exists('%archive_topic%')) return message('error', 'NO ARCHIVE TABLE');
+	if (!DB::tableExists('%archive_topic%')) return message('error', 'NO ARCHIVE TABLE');
 
 	$error=false;
 	if ($topic->_archive) {

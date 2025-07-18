@@ -1,19 +1,21 @@
 <?php
 /**
-* Admin   :: Install Basic Database Table
-* Created :: 2016-11-08
-* Modify  :: 2025-07-14
-* Version :: 6
-*
-* @return Widget
-*
-* @usage admin/install
-*/
+ * Admin   :: Install Basic Database Table
+ * Created :: 2016-11-08
+ * Modify  :: 2025-07-18
+ * Version :: 7
+ *
+ * @return Widget
+ *
+ * @usage admin/install
+ */
+
+use Softganz\DB;
 
 function admin_install($self) {
 	$self->theme->title='Site Install';
 
-	if (!mydb::table_exists('%variable%')) {
+	if (!DB::tableExists('%variable%')) {
 		$self->theme->title='First time installation database';
 		$result=__admin_install_create_table();
 		if ($result->error) {
@@ -690,7 +692,7 @@ function __admin_install_create_table($prefix=null) {
 
 	// create table with prefix
 	foreach ($query as $table=>$sql_cmd) {
-		if (!mydb::table_exists($table)) {
+		if (!DB::tableExists('%'.$table.'%')) {
 			debugMsg($sql_cmd);
 			mydb::query($sql_cmd);
 			$result->query[]=mydb()->_query;

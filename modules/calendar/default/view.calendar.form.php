@@ -1,11 +1,15 @@
 <?php
 /**
-* Calendar : Edit Form
-*
-* @param Array $calInfo
-* @param Object $para
-* @return String
-*/
+ * Calendar:: Edit Form
+ * Modify  :: 2025-07-18
+ * Version :: 2
+ *
+ * @param Array $calInfo
+ * @param Object $para
+ * @return String
+ */
+
+use Softganz\DB;
 
 $debug = true;
 
@@ -90,7 +94,7 @@ function view_calendar_form($calInfo = [], $para = NULL) {
 				'posttext' => '<a href="javascript:void(0)" id="calendar-addmap"><i class="icon -material" style="position: absolute; right: 0; margin-top: 4px;">place</i></a><div id="calendar-mapcanvas" class="-hidden"></div>',
 			],
 
-			'category' => mydb::table_exists('%calendar_category%')
+			'category' => DB::tableExists('%calendar_category%')
 				&& ($categorys = mydb::select('SELECT category_id,category_name FROM %calendar_category%')->items) ? [
 					'type' => 'select',
 					'label' => 'ปฏิทิน',

@@ -1,18 +1,20 @@
 <?php
 /**
-* Admin   :: Main Page
-* Created :: 2016-11-08
-* Modify  :: 2024-08-19
-* Version :: 3
-*
-* @return Widget
-*
-* @usage admin
-*/
+ * Admin   :: Main Page
+ * Created :: 2016-11-08
+ * Modify  :: 2025-07-18
+ * Version :: 4
+ *
+ * @return Widget
+ *
+ * @usage admin
+ */
+
+use Softganz\DB;
 
 class Admin extends Page {
 	function build() {
-		if (!mydb::table_exists('%variable%')) {
+		if (!DB::tableExists('%variable%')) {
 			location('admin/install');
 		}
 

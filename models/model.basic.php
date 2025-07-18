@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * @created 2007-07-09
- * @modify 2025-06-15
- * Version 2
+ * @modify  2025-07-18
+ * Version  3
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
  */
 // @deprecated
 // All function will deprecate and move this class to be base class of all model
+
+use Softganz\DB;
 
 class Model {}
 
@@ -390,7 +392,7 @@ sg_text2html($topic->post->body).'
 		$rs = mydb::select($sql_cmd);
 		if ($rs->_num_rows) {
 			$rs->_archive=false;
-		} else if ($rs->_num_rows==0 && mydb::table_exists('%archive_topic%')) {
+		} else if ($rs->_num_rows==0 && DB::tableExists('%archive_topic%')) {
 			$sql_cmd=preg_replace(array('#%topic%#s','#%topic_revisions%#s'),array('%archive_topic%','%archive_topic_revisions%'),$sql_cmd);
 			$rs = mydb::select($sql_cmd);
 			if ($rs->_num_rows) $rs->_archive=true;

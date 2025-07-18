@@ -1,11 +1,15 @@
 <?php
 /**
-* Module Method
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Calendar:: View
+ * Modify  :: 2025-07-18
+ * Version :: 2
+ *
+ * @param Object $self
+ * @param Int $var
+ * @return String
+ */
+
+use Softgan\DB;
 
 $debug = true;
 
@@ -43,7 +47,7 @@ function calendar_view($self, $id=NULL) {
 		$ui->add('<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/edit',array('module'=>$module)).'" title="แก้ไขรายละเอียด" data-rel="#calendar-body" data-done="close"><i class="icon -material">edit</i></a>');
 
 		// ปิดปุ่มลบชั่วคราว จนกว่าจะหาวิธีที่ดีกว่านี้
-		if (mydb::table_exists('%project_tr%')) {
+		if (DB::tableExists('%project_tr%')) {
 			if (mydb::select('SELECT `calid` FROM %project_tr% WHERE `calid` = :id LIMIT 1',':id',$id)->calid) {
 				$ui->add('<a href="javascript:void(0)" class="-disabled" title="ลบรายการไม่ได้"><i class="icon -material">delete</i></a>');
 			} else {

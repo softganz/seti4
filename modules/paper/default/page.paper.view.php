@@ -1,16 +1,17 @@
 <?php
 /**
-* Paper   :: View
-* Created :: 2018-06-04
-* Modify  :: 2023-12-26
-* Version :: 4
-*
-* @param String $nodeInfo
-* @return Widget
-*
-* @usage paper/{nodeId}/edit.docs
-*/
+ * Paper   :: View
+ * Created :: 2018-06-04
+ * Modify  :: 2025-07-18
+ * Version :: 5
+ *
+ * @param String $nodeInfo
+ * @return Widget
+ *
+ * @usage paper/{nodeId}/edit.docs
+ */
 
+use Softganz\DB;
 use Paper\Model\PaperModel;
 
 function paper_view($self, $tpid = NULL) {
@@ -59,7 +60,7 @@ function paper_view($self, $tpid = NULL) {
 
 
 	// echo 'TPID = '.$tpid.'<br />';
-	$isTopicUser = mydb::table_exists('%topic_user%') && mydb::select('SELECT `uid` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid AND `membership` IN ("Owner","Trainer","Manager") LIMIT 1',':tpid',$tpid,':uid',i()->uid)->uid;
+	$isTopicUser = DB::tableExists('%topic_user%') && mydb::select('SELECT `uid` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid AND `membership` IN ("Owner","Trainer","Manager") LIMIT 1',':tpid',$tpid,':uid',i()->uid)->uid;
 
 	if (in_array($topicInfo->info->status,array(_DRAFT,_WAITING))
 			&& !(user_access('administer contents,administer papers')

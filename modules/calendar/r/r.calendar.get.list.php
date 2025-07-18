@@ -1,20 +1,22 @@
 <?php
 /**
-* Calendar:: Get Calendar Item List Model
-* Created :: 2007-03-06
-* Modify 	:: 2024-12-27
-* Version :: 3
-*
-* @param Object $conditions
-* @return Object $options
-*/
+ * Calendar:: Get Calendar Item List Model
+ * Created :: 2007-03-06
+ * Modify  :: 2025-07-18
+ * Version :: 4
+ *
+ * @param Object $conditions
+ * @return Object $options
+ */
+
+use Softganz\DB;
 
 $debug = true;
 
 function r_calendar_get_list() {
 	$para = para(func_get_args());
 
-	$is_category = mydb::table_exists('%calendar_category%');
+	$is_category = DB::tableExists('%calendar_category%');
 	$joins = $fields = [];
 
 

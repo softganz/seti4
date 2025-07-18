@@ -1,14 +1,14 @@
 <?php
 /**
-* Paper   :: Paper Model
-* Created :: 2007-11-21
-* Modify  :: 2025-06-23
-* Version :: 10
-*
-* @usage import('model:paper.php');
-* @usage new PaperModel([])
-* @usage PaperModel::function()
-*/
+ * Paper   :: Paper Model
+ * Created :: 2007-11-21
+ * Modify  :: 2025-07-18
+ * Version :: 11
+ *
+ * @usage import('model:paper.php');
+ * @usage new PaperModel([])
+ * @usage PaperModel::function()
+ */
 
 namespace Paper\Model;
 
@@ -59,7 +59,8 @@ class PaperModel extends \NodeModel {
 			LEFT JOIN %topic_types% ty ON ty.`type` = t.`type`
 			%WHERE%
 			LIMIT 1;
-			-- {reset:false}';
+			-- {reset:false}
+			';
 
 		$rs = \mydb::select($stmt);
 		//debugMsg(mydb()->_query);
@@ -67,7 +68,7 @@ class PaperModel extends \NodeModel {
 		if ($rs->_num_rows) {
 			$archived = false;
 			mydb()->reset();
-		} else if ($rs->_num_rows == 0 && \mydb::table_exists('%archive_topic%')) {
+		} else if ($rs->_num_rows == 0 && DB::tableExists('%archive_topic%')) {
 			$stmt = preg_replace(array('#%topic%#s','#%topic_revisions%#s'),array('%archive_topic%','%archive_topic_revisions%'),$stmt);
 			$rs = \mydb::select($stmt);
 			if ($rs->_num_rows) $archived = true;
@@ -118,7 +119,7 @@ class PaperModel extends \NodeModel {
 			$result->membership[$item->uid] = $item->membership;
 		}
 
-		if ($result->orgid && \mydb::table_exists('%org_officer%')) {
+		if ($result->orgid && DB::tableExists('%org_officer%')) {
 			foreach (DB::select([
 				'SELECT `uid`, `membership` FROM %org_officer% WHERE `orgId` = :orgId',
 				'var' => [':orgId' => $result->orgid]
@@ -170,7 +171,8 @@ class PaperModel extends \NodeModel {
 				LEFT JOIN %tag% t ON t.`tid` = tt.`tid`
 				LEFT JOIN %vocabulary% v ON tt.`vid` = v.`vid`
 			WHERE tpid = :tpid;
-			-- {key: "tid"}',
+			-- {key: "tid"}
+			',
 			[':tpid' => $tpid]
 		)->items;
 
@@ -182,7 +184,9 @@ class PaperModel extends \NodeModel {
 			FROM $TOPIC_FILES$
 			WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "photo"
 			ORDER BY fid;
-			-- {key: "fid"}',
+			-- {key: "fid"}
+			
+			',
 			[':tpid' => $tpid]
 		)->items;
 		foreach ($result->photos as $key => $photo) {
@@ -196,7 +200,8 @@ class PaperModel extends \NodeModel {
 			FROM $TOPIC_FILES$
 			WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc"
 			ORDER BY fid;
-			-- {key: "fid"}',
+			-- {key: "fid"}
+			',
 			[':tpid' => $tpid]
 		)->items;
 		foreach ($result->docs as $key => $doc) {
