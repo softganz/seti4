@@ -3,7 +3,7 @@
 * Counter :: Model
 * Created :: 2021-11-26
 * Modify  :: 2025-07-18
-* Version :: 9
+* Version :: 10
 *
 * @usage new CounterModel([])
 * @usage CounterModel::function($conditions, $options)
@@ -53,11 +53,9 @@ class CounterModel {
 		]);
 
 		$new_user = !DB::select([
-			'SELECT `keyid` FROM %users_online% WHERE `keyid` = :keyid LIMIT 1',
-			'var' => [':keyid' => $onlinekey]
-			])->keyid;
-		//debugMsg($new_user ? 'NEW USER' : 'OLD USER');
-		//debugMsg(mydb()->_query);
+			'SELECT `keyId` FROM %users_online% WHERE `keyId` = :keyId LIMIT 1',
+			'var' => [':keyId' => $onlinekey]
+			])->keyId;
 
 		$counter->hits_count++;
 		if ($new_user) $counter->users_count++;
@@ -65,7 +63,7 @@ class CounterModel {
 		// update day & hour log
 		if (cfg('system')->logDayHit) CounterModel::dayLog($today->date,$today->hours,$new_user);
 
-		if ( $counter->used_log == 1 ) CounterModel::addLog($today->datetime,$user_id,$new_user);
+		if ($counter->used_log == 1) CounterModel::addLog($today->datetime,$new_user);
 
 		if (cfg('system')->logUserOnline) {
 			CounterModel::addOnlineUser();
@@ -102,7 +100,6 @@ class CounterModel {
 					, `browser` = :browser',
 				'var' => $online
 			]);
-			//debugMsg(mydb()->_query);
 
 			//--- add/update online user information
 			DB::query(['SET @@group_concat_max_len = 100000']);
@@ -178,12 +175,11 @@ class CounterModel {
 	* Add Counter Log
 	*
 	* @param String $date
-	* @param Int $userId
 	* @param Boolean $newUser
 	* @return Object Data Set
 	*/
 
-	public static function addLog($date, $userId, $newUser) {
+	public static function addLog($date, $newUser) {
 		$debug = false; //i()->username == 'softganz';
 
 		// Not insert log on counter_log is table lock
@@ -202,7 +198,7 @@ class CounterModel {
 		// insert counter log
 		$log = (Object) [
 			'date' => $date,
-			'uid' => $userId,
+			'uid' => i()->uid,
 			'ip' => ip2long(getenv('REMOTE_ADDR')),
 			'new_user' => $newUser ? 1 : NULL,
 			'url' => $request_url,
@@ -219,29 +215,18 @@ class CounterModel {
 		// debugMsg(R('query'));
 
 		// Create table if not exists
-		if ($counterLogTable === '%counter_bot%' && !mydb::table_exists('%counter_bot%')) {
+		// TODO: Remove this code when all site was create table ready
+		if ($counterLogTable === '%counter_bot%' && !DB::tableExists('%counter_bot%')) {
+			debugMsg('CREATE ');
 			DB::query(['CREATE TABLE %counter_bot% LIKE %counter_log%']);
 			$nextId = DB::select(['SELECT MAX(`id`) `maxId` FROM %counter_log% LIMIT 1'])->maxId + 1;
 			DB::query(['ALTER TABLE %counter_bot% AUTO_INCREMENT = :nextId', 'var' => [':nextId' => $nextId]]);
 		}
 
-		$stmt = 'INSERT INTO '.$counterLogTable.' (
-			 log_date
-			, user
-			, ip
-			, new_user
-			, url
-			, referer
-			, browser
-			) VALUES (
-			 :date
-			, :uid
-			, :ip
-			, :new_user
-			, :url
-			, :referer
-			, :browser
-			);';
+		$stmt = 'INSERT INTO '.$counterLogTable.'
+			(log_date, user, ip, new_user, url, referer, browser)
+			VALUES
+			(:date, :uid, :ip, :new_user, :url, :referer, :browser)';
 
 		$logWaitingFile = cfg('paper.upload.folder ').'upload/log.waiting.txt';
 		$waitingLogMethod = 'file';
@@ -263,18 +248,15 @@ class CounterModel {
 				cfg_db('log.waiting',cfg('log.waiting')._NL.$stmt);
 				if ($debug) debugMsg('cfg(log.waiting)='.cfg('log.waiting'));
 			}
-			//echo '<h2>$stmt='.$stmt.'</h2>';
 			return;
 		}
 
 		if ($debug) debugMsg('Write log to database');
-
 		// Write log text to database
-		if ($waitingLogMethod == 'file') {
+		if ($waitingLogMethod === 'file') {
 			if (file_exists($logWaitingFile) && !$logWritingToDb) {
 				// Mark flag for this process only
-				cfg_db('log.writing',1);
-
+				cfg_db('log.writing', 1);
 				$logWaitingStmt = '';
 				// Read log waiting statement
 				$fp = fopen($logWaitingFile, "r");
@@ -287,19 +269,19 @@ class CounterModel {
 				// Delete log waiting file
 				if ($deleteAfterWriting) unlink($logWaitingFile);
 			}
+			// Clear Mark flag
+			cfg_db('log.waiting', 0);
 		} else {
 			$logWaitingStmt = cfg('log.waiting');
 			if ($deleteAfterWriting) cfg_db_delete('log.waiting');
 		}
 
 		if ($logWaitingStmt) {
-			mydb()->setMultiQuery(true);
-
-			$i=0;
 			// Split and write each statement to counter_log table
 			foreach (explode('-- End of statement', $logWaitingStmt) as $logWaitingStmtItem) {
 				$logWaitingStmtItem = trim($logWaitingStmtItem);
-				if ($logWaitingStmtItem) mydb::query($logWaitingStmtItem);
+				if (!$logWaitingStmtItem) continue;
+				DB::query([$logWaitingStmtItem, 'options' => ['multiple' => true]]);
 			}
 			cfg_db_delete('log.writing');
 			if ($debug) debugMsg('Write log waiting<br />'.$logWaitingStmt);
@@ -310,7 +292,7 @@ class CounterModel {
 			$stmt,
 			'var' => $log
 		]);
-		if ($debug) debugMsg('Write current log => '.mydb()->_query.'');
+		if ($debug) debugMsg('Write current log => '.R('query'));
 	}
 
 	/**
@@ -330,7 +312,7 @@ class CounterModel {
 			if (!isset($counter->clear_period)) $counter->clear_period=0;
 			if (!isset($counter->created_date)) $counter->created_date=date('Y-m-d H:i:s');
 		} else {
-			$rs=mydb::select('SELECT MIN(log_date) created, SUM(hits) total_hits, SUM(users) total_users FROM %counter_day% LIMIT 1');
+			$rs = DB::select(['SELECT MIN(`log_date`) `created`, SUM(`hits`) `total_hits`, SUM(`users`) `total_users` FROM %counter_day% LIMIT 1']);
 			$counter = (Object) [
 				'users_count' => $rs->total_users,
 				'hits_count' => $rs->total_hits,
@@ -339,27 +321,29 @@ class CounterModel {
 				'created_date' => $rs->created,
 			];
 		}
-		$counter->members=mydb::select('SELECT COUNT(*) `total` FROM %users% LIMIT 1')->total;
+		$counter->members = DB::select(['SELECT COUNT(*) `total` FROM %users% LIMIT 1'])->total;
 		return $counter;
 	}
 
 	public static function onlineCount() {
-		return mydb::select('SELECT COUNT(*) `total` FROM %users_online% LIMIT 1')->total;
+		return DB::select(['SELECT COUNT(*) `total` FROM %users_online% LIMIT 1'])->total;
 	}
 
 	public static function onlineUsers($conditions = []) {
-		if ($conditions['type'] == 'user') mydb::where('o.`host` NOT LIKE "%bot%" AND o.`host` NOT LIKE "%craw%"');
-		else if ($conditions['type'] == 'member') mydb::where('o.`uid` IS NOT NULL');
-		else if ($conditions['type'] == 'bot') mydb::where('(o.`host` LIKE "%bot%" OR o.`host` LIKE "%craw%")');
-
-		$dbs = mydb::select(
+		return (Array) DB::select([
 			'SELECT o.*, u.`username`
 			FROM %users_online% o
 				LEFT JOIN %users% u ON u.`uid` = o.`uid`
 			%WHERE%
-			ORDER BY o.`access` DESC'
-		);
-		return $dbs->items;
+			ORDER BY o.`access` DESC',
+			'where' => [
+				'%WHERE%' => [
+					$conditions['type'] === 'user' ? ['o.`host` NOT REGEXP :bot', ':bot' => str_replace(',', '|',cfg('ban')->botContain)] : NULL,
+					$conditions['type'] === 'member' ? ['o.`uid` IS NOT NULL'] : NULL,
+					$conditions['type'] === 'bot' ? ['o.`host` REGEXP :bot', ':bot' => str_replace(',', '|',cfg('ban')->botContain)] : NULL,
+				]
+			]
+		])->items;
 	}
 }
 ?>
