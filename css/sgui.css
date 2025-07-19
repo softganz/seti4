@@ -314,6 +314,7 @@
 	>ul {display: flex; flex-wrap: nowrap; justify-content: space-around; list-style-type: none; margin: 0; padding: 0; width: fit-content;}
 	>ul>li {position: relative;}
 	>ul>li:not(:last-child) {padding: 0 4px 0 0;}
+	&.-cross-axis-center>ul {align-items: center;}
 	&.-vertical {flex: 1 0 100%; flex-wrap: wrap; flex-direction: column;}
 	&.-vertical>ul {flex: 1 0 100%; flex-wrap: wrap; width: 100%; gap: 4px}
 	&.-vertical>ul>li {flex: 0 0 100%; flex-wrap: wrap; padding: 0;}

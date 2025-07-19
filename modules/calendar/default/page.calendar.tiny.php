@@ -1,11 +1,14 @@
 <?php
 /**
-* Module Method
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Calendar:: Tiny Page
+ * Created :: 2007-03-06
+ * Modify  :: 2025-07-19
+ * Version :: 2
+ *
+ * @param Object $self
+ * @param Int $var
+ * @return String
+ */
 
 $debug = true;
 
@@ -56,7 +59,7 @@ function calendar_tiny($self, $year = "", $month = "") {
 	$prev_month = getdate(mktime(0,0,0,$month-1,1,$year));
 	$next_month = getdate(mktime(0,0,0,$month+1,1,$year));
 
-	$ret .= '<div id="tiny_calendar">'._NL;
+	$ret .= '<div id="tiny_calendar" class="tiny-calendar">'._NL;
 	$ret .= '<table class="body">
 	<caption><a class="sg-action" href="'.url('calendar/tiny/'.$prev_month['year'].'/'.$prev_month['mon']).'" data-rel="replace:#tiny_calendar">&laquo;</a> &nbsp;'.$month_str[$current_month['mon']-1].' '.($current_month['year']+543).'&nbsp; <a class="sg-action" href="'.url('calendar/tiny/'.$next_month['year'].'/'.$next_month['mon']).'" data-rel="replace:#tiny_calendar">&raquo;</a></caption>'._NL;
 
@@ -122,7 +125,7 @@ function calendar_tiny($self, $year = "", $month = "") {
 		for ($weekday; $weekday <= 7 ; $weekday++) $ret .= '<td class="not_in_month">'.(++$day).'</td>'._NL;
 	}
 	$ret .= '</tr>'._NL;
-	$ret .= '<tr><td colspan="7"><div id="tiny_calendar_detail"></div></td></tr>'._NL;
+	$ret .= '<tr><td colspan="7"><div id="tiny_calendar_detail" class="tiny-calendar-detail"></div></td></tr>'._NL;
 	$ret .= '</table>'._NL;
 	$ret .= '</div><!--tiny_calendar-->'._NL;
 	return $ret;

@@ -3,7 +3,7 @@
  * Calendar:: Page
  * Created :: 2007-03-06
  * Modify  :: 2025-07-19
- * Version :: 1
+ * Version :: 2
  *
  * @param String $args
  * @return Widget
@@ -40,12 +40,13 @@ class CalendarHome extends Page {
 		head('<meta name="robots" content="noindex,nofollow">');
 
 		if (!_AJAX) {
-			$calendarAttr = array();
-			$calendarAttr['data-url'] = url('calendar');
-			if (substr($this->action,0,1) == '*') $calendarAttr['data-get'] = $this->action;
-			if ($post->tpid) $calendarAttr['data-tpid'] = $post->tpid;
-			if ($post->orgid) $calendarAttr['data-orgid'] = $post->orgid;
-			if ($post->module) $calendarAttr['data-module'] = $post->module;
+			$calendarAttr = [
+				'data-url' => url('calendar'),
+				'data-get' => substr($this->action,0,1) == '*' ? $this->action : NULL,
+				'data-tpid' => $post->tpid ? $post->tpid : NULL,
+				'data-orgid' => $post->orgid ? $post->orgid : NULL,
+				'data-module' => $post->module ? $post->module : NULL
+			];
 			$ret .= '<div id="calendar-body" class="calendar-body" '.sg_implode_attr($calendarAttr).'>'._NL;
 		}
 
