@@ -75,7 +75,7 @@
 	display: inline-flex;
 	flex-wrap: nowrap;
 	margin: 0px;
-	padding: 6px 8px;
+	padding: 4px 8px;
 	font-weight: normal;
 	border: none;
 	border-radius: 36px;
@@ -199,7 +199,7 @@
 	>.-title {
 		flex: 1;
 		>* {display: block;}
-		>.-title-text {font-weight: bold;}
+		>.-title-text, >.-title-text>a {font-weight: bold;}
 		>.-subtitle-text {font-size: 0.85em;}
 	}
 	>.-leading {padding-right: 8px;}
