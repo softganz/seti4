@@ -1,57 +1,98 @@
 <?php
 /**
-* Model Name
-*
-* @param Object $conditions
-* @return Object $options
-*/
+ * Calendar:: Delete Calendar Page
+ * Created :: 2007-03-06
+ * Modify  :: 2025-07-19
+ * Version :: 2
+ *
+ * @param String $calendarInfo
+ * @return Widget
+ *
+ * @usage calendar/{calendarId}/delete
+ */
 
-$debug = true;
+use Softganz\DB;
 
-function calendar_delete($self, $calId) {
-	$calendarInfo = is_object($calId) ? $calId : R::Model('calendar.get',$calId, '{initTemplate: true}');
-	$calId = $calendarInfo->id;
+class CalendarDelete extends Page {
+	var $calendarId;
+	var $module;
+	var $calendarInfo;
 
-	$module = post('module');
-
-	$self->theme->title = $calendarInfo->title;
-
-	$ret = '';
-
-	$isEdit = false;
-
-	if (user_access('administer calendars','edit own calendar content',$calendarInfo->owner)) {
-		$isEdit = true;
-	} else if ($calendarInfo->tpid && i()->ok) {
-		$topicuser = mydb::select('SELECT UPPER(`membership`) `membership` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid LIMIT 1',':tpid',$calendarInfo->tpid,':uid',i()->uid);
-		if (in_array($topicuser->membership,array('OWNER','ADMIN','MANAGER','TRAINER'))) $isEdit = true;
+	function __construct($calendarInfo = NULL) {
+		parent::__construct([
+			'calendarId' => $calendarInfo->calId,
+			'module' => post('module'),
+			'calendarInfo' => $calendarInfo
+		]);
 	}
 
-
-	if ( $calendarInfo->_empty ) {
-		$ret .= message('error','Calendar item not found');
-	} else if (!$isEdit) {
-		$ret .= message('error','Access denied','calendar');
-	} else if (\SG\confirm()) {
-		if ($module) 	$form = R::On($module.'.calendar.delete', $calendarInfo, post());
-		mydb::query('DELETE FROM %calendar% WHERE `id` = :caiId LIMIT 1',':caiId',$calId);
-		mydb::clear_autoid('%calendar%');
-		mydb::query('DELETE FROM %property% WHERE `module`="calendar" AND `propid`=:propid',':propid',$calId);
-		$ret .= '<font color="red">Calendar item was deleted.</font><br/>';
-		//location('calendar/'.$year.'/'.$month.($para->tpid?'/tpid/'.$para->tpid:''));
-	} else {
-		$ret .= '<header class="header">'._HEADER_BACK.'<h3 class="title -box">ลบปฎิทิน</h3></header>';
-
-		$ret .= '<p style="margin: 32px;"><b>คำเตือน : จะทำการลบข้อมูลปฏิทินรายการนี้ และจะไม่สามารถเรียกคืนได้อีกแล้ว กรุณายืนยัน?</b></p>';
-
-		$ret .= '<div class="-sg-text-right"><a class="sg-action btn -link -cancel" href="javascript:void(0)" data-rel="close"><i class="icon -material -gray">cancel</i>{tr:CANCEL}</a> <a class="sg-action btn -danger" href="'.url(q(),array('module'=>$module,'confirm'=>'yes')).'" data-rel="none" data-callback="calendarRefresh" data-x-ret="'.url('calendar',array('year'=>sg_date($calendarInfo->from_date,'Y'),'month'=>sg_date($calendarInfo->from_date,'m'))).'" data-done="close"><i class="icon -material">delete</i><span>ดำเนินการลบ</span></a></div>';
+	function rightToBuild() {
+		if (empty($this->calendarId)) return error(_HTTP_ERROR_BAD_REQUEST, 'Calendar ID is required');
+		return true; // Allow to build if calendarId is set
 	}
 
-	$ret .= '<script>
-	function calendarRefresh() {
-		$("#calendar-refresh").trigger("click")
-	}</script>';
+	#[\Override]
+	function build() {
+		$ret = '';
 
-	return $ret;
+		$isEdit = false;
+
+		if (user_access('administer calendars','edit own calendar content',$this->calendarInfo->owner)) {
+			$isEdit = true;
+		} else if ($this->calendarInfo->tpid && i()->ok) {
+			$membership = DB::select([
+				'SELECT UPPER(`membership`) `membership` FROM %topic_user% WHERE `tpid` = :nodeId AND `uid` = :userId LIMIT 1',
+				'var' => [
+					':nodeId' => $this->calendarInfo->tpid,
+					':userId' => i()->uid
+				]
+			])->membership;
+			$isEdit = in_array($membership, ['OWNER','ADMIN','MANAGER','TRAINER']);
+		}
+
+		if (!$isEdit) return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		if (SG\confirm()) return $this->delete();
+
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'ลบปฎิทิน : '.$this->calendarInfo->title,
+				'boxHeader' => true,
+				'leading' => _HEADER_BACK,
+			]), // AppBar
+			'body' => new Column([
+				'class' => '-sg-paddingnorm',
+				'children' => [
+					new Container([
+						'style' => 'margin: 24px',
+						'child' => '<b>คำเตือน : จะทำการลบข้อมูลปฏิทินรายการนี้ และจะไม่สามารถเรียกคืนได้อีกแล้ว กรุณายืนยัน?</b>'
+					]), // Container for warning message
+
+					new Row([
+						'mainAxisAlignment' => 'end',
+						'crossAxisAlignment' => 'center',
+						'children' => [
+							new Button([
+								'class' => 'sg-action',
+								'type' => 'cancel',
+								'href' => 'javascript:void(0)',
+								'rel' => 'back',
+								'icon' => new Icon('cancel'),
+								'text' => '{tr:CANCEL}',
+							]), // Cancel button
+							new Button([
+								'class' => 'sg-action',
+								'type' => 'danger',
+								'href' => url('api/calendar/'.$this->calendarId.'/delete', ['module' => $this->module, 'confirm' => 'yes']),
+								'rel' => 'none',
+								'icon' => new Icon('delete'),
+								'text' => 'ดำเนินการลบ',
+								'done' => 'close | remove:.-calendar-item-'.$this->calendarId, // Close the box and remove the calendar item
+							]), // Delete button
+						], // children
+					]), // Row for action buttons
+				], // children
+			]), // Widget
+		]);
+	}
 }
 ?>

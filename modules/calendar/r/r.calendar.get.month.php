@@ -1,11 +1,16 @@
 <?php
 /**
-* Get Month Calendar Table
-*
-* @param Int $year
-* @param Int $month
-* @return String
-*/
+ * Calendar:: Get Month Calendar Table
+ * Created :: 2007-03-06
+ * Modify  :: 2025-07-19
+ * Version :: 3
+ *
+ * @param Int $year
+ * @param Int $month
+ * @return String
+ *
+ * @usage R::Model('calendar.get.month', $year, $month)
+ */
 
 $debug = true;
 
@@ -117,10 +122,10 @@ function r_calendar_get_month ($year = '', $month = '') {
 		$show_date=$year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$mday);
 		$is_calendar_item=array_key_exists($show_date, $month_list);
 
-	//			$add_calendar_link=$isAdd?'onclick="ajax.link(\'calendar-body\',\''.url('calendar/add'.($para->tpid?'/tpid/'.$para->tpid:''),array('module'=>$para->module,'d'=>$mday.'/'.$month.'/'.$year).'\');return false;"':'';
+		//			$add_calendar_link=$isAdd?'onclick="ajax.link(\'calendar-body\',\''.url('calendar/add'.($para->tpid?'/tpid/'.$para->tpid:''),array('module'=>$para->module,'d'=>$mday.'/'.$month.'/'.$year).'\');return false;"':'';
 
 		$ret .= '<td id="'.(sprintf('%02d',$mday).'/'.sprintf('%02d',$month).'/'.$year).'" class="daybox'.($mday==$todayDate && intval($month)==$todayMonth && intval($year)==$todayYear?' currentdaybox':'').($isAdd ? ' calendar-add':'').'"'.($isAdd?' title="'.tr('Add new event','คลิกเพื่อเพิ่มกิจกรรมใหม่'):'').'">'._NL;
-	//'" onmouseover="$(\'#addevent_'.$mday.'\').show()" onmouseout="$(\'#addevent_'.$mday.'\').hide()"':'').'>'.($isAdd?'<img src="http://img.softganz.com/icon/date_add.png" id="addevent_'.$mday.'" style="display:none;">':'')
+		//'" onmouseover="$(\'#addevent_'.$mday.'\').show()" onmouseout="$(\'#addevent_'.$mday.'\').hide()"':'').'>'.($isAdd?'<img src="http://img.softganz.com/icon/date_add.png" id="addevent_'.$mday.'" style="display:none;">':'')
 		$ret .= '<div class="daynum'.($is_calendar_item?' have_item':'').'" ><span>'.$mday.'</span></div>'._NL;
 
 		if ($is_calendar_item) {
@@ -140,16 +145,14 @@ function r_calendar_get_month ($year = '', $month = '') {
 				$event_title = htmlspecialchars($event_title);
 				$event_detail = htmlspecialchars($event_detail);
 
-				$ret .= '<div id="reldiv'.$item['id'].'" class="month_event'.($item['category']?' tags-'.$item['category']:'').'" data-tooltip="'.$event_title.'<br />'.$event_detail.'">';
-	/*
-						$ret .= '<div id="reldiv'.$item['id'].'"
-							class="month_event'.($item['category']?' tags-'.$item['category']:'').'"
-							 title="'.$event_title.'<p>'.$event_detail.'</p>"
-							>';
-	*/
+				$ret .= '<div id="reldiv'.$item['id'].'" class="month_event -calendar-item-'.$item['id'].($item['category'] ? ' tags-'.$item['category'] : '').'" data-tooltip="'.$event_title.'<br />'.$event_detail.'">';
+				// $ret .= '<div id="reldiv'.$item['id'].'"
+				// 	class="month_event'.($item['category']?' tags-'.$item['category']:'').'"
+				// 	 title="'.$event_title.'<p>'.$event_detail.'</p>"
+				// 	>';
 				$ret .= '<a class="sg-action '.$item['privacy'].'" href="'.url('calendar/'.$item['id'],array('tpid'=>$para->tpid,'module'=>$para->module)).'"'
 					. ($calendarOptions->color ? ' style="color:'.$calendarOptions->color.';"' : '')
-					. ' data-rel="box" data-width="600">';
+					. ' data-rel="box" data-width="600" data-height="300">';
 				if ($item['from_time'] && (intval(substr($item['from_time'],0,2)) || intval(substr($item['from_time'],3,2)))) {
 					if (cfg('calendar.format.time')=='short') {
 						$hr=intval(substr($item['from_time'],0,2));

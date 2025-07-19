@@ -1,86 +1,44 @@
 <?php
 /**
-* Module Method
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Calendar:: Page Controller
+ * Created :: 2007-03-06
+ * Modify  :: 2025-07-19
+ * Version :: 2
+ *
+ * @param Int $calendarId or *,t:13259 to all include node 13259
+ * @param String $action
+ * @return Widget
+ *
+ * @usage calendar/{Id}/{action}[/{tranId}]
+ */
 
-$debug = true;
+class calendar extends PageController {
+	var $calendarId;
+	var $action;
 
-function calendar($self, $calId = NULL, $action = NULL, $tranId = NULL) {
-	if (!module_install('calendar')) return message('error', 'Calendar Not Install');
+	function __construct($calendarId = NULL, $action = NULL) {
+		if (substr($calendarId, 0, 1) === '*') {
+			$get = $calendarId;
+			unset($calendarId, $action);
+		}
 
-	if (!is_numeric($calId)) {$action = $calId; unset($calId);} // Action as calId and clear
-
-	if (empty($action) && empty($calId)) return R::Page('calendar.home',$self);
-	if (empty($action) && $calId) return R::Page('calendar.view',$self,$calId);
+		if (empty($calendarId) && empty($action)) $action = 'home';
+		else if ($calendarId && empty($action)) $action = 'view';
 
 
-	if ($calId) {
-		$calInfo = R::Model('calendar.get',$calId);
+		parent::__construct([
+			'calendarId' => $calendarId,
+			'action' => 'calendar.'.$action,
+			'args' => func_get_args(),
+			'info' => is_numeric($calendarId) ? CalendarModel::getById($calendarId) : NULL,
+		]);
 
-		$isEdit = $calInfo->RIGHT & _IS_EDITABLE;
+		// Send get parameter to hom
+		if ($get) $this->info = $get;
 	}
 
-	//R::View('calendar.toolbar',$self, 'calendar', NULL, $calInfo);
-
-	$isCreatable = user_access('create calendar content');
-
-	//$ret .= 'Action = '.$action. ' Is create = '.($isCreatable ? 'YES' : 'NO').'<br />';
-	//$ret .= print_o($orgInfo, '$orgInfo');
-
-	if (substr($action,0,1) == '*') {$get = $action; $action = '*';}
-
-	switch ($action) {
-		case 'update':
-		case 'create':
-			$data = (object) post('calendar');
-			if ($data->module) {
-				$isModuleAddable = R::On($data->module.'.calendar.isadd',$data);
-			}
-
-			if (($isCreatable || $isModuleAddable) && post('calendar')) {
-
-				$result = R::Model('calendar.create', $data, '{debug: false}');
-				// debugMsg($data,'$data');
-				// debugMsg($result, '$result');
-			}
-			// debugMsg(post(), 'post()');
-			break;
-
-		case 'edit':
-			$ret .= R::Page('calendar.new',$self, $calInfo);
-			break;
-
-		case '*':
-			$ret .= R::Page('calendar.home', $self, $get);
-			break;
-
-		default:
-			$args = func_get_args();
-			$argIndex = 3; // Start argument
-
-			//debugMsg('PAGE CALENDAR calId = '.$calId.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.func_get_arg($argIndex));
-			//$ret .= print_o(func_get_args(), '$args');
-
-			$ret = R::Page(
-				'calendar.'.$action,
-				$self,
-				$calInfo,
-				$args[$argIndex],
-				$args[$argIndex+1],
-				$args[$argIndex+2],
-				$args[$argIndex+3],
-				$args[$argIndex+4]
-			);
-
-			if (is_null($ret)) $ret = 'ERROR : PAGE NOT FOUND';
-
-			break;
+	function rightToBuild() {
+		if (!module_install('calendar')) return error(_HTTP_ERROR_NOT_FOUND, 'Calendar Not Install');
 	}
-
-	return $ret;
 }
 ?>

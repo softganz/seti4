@@ -1,68 +1,111 @@
 <?php
 /**
  * Calendar:: View
- * Modify  :: 2025-07-18
- * Version :: 2
+ * Created :: 2007-03-06
+ * Modify  :: 2025-07-19
+ * Version :: 3
  *
- * @param Object $self
- * @param Int $var
- * @return String
+ * @param String $calendarInfo
+ * @return Widget
+ *
+ * @usage calendar/{calendarId}
  */
 
-use Softgan\DB;
+use Softganz\DB;
 
-$debug = true;
+class CalendarView extends Page {
+	var $calendarId;
+	var $module;
+	var $calendarInfo;
 
-function calendar_view($self, $id=NULL) {
-	$para=para(func_get_args(),1);
-	$module = post('module');
-
-	$rs = R::Model('calendar.get',$id);
-
-	$self->theme->title=$rs->title;
-
-	$ret = '<header class="header">'._HEADER_BACK.'<h3 class="title -box">'.$rs->title.'</h3></header>';
-
-	if ($rs->topic_title && $rs->topicType == 'project') $ret.='<h4><a href="'.url('project/'.$rs->tpid).'">'.$rs->topic_title.'</a></h4>';
-	$ret .= '<p><strong>'.tr('วัน ').sg_date($rs->from_date,'ววว ว ดดด ปปปป');
-	if ($rs->to_date!=$rs->from_date) $ret .= ' - '.sg_date($rs->to_date,'ววว ว ดดด ปปปป');
-	if ($rs->from_time) $ret .= tr(' เวลา ').$rs->from_time;
-	if ($rs->to_time) $ret .= ' - '.$rs->to_time;
-	if ($rs->from_time || $rs->to_time) $ret.=' น.';
-	if ($rs->location) $ret .= '<br /><br />'.tr('สถานที่').' '.$rs->location;
-	$ret .= '</strong></p>';
-	list($year,$month)=explode('-',$rs->from_date);
-
-	$is_edit=false;
-	if (user_access('administer calendars','edit own calendar content',$rs->owner)) {
-		$is_edit=true;
-	} else if ($rs->tpid && i()->ok) {
-		$topicuser=mydb::select('SELECT `membership` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid LIMIT 1',':tpid',$rs->tpid,':uid',i()->uid);
-		if (in_array($topicuser->membership,array('Trainer','Owner'))) $is_edit=true;
+	function __construct($calendarInfo = NULL) {
+		parent::__construct([
+			'calendarId' => $calendarInfo->calId,
+			'module' => post('module'),
+			'calendarInfo' => $calendarInfo,
+		]);
 	}
 
-	$ui = new Ui();
-	$ui->add('<a id="calendar-back" class="sg-action btn -link" title="กลับสู่หน้าปฏิทิน" data-rel="close"><i class="icon -material">navigate_before</i><span>BACK</span></a>');
-	if ($is_edit) {
-		$ui->add('<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/edit',array('module'=>$module)).'" title="แก้ไขรายละเอียด" data-rel="#calendar-body" data-done="close"><i class="icon -material">edit</i></a>');
-
-		// ปิดปุ่มลบชั่วคราว จนกว่าจะหาวิธีที่ดีกว่านี้
-		if (DB::tableExists('%project_tr%')) {
-			if (mydb::select('SELECT `calid` FROM %project_tr% WHERE `calid` = :id LIMIT 1',':id',$id)->calid) {
-				$ui->add('<a href="javascript:void(0)" class="-disabled" title="ลบรายการไม่ได้"><i class="icon -material">delete</i></a>');
-			} else {
-				$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/delete',array('module'=>$module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -material">delete</i></a>');
-			}
-		} else {
-			$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$rs->id.'/delete',array('module'=>$module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -material">delete</i></a>');
+	function rightToBuild() {
+		if (empty($this->calendarId)) return error(_HTTP_ERROR_BAD_REQUEST, 'Calendar ID is required');
+		return true; // Allow to build if calendarId is set
+	}
+	
+	#[\Override]
+	function build() {
+		$isEdit = false;
+		if (user_access('administer calendars', 'edit own calendar content', $this->calendarInfo->owner)) {
+			$isEdit = true;
+		} else if ($this->calendarInfo->tpid && i()->ok) {
+			$membership = DB::select([
+				'SELECT UPPER(`membership`) `membership` FROM %topic_user% WHERE `tpid` = :nodeId AND `uid` = :userId LIMIT 1',
+				'var' => [':nodeId' => $this->calendarInfo->tpid, ':userId' => i()->uid]
+			])->membership;
+			if (in_array($membership, ['TRAINNER','OWNER'])) $isEdit = true;
 		}
+	
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => $this->calendarInfo->title,
+				'boxHeader' => true,
+				'leading' => _HEADER_BACK,
+				'trailing' => new Row([
+					'children' => [
+						'<a id="calendar-back" class="sg-action btn -link" title="กลับสู่หน้าปฏิทิน" data-rel="close"><i class="icon -material">navigate_before</i><span>BACK</span></a>',
+						$isEdit ? new Children([
+							'children' => [
+								'<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/form', ['calendarId' => $this->calendarInfo->calId, 'module' => $this->module]).'" title="แก้ไขรายละเอียด" data-rel="#calendar-body" data-done="close"><i class="icon -material">edit</i></a>',
+
+								// ปิดปุ่มลบชั่วคราว จนกว่าจะหาวิธีที่ดีกว่านี้
+								$this->calendarInfo->nodeId ? NULL
+									// if (mydb::select('SELECT `calid` FROM %project_tr% WHERE `calid` = :id LIMIT 1',':id',$this->calendarId)->calid) {
+									// 	$ui->add('<a href="javascript:void(0)" class="-disabled" title="ลบรายการไม่ได้"><i class="icon -material">delete</i></a>');
+									// } else {
+									// 	$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$this->calendarInfo->id.'/delete',array('module'=>$this->module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -material">delete</i></a>');
+									// }
+								: new Button([
+									'type' => 'danger',
+									'id' => 'calendar-delete',
+									'class' => 'sg-action',
+									'href' => url('calendar/'.$this->calendarInfo->id.'/delete', ['module' => $this->module]),
+									'rel' => 'box',
+									'title' => 'ลบหัวข้อนี้',
+									'data-width' => '600',
+									'data-height' => 'auto',
+									'icon' => new Icon('delete'),
+								]),
+							], // children
+						]) : NULL, // Edit button if user has permission
+					
+						(module_install('project') && $this->calendarInfo->nodeId) ? '<a class="sg-action btn -link" href="'.url('project/'.$this->calendarInfo->nodeId.'/info.calendar.short/'.$this->calendarInfo->calId).'" data-rel="box" title="การดำเนินกิจกรรม"><i class="icon -material">find_in_page</i></a>' : NULL
+
+					], // children
+				]), // Row
+			]), // AppBar
+			'body' => new Column([
+				'class' => '-sg-paddingnorm',
+				'style' => 'gap: 0.5rem;',
+				'children' => [
+					$this->calendarInfo->topic_title && $this->calendarInfo->topicType == 'project' ? new ListTile([
+						'title' => new Button([
+							'href' => url('project/'.$this->calendarInfo->tpid),
+							'text' => $this->calendarInfo->topic_title,
+						]), // Button to link to the project
+						'leading' => new Icon('directions_run'),
+					]) : NULL,
+					'<strong>'.tr('วัน ').sg_date($this->calendarInfo->from_date,'ววว ว ดดด ปปปป')
+					. ($this->calendarInfo->to_date!=$this->calendarInfo->from_date ? ' - '.sg_date($this->calendarInfo->to_date,'ววว ว ดดด ปปปป') : '')
+					. ($this->calendarInfo->from_time ? tr(' เวลา ').$this->calendarInfo->from_time : '')
+					. ($this->calendarInfo->to_time ? ' - '.$this->calendarInfo->to_time : '')
+					. ($this->calendarInfo->from_time || $this->calendarInfo->to_time ? ' น.' : '')
+					.'</strong>',
+					$this->calendarInfo->location ? '<b>'.tr('สถานที่').' '.$this->calendarInfo->location.'</b>' : NULL, // Location of the calendar event
+					$this->calendarInfo->detail ? sg_text2html($this->calendarInfo->detail) : NULL, // For calendar details
+					'โดย '.$this->calendarInfo->owner_name.' เมื่อ '.sg_date($this->calendarInfo->created_date,'ว ดด ปป H:i').' น.',
+					// new DebugMsg($this->calendarInfo, '$calendarInfo'), // Debug message to show the calendar data
+				], // children
+			]), // Widget
+		]);
 	}
-	if (module_install('project') && $rs->tpid) $ui->add('<a class="sg-action btn -link" href="'.url('project/'.$rs->tpid.'/info.calendar.short/'.$rs->id).'" data-rel="box" title="การดำเนินกิจกรรม"><i class="icon -material">find_in_page</i></a>');
-
-	$ret .= '<nav class="nav -page">'.$ui->build().'</nav>';
-
-	$ret .= '<div style="min-height: 100px;">'.($rs->detail ? sg_text2html($rs->detail) : '').'</div>';
-	$ret.='<p class="">โดย '.$rs->owner_name.' เมื่อ '.sg_date($rs->created_date,'ว ดด ปป H:i').' น.</p>';
-	return $ret;
 }
 ?>

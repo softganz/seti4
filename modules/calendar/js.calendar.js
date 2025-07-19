@@ -1,11 +1,12 @@
 /*
 * sg-calendar version 3.10 rev 2018-10-12
+* Modify :: 2025-07-19
+* Version :: 2
 */
 
 $(document).ready(function() {
 	var $calendarEle = $("#calendar-body")
 	var calendarUrl = $calendarEle.data('url')
-	var calendarAddUrl = calendarUrl.substr(0,calendarUrl.indexOf("/calendar"))+"/calendar"
 	var isAddable = $calendarEle.data('add') != false
 
 	// console.log(isAddable)
@@ -21,9 +22,9 @@ $(document).ready(function() {
 
 
 	// Calendar Navigator Link Click
-	$("body").on('click','.ui-nav.-calendar a', function() {
+	$("body").on('click','.widget-nav.-calendar a', function() {
 		hash = this.href.split("#")[1];
-		// console.log(hash)
+		console.log(hash)
 		if (hash == undefined) return;
 
 		if (hash == "prev") {month--; if (month <= 0) {month = 12; year--}}
@@ -62,9 +63,9 @@ $(document).ready(function() {
 
 				// console.log('CALENDAR Add Start '+$this.prop("tagName"))
 				// console.log('Event target id = '+$(event.target).prop("tagName"))
-				// console.log('Add url = '+calendarUrl+'/new')
+				// console.log('Add url = '+calendarUrl+'/form')
 				// console.log(para)
-				$.post(calendarUrl+'/new', para, function(data) {
+				$.post(calendarUrl+'/form', para, function(data) {
 					$calendarEle.html(data)
 				})
 			}

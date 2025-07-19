@@ -1,52 +1,56 @@
-#calendar-nav {margin-top:10px;}
-#calendar-nav>li>a {padding:5px 20px;}
-#calendar-nav>li>a:focus {outline:none;}
+.widget-nav.-calendar {
+	margin: 4px 0;
+	* {box-sizing: border-box;}
+	.-current.-month {font-weight: bold;}
+	.widget-button {height: 3.2rem; align-content: center; border-radius: 32px;}
+	.widget-button.-today {font-weight: bold;}
+}
 
-#calendar-body {
+.calendar-body {
 	background-color:#ffffff;
 }
-#calendar-body .dayname {
+.calendar-body .dayname {
 	padding:6px;
 	background-color:#c3d9ff;
 	font-weight:bold;
 	font-size:10pt;
 }
-#calendar-body .daynum {
+.calendar-body .daynum {
 	text-align:left;
 	background-color:#E8EEF7;
 	color:#6a6a6a;
 	font-size:10pt;
 	padding: 2px;
 }
-#calendar-body .have_item {
+.calendar-body .have_item {
 	font-weight: bold;
 }
-#calendar-body .daybox, #calendar-body .currentdaybox {
+.calendar-body .daybox, .calendar-body .currentdaybox {
 	padding:1px;
 	border:1px #ccddee solid;
 }
-#calendar-body .currentdaybox {
+.calendar-body .currentdaybox {
 	background-color:#FFFFCC;
 }
-#calendar-body .daynum>span {display: inline-block; width:1.6em;height: 1.6em; text-align: center; line-height: 1.6em; background: transparent;}
-#calendar-body .currentdaybox .daynum>span {background: #fc0; border-radius: 50%
+.calendar-body .daynum>span {display: inline-block; width:1.6em;height: 1.6em; text-align: center; line-height: 1.6em; background: transparent;}
+.calendar-body .currentdaybox .daynum>span {background: #fc0; border-radius: 50%
 }
-#calendar-body .month_event{
+.calendar-body .month_event{
 	white-space:wrap;
 	background: #f7f7f7;
 	margin: 2px 2px 8px 2px;
 	border-right: 4px;
 	padding: 4px;
 }
-#calendar-body .currentdaybox .month_event {background: #f5f5bd;}
+.calendar-body .currentdaybox .month_event {background: #f5f5bd;}
 
 .calendar-month thead th {padding:0 0 1px 0;}
 
-#calendar-body .month_event em.time{font:bold 90% Arial,Sans-serif}
-#calendar-body .month_event .event-title{padding-right:2px}
-#calendar-body a {color:#ff6600;}
-#calendar-body a:hover { color:#008F06;}
-#calendar-body a.private { color:gray;}
+.calendar-body .month_event em.time{font:bold 90% Arial,Sans-serif}
+.calendar-body .month_event .event-title{padding-right:2px}
+.calendar-body a {color:#ff6600;}
+.calendar-body a:hover { color:#008F06;}
+.calendar-body a.private { color:gray;}
 
 .calendar-agenda td {padding:5px;}
 .calendar-agenda>tbody>tr>td:first-child {white-space: nowrap;}

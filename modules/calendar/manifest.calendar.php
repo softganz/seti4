@@ -6,8 +6,8 @@
  * @version 0.12
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2007-03-06
- * @modify 2012-10-01
+ * Created :: 2007-03-06
+ * Modify  :: 2012-10-01
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

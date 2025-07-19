@@ -29,7 +29,7 @@ function view_calendar_form($calInfo = [], $para = NULL) {
 
 	$form = new Form([
 		'variable' => 'calendar',
-		'action' => url('calendar/'.($calInfo->calId ? $calInfo->calId.'/update' : 'create')),
+		'action' => url('api/calendar/'.($calInfo->calId ? $calInfo->calId.'/update' : 'create')),
 		'id' => 'edit-calendar',
 		'class' => 'sg-form',
 		'checkValid' => true,
