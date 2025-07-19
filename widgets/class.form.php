@@ -2,8 +2,8 @@
 /**
 * Widget  :: Form Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-07-15
-* Version :: 34
+* Modify  :: 2025-07-19
+* Version :: 35
 *
 * @param Array $args
 * @return Widget
@@ -729,7 +729,7 @@ class Form extends Widget {
 		if (empty($formElement->color)) $formElement->color='#ffffff, #cccccc, #c0c0c0, #999999, #666666, #333333, #000000, #ffcccc, #ff6666, #ff0000, #cc0000, #990000, #660000, #330000, #ffcc99, #ff9966, #ff9900, #ff6600, #cc6600, #993300, #663300, #ffff99, #ffff66, #ffcc66, #ffcc33, #cc9933, #996633, #663333, #ffffcc, #ffff33, #ffff00, #ffcc00, #999900, #666600, #333300, #99ff99, #66ff99, #33ff33, #33cc00, #009900, #006600, #003300, #99ffff, #33ffff, #66cccc, #00cccc, #339999, #336666, #003333, #ccffff, #66ffff, #33ccff, #3366ff, #3333ff, #000099, #000066, #ccccff, #9999ff, #6666cc, #6633ff, #6600cc, #333399, #330099, #ffccff, #ff99ff, #cc66cc, #cc33cc, #993399, #663366, #330033';
 		foreach (explode(',',$formElement->color) as $color) {
 			$color = trim($color);
-			$ret .= '<span style="background:'.$color.'; display:inline-block; padding:4px; border-radius: 4px; width: 18px; height: 18px;"><input type="radio" name="'.$name.'" value="'.$color.'"'.($color == $formElement->value?' checked="checked"':'').' style="outline: none; box-shadow: none; margin: 0 0 0 2px; padding: 0; height: 16px; width: 16px;"></span>'._NL;
+			$ret .= '<span style="background:'.$color.'; display:inline-block; padding: 6px; border-radius: 4px; width: 3.2rem; height: 3.2rem;"><input type="radio" name="'.$name.'" value="'.$color.'"'.($color == $formElement->value?' checked="checked"':'').' style="outline: none; box-shadow: none; margin: 0; padding: 0; height: 2rem; width: 2rem; border: none;"></span>'._NL;
 		}
 		return $ret;
 	}
