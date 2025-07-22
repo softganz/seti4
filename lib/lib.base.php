@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2025-07-11
- * Version :: 11
+ * Modify  :: 2025-07-22
+ * Version :: 12
  */
 
 namespace SG;
@@ -113,6 +113,12 @@ function getFirstInt() {
 	return NULL;
 }
 
+function valid($value, $regx, $debug = false) {
+	if ($debug) debugMsg('Debug of function SG\valid of <b>'.$value.'</b> with regx <b>'.$regx.'</b>');
+	$valid = preg_match($regx, $value, $out);
+	if ($debug) debugMsg($out, '$out');
+	return $valid ? $value : NULL;
+}
 
 /**
 * Get API from external website
