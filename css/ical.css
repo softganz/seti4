@@ -78,7 +78,7 @@
 #content-ical .currentdaybox {
 	background-color:#FFFFCC;
 }
-#content-ical .month_event{
+#content-ical .month-event{
 	margin:0 0 1px 0;
 	padding:0 2px;
 	z-index:5;
@@ -91,15 +91,15 @@
 }
 /* for fix height && hidden */
 /*
-#content-ical .month_event{
+#content-ical .month-event{
 	height:17px;
 	overflow:hidden;
 	white-space:wrap;
 }
 */
-.month_event-next {text-indent:-9999em;}
-#content-ical .month_event em.time{font:bold 90% Tahoma;}
-#content-ical .month_event .event-title{padding-right:2px}
+.month-event-next {text-indent:-9999em;}
+#content-ical .month-event em.time{font:bold 90% Tahoma;}
+#content-ical .month-event .event-title{padding-right:2px}
 #content-ical a {color:#fff;}
 #content-ical a:hover { color:#fff;}
 #content-ical a.private { color:gray;}
