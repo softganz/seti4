@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * Created :: 2007-03-06
- * Modify  :: 2012-10-01
+ * Modify  :: 2025-07-22
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * ============================================
  */
 
-cfg('calendar.version','0.40.0');
-cfg('calendar.release','20.6.24');
+cfg('calendar.version','1.00.0');
+cfg('calendar.release','2025-07-22');
 
 menu('calendar/room','Calendar room management','calendar.room','__controller',2,true,'static');
 menu('calendar/car','Car Reservation main page','calendar.car','__controller',2,'access calendar cars','static');
@@ -24,8 +24,4 @@ menu('calendar/car','Car Reservation main page','calendar.car','__controller',2,
 menu('calendar','Calendar','calendar','__controller',1,true,'static');
 
 cfg('calendar.permission', 'access calendars, administer calendars,create calendar content,edit own calendar content, access calendar rooms, administer calendar rooms, create calendar room content,edit own calendar room content');
-
-
-head('calendar.js','<script type="text/javascript" src="/calendar/js.calendar.js"></script>');
-
 ?>

@@ -2,16 +2,18 @@
 /**
  * Calendar:: API
  * Created :: 2025-07-19
- * Modify  :: 2025-07-19
- * Version :: 1
+ * Modify  :: 2025-07-22
+ * Version :: 2
  *
  * @param Int $calendarId
  * @param String $action
  * @param Int $tranId
  * @return Array/Object
  *
-*  @usage api/module/{Id}/{action}[/{tranId}]
+ *  @usage api/module/{Id}/{action}[/{tranId}]
  */
+
+use Softganz\DB;
 
 class CalendarApi extends PageApi {
 	var $calendarId;
@@ -27,7 +29,6 @@ class CalendarApi extends PageApi {
 			'calendarId' => $calendaeInfo->calId,
 			'right' => new CalendarRightModel($calendaeInfo->calId),
 		]);
-		debugMsg($this, '$this');
 	}
 
 	#[\Override]

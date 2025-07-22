@@ -2,8 +2,8 @@
 /**
 * Module  :: Page Controller
 * Created :: 2019-08-03
-* Modify  :: 2022-12-05
-* Version :: 2
+* Modify  :: 2025-07-22
+* Version :: 3
 *
 * @param Int $resvId
 * @param String $action
@@ -23,7 +23,7 @@ class CalendarRoom extends PageController {
 			'resvId' => $resvId,
 			'action' => 'calendar.room.'.$action,
 			'args' => func_get_args(),
-			'info' => is_numeric($resvId) ? R::Model('calendar.get.resv',$resvId) : NULL,
+			'info' => is_numeric($resvId) ? CalendarModel::getResv($resvId) : NULL,
 		]);
 	}
 
@@ -62,7 +62,7 @@ function calendar_room($self, $resvId = NULL, $action = NULL, $tranId = NULL) {
 	if ($resvId && empty($action)) return R::Page('calendar.room.view',$self, $resvId);
 
 	if ($resvId) {
-		$resvInfo = R::Model('calendar.get.resv',$resvId);
+		$resvInfo = CalendarModel::getResv($resvId);
 
 	}
 

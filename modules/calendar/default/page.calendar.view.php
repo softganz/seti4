@@ -2,8 +2,8 @@
 /**
  * Calendar:: View
  * Created :: 2007-03-06
- * Modify  :: 2025-07-19
- * Version :: 3
+ * Modify  :: 2025-07-22
+ * Version :: 4
  *
  * @param String $calendarInfo
  * @return Widget
@@ -54,7 +54,7 @@ class CalendarView extends Page {
 						'<a id="calendar-back" class="sg-action btn -link" title="กลับสู่หน้าปฏิทิน" data-rel="close"><i class="icon -material">navigate_before</i><span>BACK</span></a>',
 						$isEdit ? new Children([
 							'children' => [
-								'<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/form', ['calendarId' => $this->calendarInfo->calId, 'module' => $this->module]).'" title="แก้ไขรายละเอียด" data-rel="#calendar-body" data-done="close"><i class="icon -material">edit</i></a>',
+								'<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/form', ['calendarId' => $this->calendarInfo->calId, 'module' => $this->module]).'" title="แก้ไขรายละเอียด" data-rel=".calendar-content" data-done="close"><i class="icon -material">edit</i></a>',
 
 								// ปิดปุ่มลบชั่วคราว จนกว่าจะหาวิธีที่ดีกว่านี้
 								$this->calendarInfo->nodeId ? NULL

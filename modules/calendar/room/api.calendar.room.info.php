@@ -1,17 +1,17 @@
 <?php
 /**
-* Module  :: Description
-* Created :: 2022-12-05
-* Modify  :: 2022-12-05
-* Version :: 1
-*
-* @param Int $resvId
-* @param String $action
-* @param Int $tranId
-* @return String
-*
-* @usage module/api/{id}/{action}[/{tranId}]
-*/
+ * Module  :: Description
+ * Created :: 2022-12-05
+ * Modify  :: 2025-07-22
+ * Version :: 2
+ *
+ * @param Int $resvId
+ * @param String $action
+ * @param Int $tranId
+ * @return String
+ *
+ * @usage module/api/{id}/{action}[/{tranId}]
+ */
 
 class CalendarRoomInfoApi extends PageApi {
 	var $resvId;
@@ -24,7 +24,7 @@ class CalendarRoomInfoApi extends PageApi {
 		parent::__construct([
 			'action' => $action,
 			'tranId' => $tranId,
-			'resvInfo' => $resvInfo = ($resvId ? R::Model('calendar.get.resv',$resvId) : NULL),
+			'resvInfo' => $resvInfo = ($resvId ? CalendarModel::getResv($resvId) : NULL),
 			'resvId' => $resvInfo->resvId,
 			'right' => (Object) [
 				'admin' => is_admin(),

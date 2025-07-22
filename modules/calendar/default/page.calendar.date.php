@@ -1,16 +1,17 @@
 <?php
 /**
-* Module Method
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Calendar:: List Calendar Date
+ * Created :: 2007-03-06
+ *
+ * @param Object $self
+ * @param Int $var
+ * @return String
+ */
 
 $debug = true;
 
 function calendar_date($self,$date=NULL) {
-	$date_list = R::Model('calendar.get.list', 'date='.$date);
+	$date_list = CalendarModel::getEvents(['date' => $date]);
 
 	foreach ($date_list->items as $item) {
 		$ret .= '<p>';

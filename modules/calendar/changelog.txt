@@ -1,5 +1,11 @@
 Change log
 
+Version 1.00.0
+Updated on July 2025
+
+- Refactor code
+- Create CalendarWdget
+
 Version 0.20.1
 Updated on Mar 13, 2013
 

@@ -34,7 +34,7 @@ function calendar_tiny($self, $year = "", $month = "") {
 
 	// get month event list
 	$even_para=isset($para->_src)?'/'.$para->_src:'';
-	$month_list = R::Model('calendar.get.list','month='.$year.'-'.sprintf('%02d',$month));
+	$month_list = CalendarModel::getEvents(['month' => $year.'-'.sprintf('%02d',$month)]);
 	$day_item=array();
 	foreach ($month_list as $date=>$day_items) {
 		$day_item[$date] = $date.' : ';

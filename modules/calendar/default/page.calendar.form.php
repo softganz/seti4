@@ -35,7 +35,7 @@ class CalendarForm extends Page {
 
 		if ($this->calendarId && $post->module) {
 			$isEdit = R::On($post->module.'.calendar.isadd',$this->calendarInfo);
-			if (!$isEdit) return error('Access denied');
+			if (!$isEdit) return error(_HTTP_ERROR_FORBIDDEN,'Access denied');
 		}
 
 		if (empty($this->calendarInfo->calId)) {
@@ -55,7 +55,7 @@ class CalendarForm extends Page {
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
-					R::View('calendar.form', $this->calendarInfo, $post),
+					new calendarFormWidget($this->calendarInfo, $post),
 				], // children
 			]), // Widget
 		]);
