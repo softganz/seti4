@@ -2,7 +2,7 @@
  * Calendar:: calendar js module
  * Created :: 2007-03-06
  * Modify  :: 2025-07-22
- * Version :: 2
+ * Version :: 3
  */
 
 let $calndarElement = $(".widget-calendar");
@@ -10,7 +10,7 @@ let $contentElement = $calndarElement.find('.calendar-content');
 let calendarUrl = $calndarElement.data('apiurl')
 let isAddable = $calndarElement.data('add') != false
 
-console.log($contentElement)
+// console.log($contentElement)
 // $(document).ready(function() {
 
 	// console.log(isAddable)
@@ -25,7 +25,7 @@ console.log($contentElement)
 	let year = $calndarElement.data('year') ?? cyear;
 	let month = $calndarElement.data('month') ?? cmonth;
 
-	console.log("Current year", cyear, "Current month", cmonth, "Current hash", currentHash);
+	// console.log("Current year", cyear, "Current month", cmonth, "Current hash", currentHash);
 
 
 	// Calendar Navigator Link Click
@@ -39,8 +39,8 @@ console.log($contentElement)
 		else if (hash == "today") {year = cyear; month = cmonth;}
 		else currentHash = hash;
 
-		console.log("year", year, "month", month, "hash", hash);
-		console.log("element", $calndarElement.data('year') + '-' + $calndarElement.data('month'), hash);
+		// console.log("year", year, "month", month, "hash", hash);
+		// console.log("element", $calndarElement.data('year') + '-' + $calndarElement.data('month'), hash);
 
 		loadMonth(year,month,currentHash);
 		return false;
@@ -104,7 +104,7 @@ console.log($contentElement)
 		para.year = year
 		para.month = month
 		para.hash = hash
-		console.log("Load para", para);
+		// console.log("Load para", para);
 		let loadMonthText = thaiMonthName[parseInt(month-1)]+" "+(year+543);
 		notify("กำลังโหลดปฏิทินของเดือน " + loadMonthText);
 
