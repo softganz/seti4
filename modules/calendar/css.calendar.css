@@ -1,8 +1,8 @@
 /**
 * Calendar:: calendar css
 * Created :: 2007-03-06
-* Modify  :: 2025-07-22
-* Version :: 2
+* Modify  :: 2025-07-23
+* Version :: 3
 */
 
 .widget-nav.-calendar {
@@ -17,22 +17,26 @@
 
 .widget-calendar {
 	background-color: #ffffff;
+	a {color: #ff6600; display: block;}
+	a:hover {color: #008F06;}
+	a.private {color: gray;}
+	thead>tr>th {padding:0 0 1px 0;}
+	tbody>tr {height: 80px;}
 	.dayname {padding: 6px; background-color: #c3d9ff; font-weight: bold; font-size: 10pt;}
 	.daynum {text-align: left; background-color: #E8EEF7; color: #6a6a6a; font-size: 10pt; padding: 2px;}
 	.have_item {font-weight: bold;}
 	.daybox, .currentdaybox {padding: 1px; border: 1px #ccddee solid;}
-	.currentdaybox {background-color: #FFFFCC;}
 	.daynum>span {display: inline-block; width: 1.6em; height: 1.6em; text-align: center; line-height: 1.6em; background-color: transparent;}
-	.currentdaybox .daynum>span {background-color: #fc0; border-radius: 50%}
-	.month-event{white-space: wrap; background-color: #f7f7f7; margin: 2px 2px 8px 2px; border-right: 4px; padding: 4px;}
-	.currentdaybox .month-event {background-color: #f5f5bd;}
-	.calendar-month thead th {padding:0 0 1px 0;}
-	.month-event em.time {font: bold 90% Arial,Sans-serif}
-	.month-event .event-title {padding-right: 2px}
-	a {color: #ff6600; display: block;}
-	a:hover {color: #008F06;}
-	a.private {color: gray;}
-	tbody>tr {height: 80px;}
+	.month-event{
+		white-space: wrap; background-color: #f7f7f7; margin: 2px 2px 8px 2px; padding: 4px; border-radius: 8px;
+		em.time {font: bold 90% Arial,Sans-serif}
+		.event-title {padding-right: 2px}
+	}
+	.currentdaybox {
+		background-color: #FFFFCC;
+		.daynum>span {background-color: #fc0; border-radius: 50%}
+		.month-event {background-color: #f5f5bd;}
+	}
 }
 
 .calendar-agenda {
@@ -59,16 +63,27 @@
 
 
 
-#calendar-room-info {width:70%;float:left;}
-#calendar-room-status {width:18%;float:left;margin:0 2% 0 10%;padding:0;}
-#calendar-room-status .button {width:100%;margin-bottom:20px;padding-left:0;padding-right:0;display:block;text-align:center;}
-#calendar-room-status span.button {margin:3px 0 0 0;font-size:1.3em;}
+#calendar-room-info {
+	width: 70%; float: left;
+	#calendar-room-status {width: 18%; float: left; margin: 0 2% 0 10%; padding: 0;}
+	#calendar-room-status .button {width: 100%; margin-bottom: 20px; padding-left: 0; padding-right: 0; display: block; text-align: center;}
+	#calendar-room-status span.button {margin:3 px 0 0 0; font-size: 1.3em;}
+}
 
-#calendar-car-info {width:70%;float:left;}
-#calendar-car-info>tbody>tr>td:first-child {width:28%;text-align:right;padding-right:2%;}
-#calendar-car-info>tbody>tr>td:nth-child(2) {width:68%;padding-left:2%;font-weight:bold;}
-#calendar-car-status {width:18%;float:left;margin:0 2% 0 10%;padding:0;}
-#calendar-car-status .button {width:100%;margin-bottom:20px;padding-left:0;padding-right:0;display:block;text-align:center;}
-#calendar-car-status span.button {margin:3px 0 0 0;font-size:1.3em;}
-.calendar-car-distance {width:100px;height:100px;padding:20px;clear:both;background:#CDFFAA;border:2px #4CB700 solid;border-radius:100px;font-size:16px;text-align:center;position:relative;top:-150px;left:50%;overflow:hidden;}
-.calendar-car-distance span {padding:20px;font-size:30px;display:block;}
+#calendar-car-info {
+	width: 70%; float: left;
+	>tbody>tr>td:first-child {width: 28%; text-align: right; padding-right: 2%;}
+	>tbody>tr>td:nth-child(2) {width: 68%; padding-left: 2%; font-weight: bold;}
+	#calendar-car-status {
+		width: 18%; float: left; margin: 0 2% 0 10%; padding: 0;
+		#calendar-car-status .button {width: 100%; margin-bottom: 20px; padding-left: 0; padding-right: 0; display: block; text-align: center;}
+		#calendar-car-status span.button {margin: 3px 0 0 0; font-size: 1.3em;}
+	}
+	.calendar-car-distance {
+		width: 100px; height: 100px; padding: 20px; clear:b oth;
+		background-color: #CDFFAA; border: 2px #4CB700 solid; border-radius: 100px;
+		font-size: 16px; text-align: center;
+		position: relative; top: -150px; left: 50%; overflow: hidden;
+		span {padding: 20px; font-size: 30px; display: block;}
+	}
+}
