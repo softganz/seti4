@@ -3,7 +3,7 @@
 * Stats   :: List Counter Log
 * Created :: 2018-12-15
 * Modify  :: 2025-07-23
-* Version :: 5
+* Version :: 6
 *
 * @return Widget
 *
@@ -113,6 +113,7 @@ class StatsList extends Page {
 	}
 
 	private function data() {
+		$hasPara = SG\getFirst($this->user, $this->date, $this->ip, $this->url);
 		return DB::select([
 			'SELECT log.*, u.`name` `user_name`
 			FROM
@@ -127,7 +128,7 @@ class StatsList extends Page {
 			ORDER BY `id` DESC',
 			'where' => [
 				'%WHERE%' => [
-					!SG\getFirst($this->user, $this->date, $this->ip, $this->url) ? ['l.`id` >= :id', ':id' => $this->id] : NULL,
+					!$hasPara ? ['l.`id` >= :id', ':id' => $this->id] : NULL,
 					$this->ip ? ['l.`ip` = :ip', ':ip' => ip2long($this->ip)] : NULL,
 					$this->user ? ['l.`user` = :user', ':user' => $this->user] : NULL,
 					$this->date ? ['DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date', ':date' => $this->date] : NULL,
@@ -136,7 +137,7 @@ class StatsList extends Page {
 				]
 			],
 			'var' => [
-				'$LIMIT$' => 'LIMIT '.$this->items,
+				'$LIMIT$' => 'LIMIT '.($hasPara ? ($this->page-1)*$this->items.','.$this->items : $this->items),
 			],
 			'options' => ['key' => 'id']
 		]);
