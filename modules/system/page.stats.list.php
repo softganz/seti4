@@ -3,7 +3,7 @@
 * Stats   :: List Counter Log
 * Created :: 2018-12-15
 * Modify  :: 2025-07-23
-* Version :: 6
+* Version :: 7
 *
 * @return Widget
 *
@@ -121,7 +121,7 @@ class StatsList extends Page {
 				SELECT *
 				FROM %counter_log% l
 				%WHERE%
-				ORDER BY l.`id` ASC
+				ORDER BY l.`id` $SUBORDER$
 				$LIMIT$
 			) AS log
 				LEFT JOIN %users% AS u ON log.`user` = u.`uid`
@@ -138,6 +138,7 @@ class StatsList extends Page {
 			],
 			'var' => [
 				'$LIMIT$' => 'LIMIT '.($hasPara ? ($this->page-1)*$this->items.','.$this->items : $this->items),
+				'$SUBORDER$' => $hasPara ? 'DESC' : 'ASC',
 			],
 			'options' => ['key' => 'id']
 		]);
