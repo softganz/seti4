@@ -2,8 +2,8 @@
 /**
 * Stats   :: List Counter Log
 * Created :: 2018-12-15
-* Modify  :: 2025-07-17
-* Version :: 4
+* Modify  :: 2025-07-23
+* Version :: 5
 *
 * @return Widget
 *
@@ -17,6 +17,7 @@ class StatsList extends Page {
 	var $ip;
 	var $user;
 	var $date;
+	var $url;
 	// var $getEid;
 	var $includeBot = false;
 	var $items = 100;
@@ -28,6 +29,7 @@ class StatsList extends Page {
 			'ip' => post('ip'),
 			'user' => SG\getFirstInt(post('user')),
 			'date' => post('date'),
+			'url' => post('url'),
 			'items' => $items = SG\getFirst(post('items'), $this->items),
 			'page' => $page = SG\getFirst(post('page'), $this->page),
 			'id' => $this->getStartId(SG\getFirstInt(post('id'), $this->id), $page, $items),
@@ -49,6 +51,7 @@ class StatsList extends Page {
 			'user' => $this->user,
 			'ip' => $this->ip,
 			'date' => $this->date,
+			'url' => $this->url,
 			'id' => $this->id,
 			'items' => $this->items,
 			'bot' => $this->includeBot,
@@ -66,16 +69,16 @@ class StatsList extends Page {
 				++$no,
 				'<font color=brown>'.$rs->id.'</font>',
 				'<em><font color=brown>'.$rs->log_date.'</font></em>'.($rs->new_user ? ' <i class="icon -material">new_releases</i>' : ''),
-				($this->right->admin ? '<font color=brown><a href="'.url('stats/list', ['user' => $rs->user, 'items' => 10000]).'" title="Statistics of user '.$rs->user_name.'">'.$rs->user_name.'</a></font>' : '<font color=brown>'.$rs->user_name.'</font>'),
-				($this->right->admin ? '<a href="'.url('stats/list', ['ip' => long2ip($rs->ip), 'items' => 10000]).'" title="Statistics of ip '.long2ip($rs->ip).'"  data-width="full">'.long2ip($rs->ip).'</a>' : sg_sub_ip(long2ip($rs->ip))),
+				($this->right->admin ? '<font color=brown><a href="'.url('stats/list', ['user' => $rs->user]).'" title="Statistics of user '.$rs->user_name.'">'.$rs->user_name.'</a></font>' : '<font color=brown>'.$rs->user_name.'</font>'),
+				($this->right->admin ? '<a href="'.url('stats/list', ['ip' => long2ip($rs->ip)]).'" title="Statistics of ip '.long2ip($rs->ip).'"  data-width="full">'.long2ip($rs->ip).'</a>' : sg_sub_ip(long2ip($rs->ip))),
 			];
 
 			$tables->rows[] = [
 				'<td></td>',
 				'',
 				'<td colspan="3">'
-				. ($this->right->admin ? '<font color=#A7A7A7>url:</font><a href="'.$rs->url.'" target="_blank">'.urldecode($rs->url).'</a><br />':'')
-				. (user_access(true) ? '<font color=#A7A7A7>referer:</font><a href="'.$rs->referer.'" target=_blank><font color=#A7A7A7>'.urldecode($rs->referer).'</font></a><br />':'')
+				. ($this->right->admin ? '<font color="#A7A7A7">url:</font><a href="'.$rs->url.'" target="_blank">'.urldecode($rs->url).'</a> <a href="'.url('stats/list', ['url' => $rs->url]).'"><i class="icon -material">view_list</i></a><br />':'')
+				. (user_access(true) ? '<font color="#A7A7A7">referer:</font><a href="'.$rs->referer.'" target=_blank><font color=#A7A7A7>'.urldecode($rs->referer).'</font></a><br />':'')
 				. '<font color=#A7A7A7>browser:'.$rs->browser.'</font></td>',
 			];
 		}
@@ -124,10 +127,11 @@ class StatsList extends Page {
 			ORDER BY `id` DESC',
 			'where' => [
 				'%WHERE%' => [
-					['l.`id` >= :id', ':id' => $this->id],
+					!SG\getFirst($this->user, $this->date, $this->ip, $this->url) ? ['l.`id` >= :id', ':id' => $this->id] : NULL,
 					$this->ip ? ['l.`ip` = :ip', ':ip' => ip2long($this->ip)] : NULL,
 					$this->user ? ['l.`user` = :user', ':user' => $this->user] : NULL,
 					$this->date ? ['DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date', ':date' => $this->date] : NULL,
+					$this->url ? ['l.`url` = :url', ':url' => $this->url] : NULL,
 					!$this->includeBot ? ['l.`referer` NOT LIKE "%bot%"'] : NULL,
 				]
 			],
