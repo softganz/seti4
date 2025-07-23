@@ -27,10 +27,18 @@
 	.have_item {font-weight: bold;}
 	.daybox, .currentdaybox {padding: 1px; border: 1px #ccddee solid;}
 	.daynum>span {display: inline-block; width: 1.6em; height: 1.6em; text-align: center; line-height: 1.6em; background-color: transparent;}
-	.month-event{
-		white-space: wrap; background-color: #f7f7f7; margin: 2px 2px 8px 2px; padding: 4px; border-radius: 8px;
+	.month-event {
+		white-space: wrap; margin: 2px 2px 8px 2px; padding: 4px;
+		position: relative;
 		em.time {font: bold 90% Arial,Sans-serif}
 		.event-title {padding-right: 2px}
+	}
+	.month-event::before {
+		content: "";
+		position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+		background-color: attr(data-color type(<color>), #ff6600); /* Fallback color report error on vscode */
+		opacity: 0.1;
+		border-radius: 8px;
 	}
 	.currentdaybox {
 		background-color: #FFFFCC;

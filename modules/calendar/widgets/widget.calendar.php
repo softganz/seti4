@@ -251,7 +251,8 @@ class CalendarWidget extends Widget {
 
 		$ret .= '<div id="reldiv'.$calendar['id'].'" '
 			. 'class="month-event -calendar-item-'.$calendar['id'].($calendar['category'] ? ' tags-'.$calendar['category'] : '').'" '
-			. 'data-tooltip="'.$eventTitle.'<br />'.$eventDetail.'"'
+			. 'data-tooltip="'.$eventTitle.'<br />'.$eventDetail.'" '
+			. 'data-color="'.$calendarOptions->color.'" '
 			. '>';
 		$ret .= '<a class="sg-action '.$calendar['privacy'].'" '
 			. 'href="'.url('calendar/'.$calendar['id'], ['nodeId' => $this->nodeId, 'callFrom' => $this->callFrom]).'" '
