@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2025-07-18
-* Version :: 17
+* Modify  :: 2025-07-23
+* Version :: 18
 *
 * @param Array $args
 * @return Object
@@ -233,6 +233,8 @@ class DB {
 		$this->items = $this->fetchRow($query);
 
 		$this->count = count($this->items);
+
+		if ($this->options->debug) debugMsg($this->debugMsg());
 	}
 
 	function queryResult() {
@@ -447,10 +449,10 @@ class DB {
 				'key' => NULL,
 				'value' => NULL,
 				'group' => NULL,
-				'sum' => [],
-				'jsonDecode' => [],
 				'multiple' => false,
 				'debug' => false,
+				'sum' => [],
+				'jsonDecode' => [],
 			],
 			(Array) $options
 		);
