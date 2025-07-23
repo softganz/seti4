@@ -36,7 +36,8 @@
 	.month-event::before {
 		content: "";
 		position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-		background-color: attr(data-color type(<color>), #ff6600); /* Fallback color report error on vscode */
+		background-color: #ff6600;
+		background-color: attr(data-color type(<color>), #ff6600); /* Fallback color report : show error on vscode */
 		opacity: 0.1;
 		border-radius: 8px;
 	}
