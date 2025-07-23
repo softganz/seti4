@@ -2,8 +2,8 @@
 /**
  * Calendar:: Calcendr Widget
  * Created :: 2025-07-20
- * Modify  :: 2025-07-22
- * Version :: 1
+ * Modify  :: 2025-07-23
+ * Version :: 2
  *
  * @param Array $args
  * @return Object
@@ -126,7 +126,7 @@ class CalendarWidget extends Widget {
 		// 	// 	'month' => $month,
 		// 	// 	'hash' => $hash,
 		// 	// 	'url' => url('calendar'),
-		// 	// 	'get' => substr($this->action,0,1) == '*' ? $this->action : NULL,
+		// 	// 	'get' => substr($this->action,0,1) === '*' ? $this->action : NULL,
 		// 	// 	'nodeId' => $post->nodeId ? $post->nodeId : NULL,
 		// 	// 	'orgId' => $post->orgId ? $post->orgId : NULL,
 		// 	// 	'module' => $post->module ? $post->module : NULL
@@ -180,7 +180,7 @@ class CalendarWidget extends Widget {
 		$currentDay = 1;
 		while ($currentDay <= $daysInMonth) {
 			// Start new row if we're at the beginning of the week
-			if (($currentDay + $startDayOfWeek - 1) % 7 == 0 && $currentDay > 1) {
+			if (($currentDay + $startDayOfWeek - 1) % 7 === 0 && $currentDay > 1) {
 				$ret .= '</tr><tr>';
 			}
 
@@ -254,18 +254,19 @@ class CalendarWidget extends Widget {
 			. 'data-tooltip="'.$eventTitle.'<br />'.$eventDetail.'" '
 			. 'data-color="'.$calendarOptions->color.'" '
 			. '>';
+		$ret .= '<div class="-bg"'.($calendarOptions->color ? ' style="background-color: '.$calendarOptions->color.';"' : '').'></div>';
 		$ret .= '<a class="sg-action '.$calendar['privacy'].'" '
 			. 'href="'.url('calendar/'.$calendar['id'], ['nodeId' => $this->nodeId, 'callFrom' => $this->callFrom]).'" '
-			. ($calendarOptions->color ? 'style="color:'.$calendarOptions->color.';" ' : '')
+			. ($calendarOptions->color ? 'style="color: '.$calendarOptions->color.';" ' : '')
 			. 'data-rel="box" data-width="600" data-height="300"'
 			. '>';
 		if ($calendar['from_time'] && (intval(substr($calendar['from_time'],0,2)) || intval(substr($calendar['from_time'],3,2)))) {
-			if (cfg('calendar.format.time')=='short') {
+			if (cfg('calendar.format.time') === 'short') {
 				$hr = intval(substr($calendar['from_time'],0,2));
 				$am = $hr < 12 ? '' : 'p';
 				$hr = $hr < 12 ? $hr : $hr-12;
 				$min = intval(substr($calendar['from_time'],3,2));
-				if ($min == 0) $min = '';
+				if ($min === 0) $min = '';
 				$time = $hr.($min ? ':' : '').$min.$am;
 			} else {
 				$time = substr($calendar['from_time'],0,5).' น.';

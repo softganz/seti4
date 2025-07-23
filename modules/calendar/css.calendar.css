@@ -2,7 +2,7 @@
 * Calendar:: calendar css
 * Created :: 2007-03-06
 * Modify  :: 2025-07-23
-* Version :: 3
+* Version :: 4
 */
 
 .widget-nav.-calendar {
@@ -32,14 +32,14 @@
 		position: relative;
 		em.time {font: bold 90% Arial,Sans-serif}
 		.event-title {padding-right: 2px}
-	}
-	.month-event::before {
-		content: "";
-		position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-		background-color: #ff6600;
-		background-color: attr(data-color type(<color>), #ff6600); /* Fallback color report : show error on vscode */
-		opacity: 0.1;
-		border-radius: 8px;
+		.-bg {
+			position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+			border-radius: 8px;
+			background-color: #ff6600;
+			opacity: 0.1;
+			z-index: 1;
+			pointer-events: none;
+		}
 	}
 	.currentdaybox {
 		background-color: #FFFFCC;
