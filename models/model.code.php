@@ -2,8 +2,8 @@
 /**
  * Code    :: Code Collection Model
  * Created :: 2021-09-11
- * Modify  :: 2025-06-27
- * Version :: 2
+ * Modify  :: 2025-07-23
+ * Version :: 3
  *
  * @usage import('model:code')
  */
@@ -24,7 +24,7 @@ class ChangwatModel {
 
 		$options = SG\json_decode($conditions->options, $options, $defaults);
 		$debug = $options->debug;
-		debugMsg($options, '$options');
+		// debugMsg($options, '$options');
 
 		$result = [];
 		if ($conditions->idLike) mydb::where('`provId` LIKE :idLike', ':idLike', $conditions->idLike.'%');
