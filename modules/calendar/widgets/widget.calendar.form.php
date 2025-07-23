@@ -2,8 +2,8 @@
 /**
  * Calendar:: Edit Form
  * Created :: 2007-03-06
- * Modify  :: 2025-07-22
- * Version :: 3
+ * Modify  :: 2025-07-23
+ * Version :: 4
  *
  * @param Array $calendarInfo
  * @param Object $para
@@ -53,7 +53,7 @@ class CalendarFormWidget extends Widget {
 				'topsave' => [
 					'type' => 'button',
 					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="sg-action btn -back-to-calendar -link -cancel" style="position: absolute; left: 0;" data-rel=".calendar-content"><i class="icon -material -gray">navigate_before</i>กลับสู่หน้าปฏิทิน</a><a class="btn -back-to-calendar -link -cancel"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'pretext' => '<a class="btn -back-to-calendar -link -cancel" style="position: absolute; left: 0;"><i class="icon -material -gray">navigate_before</i>กลับสู่หน้าปฏิทิน</a><a class="btn -back-to-calendar -link -cancel"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
 					'container' => '{class:"-sg-text-right"}',
 				],
 				'title' => [
