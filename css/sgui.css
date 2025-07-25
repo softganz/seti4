@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-07-15
- * Version :: 21
+ * Modify  :: 2025-07-25
+ * Version :: 22
  */
 
 @charset "UTF-8";
@@ -435,8 +435,9 @@
 
 		>label {font-weight: bold;}
 		>.-for-input {
-			display: block; padding: 8px; line-height: 2.3rem; min-height: 3.6rem;
-			border-bottom: 1px dotted #ccc; cursor: text;
+			box-sizing: border-box;
+			display: block; line-height: 3.1rem; min-height: 3.2rem;
+			border-bottom: 0.1rem dotted #ccc; cursor: text;
 			&:hover {
 				border-bottom: 1px dotted #f60;
 			}
@@ -522,7 +523,6 @@
 	.inline-edit-view.-text {display: inline-block; padding: 0px 8px;}
 	.inline-edit-view.-primary {font-weight: bold;}
 	.inline-edit-view.-fill:not(.-hidden) {display: block;}
-
 }
 
 /* widget-column */
