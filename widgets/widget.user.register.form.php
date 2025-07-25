@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2025-07-15
-* Version :: 8
+* Modify  :: 2025-07-25
+* Version :: 9
 *
 * @param Object $register
 * @return Widget
@@ -28,8 +28,6 @@ class UserRegisterFormWidget extends Widget {
 	}
 
 	function build() {
-		if ($this->captchaKey) head(' <script src="https://www.google.com/recaptcha/api.js"></script>');
-
 			$emailDesc = '<ul><li>กรุณาป้อนอี-เมล์ของท่านให้ถูกต้อง ทางเว็บไซท์จะไม่มีการแสดงอีเมล์นี้ของท่านในหน้าเว็บไซท์ แต่จะใช้ในกรณีดังต่อไปนี้<ol><li>ท่านลืมรหัสผ่าน ระบบจะส่งรหัสผ่านไปให้ท่านตามอีเมล์ที่ระบุนี้</li><li>มีการติดต่อจากแบบฟอร์มที่ให้กรอกในหน้าเว็บไซท์เพื่อส่งถึงท่าน</li></ol></li>';
 
 		switch (cfg('member.registration.method')) {
@@ -213,6 +211,8 @@ class UserRegisterFormWidget extends Widget {
 
 	private function script() {
 		return '<script type="text/javascript">
+			$.getScript("https://www.google.com/recaptcha/api.js", function(data, textStatus, jqxhr) {})
+
 			function onSubmit(token) {
 				// console.log("Submit", token);
 				// document.getElementById("edit-register").submit();
