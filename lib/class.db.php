@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2025-07-23
-* Version :: 18
+* Modify  :: 2025-07-25
+* Version :: 19
 *
 * @param Array $args
 * @return Object
@@ -347,7 +347,7 @@ class DB {
 			$stmt .= ';<br><span style="color:red;">-- ERROR :: ('.$addMessage['errorCode'].') '.$addMessage['errorMessage'].'</span>';
 		}
 
-		if ($addMessage['rowCount']) {
+		if (isset($addMessage['rowCount'])) {
 			$stmt .= '<br><span style="color:green">-- '
 				. (isset($addMessage['rowCount']) ? '<b>'.number_format($addMessage['rowCount']).'</b> affected rows' : '')
 				. (isset($addMessage['time']) ? ' in <b>'.number_format($addMessage['time'] * 1000, 2).'</b> ms' : '')
