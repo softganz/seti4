@@ -3,7 +3,7 @@
 * DB      :: Database Management
 * Created :: 2023-07-28
 * Modify  :: 2025-07-25
-* Version :: 19
+* Version :: 20
 *
 * @param Array $args
 * @return Object
@@ -216,7 +216,7 @@ class DB {
 			$queryError = $this->PDO->errorInfo();
 			$this->updateLastQueryStmt(
 				'Select',
-				$this->stmt(['errorCode' => $queryError[1], 'errorMessage' => $queryError[2]]),
+				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
 				$queryError
 			);
 
@@ -255,7 +255,7 @@ class DB {
 			$queryError = $this->PDO->errorInfo();
 			$this->updateLastQueryStmt(
 				'Query',
-				$this->stmt(['errorCode' => $queryError[1], 'errorMessage' => $queryError[2]]),
+				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
 				$queryError
 			);
 
@@ -343,8 +343,8 @@ class DB {
 	// Create statement with message and error code
 	private function stmt($addMessage = []) {
 		$stmt = $this->stmt;
-		if ($addMessage['errorCode']) {
-			$stmt .= ';<br><span style="color:red;">-- ERROR :: ('.$addMessage['errorCode'].') '.$addMessage['errorMessage'].'</span>';
+		if ($addMessage['errorMessage']) {
+			$stmt .= ';<br><span style="color:red;">-- ERROR #'.$addMessage['errorCode'].' '.$addMessage['errorMessage'].'</span>';
 		}
 
 		if (isset($addMessage['rowCount'])) {
