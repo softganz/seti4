@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-07-04
- * Version :: 3
+ * Modify  :: 2025-07-25
+ * Version :: 4
  */
 
 .page.-page {margin: 0 auto; padding: 0;}
@@ -50,7 +50,7 @@
 			>*>*>a>.icon:only-child {padding: 0; width: 24px; height: 24px}
 			li.-profile>a {padding: 0; max-width: 110px; overflow: hidden; white-space: nowrap; font-weight: bold;}
 			li.-profile>a>.profile-photo {margin: 0;}
-			li.-profile>a>.icon {padding: 4px;}
+			li.-profile>a>.icon {box-sizing:border-box; padding: 4px; height: 32px;}
 			li.-profile>a>span {display: none; padding: 0 8px 0 4px;}
 			li.-profile>a>.profile-photo {width: 32px; height: 32px; margin: 0; padding: 0; display: inline-block; border-radius: 50%; border: none;}
 			li.-profile>ul {border-radius: 8px; overflow: hidden;}
