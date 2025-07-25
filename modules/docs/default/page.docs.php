@@ -30,6 +30,7 @@ class Docs extends PageController {
 					'<a href="'.url('docs/libraies').'">Libraries</a>',
 				]
 			]),
+			'sideBar' => $this->load('docs.list'),
 			'body' => new Widget([
 				'children' => [
 					empty($this->args) ? $this->load('overview') : $this->loadPage(),
@@ -42,11 +43,11 @@ class Docs extends PageController {
 	private function loadPage() {
 		return new Widget([
 			'children' => [
-				new Container([
-					'tagName' => 'nav',
-					'class' => 'nav docs-nav',
-					'child' => $this->load('docs.list'),
-				]), // Container
+				// new Container([
+				// 	'tagName' => 'nav',
+				// 	'class' => 'nav docs-nav',
+				// 	'child' => $this->load('docs.list'),
+				// ]), // Container
 
 				new Container([
 					'class' => 'docs-article',
