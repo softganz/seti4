@@ -2,8 +2,8 @@
 /**
 * Core    :: Core Function
 * Created :: 2023-08-01
-* Modify  :: 2025-07-18
-* Version :: 16
+* Modify  :: 2025-07-26
+* Version :: 17
 */
 
 //---------------------------------------
@@ -597,8 +597,8 @@ function module_install($module) {
  * @return Boolean
  */
 function is_home() {
-	global $R;
-	return !isset($R->request) || empty($R->request) || $R->request=='home';
+	$request = R('request');
+	return !isset($request) || empty($request) || ($request == 'home') || ($request === cfg('web.homepage'));
 }
 
 /**

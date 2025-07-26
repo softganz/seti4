@@ -2,8 +2,8 @@
 /**
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
-* Modify  :: 2025-07-06
-* Version :: 32
+* Modify  :: 2025-07-26
+* Version :: 33
 */
 
 /*************************************************************
@@ -1086,7 +1086,6 @@ class SgCore {
 		global $page,$request_time,$request_process_time;
 		$request = R()->request;
 		$requestResult = '';
-		$isLoadHomePage = false;
 		$requestFilePrefix = 'page';
 		$isDebugProcess = debug('process');
 		$buildMethod = 'build'; // Default build method
@@ -1104,7 +1103,7 @@ class SgCore {
 		// To view url parameter
 		// echo '<p style="padding-top:86px;">$request = '.$request.'<br />$_GET<br/><pre>'.print_r($_GET,1).'</pre><br />$_REQUEST<pre>'.print_r($_REQUEST,2).'</pre></p>';
 
-		if (!isset($request) || empty($request) || ($request == 'home') || ($request == cfg('web.homepage'))) {
+		if (is_home()) {
 			// Check for splash page
 		 	// Show splash if not visite site in time
 			if (cfg('web.splash.time') > 0 && $splashPage = url_alias('splash') && empty($_COOKIE['splash'])) {
@@ -1112,9 +1111,12 @@ class SgCore {
 				location('splash');
 			}
 
+			// Set page id to home
+			page_class('module-home');
+
 			// Show home page
 			$home = cfg('web.homepage');
-			$isLoadHomePage = true;
+
 			if (empty($home)) {
 				ob_start();
 				self::loadTemplate('home');
@@ -1175,9 +1177,6 @@ class SgCore {
 
 		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = self::processMenu($menu, $buildMethod, $requestFilePrefix);
 		// debugMsg('$buildMethod = '.$buildMethod);
-
-		// Set page id to home
-		if ($isLoadHomePage) page_class('module-home');
 
 		if ($found) {
 			// Set splash page was show
