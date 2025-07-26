@@ -3,7 +3,7 @@
 * Core Function :: Controller Process Web Configuration and Request
 * Created :: 2006-12-16
 * Modify  :: 2025-07-26
-* Version :: 33
+* Version :: 34
 */
 
 /*************************************************************
@@ -1132,24 +1132,17 @@ class SgCore {
 			}
 		} else if ($request) {
 			// Load Module Manifest
-			// is API?
+			// Is API request?
 			if (preg_match('/^api\/(.*)/', $request, $out)) {
 				$request = $out[1];
 				q($request);
 				$requestFilePrefix = 'api';
 			}
-			// debugMsg($request);
-			// if (preg_match('/(.*)\\'._MS_.'(person)$/', $request, $out)) {
-			// 	debugMsg($out, '$out');
-			// 	$request = $out[1];
-			// 	$buildMethod = $out[2];
-			// 	q($request);
-			// }
-			// debugMsg($request);
-			// debugMsg(q(),'q()');
+
 			if (q(0)) $manifest = R::Manifest(q(0));
+
 			if ($url_alias = url_alias($request)) {
-				// check url alias
+				// Check url alias
 				$process_debug .= '<p><strong>'.$request.'</strong> is url alias of <strong>'.$url_alias->system.'</strong></p>';
 				$request = $url_alias->system;
 				q($request);
@@ -1296,23 +1289,7 @@ class SgCore {
 			}
 		} else {
 			// Page not found
-			http_response_code(_HTTP_ERROR_NOT_FOUND);
-			LogModel::save([
-				'module' => 'system',
-				'keyword' => 'Page not found'
-			]);
-			// Set header to no found and noacrchive when url address is load function page
-			if ($q == str_replace('.', '/', $package)) {
-				header('HTTP/1.0 404 Not Found');
-				head('<meta name="robots" content="noarchive" />');
-			}
-			$requestResult .= '<div class="pagenotfound">
-			<h1>Not Found</h1>
-			<p>ขออภัย ไม่มีหน้าเว็บนี้อยู่ในระบบ</p><p>The requested URL <b>'.$_SERVER['REQUEST_URI'].'</b> was not found on this server.</p>'
-			. (user_access('access debugging program') ? '<p><strong> Load file detail</strong><br />'.print_o($menuArgs,'$request').'<br />File : <strong>'.$mainFolder.$pageFile.'</strong><br />Routine : <strong>function '.$retFunc.'()</strong></p>' : '')
-			. '<hr>
-			<address>copyright <a href="http://'.$_SERVER['HTTP_HOST'].'">http://'.$_SERVER['HTTP_HOST'].'</a> Allright reserved.</address>
-			</div>'._NL;
+			$requestResult .= self::pageNotFound($menu);
 		}
 
 		// Start Render Page, result is string
@@ -1340,8 +1317,10 @@ class SgCore {
 
 		if (debug('menu')) debugMsg(menu(),'$menu');
 		if ($isDebugProcess) debugMsg($process_debug.(isset($GLOBALS['process_debug'])?print_o($GLOBALS['process_debug']):''));
+
 		$request_time[$request] = R()->timer->get($request,5);
 		$request_process_time = $GLOBALS['request_process_time']+R()->timer->get($request);
+
 		if (debug('timer')) debugMsg('Request process time : '.$request_process_time.' ms.'.print_o($request_time));
 
 		if (debug('html')) debugMsg(htmlview($requestTextResult,'html tag'));
@@ -1351,14 +1330,15 @@ class SgCore {
 			debugMsg($cfg,'cfg');
 		}
 
-
 		if ($pageTemplate) $page = $pageTemplate;
 		else if (empty($page)) $page = 'index';
+
 		if ($loadTemplate) {
 			$webResult = self::processIndex($page, $requestTextResult);
 			$webResult = self::processTemplate($webResult, $templateVar);
 			echo $webResult;
 		}
+
 		return $requestTextResult;
 	}
 
@@ -1437,6 +1417,28 @@ class SgCore {
 		// . (q(3) && !is_numeric(q(3)) ? ' -'.preg_replace('/[\.]{1,}/','-',q(3)).' --'.preg_replace('/[\.]{1,}/','-',q(3)) : '')
 		// . ' -'.str_replace('.','-',str_replace('www.','',cfg('domain.short')))
 		// . '"'
+	}
+
+	static function pageNotFound($menu) {
+		// Set header to no found and noacrchive when url address is load function page
+		http_response_code(_HTTP_ERROR_NOT_FOUND);
+		header('HTTP/1.0 404 Not Found');
+		head('<meta name="robots" content="noarchive" />');
+
+		LogModel::save([
+			'module' => 'system',
+			'keyword' => 'Page not found'
+		]);
+
+		return '<div class="pagenotfound">
+		<h1>Page Not Found.</h1>
+		<p>ขออภัย ไม่มีหน้าเว็บนี้อยู่ในระบบ</p><p>The requested URL <b>'.$_SERVER['REQUEST_URI'].'</b> was not found on this server.</p>'
+		. (user_access('access debugging program') ? '<p><strong> Load file detail</strong><br />'.print_o($menu,'$menu').'<br />' : '')
+		// . 'File : <strong>'.$mainFolder.$pageFile.'</strong><br />'
+		// . 'Routine : <strong>function '.$retFunc.'()</strong></p>'
+		. '<hr>
+		<address>copyright <a href="http://'.$_SERVER['HTTP_HOST'].'">http://'.$_SERVER['HTTP_HOST'].'</a> Allright reserved.</address>
+		</div>'._NL;
 	}
 }
 ?>
