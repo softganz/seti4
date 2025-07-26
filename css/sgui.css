@@ -230,7 +230,7 @@
 	margin: 8px 0;
 	background-color: var(--card-bg-color);
 
-	.widget-table:last-child {margin-bottom: 8px;}
+	.widget-table:last-child::after {content: ""; display: block; height: 8px;}
 }
 
 /* widget-appbar */
