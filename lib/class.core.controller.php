@@ -1168,8 +1168,8 @@ class SgCore {
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 		}
 
+		// Load request page from menu config
 		list($pageClass, $found, $pageBuildWidget, $pageClassWidget) = self::processMenu($menu, $buildMethod, $requestFilePrefix);
-		// debugMsg('$buildMethod = '.$buildMethod);
 
 		if ($found) {
 			// Set splash page was show
@@ -1179,9 +1179,8 @@ class SgCore {
 
  			// Page function that return widget and has build method
 			if (!is_object($pageClassWidget) && is_object($pageBuildWidget) && method_exists($pageBuildWidget, $buildMethod)) {
-				$pageClassWidget = new Widget([
-					'child' => $pageBuildWidget
-				]);
+				// $pageClassWidget = new Widget(['child' => $pageBuildWidget]); // @deprecated use next line instead
+				$pageClassWidget = $pageBuildWidget;
 			}
 
 			if ( (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) ) {
@@ -1237,6 +1236,7 @@ class SgCore {
 			}
 			// debugMsg(gettype($requestResult));
 			// debugMsg($requestResult, '$resourceType');
+
 			// Generate result by content type
 			if (cfg('Content-Type') == 'text/xml') {
 				die(process_widget($requestResult));
@@ -1285,7 +1285,7 @@ class SgCore {
 
 				die(debugMsg().process_widget($requestResult));
 			} else {
-				// Do nothing
+				// Do nothing and start render by below code
 			}
 		} else {
 			// Page not found
@@ -1293,6 +1293,7 @@ class SgCore {
 		}
 
 		// Start Render Page, result is string
+
 		// debugMsg($pageClass, '$pageClass');
 		// debugMsg($pageBuildWidget, '$pageBuildWidget');
 		// debugMsg($requestResult, $requestResult);
@@ -1301,6 +1302,7 @@ class SgCore {
 			$templateVar = array_merge($templateVar, (Array) $pageBuildWidget->var);
 		}
 
+		// Set title variabe for page render
 		$templateVar['Title'] .= ' | '.cfg('web.title');
 		$templateVar['Title'] = self::processTemplate(strip_tags($templateVar['Title']), $templateVar);
 		$templateVar['Title'] = trim(trim($templateVar['Title']), '|');
@@ -1311,25 +1313,25 @@ class SgCore {
 		$requestTextResult = process_widget($requestTextResult);
 
 		R()->timer->stop($request);
+		$request_time[$request] = R()->timer->get($request,5);
+		$request_process_time = $GLOBALS['request_process_time']+R()->timer->get($request);
+
 
 		if ($isDebugProcess) $process_debug .= print_o($menu,'$menu');
 		if ($isDebugProcess) $process_debug .= print_o(q(0,'all'),'$q');
 
 		if (debug('menu')) debugMsg(menu(),'$menu');
 		if ($isDebugProcess) debugMsg($process_debug.(isset($GLOBALS['process_debug'])?print_o($GLOBALS['process_debug']):''));
-
-		$request_time[$request] = R()->timer->get($request,5);
-		$request_process_time = $GLOBALS['request_process_time']+R()->timer->get($request);
-
 		if (debug('timer')) debugMsg('Request process time : '.$request_process_time.' ms.'.print_o($request_time));
-
 		if (debug('html')) debugMsg(htmlview($requestTextResult,'html tag'));
+
 		if (debug('config')) {
 			$cfg = cfg();
 			array_walk_recursive($cfg, '__htmlspecialchars');
 			debugMsg($cfg,'cfg');
 		}
 
+		// Start load template with result
 		if ($pageTemplate) $page = $pageTemplate;
 		else if (empty($page)) $page = 'index';
 
@@ -1431,7 +1433,7 @@ class SgCore {
 		]);
 
 		return '<div class="pagenotfound">
-		<h1>Page Not Found.</h1>
+		<h1><i class="icon -material -sg-48">report_gmailerrorred</i> Page Not Found.</h1>
 		<p>ขออภัย ไม่มีหน้าเว็บนี้อยู่ในระบบ</p><p>The requested URL <b>'.$_SERVER['REQUEST_URI'].'</b> was not found on this server.</p>'
 		. (user_access('access debugging program') ? '<p><strong> Load file detail</strong><br />'.print_o($menu,'$menu').'<br />' : '')
 		// . 'File : <strong>'.$mainFolder.$pageFile.'</strong><br />'
