@@ -147,11 +147,11 @@ if (cfg('web.footer')) {
 ?>
 <?php
 if (debug('query')) {
-	echo '<strong>Query time = '.$GLOBALS['R']->myDb->_query_times.' ms.</strong><br />';
-	echo '<b>$DB</b><ul>';
+	echo '<strong>DB '.count((Array) R('query_items')).' queries in '.$GLOBALS['R']->myDb->_query_times.' ms.</strong><br />';
+	echo '<b>$DB</b><ol>';
 	foreach ((Array) R('query_items') as $query) echo '<li>'.$query.'</li>';
 	echo '</ul>';
-	echo '<b>$mydb</b><ul>';
+	echo '<b>$mydb</b><ol>';
 	foreach (mydb()->_query_items as $query) echo '<li>'.$query.'</li>';
 	echo '</ul>';
 }
