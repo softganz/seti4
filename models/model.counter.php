@@ -114,16 +114,16 @@ class CounterModel {
 			]);
 
 			$counter->online_members = $dbs->online_members;
-			$counter->online_name = $dbs->online_name;
 			$counter->online_count = $dbs->online_count;
-
-			//foreach ($online->items as $item) if ($item->name) $online_name[] = $item->name;
-
-			//debugMsg($counter,'$counter');
+			// Do not save user online name to database config
+			unset($counter->online_name);
 
 			if (cfg('counter.enable') && $is_counter_ok) {
 				cfg_db('counter',$counter);
 			}
+
+			// Set user online name to config
+			$counter->online_name = $dbs->online_name;
 		}
 
 		return $counter;
