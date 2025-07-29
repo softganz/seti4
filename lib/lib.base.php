@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2025-07-22
- * Version :: 12
+ * Modify  :: 2025-07-29
+ * Version :: 13
  */
 
 namespace SG;
@@ -698,7 +698,7 @@ function implode_address($rs, $type = 'long') {
  * @param String $sep
  * @return (Object)(preName, firstName, lastName)
  */
-function explodeName(String $name = NULL, String $sep = ' ') {
+function explodeName(String $name = '', String $sep = ' ') {
 	$name = preg_replace('/['.$sep.']{2,}/', $sep, $name);
 
 	// preg_match('/(*)'.$sep.'(*)/', $name, $out);
