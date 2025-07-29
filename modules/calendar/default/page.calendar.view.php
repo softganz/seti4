@@ -2,8 +2,8 @@
 /**
  * Calendar:: View
  * Created :: 2007-03-06
- * Modify  :: 2025-07-22
- * Version :: 4
+ * Modify  :: 2025-07-29
+ * Version :: 5
  *
  * @param String $calendarInfo
  * @return Widget
@@ -41,7 +41,7 @@ class CalendarView extends Page {
 				'SELECT UPPER(`membership`) `membership` FROM %topic_user% WHERE `tpid` = :nodeId AND `uid` = :userId LIMIT 1',
 				'var' => [':nodeId' => $this->calendarInfo->tpid, ':userId' => i()->uid]
 			])->membership;
-			if (in_array($membership, ['TRAINNER','OWNER'])) $isEdit = true;
+			if (in_array($membership, ['TRAINER','OWNER'])) $isEdit = true;
 		}
 	
 		return new Scaffold([
