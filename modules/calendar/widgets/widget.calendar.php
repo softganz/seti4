@@ -2,8 +2,8 @@
 /**
  * Calendar:: Calcendr Widget
  * Created :: 2025-07-20
- * Modify  :: 2025-07-23
- * Version :: 2
+ * Modify  :: 2025-07-29
+ * Version :: 3
  *
  * @param Array $args
  * @return Object
@@ -225,7 +225,7 @@ class CalendarWidget extends Widget {
 				// '@'.date('H:i:s').' Year ='.$year.' Month ='.$month,
 				// new DebugMsg($this->args, '$this->args'),
 				// new DebugMsg($this->right, '$this->right'),
-				$ret,
+				new ScrollView(['child' => $ret]),
 				$this->right->add ? new Container([
 					'class' => 'tips -sg-paddingnorm',
 					'child' => tr('Add new calendar item by click on date you want to add.'),
