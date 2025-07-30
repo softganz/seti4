@@ -1,13 +1,14 @@
 <?php
 /**
-* Module Method
-* Created 2019-05-15
-* Modify  2019-05-15
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Code    :: Ampur Distance 
+ * Created :: 2019-05-15
+ * Modify  :: 2025-07-30
+ * Version :: 2
+ *
+ * @param Object $self
+ * @param Int $var
+ * @return String
+ */
 
 $debug = true;
 
@@ -16,7 +17,7 @@ function code_ampur_distance($self, $ampurId = NULL) {
 
 	$ampurInfo = R::Model('code.ampur.get', $ampurId);
 
-	$isEdit = user_access('access administrator pages, administer contents');
+	$isEdit = user_access('access administrator pages, administer contents') || (i()->ok && in_array(i()->uid, (Array) cfg('system')->createDistance));
 
 	$ret = '<div id="ampur-distance">';
 	$ret .= '<h3>'.$ampurInfo->id.' อำเภอ'.$ampurInfo->name.' จังหวัด'.$ampurInfo->changwatName.'</h3>';
