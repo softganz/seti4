@@ -1,16 +1,16 @@
 <?php
 /**
-* Widget  :: Report Widget
-* Created :: 2020-10-01
-* Modify  :: 2025-06-03
-* Version :: 4
-*
-* @param Array $args
-* @return Widget
-*
-* @usage import('widget:report.php')
-* @usage new Report([])
-*/
+ * Widget  :: Report Widget
+ * Created :: 2020-10-01
+ * Modify  :: 2025-08-02
+ * Version :: 5
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @usage import('widget:report.php')
+ * @usage new Report([])
+ */
 
 class Report extends Widget {
 	var $widgetName = 'Report';
@@ -234,6 +234,9 @@ class Report extends Widget {
 				post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />' : '',
 
 				'<div class="-toolbar">',
+				'<div class="-metric">',
+				$this->_renderChildren($this->metric),
+				'</div><!-- -metric -->',
 				'<div class="-filter">'
 					. '<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
 					. ($this->filterBar ? (
