@@ -835,6 +835,16 @@
 		>.report-output-debug {max-height: 200px; overflow: scroll;}
 	}
 
+	.-toolbar>.-metric {
+		display: flex;
+		margin-bottom: 8px;
+		align-items: center;
+		gap: 8px;
+		>* {display: block;}
+		.widget-row a {border-radius: 8px;}
+		.widget-container {font-weight: bold; font-size: 120%;}
+	}
+
 	.-toolbar>.-filter {
 		display: flex;
 		margin-bottom: 8px;
@@ -889,7 +899,7 @@
 	.-toolbar>.-options {
 		display: flex; align-items: center; border-radius: 4px; gap: 8px; margin: 0 0 8px 0;
 
-		>.-item {border-right: 1px #ccc solid; padding: 2px;}
+		>.-item {border-right: 1px #ccc solid; padding: 0;}
 		>.-item:last-child {border-right: none;}
 		>div {display: flex; background-color: #fff; border-radius: 8px; gap: 8px; padding: 8px;}
 	}
