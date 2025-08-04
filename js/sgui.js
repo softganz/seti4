@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-07-14
-* Version :: 46
+* Modify  :: 2025-08-04
+* Version :: 47
 */
 
 'use strict'
@@ -532,6 +532,16 @@ function sgWebViewDomProcess(id) {
 	sgActionDone($this.data("webviewResume"), $this)
 }
 
+function showError(response) {
+	// console.log(response);
+	let errorMsg = 'ERROR : ';
+	if (response.responseJSON.text) {
+		errorMsg += response.responseJSON.text+' ('+response.status+')';
+	} else {
+		errorMsg += response.statusText+' ('+response.status+')';
+	}
+	notify(errorMsg);
+}
 
 
 
@@ -984,17 +994,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	let errorField = ''
 	let errorMsg = ''
 	let doneResult
-
-	function showError(response) {
-		console.log(response);
-		let errorMsg = 'ERROR : ';
-		if (response.responseJSON.text) {
-			errorMsg += response.responseJSON.text+' ('+response.status+')';
-		} else {
-			errorMsg += response.statusText+' ('+response.status+')';
-		}
-		notify(errorMsg);
-	}
 
 	console.log('sg-form :: Submit');
 	// console.log('rel', relTarget)
@@ -1524,8 +1523,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				)
 			}, settings.result)
 			.fail(function(response) {
-				notify('Error on update inline edit data. Please Contact Admin.');
-				console.log(response)
+				showError(response);
 			})
 			.done(function(response) {
 				// console.log('response', response)
