@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-07-06
-* Version :: 15
+* Modify  :: 2025-08-04
+* Version :: 16
 *
 * @param Array $args
 * @return Widget
@@ -113,12 +113,12 @@ class InlineEdit extends Widget {
 			$child['choices'] = json_encode($child['choices'], JSON_UNESCAPED_UNICODE);
 		}
 
-		$options = (Array) SG\getFirst($child['options']);
-		if ($child['placeholder']) $options['placeholder'] = $child['placeholder'];
-		if ($child['onBlur']) $options['onblur'] = $child['onBlur'];
-		if ($child['type'] === 'textarea' && $options['button'] !== false) $options['button'] = 'yes';
+		$options = (Object) SG\getFirst($child['options']);
+		if ($child['placeholder']) $options->placeholder = $child['placeholder'];
+		if ($child['onBlur']) $options->onblur = $child['onBlur'];
+		if ($child['type'] === 'textarea' && $options->button !== false) $options->button = 'yes';
 
-		$attributes['data-options'] = $options;
+		$attributes['data-options'] = (Array) $options;
 
 		$childAttribute = $child['attribute'];
 
@@ -158,8 +158,10 @@ class InlineEdit extends Widget {
 
 	// @override
 	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
+		// debugMsg($widget, '$widget');
 		return parent::_renderEachChildWidget($key, $widget, [
 			'array' => function($key, $widget) {
+				if (isset($widget['options'])) $widget['options'] = (Object) $widget['options'];
 				return $this->_renderChildType($key, (Object) $widget);
 					// .'<div>RENDER ARRAY key='.$key.' label='.$widget['label'].'</div>'._NL;
 			},
@@ -181,7 +183,7 @@ class InlineEdit extends Widget {
 		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
 		$text = SG\getFirst($widget->value, $widget->text);
 
-		if (is_null($text) || $text == '') $text = '<span class="placeholder -no-print">'.SG\getFirst($widget->options->placeholder, $widget->placeholder).'</span>';
+		if ((is_null($text) || $text == '') && $this->editMode) $text = '<span class="placeholder -no-print">'.SG\getFirst($widget->options->placeholder, $widget->placeholder).'</span>';
 		else if ($widget->retType === 'nl2br') $text = trim(nl2br($text));
 		else if ($widget->retType === 'html') $text = trim(sg_text2html($text));
 		else if ($widget->retType === 'text') $text = trim(str_replace("\n",'<br />',$text));
@@ -191,6 +193,7 @@ class InlineEdit extends Widget {
 			if (!$retFormat) $retFormat = 'ว ดดด ปปปป';
 			$text = sg_date($widget->value, $retFormat);
 		}
+
 		// if (is_string($widget->selectOptions)) $selectOptions = explode(',', '==เลือก==,' . $widget->selectOptions);
 		// else if (is_array($widget->selectOptions) && count($widget->selectOptions) > 0) $selectOptions = ['==เลือก=='] + $widget->selectOptions;
 
