@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-07-25
- * Version :: 22
+ * Modify  :: 2025-08-04
+ * Version :: 23
  */
 
 @charset "UTF-8";
@@ -348,18 +348,21 @@
 
 /* widget-table */
 .widget-table {
-	width: 100%; margin: 0 0 10px 0; border-collapse: collapse; border-spacing: 0; border: none; background-color: #fff; display: table;
+	--bg-color: #fff;
+	--border-color: #f5f5f5;
+	
+	width: 100%; margin: 0 0 10px 0; border-collapse: collapse; border-spacing: 0; border: none; background-color: var(--bg-color); display: table;
 	&.-table {width: auto;}
 	&.-cross-axis-center>tbody>tr>td {vertical-align: middle;}
 	>caption {margin: 0; padding: 4px; font-size: 1.1em; color: #333; font-weight: bold; background-color: #f1f1f1; border-radius: 0;}
 	>thead {background-color: #f7f7f7;}
-	>thead>tr.header, .widget-table>tbody>tr.header {display: table-row;}
+	>thead>tr.header, >tbody>tr.header {display: table-row;}
 	>tfoot {font-weight: bold; background-color: #f7f7f7;}
 	>tbody>tr:hover {background-color: #fafafa;}
-	th {padding: 8px 4px; border-right: 1px #fff solid; vertical-align: middle; text-align: center;}
+	th {padding: 8px 4px; border-right: 1px transparent solid; vertical-align: middle; text-align: center;}
 	th:last-child {border-right: none;}
 	&.-header-nowrap th {white-space: nowrap;}
-	td {padding: 8px 4px; vertical-align: top; border-bottom: 1px #f5f5f5 solid;}
+	td {padding: 8px 4px; vertical-align: top; border-bottom: 1px var(--border-color) solid;}
 	td.-fill {width: 100%;}
 	.subheader {font-weight: bold; background-color: #ddd;}
 	.subfooter {font-weight: bold; background-color: #eaeaea;}
