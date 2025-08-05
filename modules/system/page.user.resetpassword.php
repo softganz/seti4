@@ -1,8 +1,9 @@
 <?php
 /**
  * User    :: Reset Password
- * Modify  :: 2025-06-25
- * Version :: 3
+ * Created :: 20xx-xx-xx
+ * Modify  :: 2025-08-05
+ * Version :: 4
  *
  * @param String $args
  * @return Widget
@@ -111,12 +112,11 @@ class UserResetpassword extends Page {
 
 	private function saveNewPassword($user) {
 		$post = (Object) post('resetpassword');
+		$error = NULL;
 
-		if ($post->password === '') $error[] = 'กรุณาระบุ รหัสผ่าน (Password)'; //-- fill password
-		if ($post->password && strlen($post->password) < 6) $error[]='รหัสผ่าน (Password) ต้องยาวอย่างน้อย 6 อักษร'; //-- password length
-		if ($post->password && $post->password != $post->repassword) $error[]='กรุณายืนยันรหัสผ่าน (Re-enter password) ให้เหมือนกันรหัสที่ป้อน'; //-- password <> retype
-
-		if ($error) return error(_HTTP_ERROR_NOT_ACCEPTABLE, $error);
+		if ($post->password === '') return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'กรุณาระบุ รหัสผ่าน (Password)'); //-- fill password
+		else if ($post->password && strlen($post->password) < 6) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'รหัสผ่าน (Password) ต้องยาวอย่างน้อย 6 อักษร'); //-- password length
+		else if ($post->password && $post->password != $post->repassword) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'กรุณายืนยันรหัสผ่าน (Re-enter password) ให้เหมือนกันรหัสที่ป้อน'); //-- password <> retype
 
 		$password = sg_encrypt($post->password,cfg('encrypt_key'));
 
