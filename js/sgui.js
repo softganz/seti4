@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-08-04
-* Version :: 47
+* Modify  :: 2025-08-06
+* Version :: 48
 */
 
 'use strict'
@@ -2419,7 +2419,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				},
 				settings.dataType
 			).fail(function(data) {
-				notify('Error on getting report data. Please Contact Admin.');
+				// console.log(data);
+				// notify('Error on getting report data. Please Contact Admin.');
+				showError(data);
 				// $(".report-output").css("opacity", outputOpacity)
 				waiting.remove();
 				// console.log('DONE WITH data = ',data)
