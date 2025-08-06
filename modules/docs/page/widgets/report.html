@@ -1,0 +1,91 @@
+<!--
+Report Widget
+Created :: 2025-08-05
+Modify  :: 2025-08-05
+Version :: 1
+-->
+<h3>Class Report Widget</h3>
+
+<ul class="docs-page-nav-list">
+<li>Contents</li>
+<li>Before you begin</li>
+<li><a href="{widget/widget}">Extends from Widget</a></li>
+<li><a href="#Property">Property</a></li>
+<li><a href="#Method">Method</a></li>
+</ul>
+
+<h4>Class constructor</h4>
+<code>
+new Report([
+	String id,
+	String class = 'sg-drawreport',
+
+	String queryUrl = '',
+	String dataType = 'json',
+	String graphType = 'Bar',
+	String submitIcon,
+	String submitText,
+	Array filterBar,
+	Array optionBar = [],
+	Array filter = [],
+	Array output = [],
+]);
+</code>
+
+<a name="Property"></a>
+<h4>Property :</h4>
+<code>
+filterBar ↔ [
+	'title' : String
+	'child' : [
+		String or Widget,
+		...
+	]
+	'children': Array of child
+]
+filter ↔ [
+	String,
+	'key' => [
+		'group' => 'ประเมิน',
+		'type' => 'radio',
+		'text' => 'เลือก',
+		'filter' => 'eval-filter',
+		'class' => 'eval',
+		'select' =>[
+			'consistency' => 'ความสอดคล้องของโครงการ',
+			'm4' => 'ปัจจัยนำเข้า (4M)',
+			'hia' => 'ใช้ HIA เป็นเครื่องมือ',
+			'product' => 'ผลผลิต Product',
+			'other' => [
+				'label' => 'Other',
+				'items' => [
+					'o1' => 'Other 1',
+					'o2' => 'Other 2',
+					'o3' => 'Other 3',
+				],
+		],
+	],
+	Widget,
+	...
+]
+optionBar ↔ [
+	String or Widget,
+	...
+]
+output ↔ [
+	key => String value,
+	...
+]
+</code>
+<code>
+editMode ↔ Boolean
+action ↔ String
+</code>
+
+<a name="Method"></a>
+<h4>Method :</h4>
+<code>
+Report::build() → String
+Report::filter($key, $value)
+Report::output($key, $html = NULL)
+</code>
