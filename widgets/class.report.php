@@ -2,8 +2,8 @@
 /**
  * Widget  :: Report Widget
  * Created :: 2020-10-01
- * Modify  :: 2025-08-02
- * Version :: 5
+ * Modify  :: 2025-08-06
+ * Version :: 6
  *
  * @param Array $args
  * @return Widget
@@ -57,7 +57,7 @@ class Report extends Widget {
 			} else if (is_array($selVal)) {
 				$selItem = (Object) $selVal;
 			} else if (is_object($selVal)) {
-				;
+				// Do nothing
 			} else {
 				continue;
 			}
@@ -71,7 +71,8 @@ class Report extends Widget {
 				. 'class="-checkbox-'.$filter.' -filter-checkbox'.($typeValue['class'] ? ' '.$typeValue['class'] : '').'" '
 				. 'type="'.$inputType.'" '
 				. 'name="'.$filter.($inputTypeMultiple ? '[]' : '').'" '
-				. 'value="'.$selKey.'" '.sg_implode_attr($selItem->attr).' '
+				. 'value="'.$selKey.'" '
+				. sg_implode_attr($selItem->attribute).' '
 				. '/>'
 				. '<span>'.$selItem->label.'</span>'
 				. '</label>'._NL;
@@ -97,7 +98,7 @@ class Report extends Widget {
 			//if (empty($typeValue)) continue;
 			if (is_object($typeValue)) {
 				$groupUi->add($this->_renderEachChildWidget(NULL, $typeValue));
-			} else {
+			} else if (is_array($typeValue)) {
 				$groupUiStr = $typeValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#'.$typeId.'"><span>'.$typeValue['group'].'</span></a></span>' : '';
 				if (isset($typeValue['select'])) {
 					$checkbox = $this->_render_checkbox($typeValue['select'],$typeValue);
@@ -128,7 +129,9 @@ class Report extends Widget {
 					$groupUiStr,
 					'{class: "'.('-group-'.$typeValue['filter']).($typeValue['active'] ? '-active' : '').($typeValue['group'] ? '' : ' -no-name').'"}'
 				);
-			}
+			} else {
+			$groupUi->add($typeValue);
+		}
 		}
 
 
@@ -238,16 +241,20 @@ class Report extends Widget {
 				$this->_renderChildren($this->metric),
 				'</div><!-- -metric -->',
 				'<div class="-filter">'
-					. '<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
-					. ($this->filterBar ? (
-						function() {
-							$form = '';
-							foreach ($this->filterBar['children'] as $key => $widget) {
-								$form .= '<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
+					. (is_array($this->fillterBar) ? 
+						'<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
+						. ($this->filterBar ? (
+							function() {
+								$form = '';
+								foreach ($this->filterBar['children'] as $key => $widget) {
+									$form .= 'AA<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
+								}
+								return $form;
 							}
-							return $form;
-						}
-					)() : '')
+						)() : '')
+						:
+						'<span class="-title -text">'.SG\getFirst($this->filterBar, '{tr:Filter by}').'</span>'
+					)
 					. '<span id="toolbar-report-filter" class="-select">'
 					. ($this->config->filterPretext ? $this->_renderEachChildWidget(NULL, $this->config->filterPretext) : '')
 					. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item" style="flex: 1;"></span>'
