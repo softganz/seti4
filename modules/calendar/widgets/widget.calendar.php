@@ -2,8 +2,8 @@
 /**
  * Calendar:: Calcendr Widget
  * Created :: 2025-07-20
- * Modify  :: 2025-07-29
- * Version :: 3
+ * Modify  :: 2025-08-13
+ * Version :: 4
  *
  * @param Array $args
  * @return Object
@@ -17,6 +17,7 @@ class CalendarWidget extends Widget {
 	var $class = 'widget-calendar';
 	var $tagName = 'div';
 	private $classContent = 'calendar-content'; // class for content div
+	var $forceBuild = false;
 	var $year;
 	var $month;
 	var $hash;
@@ -75,7 +76,7 @@ class CalendarWidget extends Widget {
 		// 	$this->right->add = R::On($this->module.'.calendar.isadd', $this);
 		// }
 
-		if (!_AJAX) {
+		if (!_AJAX || $this->forceBuild) {
 			$this->children = [
 					'navigator' => new CalendarNavWidget(),
 					// new DebugMsg($args, '$args'),
@@ -84,6 +85,7 @@ class CalendarWidget extends Widget {
 						'atribute' => ['data-month' => sg_date($year.'-'.$month.'-01','ดดด ปปปป')],
 						'child' => $this->month($this->year, $this->month),
 					]), // Container
+					'<script type="module" src="/calendar/js.calendar.js"></script>'
 			]; // children
 		}
 		// debugMsg($this->right, '$this->right');
@@ -91,9 +93,9 @@ class CalendarWidget extends Widget {
 
 	#[\Override]
 	function build() {
-		if (_AJAX) return $this->month($this->year, $this->month);
+		if (_AJAX && !$this->forceBuild) return $this->month($this->year, $this->month);
 
-		head('calendar.js', '<script type="module" src="/calendar/js.calendar.js"></script>');
+		// head('calendar.js', '<script type="module" src="/calendar/js.calendar.js"></script>');
 
 		return parent::build();
 
