@@ -2,8 +2,8 @@
 /**
 * Admin   :: Ban Management
 * Created :: 2024-07-08
-* Modify  :: 2024-07-08
-* Version :: 1
+* Modify  :: 2025-08-13
+* Version :: 2
 *
 * @return Widget
 *
@@ -11,11 +11,6 @@
 */
 
 class AdminBan extends Page {
-	function __construct() {
-		parent::__construct([
-		]);
-	}
-
 	function rightToBuild() {return true;}
 
 	function build() {
@@ -36,7 +31,8 @@ class AdminBan extends Page {
 				'boxHeader' => true,
 			]),
 			'body' => new Table([
-				'thead' => ['IP/Host', 'Start Time', 'End Time', ''],
+				'class' => '-center',
+				'thead' => ['IP/Host', 'Start Time', 'End Time', 'icons -i1' => ''],
 				'children' => array_map(
 					function($ban, $key) {
 						return [
@@ -45,15 +41,17 @@ class AdminBan extends Page {
 							$ban->end,
 							new Nav([
 								'children' => [
+									// new Button([
+									// 	'type' => 'secondary',
+									// 	// 'href' => url(),
+									// 	'class' => '-disabled',
+									// 	'icon' => new Icon('edit'),
+									// ]),
 									new Button([
-										// 'href' => url(),
-										'class' => '-disabled',
-										'icon' => new Icon('edit'),
-									]),
-									new Button([
+										'type' => 'danger',
 										'class' => 'sg-action',
 										'href' => url('api/admin/ban/remove', ['id' => $key]),
-										'icon' => new Icon('cancel'),
+										'icon' => new Icon('clear'),
 										'rel' => 'none',
 										'done' => 'remove: parent tr',
 										'attribute' => [
