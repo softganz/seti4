@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-07-25
- * Version :: 4
+ * Modify  :: 2025-08-14
+ * Version :: 5
  */
 
 .page.-page {margin: 0 auto; padding: 0;}
@@ -68,7 +68,7 @@
 				.form-text,
 				.form-password {padding: 10px 12px 0; width: auto; border-radius: 32px; height: 44px;}
 				.form-select {background-color: #fff; text-align: center; border-radius: 32px; padding: 14px 24px 14px 12px; height: auto;}
-				.btn.-primary {width: 100%; padding: 10px 0; border-radius: 32px;}
+				.btn.-primary {width: 100%; padding: 10px 0; border-radius: 32px; justify-content: center;}
 				a {display: block; padding: 8px; text-align: center;}
 			}
 		}
