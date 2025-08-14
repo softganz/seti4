@@ -2,8 +2,8 @@
 /**
  * Model   :: User Information
  * Created :: 2021-07-22
- * Modify  :: 2025-07-18
- * Version :: 17
+ * Modify  :: 2025-08-14
+ * Version :: 19
  *
  * @param Int $userId
  * @return Object
@@ -562,13 +562,14 @@ class UserModel {
 			$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 		}
 
+		$username = Request::post('username');
+		$password = Request::post('password');
+
 		// User sign in from any page using POST method only
-		if ($_POST['username'] && $_POST['password']) {
+		if ($username && is_string($username) && $password) {
 			cache::clear_expire();
-			$username = $_POST['username'];
-			$password = $_POST['password'];
-			$remember = $_POST['remember'];
-			$cookielength = $_POST['cookielength'] ? intval($_POST['cookielength']) : NULL;
+			$remember = Request::post('remember');
+			$cookielength = SG\getFirstInt(Request::post('cookielength'));
 			// echo '$username = '.$username.' $password = '.$password;
 			// print_r($_POST);
 			// if ($username=='softganz') die($username);
@@ -577,10 +578,13 @@ class UserModel {
 
 
 			// check for email signin
-			if (strpos($username,'@')) {
-				$user_email = mydb::select('SELECT `username` FROM %users% WHERE `email` = :email', [':email' => $username]);
-				// print_o($user_email,'$user_email',1);
-				if ($user_email->_num_rows == 1) {
+			if (preg_match('/@/', $username)) {
+				$user_email = DB::select([
+					'SELECT `username` FROM %users% WHERE `email` = :email',
+					'var' => [':email' => $username]
+				]);
+
+				if ($user_email->count === 1) {
 					$username = $user_email->items[0]->username;
 				} else {
 					$user->signInResult = tr('Invalid email or too many email');
@@ -588,7 +592,7 @@ class UserModel {
 				}
 			}
 
-			$error = NULL;
+			// No username match in database
 			if (empty($username) || empty($password)) {
 				$user->signInResult = tr('Invalid user signin');
 				return $user;
@@ -600,8 +604,11 @@ class UserModel {
 				$user->signInResult = tr('Invalid user signin');
 				return $user;
 			}
+
+			// Sign in complete
 			$user = $result;
 			$user->signInResult = tr('Sign in complete');
+
 			return $user;
 		} else if (($credential = post('credential')) && post('signMethod') === 'google') {
 			// Google Sign In
