@@ -711,9 +711,9 @@ function showError(response) {
 		// console.log(settings)
 
 		self.doAction = async function() {
-			//console.log("Do Action Start Something")
+			console.log('load from ', url);
+			console.log('relTarget = ', relTarget, ', Action = ', relAction);
 			//console.log('$THIS is ',$this)
-			console.log('relTarget = '+relTarget+' Action = '+relAction)
 
 			if (!confirm) {
 				return
