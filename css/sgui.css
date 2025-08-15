@@ -367,7 +367,7 @@
 	.subheader {font-weight: bold; background-color: #ddd;}
 	.subfooter {font-weight: bold; background-color: #eaeaea;}
 	.newitem td {background-color: #E5BBA0;}
-	&.-center td, .widget-table.-center th {text-align: center;}
+	&.-center td, &.-center th {text-align: center;}
 	&.-cols8 td {width: 12.5%;}
 	&.-cols2 td:first-child {white-space: nowrap;}
 	&.-cols2 td:nth-child(2) {width: 100%;}
@@ -1265,4 +1265,23 @@
 
 @media print {
 	.inline-edit-view.-text.-fill {display: block;}
+
+	.widget-table {
+		display: table; width: 100%; padding: 2px; box-shadow: 0 0 0 1px #333 inset; border: none; clear: none;
+		&.-no-print {display: none;}
+		tr td {padding: 1.0rem; border: none; border-bottom: 1px #ccc solid; border-radius: 0;vertical-align: top;}
+		thead tr th {padding: 4px 0px; border: none; border-top: 1px #ccc solid; border-bottom: 1px #ccc solid; border-radius: 0;}
+		&.-center td {text-align: center;}
+		&.-cols8 td {width: 12.5%;}
+		.col.-center {text-align: center;}
+		.col.-money {text-align: center;}
+		.col.-no {width: 1px; text-align: center; white-space: nowrap;}
+		.col.-no:after {content: ".";}
+		.col.-amt {text-align: center;}
+		.col.-tool {text-align: center;}
+		.col.-date {text-align: center; white-space: nowrap;}
+		.col.-status {text-align: center;}
+		.col.-poster {text-align: center;}
+		.widget-table {border-left: none; border-right: none; border: none;} /* table in table */
+	}
 }

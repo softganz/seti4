@@ -1477,23 +1477,6 @@ $PRINT
 	.title {margin: 0; padding: 10px; font-size: 1.2em; color: #000 !important;}
 	h2.header {text-align:right;}
 
-	.widget-table {display: table; width: 100%; padding: 2px; box-shadow: 0 0 0 1px #333 inset; border: none; clear:none;}
-	.widget-table.-no-print {display: none;}
-	.widget-table tr td {padding: 1.0rem;border:none;border-bottom:1px #ccc solid;border-radius:0;vertical-align:top;}
-	.widget-table thead tr th {padding:4px 0px;border:none;border-top:1px #ccc solid; border-bottom:1px #ccc solid;border-radius:0;}
-	.widget-table .widget-table {border-left:none;border-right:none;border:none;}
-		.widget-table.-center td {text-align: center;}
-		.widget-table.-cols8 td {width:12.5%;}
-		.widget-table .col.-center {text-align: center;}
-		.widget-table .col.-money {text-align: center;}
-		.widget-table .col.-no {width: 1px;text-align: center;white-space: nowrap;}
-		.widget-table .col.-no:after {content:".";}
-		.widget-table .col.-amt {text-align:center;}
-		.widget-table .col.-tool {text-align:center;}
-		.widget-table .col.-date {text-align:center;white-space:nowrap;}
-		.widget-table .col.-status {text-align:center;}
-		.widget-table .col.-poster {text-align:center;}
-
 	.page.-header {display: none;}
 	.page.-content {margin: 0; padding: 0;}
 	.page.-footer {display: none;}
