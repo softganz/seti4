@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-08-04
- * Version :: 23
+ * Modify  :: 2025-08-16
+ * Version :: 24
  */
 
 @charset "UTF-8";
@@ -1283,5 +1283,16 @@
 		.col.-status {text-align: center;}
 		.col.-poster {text-align: center;}
 		.widget-table {border-left: none; border-right: none; border: none;} /* table in table */
+
+		&.-print-border-all {
+			--border-color: #000;
+			border-right: 1px var(--border-color) solid;
+			box-sizing: border-box;
+			box-shadow: none;
+			* {box-sizing: border-box;}
+			>tbody>tr>td {padding: 4px; border: 1px var(--border-color) solid;}
+			>thead>tr>th {border: 1px var(--border-color) solid;}
+			>tfoot>tr>td {border: 1px var(--border-color) solid;}
+		}
 	}
 }
