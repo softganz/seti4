@@ -974,8 +974,53 @@ $(document).ready(function(){
 */
 
 
+// Must add event before submit form
+$(document).on('submit','form[data-confirm]',function(ele) {
+	//console.log("Data Confirm Click by CONFIRM")
+	var $this = $(this)
+	//console.log($this.attr('href'))
+	if ($this.data('confirmed')) return true
+	$this.data('confirmed',false)
+	ele.stopPropagation()
 
-
+	$.confirm({
+		title: $this.data('title') ? $this.data('title') : $this.data('confirm'),
+		content: $this.data('confirm'),
+		draggable: true,
+		escapeKey: true,
+		backgroundDismiss: false,
+		escapeKey: 'Cancel',
+		scrollToPreviousElement: false,
+		boxWidth: '300px',
+		useBootstrap: false,
+		theme: 'material',
+		buttons: {
+			Cancel: {
+				text: ' <i class="icon -material">cancel</i> ยกเลิก ',
+				btnClass: 'btn -link -cancel',
+				action: function() {
+					//$( this ).dialog( "close" );
+				}
+			},
+			Ok : {
+				text: ' <i class="icon -material">done_all</i> ยืนยัน ',
+				btnClass: 'btn -primary',
+				keys: ['enter', 'o'],
+				action: function() {
+					//$( this ).dialog( "close" );
+					//console.log("OK")
+					$this.data('confirmed',true)
+					//console.log($this.data('confirmed'))
+					//console.log('href='+$this.attr('href'))
+					$this.trigger('submit')
+					$this.removeData('confirmed')
+				}
+			},
+		},
+	});
+	ele.stopPropagation()
+	return false;
+})
 
 /*
 * jQuery Extension :: sg-form :: Softganz form
@@ -994,6 +1039,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	let errorField = ''
 	let errorMsg = ''
 	let doneResult
+	let confirm = $this.data('confirm') == undefined || $this.data('confirmed');
 
 	console.log('sg-form :: Submit');
 	// console.log('rel', relTarget)
@@ -1032,7 +1078,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		});
 		if (errorField) return false;
 	}
-
+console.log(confirm);
+console.log($this)
 	// Process callback function
 	// console.log('onFormSubmit',onFormSubmit,window[onFormSubmit])
 	if (onFormSubmit && typeof window[onFormSubmit] === 'function') {
@@ -1047,6 +1094,12 @@ $(document).on('submit', 'form.sg-form', function(event) {
 	// event.preventDefault()
 	// return false;
 
+	if (!confirm) {
+		return
+	} else if ($this.data('confirmed')) {
+		$this.removeData('confirmed')
+		// para.confirm = 'yes'
+	}
 
 	if (relTarget == undefined) return true;
 
