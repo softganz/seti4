@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-07-16
-* Version :: 25
+* Modify  :: 2025-08-18
+* Version :: 26
 *
 * @param Array $args
 * @return Object
@@ -999,7 +999,7 @@ class NodeModel {
 				) a
 				LEFT JOIN %users% u ON u.`uid` = a.`uid`
 			GROUP BY `uid`
-			ORDER BY FIELD(`membership`,"ADMIN","MANAGER","TRAINER","OWNER","FOLLOWER","COMMENTATOR","VIEWER","REGULAR MEMBER", "DELETED", "") ASC, CONVERT(u.`name` USING tis620) ASC;',
+			ORDER BY FIELD(`membership`,"ADMIN","MANAGER","TRAINER","OWNER","ACCOUTANT","FINANCE","FOLLOWER","COMMENTATOR","VIEWER","REGULAR MEMBER", "DELETED", "") ASC, CONVERT(u.`name` USING tis620) ASC;',
 			'var' => [':tpid' => $nodeId],
 			'options' => ['key' => 'uid']
 		])->items;

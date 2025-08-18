@@ -2,8 +2,8 @@
 /**
 * Widget  :: Node Share
 * Created :: 2021-12-17
-* Modify 	:: 2023-02-02
-* Version :: 2
+* Modify 	:: 2025-08-18
+* Version :: 3
 *
 * @param Array $args
 * @return Widget
@@ -21,6 +21,8 @@ class NodeShareWidget extends Widget {
 		'MANAGER' => 'MANAGER',
 		'TRAINER' => 'TRAINER',
 		'OWNER' => 'OWNER',
+		'ACCOUTANT' => 'ACCOUTANT',
+		'FINANCE' => 'FINANCE',
 		'FOLLOWER' => 'FOLLOWER',
 		'COMMENTATOR' => 'COMMENTATOR',
 		'VIEWER' => 'VIEWER',
