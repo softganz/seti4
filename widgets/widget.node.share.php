@@ -21,7 +21,7 @@ class NodeShareWidget extends Widget {
 		'MANAGER' => 'MANAGER',
 		'TRAINER' => 'TRAINER',
 		'OWNER' => 'OWNER',
-		'ACCOUTANT' => 'ACCOUTANT',
+		'ACCOUNTANT' => 'ACCOUNTANT',
 		'FINANCE' => 'FINANCE',
 		'FOLLOWER' => 'FOLLOWER',
 		'COMMENTATOR' => 'COMMENTATOR',

@@ -999,7 +999,7 @@ class NodeModel {
 				) a
 				LEFT JOIN %users% u ON u.`uid` = a.`uid`
 			GROUP BY `uid`
-			ORDER BY FIELD(`membership`,"ADMIN","MANAGER","TRAINER","OWNER","ACCOUTANT","FINANCE","FOLLOWER","COMMENTATOR","VIEWER","REGULAR MEMBER", "DELETED", "") ASC, CONVERT(u.`name` USING tis620) ASC;',
+			ORDER BY FIELD(`membership`,"ADMIN","MANAGER","TRAINER","OWNER","ACCOUNTANT","FINANCE","FOLLOWER","COMMENTATOR","VIEWER","REGULAR MEMBER", "DELETED", "") ASC, CONVERT(u.`name` USING tis620) ASC;',
 			'var' => [':tpid' => $nodeId],
 			'options' => ['key' => 'uid']
 		])->items;
