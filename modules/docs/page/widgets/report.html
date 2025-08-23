@@ -1,8 +1,8 @@
 <!--
 Report Widget
 Created :: 2025-08-05
-Modify  :: 2025-08-05
-Version :: 1
+Modify  :: 2025-08-23
+Version :: 2
 -->
 <h3>Class Report Widget</h3>
 
@@ -49,22 +49,21 @@ filterBar ↔ [
 filter ↔ [
 	String,
 	'key' => [
-		'group' => 'ประเมิน', // If set, can click to show group report
+		'group' => 'Group Text', // If set, can click to show group report
 		'type' => 'radio', // Radio, checkbox
-		'text' => 'เลือก',
-		'filter' => 'eval-filter',
-		'class' => 'eval',
+		'text' => 'Select Text',
+		'filter' => 'variable name',
+		'class' => 'class',
 		'select' =>[
-			'consistency' => 'ความสอดคล้องของโครงการ',
-			'm4' => 'ปัจจัยนำเข้า (4M)',
-			'hia' => 'ใช้ HIA เป็นเครื่องมือ',
-			'product' => 'ผลผลิต Product',
-			'other' => [
+			'choice 1' => 'Value 1',
+			'choice 2' => 'Value 2',
+			'choice 3' => 'Value 3',
+			'choice sub' => [
 				'label' => 'Other',
 				'items' => [
-					'o1' => 'Other 1',
-					'o2' => 'Other 2',
-					'o3' => 'Other 3',
+					'choice 4' => 'Value 4',
+					'choice 5' => 'Value 5',
+					'choice 6' => 'Value 6',
 				],
 		],
 	],
