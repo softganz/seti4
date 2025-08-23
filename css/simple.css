@@ -8,8 +8,8 @@
  * Author      :: Panumas Nontapan
  * Author URI  :: https://softganz.com
  * Created     :: 2018-10-15
- * Last Modify :: 2025-07-14
- * Version     :: 13
+ * Last Modify :: 2025-08-23
+ * Version     :: 14
  */
 
 @import url(reset.css);
@@ -1414,7 +1414,7 @@ $SCREENS
 		.sg-toolbar .search-box {width:300px;}
 		.item__card>thead {display: table-header-group;}
 		.item__card>tbody>tr>td {display: table-cell; float:none; width:auto;}
-		.item__card>tbody>tr>td:first-child {width:30%; font-weight:normal; border-bottom: 1px #efefef solid;}
+		.item__card>tbody>tr>td:first-child {width:30%; font-weight:normal;}
 		.item__card col {width:auto;}
 		.widget.-col2 .widget-item {width:45%; height:280px; margin:0 2.5% 30px; float: left; overflow:hidden;}
 		.widget.-col3 .widget-item {width:45%; height:280px; margin:0 2.5% 30px; float: left;}

@@ -2,8 +2,8 @@
 /**
  * Widget  :: Report Widget
  * Created :: 2020-10-01
- * Modify  :: 2025-08-06
- * Version :: 6
+ * Modify  :: 2025-08-23
+ * Version :: 7
  *
  * @param Array $args
  * @return Widget
@@ -62,7 +62,7 @@ class Report extends Widget {
 				continue;
 			}
 
-			$filter = \SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $typeValue['filter']);
+			$filter = \SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $typeValue['name'], $typeValue['filter']);
 
 			$ret .= '		<abbr class="'.(preg_match('/^\t/', $selItem->label) ? '-level-2' : '').'">'
 				. '<label>'
@@ -70,7 +70,7 @@ class Report extends Widget {
 				. 'id="'.$filter.'_'.$selKey.'" '
 				. 'class="-checkbox-'.$filter.' -filter-checkbox'.($typeValue['class'] ? ' '.$typeValue['class'] : '').'" '
 				. 'type="'.$inputType.'" '
-				. 'name="'.$filter.($inputTypeMultiple ? '[]' : '').'" '
+				. 'name="filter['.$filter.']'.($inputTypeMultiple ? '[]' : '').'" '
 				. 'value="'.$selKey.'" '
 				. sg_implode_attr($selItem->attribute).' '
 				. '/>'
@@ -95,34 +95,36 @@ class Report extends Widget {
 	function toString() {
 		$groupUi = new Ui();
 		foreach ($this->filter as $typeId => $typeValue) {
-			//if (empty($typeValue)) continue;
+			if (is_null($typeValue)) continue;
+
 			if (is_object($typeValue)) {
 				$groupUi->add($this->_renderEachChildWidget(NULL, $typeValue));
 			} else if (is_array($typeValue)) {
 				$groupUiStr = $typeValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#'.$typeId.'"><span>'.$typeValue['group'].'</span></a></span>' : '';
 				if (isset($typeValue['select'])) {
 					$checkbox = $this->_render_checkbox($typeValue['select'],$typeValue);
-					// $groupUiStr .= _NL.'	'
-					// 	. (new Dropbox([
-					// 		'text' => 'ตัวกรอง:',
-					// 		'children' => [
-					// 			$this->_render_checkbox($typeValue['select'],$typeValue)
-					// 		],
-					// 	// . '	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
-					// 	// . '	<div class="-checkbox">'._NL
-					// 	// . $checkbox
-					// 	// . '	</div><!-- checkbox -->'._NL
-					// 	// . '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
-					// 	// '{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
-					// ]))->build()._NL;
-					$groupUiStr .= _NL.'	'.sg_dropbox(
-						_NL.'	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
-						. '	<div class="-checkbox">'._NL
-						. $checkbox
-						. '	</div><!-- checkbox -->'._NL
-						. '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
-						'{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
-						)._NL;
+					$groupUiStr .= _NL.'	'
+						. (new Dropbox([
+							'text' => $typeValue['text'],
+							'children' => [
+								$this->_render_checkbox($typeValue['select'],$typeValue)
+							],
+						// . '	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
+						// . '	<div class="-checkbox">'._NL
+						// . $checkbox
+						// . '	</div><!-- checkbox -->'._NL
+						// . '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
+						// '{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
+					]))->build()._NL;
+
+					// $groupUiStr .= _NL.'	'.sg_dropbox(
+					// 	_NL.'	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
+					// 	. '	<div class="-checkbox">'._NL
+					// 	. $checkbox
+					// 	. '	</div><!-- checkbox -->'._NL
+					// 	. '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
+					// 	'{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
+					// 	)._NL;
 				}
 				$groupUiStr .= '	<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>'._NL;
 				$groupUi->add(
@@ -130,8 +132,8 @@ class Report extends Widget {
 					'{class: "'.('-group-'.$typeValue['filter']).($typeValue['active'] ? '-active' : '').($typeValue['group'] ? '' : ' -no-name').'"}'
 				);
 			} else {
-			$groupUi->add($typeValue);
-		}
+				$groupUi->add($typeValue);
+			}
 		}
 
 
@@ -241,17 +243,18 @@ class Report extends Widget {
 				$this->_renderChildren($this->metric),
 				'</div><!-- -metric -->',
 				'<div class="-filter">'
-					. (is_array($this->fillterBar) ? 
+					. (
+						is_array($this->filterBar) ? 
 						'<span class="-title -text">'.$this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')).'</span>'
-						. ($this->filterBar ? (
-							function() {
-								$form = '';
-								foreach ($this->filterBar['children'] as $key => $widget) {
-									$form .= 'AA<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
-								}
-								return $form;
-							}
-						)() : '')
+						// . ($this->filterBar ? (
+						// 	function() {
+						// 		$form = '';
+						// 		foreach ($this->filterBar['children'] as $key => $widget) {
+						// 			$form .= 'AA<span class="-item">'.$this->_renderEachChildWidget($key, $widget).'</span>';
+						// 		}
+						// 		return $form;
+						// 	}
+						// )() : '')
 						:
 						'<span class="-title -text">'.SG\getFirst($this->filterBar, '{tr:Filter by}').'</span>'
 					)

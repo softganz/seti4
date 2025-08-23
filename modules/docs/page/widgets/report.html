@@ -35,6 +35,7 @@ new Report([
 <a name="Property"></a>
 <h4>Property :</h4>
 <code>
+// For dropdown filter
 filterBar ↔ [
 	'title' : String
 	'child' : [
@@ -43,11 +44,13 @@ filterBar ↔ [
 	]
 	'children': Array of child
 ]
+
+// For bar filter
 filter ↔ [
 	String,
 	'key' => [
-		'group' => 'ประเมิน',
-		'type' => 'radio',
+		'group' => 'ประเมิน', // If set, can click to show group report
+		'type' => 'radio', // Radio, checkbox
 		'text' => 'เลือก',
 		'filter' => 'eval-filter',
 		'class' => 'eval',
