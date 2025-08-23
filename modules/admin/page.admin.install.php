@@ -2,8 +2,8 @@
 /**
  * Admin   :: Install Basic Database Table
  * Created :: 2016-11-08
- * Modify  :: 2025-08-18
- * Version :: 9
+ * Modify  :: 2025-08-20
+ * Version :: 10
  *
  * @return Widget
  *
@@ -680,7 +680,8 @@ class AdminInstall extends Page {
 		$query->topic_user='CREATE TABLE IF NOT EXISTS %topic_user% (
 			`tpid` int(11) UNSIGNED NOT NULL DEFAULT 0,
 			`uid` int(11) UNSIGNED NOT NULL DEFAULT 0,
-			`membership` enum("MANAGER","FOLLOWER","TRAINER","OWNER","ACCOUNTANT","FINANCE","REGULAR MEMBER","COMMENTATOR","VIEWER","EDITOR") NOT NULL DEFAULT "REGULAR MEMBER",
+			`membership` varchar(20) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL DEFAULT "REGULAR MEMBER",
+			-- `membership` enum("MANAGER","FOLLOWER","TRAINER","OWNER","ACCOUNTANT","FINANCE","REGULAR MEMBER","COMMENTATOR","VIEWER","EDITOR") NOT NULL DEFAULT "REGULAR MEMBER",
 			PRIMARY KEY (`tpid`,`uid`)
 		)';
 
