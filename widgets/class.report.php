@@ -107,13 +107,13 @@ class Report extends Widget {
 						. (new Dropbox([
 							'text' => $typeValue['text'],
 							'children' => [
-								$this->_render_checkbox($typeValue['select'],$typeValue)
+								$this->_render_checkbox($typeValue['select'],$typeValue),
+								'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
 							],
 						// . '	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
 						// . '	<div class="-checkbox">'._NL
 						// . $checkbox
 						// . '	</div><!-- checkbox -->'._NL
-						// . '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
 						// '{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
 					]))->build()._NL;
 
