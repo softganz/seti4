@@ -2,8 +2,8 @@
 /**
  * Widget  :: Report Widget
  * Created :: 2020-10-01
- * Modify  :: 2025-08-23
- * Version :: 7
+ * Modify  :: 2025-08-24
+ * Version :: 8
  *
  * @param Array $args
  * @return Widget
@@ -23,6 +23,11 @@ class Report extends Widget {
 	var $submitIcon;
 	var $submitText;
 	var $filterBar;
+	var $showArrowLeft;
+	var $showArrowRight;
+	var $filterPretext;
+	var $showPage = false;
+	var $input = [];
 	var $optionBar = [];
 	var $filter = [];
 	var $output = [];
@@ -143,7 +148,7 @@ class Report extends Widget {
 		// 	. ' data-query="'.$this->queryUrl.'"'._NL
 		// 	. ' data-options=\'{"dataType":"'.$this->dataType.'"}\'';
 
-		// foreach ($this->config->data as $key => $value) {
+		// foreach ($this->data as $key => $value) {
 		// 	$ret .= ' '.$key.'="'.$value.'"';
 		// }
 
@@ -165,7 +170,7 @@ class Report extends Widget {
 			];
 			if ($this->debug) $attributes['data-options']['debug'] = true;
 
-			foreach ($this->config->data as $key => $value) {
+			foreach ($this->data as $key => $value) {
 				$attributes[$key] = $value;
 			}
 
@@ -180,7 +185,7 @@ class Report extends Widget {
 		// 	. '<input type="hidden" name="dataType" value="'.$this->dataType.'" />'._NL
 		// 	. '<input type="hidden" name="r" id="reporttype" value="" />'._NL
 		// 	. '<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />'._NL
-		// 	. ($this->config->showPage ? '<input id="page" type="hidden" name="page" value="" />'._NL : '')
+		// 	. ($this->showPage ? '<input id="page" type="hidden" name="page" value="" />'._NL : '')
 		// 	. (post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />'._NL : '');
 
 		// $form .= '<div class="-toolbar">';
@@ -197,7 +202,7 @@ class Report extends Widget {
 		// 		}
 		// 	)() : '')
 		// 	. '<span id="toolbar-report-filter" class="-select">'
-		// 	. ($this->config->filterPretext ? $this->config->filterPretext : '')
+		// 	. ($this->filterPretext ? $this->filterPretext : '')
 		// 	. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item" style="flex: 1;"></span>'
 		// 	. '</span><!-- toolbar-report-filter -->'
 		// 	. '<span class="">'
@@ -207,9 +212,9 @@ class Report extends Widget {
 
 		// if ($groupUi->count()) {
 		// 	$form .= '<div class="-group">'._NL;
-		// 	if ($this->config->showArrowLeft) $form .= '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>';
+		// 	if ($this->showArrowLeft) $form .= '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>';
 		// 	$form .= $groupUi->build()._NL;
-		// 	if ($this->config->showArrowRight) $form .= '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL;
+		// 	if ($this->showArrowRight) $form .= '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL;
 		// 	$form .= '</div>'._NL;
 		// }
 
@@ -235,7 +240,8 @@ class Report extends Widget {
 				'<input type="hidden" name="r" id="reporttype" value="" />',
 				'<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />',
 				'<input type="hidden" name="metric" id="metric" value="" />',
-				$this->config->showPage ? '<input id="page" type="hidden" name="page" value="" />' : '',
+				...$this->input,
+				$this->showPage ? '<input id="page" type="hidden" name="page" value="" />' : '',
 				post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />' : '',
 
 				'<div class="-toolbar">',
@@ -259,7 +265,7 @@ class Report extends Widget {
 						'<span class="-title -text">'.SG\getFirst($this->filterBar, '{tr:Filter by}').'</span>'
 					)
 					. '<span id="toolbar-report-filter" class="-select">'
-					. ($this->config->filterPretext ? $this->_renderEachChildWidget(NULL, $this->config->filterPretext) : '')
+					. ($this->filterPretext ? $this->_renderEachChildWidget(NULL, $this->filterPretext) : '')
 					. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item" style="flex: 1;"></span>'
 					. '</span><!-- toolbar-report-filter -->'
 					. '<span class="">'
@@ -269,9 +275,9 @@ class Report extends Widget {
 
 				($groupUi->count() ?
 					'<div class="-group">'._NL
-						. ($this->config->showArrowLeft ? '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>' : '')
+						. ($this->showArrowLeft ? '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>' : '')
 						. $groupUi->build()._NL
-						. ($this->config->showArrowRight ? '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL : '')
+						. ($this->showArrowRight ? '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL : '')
 						. '</div>'._NL
 					: ''),
 				new Row([

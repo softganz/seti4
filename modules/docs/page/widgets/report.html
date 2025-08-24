@@ -1,8 +1,8 @@
 <!--
 Report Widget
 Created :: 2025-08-05
-Modify  :: 2025-08-23
-Version :: 2
+Modify  :: 2025-08-24
+Version :: 3
 -->
 <h3>Class Report Widget</h3>
 
@@ -26,6 +26,11 @@ new Report([
 	String submitIcon,
 	String submitText,
 	Array filterBar,
+	Bool $showArrowLeft;
+	Bool $showArrowRight;
+	String $filterPretext;
+	Bool $showPage = false;
+	Array $input = [];
 	Array optionBar = [],
 	Array filter = [],
 	Array output = [],
