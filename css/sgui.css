@@ -383,7 +383,7 @@
 }
 
 .widget-table {	
-	width: 100%; margin: 0 0 10px 0; border-collapse: collapse; border-spacing: 0; border: none; background-color: var(--bg-color); display: table;
+	width: 100%; margin: 0; padding: 0; border-collapse: collapse; border-spacing: 0; border: none; background-color: var(--bg-color); display: table;
 	&.-table {width: auto;}
 	&.-cross-axis-center>tbody>tr>td {vertical-align: middle;}
 	>caption {margin: 0; padding: 4px; font-size: 1.1em; color: var(--caption-text-color); font-weight: bold; background-color: var(--caption-bg-color); border-radius: 0;}
@@ -921,7 +921,8 @@
 			.widget-dropbox {
 				height: 100%; flex: 1 0 100%; position: relative;
 				&.rightside .sg-dropbox--wrapper {left: 0;}
-				>a {display: flex; align-items: center; position: relative;}
+				>a {display: flex; align-items: center; position: relative; border-radius: 0;}
+				>a:hover {border-radius: 0; background-color: transparent;}
 				>a>span {padding: 0 24px 0 8px; color: #666; font-size: 0.9em;}
 				>.icon {position: relative;}
 				.sg-dropbox--wrapper {min-width: 200px;}
