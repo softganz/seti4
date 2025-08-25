@@ -3,7 +3,7 @@
  * Widget  :: Report Widget
  * Created :: 2020-10-01
  * Modify  :: 2025-08-25
- * Version :: 9
+ * Version :: 10
  *
  * @param Array $args
  * @return Widget
@@ -243,7 +243,8 @@ class Report extends Widget {
 				'<input type="hidden" name="r" id="reporttype" value="" />',
 				'<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />',
 				'<input type="hidden" name="metric" id="metric" value="" />',
-				...$this->input,
+				new Children(['children' => (Array) $this->input]),
+				// ...$this->input, // error on php 7.2
 				$this->showPage ? '<input id="page" type="hidden" name="page" value="" />' : '',
 				$this->debug && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />' : '',
 
