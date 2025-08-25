@@ -1,8 +1,8 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2025-07-18",
-		"version": 6
+		"lastModify": "2025-08-25",
+		"version": 7
 	},
 	"autoLoader": {
 		"items": {
@@ -31,6 +31,10 @@
 		"logCounter": true,
 		"logDayHit": true,
 		"logUserOnline": true,
+		"rateLimit": {
+			"limit": 60,
+			"seconds": 60
+		},
 		"createDistance": [],
 		"loginToken": {
 			"tokenType": "jwt",

@@ -2,8 +2,8 @@
 /**
  * Core    :: Init Web
  * Created :: 2023-08-01
- * Modify  :: 2025-07-18
- * Version :: 12
+ * Modify  :: 2025-08-25
+ * Version :: 13
  */
 
 global $R;
@@ -254,6 +254,8 @@ SgCore::setLang();
 // Start session handler register using database
 session_set_save_handler(new Session(), true);
 session_start();
+
+rateLimit(cfg('system')->rateLimit->limit, cfg('system')->rateLimit->seconds); // 60 requests per 60 seconds
 
 // Set JS Min file, ?jsMin=no/yes/clear
 if (array_key_exists('devMode', $_GET)) {
