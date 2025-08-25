@@ -2,8 +2,8 @@
 /**
  * Widget  :: Report Widget
  * Created :: 2020-10-01
- * Modify  :: 2025-08-24
- * Version :: 8
+ * Modify  :: 2025-08-25
+ * Version :: 9
  *
  * @param Array $args
  * @return Widget
@@ -27,6 +27,7 @@ class Report extends Widget {
 	var $showArrowRight;
 	var $filterPretext;
 	var $showPage = false;
+	var $debug = false;
 	var $input = [];
 	var $optionBar = [];
 	var $filter = [];
@@ -75,7 +76,7 @@ class Report extends Widget {
 				. 'id="'.$filter.'_'.$selKey.'" '
 				. 'class="-checkbox-'.$filter.' -filter-checkbox'.($typeValue['class'] ? ' '.$typeValue['class'] : '').'" '
 				. 'type="'.$inputType.'" '
-				. 'name="filter['.$filter.']'.($inputTypeMultiple ? '[]' : '').'" '
+				. 'name="'.$filter.($inputTypeMultiple ? '[]' : '').'" '
 				. 'value="'.$selKey.'" '
 				. sg_implode_attr($selItem->attribute).' '
 				. '/>'
@@ -106,13 +107,15 @@ class Report extends Widget {
 				$groupUi->add($this->_renderEachChildWidget(NULL, $typeValue));
 			} else if (is_array($typeValue)) {
 				$groupUiStr = $typeValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#'.$typeId.'"><span>'.$typeValue['group'].'</span></a></span>' : '';
-				if (isset($typeValue['select'])) {
-					$checkbox = $this->_render_checkbox($typeValue['select'],$typeValue);
+				if (isset($typeValue['choices'])) {
+					$checkbox = $this->_render_checkbox($typeValue['choices'],$typeValue);
 					$groupUiStr .= _NL.'	'
 						. (new Dropbox([
 							'text' => $typeValue['text'],
 							'children' => [
-								$this->_render_checkbox($typeValue['select'],$typeValue),
+								'<div class="-checkbox">'
+								. $this->_render_checkbox($typeValue['choices'],$typeValue)
+								. '</div><!-- checkbox -->',
 								'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
 							],
 						// . '	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
@@ -242,7 +245,7 @@ class Report extends Widget {
 				'<input type="hidden" name="metric" id="metric" value="" />',
 				...$this->input,
 				$this->showPage ? '<input id="page" type="hidden" name="page" value="" />' : '',
-				post('debug') && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />' : '',
+				$this->debug && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />' : '',
 
 				'<div class="-toolbar">',
 				'<div class="-metric">',
@@ -292,8 +295,11 @@ class Report extends Widget {
 		$this->children['output'] = new Container([
 			'id' => 'report-output',
 			'class' => 'report-output',
-			'children' => array_merge(
-				['<div id="report-output-debug" class="report-output-debug debug-msg" style="display: none;"></div>'],
+			'children' => array_replace(
+				[
+					'debug' => '<div id="report-output-debug" class="report-output-debug debug-msg" style="display: none;"></div>'
+				],
+				// (Array) $this->output
 				array_map(
 					function($html, $key) {
 						return '<div id="report-output-'.$key.'" class="report-output-'.$key.'">'.$html.'</div>';
