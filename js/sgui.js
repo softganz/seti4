@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-08-06
-* Version :: 48
+* Modify  :: 2025-08-26
+* Version :: 49
 */
 
 'use strict'
@@ -2653,7 +2653,7 @@ $(document).on('click', '.widget-tabbar>.tabs>li>a, .sg-tabs>.ui-tab>.ui-item>a,
 $(document).on('click', '.sg-dropbox>a', function() {
 	let $parent=$(this).parent()
 	let $wrapper=$(this).next()
-	let $target=$parent.find('.sg-dropbox--content')
+	let $target=$parent.find('.-content')
 
 	$('.sg-dropbox.click').not($(this).parent()).each(function() {
 		$(this).children('div').hide()

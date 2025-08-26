@@ -2,8 +2,8 @@
 /**
 * System  :: Show mobile style Page
 * Created :: 2025-06-21
-* Modify  :: 2025-06-22
-* Version :: 2
+* Modify  :: 2025-08-26
+* Version :: 3
 *
 * @return Widget
 *
@@ -224,12 +224,12 @@ class SystemMobile extends Page {
 						height: var(--border-width);
 					}
 					.widget-dropbox {
-						.sg-dropbox--content {
+						>.-content {
 							background-color: #000;
 							border: none;
 							box-shadow: none;
 						}
-						.sg-dropbox--arrow {display: none;}
+						>.-arrow {display: none;}
 						.select-device {
 							input {display: none;}
 							.option {white-space: nowrap;}

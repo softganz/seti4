@@ -2,8 +2,8 @@
 /**
  * Widget  :: Report Widget
  * Created :: 2020-10-01
- * Modify  :: 2025-08-25
- * Version :: 10
+ * Modify  :: 2025-08-26
+ * Version :: 11
  *
  * @param Array $args
  * @return Widget
@@ -52,10 +52,10 @@ class Report extends Widget {
 		$this->output[$key] = $html;
 	}
 
-	function _render_checkbox($items, $typeValue) {
-		$ret = '';
+	function _render_checkbox($items, $filterValue) {
+		$ret = [];
 		foreach ($items as $selKey => $selVal) {
-			$inputType = \SG\getFirst($typeValue['type'], 'checkbox');
+			$inputType = \SG\getFirst($filterValue['type'], 'checkbox');
 			$inputTypeMultiple = $inputType === 'checkbox';
 			$selItem = (Object) [];
 			if (is_string($selVal)) {
@@ -68,25 +68,25 @@ class Report extends Widget {
 				continue;
 			}
 
-			$filter = \SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $typeValue['name'], $typeValue['filter']);
+			$filter = \SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $filterValue['name'], $filterValue['filter']);
 
-			$ret .= '		<abbr class="'.(preg_match('/^\t/', $selItem->label) ? '-level-2' : '').'">'
+			$renderItem = '<abbr class="'.(preg_match('/^\t/', $selItem->label) ? '-level-2' : '').'">'
 				. '<label>'
 				. '<input '
 				. 'id="'.$filter.'_'.$selKey.'" '
-				. 'class="-checkbox-'.$filter.' -filter-checkbox'.($typeValue['class'] ? ' '.$typeValue['class'] : '').'" '
+				. 'class="-checkbox-'.$filter.' -filter-checkbox'.($filterValue['class'] ? ' '.$filterValue['class'] : '').'" '
 				. 'type="'.$inputType.'" '
 				. 'name="'.$filter.($inputTypeMultiple ? '[]' : '').'" '
 				. 'value="'.$selKey.'" '
 				. sg_implode_attr($selItem->attribute).' '
 				. '/>'
 				. '<span>'.$selItem->label.'</span>'
-				. '</label>'._NL;
-			if ($selItem->items) {
-				//debugMsg($selVal, $selKey);
-				$ret .= '<span>'.$this->_render_checkbox($selItem->items, $typeValue).'</span>';
-			}
-			$ret .= '</abbr>'._NL;
+				. '</label>';
+			// if ($selItem->items) {
+			// 	$ret .= '<span>'.$this->_render_checkbox($selItem->items, $filterValue).'</span>';
+			// }
+			$renderItem .= '</abbr>';
+			$ret[] = $renderItem;
 		}
 		return $ret;
 	}
@@ -100,30 +100,37 @@ class Report extends Widget {
 
 	function toString() {
 		$groupUi = new Ui();
-		foreach ($this->filter as $typeId => $typeValue) {
-			if (is_null($typeValue)) continue;
+		foreach ($this->filter as $filterKey => $filterValue) {
+			if (is_null($filterValue)) continue;
 
-			if (is_object($typeValue)) {
-				$groupUi->add($this->_renderEachChildWidget(NULL, $typeValue));
-			} else if (is_array($typeValue)) {
-				$groupUiStr = $typeValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#'.$typeId.'"><span>'.$typeValue['group'].'</span></a></span>' : '';
-				if (isset($typeValue['choices'])) {
-					$checkbox = $this->_render_checkbox($typeValue['choices'],$typeValue);
+			if (is_object($filterValue)) {
+				$groupUi->add($this->_renderEachChildWidget(NULL, $filterValue));
+			} else if (is_array($filterValue)) {
+				$groupUiStr = $filterValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#'.$filterKey.'"><span>'.$filterValue['group'].'</span></a></span>' : '';
+				// if (isset($filterValue['choice'])) {
 					$groupUiStr .= _NL.'	'
 						. (new Dropbox([
-							'text' => $typeValue['text'],
-							'children' => [
-								'<div class="-checkbox">'
-								. $this->_render_checkbox($typeValue['choices'],$typeValue)
-								. '</div><!-- checkbox -->',
-								'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
-							],
+							'text' => $filterValue['text'],
+							'position' => 'right',
+							// 'childrenAttribute' => ['class' => '-checkbox'],
+							'childrenContainer' => ['tagName' => 'ul', 'class' => '-checkbox'],
+							'children' => $this->_render_checkbox($filterValue['choice'],$filterValue),
+							'footer' => new Widget([
+								'children' => [
+									'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()"><i class="icon -material">done</i><span>Apply</span></a></nav>',
+								],
+							]),
+								// '<div class="-checkbox">'
+								// . $this->_render_checkbox($filterValue['choice'],$filterValue)
+								// . '</div><!-- checkbox -->'._NL,
+								// '<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
+							// ],
 						// . '	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
 						// . '	<div class="-checkbox">'._NL
 						// . $checkbox
 						// . '	</div><!-- checkbox -->'._NL
-						// '{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
-					]))->build()._NL;
+						// '{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$filterValue['text'].'"}'
+					]))->build();
 
 					// $groupUiStr .= _NL.'	'.sg_dropbox(
 					// 	_NL.'	<nav class="nav -top">ตัวกรอง:<a class="btn -link -hidden">Select all</a> <a class="btn -link -hidden">None</a></nav>'._NL
@@ -131,16 +138,16 @@ class Report extends Widget {
 					// 	. $checkbox
 					// 	. '	</div><!-- checkbox -->'._NL
 					// 	. '	<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()">Apply</a></nav>'._NL.'	',
-					// 	'{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$typeValue['text'].'"}'
+					// 	'{class: "rightside -not-hide", icon: "material", iconText: "expand_more",text: "'.$filterValue['text'].'"}'
 					// 	)._NL;
-				}
-				$groupUiStr .= '	<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>'._NL;
+				// }
+				$groupUiStr .= '<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>'._NL;
 				$groupUi->add(
 					$groupUiStr,
-					'{class: "'.('-group-'.$typeValue['filter']).($typeValue['active'] ? '-active' : '').($typeValue['group'] ? '' : ' -no-name').'"}'
+					'{class: "'.('-group-'.$filterValue['filter']).($filterValue['active'] ? '-active' : '').($filterValue['group'] ? '' : ' -no-name').'"}'
 				);
 			} else {
-				$groupUi->add($typeValue);
+				$groupUi->add($filterValue);
 			}
 		}
 

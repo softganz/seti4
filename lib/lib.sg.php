@@ -2,8 +2,8 @@
 /**
 * Function:: Common Function
 * Created :: 2007-07-09
-* Modify  :: 2025-06-15
-* Version :: 6
+* Modify  :: 2025-08-26
+* Version :: 7
 *
 * @param Array $args
 * @return Widget
@@ -938,9 +938,9 @@ function sg_dropbox($ui, $options = '{}') {
 
 	$ret .= '<span class="widget-dropbox sg-dropbox '.$options->type.' '.$options->class.'" data-type="'.$options->type.'"'.($options->url ? ' data-url="'.$options->url.'"' : '').'>'
 		. $dropLink
-		. '<div class="sg-dropbox--wrapper -wrapper -hidden">'
-		. '<div class="sg-dropbox--arrow -arrow"></div>'
-		. '<div class="sg-dropbox--content -content">'.$ui.'</div>'
+		. '<div class="-wrapper -wrapper -hidden">'
+		. '<div class="-arrow -arrow"></div>'
+		. '<div class="-content -content">'.$ui.'</div>'
 		. '</div>'
 		. '</span>';
 
