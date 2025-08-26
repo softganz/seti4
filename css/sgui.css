@@ -907,6 +907,7 @@
 		.-select {margin: 0 16px 0 0; padding: 4px; border-radius: 0 4px 4px 0; border: 1px #ddd solid; border-left: none; flex: 1; display: flex; gap: 8px;}
 		.-select>.-item {display: flex; flex-wrap: wrap; flex: 1;}
 		.-select>.-item>span {padding: 2px 0 2px 6px; margin: 1px 8px 1px 0; font-size: 0.85em; background-color: #eee; border-radius: 4px;}
+		.toolbar-report-filter-items {flex: 1;}
 	}
 
 	.-toolbar>.-group {
@@ -978,7 +979,7 @@
 		>div {display: flex; background-color: #fff; border-radius: 8px; gap: 8px; padding: 8px;}
 	}
 
-
+	.report-output-debug {display: none;}
 	.report-output-summary {width: 100%; padding: 0; overflow: scroll; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */}
 	.report-output-summary::-webkit-scrollbar {display: none; width: 0 !important; height: 0 !important; background-color: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
 }
