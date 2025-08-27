@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-08-25
- * Version :: 18
+ * Modify  :: 2025-08-26
+ * Version :: 19
  */
 
 //---------------------------------------
@@ -858,10 +858,15 @@ function banRequest($ip = NULL, $host = NULL) {
 
 	// $banList[0]->ip = '^185.';
 	// $banList[0]->host = 'bot.semrush.[c]';
-	// $ip = '185.191.171.8';
+	// $banList[] = (Object) [
+	// 	'host' => 'Crawler',
+	// 	'ip' => '185.191.171.8', // '185.191.171.8' getenv('REMOTE_ADDR'), gethostbyaddr(getenv('REMOTE_ADDR'))
+	// 	'start' => date('Y-m-d H:i:s'),
+	// 	'end' => '2099-12-31 23:59:59',
+	// ];
 	// $host = '8.bl.bot.semrush.com';
-
-	// debugMsg('IP '. $ip);
+	// $host = 'crawler';
+	// debugMsg($banList, '$banList');
 	// debugMsg('HOST '. $host);
 	// debugMsg($banList, '$banList');
 
@@ -873,13 +878,13 @@ function banRequest($ip = NULL, $host = NULL) {
 			continue;
 		}
 
-		// debugMsg('PATTERN IP '.'/'.$ban->ip.'/');
-		if ($ban->ip && ($ban->ip === $ip || preg_match('/'.$ban->ip.'/', $ip))) {
+		// debugMsg('PATTERN IP '. $ban->ip .' => /'.preg_quote($ban->ip).'/');
+		if ($ban->ip && ($ban->ip === $ip || preg_match('/'.preg_quote($ban->ip).'/', $ip))) {
 			// debugMsg('PATTERN IP FOUND '.'/'.$ban->ip.'/');
 			$isBan = 'IP';
 		}
 		// debugMsg('PATTERN HOST '.'/'.$ban->host.'/');
-		if ($ban->host && preg_match('/'.$ban->host.'/', $host)) {
+		if ($ban->host && preg_match('/'.$ban->host.'/i', $host)) {
 			// debugMsg('PATTERN HOST FOUND '.'/'.$ban->host.'/');
 			$isBan = 'HOST';
 		}
