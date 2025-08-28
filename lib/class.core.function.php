@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-08-26
- * Version :: 19
+ * Modify  :: 2025-08-28
+ * Version :: 20
  */
 
 //---------------------------------------
@@ -853,6 +853,8 @@ function banRequest($ip = NULL, $host = NULL) {
 	$currentTime = date('Y-m-d H:i:s');
 	$isBan = false;
 	$banChange = false;
+	// debugMsg('HOST '. $host);
+	// debugMsg(cfg('ban.ip'),'cfg(ban.ip)');
 
 	if (empty($banList)) return $isBan;
 
@@ -866,6 +868,7 @@ function banRequest($ip = NULL, $host = NULL) {
 	// ];
 	// $host = '8.bl.bot.semrush.com';
 	// $host = 'crawler';
+	// $host = 'ip13.2.1.2.eu';
 	// debugMsg($banList, '$banList');
 	// debugMsg('HOST '. $host);
 	// debugMsg($banList, '$banList');
@@ -884,9 +887,18 @@ function banRequest($ip = NULL, $host = NULL) {
 			$isBan = 'IP';
 		}
 		// debugMsg('PATTERN HOST '.'/'.$ban->host.'/');
-		if ($ban->host && preg_match('/'.$ban->host.'/i', $host)) {
+		if ($ban->host) {
+			// debugMsg('BAN CHECK '.$ban->host.' : HOST = '.$host);
+			if (preg_match('/^\//', $ban->host)) {
+				// debugMsg('CHECK BAN WITH REGX');
+				if (preg_match($ban->host, $host)) {
+					$isBan = 'HOST';
+					// debugMsg('BAN WITH REGX');
+				}
+			} else if (preg_match('/'.preg_quote($ban->host).'/i', $host)) {
 			// debugMsg('PATTERN HOST FOUND '.'/'.$ban->host.'/');
-			$isBan = 'HOST';
+				$isBan = 'HOST';
+			}
 		}
 		// if ($isBan) break;
 
