@@ -974,6 +974,7 @@
 	.-toolbar>.-options {
 		display: flex; align-items: center; border-radius: 4px; gap: 8px; margin: 0 0 8px 0;
 
+		.form-select {height: 22px;}
 		>.-item {border-right: 1px #ccc solid; padding: 0;}
 		>.-item:last-child {border-right: none;}
 		>div {display: flex; background-color: #fff; border-radius: 8px; gap: 8px; padding: 8px;}
