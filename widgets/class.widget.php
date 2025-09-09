@@ -2,8 +2,8 @@
 /**
 * Widget  :: Basic Widgets Collector
 * Created :: 2020-10-01
-* Modify  :: 2025-08-13
-* Version :: 53
+* Modify  :: 2025-09-09
+* Version :: 54
 *
 * @param Array $args
 * @return Widget
@@ -475,9 +475,29 @@ class ListTile extends Widget {
 class Card extends Widget {
 	var $widgetName = 'Card';
 	var $tagName = 'div';
+	var $titleTag = 'div';
 
 	function __construct($args = []) {
 		parent::__construct($args);
+	}
+
+	// @override
+	function toString() {
+		return $this->_renderWidgetContainerStart()
+			. (
+				$this->header ?
+					'<div class="-header">'
+					. ($this->header['leading'] ? '<div class="-leading">'.$this->_renderEachChildWidget(NULL, $this->header['leading']).'</div>'._NL : '')
+					. '<div class="-title">'
+					. ($this->header['title'] ? '<'.SG\getFirst($this->header['titleTag'], $this->titleTag).' class="-title-text">'.$this->_renderEachChildWidget(NULL, $this->header['title']).'</'.SG\getFirst($this->header['titleTag'], $this->titleTag).'>' : '')
+					. ($this->header['subtitle'] ? '<span class="-subtitle-text">'.$this->_renderEachChildWidget(NULL, $this->header['subtitle']).'</span>' : '')
+					. '</div>'._NL
+					. ($this->header['trailing'] ? '<div class="-trailing">'.$this->_renderEachChildWidget(NULL, $this->header['trailing']).'</div>'._NL : '')
+					. '</div><!-- header -->'
+			 : '' // header
+			)
+			. $this->_renderChildren($this->children())
+			. $this->_renderWidgetContainerEnd();
 	}
 } // End of class Card
 

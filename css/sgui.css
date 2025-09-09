@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-08-26
- * Version :: 26
+ * Modify  :: 2025-09-09
+ * Version :: 27
  */
 
 @charset "UTF-8";
@@ -245,6 +245,13 @@
 	margin: 8px 0;
 	background-color: var(--card-bg-color);
 
+	>.-header {
+		display: flex; flex-direction: row;
+		padding: 8px;
+		gap: 8px;
+		.-title {flex: 1;}
+		.-title-text {font-weight: bold;}
+	}
 	.widget-table:last-child::after {content: ""; display: block; height: 8px;}
 }
 
