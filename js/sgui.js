@@ -1,8 +1,8 @@
 /**
 * sgui    :: Javascript Library For SoftGanz
 * Created :: 2021-12-24
-* Modify  :: 2025-08-26
-* Version :: 49
+* Modify  :: 2025-09-09
+* Version :: 50
 */
 
 'use strict'
@@ -679,7 +679,7 @@ function showError(response) {
 		let $this = $(this)
 		let linkData = $this.data()
 		let dataOptions = linkData.options
-		let url = $this.attr('href')
+		let href = $this.attr('href')
 		let relTarget = linkData.rel
 		let retUrl = linkData.ret
 		let para = {}
@@ -689,7 +689,7 @@ function showError(response) {
 		let relAction
 		let doneResult
 
-		if (url == 'javascript:void(0)') url = linkData.url
+		if (href === 'javascript:void(0)') href = linkData.url
 
 		console.log('$.sgAction version ' + version + ' start')
 
@@ -711,7 +711,7 @@ function showError(response) {
 		// console.log(settings)
 
 		self.doAction = async function() {
-			console.log('load from ', url);
+			console.log('load from ', href);
 			console.log('relTarget = ', relTarget, ', Action = ', relAction);
 			//console.log('$THIS is ',$this)
 
@@ -783,38 +783,38 @@ function showError(response) {
 				hrefUrl = hrefUrl + (hasPara ? (hrefUrl.indexOf('?') == -1 ? '?' : '&') + $.param(para) : '')
 				window.location = hrefUrl
 				return true
-			} else if (url && url.substr(0,1) == '#') {
+			} else if (href && href.substr(0,1) === '#') {
 				// href is begin with #
 				// Get HTML from #id and send to data-rel
-				// console.log('LOAD FROM DOM ' + url)
+				// console.log('LOAD FROM DOM ' + href)
 				let html = null
-				if (url != '#' && $(url).length) html = $(url).get(0).innerHTML
+				if (href.length > 1 && $(href).length) html = $(href).get(0).innerHTML
 				sgUpdateData(html, relTarget, $this)
 				sgActionDone(linkData.done, $this, doneResult)
 				return
 			}
 
 
-			if (debugSG) console.log("Load from url "+url)
+			if (debugSG) console.log("Load from url "+href)
 			if (!settings.silent) notify(settings.indicator);
 
 			// Show iframe in box
 			if ($this.data('type') == 'iframe') {
-				sgShowBox('<iframe src="'+url+'"></iframe>', $this, {clearBoxContent: relTarget == 'clear'})
+				sgShowBox('<iframe src="'+href+'"></iframe>', $this, {clearBoxContent: relTarget == 'clear'})
 				notify('')
 				return
 			}
 
 
-			// console.log('URL = '+url)
-			let urlMatch = url.match(/^(function|javascript)\:(.*)/)
+			// console.log('URL = '+href)
+			let hrefMatch = href.match(/^(function|javascript)\:(.*)/)
 
-			if (urlMatch) {
-				let urlFunction = urlMatch[2]
-				// console.log(urlFunction,urlMatch)
+			if (hrefMatch) {
+				let urlFunction = hrefMatch[2]
+				// console.log(urlFunction,hrefMatch)
 				// console.log("1.START EXECUTE FUNCTION")
 
-				if (urlMatch[1] === 'javascript') {
+				if (hrefMatch[1] === 'javascript') {
 					eval(urlFunction)
 				} else {
 					let exeFunction = window[urlFunction]
@@ -828,9 +828,9 @@ function showError(response) {
 				return
 			}
 
-			if (settings.fragment) history.pushState({}, document.title, '#'+url);
+			if (settings.fragment) history.pushState({}, document.title, '#'+href);
 
-			$.post(url, para, function(html) {
+			$.post(href, para, function(html) {
 				doneResult = html
 				notify()
 				if (!settings.silent) console.log("Load completed.")
