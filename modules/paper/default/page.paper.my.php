@@ -2,8 +2,8 @@
 /**
 * Paper   :: My Paper
 * Created :: 2021-01-01
-* Modify  :: 2023-07-25
-* Version :: 2
+* Modify  :: 2025-09-09
+* Version :: 3
 *
 * @return Widet
 *
@@ -55,7 +55,8 @@ class PaperMy extends Page {
 										WHERE `created` IS NOT NULL AND `type` IN ("story", "page")
 										GROUP BY `year`
 										ORDER BY `year` DESC;
-										-- {key: "year", value: "bcyear"}'
+										-- {key: "year", value: "bcyear"}
+										'
 									)->items,
 								'value' => post('year'),
 							],
@@ -69,7 +70,8 @@ class PaperMy extends Page {
 											LEFT JOIN %users% u USING(`uid`)
 										WHERE u.`uid` IS NOT NULL AND `type` IN ("story", "page")
 										ORDER BY CONVERT(`name` USING tis620) ASC;
-										-- {key: "uid", value: "name"}'
+										-- {key: "uid", value: "name"}
+										'
 									)->items,
 								'value' => post('user'),
 							] : NULL,
