@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-08-28
- * Version :: 20
+ * Modify  :: 2025-09-09
+ * Version :: 21
  */
 
 //---------------------------------------
@@ -1329,24 +1329,24 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 	return $args['text'] ? $args['text'] : $ret;
 }
 
-function rateLimit($limit = 60, $seconds = 60) {
+function rateLimit($limit = 60, $seconds = 60, $key = '') {
 	$ip = $_SERVER['REMOTE_ADDR'];
-	$key = "rate_limit_{$ip}";
+	$identifier = 'rateLimit:'.$ip.($key ? ':'.$key : '');
 	$now = time();
 
-	if (!isset($_SESSION[$key])) {
-		$_SESSION[$key] = [
+	if (!isset($_SESSION[$identifier])) {
+		$_SESSION[$identifier] = [
 			'count' => 1,
 			'start' => $now
 		];
 		return true;
 	}
 
-	$data = $_SESSION[$key];
+	$data = $_SESSION[$identifier];
 
 	if ($now - $data['start'] > $seconds) {
 		// Reset window
-		$_SESSION[$key] = [
+		$_SESSION[$identifier] = [
 			'count' => 1,
 			'start' => $now
 		];
@@ -1356,16 +1356,15 @@ function rateLimit($limit = 60, $seconds = 60) {
 	if ($data['count'] >= $limit) {
 		// Limit reached
 		header('HTTP/1.1 429 Too Many Requests');
-		echo 'Rate limit exceeded. Try again later in '.($seconds - ($now - $data['start'])).' seconds.';
 		LogModel::save([
 			'module' => 'system',
 			'keyword' => 'Rate limit exceeded',
-			'message' => $ip.' has exceeded the rate limit of '.$limit.' requests per '.$seconds.' seconds. Wait for '.($seconds - ($now - $data['start'])).' seconds.'
+			'message' => 'IP : '.$ip.' has exceeded the rate limit of '.$limit.' requests per '.$seconds.' seconds. Wait for '.($seconds - ($now - $data['start'])).' seconds.'
 		]);
-		exit;
+		die('Rate limit exceeded. Try again later in '.($seconds - ($now - $data['start'])).' seconds.');
 	}
 
-	$_SESSION[$key]['count']++;
+	$_SESSION[$identifier]['count']++;
 	return true;
 }
 
