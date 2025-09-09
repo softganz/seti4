@@ -2,8 +2,8 @@
 /**
  * Widget  :: Dropbox widget for create Dropbox
  * Created :: 2020-10-01
- * Modify  :: 2025-08-26
- * Version :: 2
+ * Modify  :: 2025-09-09
+ * Version :: 3
  *
  * @param Array $args
  * @return Widget
@@ -34,6 +34,10 @@ class Dropbox extends Widget {
 
 	function __construct($args = []) {
 		parent::__construct($args);
+	}
+
+	function add($value = NULL) {
+		if (isset($value)) $this->children[] = $value;
 	}
 
 	function build() {
