@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-06-25
- * @version :: 22
+ * @modify  :: 2025-09-11
+ * @version :: 23
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +136,6 @@ function loadJS($requestFile, $ext) {
 		$headerType = 'text/css'.'; charset=utf-8';
 	} else if ($ext == 'png') {
 		$headerType = 'image/png';
-		//echo '$headerType='.$headerType.' '.$fileName.(file_exists($fileName) ? ' exists' : 'no exists');
 	} else if ($ext == 'gif') {
 		$headerType = 'image/gif';
 	}	else {
@@ -148,6 +147,12 @@ function loadJS($requestFile, $ext) {
 	// echo "Request = $requestFile \rFirstFolder = $firstFolder \rModule = $module \rFile location = $fileName\r\r";
 	if (file_exists($fileName)) require($fileName);
 	// else echo '// '.$requestFile.' '.$fileName.' not found!!!';
+
+	// $logFile = '/tmp/js_load.log';
+	// $logMessage = date('Y-m-d H:i:s') . " | Loaded: $fileName | Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
+	
+	// error_log($logMessage, 3, $logFile);
+
 	return;
 }
 
