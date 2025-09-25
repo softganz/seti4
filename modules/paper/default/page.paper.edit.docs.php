@@ -2,8 +2,8 @@
 /**
 * Paper   :: Document Management
 * Created :: 2019-06-02
-* Modify  :: 2024-05-01
-* Version :: 5
+* Modify  :: 2025-09-25
+* Version :: 6
 *
 * @param String $nodeInfo
 * @return Widget
@@ -67,7 +67,7 @@ class PaperEditDocs extends Page {
 
 		return new Container([
 			'id' => 'paper-edit-docs-list',
-			'data-url' => url('paper/'.$this->nodeId.'/edit.docs'._MS_.'list'),
+			'data-url' => url('paper/'.$this->nodeId.'/edit.docs..list'),
 			'child' => new Table([
 				'thead' => [
 					'Document file',

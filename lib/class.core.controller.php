@@ -1,15 +1,15 @@
 <?php
 /**
-* Core Function :: Controller Process Web Configuration and Request
-* Created :: 2006-12-16
-* Modify  :: 2025-07-26
-* Version :: 34
-*/
+ * Core Function :: Controller Process Web Configuration and Request
+ * Created :: 2006-12-16
+ * Modify  :: 2025-09-25
+ * Version :: 35
+ */
 
 /*************************************************************
-* Core class and function library for core process
-*
-* Manage Resource, Controller and Utilities function
+ * Core class and function library for core process
+ *
+ * Manage Resource, Controller and Utilities function
 **************************************************************/
 
 //---------------------------------------
@@ -93,8 +93,8 @@ class R {
 		$buildMethod = 'build'; // Default build method
 		$reservedMethod = ['rightToBuild'];
 
-		// Specific build method using _MS_ or .. method at end of action
-		if (preg_match('/([\w].*)(['._MS_.']|\.\.)([\w\.].*)$/', $pageName, $out)) {
+		// Specific build method using .. method at end of action
+		if (preg_match('/([\w].*)(\.\.)([\w\.].*)$/', $pageName, $out)) {
 			$pageName = $out[1];
 			$buildMethod = $out[3];
 			$buildMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $buildMethod);
@@ -1016,7 +1016,7 @@ class SgCore {
 		}
 
 		// Find method in function name
-		if (preg_match('/([\w].*)(['._MS_.']|\.\.)([\w\.].*)$/', end($funcName), $out)) {
+		if (preg_match('/([\w].*)(\.\.)([\w\.].*)$/', end($funcName), $out)) {
 			$funcName[count($funcName) - 1] = $out[1]; // Last argument
 			$buildMethod = $out[3]; // After method separator
 			$buildMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $buildMethod);

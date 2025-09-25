@@ -18,8 +18,6 @@
 /**************************
 define
 ***************************/
-define('_MS_', '>');
-
 define('_STRIPSLASHES',1);
 define('_ADDSLASHES',2);
 define('_HTMLSPECIALCHARS',4);
