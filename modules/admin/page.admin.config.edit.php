@@ -1,18 +1,19 @@
 <?php
 /**
-* Admin   :: Edit config and save config to db
-* Created :: 2023-11-24
-* Modify  :: 2023-11-24
-* Version :: 2
-*
-* @param $_GET[name]
-* @return Widget
-*
-* @usage admin/config/edit?name={configName}
-*/
+ * Admin   :: Edit config and save config to db
+ * Created :: 2023-11-24
+ * Modify  :: 2025-09-26
+ * Version :: 3
+ *
+ * @param $_GET[name]
+ * @return Widget
+ *
+ * @usage admin/config/edit?name={configName}
+ */
 
 class AdminConfigEdit extends Page {
 	var $configName;
+	var $configValue;
 
 	function __construct() {
 		parent::__construct([
@@ -45,18 +46,21 @@ class AdminConfigEdit extends Page {
 				'leading' => _HEADER_BACK,
 			]), // AppBar
 			'body' => new Form([
-				'variable' => 'admin',
-				'action' => url('admin/config/edit'._MS_.'update', ['name' => $this->configName]),
+				'action' => url('admin/config/edit..update'),
 				'id' => 'admin-config-form',
 				'class' => 'sg-form admin-config-form',
 				'rel' => 'notify',
 				'done' => 'load',
 				'children' => [
+					'name' => [
+						'type' => 'hidden',
+						'value' => $this->configName,
+					],
 					$this->formElementValue(),
 					'submit' => [
 						'type' => 'button',
 						'value' => '<i class="icon -material -white">done_all</i><span>Save configuration</span>',
-						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('admin/config/edit'._MS_.'restore', ['name' => $this->configName,'restore' => 'yes']).'" data-rel="notify" data-done="load" data-title="Reset to default" data-confirm="Reset to default. Plese confirm?"><i class="icon -material -gray">settings_backup_restore</i><span>Reset to default</span></a>',
+						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('admin/config/edit..restore', ['name' => $this->configName,'restore' => 'yes']).'" data-rel="notify" data-done="load" data-title="Reset to default" data-confirm="Reset to default. Plese confirm?"><i class="icon -material -gray">settings_backup_restore</i><span>Reset to default</span></a>',
 						'container' => '{class: "-sg-text-right"}',
 					],
 					'<style type="text/css">
@@ -107,8 +111,19 @@ class AdminConfigEdit extends Page {
 			], // children
 		];
 
+		if (is_bool($this->configValue)) return [
+			'type' => 'radio',
+			'name' => 'value',
+			'label' => 'Variable value : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" )',
+			'choice' => [
+				'true' => 'True',
+				'false' => 'False'
+			],
+			'value' => $this->configValue ? 'true' : 'false'
+		];
 		return [
 			'type' => 'textarea',
+			'name' => 'value',
 			'label' => 'Variable value : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" ): ',
 			'class' => '-fill',
 			'rows' => 10,
@@ -122,24 +137,27 @@ class AdminConfigEdit extends Page {
 	}
 
 	function update() {
-		$post = (Object) post('admin');
+		$post = (Object) post();
+		$cfgName = post('name');
+		$cfgValue = post('value');
 
-		if (empty($post)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
+		if (empty($cfgName)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
 
 		$saved = true;
-
+		debugMsg($post,'$post');
 		if (is_array($this->configValue)) {
-			foreach ($this->configValue as $key => $v) {
-				if (!in_array($key,$post->value)) unset($this->configValue[$key]);
+			foreach ($this->configValue as $key => $currentValue) {
+				if (!in_array($key, $post->value)) unset($this->configValue[$key]);
 			}
-			if ($post->addvalue!='') {
-				if ($post->addkey=='') {
-					$this->configValue[]=$post->addvalue;
+			if ($post->addvalue != '') {
+				if ($post->addkey == '') {
+					$this->configValue[] = $post->addvalue;
 				} else {
-					$this->configValue[$post->addkey]=$post->addvalue;
+					$this->configValue[$post->addkey] = $post->addvalue;
 				}
 			}
-			cfg_db($this->configName,$this->configValue);
+			// debugMsg($this->configValue,'$this->configValue');
+			cfg_db($this->configName, $this->configValue);
 		} else if (is_object($this->configValue)) {
 			if ($post->value != '{}') {
 				$testResult = (Array) SG\json_decode($post->value);
@@ -154,18 +172,20 @@ class AdminConfigEdit extends Page {
 				cfg_db($this->configName,$post->value);
 			}
 			//debugMsg($post->value);
-		} else if (is_string($this->configValue) || is_null($this->configValue)) {
-			cfg_db($this->configName,$post->value);
 		} else if (is_bool($this->configValue)) {
-			$this->configValue = strtoupper($post->value) == 'TRUE' || is_numeric($post->value) && $post->value > 0 ? true : false;
-			//debugMsg('Save boolean '.($post->value?true:false));
-			cfg_db($this->configName, $this->configValue);
-			//debugMsg(mydb()->_query);
-			$newValue = $this->configValue ? 'True' : 'False';
+			$post->value = strtoupper($post->value) === 'TRUE' || is_numeric($post->value) && $post->value > 0 ? true : false;
+			debugMsg('Save boolean '.($post->value?true:false));
+			cfg_db($this->configName, $post->value);
+			debugMsg(mydb()->_query);
+			$newValue = $post->value ? 'True' : 'False';
 		} else if (is_int($this->configValue)) {
-			cfg_db($this->configName,intval($post->value));
+			cfg_db($this->configName, intval($post->value));
 		} else if (is_numeric($this->configValue)) {
-			cfg_db($this->configName,floatval($post->value));
+			cfg_db($this->configName, floatval($post->value));
+		} else if (is_string($this->configValue) || is_null($this->configValue)) {
+			cfg_db($this->configName, $cfgValue);
+			debugMsg('Save string '.$cfgValue);
+			debugMsg($post,'$post');
 		}
 
 		return $saved ? success('บันทึกเรียบร้อย') : error(_HTTP_ERROR_NOT_ACCEPTABLE, 'รูปแบบไม่ถูกต้อง');
