@@ -826,6 +826,8 @@
 	.ui-item a:hover {color: #999; background-color: #f5f5f5;}
 	>.-wrapper {
 		display: block; max-width: 400px; padding: 11px 0 8px; display: none; position: absolute; z-index: 100; left:-10px; right: auto;
+	}
+	>* {
 		>.-content {
 			margin-top: -4px; padding: 0; opacity: 1; text-align: left; border-radius: 4px 4px 2px 2px;
 			overflow: auto;
@@ -1010,8 +1012,12 @@
 	/* @end */
 
 }
-	/* @end */
+/* @end */
 
+.profile-photo {
+	width: 32px; height: 32px; margin: 0; line-height: 32px; display: inline-block; border-radius: 50%; overflow: hidden; border: 2px #eee solid; vertical-align: middle;
+	&.-sg-big {margin: 0px auto 32px; width: 196px; height: 196px; display: block; }
+}
 
 
 
