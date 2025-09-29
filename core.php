@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-09-11
- * @version :: 23
+ * @modify  :: 2025-09-29
+ * @version :: 24
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,7 +219,8 @@ function sg_autoloader($class) {
 	$registerFileList = (Array) R()->core->autoLoader->items;
 
 	if (preg_match('/\\\\/', $class)) {
-		$class = end(explode('\\', $class));
+		$classList = explode('\\', $class);
+		$class = end($classList);
 	}
 
 	$lowerClass = strtolower($class);
@@ -283,9 +284,11 @@ function cfg($key = NULL, $new_value = NULL, $action = NULL) {
 		if (is_string($ret) && substr(trim($ret), 0, 1) == '{') {
 			$ret = json_decode($ret);
 		}
-	} else $ret = $cfg;
+	} else {
+		$ret = $cfg;
+	}
 
-	if (is_object($ret) || is_array($ret)) reset($ret);
+	if (is_array($ret)) reset($ret);
 	return $ret;
 }
 
@@ -347,8 +350,13 @@ function debugMsg($msg = NULL, $varname = NULL) {
  */
 function sgErrorHandler($code, $description, $file = null, $line = null, $context = null) {
 	$displayErrors = strtolower(ini_get("display_errors"));
-	// echo '<p>Debug Error: code : '.$code.' display '.$displayErrors.' : ['.$code.'] : '.$description.' in [' . $file . ', line ' . $line . ']'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code).'</p>';
-	error_reporting(0);
+
+	// $message = 'Debug Error: <b>'.$description.'</b><br>code : <b>'.$code.'</b>, display : <b>'.$displayErrors.'</b> in file <b>' . $file . '</b>, line <b>' . $line . '</b>'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code);
+	$message = 'Debug Error: <b>'.$description.'</b><br>code : <b>'.$code.'</b>, display : <b>'.$displayErrors.'</b> error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code);
+
+	// echo 'show_error = '.(cfg('show_error') ? 'TRUE' : FALSE);
+	// echo error_reporting()."\n";
+	// error_reporting(0);
 
 	$description = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
 
@@ -372,9 +380,9 @@ function sgErrorHandler($code, $description, $file = null, $line = null, $contex
 		'line' => $line,
 		'context' => $context,
 		'path' => $file,
-		'message' => $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']'
+		'message' => '<b>'.$error . '</b> (' . $code . ') in file <b>' . $file . '</b>, line <b>' . $line . '</b>' . $description
 	];
-	debugMsg('<p class="error">'.$data['message'].'</p>'."\n");
+	debugMsg('<p class="error">'.$data['message'].'</p><p>'.$message.'</p>');
 	return true;
 }
 
@@ -423,7 +431,7 @@ function sgMapErrorCode($code) {
 }
 
 function sgSendLog($data = []) {
-	$forceSend = Request::get('forceSendLog');
+	$forceSend = $_GET['forceSendLog'];
 	$sendLogToUrl = cfg('error')->sendLog->toUrl;
 	$domainNotSendLog = (Array) cfg('error')->sendLog->domainNotSend;
 	
