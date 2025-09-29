@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2025-07-12
-* Version :: 10
+* Modify  :: 2025-09-29
+* Version :: 11
 */
 
 use Softganz\DB;
@@ -213,7 +213,7 @@ class Session implements SessionHandlerInterface {
 		return false;
 	}
 
-	public function open($path,$name) {return true;}
+	public function open($path, $name) {return true;}
 
 	public function close() {return true;}
 
@@ -281,9 +281,9 @@ class Session implements SessionHandlerInterface {
 		return true;
 	}
 
-	public function gc($ttl = 86400) {
+	public function gc($maxLifetime = 86400) {
 		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
-		$end = date('Y-m-d H:i:s',time()-$ttl);
+		$end = date('Y-m-d H:i:s',time() - $maxLifetime);
 		DB::query([
 			'DELETE FROM %session% WHERE sess_last_acc < :end',
 			'var' => [':end' => $end]
