@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-09-09
- * Version :: 21
+ * Modify  :: 2025-09-29
+ * Version :: 22
  */
 
 //---------------------------------------
@@ -523,7 +523,7 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	if (function_exists('i') && isset(i()->uid) && i()->uid == 1) return true;
 
 	// admin have all privileges
-	if (function_exists('i') && i()->ok && in_array('admin',i()->roles)) return true;
+	if (function_exists('i') && i() && i()->ok && in_array('admin',i()->roles)) return true;
 
 	$role=explode(',',$role);
 
@@ -531,7 +531,7 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	if (in_array('method permission',$role)) return true;
 
 	// check for member
-	if (function_exists('i') && i()->ok) {
+	if (function_exists('i') && i() && i()->ok) {
 		// collage all member roles
 		if (!array_key_exists(i()->uid, $member_roles)) {
 			$member_roles[i()->uid] = array_merge($roles['anonymous'], $roles['member']);
@@ -882,7 +882,7 @@ function banRequest($ip = NULL, $host = NULL) {
 		}
 
 		// debugMsg('PATTERN IP '. $ban->ip .' => /'.preg_quote($ban->ip).'/');
-		if ($ban->ip && ($ban->ip === $ip || preg_match('/'.preg_quote($ban->ip).'/', $ip))) {
+		if (property_exists($ban, 'ip') && $ban->ip && ($ban->ip === $ip || preg_match('/'.preg_quote($ban->ip).'/', $ip))) {
 			// debugMsg('PATTERN IP FOUND '.'/'.$ban->ip.'/');
 			$isBan = 'IP';
 		}
