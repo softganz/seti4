@@ -2,11 +2,13 @@
 /**
  * Code    :: Code Collection Model
  * Created :: 2021-09-11
- * Modify  :: 2025-07-23
- * Version :: 3
+ * Modify  :: 2025-09-29
+ * Version :: 4
  *
  * @usage import('model:code')
  */
+
+use Softganz\DB;
 
 class ChangwatModel {
 	public static function items($conditions = NULL, $options = '{}') {
@@ -64,6 +66,33 @@ class ChangwatModel {
 		}
 
 		return $result;
+	}
+
+	// Get changwat, ampur, tombon name from areacode
+	public static function getNameFromAreaCode($areacode) {
+		if (empty($areacode)) return;
+
+		$areaName = DB::select([
+			'SELECT
+				CONCAT(
+					IF(`tambon`.`subDistName` IS NOT NULL, CONCAT("ต.", `tambon`.`subDistName`, " "), "")
+					, IF(`ampur`.`distName` IS NOT NULL, CONCAT("อ.", `ampur`.`distName`, " "), "")
+					, "จ."
+					, `changwat`.`provName`
+				) `areaName`
+			FROM %co_province% `changwat`
+				LEFT JOIN %co_district% `ampur` ON `ampur`.`distId` = :ampurId
+				LEFT JOIN %co_subdistrict% `tambon` ON `tambon`.`subDistId` = :tambonId
+			WHERE `provId` = :changwatId
+			LIMIT 1',
+			'var' => [
+				':changwatId' => substr($areacode, 0, 2),
+				':ampurId' => substr($areacode, 0, 4),
+				':tambonId' => substr($areacode, 0, 6),
+			]
+		])->areaName;
+
+		return $areaName;
 	}
 }
 
