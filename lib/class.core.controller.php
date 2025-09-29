@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-09-25
- * Version :: 35
+ * Modify  :: 2025-09-29
+ * Version :: 36
  */
 
 /*************************************************************
@@ -16,6 +16,8 @@
 // Class R :: Core resource
 //---------------------------------------
 class R {
+	public $configFolder;
+	public $colorScheme;
 	public $request;
 	public $appAgent = NULL;
 	public $message;
@@ -24,11 +26,14 @@ class R {
 	public $counter;
 	public $timer;
 	public $user;
+	public $error;
+	public $debug;
 	public $pageClass = [];
 	public $pageAttribute = [];
 	public $core;
 	public $myDb;
 	public $DB;
+	public $mysql;
 	public $query;
 	public $query_items = [];
 
@@ -321,7 +326,7 @@ class SgCore {
 			// $debugStr .= '<b>START LOAD CONFIG :: '.$configFile.' :: </b> from '.implode(';', (Array) $folders).'<br />';
 		}
 
-		if (i()->ok && debug('config')) debugMsg($debugStr);
+		if (i() && i()->ok && debug('config')) debugMsg($debugStr);
 
 		// Add each config key to cfg(), except conf.[module].json
 		foreach ($configArray as $configKey => $configValue) {
@@ -1369,7 +1374,7 @@ class SgCore {
 	static function setLang($lang = NULL) {
 		if ($lang) {
 			// do nothing
-		} else if (($lang = $_GET['lang']) && is_string($lang)) {
+		} else if (($lang = Request::all('lang')) && is_string($lang)) {
 			if ($lang === 'clear') {
 				setcookie('lang', NULL, time()-100, cfg('cookie.path'), cfg('cookie.domain'));
 			} else {
