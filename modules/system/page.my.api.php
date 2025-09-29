@@ -2,8 +2,8 @@
 /**
 * My API  :: My Information API
 * Created :: 2021-12-14
-* Modify  :: 2024-10-23
-* Version :: 2
+* Modify  :: 2025-09-29
+* Version :: 3
 *
 * @param String $action
 * @param Int $tranId
@@ -88,7 +88,6 @@ class MyApi extends Page {
 							if (cfg('upload.folder.chmod')) chmod($upload_folder,cfg('upload.folder.chmod'));
 						}
 
-						if (debug('profile')) error_reporting(E_ALL);
 						if (move_uploaded_file($photo['tmp_name'], $upload_file)) {
 							// change mode to config->upload.file.chmod
 							cropImage(200, 200, $upload_file, $photo_ext, $upload_file);

@@ -2,8 +2,8 @@
 /**
 * My      :: Change Profile Photo
 * Created :: 20xx-xx-xx
-* Modify  :: 2025-06-25
-* Version :: 2
+* Modify  :: 2025-09-29
+* Version :: 3
 *
 * @param String $args
 * @return Widget
@@ -35,7 +35,6 @@ class MyChangePhoto extends Page {
 					if (cfg('upload.folder.chmod')) chmod($upload_folder,cfg('upload.folder.chmod'));
 				}
 
-				if (debug('profile')) error_reporting(E_ALL);
 				if (move_uploaded_file($photo['tmp_name'], $upload_file)) {
 					// change mode to config->upload.file.chmod
 					cropImage(200, 200, $upload_file, $photo_ext, $upload_file);
