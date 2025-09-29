@@ -1,23 +1,14 @@
 <?php
-//-----------------------------------------------------------------------------------------
 /**
-* SOFTGANZ :: class mail
-*
-* Copyright (c) 2000-2002 The SoftGanz Group By Panumas Nontapun
-* Authors: Panumas Nontapun <webmaster@softganz.com>
-* http://www.softganz.com
-* ============================================
-* This module is to send mail
-*
-* This program is free software. You can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License.
-* ============================================
-*
---- Created 2007-01-16
---- Modify   2007-01-16
-*/
-class mail {
+ * Mail    :: Mail Class
+ * Created :: 2007-01-16
+ * Modify  :: 2025-09-29
+ * Version :: 2
+ *
+ * @usage new Mail()
+ */
+
+class Mail {
 var $varFromName=NULL;
 var $varFromEmail=NULL;
 var $varReplyToEmail=NULL;
@@ -170,9 +161,7 @@ function Send_by_SMTP($mailto,$title,$message,$emulate=false) {
 	if ( $emulate ) {
 		$result = true;
 	} else {
-		$old_error=error_reporting(0);
 		$result = mail($mailto,$title, $message,$headers);
-		error_reporting($old_error);
 	}
 	$this->send_message='<p>mailto : '.htmlspecialchars($mailto).'</p><p>hearder : '.htmlspecialchars($headers).'</p><p>title : '.htmlspecialchars($title).'</p></p>message : '.htmlspecialchars($message).'</p>';
 
