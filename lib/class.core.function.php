@@ -3,7 +3,7 @@
  * Core    :: Core Function
  * Created :: 2023-08-01
  * Modify  :: 2025-09-29
- * Version :: 22
+ * Version :: 23
  */
 
 //---------------------------------------
@@ -995,16 +995,16 @@ function tr($text, $translateText = NULL) {
  */
 function head($key = NULL, $value = NULL, $pos = NULL) {
 	static $items = [];
-	if ($value===NULL) $value=$key;
-	if (preg_match('/[\n]/',$key)) unset($key);
-	if (!in_array($value,$items)) {
-		if ($pos==-1) {
+	if ($value === NULL) $value = $key;
+	if (preg_match('/[\n]/', $key)) unset($key);
+	if (!in_array($value, $items)) {
+		if ($pos == -1) {
 			$items = [$key => $value] + $items;
-		} else if (isset($key) && $key) $items[$key]=$value;
-		else $items[]=$value;
+		} else if (isset($key) && $key) $items[$key] = $value;
+		else $items[] = $value;
 	}
-	if ((!isset($key) || $key===NULL) && $value===NULL) return $items;
-	else if (isset($key) && $key) return $items[$key];
+	if ((!isset($key) || $key === NULL) && $value === NULL) return $items;
+	else if (isset($key) && $key && isset($items[$key])) return $items[$key];
 }
 
 /**
