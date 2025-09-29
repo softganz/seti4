@@ -2,8 +2,8 @@
 /**
 * DB      :: Database Management
 * Created :: 2023-07-28
-* Modify  :: 2025-07-25
-* Version :: 20
+* Modify  :: 2025-09-29
+* Version :: 21
 *
 * @param Array $args
 * @return Object
@@ -93,6 +93,7 @@ class DB {
 	private $where = [];
 	private $options; // key, value, group, sum, jsonDecode, multiple, history, log, debug
 	private $multipleQuery = false; // Use for multiple query in one statement, default is single query
+	private $callerFrom;
 
 	public $count = 0;
 	public $items = [];
@@ -100,7 +101,7 @@ class DB {
 	function __construct($args = NULL) {
 		$args = is_string($args) ? [0 => $args] : (Array) $args;
 
-		if ($args['connection']) {
+		if (isset($args['connection']) && $args['connection']) {
 			$this->createDbConnection($args['connection']);
 		} else if (function_exists('R')) {
 			$this->PDO = R()->DB->PDO();
@@ -108,11 +109,11 @@ class DB {
 		}
 
 		if (!$this->status) return;
-		$this->srcStmt = trim($args[0]);
+		$this->srcStmt = isset($args[0]) ? trim($args[0]) : NULL;
 		unset($args[0]);
 		$this->args = $args;
 
-		$this->setOptions((Array) $args['options']);
+		if (isset($args['options'])) $this->setOptions((Array) $args['options']);
 	}
 
 	// Call by static method
@@ -189,7 +190,7 @@ class DB {
 	function prepare() {
 		$this->stmt = $this->srcStmt;
 
-		$this->setVariable($this->args['var']);
+		if (isset($this->args['var'])) $this->setVariable($this->args['var']);
 		$this->setWhere();
 
 		$this->replaceWhere();
@@ -207,7 +208,7 @@ class DB {
 
 		$this->setDebugMessage('SRC', $this->srcStmt);
 		$this->setDebugMessage('PREPARE', $this->stmt);
-		$this->setDebugMessage('VAR', $this->args['var']);
+		if (isset($this->args['var'])) $this->setDebugMessage('VAR', $this->args['var']);
 
 		$start = microtime(true);
 		try {
@@ -234,7 +235,7 @@ class DB {
 
 		$this->count = count($this->items);
 
-		if ($this->options->debug) debugMsg($this->debugMsg());
+		if (isset($this->options->debug) && $this->options->debug) debugMsg($this->debugMsg());
 	}
 
 	function queryResult() {
@@ -276,7 +277,7 @@ class DB {
 		$result = [];
 		foreach ($items as $key => $value) {
 			$value = (Object) $value;
-			if ($this->options->jsonDecode) {
+			if (isset($this->options->jsonDecode) && $this->options->jsonDecode) {
 				foreach ($this->options->jsonDecode as $jsonDecode) {
 					$jsonDecodeResult = json_decode($value->{$jsonDecode['field']});
 					if ($jsonDecode['type'] === 'merge') {
@@ -302,19 +303,19 @@ class DB {
 				}
 			}
 
-			if ($this->options->group) {
+			if (isset($this->options->group) && $this->options->group) {
 				// Collect result using group of items and/or using key and value
-				if ($this->options->key && $this->options->value) {
+				if (isset($this->options->key) && $this->options->key && isset($this->options->value) && $this->options->value) {
 					$result[$value->{$this->options->group}][$value->{$this->options->key}] = $value->{$this->options->value};
-				} else if ($this->options->key) {
+				} else if (isset($this->options->key) && $this->options->key) {
 					$result[$value->{$this->options->group}][$value->{$this->options->key}] = $value;
 				} else {
 					$result[$value->{$this->options->group}][] = $value;
 				}
-			} else if ($this->options->key && $this->options->value) {
+			} else if (isset($this->options->key) && isset($this->options->value) && $this->options->key && $this->options->value) {
 				// Collect result using key and value
 				$result[$value->{$this->options->key}] = $value->{$this->options->value};
-			} else if ($this->options->key) {
+			} else if (isset($this->options->key) && $this->options->key) {
 				// Collect result using key
 				$result[$value->{$this->options->key}] = $value;
 			} else {
@@ -323,7 +324,7 @@ class DB {
 			}
 
 			// Generate sum value of fields
-			if ($this->options->sum) {
+			if (isset($this->options->sum) && $this->options->sum) {
 				foreach ($this->options->sum as $keySum => $valueSum) {
 					$this->options->sum->{$keySum} += $value->{$keySum};
 				}
@@ -343,7 +344,7 @@ class DB {
 	// Create statement with message and error code
 	private function stmt($addMessage = []) {
 		$stmt = $this->stmt;
-		if ($addMessage['errorMessage']) {
+		if (isset($addMessage['errorMessage']) && $addMessage['errorMessage']) {
 			$stmt .= ';<br><span style="color:red;">-- ERROR #'.$addMessage['errorCode'].' '.$addMessage['errorMessage'].'</span>';
 		}
 
@@ -718,7 +719,7 @@ class DB {
 	}
 
 	private function updateLastQueryStmt($method, $stmt, $error = []) {
-		if ($this->options->history === false) return; // Do not save query history
+		if (isset($this->options->history) && $this->options->history === false) return; // Do not save query history
 
 		$this->setDebugMessage(NULL, $stmt);
 
