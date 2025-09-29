@@ -142,6 +142,7 @@ pre {tab-size: 1;}
 
 .-disabled:not(body) {pointer-events: none !important; cursor: default; color:#ccc;}
 a.-disabled {color:#ccc;}
+h2.header {text-align: right; font-size: 1.2em;}
 
 
 .jconfirm-box {width: 200px;}
