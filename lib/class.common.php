@@ -15,7 +15,7 @@
 
 * Created :: 2007-07-09
 * Modify  :: 2025-09-29
-* Version :: 11
+* Version :: 12
 */
 
 use Softganz\DB;
@@ -213,10 +213,13 @@ class Session implements SessionHandlerInterface {
 		return false;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function open($path, $name) {return true;}
 
+	#[\ReturnTypeWillChange]
 	public function close() {return true;}
 
+	#[\ReturnTypeWillChange]
 	public function read($sess_id) {
 		$res = DB::select([
 			'SELECT `sess_data` FROM %session% WHERE `sess_id` = :id LIMIT 1',
@@ -227,6 +230,7 @@ class Session implements SessionHandlerInterface {
 		return $sess_data;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function write($sess_id = NULL, $data = NULL) {
 		$debug = false;
 
@@ -275,12 +279,14 @@ class Session implements SessionHandlerInterface {
 		return true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function destroy($sess_id) {
 		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
 		mydb::query('DELETE FROM %session% WHERE sess_id = :id LIMIT 1',':id',$sess_id);
 		return true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function gc($maxLifetime = 86400) {
 		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
 		$end = date('Y-m-d H:i:s',time() - $maxLifetime);
