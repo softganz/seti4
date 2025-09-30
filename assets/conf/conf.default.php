@@ -231,6 +231,7 @@ if ($_SERVER['HTTP_HOST'] = 'localhost') {
 $cfg['cookie.u'] = 'u'.$cookie_id;
 $cfg['cookie.id'] = 'id'.$cookie_id;
 $cfg['cookie.path'] = '/';
+$cfg['cookie.domain'] = '';
 
 $cfg['markdown.linktarget'] = NULL;
 
