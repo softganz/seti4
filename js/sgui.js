@@ -1,13 +1,13 @@
 /**
-* sgui    :: Javascript Library For SoftGanz
-* Created :: 2021-12-24
-* Modify  :: 2025-09-09
-* Version :: 50
-*/
+ * sgui    :: Javascript Library For SoftGanz
+ * Created :: 2021-12-24
+ * Modify  :: 2025-10-01
+ * Version :: 51
+ */
 
 'use strict'
 
-let sgUiVersion = '4.00.19'
+let sgUiVersion = '4.00.20'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -1245,7 +1245,7 @@ console.log($this)
 * Using <div class="sg-inline-edit"><span class="inlineedit-field" data-type="text"></span></div>
 * DOWNLOAD : https://github.com/NicolasCARPi/jquery_jeditable
 */
-(function($) {
+(function($) { // sg-inlineedit
 	let inlineEditDom;
 	let version = '2.01';
 	let sgInlineEditAction = 'click';
@@ -1569,8 +1569,13 @@ console.log($this)
 					//console.log(replaceTrMsg);
 				}
 
+				let message = '';
+				if ('error' in data) message = data.error;
+				else if ('text' in data) message = data.text;
+				else if ('msg' in data) message = data.msg;
+				else message = 'บันทึกเรียบร้อย';
 				notify(
-					('error' in data ? data.error : ('msg' in data ? data.msg : 'บันทึกเรียบร้อย'))
+					message
 					+ (debug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>POST PARAMETER:</b><pre>'+JSON.stringify(para, null, "\t")+'</pre><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
 					debug ? 300000 : 5000
 				)
