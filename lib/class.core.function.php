@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-09-29
- * Version :: 23
+ * Modify  :: 2025-10-01
+ * Version :: 24
  */
 
 //---------------------------------------
@@ -425,7 +425,7 @@ function set_theme($name = NULL, $style = 'style.css') {
 	/folder/themes -> /folder/themes
 	*/
 
-	$getTemporaryTheme = $_GET['theme'];
+	$getTemporaryTheme = isset($_GET['theme']) ? $_GET['theme'] : '';
 
 	$themes = [];
 	if (isset($name)) $themes[] = $name;
@@ -436,7 +436,7 @@ function set_theme($name = NULL, $style = 'style.css') {
 		$themes[] = $getTemporaryTheme;
 		setcookie('theme', $getTemporaryTheme, time()+10*365*24*60*60, cfg('cookie.path'), cfg('cookie.domain'));
 	}
-	if ($_COOKIE['theme']) $themes[] = $_COOKIE['theme'];
+	if (isset($_COOKIE['theme'])) $themes[] = $_COOKIE['theme'];
 	$themes[] = cfg('theme.name');
 	$themes[] = 'default';
 
@@ -459,7 +459,7 @@ function set_theme($name = NULL, $style = 'style.css') {
 		}
 	}
 
-	if ($_COOKIE['pageclass']) page_class('-'.$_COOKIE['pageclass']);
+	if (isset($_COOKIE['pageclass'])) page_class('-'.$_COOKIE['pageclass']);
 
 	//set style sheet
 	if (isset($_GET['style']) && $_GET['style']=='') {
@@ -468,7 +468,7 @@ function set_theme($name = NULL, $style = 'style.css') {
 	} else if (isset($_GET['style']) && $_GET['style']!='') {
 		cfg('theme.stylesheet',$_GET['style']);
 		setcookie('style',$_GET['style'],time()+365*24*60*60,cfg('cookie.path'),cfg('cookie.domain'));
-	} else if ($_COOKIE['style']) {
+	} else if (isset($_COOKIE['style'])) {
 		cfg('theme.stylesheet',cfg('theme.name',$_COOKIE['style']));
 	} else {
 		cfg('theme.stylesheet',file_exists($css_file)?cfg('theme').$style:'/themes/'.$name.'/'.$style);
@@ -626,14 +626,16 @@ function is_admin($module = NULL) {
  * @return String
  */
 function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
-	$ret='';
+	$q = is_null($q) ? '' : $q;
+	$ret = '';
+
 	if (isset($get) && is_array($get)) {
 		foreach ($get as $k=>$v) if (!is_null($v)) $get_a.=$k.'='.$v.'&';
 		$get=rtrim($get_a,'&');
 		if (empty($get)) unset($get);
 	}
-	if (substr($q,0,2)==='//') ; // do nothing
-	else if (substr($q,0,1)==='/') $q=substr($q,1);
+	if (substr($q,0,2) === '//') ; // do nothing
+	else if (substr($q,0,1) === '/') $q=substr($q,1);
 
 	$url = preg_match('/^(\/\/|http\:\/\/|https\:\/\/)/', $q, $out) ? '' : cfg('url');
 
@@ -996,7 +998,7 @@ function tr($text, $translateText = NULL) {
 function head($key = NULL, $value = NULL, $pos = NULL) {
 	static $items = [];
 	if ($value === NULL) $value = $key;
-	if (preg_match('/[\n]/', $key)) unset($key);
+	if ($key && preg_match('/[\n]/', $key)) unset($key);
 	if (!in_array($value, $items)) {
 		if ($pos == -1) {
 			$items = [$key => $value] + $items;

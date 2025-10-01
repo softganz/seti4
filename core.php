@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-09-29
- * @version :: 24
+ * @modify  :: 2025-10-01
+ * @version :: 26
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ function loadJS($requestFile, $ext) {
  * @return String
  */
 function requestString() {
-	$request = NULL;
+	$request = '';
 	reset($_GET);
 
 	$key = key($_GET);
@@ -175,7 +175,7 @@ function requestString() {
 	// debugMsg('_URL = '._URL);
 
 	if ($key && empty($value)) {
-		$folder = dirname($_SERVER['DOCUMENT_URI']);
+		$folder = isset($_SERVER['DOCUMENT_URI']) ? dirname($_SERVER['DOCUMENT_URI']) : '';
 		$request_string = $_SERVER['QUERY_STRING'];
 		$pattern = '%^'.preg_quote(addslashes($folder)).'%';
 
@@ -317,6 +317,11 @@ function sendHeader($type = 'text/html') {
 function debugMsg($msg = NULL, $varname = NULL) {
 	static $debugMsg = '';
 	$isDebugGlobal = true;
+	// $callerFrom = get_caller(__FUNCTION__)['from'];
+	$debugBacktrace = debug_backtrace();
+	$callerFrom = end($debugBacktrace)['function'];
+	// echo debug_backtrace()[1]['function'];
+	// echo '<pre>'.print_r(debug_backtrace(),1).'</pre>';
 	if (is_array($msg) && is_null($varname)) {
 		$varname = $msg[1];
 		$msg = $msg[0];
@@ -333,7 +338,9 @@ function debugMsg($msg = NULL, $varname = NULL) {
 		if (preg_match('/^(SELECT|UPDATE|INSERT|DELETE)/i', $msg, $out)) {
 			$msg = '<pre>'.$msg.'</pre>';
 		}
-		$msg = "\r\n".'<div class="debug-msg">'.$msg.'</div>'."\r\n";
+		$msg = "\r\n".'<div class="debug-msg">'.$msg
+			. (isset($callerFrom) ? '<br><em><small>Call from: '.$callerFrom.'</small></em></div>' : '')
+			. "\r\n";
 		if ($isDebugGlobal) $debugMsg .= $msg; else if (user_access('access debugging program')) return $msg;
 	}
 	return $debugMsg;

@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-09-29
- * Version :: 36
+ * Modify  :: 2025-10-01
+ * Version :: 37
  */
 
 /*************************************************************
@@ -395,10 +395,13 @@ class SgCore {
 		$paths = [];
 		$fileName = '';
 		$funcName = NULL;
+    $className = NULL;
 		$isDebugable = true;
 		$debugLoadfile = debug('load') || $debugResourceFile;
 		$fixFolders = ['widget' => 'widgets', 'model' => 'models', 'api' => 'api'];
 		$template = cfg('template');
+		$caller = get_caller(__FUNCTION__);
+
 		if (cfg('template.add')) {
 			$template = cfg('template.add').';'.$template;
 		}
@@ -446,12 +449,17 @@ class SgCore {
 
 		$loadAction = in_array($resourceType, ['asset']) ? 'content' : 'include';
 
-		if ($debugLoadfile) $caller = get_caller(__FUNCTION__);
-		// debugMsg($caller,'$caller');
 
-		$debugStr = '<div>Debug of '.__FUNCTION__.'() #'.$loadCount.' in <b>'.($caller['class'] ? $caller['class'] : '').($caller['type'] ? $caller['type'] : '').($caller['function'] ? $caller['function'].'(\''.$srcPackageName.'\')' : '').'</b> from '.$caller['file'].' line '.$caller['line'].' '
-			. '<a href="#" onclick="$(this).next().toggle();return false;">Caller</a><div class="loadfunction__detail -hidden" style="border: 1px #ccc solid; margin: 0 8px; padding: 8px; border-radius: 8px;">'.(isset($caller['from'])?'Call from '.$caller['from']:'').'</div>'._NL
-			.'</div>'._NL
+		$debugStr = '<div>Debug of '.__FUNCTION__.'() #'.$loadCount.' in <b>'
+			. (isset($caller['class']) ? $caller['class'] : '')
+			. (isset($caller['type']) ? $caller['type'] : '')
+			. (isset($caller['function']) ? $caller['function'].'(\''.$srcPackageName.'\')' : '').'</b> '
+			. 'from '.$caller['file'].' line '.$caller['line'].' '
+			. '<a href="#" onclick="$(this).next().toggle();return false;">Caller</a>'
+			. '<div class="loadfunction__detail -hidden" style="border: 1px #ccc solid; margin: 0 8px; padding: 8px; border-radius: 8px;">'
+			. (isset($caller['from']) ? 'Call from '.$caller['from'] : '')
+			. '</div>'._NL
+			. '</div>'._NL
 			. 'Start load <b>'.($resourceType?' Resource '.strtoupper($resourceType).'':'Page').'</b> from package <b>'.$package.'</b> '._NL
 			. 'module = <b>'.$module.'</b>'.($subModule ? ' , Sub Module = <b>'.$subModule.'</b>' : '').'<br />'._NL;
 
@@ -656,7 +664,7 @@ class SgCore {
 			$funcName .= implode('_',$request);
 		}
 
-		if ((($funcName && function_exists($funcName)) || ($className && class_exists($className)) ) && array_key_exists($packageName, $loadFiles)) {
+		if ((($funcName && function_exists($funcName)) || ($className && class_exists($className))) && array_key_exists($packageName, $loadFiles)) {
 			// Resource file was loaded
 			$found = true;
 			$debugStr .= '<font color="green">Function '.$funcName.'() was already load.</font><br />'._NL;
@@ -730,7 +738,7 @@ class SgCore {
 
 		if ($debugLoadfile && ($isDebugable || debug('force'))) debugMsg($debugStr);
 
-		if (class_exists($className)) {
+		if ($className && class_exists($className)) {
 			return [$className, $found, $resourceFileToLoad, $resourceType];
 		} else {
 			return [$funcName, $found, $resourceFileToLoad, $resourceType, $resultContent];
@@ -967,10 +975,22 @@ class SgCore {
 
 		$settingJson = trim(json_encode($setting));
 		if (in_array($settingJson, ['{}', 'null'])) {
-			setcookie($cookieKey,'',time()-3600,cfg('cookie.path'),cfg('cookie.domain'));
+			setcookie(
+				$cookieKey,
+				'',
+				time()-3600,
+				is_null(cfg('cookie.path') ? '' : cfg('cookie.path')),
+				is_null(cfg('cookie.domain') ? '' : cfg('cookie.domain'))
+			);
 			unset($_COOKIE[$cookieKey]);
 		} else {
-			setcookie($cookieKey, $settingJson, time()+365*24*60*60,cfg('cookie.path'),cfg('cookie.domain'));
+			setcookie(
+				$cookieKey,
+				$settingJson,
+				time()+365*24*60*60,
+				is_null(cfg('cookie.path') ? '' : cfg('cookie.path')),
+				is_null(cfg('cookie.domain') ? '' : cfg('cookie.domain'))
+			);
 		}
 		return R::setting($setting);
 	}
@@ -981,6 +1001,7 @@ class SgCore {
 	* @return String
 	*/
 	static function processMenu($menu, &$buildMethod = 'build', $prefix = 'page') {
+		$pageClass = NULL;
 		$module = $menu['call']['module'];
 		$auth_code = $menu['access'];
 		$is_auth = user_access($auth_code);
@@ -999,7 +1020,7 @@ class SgCore {
 		R::Module($module.'.init', $pageClass);
 
 		$options = \SG\json_decode($menu['options']);
-		$verify = $options->verify ? R::Model($options->verify,$pageClass) : true;
+		$verify = isset($options->verify) ? R::Model($options->verify,$pageClass) : true;
 
 		if ($verify === false) {
 			http_response_code(_HTTP_ERROR_FORBIDDEN);
@@ -1065,7 +1086,7 @@ class SgCore {
 				$pageBuildWidget = $pageClassWidget->$buildMethod();
 				// debugMsg($pageClassWidget, '$pageClassWidget');
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
-				if ($pageBuildWidget->exeClass) {
+				if (isset($pageBuildWidget->exeClass)) {
 					$pageClass = $pageBuildWidget->exeClass;
 					$pageClass->module = $module;
 				}
@@ -1093,6 +1114,7 @@ class SgCore {
 		$requestResult = '';
 		$requestFilePrefix = 'page';
 		$isDebugProcess = debug('process');
+		$process_debug = '';
 		$buildMethod = 'build'; // Default build method
 		$templateVar = [];
 
@@ -1179,7 +1201,7 @@ class SgCore {
 		if ($found) {
 			// Set splash page was show
 			if (cfg('web.splash.time')) {
-				setcookie('splash',true,time()+cfg('web.splash.time')*60,cfg('cookie.path'),cfg('cookie.domain')); // show splash if not visite site
+				setcookie('splash', true, time()+cfg('web.splash.time')*60, cfg('cookie.path'), cfg('cookie.domain')); // show splash if not visite site
 			}
 
  			// Page function that return widget and has build method

@@ -2,8 +2,8 @@
 /**
  * Core    :: Init Web
  * Created :: 2023-08-01
- * Modify  :: 2025-08-25
- * Version :: 13
+ * Modify  :: 2025-10-01
+ * Version :: 14
  */
 
 global $R;
@@ -152,14 +152,14 @@ q($R->request);
 $R->timer = new Timer();
 
 // Clear module folder don't exists
-$old_error = error_reporting(0);
+// $old_error = error_reporting(0);
 $_module_folder = [];
 
-foreach (explode(PATH_SEPARATOR,ini_get('include_path')) as $_folder) {
+foreach (explode(PATH_SEPARATOR, ini_get('include_path')) as $_folder) {
 	if (is_dir($_folder.'/modules')) $_module_folder[] = $_folder.'/modules';
 	if (is_dir($_folder.'/modules/apps')) $_module_folder[] = $_folder.'/modules/apps';
 }
-error_reporting($old_error);
+// error_reporting($old_error);
 
 cfg('module.folder',$_module_folder);
 unset($_module_folder, $_folder); // clear unused variable
@@ -201,6 +201,7 @@ $R->mysql = (Object) [
 // Load config variable from table
 SgCore::loadConfig(cfg_db());
 
+// Ban request from IP and hostname
 if (banRequest(getenv('REMOTE_ADDR'), gethostbyaddr(getenv('REMOTE_ADDR')))) {
 	http_response_code(_HTTP_ERROR_NOT_FOUND);
 	die('Sorry!!!! You were banned.');
@@ -215,6 +216,7 @@ if (banRequest(getenv('REMOTE_ADDR'), gethostbyaddr(getenv('REMOTE_ADDR')))) {
 // 	die($ret);
 // }
 
+// Return robot text
 if ($request == 'robots.txt') die(cfg('robots.txt'));
 
 // Clear user_access
@@ -222,7 +224,7 @@ user_access('reset');
 
 // DEFINE from config
 define('_DATE_FORMAT', cfg('dateformat'));
-define('_img',cfg('img'));
+define('_img', cfg('img'));
 
 // Redirect website to other site if set redirect and not admin page
 if (cfg('site.redirection') != ''
@@ -245,6 +247,7 @@ cfg('url.abs', preg_match('/http\:/',cfg('url')) ? cfg('url') : '//'.$_SERVER['H
 if (!cfg('upload.folder')) cfg('upload.folder', cfg('folder.abs').cfg('upload').'/');
 if (!cfg('upload.url')) cfg('upload.url', cfg('url').cfg('upload').'/');
 
+// Set language
 SgCore::setLang();
 
 // set the cache expire to 1 minutes
@@ -255,10 +258,11 @@ SgCore::setLang();
 session_set_save_handler(new Session(), true);
 session_start();
 
+// Check request rate limit and die if over limit
 rateLimit(cfg('system')->rateLimit->limit, cfg('system')->rateLimit->seconds); // 60 requests per 60 seconds
 
 // Set JS Min file, ?jsMin=no/yes/clear
-if (array_key_exists('devMode', $_GET)) {
+if (isset($_GET['devMode'])) {
 	if (in_array($_GET['devMode'], ['','clear'])) unset($_SESSION['devMode']);
 	else $_SESSION['devMode'] = 'yes';
 }

@@ -6,8 +6,8 @@
  * @version 1.2
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2007-08-07
- * @modify 2010-05-17
+ * @created :: 2007-08-07
+ * @modify  :: 2025-10-01
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 class Module {
 	var $module = NULL;
 	var $version = NULL;
+	var $appBar = NULL;
+	var $appBarText = NULL;
+	var $sideBar = NULL;
 	var $theme = NULL;
 
 	function __construct($moduleName = NULL) {

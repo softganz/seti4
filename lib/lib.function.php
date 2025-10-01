@@ -1,18 +1,21 @@
 <?php
 /**
-* Core    :: Function Library
-* Created :: 2021-10-24
-* Modify  :: 2025-07-12
-* Version :: 3
-*
-* @usage functionName(parameter)
-*/
+ * Core    :: Function Library
+ * Created :: 2021-10-24
+ * Modify  :: 2025-10-01
+ * Version :: 4
+ *
+ * @usage functionName(parameter)
+ */
 
 /**
  * Get date and time of today
  *
  * @return Object
  */
+
+use Softganz\DB;
+
 function today() {
 	if (cfg('server.timezone.offset')) {
 		$today= getdate(mktime(date('H')+cfg('server.timezone.offset') , date('i') , date('s'), date('m')  , date('d') , date('Y')));
@@ -39,14 +42,18 @@ function title($str=NULL) { $GLOBALS['title']=$str; };
  * @param Mixed $name
  * @param Mixed $value
  */
-function property($name=NULL,$value=NULL) {
-	static $property=array();
+function property($name = NULL, $value = NULL) {
+	static $property = [];
+	$module = '';
+	$propid = NULL;
+	$item = NULL;
+
 	if (is_string($name)) {
-		list($module,$name,$propid,$item)=explode(':',$name);
+		list($module, $name, $propid, $item) = explode(':',$name.'::::'); // Remove warning
 	} else if (is_numeric($name)) {
 		$propid=intval($name);
 	} else if (is_array($name)) {
-		list($module,$name,$propid,$item)=array($name);
+		list($module, $name, $propid, $item) = [$name];
 	}
 	if ($module=='') $module=NULL;
 	if ($name=='') $name=NULL;
@@ -55,20 +62,26 @@ function property($name=NULL,$value=NULL) {
 	if ($propid) $propid=intval($propid);
 	//debugMsg('module='.(is_null($module)?'NULL':$module).' name='.(is_null($name)?'NULL':$name).' propid='.(is_null($propid)?'NULL':$propid).' item='.(is_null($item)?'NULL':$item).' value='.$value);
 	if ($module && $name && isset($value)) {
-		$property[$module][$propid][$name]=$ret=$value;
+		$property[$module][$propid][$name] = $ret = $value;
 		$stmt='INSERT INTO %property% (`module`, `propid`, `name`, `item`, `value`) VALUES (:module, :propid, :name, :item, :value)
 						ON DUPLICATE KEY UPDATE `value`=:value; -- {reset: false}';
 		mydb::query($stmt,':module',$module, ':propid',is_null($propid)?0:$propid, ':name',$name, ':item', $item?$item:'', ':value',$value);
 	} else if ($module && $name && isset($propid) && isset($item)) {
 		$stmt='SELECT `value` FROM %property% WHERE `module`=:module AND `propid`=:propid AND `name`=:name AND `item`=:item LIMIT 1; -- {reset: false}';
-		$property[$module][$propid][$name]=$ret=mydb::select($stmt,':module',$module, ':propid',$propid, ':name',$name, ':item',$item)->value;
+		$property[$module][$propid][$name] = $ret = mydb::select($stmt,':module',$module, ':propid',$propid, ':name',$name, ':item',$item)->value;
 	} else if ($module && $name && isset($propid)) {
-		$stmt='SELECT `value` FROM %property% WHERE `module`=:module AND `propid`=:propid AND `name`=:name LIMIT 1; -- {reset: false}';
-		$property[$module][$propid][$name]=$ret=mydb::select($stmt,':module',$module, ':propid',$propid, ':name',$name)->value;
+		$property[$module][$propid][$name] = $ret = DB::select([
+			'SELECT `value` FROM %property% WHERE `module` = :module AND `propid` = :propid AND `name` = :name LIMIT 1',
+			'var' => [
+				':module' => $module,
+				':propid' => $propid,
+				':name' => $name
+			]
+		])->valueOf('value');
 	} else if ($module && isset($propid)) {
 		$stmt='SELECT `name`, `value` FROM %property% WHERE `module`=:module AND `propid`=:propid; -- {reset: false}';
 		foreach ($dbs=mydb::select($stmt,':module',$module, ':propid',$propid)->items as $rs) {
-			$property[$module][$propid][$rs->name]=$rs->value;
+			$property[$module][$propid][$rs->name] = $rs->value;
 		}
 		$ret=$property[$module][$propid];
 	} else if ($module && $name && isset($item)) {
@@ -535,9 +548,10 @@ function object_merge_recursive() {
 	if (is_null($result)) $result = (Object) [];
 
 	foreach ($args as $arg) {
-		foreach ($arg as $key => $value) {
+		foreach ((Array) $arg as $key => $value) {
 			if (is_object($value)) {
-				//debugMsg('Merge object key '.$key);
+				// debugMsg('Merge object key '.$key);
+				if (!isset($result->{$key})) $result->{$key} = (Object) [];
 				$result->{$key} = object_merge_recursive($result->{$key}, $value);
 			} else if (is_array($value)) {
 				//debugMsg('ARRAY KEY = '.$key);

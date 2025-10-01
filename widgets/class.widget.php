@@ -1,15 +1,15 @@
 <?php
 /**
-* Widget  :: Basic Widgets Collector
-* Created :: 2020-10-01
-* Modify  :: 2025-09-09
-* Version :: 54
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new Widget([key => value,...])
-*/
+ * Widget  :: Basic Widgets Collector
+ * Created :: 2020-10-01
+ * Modify  :: 2025-10-01
+ * Version :: 55
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @usage new Widget([key => value,...])
+ */
 
 /**
 * Class :: WidgetBase
@@ -1014,6 +1014,11 @@ class ProfilePhoto extends Widget {
 
 class Scaffold extends Widget {
 	var $widgetName = 'Scaffold';
+	var $appBar = NULL;
+	var $sideBar = NULL;
+	var $body = NULL;
+	var $floatingActionButton = NULL;
+
 	function __construct($args = []) {
 		parent::__construct($args);
 	}

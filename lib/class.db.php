@@ -1,15 +1,15 @@
 <?php
 /**
-* DB      :: Database Management
-* Created :: 2023-07-28
-* Modify  :: 2025-09-29
-* Version :: 21
-*
-* @param Array $args
-* @return Object
-*
-* @usage new Softganz\DB([])
-*/
+ * DB      :: Database Management
+ * Created :: 2023-07-28
+ * Modify  :: 2025-10-01
+ * Version :: 22
+ *
+ * @param Array $args
+ * @return Object
+ *
+ * @usage new Softganz\DB([])
+ */
 
 namespace Softganz;
 
@@ -46,6 +46,10 @@ class DbSelect {
 		foreach ($args as $key => $value) $this->{$key} = $value;
 	}
 
+	public function valueOf($field) {
+		return isset($this->{$field}) ? $this->{$field} : NULL;
+	}
+
 	public function DB($db = NULL) {
 		if (isset($db)) $this->DB = $db;
 		return $this->DB;
@@ -53,6 +57,7 @@ class DbSelect {
 }
 
 class DbQuery {
+	var $query;
 	private $DB;
 
 	function __construct($args = []) {
