@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
  * @modify  :: 2025-10-01
- * @version :: 26
+ * @version :: 27
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -528,7 +528,7 @@ function sgFatalError($code, $description, $file, $line) {
 			<p>The requested URL <b>'.$url.'</b> was error.</p>
 			<p>'.$msg.'</p>'
 			. '<hr>
-			<address>copyright <a href="http://'.$_SERVER['HTTP_HOST'].'">'.$_SERVER['HTTP_HOST'].'</a> Allright reserved.</address>
+			<address>copyright <a href="//'.$_SERVER['SERVER_NAME'].'">'.$_SERVER['SERVER_NAME'].'</a> Allright reserved.</address>
 			</div>
 		</td>
 		<td></td>

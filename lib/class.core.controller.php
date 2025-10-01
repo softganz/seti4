@@ -3,7 +3,7 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
  * Modify  :: 2025-10-01
- * Version :: 37
+ * Version :: 38
  */
 
 /*************************************************************
@@ -1466,7 +1466,7 @@ class SgCore {
 		// . 'File : <strong>'.$mainFolder.$pageFile.'</strong><br />'
 		// . 'Routine : <strong>function '.$retFunc.'()</strong></p>'
 		. '<hr>
-		<address>copyright <a href="http://'.$_SERVER['HTTP_HOST'].'">http://'.$_SERVER['HTTP_HOST'].'</a> Allright reserved.</address>
+		<address>copyright <a href="//'.$_SERVER['SERVER_NAME'].'">'.$_SERVER['SERVER_NAME'].'</a> Allright reserved.</address>
 		</div>'._NL;
 	}
 }

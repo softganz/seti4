@@ -93,7 +93,7 @@ $cfg['roles']->member='access user profiles,change own profile,edit own comment,
 $cfg['encode.format'] = 'nl2br'; // text to html encoding format : nls2p , nl2br
 
 $cfg['member.registration.method'] = 'auto'; // method on register is auto , email
-$cfg['member.registration.email'] = 'noreply@'.$_SERVER['HTTP_HOST'];
+$cfg['member.registration.email'] = 'noreply@'.$_SERVER['SERVER_NAME'];
 $cfg['member.signin.checkip'] = false; // check ip address on member sign in
 $cfg['member.signin.remembertime'] = 10*24*60; // time in minute = day*24*60 default is 10 days
 $cfg['member.username.minlength'] = 4; // Min length of username
@@ -223,10 +223,10 @@ $cfg['page.extension'] = ['htm','html','php'];
 $cfg['sticky.category.items'] = 10;
 $cfg['sticky'] = [_HOME_STICKY=>'Top of Home Page',_CATEGORY_STICKY=>'Top of Category Listing'];
 
-if ($_SERVER['HTTP_HOST'] = 'localhost') {
-	$cookie_id = substr($_SERVER['HTTP_HOST'],0,2).substr(str_replace('/','',$_SERVER['SCRIPT_NAME']),0,strpos(str_replace('/','',$_SERVER['SCRIPT_NAME']),'.'));
+if ($_SERVER['SERVER_NAME'] === 'localhost') {
+	$cookie_id = substr($_SERVER['SERVER_NAME'],0,2).substr(str_replace('/','',$_SERVER['SCRIPT_NAME']),0,strpos(str_replace('/','',$_SERVER['SCRIPT_NAME']),'.'));
 } else {
-	$cookie_id = substr($_SERVER['HTTP_HOST'],0,2);
+	$cookie_id = substr($_SERVER['SERVER_NAME'],0,2);
 }
 $cfg['cookie.u'] = 'u'.$cookie_id;
 $cfg['cookie.id'] = 'id'.$cookie_id;

@@ -19,7 +19,7 @@ function view_site_maintenance() {
 		<p>'.cfg('web.offline_message').'</p>
 		<p>'.(isset($GLOBALS['site_message'])?$GLOBALS['site_message']:'').'</p>
 		<hr>
-		<address>copyright <a href="http://'.$_SERVER['HTTP_HOST'].'">http://'.$_SERVER['HTTP_HOST'].'</a> Allright reserved.</address>
+		<address>copyright <a href="//'.$_SERVER['SERVER_NAME'].'">'.$_SERVER['SERVER_NAME'].'</a> Allright reserved.</address>
 		</div>
 	</td>
 	<td></td>

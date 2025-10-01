@@ -3,16 +3,16 @@
  * Core    :: Init Web
  * Created :: 2023-08-01
  * Modify  :: 2025-10-01
- * Version :: 14
+ * Version :: 15
  */
 
 global $R;
 
 use Softganz\DB;
 
-if (!cfg('domain')) cfg('domain', ($_SERVER["REQUEST_SCHEME"] ? $_SERVER["REQUEST_SCHEME"] : 'https').'://'.$_SERVER['HTTP_HOST']);
-if (!cfg('domain.short')) cfg('domain.short', $_SERVER['HTTP_HOST']);
-//if (!cfg('cookie.domain')) cfg('cookie.domain', $_SERVER['HTTP_HOST']);
+if (!cfg('domain')) cfg('domain', ($_SERVER["REQUEST_SCHEME"] ? $_SERVER["REQUEST_SCHEME"] : 'https').'://'.$_SERVER['SERVER_NAME']);
+if (!cfg('domain.short')) cfg('domain.short', $_SERVER['SERVER_NAME']);
+//if (!cfg('cookie.domain')) cfg('cookie.domain', $_SERVER['SERVER_NAME']);
 
 cfg('folder.abs', dirname(isset($_SERVER['PATH_TRANSLATED']) ? $_SERVER['PATH_TRANSLATED'] : $_SERVER['SCRIPT_FILENAME']).'/');
 cfg('url', in_array(dirname($_SERVER['PHP_SELF']), ['/','\\']) ? '/' : dirname($_SERVER['PHP_SELF']).'/');
@@ -145,7 +145,7 @@ define('_API',     isset($_REQUEST['api']));
 
 // die(_AJAX?'AJAX Call':'Normal call');
 // echo (_AJAX?'AJAX Call':'Normal call').'<br />';
-// debugMsg('HTTP_X_REQUESTED_WITH = '.$_SERVER['HTTP_X_REQUESTED_WITH'].' , domain = '.cfg('domain').' , httpDomain = '.$httpDomain.' , httpReferer = '.$httpReferer.' , HTTP_HOST = '.$_SERVER['HTTP_HOST']);
+// debugMsg('HTTP_X_REQUESTED_WITH = '.$_SERVER['HTTP_X_REQUESTED_WITH'].' , domain = '.cfg('domain').' , httpDomain = '.$httpDomain.' , httpReferer = '.$httpReferer.' , SERVER_NAME = '.$_SERVER['SERVER_NAME']);
 
 q($R->request);
 
@@ -243,7 +243,7 @@ if (basename($request) === 'theme.css') {
 	die(cfg('theme.'.cfg('theme.name').'.css'));
 }
 
-cfg('url.abs', preg_match('/http\:/',cfg('url')) ? cfg('url') : '//'.$_SERVER['HTTP_HOST'].cfg('url'));
+cfg('url.abs', preg_match('/^http\:/',cfg('url')) ? cfg('url') : '//'.$_SERVER['SERVER_NAME'].cfg('url'));
 if (!cfg('upload.folder')) cfg('upload.folder', cfg('folder.abs').cfg('upload').'/');
 if (!cfg('upload.url')) cfg('upload.url', cfg('url').cfg('upload').'/');
 
