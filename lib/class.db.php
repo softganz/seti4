@@ -2,8 +2,8 @@
 /**
  * DB      :: Database Management
  * Created :: 2023-07-28
- * Modify  :: 2025-10-01
- * Version :: 22
+ * Modify  :: 2025-10-03
+ * Version :: 23
  *
  * @param Array $args
  * @return Object
@@ -214,10 +214,22 @@ class DB {
 		$this->setDebugMessage('SRC', $this->srcStmt);
 		$this->setDebugMessage('PREPARE', $this->stmt);
 		if (isset($this->args['var'])) $this->setDebugMessage('VAR', $this->args['var']);
+		if (isset($this->args['where'])) $this->setDebugMessage('WHERE', $this->args['where']);
+		$this->setDebugMessage('OPTIONS', $this->options);
 
-		$start = microtime(true);
 		try {
+			$start = microtime(true);
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
+			// Select complete
+			$end = microtime(true);
+			$this->updateLastQueryStmt(
+				'Select',
+				$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
+			);
+
+			$this->items = $this->fetchRow($query);
+
+			$this->count = count($this->items);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
 			$this->updateLastQueryStmt(
@@ -225,22 +237,9 @@ class DB {
 				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
 				$queryError
 			);
-
-			return false;
 		}
-
-		// Select complete
-		$end = microtime(true);
-		$this->updateLastQueryStmt(
-			'Select',
-			$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
-		);
-
-		$this->items = $this->fetchRow($query);
-
-		$this->count = count($this->items);
-
-		if (isset($this->options->debug) && $this->options->debug) debugMsg($this->debugMsg());
+		
+		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
 	}
 
 	function queryResult() {
@@ -251,7 +250,9 @@ class DB {
 
 		$this->setDebugMessage('SRC', $this->srcStmt);
 		$this->setDebugMessage('QUERY', $this->stmt);
-		$this->setDebugMessage('VAR', $this->args['var']);
+		if (isset($this->args['var'])) $this->setDebugMessage('VAR', $this->args['var']);
+		if (isset($this->args['where'])) $this->setDebugMessage('WHERE', $this->args['where']);
+		$this->setDebugMessage('OPTIONS', $this->options);
 
 		$start = microtime(true);
 
@@ -276,6 +277,7 @@ class DB {
 		);
 
 		if ($this->args['onComplete'] && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
+		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
 	}
 
 	function fetchRow($items) {
@@ -474,8 +476,6 @@ class DB {
 		if ($this->options->multiple) {
 			$this->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, true);
 		}
-
-		if ($this->options->debug) debugMsg($this->options, '$this->options');
 	}
 
 	private function setDebugMessage($key, $message) {
