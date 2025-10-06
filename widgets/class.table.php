@@ -2,8 +2,8 @@
 /**
 * Widget  :: Table Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-07-10
-* Version :: 4
+* Modify  :: 2025-10-06
+* Version :: 5
 *
 * @param Array $args
 * @return Widget
@@ -35,10 +35,19 @@ class Table extends Widget {
 	}
 
 	function toString() {
-		$config = $this->config;
-		$colgroups = [];
+		$colGroups = [];
 		$headerkey = [];
-		$captionStr = \SG\getFirst($this->config->caption,$this->caption);
+
+		if (!isset($this->thead) && isset($this->header)) {
+			$this->thead = $this->header;
+		}
+
+		if (isset($this->colgroup) && is_array($this->colgroup)) {
+			$colGroups = $this->colgroup;
+		}
+
+		if ($this->rows) {$this->children = $this->rows;}
+	 	unset($this->rows);
 
 		// Create table tag
 		$ret = '<table '
@@ -59,15 +68,40 @@ class Table extends Widget {
 		}
 		$ret .= '>'._NL;
 
-		if (isset($captionStr))
-			$ret .= '<caption>'.$captionStr.'</caption>'._NL;
+		// Create table caption
+		$ret .= self::renderCaption();
 
 		// Create table column group
+		$ret .= self::renderColGroup($headerkey);
+
+		// Create table header
+		$headerTag = self::renderHeader($headerkey, $colGroups);
+		$ret .= $this->showHeader ? '<thead>'.$headerTag.'</thead>'._NL : '';
+
+		// Create table rows
+		$ret .= self::renderBody($headerkey, $headerTag);
+
+		// Create table footer
+		$ret .= self::renderFooter($headerkey);
+
+		$ret .= '</table>'._NL;
+		return $ret;
+	}
+
+	private function renderCaption() {
+		$captionStr = \SG\getFirst($this->caption, $this->config->caption);
+
+		return '<caption>'.$captionStr.'</caption>'._NL;
+	}
+
+	private function renderColGroup(&$headerkey) {
+		$ret = '';
+
 		if (isset($this->colgroup) && is_array($this->colgroup)) {
-			$colgroups = $this->colgroup;
+			$colGroups = $this->colgroup;
 			$ret .= '<colgroup>'._NL;
 			$colNo = 1;
-			foreach ($colgroups as $key => $value) {
+			foreach ($colGroups as $key => $value) {
 				if (is_array($value) || (is_string($value) && substr($value, 0, 1) == '{')) {
 					$value = sg_implode_attr(sg_json_decode($value));
 				}
@@ -78,17 +112,17 @@ class Table extends Widget {
 			$ret .= '</colgroup>'._NL;
 		}
 
-		// Create table header
-		if (!isset($this->thead) && isset($this->header)) {
-			$this->thead = $this->header;
-		}
+		return $ret;
+	}
+
+	private function renderHeader(&$headerkey, $colGroups) {
+		$headerTag = '';
 
 		if (isset($this->thead) && is_string($this->thead)) {
-			$headerTag = $this->thead;
 			$headerTag = str_replace(
 				['<thead>', '</thead>', '<tr'],
 				['','','<tr class="header"'],
-				$headerTag
+				$this->thead
 			);
 		} else if (isset($this->thead) && is_array($this->thead)) {
 			$colNo = 1;
@@ -98,7 +132,7 @@ class Table extends Widget {
 
 				$thKey = is_numeric($thKey) ? $colNo : $thKey;
 
-				if (!$colgroups) {
+				if (!$colGroups) {
 					$headerkey[$colNo] = is_numeric($thKey) ? 'col-'.$thKey : $thKey;
 				}
 
@@ -120,109 +154,113 @@ class Table extends Widget {
 		} else {
 			$headerTag = '';
 		}
-		$ret .= $this->showHeader ? '<thead>'.$headerTag.'</thead>'._NL : '';
 
+		return $headerTag;
+	}
 
+	private function renderBody($headerkey, $headerTag) {
+		if (!isset($this->children)) return;
 
-		// Create table rows
+		$rowNo = 0;
 
-		if ($this->rows) {$this->children = $this->rows;}
-	 	unset($this->rows);
+		$ret = '<tbody>'._NL;
+		foreach ($this->children as $rowKey => $row) {
+			if (is_string($row) && $row == '<header>') {
+				$ret .= $headerTag._NL;
+				continue;
+			}
 
-		if (isset($this->children)) {
-			$rowNo = 0;
+			if ($this->repeatHeader && $rowNo && $rowNo % $this->repeatHeader == 0)
 
-			$ret .= '<tbody>'._NL;
-			foreach ($this->children as $rowKey => $row) {
-				if (is_string($row) && $row == '<header>') {
-					$ret .= $headerTag._NL;
-					continue;
-				}
+			$ret .= $headerTag._NL;
+			$rowConfig = [];
 
-				if ($this->repeatHeader && $rowNo && $rowNo % $this->repeatHeader == 0)
-					$ret .= $headerTag._NL;
-				$rowConfig = [];
-				if (is_array($row) && array_key_exists('config', $row)) {
-					$rowConfig = $row['config'];
-					if (is_string($rowConfig)) $rowConfig = (Array) \SG\json_decode($rowConfig);
-					unset($row['config']);
-				}
-				if (is_string($row) && strtolower(substr($row,0,3))=='<tr') {
-					$ret .= $row._NL;
-					continue;
-				}
+			if (is_array($row) && array_key_exists('config', $row)) {
+				$rowConfig = $row['config'];
+				if (is_string($rowConfig)) $rowConfig = (Array) \SG\json_decode($rowConfig);
+				unset($row['config']);
+			}
 
-				++$rowNo;
+			if (is_string($row) && strtolower(substr($row,0,3))=='<tr') {
+				$ret .= $row._NL;
+				continue;
+			}
 
-				if (is_string($rowKey)) $rowConfig['id'] = $rowKey;
+			++$rowNo;
 
-				$rowConfig['class'] = 'row -row-'.$rowNo
-					. (is_string($rowKey) ? ' '.$rowKey : '')
-					. (isset($rowConfig['class']) ? ' '.$rowConfig['class'] : '');
-				if (array_key_exists('attr', $rowConfig)) {
-					$attr = $rowConfig['attr'].' ';
-					unset($rowConfig['attr']);
-				} else {
-					$attr = '';
-				}
+			if (is_string($rowKey)) $rowConfig['id'] = $rowKey;
 
-				foreach ($rowConfig as $config_key => $config_value) {
-					$attr .= $config_key.'="'.$config_value.'" ';
-				}
-				$attr = trim($attr);
-				$ret .= '<tr '.$attr.'>'._NL;
+			$rowConfig['class'] = 'row -row-'.$rowNo
+				. (is_string($rowKey) ? ' '.$rowKey : '')
+				. (isset($rowConfig['class']) ? ' '.$rowConfig['class'] : '');
+			if (array_key_exists('attr', $rowConfig)) {
+				$attr = $rowConfig['attr'].' ';
+				unset($rowConfig['attr']);
+			} else {
+				$attr = '';
+			}
 
-				$colNo = 0;
+			foreach ($rowConfig as $config_key => $config_value) {
+				$attr .= $config_key.'="'.$config_value.'" ';
+			}
+			$attr = trim($attr);
+			$ret .= '<tr '.$attr.'>'._NL;
 
-				foreach ($row as $colKey => $colData) {
-					++$colNo;
-					if (is_array($colData) || is_object($colData)) {
-						// Column data is an Array
-						$colValue = '';
-						$already_class = false;
-						$ret .= '	<td';
-						if (is_object($colData) && method_exists($colData, 'build')) {
-							$colValue = $colData->build().'</td>';
-						} else if (is_object($colData)) {
-							$colValue = '*Object*';
-						} else {
-							foreach ($colData as $colk => $colv) {
-								if (empty($colk)) {
-									$colValue = $colv;
-									// unset($col[$colk]);
-								} else {
-									if ($colk == 'class') $already_class = true;
-									$ret .= ' '.$colk.'="'.$colv.'"';
-								}
+			$colNo = 0;
+
+			foreach ($row as $colKey => $colData) {
+				++$colNo;
+				if (is_array($colData) || is_object($colData)) {
+					// Column data is an Array
+					$colValue = '';
+					$already_class = false;
+					$ret .= '	<td';
+					if (is_object($colData) && method_exists($colData, 'build')) {
+						$colValue = $colData->build().'</td>';
+					} else if (is_object($colData)) {
+						$colValue = '*Object*';
+					} else {
+						foreach ($colData as $colk => $colv) {
+							if (empty($colk)) {
+								$colValue = $colv;
+								// unset($col[$colk]);
+							} else {
+								if ($colk == 'class') $already_class = true;
+								$ret .= ' '.$colk.'="'.$colv.'"';
 							}
 						}
-						if (!$already_class) {
-							$ret .= $headerkey[$colNo] ? ' class="col -'.$headerkey[$colNo].' col-'.$headerkey[$colNo].'"' : '';
-						}
-						$ret .= '>'.$colValue.'</td>'._NL;
-					} else if (strtolower(substr($colData, 0, 3)) == '<th') {
-						// Column data is TH
-						$ret .= $colData._NL;
-					} else if (strtolower(substr($colData, 0, 3)) == '<td') {
-						// Column data is TD
-						$ret .= $colData._NL;
-					} else {
-						// Column data is String
-						list($colFirstKey) = explode(' ', trim($headerkey[$colNo]));
-						$ret .= '	<td';
-						if (is_string($colKey) && substr($colKey, 0, 1) != '-')
-							$ret .= ' class="'.$colKey.'"';
-						else
-							$ret .= ($headerkey[$colNo] ? ' class="col -'.$headerkey[$colNo].' col-'.$colFirstKey.(is_string($colKey)?' '.$colKey:'').'"' : '');
-						$ret .= '>'.$colData.'</td>'._NL;
 					}
+					if (!$already_class) {
+						$ret .= $headerkey[$colNo] ? ' class="col -'.$headerkey[$colNo].' col-'.$headerkey[$colNo].'"' : '';
+					}
+					$ret .= '>'.$colValue.'</td>'._NL;
+				} else if (strtolower(substr($colData, 0, 3)) == '<th') {
+					// Column data is TH
+					$ret .= $colData._NL;
+				} else if (strtolower(substr($colData, 0, 3)) == '<td') {
+					// Column data is TD
+					$ret .= $colData._NL;
+				} else {
+					// Column data is String
+					list($colFirstKey) = explode(' ', trim($headerkey[$colNo]));
+					$ret .= '	<td';
+					if (is_string($colKey) && substr($colKey, 0, 1) != '-')
+						$ret .= ' class="'.$colKey.'"';
+					else
+						$ret .= ($headerkey[$colNo] ? ' class="col -'.$headerkey[$colNo].' col-'.$colFirstKey.(is_string($colKey)?' '.$colKey:'').'"' : '');
+					$ret .= '>'.$colData.'</td>'._NL;
 				}
-				$ret .= '</tr>'._NL;
 			}
-			$ret .= '</tbody>'._NL;
+			$ret .= '</tr>'._NL;
 		}
+		$ret .= '</tbody>'._NL;
 
-		// Create table footer
+		return $ret;
+	}
+
+	private function renderFooter($headerkey) {
+		$ret = '';
+
 		if (isset($this->tfoot)) {
 			$ret .= '<tfoot>'._NL;
 			if (is_string($this->tfoot)) {
@@ -249,9 +287,8 @@ class Table extends Widget {
 			}
 			$ret .= '</tfoot>'._NL;
 		}
-		$ret .= '</table>'._NL;
+
 		return $ret;
 	}
-
 } // End of class Table
 ?>
