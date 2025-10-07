@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2025-07-25
-* Version :: 9
+* Modify  :: 2025-10-07
+* Version :: 10
 *
 * @param Object $register
 * @return Widget
@@ -165,7 +165,7 @@ class UserRegisterFormWidget extends Widget {
 				'accept' => [
 					'type' => 'checkbox',
 					'options' => ['yes' => '<b>ฉันเข้าใจและยอมรับข้อตกลงรวมทั้งเงื่อนไขในการใช้บริการ <a href="'.url('privacy').'" target="_blank" data-webview="เงื่อนไขการใช้งาน">รายละเอียดเงื่อนไข</a></b>'],
-					'description' => 'ยอมรับข้อตกลงการใช้งาน',
+					// 'description' => 'ยอมรับข้อตกลงการใช้งาน',
 					'attribute' => ['onChange' => 'checkComplete.checkAccept(this)']
 				],
 				'verify' => [
@@ -187,7 +187,7 @@ class UserRegisterFormWidget extends Widget {
 						],
 						'next' => [
 							'type' => 'submit',
-							'class' => '-primary -next -disabled g-recaptcha',
+							'class' => '-primary -next -disabled'.(cfg('captcha') ? 'g-recaptcha' : ''),
 							'value' => '<i class="icon -material">navigate_next</i><span><b>{tr:Sign up now}</b></span>',
 							'attribute' => [
 								'data-sitekey' => $this->captchaKey,
@@ -268,38 +268,90 @@ class UserRegisterFormWidget extends Widget {
 					return "<ul><li>"+errors.join("</li><li>")+"</li></ul>"
 				}
 
-				function userExists(para) {
-					let exists = false
-					jQuery.ajaxSetup({async:false});
+				// function userExists(para) {
+				// 	let exists = false;
+				// 	const baseUrl = SG.url("api/user/exists");
+				// 	const url = new URL(baseUrl, window.location.origin);
+				// 	jQuery.ajaxSetup({async:false});
 
-					// $.ajax({
-					// 	type: "GET",
-					// 	url: SG.url("api/user/exists"),
-					// 	async: false,
-					// 	data: para,
-					// 	error: function(response) {
-					// 		console.clear()
-					// 		// console.log("response ERROR", response)
-					// 		exists = response.responseJSON.text
-					// 	}
-					// });
-					$.get(
-						SG.url("api/user/exists"),
-						para,
-					).fail(function(response) {
-						console.clear()
-						// console.log("response ERROR", response)
-						exists = response.responseJSON.text
-					});
-					// .done(function(data) {
-					// 	// console.log("DONE", data)
-					// 	exists = data.text
-					// });
+				// 	$.get(
+				// 		url,
+				// 		para,
+				// 	).fail(function(response) {
+				// 		console.clear();
+				// 		// console.log("response ERROR", response)
+				// 		exists = response.responseJSON.text || "Network error occurred";
+				// 	});
+				// 	// .done(function(data) {
+				// 	// 	// console.log("DONE", data)
+				// 	// 	exists = data.text
+				// 	// });
 
+				// 	return exists
+				// }
+
+				async function userExists(para) {
+					let exists = false;
+					try {
+						const baseUrl = SG.url("api/user/exists");
+						const url = new URL(baseUrl, window.location.origin);
+						url.search = new URLSearchParams(para).toString();
+							
+						// console.log(url);
+						
+						const response = await fetch(url, {
+							method: "GET",
+							headers: {
+								"Accept": "application/json",
+								"X-Requested-With": "XMLHttpRequest"
+							},
+							credentials: "same-origin"
+						});
+
+						console.clear();
+
+						if (!response.ok) {
+							const error = await response.json();
+							// console.log("ERROR: ",error);
+							return error.text || "Network error occurred";
+							// exists = error.text || "Network error occurred";
+							// exists = "ERROR";
+						}
+						
+						// const data = await response.json();
+						// return data.text || false;
+							
+					} catch (error) {
+						console.error("Error:", error);
+						return "Network error occurred. Please try again.";
+					}
+					
+					// console.log("exists is ", exists);
 					return exists
 				}
 
-				this.checkUserValid = function (element) {
+				// function userExists(para) {
+				// 	let exists = false;
+				// 	const baseUrl = SG.url("api/user/exists");
+				// 	const url = new URL(baseUrl, window.location.origin);
+				// 	jQuery.ajaxSetup({async:false});
+
+				// 	$.ajax({
+				// 		type: "GET",
+				// 		url: SG.url("api/user/exists"),
+				// 		async: false,
+				// 		data: para,
+				// 		error: function(response) {
+				// 			console.clear()
+				// 			// console.log("response ERROR", response)
+				// 			exists = response.responseJSON.text
+				// 		}
+				// 	});
+
+				// 	return exists
+				// }
+
+				this.checkUserValid = async function (element) {
 					let $this = $(element)
 					let username = $this.val().toLowerCase()
 					let errors = []
@@ -322,8 +374,9 @@ class UserRegisterFormWidget extends Widget {
 					} else if (username.length < 4) {
 						errors.push("ชื่อสมาชิกน้อยกว่า 4 ตัวอักษร")
 					} else {
-						let exists = userExists({name: username})
-						if (exists === false) {} else errors.push(exists)
+						let exists = await userExists({name: username});
+						// console.log("EXISTS VALUE:", exists);
+						if (exists != false) errors.push(exists)
 					}
 
 					if (errors.length === 0) {
@@ -389,7 +442,7 @@ class UserRegisterFormWidget extends Widget {
 					this.checkAllComplete()
 				}
 
-				this.checkEmailValid = function (element) {
+				this.checkEmailValid = async function (element) {
 					let $this = $(element)
 					let email = $this.val()
 					let errors = []
@@ -405,7 +458,7 @@ class UserRegisterFormWidget extends Widget {
 						// TODO: check email format
 						errors.push("รูปแบบของอีเมล์ไม่ถูกต้อง")
 					} else {
-						let exists = userExists({email: email})
+						let exists = await userExists({email: email})
 						if (exists === false) {} else errors.push(exists)
 					}
 
@@ -420,7 +473,7 @@ class UserRegisterFormWidget extends Widget {
 					this.checkAllComplete()
 				}
 
-				this.checkAccept = function (element) {
+				this.checkAccept = async function (element) {
 					let acceptChecked = $(element).is(":checked")
 					let $verifyElement = $("#form-item-edit-register-verify")
 					let $spamwordElement = $("#spamword")
@@ -434,34 +487,70 @@ class UserRegisterFormWidget extends Widget {
 
 						// Check spam word
 						if (!$("#spamword").text()) {
-							jQuery.ajaxSetup({async:false});
-							$.get(
-								SG.url("user/register..verify"),
-							).fail(function(response) {
-								// console.clear();
-								// console.log("response ERROR", response);
-								// statusText
-								exists = response.responseJSON.text
-							})
-							.done(function(data) {
-								// console.log(data);
+							try {
+								const baseUrl = SG.url("user/register..verify");
+								const url = new URL(baseUrl, window.location.origin);
+								// url.search = new URLSearchParams(para).toString();
+									
+								// console.log(url);
+								
+								const response = await fetch(url, {
+									method: "GET",
+									headers: {
+										"Accept": "application/json",
+										"X-Requested-With": "XMLHttpRequest"
+									},
+									credentials: "same-origin"
+								});
+								
+								if (!response.ok) {
+									const error = await response.json();
+									// console.log("ERROR: ",error);
+									return error.text || "Network error occurred";
+									// exists = error.text || "Network error occurred";
+									// exists = "ERROR";
+								}
+								
+
+								const data = await response.json();
 								$("#spamword").text(data)
-							});
-								// $.ajax({
-								// 	type: "GET",
-								// 	url: SG.url("user/register..verify"),
-								// 	async: false,
-								// 	error: function(response) {
-								// 		// console.clear();
-								// 		console.log("response ERROR", response);
-								// 		// statusText
-								// 		// exists = response.responseJSON.text								
-								// 	}
-								// })
-								// .done(function(data) {
-								// 	console.log("VERIFY DONE", data)
-								// 	$("#spamword").text(data)
-								// })
+								// return data.text || false;
+									
+							} catch (error) {
+								console.error("Error:", error);
+								return "Network error occurred. Please try again.";
+							}
+								
+						// jQuery.ajaxSetup({async:false});
+							// $.get(
+							// 	SG.url("user/register..verify"),
+							// ).fail(function(response) {
+							// 	// console.clear();
+							// 	// console.log("response ERROR", response);
+							// 	// statusText
+							// 	exists = response.responseJSON.text
+							// })
+							// .done(function(data) {
+							// 	// console.log(data);
+							// 	$("#spamword").text(data)
+							// });
+
+
+							// $.ajax({
+							// 	type: "GET",
+							// 	url: SG.url("user/register..verify"),
+							// 	async: false,
+							// 	error: function(response) {
+							// 		// console.clear();
+							// 		console.log("response ERROR", response);
+							// 		// statusText
+							// 		// exists = response.responseJSON.text								
+							// 	}
+							// })
+							// .done(function(data) {
+							// 	console.log("VERIFY DONE", data)
+							// 	$("#spamword").text(data)
+							// })
 						}
 					} else {
 						$verifyElement.hide()
@@ -489,7 +578,7 @@ class UserRegisterFormWidget extends Widget {
 					})
 					.fail(function(response){
 						console.clear()
-						console.log("FAIL", response)
+						// console.log("FAIL", response)
 
 						Object.keys(response.responseJSON).forEach( function(key) {
 							let errorText = response.responseJSON[key]
