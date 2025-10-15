@@ -2,8 +2,8 @@
 /**
 * User    :: Register Form
 * Created :: 2019-05-06
-* Modify  :: 2025-10-07
-* Version :: 10
+* Modify  :: 2025-10-10
+* Version :: 11
 *
 * @param Object $register
 * @return Widget
@@ -52,7 +52,9 @@ class UserRegisterFormWidget extends Widget {
 			// 'title' => '<header class="header"><h3>'.tr('Register New Member').'</h3></header>',
 			'checkValid' => true,
 			'rel' => SG\getFirst($this->register->rel, 'edit-register'),
-			'attribute' => ['onSubmit' => 'checkComplete.registerSubmit(this)'],
+			'attribute' => [
+				'onSubmit' => $this->captchaKey ? NULL : 'checkComplete.registerSubmit(this)'
+			],
 			'children' => [
 				'rel' => $this->register->rel ? ['type' => 'hidden','value' => $this->register->rel] : NULL,
 				'ret' => $this->register->ret ? ['type' => 'hidden','value' => $this->register->ret] : NULL,
@@ -180,14 +182,14 @@ class UserRegisterFormWidget extends Widget {
 				'submit' => [
 					'type' => 'button',
 					'items' => [
-						'cancel' => [
-							'type' => 'cancel',
-							'class' => '-link',
-							'value' => '<i class="icon -material -gray">cancel</i><span>{tr:Cancel}</span>'
-						],
+						// 'cancel' => [
+						// 	'type' => 'cancel',
+						// 	'class' => '-link',
+						// 	'value' => '<i class="icon -material -gray">cancel</i><span>{tr:Cancel}</span>'
+						// ],
 						'next' => [
 							'type' => 'submit',
-							'class' => '-primary -next -disabled'.(cfg('captcha') ? 'g-recaptcha' : ''),
+							'class' => '-primary -next -disabled'.($this->captchaKey ? ' g-recaptcha' : ''),
 							'value' => '<i class="icon -material">navigate_next</i><span><b>{tr:Sign up now}</b></span>',
 							'attribute' => [
 								'data-sitekey' => $this->captchaKey,
