@@ -23,12 +23,12 @@
 	&.-nav {
 		margin: 0; padding: 0; flex: 1; display: flex; flex-wrap: nowrap; justify-content: flex-end;
 		>* {flex: 0;}
+		ul.-pulldown>li>a {overflow: hidden;}
 
 		>.nav {
 			&.-main {
 				order: -1; align-items: center; height: 48px; margin: 0; display: flex; flex-wrap: nowrap; justify-content: flex-start; z-index: 1100; flex: 1;
 				>ul {list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: nowrap; gap: 4px; position: relative;}
-				>ul.-pulldown>li>a {overflow: hidden;}
 				:not(.-owner)>ul.-main>li {font-weight: normal;}
 				>ul>li>a {padding: 0 8px; white-space: nowrap;}
 				>ul ul {min-width: 240px; font-weight: normal;}
