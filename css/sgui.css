@@ -22,6 +22,10 @@
 
 	--sidebar-bg-color: #f6f6f6;
 
+	--color-1: #E9F7EF; --color-1-border: #84AA8A;
+	--color-2: #E7EFFB; --color-2-border: #6A768B;
+	--color-3: #F4E7D1; --color-3-border: #999070;
+	--color-4: #FCEDE8; --color-4-border: #8C6A67;
 	.widget-inlineedit {
 		--font-color: inherit;
 	}
@@ -379,6 +383,7 @@
 	--footer-bg-color: #f7f7f7;
 	--tr-bg-hover-color: #fafafa;
 }
+
 .module.-app-theme-dark .widget-table {
 	--bg-color: #333;
 	--border-color: #333;
