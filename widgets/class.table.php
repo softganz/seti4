@@ -2,8 +2,8 @@
 /**
 * Widget  :: Table Widget
 * Created :: 2020-10-01
-* Modify  :: 2025-10-06
-* Version :: 5
+* Modify  :: 2025-10-14
+* Version :: 6
 *
 * @param Array $args
 * @return Widget
@@ -91,7 +91,7 @@ class Table extends Widget {
 	private function renderCaption() {
 		$captionStr = \SG\getFirst($this->caption, $this->config->caption);
 
-		return '<caption>'.$captionStr.'</caption>'._NL;
+		return $captionStr ? '<caption>'.$captionStr.'</caption>'._NL : '';
 	}
 
 	private function renderColGroup(&$headerkey) {
