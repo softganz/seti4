@@ -1,14 +1,15 @@
 <?php
 /**
-* Model Name
-* Created 2019-11-01
-* Modify  2019-11-01
-*
-* @param Object $conditions
-* @param Object $options
-* @return Object Data Set
-*		$options->result = default,group,tree
-*/
+ * Category :: Get Category
+ * Created  :: 2019-11-01
+ * Modify   :: 2019-11-01
+ * Version  :: 2
+ *
+ * @param Object $conditions
+ * @param Object $options
+ * @return Object Data Set
+ *		$options->result = default,group,tree
+ */
 
 $debug = true;
 
@@ -60,7 +61,10 @@ function r_category_get($conditions, $key = 'tid', $options = '{}') {
 
 	$dbs = mydb::select($stmt, $conditions);
 
-	if ($options->debug) debugMsg(mydb()->_query).debugMsg($dbs,'$dbs');
+	if ($options->debug) {
+		debugMsg($options, '$options');
+		debugMsg(mydb()->_query).debugMsg($dbs,'$dbs');
+	}
 
 	$result = [];
 	if ($options->selectText) $result[''] = $options->selectText;
