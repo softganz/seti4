@@ -2,8 +2,8 @@
 /**
  * Widget  :: Basic Widgets Collector
  * Created :: 2020-10-01
- * Modify  :: 2025-10-01
- * Version :: 55
+ * Modify  :: 2025-10-16
+ * Version :: 56
  *
  * @param Array $args
  * @return Widget
@@ -752,24 +752,18 @@ class BackButton extends Widget {
 // Usage: new Icon('iconName1,iconName2', property=[])
 class Icon extends Widget {
 	var $widgetName = 'Icon';
-	var $version = '0.02';
+	var $version = '0.03';
 	var $icon;
+	var $secondary; // For secondary icon
 	var $type = 'material';
 
 	function __construct($icon, $args = []) {
 		$this->icon = $icon;
 		parent::__construct($args);
+		unset($this->config, $this->childContainer, $this->child, $this->children, $this->attributeText);
 	}
 
 	function toString() {
-		// $secondaryIcon = NULL;
-		// debugMsg($this, '$this');
-		// if ($this->attributes['secondary']) {
-		// 	$secondaryIcon = $this->attribute['secondary'];
-		// 	unset($this->attribute['secondary']);
-		// }
-		// debugMsg('icon2 = '.$icon2);
-
 		if (is_string($this->icon) && preg_match('/$</', $this->icon)) return $this->icon;
 
 		if (is_object($this->icon)) return $this->icon;
@@ -796,15 +790,12 @@ class Icon extends Widget {
 				. '</span>';
 		}
 
-		// debugMsg('icon2 = '.$icon2);
 		if ($this->secondary) {
 			return '<span class="icon-group">'
 				. '<i '.sg_implode_attr($attribute).'>'
 				. $this->icon
 				. '</i>'
-				// . '<i '.sg_implode_attr($attribute).'>'
 				. $this->secondary
-				// . '</i>'
 				. '</span>';
 		}
 
