@@ -1,8 +1,8 @@
 <!--
 Inlineedit Widget
 Created :: 2025-07-04
-Modify  :: 2025-07-04
-Version :: 1
+Modify  :: 2025-10-17
+Version :: 2
 -->
 <h3>Class Inlineedit Widget</h3>
 
@@ -35,7 +35,7 @@ Child and children element
 All input type property
 [
 	'editMode' : Boolean default false
-	'type' : 'text,textarea,datepicker,radio,checkbox,select'
+	'type' : 'label,text,textarea,datepicker,radio,checkbox,select,textfield,method,comment' Default is text
 	'inputName' : String
 	'label' : String
 	'value': Mixed
@@ -57,6 +57,18 @@ Additionall for type radio,checkbox,select:
 </code>
 <code>
 editMode ↔ Boolean
+action ↔ String
+</code>
+
+<code>
+type ↔ method
+new InlineEdit([
+	'child' => [
+		'type' => 'method',
+		'label' => 'Label Name',
+		'method' => $this->methodName(),
+	]
+])
 action ↔ String
 </code>
 
