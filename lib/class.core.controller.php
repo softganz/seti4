@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-10-01
- * Version :: 38
+ * Modify  :: 2025-10-22
+ * Version :: 39
  */
 
 /*************************************************************
@@ -95,8 +95,11 @@ class R {
 	}
 
 	public static function PageWidget($pageName, $args = []) {
+		$filePrefix = 'page.';
 		$buildMethod = 'build'; // Default build method
 		$reservedMethod = ['rightToBuild'];
+
+		if (preg_match('/^api\./', $pageName)) $filePrefix = '';
 
 		// Specific build method using .. method at end of action
 		if (preg_match('/([\w].*)(\.\.)([\w\.].*)$/', $pageName, $out)) {
@@ -105,7 +108,7 @@ class R {
 			$buildMethod = preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $buildMethod);
 		}
 
-		list($className, $found, $fileName, $resourceType) = SgCore::loadResourceFile('page.'.$pageName);
+		list($className, $found, $fileName, $resourceType) = SgCore::loadResourceFile($filePrefix.$pageName);
 
 		if ($found && class_exists($className) && method_exists($className, $buildMethod)) {
 			// Found page widget then build method
