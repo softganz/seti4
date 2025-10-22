@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-10-01
- * Version :: 51
+ * Modify  :: 2025-10-22
+ * Version :: 52
  */
 
 'use strict'
@@ -535,10 +535,15 @@ function sgWebViewDomProcess(id) {
 function showError(response) {
 	// console.log(response);
 	let errorMsg = 'ERROR : ';
-	if (response.responseJSON.text) {
-		errorMsg += response.responseJSON.text+' ('+response.status+')';
+	if ("responseJSON" in response) {
+		errorMsg += ("text" in response.responseJSON ? response.responseJSON.text : '')
+			+ ' ('+response.status+')';
+	} else if ("responseText" in response) {
+		errorMsg += response.responseText
+			+ ("statusText" in response ? response.statusText : '')
+			+ ("status" in response ? ' ('+response.status+')' : '');
 	} else {
-		errorMsg += response.statusText+' ('+response.status+')';
+		errorMsg += 'Unknown error occurred.';
 	}
 	notify(errorMsg);
 }
@@ -1264,7 +1269,7 @@ console.log($this)
 	let inputType = ''
 
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
-		let debug = false
+		let debug = false;
 
 		if (debug) console.log('$.sgInlineEdit version ' + version + ' start')
 
