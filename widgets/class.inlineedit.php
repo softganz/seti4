@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-08-04
-* Version :: 16
+* Modify  :: 2025-10-22
+* Version :: 17
 *
 * @param Array $args
 * @return Widget
@@ -270,7 +270,8 @@ class InlineEdit extends Widget {
 	}
 
 	function _renderTypeTextField($widget) {
-		return $this->_renderLabel($widget).(isset($widget->text) ? '<span>'.$widget->text.'</span>' : '');
+		return $this->_renderLabel($widget)
+			. (isset($widget->text) ? '<span>'.self::_renderEachChildWidget(NULL, $widget->text).'</span>' : '');
 	}
 
 	function _renderTypeLabel($widget) {
@@ -327,7 +328,7 @@ class InlineEdit extends Widget {
 		$ret = '';
 		$ret .= $this->_renderLabel($widget, ':');
 
-		$text = $widget->data[$widget->value];
+		$text = SG\getFirst($widget->data[$widget->value], $widget->options->placeholder ? '<span class="placeholder -no-print">'.$widget->options->placeholder.'</span>' : NULL);
 
 		if ($childEditMode) {
 			$ret .= '<span class="-for-input">'.$text.'</span>'._NL;
