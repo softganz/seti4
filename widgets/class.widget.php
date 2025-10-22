@@ -2,8 +2,8 @@
 /**
  * Widget  :: Basic Widgets Collector
  * Created :: 2020-10-01
- * Modify  :: 2025-10-16
- * Version :: 56
+ * Modify  :: 2025-10-22
+ * Version :: 57
  *
  * @param Array $args
  * @return Widget
@@ -1196,32 +1196,55 @@ class Page extends PageBase {
 
 class PageApi extends PageBase {
 	var $widgetName = 'PageApi';
-	var $actionDefault;
-	var $action;
-	var $actionMethod;
+	private $runInternalMethod = true;
+	protected $actionDefault;
+	protected $action;
+	private $actionMethod;
+	protected $args = [];
 
 	function __construct($args = []) {
 		parent::__construct($args);
+
 		if (empty($this->action)) $this->action = $this->actionDefault;
-		// Replace .a to .A
-		$this->actionMethod = (preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->action));
+
+		if (preg_match('/^api\./', $this->action)) $this->runInternalMethod = false;
+
+		// Replace .a with .A
+		$this->actionMethod = preg_replace_callback(
+			'/\.(\w)/',
+			function($matches) {return strtoupper($matches[1]);},
+			$this->action
+		);
 	}
 
 	function build() {
-		if (method_exists($this, $this->actionMethod) && ($reflection = new ReflectionMethod($this, $this->actionMethod)) && $reflection->isPublic()) {
-			if (method_exists($this, 'rightToBuild')) {
-				$rightToBuild = $this->rightToBuild();
-				if ($rightToBuild === true) {
-					return $this->{$this->actionMethod}();
-				} else {
-					return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-				}
-			} else {
-				return $this->{$this->actionMethod}();
-			}
+		if ($this->runInternalMethod) return $this->runMethod();
+		else return $this->runExternalMethod();
+	}
+
+	private function runMethod() {
+		if (!$this->canRunMethod()) return apiError(_HTTP_ERROR_NOT_FOUND, 'Action not found!!!');
+		if (!method_exists($this, 'rightToBuild')) return $this->{$this->actionMethod}();
+
+		$rightToBuild = $this->rightToBuild();
+		if ($rightToBuild === true) {
+			return $this->{$this->actionMethod}();
 		} else {
-			return apiError(_HTTP_ERROR_NOT_FOUND, 'Action not found!!!');
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 		}
+	}
+
+	private function runExternalMethod() {
+		return R::PageWidget(
+			$this->action,
+			(Array) $this->args
+		);
+	}
+
+	private function canRunMethod() {
+		return method_exists($this, $this->actionMethod)
+			&& ($reflection = new ReflectionMethod($this, $this->actionMethod))
+			&& $reflection->isPublic();
 	}
 } // End of class PageApi
 
