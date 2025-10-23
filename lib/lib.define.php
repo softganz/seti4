@@ -140,6 +140,7 @@ define('_HTTP_ERROR_NOT_ALLOWED', 405); // Method Not Allowed : Page found but r
 define('_HTTP_ERROR_NOT_ACCEPTABLE', 406); // Not Acceptable : Page found but data incomplete
 define('_HTTP_ERROR_TIMEOUT', 408); // Request Time-out
 define('_HTTP_ERROR_UNSUPPORT', 415); // Unsupported Media Type : Wrong media type on upload
+define('_HTTP_ERROR_NOT_IMPLEMENTED', 501); // Unsupported Media Type : Wrong media type on upload
 
 define(
 	'_STATUS',
