@@ -2,7 +2,7 @@
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
  * Modify  :: 2025-10-23
- * Version :: 53
+ * Version :: 54
  */
 
 'use strict'
@@ -535,7 +535,9 @@ function sgWebViewDomProcess(id) {
 function showError(response) {
 	// console.log(response);
 	let errorMsg = 'ERROR : ';
-	if ("responseJSON" in response) {
+	if ("responseJSON" in response && "error" in response.responseJSON) {
+		errorMsg += response.responseJSON.error.text + ' ('+response.status+')';
+	} else if ("responseJSON" in response) {
 		errorMsg += ("text" in response.responseJSON ? response.responseJSON.text : '')
 			+ ' ('+response.status+')';
 	} else if ("responseText" in response) {
@@ -1256,13 +1258,10 @@ console.log($this)
 	let sgInlineEditAction = 'click';
 	let updatePending = 0;
 	let updateQueue = 0;
-	// let debug = 1; // debugSG
 	let database;
 	let ref;
 	let radioClickCount = 0;
 	let settings = {}
-
-
 	let count = 0 // @deprecated
 	let editActive = false // @deprecated
 
@@ -1277,17 +1276,13 @@ console.log($this)
 		if (typeof $.fn.editable === 'undefined') {
 			console.error('ERROR :: $.editable is not load')
 			return
-		}
-
-		if ('disable' === target) {
+		} else if ('disable' === target) {
 			//$(this).data('disabled.editable', true);
 			return;
-		}
-		if ('enable' === target) {
+		} else if ('enable' === target) {
 			//$(this).data('disabled.editable', false);
 			return;
-		}
-		if ('destroy' === target) {
+		} else if ('destroy' === target) {
 			//$(this)
 			//.unbind($(this).data('event.editable'))
 			//.removeData('disabled.editable')
@@ -1311,6 +1306,14 @@ console.log($this)
 		let showSubmitButton = (fieldOptions && 'button' in fieldOptions) || $inlineField.data('button') == 'yes'
 		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
 		let disableInputOnSave = false
+
+		console.log('debug ', $inlineWidget.data('debug'));
+		if ($inlineWidget.data('debug') === 'inline') debug = true;
+		else if (fieldOptions && 'debug' in fieldOptions && fieldOptions.debug) {
+			debug = true;
+			console.log('DEBUG ENABLED from field options');
+		}
+
 
 		if (postUrl === undefined) {
 			postUrl = $inlineWidget.data('action') ? $inlineWidget.data('action') : $inlineWidget.data('updateUrl')
@@ -1416,18 +1419,6 @@ console.log($this)
 
 		if (debug) console.log('SG-INLINE-EDIT SETTING:',settings)
 
-		// console.log('value of container = ', settings.container.data('value'))
-		// console.log('typeof container', typeof settings.container)
-		// if (typeof settings.container === 'object') delete settings.container
-		// console.log('fieldOptions',fieldOptions)
-		//console.log($this.data('options'))
-
-		// TODO: 2 lines below not used
-		debug = $inlineWidget.data('debug') ? true : false
-		if (fieldOptions && 'debug' in fieldOptions && fieldOptions.debug) debug = true
-
-		debug = settings.debug;
-
 		self.validValue = (value, settings) => {
 			let errorMsg = ''
 
@@ -1472,6 +1463,7 @@ console.log($this)
 		}
 
 		self.saveToServer = ($inlineField, value, callback) => {
+			let resultDebug = debug;
 			// console.log('Update Value = '+value)
 			// console.log($inlineWidget.data('updateUrl'))
 			// console.log('postUrl = ', postUrl)
@@ -1504,16 +1496,18 @@ console.log($this)
 			if (settings.var) para[settings.var] = para.value
 			$inlineField.data('value', para.value)
 
+			if (resultDebug) para.debug = 'inline';
+
 			//if (settings.blank === null && para.value === "") para.value = null
 			//console.log(settings.blank)
 
-			if (debug) console.log('SENDING TO ', postUrl)
-			if (debug) console.log('SENDING PARA:', para)
+			if (resultDebug) console.log('SENDING TO ', postUrl)
+			if (resultDebug) console.log('SENDING PARA:', para)
 
 			updatePending++
 			updateQueue++
 
-			notify('กำลังบันทึก กรุณารอสักครู่....' + (debug ? '<br />Updating : pending = '+updatePending+' To = '+postUrl+'<br />' : ''))
+			notify('กำลังบันทึก กรุณารอสักครู่....' + (resultDebug ? '<br />Updating : pending = '+updatePending+' To = '+postUrl+'<br />' : ''))
 
 			// Lock all inlineedit-field until post complete
 			if (disableInputOnSave) $inlineWidget.find('.inlineedit-field').addClass('-disabled')
@@ -1529,13 +1523,13 @@ console.log($this)
 					let tempData = data
 					data = {}
 					data.value = para.value
-					if (debug) data.msg = tempData
+					if (resultDebug) data.msg = tempData
 				}
 
 				//if (data == '' || data == '<p>&nbsp;</p>')
 				//	data = '...';
 
-				if (debug) console.log('RETURN DATA:', data)
+				if (resultDebug) console.log('RETURN DATA:', data)
 
 				if (returnType == 'refresh') {
 					window.location = window.location
@@ -1561,7 +1555,16 @@ console.log($this)
 					// $this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
 					// $this.html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
 				}
+			}, settings.result)
+			.fail(function(response) {
+				console.log('SG INLINE EDIT ERROR', response)
+				showError(response);
+			})
+			.done(function(data) {
+				console.log('RETURN DATA', data)
 
+				// Process widget callback function
+				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
 
 				let replaceTrMsg = '';
 				//console.log('para.tr='+para.tr+' data.tr='+data.tr)
@@ -1581,32 +1584,23 @@ console.log($this)
 				else message = 'บันทึกเรียบร้อย';
 				notify(
 					message
-					+ (debug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>POST PARAMETER:</b><pre>'+JSON.stringify(para, null, "\t")+'</pre><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
-					debug ? 300000 : 5000
+					+ (resultDebug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>POST PARAMETER:</b><pre>'+JSON.stringify(para, null, "\t")+'</pre><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
+					resultDebug ? 300000 : 5000
 				)
-			}, settings.result)
-			.fail(function(response) {
-				showError(response);
-			})
-			.done(function(response) {
-				// console.log('response', response)
 
-				// Process widget callback function
-				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
-
-				if (debug && onSaveFunction) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
+				if (resultDebug && onSaveFunction) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
 				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
-					window[onSaveFunction](settings, $inlineField, response);
+					window[onSaveFunction](settings, $inlineField, data);
 					// window[onSaveFunction]($inlineField, response, $inlineWidget);
 				}
 
 				// Process callback function on each save field
 				let callbackFunction = callback
 
-				if (debug && callbackFunction) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
+				if (resultDebug && callbackFunction) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
 					if (typeof window[callbackFunction] === 'function') {
-						window[callbackFunction]($inlineField, response, $inlineWidget);
+						window[callbackFunction]($inlineField, data, $inlineWidget);
 					} else if (settings.callbackType == 'silent') {
 						$.get(callbackFunction, function() {})
 					} else {
@@ -1618,8 +1612,8 @@ console.log($this)
 
 				// Process action done
 				if (settings.done) {
-					if (debug) console.log('PROCESSING DONE:', settings.done)
-					sgActionDone(settings.done, $inlineField, response);
+					if (resultDebug) console.log('PROCESSING DONE:', settings.done)
+					sgActionDone(settings.done, $inlineField, data);
 				}
 				editActive = false
 				console.log('$.sgInlineEdit DONE!!!')
