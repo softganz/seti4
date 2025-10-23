@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
  * @modify  :: 2025-10-23
- * @version :: 28
+ * @version :: 29
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,6 +216,7 @@ function initConfig($configFolder) {
 
 // Set auto loader file
 function sg_autoloader($class) {
+	$debug = debug('autoload');
 	$registerFileList = (Array) R()->core->autoLoader->items;
 
 	if (preg_match('/\\\\/', $class)) {
@@ -226,8 +227,8 @@ function sg_autoloader($class) {
 	$lowerClass = strtolower($class);
 	if (in_array($lowerClass, array_keys($registerFileList))) {
 		load_lib($registerFileList[$lowerClass]);
-		if (debug('auto')) {
-			debugMsg('AUTOLOAD '.$class.' from <b style="color: green">'.$registerFileList[$lowerClass].'</b>');
+		if ($debug) {
+			debugMsg('AUTOLOAD '.$class.' from register list of <b style="color: green">'.$registerFileList[$lowerClass].'</b>');
 		}
 		return;
 	}
@@ -249,9 +250,8 @@ function sg_autoloader($class) {
 	}
 	$import = strToLower($import);
 
-	if (debug('auto')) {
-		debugMsg('AUTOLOAD '.$class.' '.($import ? 'TO <b style="color: green">'.$import.'</b>' : 'not load.'));
-		// debugMsg($pieces, '$pieces');
+	if ($debug) {
+		debugMsg('AUTOLOAD '.$class.' '.($import ? 'from <b style="color: green">import("'.$import.'")</b>' : 'not load.'));
 	}
 
 	if ($import) import($import);
