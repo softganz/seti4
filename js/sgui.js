@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-10-22
- * Version :: 52
+ * Modify  :: 2025-10-23
+ * Version :: 53
  */
 
 'use strict'
@@ -2120,25 +2120,33 @@ console.log($this)
 * Using <header><h3>Text</h3><a class="sg-expand"><i class="icon -material">expand_less</i></a></header>
 */
 (function($) {	// sg-expand
-	$(document).on("click",".sg-expand",function() {
-		let $this = $(this)
-		let $icon = $(this).find('.icon')
-		if ($this.data('rel')) {
-			$($this.data('rel')).toggle()
+	$(document).on("click", ".sg-expand", function() {
+		console.log('SG-EXPAND CLICK');
+		let $this = $(this);
+		let $icon = $(this).find('.icon');
+
+		if ($this.data('rel') === "children") {
+			$this.children().toggle();
+		} else if ($this.data('rel') === "next") {
+			$this.next().toggle();
+		} else if ($this.data('rel') === "nextAll") {
+			$this.nextAll().toggle();
+		} else if ($this.data('rel')) {
+			$($this.data('rel')).toggle();
 		} else {
-			let $parent = $(this).closest('.widget-listtile')
-			$parent.next().toggle()
-			// $parent.nextAll().toggle()
+			let $parent = $(this).closest('.widget-listtile');
+			$parent.next().toggle();
 		}
 
-		if ($icon.text() == 'expand_less') {
-			$icon.text('expand_more')
-		} else if ($icon.text() == 'expand_more') {
-			$icon.text('chevron_right')
-		} else if ($icon.text() == 'chevron_right') {
-			$icon.text('expand_more')
+		if ($icon.text() === 'expand_less') {
+			$icon.text('expand_more');
+		} else if ($icon.text() === 'expand_more') {
+			$icon.text('chevron_right');
+		} else if ($icon.text() === 'chevron_right') {
+			$icon.text('expand_more');
 		}
-	})
+		return false;
+	});
 })(jQuery);
 
 
