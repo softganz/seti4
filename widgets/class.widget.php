@@ -2,8 +2,8 @@
 /**
  * Widget  :: Basic Widgets Collector
  * Created :: 2020-10-01
- * Modify  :: 2025-10-22
- * Version :: 57
+ * Modify  :: 2025-10-23
+ * Version :: 58
  *
  * @param Array $args
  * @return Widget
@@ -571,26 +571,65 @@ class ScrollView extends Widget {
 class DebugMsg extends Widget {
 	var $msg;
 	var $varName;
+	var $callFrom;
 
-	function __construct($msg = NULL, $varName = NULL) {
-		$this->msg = $msg;
-		$this->varName = $varName;
+	function __construct($msg = NULL, $varName = NULL, $callFrom = NULL) {
+		parent::__construct([
+			'msg' => $msg,
+			'varName' => $varName,
+			'callFrom' => empty($callFrom) ? debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'] : $callFrom,
+		]);
 	}
 
 	function build() {
+		if (!user_access('access debugging program')) return;
+
 		if (is_object($this->msg) || is_array($this->msg)) {
-			if (function_exists('\SG\print_o')) {
-				$this->msg = \SG\print_o($this->msg, $this->varName);
-			} else {
-				$this->msg = print_r($this->msg,1);
-			}
+			$this->msg = '<div>'.self::printObject($this->msg, $this->varName).'</div>';
+		} else if (isset($this->msg) && preg_match('/^(SELECT|UPDATE|INSERT|DELETE)/i', trim($this->msg))) {
+			$this->msg = '<pre>'.$this->msg.'</pre>';
+		} else if (!isset($this->msg)) {
+			$this->msg = 'NULL';
 		}
-		if (isset($this->msg) && user_access('access debugging program')) {
-			if (preg_match('/^(SELECT|UPDATE|INSERT|DELETE)/i', $this->msg)) {
-				$this->msg = '<pre>'.$this->msg.'</pre>';
+
+		return "\r\n".'<div class="debug-msg">'
+			. '<span class="widget-button sg-expand" data-rel="next"><i class="icon -material">expand_more</i></span>'
+			. $this->msg
+			. ($this->callFrom ? '<div class="-call-from">Called from : '.$this->callFrom.'</div>' : '')
+			. '</div>'
+			. "\r\n";
+	}
+
+	static function printObject($arr = [], $name = '', $options = []) {
+		if ($name && is_object($arr)) {$prefix = '->'; $suffix = '';}
+		else if ($name && is_array($arr)) {$prefix = '['; $suffix = ']';}
+		else $prefix = $suffix = '';
+
+		$result = '<ul class="array-value '.(isset($options['class']) ? $options['class'] : '').'" style="margin:0 0 0 15px;padding:0px;">'._NL;
+		if ( is_object($arr) || (is_array($arr) and count($arr) > 0) ) {
+			foreach ( $arr as $key=>$value ) {
+				$vtype = GetType($value);
+				$hasChild = in_array($vtype, ['array', 'object']);
+				$result .= '<li><span style="color:#ff9a56">'
+					. '<span class="'.($hasChild ? 'widget-button sg-expand' : '').'" data-rel="next">'
+					. $name.$prefix.$key.$suffix
+					. ($hasChild ? '<i class="icon -material">expand_more</i>' : '')
+					. '</font> '
+					. '<font color=gray>['.(is_object($value) ? get_class($value).' ' : '').$vtype.']</font> : </span>';
+				switch ($vtype) {
+					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
+					case 'array' : $result .= self::printObject($value,$name.$prefix.$key.$suffix); break;
+					case 'object' : $result .= self::printObject($value,$name.$prefix.$key.$suffix); break;
+					default : $result .= '<font color="#ff9a56">'.$value.'</font>'; break;
+				}
+				$result .= '</li>'._NL;
 			}
-			return "\r\n".'<div class="debug-msg">'.$this->msg.'</div>'."\r\n";
+		} else {
+			$result .= '<li>(empty)</li>'._NL;
 		}
+		$result .= '</ul>'._NL;
+
+		return $result;
 	}
 } // End of class DebugMsg
 

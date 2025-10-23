@@ -8,8 +8,8 @@
  * Author      :: Panumas Nontapan
  * Author URI  :: https://softganz.com
  * Created     :: 2018-10-15
- * Last Modify :: 2025-10-22
- * Version     :: 15
+ * Last Modify :: 2025-10-23
+ * Version     :: 16
  */
 
 @import url(reset.css);
@@ -158,7 +158,13 @@ h2.header {text-align: right; font-size: 1.2em;}
 	font-family: monospace;
 	tab-size: 1;
 	flex: 1 0 100%;
+	position: relative;
+	min-height: 4rem;;
 	* {font-style: normal;}
+	pre {white-space: pre-wrap;}
+	.-call-from {margin-top: 8px; padding-top: 8px; border-top: 1px #ccc dashed; font-size: 1.2rem; color: #666;}
+	.sg-expand {cursor: pointer; margin: 0; padding: 0;}
+	>.sg-expand {position: absolute; right: 16px;}
 }
 
 kbd {
