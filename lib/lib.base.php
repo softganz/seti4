@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2025-07-29
- * Version :: 13
+ * Modify  :: 2025-10-23
+ * Version :: 14
  */
 
 namespace SG;
@@ -76,10 +76,10 @@ function print_o() {
 		$varTitle = '<b>'.$title.(is_object($value) ? ' ['.get_class($value).']' : '').'</b>';
 		if ($echo) {
 			echo $varTitle;
-			echo Arrays::value($value, $title);
+			echo (new DebugMsg($value, $title))->build();
 		} else {
 			$ret .= $varTitle;
-			$ret .= Arrays::value($value, $title, ['class' => $inline ? '-inline' : '']);
+			$ret .= (new DebugMsg($value, $title))->build();
 		}
 		unset($title);
 	}

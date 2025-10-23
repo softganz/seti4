@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-10-01
- * @version :: 27
+ * @modify  :: 2025-10-23
+ * @version :: 28
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -316,33 +316,18 @@ function sendHeader($type = 'text/html') {
  */
 function debugMsg($msg = NULL, $varname = NULL) {
 	static $debugMsg = '';
-	$isDebugGlobal = true;
-	// $callerFrom = get_caller(__FUNCTION__)['from'];
-	$debugBacktrace = debug_backtrace();
-	$callerFrom = end($debugBacktrace)['function'];
-	// echo debug_backtrace()[1]['function'];
-	// echo '<pre>'.print_r(debug_backtrace(),1).'</pre>';
-	if (is_array($msg) && is_null($varname)) {
-		$varname = $msg[1];
-		$msg = $msg[0];
-		$isDebugGlobal = false;
-	}
-	if (is_object($msg) || is_array($msg)) {
-		if (function_exists('print_o')) {
-			$msg = print_o($msg,$varname);
-		} else {
-			$msg = print_r($msg,1);
-		}
-	}
+	$callerFrom = debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'];
+	// echo '<br><br><br><br><br><br><pre>'.print_r(debug_backtrace(),1).'</pre>';
+
+	// No need to check "access debugging program" because will check in index.tpl.php
+
 	if (isset($msg)) {
-		if (preg_match('/^(SELECT|UPDATE|INSERT|DELETE)/i', $msg, $out)) {
-			$msg = '<pre>'.$msg.'</pre>';
-		}
-		$msg = "\r\n".'<div class="debug-msg">'.$msg
-			. (isset($callerFrom) ? '<br><em><small>Call from: '.$callerFrom.'</small></em></div>' : '')
-			. "\r\n";
-		if ($isDebugGlobal) $debugMsg .= $msg; else if (user_access('access debugging program')) return $msg;
+		$msg = in_array('DebugMsg', get_declared_classes()) ? (new DebugMsg($msg, $varname, $callerFrom))->build() : '<div class="debug-msg">'.print_r($msg, 1).'</div>';
+
+		$debugMsg .= $msg;
+		return $msg;
 	}
+
 	return $debugMsg;
 }
 

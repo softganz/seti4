@@ -2,8 +2,8 @@
 /**
  * Core    :: Function Library
  * Created :: 2021-10-24
- * Modify  :: 2025-10-01
- * Version :: 4
+ * Modify  :: 2025-10-23
+ * Version :: 5
  *
  * @usage functionName(parameter)
  */
@@ -514,10 +514,10 @@ function print_o() {
 		$title = is_string($next_value) ? $next_value : '';
 		if ($echo) {
 			echo '<em>'.$title.'</em>';
-			echo Arrays::value($value,$title);
+			echo (new DebugMsg($value, $title))->build();
 		} else {
 			$ret .= '<em>'.$title.'</em>';
-			$ret .= Arrays::value($value, $title, array('class' => $inline ? '-inline' : ''));
+			$ret .= (new DebugMsg($value, $title))->build();
 		}
 		unset($title);
 	}
