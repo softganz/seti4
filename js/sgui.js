@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-10-23
- * Version :: 54
+ * Modify  :: 2025-10-25
+ * Version :: 55
  */
 
 'use strict'
@@ -1470,9 +1470,12 @@ console.log($this)
 			// console.log('parent.data', $inlineWidget.data());
 			// console.log('this.data', $inlineField.data());
 
+			$inlineField.removeClass("-error");
+
 			if (postUrl === undefined) {
 				// console.log('ERROR :: POSTURL UNDEFINED')
-				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด (ไม่ได้ระบุ)')
+				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด (ไม่ได้ระบุ)');
+				$inlineField.addClass("-error");
 				return
 			}
 
@@ -1559,6 +1562,9 @@ console.log($this)
 			.fail(function(response) {
 				console.log('SG INLINE EDIT ERROR', response)
 				showError(response);
+				if (response.status === 406) {
+					$inlineField.addClass("-error");
+				}
 			})
 			.done(function(data) {
 				console.log('RETURN DATA', data)
