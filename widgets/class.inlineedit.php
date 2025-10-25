@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-10-22
-* Version :: 17
+* Modify  :: 2025-10-25
+* Version :: 18
 *
 * @param Array $args
 * @return Widget
@@ -280,6 +280,15 @@ class InlineEdit extends Widget {
 
 	function _renderTypeText($text, $widget) {
 		$childEditMode = $this->editMode || $widget->editMode;
+
+		list($type, $format) = explode(':', $widget->retType);
+
+		switch ($type) {
+			case 'numeric':
+				$text = preg_replace('/[^0-9\.]/', '', $text);
+				$text = number_format($text);
+				break;
+		}
 
 		// $options = $widget->options;
 		$ret = '';
