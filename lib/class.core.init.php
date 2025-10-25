@@ -2,8 +2,8 @@
 /**
  * Core    :: Init Web
  * Created :: 2023-08-01
- * Modify  :: 2025-10-01
- * Version :: 15
+ * Modify  :: 2025-10-25
+ * Version :: 16
  */
 
 global $R;
@@ -175,7 +175,7 @@ error_reporting(cfg('error_reporting'));
 
 // Create new mydb database constant
 $R->myDb = new MyDb(cfg('db'));
-$R->DB = new \Softganz\DB([
+$R->DB = new DB([
 	'connection' => [
 		'uri' => cfg('db'),
 		'characterSetClient' => cfg('db.character_set_client'),
@@ -183,6 +183,7 @@ $R->DB = new \Softganz\DB([
 		'collationConnection' => cfg('db.collation_connection'),
 	]
 ]);
+$R->DB->version = DB::select(['SELECT VERSION() `version` LIMIT 1'])->version;;
 
 // If connect database error, end process
 if (!$R->myDb->status) {

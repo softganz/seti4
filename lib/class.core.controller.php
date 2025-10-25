@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-10-22
- * Version :: 39
+ * Modify  :: 2025-10-23
+ * Version :: 40
  */
 
 /*************************************************************
@@ -31,8 +31,8 @@ class R {
 	public $pageClass = [];
 	public $pageAttribute = [];
 	public $core;
-	public $myDb;
 	public $DB;
+	public $myDb;
 	public $mysql;
 	public $query;
 	public $query_items = [];
