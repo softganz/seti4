@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-10-25
- * Version :: 55
+ * Modify  :: 2025-10-26
+ * Version :: 56
  */
 
 'use strict'
@@ -1590,7 +1590,7 @@ console.log($this)
 				else message = 'บันทึกเรียบร้อย';
 				notify(
 					message
-					+ (resultDebug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>POST PARAMETER:</b><pre>'+JSON.stringify(para, null, "\t")+'</pre><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
+					+ (resultDebug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>' + createPostUrlLink(postUrl, para, 'API Link')+ '<br><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
 					resultDebug ? 300000 : 5000
 				)
 
@@ -1699,6 +1699,17 @@ console.log($this)
 
 		self.saveValue = ($inlineField, value, callback) => {
 			console.log($inlineField, value);
+		}
+
+		function createPostUrlLink(postUrl, para, text) {
+			// Convert parameters object to URL parameters
+			const urlParams = new URLSearchParams(para).toString();
+			
+			// Create full URL by combining postUrl with parameters 
+			const fullUrl = postUrl + (postUrl.includes('?') ? '&' : '?') + urlParams;
+			
+			// Return HTML string
+			return '<a href="' + fullUrl + '" target="_blank">' + text + '</a>';
 		}
 
 		// Save value immediately when radio or checkbox click
