@@ -2,8 +2,8 @@
 /**
  * DB      :: Database Management
  * Created :: 2023-07-28
- * Modify  :: 2025-10-03
- * Version :: 23
+ * Modify  :: 2025-10-26
+ * Version :: 24
  *
  * @param Array $args
  * @return Object
@@ -524,7 +524,7 @@ class DB {
 			$value = $this->jsonArrayString($value->args);
 		} else if (is_object($value) && get_class($value) === 'Softganz\SetDataModel') {
 			$value = $this->valueOfSet($value);
-		} else if (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key, $out)) {
+		} else if (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key)) {
 			$value = $this->jsonObjectString($value);
 		} else if (is_object($value)) {
 			// If value is object, recursive all element with add : in front of key
@@ -532,10 +532,13 @@ class DB {
 		} else if (is_array($value)) {
 			// If value is object, recursive all element without add : in front of key
 			return self::setVariable($value);
-		} else if (preg_match('/^\$([a-zA-Z0-9_]*)\$$/', $key, $out)) {
+		} else if (preg_match('/^(\:\`).*(\`)$/', $key)) {
+			// If key leading with :` and end with ` then value is quote and remove ' and add ` at front and end
+			$value = '`'.trim($this->quote($value), '\'').'`';
+		} else if (preg_match('/^\$([a-zA-Z0-9_]*)\$$/', $key)) {
 			// If key leading and ending with $ and function name format, Don't quote
 			$value = $value;
-		} else if (preg_match('/^\$([a-zA-Z0-9_]*)/', $key, $out)) {
+		} else if (preg_match('/^\$([a-zA-Z0-9_]*)/', $key)) {
 			// If key leading with $ and follow by function name format, Quote value
 			$value = $this->quote($value);
 		} else if (is_string($value) && preg_match('/^func\./i', $value)) {

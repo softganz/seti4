@@ -59,9 +59,14 @@ Array | String $connection
 <h5>var</h5>
 <code>
 	var => [
-		':variable1'  => value1, // with quote
-		'$variable2'  => value2,
-		'$variable3$' => value3, // without qoute
+		'$variable'  => value, // Value quote with '
+		'$variable$' => value, // Value not qoute
+		':variable'  => value, // Value quote with '
+		':`variable`' => value, // Value is quote with `
+		':variable' => new DataModel()
+		':variable' => SetDataModel()
+		':variable' => JsonDataModel()
+		':variable' => JsonArrayDataModel()
 	]
 </code>
 
