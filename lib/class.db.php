@@ -685,21 +685,24 @@ class DB {
 	}
 
 	private function jsonObjectString($value, $key = NULL) {
-		// debugMsg($value, 'JSON Value');
 		$jsonString = '';
 		if ($key) $jsonString .= '"'.$key.'" , ';
 		$jsonString .= 'JSON_OBJECT(';
 		foreach ((Array) $value as $jsonKey => $jsonValue) {
-			// debugMsg('KEY '.$jsonKey.' = '.$jsonValue);
 			if (is_array($jsonValue)) {
-				// debugMsg($jsonValue, '$jsonValue');
 				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).' , ';
-				// return $jsonString;
 			} else if (is_object($jsonValue)) {
 				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).' , ';
 			} else {
-				$jsonString .= '"'.$jsonKey.'" , "'.preg_replace('/[\"]/', '', $jsonValue).'" ,';
-				// debugMsg($jsonString);
+				// Convert value to type
+				if (is_null($jsonValue) || (is_string($jsonValue) && trim($jsonValue) === '')) $jsonValue = 'null';
+				else if (is_numeric($jsonValue)) $jsonValue = floatval($jsonValue);
+				else {
+					$jsonValue = '"'.preg_replace('/[\"]/', '', $jsonValue).'"';
+				}
+				$jsonString .= '"'.$jsonKey.'" , '
+					. $jsonValue
+					. ' ,';
 			}
 		}
 		$jsonString = rtrim($jsonString, ' , ');
