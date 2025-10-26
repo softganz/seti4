@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-10-25
-* Version :: 18
+* Modify  :: 2025-10-26
+* Version :: 19
 *
 * @param Array $args
 * @return Widget
@@ -33,7 +33,7 @@ class InlineEdit extends Widget {
 	var $group;
 	var $field;
 	var $tranId;
-	var $retType;
+	var $dataType;
 	var $inputClass = NULL;
 	var $inputName;
 	var $title = 'คลิกเพื่อแก้ไข';
@@ -59,8 +59,6 @@ class InlineEdit extends Widget {
 	// @override
 	function _renderChildContainerStart($childKey, $attributes = [], $child = []) {
 		if (!is_array($child)) return;
-		// debugMsg($childKey, '$childKey');
-		// debugMsg($child, '$child');
 
 		if ($child['type'] === 'method') return '<span class="inlineedit-field -method">';
 
@@ -73,32 +71,15 @@ class InlineEdit extends Widget {
 		$attributes['class'] .= ' -'.$child['type'];
 		if ($child['inputName']) $attributes['class'] .= ' -name-'.preg_replace_callback('/([A-Z])/', function($matches) {return '-'.strtolower($matches[1]);}, $child['inputName']);
 
-
-			// preg_replace('/([A-Z])/', '-$1', $child['inputName']);
-				// $className = 'ImedGroup'.ucfirst((preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $this->action)));
-
 		if ($child['class']) $attributes['class'] .= ' '.$child['class'];
 		if ($child['inputClass']) $attributes['class'] .= ' -input-'.$child['inputClass'];
 
 		$attributes['class'] = trim($attributes['class']);
 
-		// if ($child['type']) $attributes['data-type'] = $child['type'];
 
 		$attributes['onClick'] = '';
 
 		if (is_string($childKey) && empty($child['inputName'])) $attributes['data-input-name'] = $childKey;
-		// if ($child['inputName']) $attributes['data-name'] = $child['inputName'];
-		// 	. ($child->group ? ' data-group="'.$child->group.'"'._NL : '')
-		// 	. ($child->field ? ' data-fld="'.$child->field.'"'._NL : '')
-
-		// 	. ' class="inlineedit-field inline-edit-field -'.$child->type.($child->inputClass ? ' '.$child->inputClass : '').'"'._NL
-		// 	. ' data-tr="'.$child->tranId.'"'._NL
-		// 	. ($child->retType ? ' data-ret="'.$child->retType.'"'._NL : '')
-		// 	. ' data-value="'.htmlspecialchars(SG\getFirst($child->value, $child->text)).'"'._NL
-		// 	. ($selectOptions ? ' data-data="'.htmlspecialchars(\json_encode($selectOptions)).'"' : '')
-		// 	. ' title="'.$child->title.'"'._NL
-		// 	. ($child->attribute && is_array($child->attribute) ? ' '.sg_implode_attr($child->attribute)._NL : '')
-		// 	. ($options ? ' data-options=\''.json_encode($options).'\''._NL : '')
 
 		if (!is_array($child['value'])) {
 			$attributes['data-value'] = htmlspecialchars(isset($child['value']) ? $child['value'] : $child['text']);
@@ -182,48 +163,19 @@ class InlineEdit extends Widget {
 	private function _renderChildType($key, $widget = '{}') {
 		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
 		$text = SG\getFirst($widget->value, $widget->text);
+		$widget->dataType = SG\getFirst($widget->dataType, $widget->retType);
+		unset($widget->retType);
 
 		if ((is_null($text) || $text == '') && $this->editMode) $text = '<span class="placeholder -no-print">'.SG\getFirst($widget->options->placeholder, $widget->placeholder).'</span>';
-		else if ($widget->retType === 'nl2br') $text = trim(nl2br($text));
-		else if ($widget->retType === 'html') $text = trim(sg_text2html($text));
-		else if ($widget->retType === 'text') $text = trim(str_replace("\n",'<br />',$text));
-		else if ($widget->retType === 'money' && $text != '') $text = number_format(sg_strip_money($text), 2);
-		else if (preg_match('/^date/i', $widget->retType) && $text) {
-			list($widget->retType, $retFormat) = explode(':', $widget->retType);
+		else if ($widget->dataType === 'nl2br') $text = trim(nl2br($text));
+		else if ($widget->dataType === 'html') $text = trim(sg_text2html($text));
+		else if ($widget->dataType === 'text') $text = trim(str_replace("\n",'<br />',$text));
+		else if ($widget->dataType === 'money' && $text != '') $text = number_format(sg_strip_money($text), 2);
+		else if (preg_match('/^date/i', $widget->dataType) && $text) {
+			list($widget->dataType, $retFormat) = explode(':', $widget->dataType);
 			if (!$retFormat) $retFormat = 'ว ดดด ปปปป';
 			$text = sg_date($widget->value, $retFormat);
 		}
-
-		// if (is_string($widget->selectOptions)) $selectOptions = explode(',', '==เลือก==,' . $widget->selectOptions);
-		// else if (is_array($widget->selectOptions) && count($widget->selectOptions) > 0) $selectOptions = ['==เลือก=='] + $widget->selectOptions;
-
-
-		// $ret .= $this->_renderChildContainerStart(
-		// 	$key,
-		// 	[
-		// 		'class' => 'inlineedit-field inline-edit-field -'.$widget->type.($widget->inputClass ? ' '.$widget->inputClass : ''),
-		// 		'onClick' => '',
-		// 		'data-action' => $widget->action && $widget->editMode ? $widget->action : NULL,
-		// 		'data-type' => $widget->type,
-		// 		'data-name' => $widget->inputName,
-		// 		'data-group' => $widget->group,
-		// 		'data-fld' => $widget->field,
-		// 		'data-tr' => $widget->tranId,
-		// 		'data-ret' => $widget->retType,
-		// 		'data-button' => $widget->type === 'textarea' && $options['button'] !== false ? 'yes' : NULL,
-		// 		'data-value' => htmlspecialchars(SG\getFirst($widget->value, $widget->text)),
-		// 		'data-data' => $selectOptions ? htmlspecialchars(\json_encode($selectOptions)) : NULL,
-		// 		'title' => $widget->title,
-		// 		// $widget->attribute && is_array($widget->attribute) ? ' '.sg_implode_attr($widget->attribute)._NL : '')
-		// 		'data-options' => $options ? json_encode($options) : NULL,
-
-		// 		// 'class' => 'inline-edit-item'
-		// 		// 	. ($widget->class ? ' '.$widget->class : '')
-		// 		// 	. ($widget->type ? ' -type-'.$widget->type : ''),
-		// 		// 'class' => ($widget->type ? ' -type-'.$widget->type : '').($widget->class ? ' '.$widget->class : '')
-		// 	]
-		// )._NL;
-		// $ret .= 'type = '.$widget->type;
 
 		switch ($widget->type) {
 			case "comment": break;
@@ -281,42 +233,17 @@ class InlineEdit extends Widget {
 	function _renderTypeText($text, $widget) {
 		$childEditMode = $this->editMode || $widget->editMode;
 
-		list($type, $format) = explode(':', $widget->retType);
+		list($type, $format) = explode(':', $widget->dataType);
 
 		switch ($type) {
 			case 'numeric':
-				$text = preg_replace('/[^0-9\.]/', '', $text);
-				$text = number_format($text);
+				if (is_null($text)) break;
+				// $text = preg_replace('/[^0-9\.]/', '', $text);
+				// $text = number_format(floatval($text));
 				break;
 		}
 
-		// $options = $widget->options;
 		$ret = '';
-
-		// if ($this->editMode /* && $this->updateUrl */) $this->class = 'sg-inline-edit'.' '.$this->class;
-		// $widget->class .= ' inline-edit-item -'.$widget->type;
-		// $widget->text = trim($widget->text);
-		// if (isset($this->debug)) $this->options['debug'] = $this->debug;
-		// if ($widget->placeholder) $options['placeholder'] = $widget->placeholder;
-		// if ($widget->onBlur) $options['onblur'] = $widget->onBlur;
-
-		// $ret .= '<span'._NL
-		// 	. ' class="inlineedit-field inline-edit-field -'.$widget->type.($widget->inputClass ? ' '.$widget->inputClass : '').'"'._NL
-		// 	. ' onClick=""'._NL
-		// 	.	($widget->action ? ' data-action="'.$widget->action.'"'._NL : '')
-		// 	. ($widget->type ? ' data-type="'.$widget->type.'"'._NL : '')
-		// 	. ($widget->inputName ? ' data-name="'.$widget->inputName.'"'._NL : '')
-		// 	. ($widget->group ? ' data-group="'.$widget->group.'"'._NL : '')
-		// 	. ($widget->field ? ' data-fld="'.$widget->field.'"'._NL : '')
-		// 	. ' data-tr="'.$widget->tranId.'"'._NL
-		// 	. ($widget->retType ? ' data-ret="'.$widget->retType.'"'._NL : '')
-		// 	. ($widget->type === 'textarea' && $options['button'] !== false ? ' data-button="yes"' : '')
-		// 	. ' data-value="'.htmlspecialchars(SG\getFirst($widget->value, $widget->text)).'"'._NL
-		// 	. ($selectOptions ? ' data-data="'.htmlspecialchars(\json_encode($selectOptions)).'"' : '')
-		// 	. ' title="'.$widget->title.'"'._NL
-		// 	. ($widget->attribute && is_array($widget->attribute) ? ' '.sg_implode_attr($widget->attribute)._NL : '')
-		// 	. ($options ? ' data-options=\''.json_encode($options).'\''._NL : '')
-		// 	. '>'._NL;
 
 		$ret .= $this->_renderLabel($widget);
 
@@ -474,9 +401,9 @@ class InlineEdit extends Widget {
 				.'-'.$this->type
 				.($this->inputClass ? ' '.$this->inputClass : '').'" '
 				.'>';
-			if ($this->retType === 'html') {
+			if ($this->dataType === 'html') {
 				$ret .= trim(sg_text2html($this->text));
-			} else if ($this->retType === 'text') {
+			} else if ($this->dataType === 'text') {
 				$ret .= trim(str_replace("\n", '<br />', $this->text));
 			} else if ($input_type == "money") {
 				$ret .= number_format(sg_strip_money($this->text), 2);
@@ -490,8 +417,8 @@ class InlineEdit extends Widget {
 					.($fld['value'] == $choice ? 'checked="checked" readonly="readonly" disabled="disabled"' : 'disabled="disabled"')
 					.' style="margin:0;margin-top: -1px; display:inline-block;min-width: 1em; vertical-align: middle;" /> '
 					.$label;
-			} else if (substr($this->retType, 0, 4) == 'date') {
-				$format = substr($this->retType, 5);
+			} else if (substr($this->dataType, 0, 4) == 'date') {
+				$format = substr($this->dataType, 5);
 				$ret .= $this->text ? sg_date($this->text, $format) : '';
 			} else {
 				$ret .= $this->text;
