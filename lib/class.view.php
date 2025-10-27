@@ -221,58 +221,6 @@ class View {
 		return $ret;
 	}
 
-
-	/**
-	 * Draw Statistic bar
-	 *
-	 * @param String $type Display type in short,full default is full
-	 * @return String $ret
-	 */
-	public static function stat_bar($type=NULL) {
-		$counter = cfg('counter');
-
-		$today = date('Y-m-d');
-		$yesterday = date('Y-m-d', strtotime( '-1 days' ) );
-
-		$stmt  = 'SELECT log_date,hits,users FROM %counter_day% WHERE log_date IN (:yesterday, :today)';
-		$dbs = mydb::select($stmt,':yesterday',$yesterday,':today',$today);
-
-		$today_hits = $yesterday_hits = null;
-		foreach ($dbs->items as $rs) {
-			if ($rs->log_date==$today) $today_hits=$rs;
-			else if ($rs->log_date==$yesterday) $yesterday_hits=$rs;
-		}
-
-		switch ($type) {
-			case 'short' : $ret .= '<div id="stat">
-				'.(user_access('access statistic')?'<a href="'.url('stats').'">':'').'<span class="stat">Web Statistics: </span>'.(user_access('access statistic')?'</a>':'')
-				.'<span>Current <strong><a href="'.(user_access('access statistic')?url('stats'):'#').'" title="'.(user_access('access statistic')?$counter->online_name:'').'">'.$counter->online_members.'</a></strong> members from <strong>'.number_format($counter->online_count).'</strong>
-				persons online. </span>'
-				. '<span>Today <strong>'.number_format($today_hits->users).'</strong> persons <strong>'.number_format($today_hits->hits).'</strong> views. </span><span>Yesterday <strong>'.number_format($yesterday_hits->users).'</strong> persons <strong>'.number_format($yesterday_hits->hits).'</strong> views. </span><span>Total view <strong>'.number_format($counter->users_count).'</strong> persons <strong>'.number_format($counter->hits_count).'</strong> views from <strong>'.number_format($counter->members).'</strong> members. Since '.sg_date($counter->created_date,'M,d Y').'.</span></div><!--stat-->';
-				break;
-
-			default :
-				$ret .= _NL.'<div id="stat">'._NL;
-				$ret .= '<p>'.(user_access('access statistic')?'<a href="'.url('stats').'">':'').'<span class="stat">Web Statistics</span>'.(user_access('access statistic')?'</a>':'').' : online <strong><a href="'.(user_access('access statistic')?url('stats'):'#').'" title="'.$counter->online_name.'">'.$counter->online_members.'</a></strong> member(s) of '.$counter->online_count.' user(s)</p>'._NL;
-				$ret .= '<p>User count is <strong>'.$counter->users_count.'</strong> person(s) and <strong>'.$counter->hits_count.'</strong> hit(s) ';
-				$ret .= 'since '.sg_date($counter->created_date,'M,d Y');
-				$ret .=' , Total <strong>'.$counter->members.'</strong> member(s).</p>'._NL;
-				$ret .= '</div><!--stat-->'._NL;
-
-				$ret .= '<ul id="credit">
-					<li class="credit-softganz"><a href="https://softganz.com" title="Web site powered by SoftGanz.">SoftGanz</a></li>
-					<li class="credit-mysql"><a href="https://mysql.org" title="MySql Database Server">MySql</a></li>
-					<li class="credit-php"><a href="https://php.net" title="php.net">PHP</a></li>
-					<li class="credit-apache"><a href="https://apache.org" title="The Apache">Apache</a></li>
-					<li class="credit-firefox"><a href="https://mozilla.com/firefox" title="Best view with Mozilla Firefox">Mozilla Firefox</a></li>'.
-					(cfg('server') && cfg('spampoison') ? '<li class="spampoison"><a href="https://thai-129858975298.spampoison.com">Spam Poison</a></li>':'').'
-					</ul>'._NL;
-					break;
-		}
-
-		return $ret;
-	}
-
 	/**
 	 * Draw photo slide using flash slideshow
 	 *
@@ -289,57 +237,6 @@ class View {
 					.'	<embed src="https://softganz.com/library/imagerotator.swf" width="100%" height="100%" flashvars="file='.$imgfile.'&amp;overstretch=true'.($para?'&amp;'.$para:'').'" style="width:100%;height:100%;" />'._NL
 					.'	</object>'._NL
 					.'</div>';
-		return $ret;
-	}
-	
-	/**
-	 * List topic ul style
-	 *
-	 * @param Object $topics
-	 * @param Mixed $para
-	 * @return String
-	 */
-	public static function list_style_ul($topics,$para) {
-		$ret = '<ul '.($para->id?'id="'.$para->id.'" ':'').'class="topic-list -style-ul">'._NL;
-		foreach ($topics->items as $topic) {
-			$photo_str=$para->photo && $topic->photo?'<img class="'.$para->photo.'" src="'.$topic->photo->url.'" alt="" />':'';
-			$ret .= '<li><a class="title" href="'.url('paper/'.$topic->tpid).'">'.($para->photo && $photo_str ? $photo_str : '').$topic->title.'</a>';
-			$ret .= '<span class="poster"> by '.\SG\getFirst($topic->poster,$topic->owner).'</span>';
-			$ret .= '<span class="time_stamp">@'.sg_date($topic->created,cfg('dateformat')).'</span>';
-			$ret .= '<span class="stat"> | '.$topic->view.' reads'.($topic->reply?' | <strong>'.$topic->reply.'</strong> comment(s)':'').'</span>';
-			if ($para->option->detail) $ret .= _NL.'<p class="summary">'.$topic->summary.'</p>'._NL;
-			$ret .= '</li>'._NL;
-		}
-		$ret .= '</ul>'._NL;
-		return $ret;
-	}
-
-	/**
-	 * List all tags
-	 *
-	 * @return String $ret
-	 */
-	public static function tags() {
-		$para=para(func_get_args());
-		$tags=mydb::select('SELECT t.tid,t.name,
-												(SELECT COUNT(tid) AS max FROM %tag_topic% GROUP BY tid ORDER BY max DESC LIMIT 1) AS max,
-												(SELECT COUNT(*) FROM %tag_topic% tp WHERE tp.tid=t.tid) AS topics
-											FROM %tag% t
-											ORDER BY t.`name` ASC');
-		$tags_topics=mydb::select('SELECT tid,COUNT(*) FROM %tag_topic% GROUP BY tid ORDER BY tid');
-
-		if ($tags->_empty) return false;
-
-		if ($para->container) {
-			list($container)=explode(' ',$para->container);
-			$ret.='<'.$para->container.'>'._NL;
-		}
-		if ($para->header) $ret.='<h2>'.$para->header.'</h2>'._NL;
-		foreach ($tags->items as $tag) {
-			$level=round($tag->topics/$tag->max*4)+1;
-			$ret.='<a href="'.url('tags/'.$tag->tid).'" class="tagadelic level'.$level.'">'.$tag->name.'</a> '._NL;
-		}
-		if ($para->container) $ret.='</'.$container.'>'._NL;
 		return $ret;
 	}
 
