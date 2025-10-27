@@ -325,7 +325,7 @@ class InlineEdit extends Widget {
 				$isCheck = $key == $widget->value;
 			}
 
-			$ret .= '<abbr class="checkbox -block">'
+			$ret .= '<abbr class="'.$widget->type.' -block">'
 				. '<label>'
 				. '<input class="-for-input" type="'.$widget->type.'"'
 				. ' name="'.$widget->inputName.'"'
