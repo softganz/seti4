@@ -1,18 +1,19 @@
 <?php
 /**
-* sg utility class
-*
-* @package none
-* @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
-* @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
-* @created 2009-08-26
-* @modify 2009-08-26
-* ============================================
-* This program is free software. You can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License.
-* ============================================
-*/
+ * sg utility class
+ *
+ * @package none
+ * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+ * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
+ * Created :: 2009-08-26
+ * Modify  :: 2025-10-27
+ * Version :: 2
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ */
 
 class SG {
 
@@ -386,8 +387,8 @@ class BigData {
 
 	public static function addField($fldName,$fldData,$fldType='string',$keyName=NULL,$keyId=NULL) {
 		$data = [
-			'keyname' => isset($keyName)?$keyName:$this->keyname,
-			'keyid' => isset($keyId)?$keyId:$this->keyid,
+			'keyname' => $keyName,
+			'keyid' => $keyId,
 			'fldtype' => $fldType,
 			'fldname' => $fldName,
 			'flddata' => $fldData,
