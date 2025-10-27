@@ -7,8 +7,8 @@
 * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
 * Created :: 2009-07-06
-* Modify  :: 2025-07-07
-* Version :: 5
+* Modify  :: 2025-10-27
+* Version :: 6
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -128,14 +128,14 @@ class MyDb {
 		$this->mysqli = $mysqli;
 	}
 
-	public static function reset() {
+	public function reset() {
 		$myDb = isset($this) && $this->mydb ? $this : mydb();
 		$myDb->_wheres = [];
 		$myDb->_values = [];
 	}
 
 	public static function where($cond) {
-		$myDb = isset($this) && $this->mydb ? $this : mydb();
+		$myDb = mydb();
 		if ($cond) {
 			if (is_array($cond)) {
 				foreach ($cond as $k => $v) {
@@ -156,7 +156,7 @@ class MyDb {
 	}
 
 	public static function value($key = NULL, $value = NULL, $escape = true) {
-		$myDb = isset($this) && $this->mydb ? $this : mydb();
+		$myDb = mydb();
 		if ($key) {
 			if (isset($value)) {
 				$myDb->_values = [$key => $escape ? mydb()->escape($value) : $value] + $myDb->_values;
@@ -413,7 +413,7 @@ class MyDb {
 		$optionDefault = '{debug: false, reset:true}';
 		$optionPara = '{}';
 		$debug = false;
-		$myDb = isset($this) && $this->mydb ? $this : mydb();
+		$myDb = mydb();
 
 		//$myDb = $isExtDb ? $isExtDb : mydb();
 
@@ -893,20 +893,14 @@ class MyDb {
 	* @return Array
 	*/
 	public static function table_list() {
-		//static $tables=NULL;
-		$myDb = isset($this) && $this->mydb ? $this : mydb();
-		//echo 'DB = '.$myDb->db.'<br />'.print_o($myDb,'$myDb');
-		//if (!isset($tables)) {
-			$tables = array();
-			$query = 'SHOW TABLES FROM `'.$myDb->db.'`; -- {reset:false}';
-			mydb()->_watchlog = false;
-			$dbs = $myDb->select($query);
-			foreach ($dbs->items as $rs) {
-				$rs = array_values((array)$rs);
-				$tables[] = $rs[0];
-			}
-		//}
-		//debugMsg($tables,'$tables');
+		$tables = array();
+		$query = 'SHOW TABLES FROM `'.mydb()->db.'`; -- {reset:false}';
+		mydb()->_watchlog = false;
+		$dbs = mydb()->select($query);
+		foreach ($dbs->items as $rs) {
+			$rs = array_values((array)$rs);
+			$tables[] = $rs[0];
+		}
 		return $tables;
 	}
 
@@ -919,7 +913,6 @@ class MyDb {
 	public static function table_exists($table_name = NULL) {
 		$table_name = trim(db($table_name));
 		$table_name = str_replace('`', '', $table_name);
-		//echo '<br /><br />'.$table_name.print_o(mydb()->table_list(),'$table',1);
 		if (empty($table_name)) return false;
 		return in_array($table_name, mydb()->table_list() ) ? $table_name : false;
 	}
