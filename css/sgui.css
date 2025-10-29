@@ -343,6 +343,7 @@
 	>.-item {position: relative;}
 	>.-sep {width: 4px;}
 	>.-sep>hr {display: none;}
+	&.-hover-parent:hover>.-item .-hover {display: inline-block; top: 0; right: 0;}
 }
 
 /* widget-nav */
