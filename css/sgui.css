@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-09-09
- * Version :: 27
+ * Modify  :: 2025-10-29
+ * Version :: 28
  */
 
 @charset "UTF-8";
@@ -210,6 +210,18 @@
 /* widget-message */
 .widget-message {
 	padding: 32px 8px; text-align: center;
+}
+
+/* widget-header */
+.widget-header {
+	display: flex; flex-wrap: wrap; justify-content: space-between; padding: 8px; align-items: center;
+	>.-title {
+		flex: 1;
+		>* {display: block;}
+		>.-title-text, >.-title-text>a {font-weight: bold;}
+		>.-subtitle-text {font-size: 0.85em;}
+	}
+	>.-leading {padding-right: 8px;}
 }
 
 /* widget-listtile */
@@ -1019,6 +1031,11 @@
 
 }
 /* @end */
+
+.widget-listorder {
+	margin: 0;
+	padding: 0 0 0 24px;
+}
 
 .profile-photo {
 	width: 32px; height: 32px; margin: 0; line-height: 32px; display: inline-block; border-radius: 50%; overflow: hidden; border: 2px #eee solid; vertical-align: middle;

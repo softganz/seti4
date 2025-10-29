@@ -2,8 +2,8 @@
 /**
  * Widget  :: Basic Widgets Collector
  * Created :: 2020-10-01
- * Modify  :: 2025-10-23
- * Version :: 58
+ * Modify  :: 2025-10-29
+ * Version :: 59
  *
  * @param Array $args
  * @return Widget
@@ -383,6 +383,33 @@ class HtmlTemplate extends Widget {
 	var $tagName = 'template';
 }
 
+class Header extends Widget {
+	var $widgetName = 'Header';
+	var $tagName = 'header';
+	var $titleTag = 'span';
+	var $leading;
+	var $title;
+	var $subtitle;
+	var $trailing;
+
+	function __construct($args = []) {
+		parent::__construct($args);
+	}
+
+	// @override
+	function toString() {
+		return $this->_renderWidgetContainerStart()
+			. ($this->leading ? '<div class="-leading">'.$this->_renderEachChildWidget(NULL, $this->leading).'</div>'._NL : '')
+			. '<div class="-title">'
+			. ($this->title ? '<'.$this->titleTag.' class="-title-text">'.$this->_renderEachChildWidget(NULL, $this->title).'</'.$this->titleTag.'>' : '')
+			. ($this->subtitle ? '<span class="-subtitle-text">'.$this->_renderEachChildWidget(NULL, $this->subtitle).'</span>' : '')
+			. '</div>'._NL
+			. ($this->trailing ? '<div class="-trailing">'.$this->_renderEachChildWidget(NULL, $this->trailing).'</div>'._NL : '')
+			. $this->_renderChildren($this->children())
+			. $this->_renderWidgetContainerEnd();
+	}
+} // End of class Header
+
 class Container extends Widget {
 	var $widgetName = 'Container';
 	var $tagName = 'div';
@@ -413,6 +440,17 @@ class Center extends Widget {
 		parent::__construct($args);
 	}
 } // End of class Center
+
+class ListOrder extends Widget {
+	var $widgetName = 'ListOrder';
+	var $tagName = 'ul';
+	var $childContainer = ['tagName' => 'li', 'class' => '-item'];
+
+	function __construct($args = []) {
+		parent::__construct($args);
+		if ($this->type) $this->tagName = $this->type;
+	}
+} // End of class ListOrder
 
 class Column extends Widget {
 	var $widgetName = 'Column';
@@ -576,8 +614,8 @@ class DebugMsg extends Widget {
 	function __construct($msg = NULL, $varName = NULL, $callFrom = NULL) {
 		parent::__construct([
 			'msg' => $msg,
-			'varName' => $varName,
-			'callFrom' => empty($callFrom) ? debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'] : $callFrom,
+			'varName' => is_object($msg) && !isset($varName) ? get_class($msg) : $varName,
+			'callFrom' => isset($callFrom) ? debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'] : $callFrom,
 		]);
 	}
 
