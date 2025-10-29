@@ -2,8 +2,8 @@
 /**
  * DB      :: Database Management
  * Created :: 2023-07-28
- * Modify  :: 2025-10-26
- * Version :: 24
+ * Modify  :: 2025-10-29
+ * Version :: 25
  *
  * @param Array $args
  * @return Object
@@ -543,12 +543,12 @@ class DB {
 			$value = $this->quote($value);
 		} else if (is_string($value) && preg_match('/^func\./i', $value)) {
 			$value = substr($value, 5);
+		} else if (is_numeric($value)) {
+			$value = $value;
 		} else if (is_string($value)) {
 			$value = $this->quote($value);
 		} else if (is_bool($value)) {
 			$value = $value ? 1 : 0;
-		} else if (is_numeric($value)) {
-			$value = $value;
 		} else {
 			$value = '""';
 		}
