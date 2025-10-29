@@ -1085,8 +1085,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		});
 		if (errorField) return false;
 	}
-console.log(confirm);
-console.log($this)
+
 	// Process callback function
 	// console.log('onFormSubmit',onFormSubmit,window[onFormSubmit])
 	if (onFormSubmit && typeof window[onFormSubmit] === 'function') {

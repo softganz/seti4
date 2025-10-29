@@ -8,7 +8,7 @@ $cfg['error_reporting'] = E_ALL & ~E_STRICT & ~E_WARNING & ~E_NOTICE & ~E_DEPREC
 /* website charactor encoding */
 $cfg['client.characterset'] = 'UTF-8'; // default is UTF-8 or tis-620
 
-$cfg['jquery.version'] = '3.5';
+$cfg['jquery.version'] = '3.7';
 $cfg['library.version'] = '4.00';
 
 $cfg['lang'] = 'th';
