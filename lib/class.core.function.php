@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-10-01
- * Version :: 24
+ * Modify  :: 2025-10-30
+ * Version :: 25
  */
 
 //---------------------------------------
@@ -1191,7 +1191,16 @@ function htmlview($html, $title = NULL, $line_no = true) {
  *
  * @return String
  */
-function error($code, String $message) {
+function error($code, String $message, $debugMsg = NULL) {
+	// Generate debug message
+	if (isset($debugMsg) && user_access('access debugging program')) {
+		$callFrom = debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'];
+		if (is_array($debugMsg)) {
+			foreach ($debugMsg as $key => $value) $message .= (new DebugMsg($value, NULL, $callFrom))->build();
+		} else if (is_object($debugMsg)) $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
+		else $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
+	}
+
 	if (strtolower($message) === 'access denied') {
 		LogModel::save([
 			'module' => 'system',
@@ -1199,8 +1208,8 @@ function error($code, String $message) {
 		]);
 	}
 	if ($code) http_response_code($code);
-	if (_AJAX) return ['responseCode' => $code, 'text' => $message];
-	return new ErrorMessage(['responseCode' => $code, 'text' => $message]);
+	if (_AJAX) return ['responseCode' => $code, 'errorMessage' => $message];
+	return new ErrorMessage(['responseCode' => $code, 'errorMessage' => $message]);
 }
 
 /**
@@ -1229,7 +1238,16 @@ function success($message) {
  *
  * @return String
  */
-function apiError($code, String $message) {
+function apiError($code, String $message, $debugMsg = NULL) {
+	// Generate debug message
+	if (isset($debugMsg) && user_access('access debugging program')) {
+		$callFrom = debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'];
+		if (is_array($debugMsg)) {
+			foreach ($debugMsg as $key => $value) $message .= (new DebugMsg($value, NULL, $callFrom))->build();
+		} else if (is_object($debugMsg)) $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
+		else $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
+	}
+	
 	if (strtolower($message) === 'access denied') {
 		LogModel::save([
 			'module' => 'system',
@@ -1237,7 +1255,7 @@ function apiError($code, String $message) {
 		]);
 	}
 	if ($code) http_response_code($code);
-	return (Object) ['responseCode' => $code, 'text' => $message];
+	return (Object) ['responseCode' => $code, 'errorMessage' => $message];
 }
 
 /**

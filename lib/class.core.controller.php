@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-10-23
- * Version :: 40
+ * Modify  :: 2025-10-30
+ * Version :: 41
  */
 
 /*************************************************************
@@ -1268,15 +1268,21 @@ class SgCore {
 			// debugMsg($requestResult, '$resourceType');
 
 			// Generate result by content type
-			if (cfg('Content-Type') == 'text/xml') {
-				die(process_widget($requestResult));
-			} else if (!_AJAX && is_array($requestResult) && isset($requestResult['location'])) {
-				location($body['location']);
- 			} else if (_HTML && (is_array($requestResult) || is_object($requestResult))) {
-				die(self::processIndex('index', print_o($requestResult, '$result')));
-			} else if (_HTML) {
-				die(process_widget($requestResult));
-			} else if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
+
+			// Content is xml
+			if (cfg('Content-Type') == 'text/xml') die(process_widget($requestResult));
+
+			// Content is re-location
+			if (!_AJAX && is_array($requestResult) && isset($requestResult['location'])) location($body['location']);
+
+			// Content is array or object and force return to html
+ 			if (_HTML && (is_array($requestResult) || is_object($requestResult))) die(self::processIndex('index', print_o($requestResult, '$result')));
+
+			// Content force return to html
+			if (_HTML) die(process_widget($requestResult));
+
+			// Content is array or object and request is AJAX
+			if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
 				// AJAX Call process
 				// Check error result
 				$ajaxResult = [];
@@ -1290,9 +1296,7 @@ class SgCore {
 					if ($requestResult->text) $ajaxResult['text'] = $requestResult->text;
 					$ajaxResult = $ajaxResult + (Array) $requestResult;
 				} else if (is_array($requestResult)) {
-					if ($requestResult['responseCode']) $ajaxResult['responseCode'] = $requestResult['responseCode'];
-					if ($requestResult['text']) $ajaxResult['text'] = $requestResult['text'];
-					$ajaxResult = $ajaxResult + $requestResult;
+					$ajaxResult = $requestResult;
 				}
 
 				// Send error with json
@@ -1314,8 +1318,6 @@ class SgCore {
 				}
 
 				die(debugMsg().process_widget($requestResult));
-			} else {
-				// Do nothing and start render by below code
 			}
 		} else {
 			// Page not found
