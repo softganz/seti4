@@ -2,8 +2,8 @@
 /**
  * Widget  :: Basic Widgets Collector
  * Created :: 2020-10-01
- * Modify  :: 2025-10-29
- * Version :: 59
+ * Modify  :: 2025-10-30
+ * Version :: 60
  *
  * @param Array $args
  * @return Widget
@@ -615,7 +615,7 @@ class DebugMsg extends Widget {
 		parent::__construct([
 			'msg' => $msg,
 			'varName' => is_object($msg) && !isset($varName) ? get_class($msg) : $varName,
-			'callFrom' => isset($callFrom) ? debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'] : $callFrom,
+			'callFrom' => isset($callFrom) ? $callFrom : debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'],
 		]);
 	}
 
