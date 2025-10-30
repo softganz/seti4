@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-10-26
- * Version :: 56
+ * Modify  :: 2025-10-30
+ * Version :: 57
  */
 
 'use strict'
@@ -533,13 +533,12 @@ function sgWebViewDomProcess(id) {
 }
 
 function showError(response) {
-	// console.log(response);
 	let errorMsg = 'ERROR : ';
-	if ("responseJSON" in response && "error" in response.responseJSON) {
-		errorMsg += response.responseJSON.error.text + ' ('+response.status+')';
+	if ("responseJSON" in response && "errorMessage" in response.responseJSON) {
+		errorMsg += response.responseJSON.errorMessage + ' ('+response.status+')';
 	} else if ("responseJSON" in response) {
 		errorMsg += ("text" in response.responseJSON ? response.responseJSON.text : '')
-			+ ' ('+response.status+')';
+			+ ' (' + response.status + ': ' + response.statusText + ')';
 	} else if ("responseText" in response) {
 		errorMsg += response.responseText
 			+ ("statusText" in response ? response.statusText : '')
@@ -1306,7 +1305,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
 		let disableInputOnSave = false
 
-		console.log('debug ', $inlineWidget.data('debug'));
+		// console.log('debug ', $inlineWidget.data('debug'));
 		if ($inlineWidget.data('debug') === 'inline') debug = true;
 		else if (fieldOptions && 'debug' in fieldOptions && fieldOptions.debug) {
 			debug = true;
@@ -1329,7 +1328,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		// console.log($this.data())
 		// console.log('INPUT TYPE = ', inputType)
 		// console.log('FIELD OPTIONS', fieldOptions)
-
 
 		if (inputType == 'money' || inputType == 'numeric' || inputType == 'text-block') {
 			inputType = 'text'
@@ -1462,17 +1460,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.saveToServer = ($inlineField, value, callback) => {
-			let resultDebug = debug;
-			// console.log('Update Value = '+value)
-			// console.log($inlineWidget.data('updateUrl'))
-			// console.log('postUrl = ', postUrl)
-			// console.log('parent.data', $inlineWidget.data());
-			// console.log('this.data', $inlineField.data());
-
 			$inlineField.removeClass("-error");
 
 			if (postUrl === undefined) {
-				// console.log('ERROR :: POSTURL UNDEFINED')
 				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด (ไม่ได้ระบุ)');
 				$inlineField.addClass("-error");
 				return
@@ -1498,18 +1488,18 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			if (settings.var) para[settings.var] = para.value
 			$inlineField.data('value', para.value)
 
-			if (resultDebug) para.debug = 'inline';
+			if (debug) para.debug = 'inline';
 
 			//if (settings.blank === null && para.value === "") para.value = null
 			//console.log(settings.blank)
 
-			if (resultDebug) console.log('SENDING TO ', postUrl)
-			if (resultDebug) console.log('SENDING PARA:', para)
+			if (debug) console.log('SENDING TO ', postUrl)
+			if (debug) console.log('SENDING PARA:', para)
 
 			updatePending++
 			updateQueue++
 
-			notify('กำลังบันทึก กรุณารอสักครู่....' + (resultDebug ? '<br />Updating : pending = '+updatePending+' To = '+postUrl+'<br />' : ''))
+			notify('กำลังบันทึก กรุณารอสักครู่....' + (debug ? '<br />Updating : pending = '+updatePending+' To = '+postUrl+'<br />' : ''))
 
 			// Lock all inlineedit-field until post complete
 			if (disableInputOnSave) $inlineWidget.find('.inlineedit-field').addClass('-disabled')
@@ -1525,13 +1515,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					let tempData = data
 					data = {}
 					data.value = para.value
-					if (resultDebug) data.msg = tempData
+					if (debug) data.msg = tempData
 				}
 
 				//if (data == '' || data == '<p>&nbsp;</p>')
 				//	data = '...';
-
-				if (resultDebug) console.log('RETURN DATA:', data)
 
 				if (returnType == 'refresh') {
 					window.location = window.location
@@ -1559,14 +1547,14 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				}
 			}, settings.result)
 			.fail(function(response) {
-				console.log('SG INLINE EDIT ERROR', response)
+				if (response.responseJSON?.debug) console.log('SG INLINE EDIT ERROR', response)
 				showError(response);
 				if (response.status === 406) {
 					$inlineField.addClass("-error");
 				}
 			})
 			.done(function(data) {
-				console.log('RETURN DATA', data)
+				if (data?.debug) console.log('RETURN DATA', data)
 
 				// Process widget callback function
 				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
@@ -1589,11 +1577,11 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				else message = 'บันทึกเรียบร้อย';
 				notify(
 					message
-					+ (resultDebug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>' + createPostUrlLink(postUrl, para, 'API Link')+ '<br><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
-					resultDebug ? 300000 : 5000
+					+ (debug ? '<div class="-sg-text-left" style="white-space: normal;">Update queue = '+updateQueue+', Update pending = '+updatePending+'<br /><b>' + createPostUrlLink(postUrl, para, 'API Link')+ '<br><b>RETURN VALUE:</b><pre>'+JSON.stringify(data, null, 2).replace(/\\n/g, "<br>").replace(/\\t/g, "  ").replace(/\\/g, "")+'</pre><br />'+replaceTrMsg+'</div>' : ''),
+					debug ? 300000 : 5000
 				)
 
-				if (resultDebug && onSaveFunction) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
+				if (debug && onSaveFunction) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
 				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
 					window[onSaveFunction](settings, $inlineField, data);
 					// window[onSaveFunction]($inlineField, response, $inlineWidget);
@@ -1602,7 +1590,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// Process callback function on each save field
 				let callbackFunction = callback
 
-				if (resultDebug && callbackFunction) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
+				if (debug && callbackFunction) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
 				if (callbackFunction) {
 					if (typeof window[callbackFunction] === 'function') {
 						window[callbackFunction]($inlineField, data, $inlineWidget);
@@ -1617,7 +1605,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 				// Process action done
 				if (settings.done) {
-					if (resultDebug) console.log('PROCESSING DONE:', settings.done)
+					if (debug) console.log('PROCESSING DONE:', settings.done)
 					sgActionDone(settings.done, $inlineField, data);
 				}
 				editActive = false
