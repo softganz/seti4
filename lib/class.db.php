@@ -2,8 +2,8 @@
 /**
  * DB      :: Database Management
  * Created :: 2023-07-28
- * Modify  :: 2025-10-29
- * Version :: 25
+ * Modify  :: 2025-10-30
+ * Version :: 26
  *
  * @param Array $args
  * @return Object
@@ -72,6 +72,22 @@ class DbQuery {
 	public function insertId() {return $this->DB->insertId();}
 	public function error() {return $this->DB->errors();}
 	public function errorMsg() {return $this->DB->errorMsg();}
+}
+
+// Add custom exception class
+class DbException extends \Exception {
+	var $error = false;
+	private $query;
+	
+	public function __construct($message, $code = 0, $query = '') {
+		parent::__construct($message, $code);
+		$this->error = true;
+		$this->query = $query;
+	}
+	
+	public function getQuery() {
+		return $this->query;
+	}
 }
 
 /**
@@ -232,11 +248,15 @@ class DB {
 			$this->count = count($this->items);
 		} catch (\PDOException $e) {
 			$queryError = $this->PDO->errorInfo();
+			$errorCode = $queryError[1] ? $queryError[1] : $e->getCode();
+			$errorMsg = $e->getMessage();
+
 			$this->updateLastQueryStmt(
 				'Select',
 				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
 				$queryError
 			);
+			throw new DbException($errorMsg, $errorCode, $this->stmt);
 		}
 		
 		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
@@ -259,13 +279,22 @@ class DB {
 		try {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $e) {
+			// debugMsg("ERROR");
 			$queryError = $this->PDO->errorInfo();
+			$errorCode = $queryError[1] ? $queryError[1] : $e->getCode();
+			$errorMsg = $e->getMessage();
+
 			$this->updateLastQueryStmt(
 				'Query',
 				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
 				$queryError
 			);
 
+			// debugMsg('$errorMsg = '.$errorMsg.'<br>$errorCode = '.$errorCode.'<br><pre<'.$this->stmt.'</pre>');
+			throw new DbException($errorMsg, $errorCode, $this->stmt);
+			// throw new \Exception('Cannot divide by zero');
+			// throw new DbException($errorMsg, $errorCode, $this->stmt);
+			// trigger_error("Custom Error", E_USER_ERROR);
 			return $queryError;
 		}
 
