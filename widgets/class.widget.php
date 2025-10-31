@@ -2,8 +2,8 @@
 /**
  * Widget  :: Basic Widgets Collector
  * Created :: 2020-10-01
- * Modify  :: 2025-10-30
- * Version :: 60
+ * Modify  :: 2025-10-31
+ * Version :: 61
  *
  * @param Array $args
  * @return Widget
@@ -674,28 +674,34 @@ class DebugMsg extends Widget {
 class Message extends WidgetBase {
 	var $widgetName = 'Message';
 	var $responseCode;
+	var $error = false;
 	var $text;
 	function __construct($args = []) {
 		parent::__construct($args);
-		// unset($this->widgetName, $this->version);
+
+		if (isset($args['errorMessage'])) $this->error = true;
 		$this->returnObject = is_array($args) || is_object($args) ? $args : NULL;
 	}
 
 	// @override
 	function build() {
+		$message = $this->error ? $this->errorMessage : $this->text;
+
 		if ($this->responseCode) http_response_code($this->responseCode);
-		$result = $this->returnObject ? $this->returnObject : $this->text;
+
+		$result = $this->returnObject ? $this->returnObject : $message;
+
 		if (_AJAX) return $result;
-		return '<div class="widget-message'.($this->responseCode ? ' -code-'.$this->responseCode : '').'">'.$this->text.'</div>';
+
+		return '<div class="widget-message'.($this->error ? ' -error' : '').($this->responseCode ? ' -code-'.$this->responseCode : '').'">'
+			. $tmessage
+			. ($this->error ? $this->errorMessage : '')
+			. '</div>';
 	}
 } // End of class Message
 
 class ErrorMessage extends Message {
 	var $widgetName = 'ErrorMessage';
-	// function build() {
-	// 	echo 'widgetname = '.$this->widgetName.'<br />';
-	// 	return (Object) ['responseCode' => $this->responseCode, 'text' => $this->text];
-	// }
 } // End of class ErrorMessage
 
 /**
