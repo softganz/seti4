@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-10-30
- * Version :: 41
+ * Modify  :: 2025-10-31
+ * Version :: 42
  */
 
 /*************************************************************
@@ -1209,31 +1209,18 @@ class SgCore {
 
  			// Page function that return widget and has build method
 			if (!is_object($pageClassWidget) && is_object($pageBuildWidget) && method_exists($pageBuildWidget, $buildMethod)) {
-				// $pageClassWidget = new Widget(['child' => $pageBuildWidget]); // @deprecated use next line instead
 				$pageClassWidget = $pageBuildWidget;
 			}
 
-			if ( (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) ) {
-			    // || (is_object($pageBuildWidget) && method_exists($pageBuildWidget, $buildMethod)) ) {
+			// Prepare result object
+			if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
 				// Result is Widget Class then build widget to String
 				// Case widget, Call method build()
 
-				// debugMsg($pageClass, '$pageClass');
-				// debugMsg($pageClassWidget, '$pageClassWidget');
-				// debugMsg($pageBuildWidget, '$pageBuildWidget');
-
 				// Check right to build widget
 				if (is_object($pageClassWidget) && method_exists($pageClassWidget, 'rightToBuild')) {
-					// debugMsg('RIGHT TO BUILD');
 					$rightToBuildError = $pageClassWidget->rightToBuild();
 					if (is_object($rightToBuildError)) $pageBuildWidget = $rightToBuildError;
-				}
-
-				// Build request result
-				if (is_object($pageBuildWidget) && method_exists($pageBuildWidget, 'build')) {
-					$requestResult = $pageBuildWidget->build();
-				} else {
-					$requestResult = $pageBuildWidget;
 				}
 
 				// Create App Bar
@@ -1253,10 +1240,7 @@ class SgCore {
 					$pageClass->sideBar = $pageBuildWidget->sideBar;
 				}
 
-				// Create Floating Action Button
-				if ($pageBuildWidget->floatingActionButton) {
-					$pageClass->floatingActionButton = $pageBuildWidget->floatingActionButton;
-				}
+				$requestResult = $pageBuildWidget;
 			} else if (is_array($pageBuildWidget) || is_object($pageBuildWidget)) {
 				// Result is array or object
 				$requestResult = $pageBuildWidget;
@@ -1264,10 +1248,8 @@ class SgCore {
 				// Result is String, join
 				$requestResult .= $pageBuildWidget;
 			}
-			// debugMsg(gettype($requestResult));
-			// debugMsg($requestResult, '$resourceType');
 
-			// Generate result by content type
+			// Start Generate result by content type
 
 			// Content is xml
 			if (cfg('Content-Type') == 'text/xml') die(process_widget($requestResult));
@@ -1282,53 +1264,14 @@ class SgCore {
 			if (_HTML) die(process_widget($requestResult));
 
 			// Content is array or object and request is AJAX
-			if (_AJAX || is_array($requestResult) || is_object($requestResult)) {
-				// AJAX Call process
-				// Check error result
-				$ajaxResult = [];
-				// debugMsg($pageBuildWidget, '$pageBuildWidget');
-				if (is_object($pageBuildWidget) && $pageBuildWidget->widgetName === 'ErrorMessage') {
-					// debugMsg('ErrorMessage');
-					if ($pageBuildWidget->responseCode) $ajaxResult['responseCode'] = $pageBuildWidget->responseCode;
-					if ($pageBuildWidget->text) $ajaxResult['text'] = $pageBuildWidget->text;
-				} else if (is_object($requestResult)) {
-					if ($requestResult->responseCode) $ajaxResult['responseCode'] = $requestResult->responseCode;
-					if ($requestResult->text) $ajaxResult['text'] = $requestResult->text;
-					$ajaxResult = $ajaxResult + (Array) $requestResult;
-				} else if (is_array($requestResult)) {
-					$ajaxResult = $requestResult;
-				}
+			if (_AJAX) die((new renderAjaxWidget($requestResult))->build());
 
-				// Send error with json
-				if ($ajaxResult['responseCode']) {
-					sendHeader('application/json');
-					http_response_code($ajaxResult['responseCode']);
-					die(\SG\json_encode($ajaxResult));
-				}
-
-				if (is_array($requestResult) || is_object($requestResult)) {
-					sendHeader('application/json');
-					$requestResult = \SG\json_encode($requestResult);
-				}
-
-				// Show AppBar as Box Header when has appBar and boxHeader is true
-				if (is_object($pageBuildWidget->appBar) && $pageBuildWidget->appBar->boxHeader) {
-					$pageBuildWidget->appBar->showInBox = true;
-					$requestResult = $pageBuildWidget->appBar->build() . $requestResult;
-				}
-
-				die(debugMsg().process_widget($requestResult));
-			}
 		} else {
 			// Page not found
 			$requestResult .= self::pageNotFound($menu);
 		}
 
 		// Start Render Page, result is string
-
-		// debugMsg($pageClass, '$pageClass');
-		// debugMsg($pageBuildWidget, '$pageBuildWidget');
-		// debugMsg($requestResult, $requestResult);
 
 		if (is_object($pageBuildWidget) && isset($pageBuildWidget->var)) {
 			$templateVar = array_merge($templateVar, (Array) $pageBuildWidget->var);
@@ -1339,7 +1282,7 @@ class SgCore {
 		$templateVar['Title'] = self::processTemplate(strip_tags($templateVar['Title']), $templateVar);
 		$templateVar['Title'] = trim(trim($templateVar['Title']), '|');
 
-		$requestTextResult = (new PageRenderWidget($pageClass, $requestResult))->build();
+		$requestTextResult = (new renderPageWidget($requestResult, $pageClass))->build();
 
 		// Replace widget container with associate widget
 		$requestTextResult = process_widget($requestTextResult);
