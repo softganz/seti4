@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-10-30
- * Version :: 25
+ * Modify  :: 2025-10-31
+ * Version :: 26
  */
 
 //---------------------------------------
@@ -1207,8 +1207,7 @@ function error($code, String $message, $debugMsg = NULL) {
 			'keyword' => 'Access denied'
 		]);
 	}
-	if ($code) http_response_code($code);
-	if (_AJAX) return ['responseCode' => $code, 'errorMessage' => $message];
+
 	return new ErrorMessage(['responseCode' => $code, 'errorMessage' => $message]);
 }
 
