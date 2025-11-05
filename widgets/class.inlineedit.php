@@ -2,8 +2,8 @@
 /**
 * Widget  :: InlineEdit
 * Created :: 2023-12-08
-* Modify  :: 2025-10-26
-* Version :: 19
+* Modify  :: 2025-11-05
+* Version :: 20
 *
 * @param Array $args
 * @return Widget
@@ -60,7 +60,7 @@ class InlineEdit extends Widget {
 	function _renderChildContainerStart($childKey, $attributes = [], $child = []) {
 		if (!is_array($child)) return;
 
-		if ($child['type'] === 'method') return '<span class="inlineedit-field -method">';
+		if ($child['type'] === 'method') return '<span class="'.($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName).' -method">';
 
 		if ($this->editMode) {
 			$attributes['class'] = $this->editFieldClassName;
@@ -132,7 +132,7 @@ class InlineEdit extends Widget {
 	// @override
 	function _renderChildContainerEnd($childKey = NULL, $child = []) {
 		if (!is_array($child)) return;
-		if ($child['type'] === 'method') '</span>';
+		if ($child['type'] === 'method') return '</span>';
 
 		return parent::_renderChildContainerEnd($childKey, $child);
 	}
