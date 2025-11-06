@@ -3,7 +3,7 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
  * Modify  :: 2025-11-06
- * Version :: 43
+ * Version :: 44
  */
 
 /*************************************************************
@@ -1186,7 +1186,8 @@ class SgCore {
 				// Do request from R::Page
 				// debugMsg('Do request from R::page');
 				// menu(q(0),q(0).' page',q(0),'__controller',1,true,'static');
-				// $menu = menu($request);
+				$manifest = R::Manifest('system');
+				$menu = menu($request);
 			}
 		}
 
