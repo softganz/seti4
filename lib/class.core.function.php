@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-10-31
- * Version :: 26
+ * Modify  :: 2025-11-06
+ * Version :: 27
  */
 
 //---------------------------------------
@@ -223,27 +223,35 @@ function process_widget($html) {
 function process_install_module($module) {
 	if (empty($module)) return;
 
-	$manifest_module_file = R::Manifest($module);
+	list($className, $found, $filename) = R::Manifest($module);
 
-	if (empty($manifest_module_file)) {
-		$ret = false;
-	} else {
-		// Add Permission
-		$perm = cfg('perm') ? cfg('perm') : (Object) [];
-		$modulePerm = cfg($module.'.permission');
-		$modulePermExtend = R::Module($module.'.permission');
-		if ($modulePermExtend) $modulePerm .= ($modulePerm ? ',':'').$modulePermExtend;
-		if ($modulePerm) {
-			$perm->{$module} = $modulePerm;
-			cfg_db('perm', $perm);
-		}
+	if (!$found) R::Manifest('system');
+	
+	$permission = cfg($module.'.permission');
 
-		$ret .= '<h3>Permission of module '.$module.'</h3>'.$perm->{$module}.'<br /><br />';
+	// debugMsg($module);
+	// debugMsg(cfg('perm'), 'perm');
+	// debugMsg($permission);
+	if (empty($permission)) return false;
 
-		// Process installation
-		$ret .= '<h3>Installation of module '.$module.'</h3>';
-		$ret .= R::Module($module.'.install').'<br /><br />';
-	}
+	// return false;
+
+	// Add Permission
+	$perm = cfg('perm') ? cfg('perm') : (Object) [];
+	// $modulePerm = cfg($module.'.permission');
+	// $modulePermExtend = R::Module($module.'.permission');
+	// if ($modulePermExtend) $modulePerm .= ($modulePerm ? ',':'').$modulePermExtend;
+
+	$perm->{$module} = $permission;
+
+	// Add to database config
+	cfg_db('perm', $perm);
+
+	// Process installation
+	$ret = '<h3>Permission of module '.$module.'</h3>'.$perm->{$module}.'<br /><br />';
+	$ret .= '<h3>Installation of module '.$module.'</h3>';
+	$ret .= R::Module($module.'.install').'<br /><br />';
+
 	return $ret;
 }
 

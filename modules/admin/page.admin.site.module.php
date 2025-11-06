@@ -1,33 +1,86 @@
 <?php
-function admin_site_module($self) {
-	$self->theme->title='Site Modules';
-	//$this->nav.=$this->sep.' <a href="'.url('admin/site/module').'">Site module</a> ';
-	$ret .= '<div class="help">Add / Remove / Configuration site modules</div>';
+/**
+ * Admin   :: Site Modules Page
+ * Created :: 2016-11-08
+ * Modify  :: 2025-11-06
+ * Version :: 2
+ *
+ * @return Widget
+ *
+ * @usage admin/site/module
+ */
 
-	// Add new module
-	if (post('add') && $module=post('module')) {
-		$message=process_install_module($module);
-		$ret.=notify('Module "'.$module.'" '.($message===false ? 'not found.':'install completed.'));
+class AdminSiteModule extends Page {
+	#[\Override]	
+	function build() {
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'Site Modules',
+				'leading' => new Icon('admin_panel_settings'),
+			]), // AppBar
+			'body' => new Widget([
+				'children' => [
+					new Container([
+						'class' => 'help',
+						'child' => 'Add / Remove / Configuration site modules',
+					]), // Container
+
+					new Table([
+						'thead' => ['Modules','Permissions','Operations'],
+						'colgroup' => [['width' => '20%'], ['width' => '80%'], ['width'=>'1%']],
+						'children' => array_map(
+							function($module, $perm) {
+								return [
+									'<b>'.$module.'</b>',
+									$perm,
+									new Nav([
+										'children' => [
+											new Button([
+												'type' => 'link',
+												'href' => Url::link($module.'/admin'),
+												'title' => 'Module configuration',
+												'icon' => new Icon('settings'),
+											]),
+											$module != 'system' ? new Button([
+												'type' => 'link',
+												'class' => 'sg-action',
+												'href' => Url::link('admin/site/module/remove/'.$module),
+												'rel' => 'none',
+												'done' => 'remove:parent tr',
+												'data-title' => 'Remove module',
+												'data-confirm' => 'Remove module <b>'.$module.'</b> Please confirm?',
+												'icon' => new Icon('cancel')
+											]) : NULL,
+
+										]
+									]),
+								];
+							},
+							array_keys((Array) cfg('perm')), (Array) cfg('perm')
+						),
+					]), // Table
+
+					new Form([
+						'method' => 'post',
+						'class' => 'sg-form',
+						'action' => Url::link('api/admin/module.add'),
+						'rel' => 'notify',
+						'done' => 'load',
+						'children' => [
+							'module' => [
+								'type' => 'text',
+								'size' => '20',
+								'placeholder' => 'Enter module name',
+							],
+							'save' => [
+								'type' => 'button',
+								'value' => '<i class="icon -material">add</i><span>Add new module</span>'
+							]
+						], // children
+					]), // Form
+				], // children
+			]), // Widget
+		]);
 	}
-
-	$ret.='<form method="post" action="'.url('admin/site/module').'">';
-	$tables = new Table();
-	$tables->thead=array('Modules','Permissions','Operations');
-	$tables->colgroup=array(array('width'=>'20%'),array('width'=>'70%'), array('width'=>'10%'));
-	foreach (cfg('perm') as $module => $perm) {
-		$ui=new Ui('span');
-		$ui->add('<a href="'.url($module.'/admin').'" title="Module configuration"><i class="icon -material">settings</i><span class="-hidden">Configuration</span></a>');
-		if ($module != 'system') $ui->add('<a href="'.url('admin/site/module/remove/'.$module).'" class="sg-action" data-confirm="Remove this module?" data-rel="#main"><i class="icon -material">cancel</i><span class="-hidden">Remove</span></a>');
-		$tables->rows[]=array('<strong>'.$module.'</strong>',$perm,$ui->build());
-	}
-	$tables->rows[]=array(
-										'<input class="form-text -fill" type="text" size="20" name="module" placeholder="Enter module name">',
-										'<td colspan="2"><button class="btn -primary" type="submit" name="add" value="add"><i class="icon -material">add</i><span>Add new module</span></button></td>'
-											);
-
-	$ret.=$tables->build();
-	$ret.='</form>';
-	$ret.=$message;
-	return $ret;
 }
 ?>
