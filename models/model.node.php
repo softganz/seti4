@@ -2,8 +2,8 @@
 /**
 * Model.  :: Node Model
 * Created :: 2021-09-30
-* Modify  :: 2025-08-18
-* Version :: 26
+* Modify  :: 2025-10-07
+* Version :: 27
 *
 * @param Array $args
 * @return Object
@@ -335,9 +335,30 @@ class NodeModel {
 		])->items;
 	}
 
+	/**
+	 * Count user create node by user id
+	 * @param Int $userId
+	 * @return Int
+	 */
 	public static function countNodeByUserId($userId) {
 		return DB::select([
 			'SELECT COUNT(*) `count` FROM %topic% WHERE `uid` = :userId LIMIT 1',
+			'var' => [':userId' => $userId]
+		])->count;
+	}
+
+	/**
+	 * Count user join node by user id
+	 * @param Int $userId
+	 * @return Int
+	 */
+	public static function countNodeJoinByUserId($userId) {
+		return DB::select([
+			'SELECT COUNT(*) `count`
+			FROM %topic_user% `topicuser`
+				LEFT JOIN %topic% `topic` ON `topicuser`.`tpid` = `topic`.`tpid`
+			WHERE `topicuser`.`uid` = :userId AND `topic`.`uid` != `topicuser`.`uid`
+			LIMIT 1',
 			'var' => [':userId' => $userId]
 		])->count;
 	}
@@ -679,7 +700,6 @@ class NodeModel {
 	* @param Object $nodeId
 	* @return Object $options
 	*/
-
 	public static function delete($nodeId) {
 		$defaults = '{debug: false, simulate: false}';
 		$options = sg_json_decode($options, $defaults);

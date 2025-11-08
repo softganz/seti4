@@ -2,8 +2,8 @@
 /**
  * Model   :: User Information
  * Created :: 2021-07-22
- * Modify  :: 2025-08-14
- * Version :: 19
+ * Modify  :: 2025-11-07
+ * Version :: 20
  *
  * @param Int $userId
  * @return Object
@@ -741,6 +741,55 @@ class UserModel {
 		return $nextUsername;
 	}
 
+	public static function profilePhoto($username = NULL, $fullSize = true) {
+		$filename = $fullSize ? 'profile.photo.jpg' : 'small.avatar.jpg';
+		$photo_file = cfg('upload.folder').'/'.$username.'/'.$filename;
+		$photo_url = cfg('upload.url').$username.'/'.$filename;
+		if ($username && file_exists($photo_file)) {
+			$time = filemtime($photo_file);
+			return $photo_url.'?t='.$time;
+		} else {
+			return '/css/img/photography.png';
+		}
+		return $photo;
+	}
+
+	public static function deleteAccount($userId) {
+		mydb::query(
+			'UPDATE %users% SET `status` = "disable", `admin_remark` = CONCAT(IFNULL(`admin_remark`, ""), "@'.date('Y-m-d H:i:s').' ลบบัญชีโดยเจ้าของ") WHERE `uid` = :userId LIMIT 1',
+			[':userId' => $userId]
+		);
+	}
+
+	public static function getMemberOfGroup($userId) {
+		try {
+			return DB::select([
+				'SELECT `officer`.`orgId`, `officer`.`membership`, `org`.`name` `orgName` 
+				FROM %org_officer% `officer`
+					LEFT JOIN %db_org% `org` ON `officer`.`orgId` = `org`.`orgId`
+				WHERE `officer`.`uid` = :userId',
+				'var' => [
+					':userId' => $userId
+				]
+			])->items;
+		} catch (Eception $eception) {
+			return [];
+		}
+	}
+
+	public static function countGroupByUserId($userId) {
+		try {
+			return DB::select([
+				'SELECT COUNT(*) `amt` FROM %org_officer% WHERE `uid` = :userId LIMIT 1',
+				'var' => [
+					':userId' => $userId
+				]
+			])->amt;
+		} catch (Eception $eception) {
+			return 0;
+		}
+	}
+
 	private function _getUserInfo() {
 		$result = mydb::select('SELECT * FROM %users% u WHERE `uid` = :userId LIMIT 1', ':userId', $this->userId);
 
@@ -765,26 +814,6 @@ class UserModel {
 		}
 		// debugMsg($dbs,'$dbs');
 		// debugMsg($this, '$this');
-	}
-
-	public static function profilePhoto($username = NULL, $fullSize = true) {
-		$filename = $fullSize ? 'profile.photo.jpg' : 'small.avatar.jpg';
-		$photo_file = cfg('upload.folder').'/'.$username.'/'.$filename;
-		$photo_url = cfg('upload.url').$username.'/'.$filename;
-		if ($username && file_exists($photo_file)) {
-			$time = filemtime($photo_file);
-			return $photo_url.'?t='.$time;
-		} else {
-			return '/css/img/photography.png';
-		}
-		return $photo;
-	}
-
-	public static function deleteAccount($userId) {
-		mydb::query(
-			'UPDATE %users% SET `status` = "disable", `admin_remark` = CONCAT(IFNULL(`admin_remark`, ""), "@'.date('Y-m-d H:i:s').' ลบบัญชีโดยเจ้าของ") WHERE `uid` = :userId LIMIT 1',
-			[':userId' => $userId]
-		);
 	}
 }
 ?>

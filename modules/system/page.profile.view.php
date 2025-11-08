@@ -2,8 +2,8 @@
 /**
 * Profile :: View User Information
 * Created :: 2021-01-01
-* Modify  :: 2025-06-24
-* Version :: 8
+* Modify  :: 2025-11-07
+* Version :: 9
 *
 * @param Int $userInfo
 * @return Widget
@@ -157,18 +157,40 @@ class ProfileView extends Page {
 						]) : NULL,
 						new Button([
 							'type' => 'link',
+							'class' => 'sg-action',
 							'href' => url('paper/user/'.$this->userInfo->uid),
-							'target' => '_blank',
 							'icon' => new Icon('view_list'),
-							'text' => '<b>'.NodeModel::countNodeByUserId($this->userInfo->uid).'</b> หัวข้อที่เขียน'
+							'text' => '<b>'.NodeModel::countNodeByUserId($this->userInfo->uid).'</b> หัวข้อที่เขียน',
+							'rel' => 'box',
+							'data-width' => '480',
 						]),
-						$this->right->admin ? new Button([
+						new Button([
 							'type' => 'link',
+							'class' => 'sg-action',
 							'href' => url('paper/user/'.$this->userInfo->uid),
-							'target' => '_blank',
+							'icon' => new Icon('hub'),
+							'text' => '<b>'.NodeModel::countNodeJoinByUserId($this->userInfo->uid).'</b> หัวข้อเข้าร่วม',
+							'rel' => 'box',
+							'data-width' => '480',
+						]), // Button
+						new Button([
+							'type' => 'link',
+							'class' => 'sg-action',
+							'href' => url('profile/'.$this->userInfo->uid.'/view..group'),
+							'icon' => new Icon('groups'),
+							'text' => '<b>'.UserModel::countGroupByUserId($this->userInfo->uid).'</b> สมาชิกกลุ่ม',
+							'rel' => 'box',
+							'data-width' => '480',
+						]), // Button
+						new Button([
+							'type' => 'link',
+							'class' => 'sg-action',
+							'href' => url('paper/user/'.$this->userInfo->uid),
 							'icon' => new Icon('comment'),
 							'text' => '<b>'.NodeModel::countCommentByUserId($this->userInfo->uid).'</b> ความคิดเห็น',
-						]) : NULL, // Button
+							'rel' => 'box',
+							'data-width' => '480',
+						]), // Button
 						new Button([
 							'type' => 'link',
 							'class' => 'sg-action',
@@ -190,6 +212,34 @@ class ProfileView extends Page {
 					], // children
 				]), // Column
 			], // children
+		]);
+	}
+
+	function group() {
+		$userInfo = UserModel::get($this->userId);
+
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'User '.$userInfo->name.' in '.UserModel::countGroupByUserId($this->userId).' groups.',
+				'leading' => _HEADER_BACK,
+				'boxHeader' => true,
+			]), // AppBar
+			'body' => new Widget([
+				'children' => array_map(
+					function($user) {
+						return new Card([
+							'class' => '-sg-paddingnorm',
+							'children' => [
+								new ListTile([
+									'title' => $user->orgName,
+									'leading' => new Icon('groups')
+								]),
+							]
+						]);
+					},
+					UserModel::getMemberOfGroup($this->userId)
+				), // children
+			]), // Widget
 		]);
 	}
 }
