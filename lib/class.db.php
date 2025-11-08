@@ -2,8 +2,8 @@
 /**
  * DB      :: Database Management
  * Created :: 2023-07-28
- * Modify  :: 2025-10-30
- * Version :: 26
+ * Modify  :: 2025-11-08
+ * Version :: 27
  *
  * @param Array $args
  * @return Object
@@ -14,7 +14,7 @@
 namespace Softganz;
 
 class DataModel {
-	function __construct(Array $args) {
+	function __construct($args) {
 		foreach ($args as $key => $value) {
 			$this->{$key} = $value;
 		}
@@ -22,19 +22,19 @@ class DataModel {
 }
 
 class SetDataModel extends DataModel {
-	function __construct(Array $args) {
+	function __construct($args) {
 		foreach ($args as $key => $value) $this->{$key} = $value;
 	}
 }
 
 class JsonDataModel extends DataModel {
-	function __construct(Array $args) {
+	function __construct($args) {
 		$this->args = $args;
 	}
 }
 
 class JsonArrayDataModel extends DataModel {
-	function __construct(Array $args) {
+	function __construct($args) {
 		$this->args = $args;
 	}
 }
@@ -717,14 +717,19 @@ class DB {
 	}
 
 	private function jsonObjectString($value, $key = NULL) {
+		// Encode to json string and decode to value becuase array has index as string will convert to object
+		$value = json_decode(json_encode($value));
+
 		$jsonString = '';
-		if ($key) $jsonString .= '"'.$key.'" , ';
-		$jsonString .= 'JSON_OBJECT(';
+		
+		if ($key) $jsonString .= '	"'.$key.'", ';
+		$jsonString .= is_object($value) ? 'JSON_OBJECT('._NL : 'JSON_ARRAY('._NL;
+
 		foreach ((Array) $value as $jsonKey => $jsonValue) {
 			if (is_array($jsonValue)) {
-				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).' , ';
+				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).', '._NL;
 			} else if (is_object($jsonValue)) {
-				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).' , ';
+				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).', ';
 			} else {
 				// Convert value to type
 				if (is_null($jsonValue) || (is_string($jsonValue) && trim($jsonValue) === '')) $jsonValue = 'null';
@@ -732,13 +737,13 @@ class DB {
 				else {
 					$jsonValue = '"'.preg_replace('/[\"]/', '', $jsonValue).'"';
 				}
-				$jsonString .= '"'.$jsonKey.'" , '
+				$jsonString .= (is_array($value) ? '	' : '	"'.$jsonKey.'", ')
 					. $jsonValue
-					. ' ,';
+					. ', '._NL;
 			}
 		}
-		$jsonString = rtrim($jsonString, ' , ');
-		$jsonString .= ')';
+		$jsonString = rtrim($jsonString, ' , '._NL);
+		$jsonString .= _NL.')';
 		return $jsonString;
 	}
 
