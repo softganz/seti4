@@ -48,9 +48,9 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        15);
-cfg('core.version',             '4.3.02');
-cfg('core.release',             '2024-06-11');
+cfg('core.version.code',        16);
+cfg('core.version',             '4.3.10');
+cfg('core.release',             '2025-11-08');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
