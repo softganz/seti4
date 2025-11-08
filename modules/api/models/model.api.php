@@ -2,8 +2,8 @@
 /**
 * API     :: API Model
 * Created :: 2023-11-13
-* Modify  :: 2025-06-07
-* Version :: 4
+* Modify  :: 2025-06-08
+* Version :: 5
 *
 * @param Array $args
 * @return Object
@@ -14,6 +14,8 @@
 */
 
 use Softganz\DB;
+use Softganz\JsonDataModel;
+use Softganz\DBException;
 
 class ApiModel {
 	function __construct($args = []) {}
@@ -151,23 +153,37 @@ class ApiModel {
 	public static function sendComplete($args = []) {
 		if (empty($args['apiModel'])) return false;
 
+		$args['curlParam'][10015] = json_decode($args['curlParam'][10015]);
+
 		$data = [
 			':userId' => i()->uid,
 			':apiKey' => $args['apiKey'],
 			':apiModel' => $args['apiModel'],
 			':status' => 'COMPLETE',
-			':sendResult' => SG\json_encode($args['sendResult']),
-			':curlParam' => SG\json_encode($args['curlParam']),
+			':sendResult' => new JsonDataModel((Object) $args['sendResult']),
+			':curlParam' => new JsonDataModel((Object) $args['curlParam']),
 			':created' => date('U'),
 		];
-		DB::query([
-			'INSERT INTO %api_wait%
-			(`userId`, `apiKey`, `apiModel`, `status`, `sendResult`, `curlParam`, `created`)
-			VALUES
-			(:userId, :apiKey, :apiModel, :status, :sendResult, :curlParam, :created)',
-			'var' => $data
-		]);
-		// debugMsg(mydb()->_query);
+
+		try {
+			DB::query([
+				'INSERT INTO %api_wait%
+				(`userId`, `apiKey`, `apiModel`, `status`, `sendResult`, `curlParam`, `created`)
+				VALUES
+				(
+					:userId
+					, :apiKey
+					, :apiModel
+					, :status
+					, :sendResult
+					, :curlParam
+					, :created
+				)',
+				'var' => $data,
+			]);
+		} catch (DBException $exception) {
+		}
+		debugMsg(R('query'));
 	}
 
 	public static function getQueue($conditions = []) {
