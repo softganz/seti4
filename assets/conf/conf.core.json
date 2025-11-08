@@ -1,8 +1,8 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2025-08-25",
-		"version": 7
+		"lastModify": "2025-11-08",
+		"version": 8
 	},
 	"autoLoader": {
 		"items": {
@@ -70,5 +70,11 @@
 			"passwordMaxLength": 30,
 			"registrationConfirmMethod": "default"
 		}
+	},
+	"zones": {
+		"central": {"zoneId": "1,2,7", "name": "ภาคกลาง"},
+		"esan": {"zoneId": "3,4", "name": "ภาคอีสาน"},
+		"north": {"zoneId": "5,6", "name": "ภาคเหนือ"},
+		"south": {"zoneId": "8,9", "name": "ภาคใต้"}
 	}
 }
