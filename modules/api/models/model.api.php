@@ -2,8 +2,8 @@
 /**
 * API     :: API Model
 * Created :: 2023-11-13
-* Modify  :: 2025-06-08
-* Version :: 5
+* Modify  :: 2025-11-08
+* Version :: 6
 *
 * @param Array $args
 * @return Object
@@ -183,7 +183,7 @@ class ApiModel {
 			]);
 		} catch (DBException $exception) {
 		}
-		debugMsg(R('query'));
+		// debugMsg(R('query'));
 	}
 
 	public static function getQueue($conditions = []) {
