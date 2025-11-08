@@ -2,8 +2,8 @@
 /**
 * Widget  :: Page Render Widget
 * Created :: 2023-01-01
-* Modify  :: 2025-10-31
-* Version :: 8
+* Modify  :: 2025-11-08
+* Version :: 9
 *
 * @param Object $pageClass
 * @param String $requestResult
@@ -27,7 +27,7 @@ class renderPageWidget extends Widget {
 		}
 
 		if (is_object($this->requestResult) || is_array($this->requestResult)) {
-			return (new DebugMsg($this->requestResult, '$result'))->build();
+			die($this->renderJson($this->requestResult));
 		}
 
 		return $this->renderOldPage();
@@ -156,6 +156,12 @@ class renderPageWidget extends Widget {
 		}
 
 		return $ret;
+	}
+
+	private function renderJson($json) {
+		// Set the Content-Type header to application/json
+		header('Content-Type: application/json; charset=utf-8');
+		return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 	}
 
 	private function renderOldPage() {
