@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-11-06
- * Version :: 27
+ * Modify  :: 2025-11-10
+ * Version :: 28
  */
 
 //---------------------------------------
@@ -1226,8 +1226,8 @@ function error($code, String $message, $debugMsg = NULL) {
  */
 function success($message) {
 	if (is_object($message) || is_array($message)) {
-		$message = (Object) $message;
-		if (!$message->responseCode) $message->responseCode = _HTTP_OK;
+		$message = (Array) $message;
+		if (!$message['responseCode']) $message['responseCode'] = _HTTP_OK;
 		$result = new Message($message);
 	} else {
 		$result = new Message([
