@@ -3,7 +3,7 @@
  * Widget  :: Form Widget
  * Created :: 2020-10-01
  * Modify  :: 2025-11-11
- * Version :: 36
+ * Version :: 37
  *
  * @param Array $args
  * @return Widget
@@ -602,7 +602,9 @@ class Form extends Widget {
 	}
 
 	function _renderButton($tag_id, $name, $formElement) {
-		if (empty($formElement->items) && !empty($formElement->value)) {
+		$text = isset($formElement->text) ? $formElement->text : $formElement->value;
+
+		if (empty($formElement->items) && !empty($text)) {
 			// Single button
 			$ret .= '<button type="submit" '
 				. (empty($formElement->name) ? '' : 'name="'.$name.'"')
@@ -611,7 +613,11 @@ class Form extends Widget {
 				. ($this->readonly || $formElement->readonly ? ' disabled="disabled" ' : '')
 				. ($formElement->attribute ? ' '.$formElement->attribute : '')
 				. '>'
-				. SG\getFirst($formElement->text, $formElement->value)
+				// Have parameter icon, show icon and text
+				. ($formElement->icon ? (function($icon, $text) {
+					return ($icon ? $this->_renderEachChildWidget(NULL, $icon) : '')
+						. ($text ? '<span>'.$text.'</span>' : '');
+				})($formElement->icon, $text) : $text)
 				. '</button>';
 		} else if (is_array($formElement->items) && !empty($formElement->items['value'])) {
 			$ret .= '<button'
