@@ -1,16 +1,17 @@
 <?php
 /********************************************
-* Class :: PageNavigator
-* PageNavigator class for create page navigator
-*
-* Created 2020-10-01
-* Modify  2020-10-01
-*
-* Property
-* config {nav: "nav -icons"}
-*
-* @usage new PageNavigator($class)
-********************************************/
+ * Class :: PageNavigator
+ * PageNavigator class for create page navigator
+ *
+ * Created :: 2020-10-01
+ * Modify  :: 2025-11-11
+ * Version :: 2
+ *
+ * Property
+ * config {nav: "nav -icons"}
+ *
+ * @usage new PageNavigator($class)
+ ********************************************/
 
 class PageNavigator {
 	var $items_per_page = 10;
@@ -26,8 +27,19 @@ class PageNavigator {
 		if ( isset($itemsPerPage) ) $this->ItemsPerPage($itemsPerPage);
 		if ( isset($currentPage) ) $this->CurrentPage($currentPage);
 		if ( isset($url) ) $this->LinkURL($url);
-		if ( isset($cleanurl)) $this->cleanurl=$cleanurl;
-		if ( $linkPara ) $this->linkPara=$linkPara;
+		if ( isset($cleanurl)) $this->cleanurl = $cleanurl;
+		if ( $linkPara ) $this->linkPara = $linkPara;
+
+		if ($this->linkPara) {
+			$this->linkPara['attribute'] = (Array) SG\getFirst($this->linkPara['attribute'], $this->linkPara['attr']);
+			unset($this->linkPara['attr']);
+
+			if ($this->linkPara['attribute']['class']) {
+				$this->class .= trim(' '.$this->linkPara['attribute']['class']);
+				unset($this->linkPara['attribute']['class']);
+			}
+		};
+
 		$this->_make();
 	}
 
@@ -89,24 +101,26 @@ class PageNavigator {
 		if ($this->linkPara) {
 			$url = $this->linkUrl();
 			$linkPara = $this->linkPara;
-			unset($linkPara['class'], $linkPara['attr']);
+			unset($linkPara['attribute']);
 			$linkPara['page'] = $page;
 		} else if (preg_match('/\%page\%/',$this->LinkURL())) {
 			$linkUrl = str_replace("%page%",$page,$this->LinkURL());
 			$url = (preg_match("/ /",$linkUrl) ? Preg_Replace("/ /","%20",$linkUrl) : $linkUrl);
 		} else if (preg_match('/page\/[0-9]*/',$this->LinkURL())) {
 			$url=preg_replace('/page\/[0-9]*/','page/'.$page,$this->LinkURL());
-	//	echo 'page : '.$page.' of '.$this->LinkUrl().' = '.$url.'<br />';
+			//	echo 'page : '.$page.' of '.$this->LinkUrl().' = '.$url.'<br />';
 		} else {
 			$url=$this->LinkURL().'/page/'.$page;
 		}
-		return url($url,$linkPara);
+		return Url::link($url, $linkPara);
 	}
 
 	/** Public Property toString */
 	function toString() {
-		$class = $this->linkPara['class'];
-		$linkAttr = sg_implode_attr($this->linkPara['attr']);
+		$class = $this->class;
+		$linkAttr = sg_implode_attr($this->linkPara['attribute']);
+		// debugMsg($linkAttr);
+		// debugMsg($this->linkPara, '$this->linkPara');
 		$totalPage = $this->TotalPage();
 		$currentPage = $this->CurrentPage() == 0 ? 1 : $this->CurrentPage();
 		$startPage = $currentPage - Floor($this->PageToShow() / 2);
