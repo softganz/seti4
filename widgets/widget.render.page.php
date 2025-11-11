@@ -1,16 +1,16 @@
 <?php
 /**
-* Widget  :: Page Render Widget
-* Created :: 2023-01-01
-* Modify  :: 2025-11-08
-* Version :: 9
-*
-* @param Object $pageClass
-* @param String $requestResult
-* @return String
-*
-* @usage new PageRenderWidget($pageClass, $requestResult)
-*/
+ * Widget  :: Page Render Widget
+ * Created :: 2023-01-01
+ * Modify  :: 2025-11-11
+ * Version :: 10
+ *
+ * @param String $requestResult
+ * @param Object $pageClass
+ * @return String
+ *
+ * @usage new PageRenderWidget($requestResult, $pageClass)
+ */
 
 class renderPageWidget extends Widget {
 	var $pageClass;
@@ -40,6 +40,7 @@ class renderPageWidget extends Widget {
 			. $this->renderFloatingActionButton()
 			. $this->renderSideBar()
 			. '<div id="main" class="page -main">'
+			. $this->renderNavBar() // @deprecated
 			. $this->requestResult->build()
 			. '</div>';
 
@@ -158,6 +159,13 @@ class renderPageWidget extends Widget {
 		return $ret;
 	}
 
+	private function renderNavBar() {
+		if (empty($this->pageClass->theme->navbar)) return;
+
+		return '<div class="navbar -main">'._NL
+			. $this->pageClass->theme->navbar._NL
+			. '</div><!--navbar-->'._NL;
+	}
 	private function renderJson($json) {
 		// Set the Content-Type header to application/json
 		header('Content-Type: application/json; charset=utf-8');
