@@ -1,15 +1,15 @@
 <?php
 /**
-* Widget  :: Form Widget
-* Created :: 2020-10-01
-* Modify  :: 2025-07-19
-* Version :: 35
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new Form([key => value,...])
-*/
+ * Widget  :: Form Widget
+ * Created :: 2020-10-01
+ * Modify  :: 2025-11-11
+ * Version :: 36
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @usage new Form([key => value,...])
+ */
 
 /*
 	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, leading, rel, done, children, width, height, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
@@ -401,20 +401,22 @@ class Form extends Widget {
 	*/
 	function _renderRadioCheckbox($tag_id, $name, $formElement) {
 		static $itemIndex = 0;
+		$choices = isset($formElement->choices) ? $formElement->choices : $formElement->choice;
+
 		$ret = '';
 		if (!isset($formElement->display)) $formElement->display = '-block';
 
 		// choice begin with RANGE:
-		if (is_string($formElement->choice) && preg_match('/^RANGE\:(.*)/', $formElement->choice, $out)) {
-			$formElement->choice = [];
+		if (is_string($choices) && preg_match('/^RANGE\:(.*)/', $choices, $out)) {
+			$choices = [];
 			if (preg_match('/\.\./', $out[1])) {
 				// TODO: range from start to end
 			} else {
-				foreach (explode(',', $out[1]) as $value) $formElement->choice[trim($value)] = trim($value);
+				foreach (explode(',', $out[1]) as $value) $choices[trim($value)] = trim($value);
 			}
 		}
 
-		foreach ($formElement->choice as $optionKey => $optionValue) {
+		foreach ($choices as $optionKey => $optionValue) {
 			if (is_null($optionValue)) continue;
 
 			if (is_array($optionValue) || is_object($optionValue)) {
@@ -485,7 +487,7 @@ class Form extends Widget {
 						. ' value="'.$optionKey.'"';
 					if (is_array($formElement->value)) {
 						$optionValue_key = array_keys($formElement->value);
-						$ret .= in_array($optionKey, array_intersect(array_keys((Array) $formElement->choice), (Array) $formElement->value)) ? ' checked="checked"':'';
+						$ret .= in_array($optionKey, array_intersect(array_keys((Array) $choices), (Array) $formElement->value)) ? ' checked="checked"':'';
 					} else if (isset($formElement->value) && $optionKey == $formElement->value) {
 						$ret .= ' checked="checked"';
 					}
@@ -507,6 +509,8 @@ class Form extends Widget {
 	}
 
 	function _renderSelect($tag_id, $name, $formElement) {
+		$choices = isset($formElement->choices) ? $formElement->choices : $formElement->choice;
+
 		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
 		$ret = '	<select '
 			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" ' : '').' '
@@ -518,14 +522,14 @@ class Form extends Widget {
 			. ($formElement->attribute ? ' '.$formElement->attribute : '')
 			. '>'._NL;
 
-		if (is_string($formElement->choice) && preg_match('/^\</', $formElement->choice)) {
+		if (is_string($choices) && preg_match('/^\</', $choices)) {
 			// Option is HTML Tag
-			$ret .= $formElement->choice;
-			unset($formElement->choice);
-		} else if (is_string($formElement->choice)) {
+			$ret .= $choices;
+			unset($choices);
+		} else if (is_string($choices)) {
 			// Option is string and contain ,
 			$selectOptions = [];
-			foreach (explode(',', $formElement->choice) as $eachOption) {
+			foreach (explode(',', $choices) as $eachOption) {
 				if (preg_match('/(.*)\=\>(.*)/', $eachOption, $out)) {
 					// Option format key=value
 					$selectOptions[strtoupper(trim($out[1])) === 'NULL' ? '' : trim($out[1])] = trim($out[2]);
@@ -538,9 +542,9 @@ class Form extends Widget {
 					$selectOptions[$eachOption] = $eachOption;
 				}
 			}
-			$formElement->choice = $selectOptions;
+			$choices = $selectOptions;
 		}
-		if ($formElement->choice) $ret .= $this->_renderSelectOption($formElement->choice, $formElement->value);
+		if ($choices) $ret .= $this->_renderSelectOption($choices, $formElement->value);
 		$ret .= '	</select>';
 		return $ret;
 	}
