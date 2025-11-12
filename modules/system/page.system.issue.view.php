@@ -3,7 +3,7 @@
 * Sysgtem :: Issue View
 * Created :: 2022-10-20
 * Modify  :: 2025-11-12
-* Version :: 2
+* Version :: 3
 *
 * @param Object $issueInfo
 * @return Widget
@@ -52,7 +52,7 @@ class SystemIssueView extends Page {
 					]), // Button,
 				]), // Row
 			]), // AppBar
-			'body' => new Widget([
+			'body' => new ScrollView([
 				'children' => [
 					new Table([
 						'children' => array_map(
@@ -60,7 +60,10 @@ class SystemIssueView extends Page {
 								if ($key === 'host') $item = '<a href="'.$item.'" target="_blank">'.$item.'</a>';
 								return [
 									$key,
-									is_string($item) ? '<pre>'.$item.'</pre>' : $item
+									new ScrollView([
+										'style' => 'width: 100%;',
+										'child' => is_string($item) ? '<pre style="white-space: pre-wrap;">'.$item.'</pre>' : $item
+									]),
 								];
 							},
 							(Array) $this->issueInfo, array_keys((Array) $this->issueInfo)

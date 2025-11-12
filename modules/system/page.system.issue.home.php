@@ -3,7 +3,7 @@
 * System  :: Issue Home Page
 * Created :: 2022-10-14
 * Modify  :: 2025-11-12
-* Version :: 16
+* Version :: 17
 *
 * @return Widget
 *
@@ -97,7 +97,8 @@ class SystemIssueHome extends Page {
 													'Date : '.$item->reportDate,
 													'Referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
 													'Agent : '.$item->agent,
-													$item->description ? 'Description: <details><summary>'.preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : '.$item->description.'</details>' : NULL,
+													$item->description ? '<details><summary>Description: '.preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : '.$item->description.'</details>' : NULL,
+													$item->data ? '<details><summary>Data: '.number_format(strlen($item->data)).' chars.</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">'.$item->data.'</pre></div></details>' : ''
 												]
 											]), // Column
 										]), // ScrollView
