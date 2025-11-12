@@ -2,8 +2,8 @@
 /**
 * System  :: Issue Home Page
 * Created :: 2022-10-14
-* Modify  :: 2025-06-25
-* Version :: 15
+* Modify  :: 2025-11-12
+* Version :: 16
 *
 * @return Widget
 *
@@ -207,6 +207,7 @@ class SystemIssueHome extends Page {
 			], // children
 		]);
 	}
+
 	private function issueIcon($issueType) {
 		$icons = [
 			'Fatal Error' => 'error',

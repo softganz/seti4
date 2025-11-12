@@ -2,8 +2,8 @@
 /**
 * System  :: Save New Issue
 * Created :: 2022-10-14
-* Modify  :: 2025-07-06
-* Version :: 4
+* Modify  :: 2025-11-12
+* Version :: 5
 *
 * @return Widget
 *
@@ -36,9 +36,9 @@ class SystemIssueNew extends Page {
 
 		parent::__construct([
 			'reportUrl' => $reportUrl,
-			'host' => $hosts['scheme'].'://'.$hosts['host'],
-			'path' => $hosts['path'],
-			'query' => $hosts['query'],
+			'host' => urldecode($hosts['scheme'].'://'.$hosts['host']),
+			'path' => urldecode($hosts['path']),
+			'query' => urldecode($hosts['query']),
 			'issueType' => post('type'),
 			'file' => post('file'),
 			'line' => post('line'),
@@ -48,7 +48,7 @@ class SystemIssueNew extends Page {
 			'referer' => post('referer'),
 			'agent' => post('agent'),
 			'description' => post('description'),
-			'data' => json_encode(SG\getFirst(post('data'), (Object)[])),
+			'data' => SG\getFirst(post('data'), '{}'),
 		]);
 	}
 

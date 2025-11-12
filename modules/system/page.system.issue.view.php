@@ -2,8 +2,8 @@
 /**
 * Sysgtem :: Issue View
 * Created :: 2022-10-20
-* Modify  :: 2022-10-20
-* Version :: 1
+* Modify  :: 2025-11-12
+* Version :: 2
 *
 * @param Object $issueInfo
 * @return Widget
@@ -58,7 +58,10 @@ class SystemIssueView extends Page {
 						'children' => array_map(
 							function($item, $key) {
 								if ($key === 'host') $item = '<a href="'.$item.'" target="_blank">'.$item.'</a>';
-								return [$key, is_string($item) ? nl2br($item) : $item];
+								return [
+									$key,
+									is_string($item) ? '<pre>'.$item.'</pre>' : $item
+								];
 							},
 							(Array) $this->issueInfo, array_keys((Array) $this->issueInfo)
 						),
