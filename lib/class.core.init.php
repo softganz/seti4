@@ -2,8 +2,8 @@
 /**
  * Core    :: Init Web
  * Created :: 2023-08-01
- * Modify  :: 2025-10-25
- * Version :: 16
+ * Modify  :: 2025-11-12
+ * Version :: 17
  */
 
 global $R;
@@ -156,6 +156,7 @@ $R->timer = new Timer();
 $_module_folder = [];
 
 foreach (explode(PATH_SEPARATOR, ini_get('include_path')) as $_folder) {
+	if (!is_dir($_folder.'/modules')) continue;
 	if (is_dir($_folder.'/modules')) $_module_folder[] = $_folder.'/modules';
 	if (is_dir($_folder.'/modules/apps')) $_module_folder[] = $_folder.'/modules/apps';
 }
