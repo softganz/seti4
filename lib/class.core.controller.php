@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-11-06
- * Version :: 44
+ * Modify  :: 2025-11-13
+ * Version :: 45
  */
 
 /*************************************************************
@@ -1162,12 +1162,16 @@ class SgCore {
 			}
 		} else if ($request) {
 			// Load Module Manifest
+
 			// Is API request?
 			if (preg_match('/^api\/(.*)/', $request, $out)) {
 				$request = $out[1];
 				q($request);
 				$requestFilePrefix = 'api';
 			}
+
+			// Load system manifest
+			$manifest = R::Manifest('system');
 
 			if (q(0)) $manifest = R::Manifest(q(0));
 
@@ -1186,7 +1190,6 @@ class SgCore {
 				// Do request from R::Page
 				// debugMsg('Do request from R::page');
 				// menu(q(0),q(0).' page',q(0),'__controller',1,true,'static');
-				$manifest = R::Manifest('system');
 				$menu = menu($request);
 			}
 		}
