@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-10-30
- * Version :: 57
+ * Modify  :: 2025-11-16
+ * Version :: 58
  */
 
 'use strict'
@@ -532,7 +532,7 @@ function sgWebViewDomProcess(id) {
 	sgActionDone($this.data("webviewResume"), $this)
 }
 
-function showError(response) {
+function showError(response, time = 5000) {
 	let errorMsg = 'ERROR : ';
 	if ("responseJSON" in response && "errorMessage" in response.responseJSON) {
 		errorMsg += response.responseJSON.errorMessage + ' ('+response.status+')';
@@ -546,7 +546,7 @@ function showError(response) {
 	} else {
 		errorMsg += 'Unknown error occurred.';
 	}
-	notify(errorMsg);
+	notify(errorMsg, time);
 }
 
 
