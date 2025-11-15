@@ -2,8 +2,8 @@
 /**
  * Widget  :: Page Render Widget
  * Created :: 2023-01-01
- * Modify  :: 2025-11-11
- * Version :: 10
+ * Modify  :: 2025-11-16
+ * Version :: 11
  *
  * @param String $requestResult
  * @param Object $pageClass
@@ -44,7 +44,10 @@ class renderPageWidget extends Widget {
 			. $this->requestResult->build()
 			. '</div>';
 
-			return $ret;
+		// Send script to index process to add at last of body
+		if (isset($this->requestResult->script)) cfg('mainScript', $this->requestResult->script)._NL;
+
+		return $ret;
 	}
 
 	private function renderAppBar() {

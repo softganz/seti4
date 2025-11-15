@@ -190,5 +190,6 @@ window.cookieconsent.initialise({
 });
 </script>';
 ?>
+<?php echo cfg('mainScript');?>
 </body>
 </html>

@@ -2,8 +2,8 @@
 /**
  * Widget  :: Basic Widgets Collector
  * Created :: 2020-10-01
- * Modify  :: 2025-10-31
- * Version :: 61
+ * Modify  :: 2025-11-16
+ * Version :: 62
  *
  * @param Array $args
  * @return Widget
@@ -1092,6 +1092,7 @@ class Scaffold extends Widget {
 	var $sideBar = NULL;
 	var $body = NULL;
 	var $floatingActionButton = NULL;
+	var $script = NULL;
 
 	function __construct($args = []) {
 		parent::__construct($args);
