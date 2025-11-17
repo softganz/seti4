@@ -1,15 +1,15 @@
 <?php
 /**
-* Paper   :: List Paper of user
-* Created :: 2023-08-27
-* Modify  :: 2025-06-24
-* Version :: 6
-*
-* @param Int $userId
-* @return Widget
-*
-* @usage paper/user/{userId}
-*/
+ * Paper   :: List Paper of user
+ * Created :: 2023-08-27
+ * Modify  :: 2025-11-17
+ * Version :: 7
+ *
+ * @param Int $userId
+ * @return Widget
+ *
+ * @usage paper/user/{userId}
+ */
 
 ini_set('memory_limit', -1);
 
@@ -19,11 +19,17 @@ class PaperUser extends Page {
 
 	function __construct($userId = NULL) {
 		parent::__construct([
-			'userId' => $userId,
+			'userId' => SG\getFirstInt($userId),
 			'right' => (Object) [
 				'admin' => user_access('admin paper'),
 			]
 		]);
+	}
+
+	function rightToBuild() {
+		if (empty($this->userId)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลผู้ใช้งานที่ระบุ');
+
+		return true;
 	}
 
 	function build() {
