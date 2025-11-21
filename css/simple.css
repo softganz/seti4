@@ -988,7 +988,7 @@ $SCREENS
 	ul.topic-list .title {padding:0;margin:0;font-size:0.9em;font-weight:normal;display:inline;}
 	ul.topic-list .timestamp {padding:0;font-size:0.8em;font-style:normal;}
 
-	table.topic-list {width:100%;}
+	table.topic-list {width:100%; display: table;}
 	table.topic-list caption, table.topic-list thead th {padding:4px; background-color:#f1e6b8; font-weight:bold; text-align:center;}
 	table.topic-list thead th {white-space:nowrap;}
 	table.topic-list thead th.title {width:100%;}
