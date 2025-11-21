@@ -6,8 +6,9 @@
  * @version 0.01
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2011-11-04
- * @modify 2011-11-04
+ * @created :: 2011-11-04
+ * @modify  :: 2025-11-21
+ * Version  :: 2
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +105,7 @@ global $today;
 	$patterns->div->header='h3';
 	$patterns->div->value = '"<div class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</div>'
 		. '<div class=\"photo\">'
-		. '<a '.($para->{'show-webview'} ? 'class=\"sg-action\"' : '').' href=\"$_url\" '.($para->{'show-webview'} ? 'data-webview=\"true\" data-webview-title=\"News\"' : '').' title=\"".htmlspecialchars($title)."\">{$photo}</a>'
+		. '<a '.($para->{'show-webview'} ? 'class=\"sg-action\"' : '').' href=\"$_url\" '.($para->{'show-webview'} ? 'data-webview=\"".htmlspecialchars($title)."\"' : '').' title=\"".htmlspecialchars($title)."\">{$photo}</a>'
 		. '</div>'
 		. '<div class=\"summary\">{$summary}</div>'
 		. '<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"';
@@ -228,7 +229,7 @@ global $today;
 		// $ret .= print_o($topic, '$topic');
 		/* generate each topic title */
 		if ($pattern->header) $ret.='<'.$pattern->header.'>';
-		$ret .= '<a href="'.$topic->_url.'"'.($pattern->{'show-style'}=='div'?' title="'.htmlspecialchars($topic->title).'"':'').'>';
+		$ret .= '<a href="'.$topic->_url.'"'.($pattern->{'show-style'}=='div'?' title="'.htmlspecialchars($topic->title).'"':'').' data-webview="'.htmlspecialchars($topic->title).'">';
 
 		$ret .= $para->{'show-style'}=='short'&&$para->{'show-photo'}&&$topic->photo?$topic->photo:'';
 		if ($showTitle = SG\getFirst($para->{'show-title'},$pattern->{'show-title'})) {
