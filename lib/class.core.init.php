@@ -2,17 +2,31 @@
 /**
  * Core    :: Init Web
  * Created :: 2023-08-01
- * Modify  :: 2025-11-12
- * Version :: 17
+ * Modify  :: 2025-11-21
+ * Version :: 18
  */
 
 global $R;
 
 use Softganz\DB;
 
-if (!cfg('domain')) cfg('domain', ($_SERVER["REQUEST_SCHEME"] ? $_SERVER["REQUEST_SCHEME"] : 'https').'://'.$_SERVER['SERVER_NAME']);
-if (!cfg('domain.short')) cfg('domain.short', $_SERVER['SERVER_NAME']);
+if ($_SERVER['HTTP_HOST']) {
+	$domainName = $_SERVER['HTTP_HOST'];
+} else if ($_SERVER['SERVER_NAME']) {
+	$domainName = $_SERVER['SERVER_NAME'];
+}
+
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+	$schema = $_SERVER['HTTP_X_FORWARDED_PROTO'];
+} else {
+	$schema = isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'http';
+}
+
+if (!cfg('domain')) cfg('domain', $schema.'://'.$domainName);
+if (!cfg('domain.short')) cfg('domain.short', $domainName);
 //if (!cfg('cookie.domain')) cfg('cookie.domain', $_SERVER['SERVER_NAME']);
+
+unset($domainName, $schema); // clear unused variable
 
 cfg('folder.abs', dirname(isset($_SERVER['PATH_TRANSLATED']) ? $_SERVER['PATH_TRANSLATED'] : $_SERVER['SCRIPT_FILENAME']).'/');
 cfg('url', in_array(dirname($_SERVER['PHP_SELF']), ['/','\\']) ? '/' : dirname($_SERVER['PHP_SELF']).'/');
