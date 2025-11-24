@@ -2,8 +2,8 @@
 /**
 * Calendar:: Calendar Model
 * Created :: 2023-01-15
-* Modify  :: 2025-07-19
-* Version :: 2
+* Modify  :: 2025-11-24
+* Version :: 3
 *
 * @param Array $args
 * @return Object
@@ -126,13 +126,16 @@ class CalendarModel {
 			mydb::where(
 				'
 				(
-					-- (MONTH(c.`from_date`) = :month AND YEAR(c.`from_date`) = :year) OR (MONTH(c.`to_date`) = :month AND YEAR(c.`to_date`) = :year) OR
-					(`c`.`from_date` BETWEEN :getFromDate AND :getToDate) OR (`c`.`to_date` BETWEEN :getFromDate AND :getToDate) OR
-					(:getFromDate BETWEEN `c`.`from_date` AND `c`.`to_date`) OR (:getToDate BETWEEN `c`.`from_date` AND `c`.`to_date`)
+					(c.`from_date` IS NOT NULL AND c.`to_date` IS NOT NULL) AND
+					(
+						(`c`.`from_date` BETWEEN :getFromDate AND :getToDate) OR (`c`.`to_date` BETWEEN :getFromDate AND :getToDate) OR
+						(:getFromDate BETWEEN `c`.`from_date` AND `c`.`to_date`) OR (:getToDate BETWEEN `c`.`from_date` AND `c`.`to_date`)
+					)
 				)',
 				':month', $month, ':year', $year,
 				':getFromDate', $getFromDate, ':getToDate', $getToDate
 			);
+			// -- (MONTH(c.`from_date`) = :month AND YEAR(c.`from_date`) = :year) OR (MONTH(c.`to_date`) = :month AND YEAR(c.`to_date`) = :year) OR
 		}
 
 		// if ($getFromDate && $getToDate) {

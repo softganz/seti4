@@ -2,8 +2,8 @@
 /**
  * Calendar:: Calcendr Widget
  * Created :: 2025-07-20
- * Modify  :: 2025-08-13
- * Version :: 4
+ * Modify  :: 2025-11-24
+ * Version :: 5
  *
  * @param Array $args
  * @return Object
@@ -180,34 +180,45 @@ class CalendarWidget extends Widget {
 
 		// Print every month days
 		$currentDay = 1;
-		while ($currentDay <= $daysInMonth) {
-			// Start new row if we're at the beginning of the week
-			if (($currentDay + $startDayOfWeek - 1) % 7 === 0 && $currentDay > 1) {
-				$ret .= '</tr><tr>';
-			}
 
-			// Check is today
-			$isToday = $year == date('Y') && $month == date('n') && $currentDay == date('j');
-			
-			$ret .= '<td id="'.(sprintf('%02d',$currentDay).'/'.sprintf('%02d',$month).'/'.$year).'" '
-				. 'class="daybox'.($isToday ? ' currentdaybox' : '').($this->right->add ? ' calendar-add' : '').'"'
-				. ($this->right->add ? ' title="'.tr('Add new event','คลิกเพื่อเพิ่มกิจกรรมใหม่') : '').'"'
-				. '>'._NL;
-
-			$showDate = $year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$currentDay);
-			$hasCalendarItem = array_key_exists($showDate, $calendarList);
-
-			$ret .= '<div class="daynum'.($hasCalendarItem?' have_item':'').'" ><span>'.$currentDay.'</span></div>'._NL;
-
-			// Show calendar items for the day
-			if ($hasCalendarItem) {
-				foreach ($calendarList[$showDate] as $calendar) {
-					$ret .= $this->renderCalendarItem($calendar, $even_title_field);
+		try {
+			while ($currentDay <= $daysInMonth) {
+				// Start new row if we're at the beginning of the week
+				if (($currentDay + $startDayOfWeek - 1) % 7 === 0 && $currentDay > 1) {
+					$ret .= '</tr><tr>';
 				}
-			}
 
-			$ret .= '</td>'._NL;
-			$currentDay++;
+				// Check is today
+				$isToday = $year == date('Y') && $month == date('n') && $currentDay == date('j');
+				
+				$ret .= '<td id="'.(sprintf('%02d',$currentDay).'/'.sprintf('%02d',$month).'/'.$year).'" '
+					. 'class="daybox'.($isToday ? ' currentdaybox' : '').($this->right->add ? ' calendar-add' : '').'"'
+					. ($this->right->add ? ' title="'.tr('Add new event','คลิกเพื่อเพิ่มกิจกรรมใหม่') : '').'"'
+					. '>'._NL;
+
+				$showDate = $year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$currentDay);
+				$hasCalendarItem = array_key_exists($showDate, $calendarList);
+
+				$ret .= '<div class="daynum'.($hasCalendarItem?' have_item':'').'" ><span>'.$currentDay.'</span></div>'._NL;
+
+				// Show calendar items for the day
+				$maxItemsPerDay = 100;
+				if ($hasCalendarItem) {
+					// echo $showDate.' has '.count($calendarList[$showDate]).' items.<br />';
+					foreach ($calendarList[$showDate] as $calendar) {
+						if (--$maxItemsPerDay < 0) {
+							$ret .= '<div class="month-event -more-events">{tr:More}...</div>'._NL;
+							break;
+						}
+						$ret .= $this->renderCalendarItem($calendar, $even_title_field);
+					}
+				}
+
+				$ret .= '</td>'._NL;
+				$currentDay++;
+			}
+		} catch (Exception $e) {
+			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, $e->getMessage());
 		}
 
 		// Fill remaining cells in the last row
