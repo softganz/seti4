@@ -2,8 +2,8 @@
 /**
  * Admin   :: Site Modules Page
  * Created :: 2016-11-08
- * Modify  :: 2025-11-06
- * Version :: 2
+ * Modify  :: 2025-12-05
+ * Version :: 3
  *
  * @return Widget
  *
@@ -25,47 +25,14 @@ class AdminSiteModule extends Page {
 						'child' => 'Add / Remove / Configuration site modules',
 					]), // Container
 
-					new Table([
-						'thead' => ['Modules','Permissions','Operations'],
-						'colgroup' => [['width' => '20%'], ['width' => '80%'], ['width'=>'1%']],
-						'children' => array_map(
-							function($module, $perm) {
-								return [
-									'<b>'.$module.'</b>',
-									$perm,
-									new Nav([
-										'children' => [
-											new Button([
-												'type' => 'link',
-												'href' => Url::link($module.'/admin'),
-												'title' => 'Module configuration',
-												'icon' => new Icon('settings'),
-											]),
-											$module != 'system' ? new Button([
-												'type' => 'link',
-												'class' => 'sg-action',
-												'href' => Url::link('admin/site/module/remove/'.$module),
-												'rel' => 'none',
-												'done' => 'remove:parent tr',
-												'data-title' => 'Remove module',
-												'data-confirm' => 'Remove module <b>'.$module.'</b> Please confirm?',
-												'icon' => new Icon('cancel')
-											]) : NULL,
-
-										]
-									]),
-								];
-							},
-							array_keys((Array) cfg('perm')), (Array) cfg('perm')
-						),
-					]), // Table
+					$this->list(),
 
 					new Form([
 						'method' => 'post',
 						'class' => 'sg-form',
 						'action' => Url::link('api/admin/module.add'),
-						'rel' => 'notify',
-						'done' => 'load',
+						'rel' => '#result',
+						'done' => 'load->replace:#list:'.url('admin/site/module..list').' | moveto: 0,0',
 						'children' => [
 							'module' => [
 								'type' => 'text',
@@ -78,9 +45,50 @@ class AdminSiteModule extends Page {
 							]
 						], // children
 					]), // Form
+					new Container([
+						'id' => 'result',
+					]), // Container
 				], // children
 			]), // Widget
 		]);
+	}
+
+	function list() {
+		return new Table([
+			'id' => 'list',
+			'thead' => ['Modules','Permissions','Operations'],
+			'colgroup' => [['width' => '20%'], ['width' => '80%'], ['width'=>'1%']],
+			'children' => array_map(
+				function($module, $perm) {
+					return [
+						'<b>'.$module.'</b>',
+						$perm,
+						new Nav([
+							'children' => [
+								new Button([
+									'type' => 'link',
+									'href' => Url::link($module.'/admin'),
+									'title' => 'Module configuration',
+									'icon' => new Icon('settings'),
+								]),
+								$module != 'system' ? new Button([
+									'type' => 'link',
+									'class' => 'sg-action',
+									'href' => Url::link('admin/site/module/remove/'.$module),
+									'rel' => 'none',
+									'done' => 'remove:parent tr',
+									'data-title' => 'Remove module',
+									'data-confirm' => 'Remove module <b>'.$module.'</b> Please confirm?',
+									'icon' => new Icon('cancel')
+								]) : NULL,
+
+							]
+						]),
+					];
+				},
+				array_keys((Array) cfg('perm')), (Array) cfg('perm')
+			),
+		]); // Table
 	}
 }
 ?>

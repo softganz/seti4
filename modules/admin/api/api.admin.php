@@ -2,8 +2,8 @@
 /**
  * Admin   :: Admin General API
  * Created :: 2021-12-27
- * Modify  :: 2025-11-06
- * Version :: 4
+ * Modify  :: 2025-12-05
+ * Version :: 5
  *
  * @param String $action
  * @return Array
@@ -46,7 +46,7 @@ class AdminApi extends PageApi {
 
 		if ($message === false) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'Module "'.$module.'" not found.');
 		
-		return apiSuccess('Module "'.$module.'" install completed.');
+		return apiSuccess('Module "'.$module.'" install completed.<br>'.$message);
 	}
 }
 ?>
