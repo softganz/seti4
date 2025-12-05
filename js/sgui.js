@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-11-16
- * Version :: 58
+ * Modify  :: 2025-12-05
+ * Version :: 59
  */
 
 'use strict'
@@ -309,7 +309,7 @@ function sgUpdateData(html, relTarget, $this, options = {}) {
 	if (relExplode.length > 1 )
 		relTarget = relExplode[1]
 
-	if (debugSG)console.log('Type = ' + relType + ' Target = ' + relTarget)
+	if (debugSG) console.log('Type = ' + relType + ' Target = ' + relTarget)
 	//console.log('$this',$this)
 
 	if (relType == 'none') {
@@ -1187,23 +1187,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 				}
 
-				if (retUrl) {
-					if (debugSG) console.log("Return URL "+retUrl)
-					$.post(retUrl, function(html) {
-						sgUpdateData(html, relTarget, $this)
-						notify()
-					})
-				} else {
-					sgUpdateData(html, relTarget, $this)
-
-					if ($this.data('moveto')) {
-						let moveto = $this.data('moveto').split(',');
-						window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]));
-					}
-				}
-
-				if (relTarget.substring(0,6) != 'notify') notify()
-
 				// Process callback function
 				let callback = $this.data('callback');
 				if (callback && typeof window[callback] === 'function') {
@@ -1215,8 +1198,32 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		).fail(function(response) {
 			showError(response);
 		}).done(function(response) {
-			if (response.responseCode && response.text) notify(response.text, 3000);
+			let html = '';
+			if (response.responseCode && response.text) html = response.text;
+			else html = response;
+			
+			// notify(response.text, 3000);
+
+			if (retUrl) {
+				if (debugSG) console.log("Return URL "+retUrl)
+				$.post(retUrl, function(html) {
+					sgUpdateData(html, relTarget, $this)
+					notify()
+				})
+			} else {
+				sgUpdateData(html, relTarget, $this);
+				console.log(html)
+			}
+
+			if (relTarget.substring(0,6) != 'notify') notify()
+
 			sgActionDone($this.data('done'), $this, doneResult);
+
+			// Move screen to position
+			if ($this.data('moveto')) {
+				let moveto = $this.data('moveto').split(',');
+				window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]));
+			}
 		})
 	}
 	return false;
