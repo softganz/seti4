@@ -2,8 +2,8 @@
 /**
  * DB      :: Database Management
  * Created :: 2023-07-28
- * Modify  :: 2025-11-08
- * Version :: 27
+ * Modify  :: 2025-12-05
+ * Version :: 28
  *
  * @param Array $args
  * @return Object
@@ -79,8 +79,8 @@ class DbException extends \Exception {
 	var $error = false;
 	private $query;
 	
-	public function __construct($message, $code = 0, $query = '') {
-		parent::__construct($message, $code);
+	public function __construct($message = NULL, $code = NULL, $query = NULL) {
+		parent::__construct($message, (Int) $code);
 		$this->error = true;
 		$this->query = $query;
 	}
@@ -256,7 +256,10 @@ class DB {
 				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
 				$queryError
 			);
-			throw new DbException($errorMsg, $errorCode, $this->stmt);
+
+			if (!$this->options->debug) {
+				throw new DbException($errorMsg, $errorCode, $this->stmt);
+			}
 		}
 		
 		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
@@ -291,7 +294,9 @@ class DB {
 			);
 
 			// debugMsg('$errorMsg = '.$errorMsg.'<br>$errorCode = '.$errorCode.'<br><pre<'.$this->stmt.'</pre>');
-			throw new DbException($errorMsg, $errorCode, $this->stmt);
+			if (!$this->options->debug) {
+				throw new DbException($errorMsg, $errorCode, $this->stmt);
+			}
 			// throw new \Exception('Cannot divide by zero');
 			// throw new DbException($errorMsg, $errorCode, $this->stmt);
 			// trigger_error("Custom Error", E_USER_ERROR);
