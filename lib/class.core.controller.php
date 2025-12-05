@@ -1086,9 +1086,19 @@ class SgCore {
 			if (($pageBuildReflection = new ReflectionMethod($pageClassWidget, $buildMethod))
 				&& $pageBuildReflection->isPublic()
 			) {
+				// Check right to build widget
+				if (is_object($pageClassWidget) && method_exists($pageClassWidget, 'rightToBuild')) {
+					$rightToBuildError = $pageClassWidget->rightToBuild();
+					if (is_object($rightToBuildError)) {
+						return [$rightToBuildError, $found, $rightToBuildError, $rightToBuildError];
+					}
+				}
+
 				$pageBuildWidget = $pageClassWidget->$buildMethod();
+
 				// debugMsg($pageClassWidget, '$pageClassWidget');
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
+				
 				if (isset($pageBuildWidget->exeClass)) {
 					$pageClass = $pageBuildWidget->exeClass;
 					$pageClass->module = $module;
