@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-10-29
- * Version :: 28
+ * Modify  :: 2025-12-08
+ * Version :: 29
  */
 
 @charset "UTF-8";
@@ -17,6 +17,8 @@
 	--appbar-nav-btn-bg-color: unset;
 	--appbar-nav-btn-hover-color: unset;
 	--appbar-nav-text-color: unset;
+	--appbar-trailing-text-color: unset;
+
 	--card-bg-color: unset;
 	--side-nav-hover-bg-color: unset;
 
@@ -294,15 +296,15 @@
 	}
 
 	>.-trailing {
-		height: 4.8rem; padding-right: 8px; display: flex; align-items: center; color: var(--appbar-text-color); background-color: var(--appbar-bg-color);
+		height: 4.8rem; padding-right: 8px; display: flex; align-items: center; color: var(--appbar-trailing-text-color); background-color: var(--appbar-bg-color);
 		.widget-row {gap: 8px;}
-		.widget-row>*>a {color: var(--appbar-text-color); background-color: var(--appbar-btn-bg-color);}
+		.widget-row>*>a {color: var(--appbar-trailing-text-color); background-color: var(--appbar-btn-bg-color);}
 		.widget-row>*>a:hover {background-color: var(--appbar-btn-bg-color-hover);}
-		.widget-row>*>a>.icon {color: var(--appbar-text-color);}
+		.widget-row>*>a>.icon {color: var(--appbar-trailing-text-color);}
 		.widget-nav>ul {align-items: center;}
-		.widget-dropbox>a {color: var(--appbar-text-color); background-color: var(--appbar-btn-bg-color); box-shadow: none;}
+		.widget-dropbox>a {color: var(--appbar-trailing-text-color); background-color: var(--appbar-btn-bg-color); box-shadow: none;}
 		.widget-dropbox>a:hover {background-color: var(--appbar-btn-bg-color-hover);}
-		.widget-dropbox>a>.icon {color: var(--appbar-text-color);}
+		.widget-dropbox>a>.icon {color: var(--appbar-trailing-text-color);}
 		.widget-dropbox a>span {white-space: nowrap;}
 	}
 
