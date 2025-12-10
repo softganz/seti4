@@ -1,8 +1,8 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2025-11-08",
-		"version": 8
+		"lastModify": "2025-12-09",
+		"version": 9
 	},
 	"autoLoader": {
 		"items": {
@@ -17,7 +17,7 @@
 			"survey": "widgets/class.survey.php",
 			"report": "widgets/class.report.php",
 			"inlineedit": "widgets/class.inlineedit.php",
-			"signinwidget": "widgets/widget.signin.php",
+			"signform": "widgets/class.signform.php",
 
 			"changwatmodel": "models/model.code.php",
 			"ampurmodel": "models/model.code.php"
