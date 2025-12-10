@@ -2,18 +2,19 @@
 /**
 * My      :: My Home
 * Created :: 2021-12-14
-* Modify  :: 2024-08-29
-* Version :: 3
+* Modify  :: 2025-12-09
+* Version :: 4
 *
 * @return Widget
 *
 * @usage my
 */
 
-import('widget:profile.photo.php');
-
 class My extends Page {
+	#[\Override]
 	function build() {
+		if (!i()->ok) return $this->signForm();
+
 		$uid = i()->uid;
 		$userInfo = UserModel::get($uid);
 
@@ -89,6 +90,12 @@ class My extends Page {
 					</script>',
 				], // children
 			]), // Widget
+		]);
+	}
+
+	private function signForm() {
+		return new SignForm([
+			'action' => url('my'),
 		]);
 	}
 }
