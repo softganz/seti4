@@ -209,7 +209,6 @@
 	position: fixed; margin: 0 auto; bottom: 8px; z-index: 1000; display: flex; flex-wrap: wrap; width: calc(100% - 16px); padding: 0 8px;
 
 	>* {flex: 1 0 100%; text-align: right; margin-top: 8px;}
-	&:hover>.-item>a {display: inline-block;}
 }
 
 /* widget-message */
