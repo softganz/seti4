@@ -636,7 +636,7 @@ $SCREENS
 	, input[type="password"]
 	, textarea
 	, .ui-autocomplete-input
-	, .uneditable-input {padding: 1px 8px; line-height: 24px; font-family: sans-serif; font-size: 1em; box-shadow: 0 0 0 1px #ccc inset; border: none; border-radius: 3px; background-color: #fff;}
+	, .uneditable-input {padding: 1px 8px; line-height: 24px; font-family: sans-serif; font-size: 1em; box-shadow: none; border: 1px #ccc solid; border-radius: 3px; background-color: #fff;}
 	input[type="radio"]
 	, input[type="checkbox"] {transition: none; -webkit-transition: none; -moz-transition: none; -o-transition: none; box-shadow: none;}
 	input[type="radio"]+.icon
