@@ -2,8 +2,8 @@
 /**
 * SignIn  :: Sign In
 * Created :: 2019-09-05
-* Modify  :: 2022-10-02
-* Version :: 2
+* Modify  :: 2025-12-10
+* Version :: 3
 *
 * @return Widget
 *
@@ -13,11 +13,11 @@
 class Signin extends Page {
 	var $username;
 	var $password;
-	var $time;
+	var $time = 10080;
 	var $ret;
 	var $rel;
 	var $signRet;
-	var $showTime;
+	var $showTime = true;
 	var $showGuide;
 	var $showInfo;
 	var $showRegist;
@@ -25,21 +25,21 @@ class Signin extends Page {
 
 	function __construct() {
 		parent::__construct([
-			'username' => post('u'),
-			'password' => post('pw'),
-			'time' => post('time'),
-			'ret' => post('ret'),
-			'rel' => post('rel'),
-			'signRet' => post('signret'),
-			'showTime' => post('showTime'),
-			'showHeader' => post('showHeader') === '0' ? false : true,
-			'showFooter' => post('showFooter') === '0' ? false : true,
-			'showNav' => post('showNav') === '0' ? false : true,
-			'showGuide' => post('showGuide') === '0' ? false : true,
-			'showInfo' => post('showInfo') === '0' ? false : true,
-			'showRegist' => post('showRegist') === '0' ? false : true,
-			'done' => post('done'),
-			'complete' => post('complete')
+			'username' => Request::all('u'),
+			'password' => Request::all('pw'),
+			'time' => SG\getFirst(Request::all('time'), $this->time),
+			'ret' => Request::all('ret'),
+			'rel' => Request::all('rel'),
+			'signRet' => Request::all('signret'),
+			'showTime' => SG\getFirst(Request::all('showTime'), $this->showTime),
+			'showHeader' => Request::all('showHeader') === '0' ? false : true,
+			'showFooter' => Request::all('showFooter') === '0' ? false : true,
+			'showNav' => Request::all('showNav') === '0' ? false : true,
+			'showGuide' => Request::all('showGuide') === '0' ? false : true,
+			'showInfo' => Request::all('showInfo') === '0' ? false : true,
+			'showRegist' => Request::all('showRegist') === '0' ? false : true,
+			'done' => Request::all('done'),
+			'complete' => Request::all('complete')
 		]);
 	}
 
