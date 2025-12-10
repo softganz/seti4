@@ -2,8 +2,8 @@
 /**
  * Widget  :: Page Render Widget
  * Created :: 2023-01-01
- * Modify  :: 2025-11-16
- * Version :: 11
+ * Modify  :: 2025-12-10
+ * Version :: 12
  *
  * @param String $requestResult
  * @param Object $pageClass
@@ -13,12 +13,16 @@
  */
 
 class renderPageWidget extends Widget {
+	var $debug = false;
 	var $pageClass;
 	var $requestResult;
 
 	function __construct($requestResult, $pageClass) {
-		$this->pageClass = $pageClass;
-		$this->requestResult = $requestResult;
+		parent::__construct([
+			'pageClass' => $pageClass,
+			'requestResult' => $requestResult,
+			'debug' => debug('render'),
+		]);
 	}
 
 	function build() {
@@ -41,15 +45,27 @@ class renderPageWidget extends Widget {
 			. $this->renderSideBar()
 			. '<div id="main" class="page -main">'
 			. $this->renderNavBar() // @deprecated
-			. $this->requestResult->build()
+			. $this->buildWidget($this->requestResult)
 			. '</div>';
-
+			
 		// Send script to index process to add at last of body
 		if (isset($this->requestResult->script)) cfg('mainScript', $this->requestResult->script)._NL;
 
 		return $ret;
 	}
 
+	private function buildWidget($widget) {
+		$ret = '';
+		if ($this->count > 4) return $ret;
+		if (method_exists($widget, 'build')) {
+			if ($this->debug) debugMsg('BUILD EXISTS #'.(++$this->count).' WIDGET NAME: '.$widget->widgetName);
+
+			return $this->buildWidget($widget->build());
+		} else {
+			$ret .= $widget;
+		}
+		return $ret;
+	}
 	private function renderAppBar() {
 		if (!isset($this->pageClass->appBarText)) return;
 		
@@ -169,6 +185,7 @@ class renderPageWidget extends Widget {
 			. $this->pageClass->theme->navbar._NL
 			. '</div><!--navbar-->'._NL;
 	}
+
 	private function renderJson($json) {
 		// Set the Content-Type header to application/json
 		header('Content-Type: application/json; charset=utf-8');
