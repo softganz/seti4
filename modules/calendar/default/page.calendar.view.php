@@ -2,8 +2,8 @@
 /**
  * Calendar:: View
  * Created :: 2007-03-06
- * Modify  :: 2025-07-29
- * Version :: 5
+ * Modify  :: 2025-12-12
+ * Version :: 6
  *
  * @param String $calendarInfo
  * @return Widget
@@ -86,6 +86,7 @@ class CalendarView extends Page {
 				'class' => '-sg-paddingnorm',
 				'style' => 'gap: 0.5rem;',
 				'children' => [
+					'title' => '<strong>'.$this->calendarInfo->title.'</strong>',
 					$this->calendarInfo->topic_title && $this->calendarInfo->topicType == 'project' ? new ListTile([
 						'title' => new Button([
 							'href' => url('project/'.$this->calendarInfo->tpid),
