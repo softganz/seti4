@@ -1323,6 +1323,7 @@ $SCREENS
 		.form-item.-sg-box-bottom {position: absolute; bottom: 0; display: inline-block;}
 		.form-item.-sg-box-bottom.-sg-text-right {right: 8px;}
 		>iframe {width: 100%; height: 100%;}
+		.widget-appbar>.-trailing {padding-right: 40px;}
 	}
 
 
