@@ -22,7 +22,6 @@ class MenuGroupWidget extends Widget {
 	}
 
 	function build() {
-		// debugMsg($this, '$this');
 		return new Row([
 			'children' => (function() {
 				$childrens = [];
@@ -36,15 +35,20 @@ class MenuGroupWidget extends Widget {
 						$menuItem->{$menuItemKey} = preg_replace_callback(
 							'/(\{\{(.*?)\}\})/',
 							function($match) {
-								// debugMsg($match, '$match');
 								return $this->variable->{$match[2]};
 							},
 							$menuItemValue
 						);
 					}
-					// debugMsg($menuItem, '$menuItem');
 
-					if ($button = $this->_renderButton($menuItem, $this->variable)) {
+					if ($menuItem->call) {
+						if (is_object($this->callFrom) && method_exists($this->callFrom, $menuItem->call)) {
+							$callButtons = (Array) $this->callFrom->{$menuItem->call}();
+							foreach($callButtons as $button) {
+								$childrens[] = $button;
+							}
+						}
+					} else if ($button = $this->_renderButton($menuItem, $this->variable)) {
 						$childrens[$navKey] = $button;
 					}
 				}
@@ -79,6 +83,7 @@ class MenuGroupWidget extends Widget {
 		}
 		if ($menuItem->icon) $menuItem->icon = new Icon($menuItem->icon);
 		if ($menuItem->href) $menuItem->href = url($menuItem->href);
+
 		return new Button($menuItem, $info);
 	}
 
