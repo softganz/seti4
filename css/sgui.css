@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-12-10
- * Version :: 31
+ * Modify  :: 2025-12-12
+ * Version :: 32
  */
 
 @charset "UTF-8";
@@ -180,7 +180,7 @@
 	&.-no-wrap {flex-wrap: nowrap;}
 	&.-big {padding-top: 16px; padding-bottom: 16px; border-radius: 64px; font-size: 1.8rem;}
 	&.-hidden {display: none;}
-	&:has(:only-child) {padding: 4px;}
+	&:has(:only-child) {padding: 6px;}
 	&:has(.-desc) {border-radius: 128px;}
 	&.-fill {width: 100%; padding-left: 0; padding-right: 0; justify-content: center;}
 	&.-wrap {white-space: normal;}
