@@ -2,13 +2,13 @@
 /**
 * SignIn  :: Sign Form Widget
 * Created :: 2022-07-20
-* Modify  :: 2025-12-09
-* Version :: 4
+* Modify  :: 2025-12-14
+* Version :: 5
 *
 * @param Array $args
 * @return Widget
 *
-* @usage new SignInWidget([])
+* @usage new SignForm([])
 */
 
 class SignForm extends Widget {
@@ -64,6 +64,7 @@ class SignForm extends Widget {
 					'action' => $this->formAction,
 					'id' => $this->id ? $this->id : 'signin-'.$id,
 					'class' => 'sg-form -form',
+					'checkValid' => true,
 					'rel' => 'none',
 					'done' => $this->done,
 					'children' => [
@@ -72,6 +73,7 @@ class SignForm extends Widget {
 							'id' => 'username-'.$id,
 							'label' => tr('Username').' '.tr('or').' '.tr('e-mail'),
 							'class' => '-username -fill',
+							'require' => true,
 							'placeholder' => 'Username',
 							'maxlength' => 50,
 							'autocomplete' => 'off',
@@ -83,6 +85,7 @@ class SignForm extends Widget {
 							'id' => 'password-'.$id,
 							'label' => tr('Password'),
 							'class' => '-password -fill',
+							'require' => true,
 							'placeholder' => 'Password',
 							'maxlength' => 20,
 							'value' => $this->password,
