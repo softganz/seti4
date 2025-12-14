@@ -1,8 +1,8 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
  * Created :: 2021-12-24
- * Modify  :: 2025-12-05
- * Version :: 59
+ * Modify  :: 2025-12-14
+ * Version :: 60
  */
 
 'use strict'
@@ -792,7 +792,6 @@ function showError(response, time = 5000) {
 			} else if (href && href.substr(0,1) === '#') {
 				// href is begin with #
 				// Get HTML from #id and send to data-rel
-				// console.log('LOAD FROM DOM ' + href)
 				let html = null
 				if (href.length > 1 && $(href).length) html = $(href).get(0).innerHTML
 				sgUpdateData(html, relTarget, $this)
@@ -818,19 +817,16 @@ function showError(response, time = 5000) {
 			if (hrefMatch) {
 				let urlFunction = hrefMatch[2]
 				// console.log(urlFunction,hrefMatch)
-				// console.log("1.START EXECUTE FUNCTION")
 
 				if (hrefMatch[1] === 'javascript') {
 					eval(urlFunction)
 				} else {
 					let exeFunction = window[urlFunction]
 					await exeFunction($this).then(function(){
-						// console.log("4.EXECUTE DONE")
 						notify()
 						sgActionDone(linkData.done, $this, doneResult)
 					})
 				}
-				// console.log("9.END EXECUTE FUNCTION")
 				return
 			}
 
@@ -869,39 +865,13 @@ function showError(response, time = 5000) {
 				}
 			})
 			.done(function(response) {
-				// console.log('sg-action DONE');
-				// console.log(response)
 				if (response.responseCode && response.text) notify(response.text, 3000)
 				sgActionDone(linkData.done, $this, doneResult)
 			})
 			.fail(function(response) {
-				// // console.log('sg-action FAIL');
-				console.log(response)
-
-				// Old way
-				// let errorMsg = 'ERROR : '
-				// if (response.responseJSON.text) {
-				// 	errorMsg += response.responseJSON.text
-				// } else {
-				// 	errorMsg += response.statusText
-				// }
-				// errorMsg += ' ('+response.status+')'
-				// notify(errorMsg, 3000)
-
-				// New way like form
-				let errorMsg = 'ERROR : '
-				// console.log(response.responseJSON.text)
-				if (response.responseJSON != undefined && response.responseJSON.text) {
-					errorMsg += response.responseJSON.text+' ('+response.status+')'
-				} else {
-					errorMsg += response.statusText+' ('+response.status+')'
-				}
-				notify(errorMsg)
-				if (debugSG) console.log(response)
-				return false
+				return showError(response);
 			});
 
-			// console.log('sg-action done')
 			return
 		}
 
