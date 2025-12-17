@@ -2,8 +2,8 @@
 /**
  * Core    :: Core Function
  * Created :: 2023-08-01
- * Modify  :: 2025-11-10
- * Version :: 28
+ * Modify  :: 2025-12-17
+ * Version :: 29
  */
 
 //---------------------------------------
@@ -510,22 +510,27 @@ function set_theme($name = NULL, $style = 'style.css') {
 function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	static $roles;
 	static $member_roles = [];
-	if ($role == 'reset') {
-		$roles = NULL;
-	}
+
+	if ($role === 'reset') $roles = NULL;
+
 	if (!isset($roles)) {
-		foreach (cfg('roles') as $name => $item) {
-			$roles[$name]=trim($item) === '' ? [] : explode(',',$item);
+		$roles = [];
+		foreach ((Array) cfg('roles') as $name => $item) {
+			$roles[$name] = trim($item) === '' ? [] : explode(',', $item);
 		}
-		array_walk_recursive($roles,'__trim');
+		array_walk_recursive($roles, '__trim');
 	}
+
 	if ($role === 'reset') return false;
 
 	if ($uid) $uid = intval($uid);
 
-	if ($debug) echo '<br />user access debug role <b>'.$role.($urole?','.$urole:'').($uid?','.$uid:'').'</b> of <b>'.(i()->ok?i()->name.'('.i()->uid.(i()->roles?',':'').implode(',',i()->roles).')':'anonymous').'</b><br />';
+	if ($debug) {
+		echo '<br><br><br><br>user access debug role <b>'.$role;//.($urole ? ','.$urole : '').($uid ? ','.$uid : '').'</b> of <b>'.(i()->ok ? i()->name.'('.i()->uid.(i()->roles?',' : '').implode(',', i()->roles).')' : 'anonymous').'</b><br />';
+		echo '<hr>';
+	}
 	// menu for everyone
-	if ($role===true) return true;
+	if ($role === true) return true;
 
 	// root have all privileges
 	if (function_exists('i') && isset(i()->uid) && i()->uid == 1) return true;
@@ -533,10 +538,10 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	// admin have all privileges
 	if (function_exists('i') && i() && i()->ok && in_array('admin',i()->roles)) return true;
 
-	$role=explode(',',$role);
+	$role = explode(',', $role);
 
 	// need method check privileges
-	if (in_array('method permission',$role)) return true;
+	if (in_array('method permission', $role)) return true;
 
 	// check for member
 	if (function_exists('i') && i() && i()->ok) {
@@ -559,19 +564,19 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 		if ($debug) echo '$member_roles['.i()->uid.']='.implode(',',$member_roles[i()->uid]).'<br />';
 
 		/* user have permission in roles */
-		if ($debug && $str = implode(',',array_intersect($role,$member_roles[i()->uid]))) {
+		if ($debug && $str = implode(',', array_intersect($role, $member_roles[i()->uid]))) {
 			echo 'roles permission is <b>'.$str.'</b><br />';
 		}
-		if (array_intersect($role,$member_roles[i()->uid])) {
+		if (array_intersect($role, $member_roles[i()->uid])) {
 			return true;
 		}
 
 		/* check permission of owner content */
 		if ($urole) {
 			if ($debug) {
-				echo in_array($urole,$member_roles[i()->uid]) ? 'user role is <b>'.$urole.'</b>'.($uid === i()->uid ? ' and is owner permission':' but not owner').'<br />' : '';
+				echo in_array($urole, $member_roles[i()->uid]) ? 'user role is <b>'.$urole.'</b>'.($uid === i()->uid ? ' and is owner permission':' but not owner').'<br />' : '';
 			}
-			if ($uid === i()->uid && in_array($urole,$member_roles[i()->uid])) {
+			if ($uid === i()->uid && in_array($urole, $member_roles[i()->uid])) {
 				return true;
 			}
 		}
@@ -581,9 +586,13 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	}
 
 	// anonymous user role
-	if ($debug) echo '$roles[anonymous]='.implode(',',$roles['anonymous']).'<br />';
-	if ($debug && $str=implode(',',array_intersect($role,$roles['anonymous']))) echo 'roles intersection=<b>'.$str.'</b><br />';
-	if (is_array($roles['anonymous']) && array_intersect($role,$roles['anonymous'])) return true;
+	// echo '<pre>'.print_r($roles, 1).'</pre>';
+	if ($debug && isset($roles['anonymous'])) {
+		echo '$roles[anonymous] = '.implode(',', (Array) $roles['anonymous']).'<br />';
+		if ($str = implode(',', array_intersect($role, $roles['anonymous']))) echo 'roles intersection=<b>'.$str.'</b><br />';
+	}
+
+	if (isset($roles['anonymous']) && is_array($roles['anonymous']) && array_intersect($role, $roles['anonymous'])) return true;
 
 	if ($debug) echo 'no role permission<br />';
 	return false;
