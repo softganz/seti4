@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-11-12
- * @version :: 30
+ * @modify  :: 2025-12-17
+ * @version :: 31
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -407,10 +407,10 @@ function sgMapErrorCode($code) {
 			$error = 'Notice';
 			$log = LOG_NOTICE;
 			break;
-		case E_STRICT:
-			$error = 'Strict';
-			$log = LOG_NOTICE;
-			break;
+		// case E_STRICT:
+		// 	$error = 'Strict';
+		// 	$log = LOG_NOTICE;
+		// 	break;
 		case E_DEPRECATED:
 		case E_USER_DEPRECATED:
 			$error = 'Deprecated';
@@ -499,34 +499,26 @@ function sgFatalError($code, $description, $file, $line) {
 		'description' => 'Error at line <b>'.$line.'</b><br />'.$description,
 	]);
 
-	$msg = 'There is error in <b>'.$reportFileName.'</b> '
-		. 'line <b>'.$line.'</b>. '
-		. 'Please report to webmaster.'
-		. ($isAdmin ? '<br /><br />Error at line <b>'.$line.'</b><br />'.$description : '');
+	$content = file_get_contents(__DIR__.'/assets/template/fatal.html');
 
-	$url = _DOMAIN.$_SERVER['REQUEST_URI'];
+	$var = [
+		'Title' => 'Oops! An Error Occurred',
+		'Version' => $isAdmin ? '<span style="font-size: 0.6em;"> @PHP Version '.phpversion().'</span>' : '',
+		'Url' => _DOMAIN.$_SERVER['REQUEST_URI'],
+		'ServerName' => $_SERVER['SERVER_NAME'],
+		'Message' => $isAdmin ? 'There is error in <b>'.$reportFileName.'</b> '
+			. 'line <b>'.$line.'</b>. '
+			. '<br /><br />Error at line <b>'.$line.'</b><br />'.$description : '',
+		'DebugMessage' => $isAdmin && $debugMsg ? $debugMsg : '',
+	];
 
-	return '<html><head><title>Fatal error</title></head>
-	<body>
-	<table width="100%" height="100%">
-	<tr>
-		<td></td>
-		<td width="80%">
-			<div style="border: 1px solid rgb(210, 210, 210); border-radius: 8px; background-color: rgb(241, 241, 241); padding: 30px;">
-			<h1>Fatal error'.($isAdmin ? '<span style="font-size: 0.6em;"> @PHP Version '.phpversion().'</span>' : '').'</h1>
-			<p>The requested URL <b>'.$url.'</b> was error.</p>
-			<p>'.$msg.'</p>'
-			. '<hr>
-			<address>copyright <a href="//'.$_SERVER['SERVER_NAME'].'">'.$_SERVER['SERVER_NAME'].'</a> Allright reserved.</address>
-			</div>
-		</td>
-		<td></td>
-	</tr>
-	'
-	.($isAdmin && $debugMsg ? '<tr><td></td><td>'.$debugMsg.'<style>.debug-msg {padding: 16px; border:1px #ccc solid; margin: 16px 0; border-radius: 8px; background-color: #fafafa;}</style></td><td></td></tr>' : '').'
-	</table>
-	</body>
-	</html>';
+	$content = preg_replace_callback(
+		'/\{\{\s*\.([\w]*)\s*\}\}/s',
+		function ($m) use ($var) {
+			return isset($var[$m[1]]) ? $var[$m[1]] : $m[0];
+		}, $content);
+		
+	return $content;
 }
 
 function sgIsFatalError($code) {

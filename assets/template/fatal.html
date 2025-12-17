@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>{{ .Title }}</title>
+		<style>
+			@import url(/css/icons.css);
+			* {box-sizing: border-box;}
+			html {height: 100vh; font-size: 62.5%;}
+			body {height: 100vh; font: 1.7rem/2.0rem sans-serif; display: flex;}
+			.container {
+				align-content: center; margin: 0 auto;
+				>* {margin: 0 auto 16px;}
+			}
+			.icon.-error {font-size: 4.6rem; width: 4.6rem; height: 4.6rem; color: red; margin: 0 16px 0 0;}
+			.message {border: 1px solid rgb(210, 210, 210); border-radius: 8px; background-color: rgb(241, 241, 241); padding: 30px;}
+			.debug-msg {
+				margin: 8px 0; padding: 8px; background-color: #f5f5f5;
+				border-radius: 8px; border: 1px #999 dotted;
+				overflow: scroll; color: #ff9a56; text-align: left;
+				font-size: 1.4rem;
+				font-family: monospace;
+				tab-size: 1;
+				flex: 1 0 100%;
+				position: relative;
+				min-height: 4rem;;
+				* {font-style: normal;}
+				pre {white-space: pre-wrap;}
+				.-call-from {margin-top: 8px; padding-top: 8px; border-top: 1px #ccc dashed; font-size: 1.2rem; color: #666;}
+				.sg-expand {cursor: pointer; margin: 0; padding: 0;}
+				>.sg-expand {position: absolute; right: 16px;}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="message">
+				<h1><i class="icon -material -error">bomb</i>{{ .Title }} {{ .Version }}</h1>
+				<p>Sorry, something went wrong. We are working on fixing this issue.</p>
+        <p>Please try again later or contact support or webmaster if the problem persists.</p>
+				<p>The requested URL <b>{{ .Url }}</b> was error.</p>
+				<p>{{ .Message }}</p>
+				<hr>
+				<address>copyright <a href="//{{ .ServerName }}">{{ .ServerName }}</a> Allright reserved.</address>
+			</div>
+			{{ .DebugMessage }}
+		</div>
+	</body>
+	</html>
