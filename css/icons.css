@@ -1,6 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp);
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined);
 
-/* Not inclode |Material+Icons+Two+Tone */
+/* Old material icon */
+@import url(https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp);
 
 .icon {
 	/* Don't set width and height, it effect on large font size on mobile */
@@ -52,19 +53,22 @@
 .icon.-material.-sg-active {color: green;}
 .icon.-material.-sg-inactive {color: #b0b0b0;}
 
-.icon.-material {font-family: 'Material Icons'; /* width: auto; height: auto; */}
-.icon.-material.-sg-16 {width: auto !important; height: auto !important;}
-.icon.-material.-sg-24 {width: auto !important; height: auto !important;}
-.icon.-material.-sg-32 {width: auto !important; height: auto !important;}
-.icon.-material.-sg-48 {width: auto !important; height: auto !important;}
-.icon.-material.-sg-64 {width: auto !important; height: auto !important;}
+.icon.-material {font-family: 'Material Symbols Outlined';}
+
+/*
+.icon.-material {font-family: 'Material Icons';}
 .icon.-material.-normal {font-family: 'Material Icons';}
 .icon.-material.-outline {font-family: 'Material Icons Outlined';}
 .icon.-material.-two-tone {font-family: 'Material Icons Two Tone';}
 .icon.-material.-round {font-family: 'Material Icons Round';}
 .icon.-material.-sharp {font-family: 'Material Icons Sharp';}
+*/
 
-.icon.-svg {}
+.icon.-material.-sg-16 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-24 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-32 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-48 {width: auto !important; height: auto !important;}
+.icon.-material.-sg-64 {width: auto !important; height: auto !important;}
 
 .icon>img, .icon>svg {width: 100%; height: 100%; margin: 0; padding: 0; border: none; box-shadow: none; display: block;}
 
