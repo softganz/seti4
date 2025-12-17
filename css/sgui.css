@@ -107,7 +107,24 @@
 	align-items: center;
 	box-shadow: none;
 
+	>.-desc {flex: 0 0 100%; text-align: center; font-size: 1.4rem;}
+	>.icon {margin: 0;}
+	>.icon:only-child {margin: 0;}
+	>span {padding: 0 6px; white-space: nowrap;}
+	>span.-hidden {display: none;}
+	>.icon+span {padding-left: 4px;}
+	>.icon-group {padding: 0;}
+	>span>em {font-weight: normal; font-size: 1.4rem; font-style: italic; display: block;}
+
 	&:hover {filter: brightness(0.95);}
+
+	&.-default {
+		padding: 0;
+		flex-direction: column; align-items: start;
+		&:has(:only-child) {padding: 0;}
+		>span {white-space: wrap; padding: 0;}
+	}
+
 	&.-normal {color: var(--normal-text-color); background-color: var(--normal-bg-color);}
 
 	&.-primary {
@@ -156,12 +173,6 @@
 		>.icon {color: var(--floating-text-color);}
 	}
 
-	&.-default {
-		padding: 0;
-		&:has(:only-child) {padding: 0;}
-		>span {white-space: wrap; padding: 0;}
-	}
-
 	&.-circle24 {width: 24px; height: 24px; padding: 0px; border-radius: 50%;}
 	&.-circle32 {width: 32px; height: 32px; padding: 4px !important; border-radius: 50%;}
 	&.-circle48 {width: 48px; height: 48px; padding: 12px !important; border-radius: 50%;}
@@ -193,22 +204,16 @@
 	&.-upload>input.form-file {display: none;}
 	&.-upload>label {margin: 0;}
 	&.-sg-text-center .icon {display: block; margin: 0 auto;}
-
-	>span>em {font-weight: normal; font-size: 1.2rem; font-style: normal; display: block;}
-	>.-desc {flex: 0 0 100%; text-align: center; font-size: 1.2rem;}
-	>.icon {margin: 0;}
-	>.icon:only-child {margin: 0;}
-	>span {padding: 0 6px; white-space: nowrap;}
-	>span.-hidden {display: none;}
-	>.icon+span {padding-left: 4px;}
-	>.icon-group {padding: 0;}
 }
 
 /* widget-floatingactionbutton */
 .widget-floatingactionbutton {
-	position: fixed; margin: 0 auto; bottom: 8px; z-index: 1000; display: flex; flex-wrap: wrap; width: calc(100% - 16px); padding: 0 8px;
+	position: fixed; margin: 0 auto; bottom: 8px; z-index: 1000;
+	display: flex; flex-wrap: wrap; flex-direction: column;
+	width: calc(100% - 16px); padding: 0 8px;
+	pointer-events: none;
 
-	>* {flex: 1 0 100%; text-align: right; margin-top: 8px;}
+	>* {flex: 1 0 100%; text-align: right; margin-top: 8px; pointer-events: all;}
 }
 
 /* widget-message */
