@@ -1,10 +1,15 @@
-@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined);
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200);
 
 /* Old material icon */
-@import url(https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp);
+/* @import url(https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Round|Material+Icons+Sharp); */
+:root {
+	--icon-font: 'Material Symbols Outlined';
+	--icon-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48;
+}
 
 .icon {
 	/* Don't set width and height, it effect on large font size on mobile */
+	font-size: 2.4rem;
 	width: 2.4rem;
 	height: 2.4rem;
 	padding: 0;
@@ -15,9 +20,8 @@
 	display: inline-block;
 	vertical-align: middle;
 	background: transparent none no-repeat 0 0;
-	color: #444444;
+	color: var(--font-color);
 	font-weight: normal;
-	font-size: 2.4rem;
 	font-style: normal;
 	line-height: 1;
 	letter-spacing: normal;
@@ -53,16 +57,13 @@
 .icon.-material.-sg-active {color: green;}
 .icon.-material.-sg-inactive {color: #b0b0b0;}
 
-.icon.-material {font-family: 'Material Symbols Outlined';}
-
-/*
-.icon.-material {font-family: 'Material Icons';}
-.icon.-material.-normal {font-family: 'Material Icons';}
-.icon.-material.-outline {font-family: 'Material Icons Outlined';}
-.icon.-material.-two-tone {font-family: 'Material Icons Two Tone';}
-.icon.-material.-round {font-family: 'Material Icons Round';}
-.icon.-material.-sharp {font-family: 'Material Icons Sharp';}
-*/
+.icon.-material {
+	font-family: var(--icon-font);
+	font-variation-settings: var(--icon-settings);
+}
+.icon.-material.-outline {
+	font-variation-settings: 'FILL' 0, 'wght' 700, 'GRAD' 0, 'opsz' 48;
+}
 
 .icon.-material.-sg-16 {width: auto !important; height: auto !important;}
 .icon.-material.-sg-24 {width: auto !important; height: auto !important;}
