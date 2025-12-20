@@ -2,22 +2,22 @@
 	"dev": {
 		"created": "2024-05-15",
 		"lastModify": "2025-12-20",
-		"version": 10
+		"version": 11
 	},
 	"autoLoader": {
 		"items": {
 			"db": "lib/class.db.php",
-			"album": "widgets/class.album.php",
-			"ui": "widgets/class.ui.php",
-			"dropbox": "widgets/class.dropbox.php",
-			"toolbar": "widgets/class.toolbar.php",
-			"form": "widgets/class.form.php",
-			"table": "widgets/class.table.php",
-			"pagenavigator": "widgets/class.pagenavigator.php",
-			"survey": "widgets/class.survey.php",
-			"report": "widgets/class.report.php",
-			"inlineedit": "widgets/class.inlineedit.php",
-			"signform": "widgets/class.signform.php",
+			"album": "widget/class.album.php",
+			"ui": "widget/class.ui.php",
+			"dropbox": "widget/class.dropbox.php",
+			"toolbar": "widget/class.toolbar.php",
+			"form": "widget/class.form.php",
+			"table": "widget/class.table.php",
+			"pagenavigator": "widget/class.pagenavigator.php",
+			"survey": "widget/class.survey.php",
+			"report": "widget/class.report.php",
+			"inlineedit": "widget/class.inlineedit.php",
+			"signform": "widget/class.signform.php",
 
 			"changwatmodel": "model/model.code.php",
 			"ampurmodel": "model/model.code.php"

@@ -1,9 +1,10 @@
 <?php
 /**
  * Core    :: Init Web
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
  * Modify  :: 2025-12-20
- * Version :: 19
+ * Version :: 20
  */
 
 global $R;
@@ -68,7 +69,7 @@ $includeFileList = [
 	'model/model.basic.php',
 	'model/model.user.php',
 	'model/model.counter.php',
-	'widgets/class.widget.php',
+	'widget/class.widget.php',
 	// Extend Library
 	// 'lib/lib.corefunction.v'.cfg('core.version.major').'.php',
 ];

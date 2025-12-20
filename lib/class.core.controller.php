@@ -1,9 +1,10 @@
 <?php
 /**
  * Core Function :: Controller Process Web Configuration and Request
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2006-12-16
  * Modify  :: 2025-12-20
- * Version :: 46
+ * Version :: 47
  */
 
 /*************************************************************
@@ -401,7 +402,7 @@ class SgCore {
     $className = NULL;
 		$isDebugable = true;
 		$debugLoadfile = debug('load') || $debugResourceFile;
-		$fixFolders = ['widget' => 'widgets', 'model' => 'model', 'api' => 'api'];
+		$fixFolders = ['widget' => 'widget', 'model' => 'model', 'api' => 'api'];
 		$template = cfg('template');
 		$caller = get_caller(__FUNCTION__);
 
@@ -516,14 +517,14 @@ class SgCore {
 
 			case 'widget' : // Widget Resource
 				$fileName = 'widget.';
-				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/widgets';
+				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/widget';
 				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule;
-				$paths[] = 'modules/'.$module.'/widgets';
+				$paths[] = 'modules/'.$module.'/widget';
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
 					if ($subModule) $paths[] = 'core/modules/'.$module.'/'.$subModule;
-					$paths[] = 'core/modules/'.$module.'/widgets';
+					$paths[] = 'core/modules/'.$module.'/widget';
 				} else {
-					$paths[] = 'core/widgets';
+					$paths[] = 'core/widget';
 				}
 				// debugMsg($paths, '$paths');
 				break;
@@ -793,7 +794,7 @@ class SgCore {
 			// Load widget from filename widget.name.php function=widget_name
 			if (empty($folders)) {
 				$folders = cfg('theme.template');
-				$folders[] = _CORE_FOLDER.'/core/widgets/';
+				$folders[] = _CORE_FOLDER.'/core/widget/';
 			}
 
 			$is_debug = debug('widget');

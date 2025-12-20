@@ -1,9 +1,10 @@
 <?php
 /**
- * Widget  :: Basic Widgets Collector
+ * Widget  :: Basic Widget Collector
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2025-11-16
- * Version :: 62
+ * Modify  :: 2025-12-20
+ * Version :: 63
  *
  * @param Array $args
  * @return Widget

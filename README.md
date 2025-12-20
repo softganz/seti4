@@ -21,7 +21,7 @@ seti4
 ⎪   ├── ui
 ⎪   ├── upgrade
 ⎪   ├── view
-⎪   ├── widgets
+⎪   ├── widget
 ⎪   └── core.php
 └── modules
     ├── module1
