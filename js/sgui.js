@@ -1182,7 +1182,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				})
 			} else {
 				sgUpdateData(html, relTarget, $this);
-				console.log(html)
+				// console.log(html)
 			}
 
 			if (relTarget.substring(0,6) != 'notify') notify()
