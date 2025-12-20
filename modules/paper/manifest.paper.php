@@ -6,8 +6,8 @@
  * @version 4.00.0
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2007-11-21
- * @modify 2018-02-02
+ * @created :: 2007-11-21
+ * @modify  :: 2025-12-20
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,5 +31,5 @@ menu('paper','Paper Home','paper','__controller',1,'access papers','static');
 
 cfg('paper.permission', 'access papers,add bookmarks,edit own paper,administer papers,administer paper tags,post paper without approval,input format type php,input format type script');
 
-include_once('models/model.paper.php');
+include_once('model/model.paper.php');
 ?>

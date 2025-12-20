@@ -2,8 +2,8 @@
 /**
  * Core    :: Init Web
  * Created :: 2023-08-01
- * Modify  :: 2025-11-21
- * Version :: 18
+ * Modify  :: 2025-12-20
+ * Version :: 19
  */
 
 global $R;
@@ -65,9 +65,9 @@ $includeFileList = [
 	'lib/class.view.php',
 	'lib/class.sg.php',
 	'lib/class.poison.php',
-	'models/model.basic.php',
-	'models/model.user.php',
-	'models/model.counter.php',
+	'model/model.basic.php',
+	'model/model.user.php',
+	'model/model.counter.php',
 	'widgets/class.widget.php',
 	// Extend Library
 	// 'lib/lib.corefunction.v'.cfg('core.version.major').'.php',

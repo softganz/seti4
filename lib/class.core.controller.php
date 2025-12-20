@@ -2,8 +2,8 @@
 /**
  * Core Function :: Controller Process Web Configuration and Request
  * Created :: 2006-12-16
- * Modify  :: 2025-11-13
- * Version :: 45
+ * Modify  :: 2025-12-20
+ * Version :: 46
  */
 
 /*************************************************************
@@ -401,7 +401,7 @@ class SgCore {
     $className = NULL;
 		$isDebugable = true;
 		$debugLoadfile = debug('load') || $debugResourceFile;
-		$fixFolders = ['widget' => 'widgets', 'model' => 'models', 'api' => 'api'];
+		$fixFolders = ['widget' => 'widgets', 'model' => 'model', 'api' => 'api'];
 		$template = cfg('template');
 		$caller = get_caller(__FUNCTION__);
 
@@ -479,7 +479,7 @@ class SgCore {
 
 				if (in_array($resourceType, ['widget', 'model', 'api'])) {
 					if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$fixFolders[$resourceType];
-					$paths[] = 'modules/'.$module.'/template/'.$item.'/models';
+					$paths[] = 'modules/'.$module.'/template/'.$item.'/model';
 				} else if (in_array($resourceType, ['page'])) {
 					if ($subModule && $actionModule) {
 						$paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$actionModule;
@@ -530,15 +530,15 @@ class SgCore {
 
 			case 'model' : // Model Resource
 				$fileName = 'model.';
-				// if ($subModule && $template) $paths[] = 'modules/'.$module.'/template/'.$template.'/'.$subModule.'/models';
+				// if ($subModule && $template) $paths[] = 'modules/'.$module.'/template/'.$template.'/'.$subModule.'/model';
 				# $paths[] = 'modules/'.$module.'/template/'.$template;
-				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/models';
-				$paths[] = 'modules/'.$module.'/models';
+				if ($subModule) $paths[] = 'modules/'.$module.'/'.$subModule.'/model';
+				$paths[] = 'modules/'.$module.'/model';
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
-					if ($subModule) $paths[] = 'core/modules/'.$module.'/'.$subModule.'/models';
-					$paths[] = 'core/modules/'.$module.'/models';
+					if ($subModule) $paths[] = 'core/modules/'.$module.'/'.$subModule.'/model';
+					$paths[] = 'core/modules/'.$module.'/model';
 				}
-				$paths[] = 'core/models';
+				$paths[] = 'core/model';
 				break;
 
 			case 'api' : // Page Resource
@@ -605,7 +605,7 @@ class SgCore {
 				if (is_dir(_CORE_MODULE_FOLDER.'/'.$module)) {
 					$paths[] = 'core/modules/'.$module.'/r';
 				}
-				$paths[] = 'core/models';
+				$paths[] = 'core/model';
 				break;
 
 			// @deprecated
@@ -631,7 +631,7 @@ class SgCore {
 				$funcName = 'on_';
 				$paths[] = 'modules/'.$module.'/r';
 				$paths[] = 'core/modules/'.$module.'/r';
-				$paths[] = 'core/models';
+				$paths[] = 'core/model';
 				break;
 		}
 

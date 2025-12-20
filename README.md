@@ -13,7 +13,7 @@ seti4
 ⎪   ├── css
 ⎪   ├── js
 ⎪   ├── lib
-⎪   ├── models
+⎪   ├── model
 ⎪   ├── modules
 ⎪   ⎪   ├── module1
 ⎪   ⎪   └── module2
