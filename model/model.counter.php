@@ -1,19 +1,19 @@
 <?php
 /**
-* Counter :: Model
-* Created :: 2021-11-26
-* Modify  :: 2025-07-18
-* Version :: 10
-*
-* @usage new CounterModel([])
-* @usage CounterModel::function($conditions, $options)
-*/
+ * Counter :: Counter Model
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2021-11-26
+ * Modify  :: 2025-12-20
+ * Version :: 11
+ *
+ * @usage new CounterModel([])
+ * @usage CounterModel::function($conditions, $options)
+ */
 
 use Softganz\DB;
 
 class CounterModel {
 	public static function hit() {
-		// debugMsg('COUNTER HIT');
 		$today = today();
 		Cache::clear_expire();
 		$counter = cfg('counter');
@@ -30,7 +30,7 @@ class CounterModel {
 
 		$real_ip = \SG\getFirst(getenv('REMOTE_ADDR'),'0');
 		$ip = ip2long($real_ip);
-		$browser = addslashes($_SERVER['HTTP_USER_AGENT']);
+		$browser = self::getBrowserName($_SERVER['HTTP_USER_AGENT']);
 		$new_user = false;
 		$user_id = i()->uid ? i()->uid : NULL;
 		$user_name = i()->name;
@@ -47,15 +47,16 @@ class CounterModel {
 
 		//$checked_online_time = $today->time - 1 * 60;
 
+		// Delete old online user
 		DB::query([
 			'DELETE FROM %users_online% WHERE `access` < :checktime',
 			'var' => [':checktime' => $checked_online_time]
 		]);
 
-		$new_user = !DB::select([
+		$new_user = empty(DB::select([
 			'SELECT `keyId` FROM %users_online% WHERE `keyId` = :keyId LIMIT 1',
 			'var' => [':keyId' => $onlinekey]
-			])->keyId;
+		])->keyId);
 
 		$counter->hits_count++;
 		if ($new_user) $counter->users_count++;
@@ -65,9 +66,10 @@ class CounterModel {
 
 		if ($counter->used_log == 1) CounterModel::addLog($today->datetime,$new_user);
 
-		if (cfg('system')->logUserOnline) {
-			CounterModel::addOnlineUser();
+		CounterModel::updateUserHit();
 
+		//--- update online user information
+		if (cfg('system')->logUserOnline) {
 			$online = (Object) [
 				'keyid' => $onlinekey,
 				'host' => NULL,
@@ -76,7 +78,7 @@ class CounterModel {
 				'uid' => $user_id,
 				'name' => $user_name,
 				'access' => $today->time,
-				'browser' => NULL,
+				'browser' => $browser,
 			];
 			if ( $new_user ) {
 				$host = gethostbyaddr($real_ip);
@@ -84,22 +86,23 @@ class CounterModel {
 				$online->host = $host;
 				$online->coming = $today->time;
 			}
-			$online->hits++;
-			list($online->browser) = str_replace('"', '', explode(' ',$browser));
 
-			DB::query([
-				'INSERT INTO %users_online%
-					(`keyid`, `uid`, `name`, `coming`, `access`, `ip`, `host`, `browser`)
-					VALUES
-					(:keyid, :uid, :name, :coming, :access, :ip, :host, :browser)
-					ON DUPLICATE KEY UPDATE
-					`uid` = :uid
-					, `name` = :name
-					, `hits` = `hits` + 1
-					, `access` = :access
-					, `browser` = :browser',
-				'var' => $online
-			]);
+			try {
+				DB::query([
+					'INSERT INTO %users_online%
+						(`keyid`, `uid`, `name`, `coming`, `access`, `ip`, `host`, `browser`)
+						VALUES
+						(:keyid, :uid, :name, :coming, :access, :ip, :host, :browser)
+						ON DUPLICATE KEY UPDATE
+						`uid` = :uid
+						, `name` = :name
+						, `hits` = `hits` + 1
+						, `access` = :access
+						, `browser` = :browser',
+					'var' => $online,
+					// 'options' => ['debug' => true]
+				]);
+			} catch (Exception $e) {}
 
 			//--- add/update online user information
 			DB::query(['SET @@group_concat_max_len = 100000']);
@@ -127,6 +130,54 @@ class CounterModel {
 		}
 
 		return $counter;
+	}
+
+	private static function getBrowserName($user_agent) {
+		// Make case insensitive.
+		$t = strtolower($user_agent);
+
+		// If the string *starts* with the string, strpos returns 0 (i.e., FALSE). Do a ghetto hack and start with a space.
+		// "[strpos()] may return Boolean FALSE, but may also return a non-Boolean value which evaluates to FALSE."
+		//     http://php.net/manual/en/function.strpos.php
+		$t = " " . $t;
+
+		// Humans / Regular Users      
+		if     (strpos($t, 'opera'     ) || strpos($t, 'opr/')     ) return 'Opera'            ;
+		elseif (strpos($t, 'edge'      )                           ) return 'Edge'             ;
+		elseif (strpos($t, 'chrome'    )                           ) return 'Chrome'           ;
+		elseif (strpos($t, 'safari'    )                           ) return 'Safari'           ;
+		elseif (strpos($t, 'firefox'   )                           ) return 'Firefox'          ;
+		elseif (strpos($t, 'msie'      ) || strpos($t, 'trident/7')) return 'Internet Explorer';
+
+		// Search Engines  
+		elseif (strpos($t, 'google'    )                           ) return '[Bot] Googlebot'   ;
+		elseif (strpos($t, 'bing'      )                           ) return '[Bot] Bingbot'     ;
+		elseif (strpos($t, 'slurp'     )                           ) return '[Bot] Yahoo! Slurp';
+		elseif (strpos($t, 'duckduckgo')                           ) return '[Bot] DuckDuckBot' ;
+		elseif (strpos($t, 'baidu'     )                           ) return '[Bot] Baidu'       ;
+		elseif (strpos($t, 'yandex'    )                           ) return '[Bot] Yandex'      ;
+		elseif (strpos($t, 'sogou'     )                           ) return '[Bot] Sogou'       ;
+		elseif (strpos($t, 'exabot'    )                           ) return '[Bot] Exabot'      ;
+		elseif (strpos($t, 'msn'       )                           ) return '[Bot] MSN'         ;
+
+		// Common Tools and Bots
+		elseif (strpos($t, 'mj12bot'   )                           ) return '[Bot] Majestic'     ;
+		elseif (strpos($t, 'ahrefs'    )                           ) return '[Bot] Ahrefs'       ;
+		elseif (strpos($t, 'semrush'   )                           ) return '[Bot] SEMRush'      ;
+		elseif (strpos($t, 'rogerbot'  ) || strpos($t, 'dotbot')   ) return '[Bot] Moz or OpenSiteExplorer';
+		elseif (strpos($t, 'frog'      ) || strpos($t, 'screaming')) return '[Bot] Screaming Frog';
+		
+		// Miscellaneous 
+		elseif (strpos($t, 'facebook'  )                           ) return '[Bot] Facebook'     ;
+		elseif (strpos($t, 'pinterest' )                           ) return '[Bot] Pinterest'    ;
+		
+		// Check for strings commonly used in bot user agents   
+		elseif (strpos($t, 'crawler' ) || strpos($t, 'api'    ) ||
+						strpos($t, 'spider'  ) || strpos($t, 'http'   ) ||
+						strpos($t, 'bot'     ) || strpos($t, 'archive') || 
+						strpos($t, 'info'    ) || strpos($t, 'data'   )    ) return '[Bot] Other'   ;
+		
+		return 'Other (Unknown)';
 	}
 
 	public static function dayLog($date,$hr,$new_user) {
@@ -159,16 +210,16 @@ class CounterModel {
 		]);
 	}
 
-	public static function addOnlineUser(){
-		// update user hit count
-		if ( i()->ok ) {
-			DB::query([
-				'UPDATE %users%
-				SET `hits` = `hits` + 1, `lastHitTime` = NOW()
-				WHERE uid = :userId LIMIT 1',
-				'var' => [':userId' => i()->uid]
-			]);
-		}
+	// Update user hit count
+	public static function updateUserHit() {
+		if (!i()->ok) return; 
+	
+		DB::query([
+			'UPDATE %users%
+			SET `hits` = `hits` + 1, `lastHitTime` = NOW()
+			WHERE uid = :userId LIMIT 1',
+			'var' => [':userId' => i()->uid]
+		]);
 	}
 
 	/**
