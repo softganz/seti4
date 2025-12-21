@@ -1,9 +1,10 @@
 <?php
 /**
  * Model   :: User Information
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-07-22
- * Modify  :: 2025-11-07
- * Version :: 20
+ * Modify  :: 2025-12-21
+ * Version :: 21
  *
  * @param Int $userId
  * @return Object
@@ -13,6 +14,7 @@
  */
 
 use Softganz\DB;
+use Softganz\DbException;
 
 class UserModel {
 	var $userId;
@@ -772,7 +774,7 @@ class UserModel {
 					':userId' => $userId
 				]
 			])->items;
-		} catch (Eception $eception) {
+		} catch (Exception $exception) {
 			return [];
 		}
 	}
@@ -785,7 +787,7 @@ class UserModel {
 					':userId' => $userId
 				]
 			])->amt;
-		} catch (Eception $eception) {
+		} catch (Exception $exception) {
 			return 0;
 		}
 	}
