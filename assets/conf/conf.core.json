@@ -28,6 +28,7 @@
 		"maximumScale": 2.5,
 		"initialScale": 1.0,
 		"minimumScale": 1.0,
+		"themeModeFromOS": false,
 		"logCounter": true,
 		"logDayHit": true,
 		"logUserOnline": true,

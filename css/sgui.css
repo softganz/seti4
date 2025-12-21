@@ -23,6 +23,7 @@
 	--side-nav-hover-bg-color: unset;
 
 	--sidebar-bg-color: #f6f6f6;
+	--border-color: #dcdedf;
 
 	--button-height: 36px;
 	--button-padding: 0 12px;
@@ -38,6 +39,7 @@
 
 .module.-app-theme-dark {
 	--sidebar-bg-color: #f6f6f6;
+	--border-color: #888888;
 
 	.widget-inlineedit {
 		--font-color: #979797;
@@ -668,7 +670,7 @@
 	.form-text:focus
 	, .form-password:focus
 	, .form-select:focus
-	, .form-textarea:focus {background-color: var(--focus-bg-color); outline: none;}
+	, .form-textarea:focus {background-color: var(--focus-bg-color); color: var(--font-color); outline: none;}
 
 	.-line {
 		&.form-text,
@@ -1121,11 +1123,11 @@
 
 .sg-view {
 	&.-co-2 {display: flex; flex-wrap: wrap;}
-	&.-co-2>.header {flex: 1 0 100%; border-bottom: 1px rgb(220, 226, 230) solid;}
+	&.-co-2>.header {flex: 1 0 100%; border-bottom: 1px var(--border-color) solid;}
 	&.-co-2>.detail.-sg-view {margin: 0; padding: 0;}
 	&.-co-2>.-sg-view:first-of-type {flex: 1;}
-	&.-co-2>.-sg-view:nth-of-type(2) {flex: 0 0 100px; border-left: 1px rgb(220, 226, 230) solid; background-color: rgb(247, 249, 250);}
-	&.-co-2>.-sg-view:nth-of-type(2)>* {display: block; margin: 0; padding: 8px; border-bottom: 1px  rgb(220, 226, 230) solid; width: auto;}
+	&.-co-2>.-sg-view:nth-of-type(2) {flex: 0 0 100px; border-left: 1px var(--border-color) solid; background-color: var(--card-bg-color);}
+	&.-co-2>.-sg-view:nth-of-type(2)>* {display: block; margin: 0; padding: 8px; border-bottom: 1px  var(--border-color) solid; width: auto;}
 	&.-co-2>.-sg-view:nth-of-type(2)>*:last-child {border-bottom: none;}
 	&.-co-2>.-sg-view:nth-of-type(2)>.header {background-color: rgb(247, 249, 250);}
 
