@@ -3,8 +3,8 @@
  * Counter :: Counter Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-11-26
- * Modify  :: 2025-12-20
- * Version :: 11
+ * Modify  :: 2025-12-21
+ * Version :: 12
  *
  * @usage new CounterModel([])
  * @usage CounterModel::function($conditions, $options)
@@ -132,52 +132,112 @@ class CounterModel {
 		return $counter;
 	}
 
-	private static function getBrowserName($user_agent) {
+	private static function getBrowserName($userAgent) {
+		$browser = 'Unknown';
+ 		$platform = 'Unknown';
+    $version= '';
+
 		// Make case insensitive.
-		$t = strtolower($user_agent);
+		list($engine) = explode(' ', $userAgent);
+
+		//First get the platform?
+		if (preg_match('/linux/i', $userAgent)) {
+			$platform = 'Linux';
+		} elseif (preg_match('/macintosh|mac os x/i', $userAgent)) {
+			$platform = 'Mac';
+		} elseif (preg_match('/windows|win32/i', $userAgent)) {
+			$platform = 'Windows';
+		}
+
+    // Next get the name of the useragent yes seperately and for good reason
+		if(preg_match('/MSIE/i', $userAgent) && !preg_match('/Opera/i', $userAgent)) { 
+			$bname = 'Internet Explorer';
+			$ub = 'MSIE';
+		} elseif(preg_match('/Firefox/i',$userAgent)) { 
+			$bname = 'Mozilla Firefox';
+			$ub = 'Firefox';
+		} elseif(preg_match('/Chrome/i',$userAgent)) { 
+			$bname = 'Google Chrome';
+			$ub = 'Chrome';
+		} elseif(preg_match('/Safari/i',$userAgent)) { 
+			$bname = 'Apple Safari';
+			$ub = 'Safari';
+		} elseif(preg_match('/Opera/i',$userAgent)) { 
+			$bname = 'Opera';
+			$ub = 'Opera';
+		} elseif(preg_match('/Netscape/i',$userAgent)) { 
+			$bname = 'Netscape';
+			$ub = 'Netscape';
+		} 
+
+		// finally get the correct version number
+		$known = ['Version', $ub, 'other'];
+		$pattern = '#(?<browser>' . join('|', $known) . ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+		if (!preg_match_all($pattern, $userAgent, $matches)) {
+			// we have no matching number just continue
+		}
+    
+		// see how many we have
+		$i = count($matches['browser']);
+		if ($i != 1) {
+			//we will have two since we are not using 'other' argument yet
+			//see if version is before or after the name
+			if (strripos($userAgent, 'Version') < strripos($userAgent,$ub)){
+				$version= $matches['version'][0];
+			} else {
+				$version= $matches['version'][1];
+			}
+		} else {
+			$version= $matches['version'][0];
+		}
+
+		// check if we have a number
+		if ($version == null || $version == '') {$version = '?';}
+
+		$agent = strtolower($userAgent);
 
 		// If the string *starts* with the string, strpos returns 0 (i.e., FALSE). Do a ghetto hack and start with a space.
 		// "[strpos()] may return Boolean FALSE, but may also return a non-Boolean value which evaluates to FALSE."
-		//     http://php.net/manual/en/function.strpos.php
-		$t = " " . $t;
+		// http://php.net/manual/en/function.strpos.php
+		$agent = ' ' . $agent;
 
-		// Humans / Regular Users      
-		if     (strpos($t, 'opera'     ) || strpos($t, 'opr/')     ) return 'Opera'            ;
-		elseif (strpos($t, 'edge'      )                           ) return 'Edge'             ;
-		elseif (strpos($t, 'chrome'    )                           ) return 'Chrome'           ;
-		elseif (strpos($t, 'safari'    )                           ) return 'Safari'           ;
-		elseif (strpos($t, 'firefox'   )                           ) return 'Firefox'          ;
-		elseif (strpos($t, 'msie'      ) || strpos($t, 'trident/7')) return 'Internet Explorer';
+		// Humans / Regular Users
+		if (strpos($agent, 'opera') || strpos($agent, 'opr/')) $browser = 'Opera';
+		elseif (strpos($agent, 'edge')) $browser = 'Edge' ;
+		elseif (strpos($agent, 'chrome')) $browser = 'Chrome' ;
+		elseif (strpos($agent, 'safari')) $browser = 'Safari' ;
+		elseif (strpos($agent, 'firefox')) $browser = 'Firefox' ;
+		elseif (strpos($agent, 'msie') || strpos($agent, 'trident/7')) $browser = 'Internet Explorer';
 
-		// Search Engines  
-		elseif (strpos($t, 'google'    )                           ) return '[Bot] Googlebot'   ;
-		elseif (strpos($t, 'bing'      )                           ) return '[Bot] Bingbot'     ;
-		elseif (strpos($t, 'slurp'     )                           ) return '[Bot] Yahoo! Slurp';
-		elseif (strpos($t, 'duckduckgo')                           ) return '[Bot] DuckDuckBot' ;
-		elseif (strpos($t, 'baidu'     )                           ) return '[Bot] Baidu'       ;
-		elseif (strpos($t, 'yandex'    )                           ) return '[Bot] Yandex'      ;
-		elseif (strpos($t, 'sogou'     )                           ) return '[Bot] Sogou'       ;
-		elseif (strpos($t, 'exabot'    )                           ) return '[Bot] Exabot'      ;
-		elseif (strpos($t, 'msn'       )                           ) return '[Bot] MSN'         ;
+		// Search Engines 
+		elseif (strpos($agent, 'google')) $browser = '[Bot] Googlebot' ;
+		elseif (strpos($agent, 'bing')) $browser = '[Bot] Bingbot' ;
+		elseif (strpos($agent, 'slurp')) $browser = '[Bot] Yahoo! Slurp';
+		elseif (strpos($agent, 'duckduckgo')) $browser = '[Bot] DuckDuckBot' ;
+		elseif (strpos($agent, 'baidu')) $browser = '[Bot] Baidu' ;
+		elseif (strpos($agent, 'yandex')) $browser = '[Bot] Yandex' ;
+		elseif (strpos($agent, 'sogou')) $browser = '[Bot] Sogou' ;
+		elseif (strpos($agent, 'exabot')) $browser = '[Bot] Exabot' ;
+		elseif (strpos($agent, 'msn')) $browser = '[Bot] MSN' ;
 
 		// Common Tools and Bots
-		elseif (strpos($t, 'mj12bot'   )                           ) return '[Bot] Majestic'     ;
-		elseif (strpos($t, 'ahrefs'    )                           ) return '[Bot] Ahrefs'       ;
-		elseif (strpos($t, 'semrush'   )                           ) return '[Bot] SEMRush'      ;
-		elseif (strpos($t, 'rogerbot'  ) || strpos($t, 'dotbot')   ) return '[Bot] Moz or OpenSiteExplorer';
-		elseif (strpos($t, 'frog'      ) || strpos($t, 'screaming')) return '[Bot] Screaming Frog';
+		elseif (strpos($agent, 'mj12bot')) $browser = '[Bot] Majestic' ;
+		elseif (strpos($agent, 'ahrefs')) $browser = '[Bot] Ahrefs' ;
+		elseif (strpos($agent, 'semrush')) $browser = '[Bot] SEMRush' ;
+		elseif (strpos($agent, 'rogerbot') || strpos($agent, 'dotbot')) $browser = '[Bot] Moz or OpenSiteExplorer';
+		elseif (strpos($agent, 'frog') || strpos($agent, 'screaming')) $browser = '[Bot] Screaming Frog';
 		
 		// Miscellaneous 
-		elseif (strpos($t, 'facebook'  )                           ) return '[Bot] Facebook'     ;
-		elseif (strpos($t, 'pinterest' )                           ) return '[Bot] Pinterest'    ;
+		elseif (strpos($agent, 'facebook')) $browser = '[Bot] Facebook' ;
+		elseif (strpos($agent, 'pinterest')) $browser = '[Bot] Pinterest' ;
 		
-		// Check for strings commonly used in bot user agents   
-		elseif (strpos($t, 'crawler' ) || strpos($t, 'api'    ) ||
-						strpos($t, 'spider'  ) || strpos($t, 'http'   ) ||
-						strpos($t, 'bot'     ) || strpos($t, 'archive') || 
-						strpos($t, 'info'    ) || strpos($t, 'data'   )    ) return '[Bot] Other'   ;
-		
-		return 'Other (Unknown)';
+		// Check for strings commonly used in bot user agents 
+		elseif (strpos($agent, 'crawler') || strpos($agent, 'api') ||
+			strpos($agent, 'spider') || strpos($agent, 'http') ||
+			strpos($agent, 'bot')|| strpos($agent, 'archive')|| 
+			strpos($agent, 'info') || strpos($agent, 'data')) $browser = '[Bot] Other' ;
+
+		return $browser.' '.$version.' ('. $platform.' '.$engine.')';
 	}
 
 	public static function dayLog($date,$hr,$new_user) {
