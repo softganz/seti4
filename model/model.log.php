@@ -1,17 +1,18 @@
 <?php
 /**
-* Log     :: Log Model
-* Created :: 2024-06-26
-* Modify  :: 2025-06-15
-* Version :: 2
-*
-* @param Array $args
-* @return Object
-*
-* @usage import('model:module.modelname.php')
-* @usage new LogModel([])
-* @usage LogModel::function($conditions)
-*/
+ * Log     :: Log Model
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2024-06-26
+ * Modify  :: 2025-12-21
+ * Version :: 3
+ *
+ * @param Array $args
+ * @return Object
+ *
+ * @usage import('model:module.modelname.php')
+ * @usage new LogModel([])
+ * @usage LogModel::function($conditions)
+ */
 
 use Softganz\DB;
 
@@ -23,15 +24,10 @@ class LogModel {
 		// $module = NULL, $keyword = NULL, $message = NULL, $uid = NULL, $keyid = NULL, $fldname = NULL) {
 		$args = (Object) $args;
 
-		mydb()->_watchlog = false;
-
-		if (!mydb()->table_exists('watchdog')) return false;
-
-		mydb()->_watchlog = false;
+		if (!DB::tableExists('watchdog')) return false;
 
 		$data = (Object) [
 			'date' => date('Y-m-d H:i:s'),
-			// 'logDate' => date('Y-m-d'),
 			'uid' => SG\getFirst($args->userId, i()->uid),
 			'ip' => ip2long(i()->ip),
 			'module' => SG\getFirst($args->module),
@@ -44,16 +40,18 @@ class LogModel {
 			'fieldName' => $args->fieldName,
 		];
 
-		$r = DB::query([
-			'INSERT INTO %watchdog%
-			( `date`, `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser`, `keyid`, `fldname` )
-			VALUES
-			(:date, :uid, :ip, :module, :keyword, :message, :url, :referer, :browser, :keyId, :fieldName );',
-			'var' => $data,
-			'options' => ['log' => false, 'history' => false]
-		]);
-
-		// if (i()->username == 'softganz') echo 'WATCH : '.$stmt.print_o($data,'$data').print_o($r,'$r').'<br />';
+		try {
+			$r = DB::query([
+				'INSERT INTO %watchdog%
+				( `date`, `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser`, `keyid`, `fldname` )
+				VALUES
+				(:date, :uid, :ip, :module, :keyword, :message, :url, :referer, :browser, :keyId, :fieldName );',
+				'var' => $data,
+				'options' => ['log' => false, 'history' => false]
+			]);
+		} catch (Exception $e) {
+			return false;
+		}
 	}
 }
 ?>
