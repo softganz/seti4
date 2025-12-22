@@ -1,14 +1,15 @@
 <?php
 /**
-* Watchdog:: Analysis
-* Created :: 2020-01-01
-* Modify  :: 2025-06-15
-* Version :: 5
-*
-* @return Widget
-*
-* @usage watchdog/analysis
-*/
+ * Watchdog:: Analysis
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2020-01-01
+ * Modify  :: 2025-12-21
+ * Version :: 6
+ *
+ * @return Widget
+ *
+ * @usage watchdog/analysis
+ */
 
 use Softganz\DB;
 
@@ -16,6 +17,7 @@ class WatchdogAnalysis extends Page {
 	var $module;
 	var $keyword;
 	var $userId;
+	var $keyId;
 	var $message;
 	var $delete;
 	var $days = 30;
@@ -27,6 +29,7 @@ class WatchdogAnalysis extends Page {
 			'module' => post('module'),
 			'keyword' => post('keyword'),
 			'userId' => post('user'),
+			'keyId' => Request::all('keyId'),
 			'message' => post('message'),
 			'delete' => post('delete'),
 			'days' => SG\getFirst(post('d'), $this->days),
@@ -142,6 +145,7 @@ class WatchdogAnalysis extends Page {
 						$this->module ? ['`module` = :module', ':module' => $this->module] : NULL,
 						$this->keyword ? ['`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
 						$this->userId ? ['`uid` = :userId',':userId' => $this->userId] : NULL,
+						$this->keyId ? ['`keyId` = :keyId',':keyId' => $this->keyId] : NULL,
 						$this->message ? ['`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
 					],
 					// '%WHEREMAX%' => [
