@@ -5,11 +5,11 @@
  * Theme URI   :: httsp://softganz.com
  * Description :: A simple theme.
  * Template    :: options
- * Author      :: Panumas Nontapan
+ * Author      :: Little Bear<softganz@gmail.com>
  * Author URI  :: https://softganz.com
  * Created     :: 2018-10-15
- * Last Modify :: 2025-12-08
- * Version     :: 18
+ * Last Modify :: 2025-12-22
+ * Version     :: 19
  */
 
 @import url(reset.css);
@@ -80,6 +80,7 @@ pre {tab-size: 1;}
 .-clearfix::after {content: ""; display: block; clear: both;}
 .-nowrap {white-space: nowrap !important;}
 .-sep {height: 1px; opacity: 0.50; background-color: #e9e9e9; border: none; padding: 0; margin: 0;}
+.-no-event {pointer-events: none;}
 
 
 .row {}
