@@ -3,8 +3,8 @@
  * Counter :: Counter Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-11-26
- * Modify  :: 2025-12-21
- * Version :: 12
+ * Modify  :: 2025-12-22
+ * Version :: 13
  *
  * @usage new CounterModel([])
  * @usage CounterModel::function($conditions, $options)
@@ -15,13 +15,14 @@ use Softganz\DB;
 class CounterModel {
 	public static function hit() {
 		$today = today();
+
 		Cache::clear_expire();
 		$counter = cfg('counter');
 		if (isset($counter->online)) unset($counter->online);
 		if (cfg('online')) {cfg_db_delete('online');}
 
 		if (is_null($counter)) {
-			$counter = CounterModel::make($counter);
+			$counter = self::make($counter);
 		}
 
 		$is_counter_ok = is_object($counter);
@@ -62,11 +63,11 @@ class CounterModel {
 		if ($new_user) $counter->users_count++;
 
 		// update day & hour log
-		if (cfg('system')->logDayHit) CounterModel::dayLog($today->date,$today->hours,$new_user);
+		if (cfg('system')->logDayHit) self::dayLog($today->date,$today->hours,$new_user);
 
-		if ($counter->used_log == 1) CounterModel::addLog($today->datetime,$new_user);
+		if ($counter->used_log == 1) self::addLog($today->datetime,$new_user);
 
-		CounterModel::updateUserHit();
+		self::updateUserHit();
 
 		//--- update online user information
 		if (cfg('system')->logUserOnline) {
@@ -241,6 +242,13 @@ class CounterModel {
 	}
 
 	public static function dayLog($date,$hr,$new_user) {
+		// Check logDayHit configuration
+		if (!cfg('system')->logDayHit) return false;
+
+		// Check logApiHit configuration
+		if (!cfg('system')->logApiHit && isApiRequest()) return false;
+
+		// Update day hit count
 		$hr = sprintf('%02d', $hr);
 		$data['date'] = $date;
 		if ($new_user) {
@@ -274,6 +282,17 @@ class CounterModel {
 	public static function updateUserHit() {
 		if (!i()->ok) return; 
 	
+		// Check logApiHit configuration
+		if (!cfg('system')->logApiHit && isApiRequest()) {
+			DB::query([
+				'UPDATE %users%
+				SET `lastHitTime` = NOW()
+				WHERE uid = :userId LIMIT 1',
+				'var' => [':userId' => i()->uid]
+			]);
+			return false;
+		}
+
 		DB::query([
 			'UPDATE %users%
 			SET `hits` = `hits` + 1, `lastHitTime` = NOW()
