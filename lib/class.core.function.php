@@ -1,14 +1,13 @@
 <?php
 /**
  * Core    :: Core Function
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2025-12-17
- * Version :: 29
+ * Modify  :: 2025-12-22
+ * Version :: 30
  */
 
-//---------------------------------------
-// Core Function
-//---------------------------------------
+/* Core Function */
 
 use Softganz\DB;
 
@@ -256,9 +255,7 @@ function process_install_module($module) {
 }
 
 
-//---------------------------------------
-// Core Utility Function
-//---------------------------------------
+/* Core Utility Function */
 
 /**
  * Get current web viewer information and set value to key
@@ -1245,6 +1242,13 @@ function success($message) {
 		]);
 	}
 	return $result;
+}
+
+/** Check if the current request is an API request
+ * @return Boolean
+ */
+function isApiRequest() {
+	return preg_match('/api\//i', R('request'));
 }
 
 /**
