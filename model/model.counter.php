@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-11-26
  * Modify  :: 2025-12-22
- * Version :: 13
+ * Version :: 14
  *
  * @usage new CounterModel([])
  * @usage CounterModel::function($conditions, $options)
@@ -311,6 +311,8 @@ class CounterModel {
 
 	public static function addLog($date, $newUser) {
 		$debug = false; //i()->username == 'softganz';
+
+		if (!cfg('system')->logApiCounter && isApiRequest()) return false;
 
 		// Not insert log on counter_log is table lock
 		$isCounterTableLock = mydb::table_is_lock('%counter_log%');
