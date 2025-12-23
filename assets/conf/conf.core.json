@@ -1,8 +1,8 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2025-12-20",
-		"version": 11
+		"lastModify": "2025-12-22",
+		"version": 12
 	},
 	"autoLoader": {
 		"items": {
@@ -32,6 +32,7 @@
 		"logCounter": true,
 		"logDayHit": true,
 		"logUserOnline": true,
+		"logApiHit": false,
 		"rateLimit": {
 			"limit": 60,
 			"seconds": 60
