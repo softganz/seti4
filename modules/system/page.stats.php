@@ -1,14 +1,15 @@
 <?php
 /**
-* Stats   :: Main Page
-* Created :: 2022-02-13
-* Modify  :: 2025-03-22
-* Version :: 3
-*
-* @return Widget
-*
-* @usage stats
-*/
+ * Stats   :: Main Page
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-02-13
+ * Modify  :: 2025-12-23
+ * Version :: 4
+ *
+ * @return Widget
+ *
+ * @usage stats
+ */
 
 class Stats extends Page {
 	var $right;
@@ -22,7 +23,6 @@ class Stats extends Page {
 	}
 
 	function build() {
-		cfg('web.title', 'Stats - '.cfg('web.title'));
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'Current online <b>'.number_format(CounterModel::onlineCount()).'</b> users @'.sg_date(cfg('dateformat')),
