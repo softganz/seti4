@@ -1,8 +1,8 @@
 /**
  * SoftGanz Ui CSS
  * Created :: 2020-10-01
- * Modify  :: 2025-08-14
- * Version :: 5
+ * Modify  :: 2025-12-24
+ * Version :: 6
  */
 
 .page {
@@ -10,6 +10,7 @@
 
 	&.-header {
 		height: 48px; width: 100%; margin: 0 auto; padding: 0; z-index: 1000; opacity: 0.9; position: fixed; top: 0;
+		background-color: var(--header-bg-color);
 		>.wrapper {display: flex; flex-wrap: wrap; margin: 0 auto;}
 		header {width: 48px; height: 48px; margin: 0; overflow: hidden; background: transparent none 0 0 no-repeat; text-indent: -999em;}
 		h1 {
