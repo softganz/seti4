@@ -1,16 +1,17 @@
 <?php
 /**
-* Admin   :: Admin User API
-* Created :: 2022-10-22
-* Modify  :: 2025-06-23
-* Version :: 7
-*
-* @param Int $userId
-* @param String $action
-* @return String
-*
-* @usage api/admin/user/{userId}/{action}
-*/
+ * Admin   :: Admin User API
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-10-22
+ * Modify  :: 2025-12-25
+ * Version :: 8
+ *
+ * @param Int $userId
+ * @param String $action
+ * @return String
+ *
+ * @usage api/admin/user/{userId}/{action}
+ */
 
 use Softganz\DB;
 
@@ -84,7 +85,7 @@ class AdminUserApi extends PageApi {
 		NodeModel::deleteAllUserComment($this->userId);
 
 		LogModel::save([
-			'module' => 'Admin',
+			'module' => 'admin',
 			'keyword' => 'User Block',
 			'message' => 'User '.$this->userId.' was blocked and delete topics.',
 			'keyId' => $this->userId
