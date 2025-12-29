@@ -1,16 +1,26 @@
 <?php
 /**
-* Admin   :: Ban Management
-* Created :: 2024-07-08
-* Modify  :: 2025-08-13
-* Version :: 2
-*
-* @return Widget
-*
-* @usage module/{id}/method
-*/
+ * Admin   :: Ban Management
+ * Created :: 2024-07-08
+ * Modify  :: 2025-12-29
+ * Version :: 3
+ *
+ * @return Widget
+ *
+ * @usage admin/ban
+ */
 
 class AdminBan extends Page {
+	var $ip;
+	var $host;
+
+	function __construct() {
+		parent::__construct([
+			'ip' => Request::all('ip'),
+			'host' => Request::all('host'),
+		]);
+	}
+
 	function rightToBuild() {return true;}
 
 	function build() {
@@ -19,7 +29,14 @@ class AdminBan extends Page {
 				'title' => 'Ban Management',
 			]), // AppBar
 			'body' => new Widget([
-				'children' => [], // children
+				'children' => [
+					new Row([
+						'children' => [
+							$this->form(),
+							'row-expand' => $this->list(),
+						]
+					]),
+				], // children
 			]), // Widget
 		]);
 	}
@@ -34,9 +51,9 @@ class AdminBan extends Page {
 				'class' => '-center',
 				'thead' => ['IP/Host', 'Start Time', 'End Time', 'icons -i1' => ''],
 				'children' => array_map(
-					function($ban, $key) {
+					function($ban) {
 						return [
-							$ban->ip.$ban->host,
+							trim($ban->ip.' '.$ban->host),
 							$ban->start,
 							$ban->end,
 							new Nav([
@@ -50,7 +67,7 @@ class AdminBan extends Page {
 									new Button([
 										'type' => 'danger',
 										'class' => 'sg-action',
-										'href' => url('api/admin/ban/remove', ['id' => $key]),
+										'href' => url('api/admin/ban/remove', ['id' => $ban->id]),
 										'icon' => new Icon('clear'),
 										'rel' => 'none',
 										'done' => 'remove: parent tr',
@@ -63,10 +80,52 @@ class AdminBan extends Page {
 							]), // Nav
 						];
 					},
-					(Array) cfg('ban.ip'),
-					array_keys((Array) cfg('ban.ip'))
+					(Array) BanModel::getList()->items,
 				)
 			])
+		]);
+	}
+
+	private function form() {
+		return new Form([
+			'class' => 'sg-form',
+			'action' => url('api/admin/ban/save'),
+			'rel' => 'none',
+			'done' => 'close',
+			'children' => [
+				'ip' => [
+					'type' => 'text',
+					'label' => 'IP (php regex match)',
+					'class' => '-fill',
+					'value' => $this->ip,
+				],
+				'host' => [
+					'type' => 'text',
+					'label' => 'Host (php regex match)',
+					'class' => '-fill',
+					'value' => $this->host,
+				],
+				'time' => [
+					'type' => 'select',
+					'class' => '-fill',
+					'label' => 'Time',
+					'options' => [
+						30 => '30 minute',
+						60 => '1 Hour',
+						2*60 => '2 Hours',
+						1*24*60 => '1 Day',
+						2*24*60 => '2 Days',
+						1*7*24*60 => '1 Week',
+						1*31*24*60 => '1 Month',
+						100*365*24*60 => 'Forver'
+					],
+				],
+				'save' => [
+					'type' => 'button',
+					'class' => '-primary -fill',
+					'value' => '<i class="icon -material">done_all</i><span>Save</span>',
+				]
+			]
 		]);
 	}
 }

@@ -3,8 +3,8 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2025-12-22
- * Version :: 30
+ * Modify  :: 2025-12-29
+ * Version :: 31
  */
 
 /* Core Function */
@@ -864,87 +864,31 @@ function core_version_check() {
  * @return boolean
  */
 function banRequest($ip = NULL, $host = NULL) {
-	$banList = (Array) cfg('ban.ip');
-	$banCount = count((Array) cfg('ban.ip'));
-	$currentTime = date('Y-m-d H:i:s');
-	$isBan = false;
-	$banChange = false;
-	// debugMsg('HOST '. $host);
-	// debugMsg(cfg('ban.ip'),'cfg(ban.ip)');
-
-	if (empty($banList)) return $isBan;
-
-	// $banList[0]->ip = '^185.';
-	// $banList[0]->host = 'bot.semrush.[c]';
-	// $banList[] = (Object) [
-	// 	'host' => 'Crawler',
-	// 	'ip' => '185.191.171.8', // '185.191.171.8' getenv('REMOTE_ADDR'), gethostbyaddr(getenv('REMOTE_ADDR'))
-	// 	'start' => date('Y-m-d H:i:s'),
-	// 	'end' => '2099-12-31 23:59:59',
-	// ];
-	// $host = '8.bl.bot.semrush.com';
-	// $host = 'crawler';
-	// $host = 'ip13.2.1.2.eu';
-	// debugMsg($banList, '$banList');
-	// debugMsg('HOST '. $host);
-	// debugMsg($banList, '$banList');
-
-	foreach ($banList as $idx => $ban) {
-		// Remove ban end time lese than current time
-		if ($currentTime > $ban->end) {
-			unset($banList[$idx]);
-			$banChange = true;
-			continue;
+	// Delete expired ban or create ban table
+	try {
+		BanModel::deleteExpiredBan($currentTime);
+	} catch (Exception $e) {
+		// Table not exists -> create ban table
+		if (!DB::tableExists('%ban%')) {
+			BanModel::createTable();
+			banModel::copyFromConfig();
 		}
-
-		// debugMsg('PATTERN IP '. $ban->ip .' => /'.preg_quote($ban->ip).'/');
-		if (property_exists($ban, 'ip') && $ban->ip && ($ban->ip === $ip || preg_match('/'.preg_quote($ban->ip).'/', $ip))) {
-			// debugMsg('PATTERN IP FOUND '.'/'.$ban->ip.'/');
-			$isBan = 'IP';
-		}
-		// debugMsg('PATTERN HOST '.'/'.$ban->host.'/');
-		if ($ban->host) {
-			// debugMsg('BAN CHECK '.$ban->host.' : HOST = '.$host);
-			if (preg_match('/^\//', $ban->host)) {
-				// debugMsg('CHECK BAN WITH REGX');
-				if (preg_match($ban->host, $host)) {
-					$isBan = 'HOST';
-					// debugMsg('BAN WITH REGX');
-				}
-			} else if (preg_match('/'.preg_quote($ban->host).'/i', $host)) {
-			// debugMsg('PATTERN HOST FOUND '.'/'.$ban->host.'/');
-				$isBan = 'HOST';
-			}
-		}
-		// if ($isBan) break;
-
-		// if (preg_match('/^(.*)\*/', $idx, $out)) {
-		// 	$banPattern = $out[1];
-		// 	if (preg_match('/^'.preg_quote($banPattern).'/', $ip)) {
-		// 		$isBan = true;
-		// 		break;
-		// 	}
-		// } else if ($idx == $ip && $currentTime < $ban->end) {
-		// 	$isBan = true;
-		// 	break;
-		// }
+		return false;
 	}
-	// debugMsg($banList, '$banList');
-	$newBanCount = count($banList);
-	if (count($banList) === 0) cfg_db_delete('ban.ip');
-	else if ($banChange) cfg_db('ban.ip', $banList);
-	// debugMsg($isBan ? 'BANED' : 'NOT BAN');
+
+	// Get ban list from database
+	$banId = BanModel::getBanByHost($ip, $host);
 
 	if (cfg('ban')->log) {
 		LogModel::save([
 			'module' => 'ban',
-			'keyword' => 'request',
+			'keyword' => 'Ban request',
 			'message' => $ip.' '.$host,
-			'fieldName' => $isBan ? 'BAN '.$isBan : 'PASS',
+			'fieldName' => $banId ? 'BAN '.$banId : 'PASS',
 		]);
 	}
 
-	return $isBan;
+	return $banId ? true : false;
 }
 
 /**

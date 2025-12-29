@@ -3,8 +3,8 @@
  * Stats   :: Current User Online
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2018-09-01
- * Modify  :: 2025-12-23
- * Version :: 4
+ * Modify  :: 2025-12-29
+ * Version :: 5
  *
  * @param String $arg1
  * @return Widget
@@ -102,7 +102,7 @@ class StatsOnline extends Page {
 									date(($current_date != date('Y-m-d',$rs->access) ? 'Y-m-d ' : '').'H:i:s',$rs->access),
 									number_format($rs->hits),
 									$rs->browser.' '.($this->right->fullView ? $rs->host : ''),
-									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('admin/ban/request', ['ip' => $full_ip, 'host' => $rs->host]).'" data-rel="box" data-width="800"><i class="icon -material">block</i></a>' : '',
+									$this->right->fullView ? '<a class="sg-action btn -link" href="'.url('admin/ban', ['ip' => $full_ip, 'host' => $rs->host]).'" data-rel="box" data-width="800"><i class="icon -material">block</i></a>' : '',
 								];
 							},
 							CounterModel::onlineUsers(['type' => $this->onlineType])
