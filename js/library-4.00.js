@@ -1,31 +1,31 @@
 /**
-* SoftGanz JavaScript Library
-*
-* library :: Javascript Library For SoftGanz
-* Created :: 2009-09-22
-* Modify  :: 2024-10-04
-* Version :: 3
-* Version :: 4.00.08
-*
-* Copyright :: Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
-* Author    :: Panumas Nontapan <webmaster@softganz.com>
-* Website   :: http://www.softganz.com
-* ============================================
-* This program is free software. You can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License.
-* ============================================
-*
-* Using Library
-* - jquery.3.3.js : https://jquery.com
-* - jquery.form.js : http://jquery.malsup.com/form/
-* - jquery.editable.js : https://github.com/*NicolasCARPi/jquery_jeditable
-* - gmaps.js : https://hpneo.github.io/gmaps/
-*/
+ * SoftGanz JavaScript Library
+ *
+ * library :: Javascript Library For SoftGanz
+ * Created :: 2009-09-22
+ * Modify  :: 2025-12-29
+ * Version :: 4
+ * Version :: 4.00.09
+ *
+ * Copyright :: Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
+ * Author    :: Panumas Nontapan <webmaster@softganz.com>
+ * Website   :: http://www.softganz.com
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ *
+ * Using Library
+ * - jquery.3.3.js : https://jquery.com
+ * - jquery.form.js : http://jquery.malsup.com/form/
+ * - jquery.editable.js : https://github.com/*NicolasCARPi/jquery_jeditable
+ * - gmaps.js : https://hpneo.github.io/gmaps/
+ */
 
 'use strict'
 
-let sgLibraryVersion = '4.00.08'
+let sgLibraryVersion = '4.00.09'
 let thaiMonthName = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 let debugSignIn = false
 let firebaseConfig
@@ -244,12 +244,16 @@ $(document).on('submit','form.signform', function(e) {
 			// Sometime sign in ok but error 500:Internal error or empty response
 			// On error, responseJSON have value ok
 			// console.log(response)
-			if (response.responseJSON.ok) {
+			if ("responseJSON" in response && "ok" in response.responseJSON && response.responseJSON.ok) {
 				console.log('SIGN IN RESPONSE FAIL BUT OK!!!!')
 				signInOk(response.responseJSON)
 			} else {
-				console.log('SIGN IN FAIL!!!')
-				notify(response.responseJSON.signInResult)
+				// console.log('SIGN IN FAIL!!!')
+				let message = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+				if ("responseJSON" in response && "signInResult" in response.responseJSON) {
+					message = response.responseJSON.signInResult;
+				}
+				notify(message)
 			}
 		})
 		.done(function(result) {

@@ -3,8 +3,8 @@
  * Model   :: User Information
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-07-22
- * Modify  :: 2025-12-21
- * Version :: 21
+ * Modify  :: 2025-12-29
+ * Version :: 22
  *
  * @param Int $userId
  * @return Object
@@ -320,6 +320,8 @@ class UserModel {
 	}
 
 	public static function signInProcess($username = NULL, $password = NULL, $cookielength = NULL) {
+		if (empty($username) || empty($password)) return false;
+
 		// Check username is email
 		if (preg_match('/\@/', $username)) {
 			$username = DB::select([
