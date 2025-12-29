@@ -90,6 +90,30 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 	}
 }?>
 <!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" /> -->
+<?php if (cfg('system')->themeModeFromOS) {?>
+<script>
+//determines if the user has a set theme
+function detectColorScheme(){
+	let theme = "light";    //default to light
+
+	//local storage is used to override OS theme settings
+	if(localStorage.getItem("theme")){
+		if(localStorage.getItem("theme") == "dark") theme = "dark";
+	} else if(!window.matchMedia) {
+		//matchMedia method not supported
+		return false;
+	} else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+		//OS theme setting detected as dark
+		theme = "dark";
+	}
+
+	//dark theme preferred, set document with a `data-theme` attribute
+	if (theme == "dark") {
+		document.body.classList.add("theme-dark");
+	}
+}
+</script>
+<?php } ?>
 </head>
 
 <body<?php echo
@@ -97,6 +121,7 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 	. ' class="'.page_class().'"'
 	. (cfg('body_attr') ? ' '.cfg('body_attr'):'')
 ;?>>
+<?php if (cfg('system')->themeModeFromOS) echo '<script>detectColorScheme();</script>';?>
 <?php if (R::option('fullpage') || cfg('web.fullpage')) {echo $GLOBALS['request_result'].'</body>'._NL.'</html>';return;}?>
 <?php if (cfg('web.navigator')) echo is_string(cfg('web.navigator')) ? cfg('web.navigator') : '<ul><li><a href="'.url().'">Home</a></li><li><a href="'.url('help').'">Help</a></li><li><a href="'.url('my').'">Login</a></li><li><a href="'.url('user/register').'">Register</a></li></ul>';?>
 <div id="page-wrapper" class="page -page">
@@ -190,31 +215,6 @@ window.cookieconsent.initialise({
 });
 </script>';
 ?>
-<?php if (cfg('system')->themeModeFromOS) {?>
-<script>
-//determines if the user has a set theme
-function detectColorScheme(){
-	let theme = "light";    //default to light
-
-	//local storage is used to override OS theme settings
-	if(localStorage.getItem("theme")){
-		if(localStorage.getItem("theme") == "dark") theme = "dark";
-	} else if(!window.matchMedia) {
-		//matchMedia method not supported
-		return false;
-	} else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
-		//OS theme setting detected as dark
-		theme = "dark";
-	}
-
-	//dark theme preferred, set document with a `data-theme` attribute
-	if (theme == "dark") {
-		document.body.classList.add("-app-theme-dark");
-	}
-}
-detectColorScheme();
-</script>
-<?php } ?>
 <?php echo cfg('mainScript');?>
 </body>
 </html>

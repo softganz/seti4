@@ -35,7 +35,6 @@
 	--appbar-nav-btn-bg-color: unset;
 	--appbar-nav-btn-hover-color: #eee;
 	--appbar-nav-text-color: unset;
-	--appbar-trailing-text-color: unset;
 
 	--card-bg-color: #f3f3f3;
 	--side-nav-hover-bg-color: unset;
@@ -48,7 +47,7 @@
 }
 
 /* Dark Theme Color */
-.module.-app-theme-dark {
+.theme-dark {
 	--font-color: #bcbcbc;
 	--bg-color: #171717;
 	--card-bg-color: #383838;

@@ -53,7 +53,7 @@ $R->request = $request;
 $R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
 $R->configFolder = isset($_GET['setting:conf']) ? $_GET['setting:conf'] : 'conf.d';
 $R->colorScheme = isset($_COOKIE['color-scheme']) ? $_COOKIE['color-scheme'] : NULL;
-if ($R->colorScheme === 'dark') page_class('-app-theme-dark');
+if ($R->colorScheme === 'dark') page_class('theme-dark');
 
 $includeFileList = [
 	'lib/lib.define.php',

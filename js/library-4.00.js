@@ -264,13 +264,13 @@ $(document).on('submit','form.signform', function(e) {
 document.addEventListener('click', function(event) {
 	if (!event.target.classList.contains('-change-color-scheme')) return;
 
-	if (document.body.classList.contains('-app-theme-dark')) {
+	if (document.body.classList.contains('theme-dark')) {
 		event.target.textContent = 'light_mode';
-		document.body.classList.remove("-app-theme-dark")
+		document.body.classList.remove("theme-dark")
 		setCookie("color-scheme", 'light', 365);
 	} else {
 		event.target.textContent = 'dark_mode';
-		document.body.classList.add("-app-theme-dark")
+		document.body.classList.add("theme-dark")
 		setCookie("color-scheme", 'dark', 365);
 	}
 });
