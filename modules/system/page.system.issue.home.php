@@ -1,28 +1,31 @@
 <?php
 /**
-* System  :: Issue Home Page
-* Created :: 2022-10-14
-* Modify  :: 2025-11-12
-* Version :: 17
-*
-* @return Widget
-*
-* @usage system/issue
-*/
+ * System  :: Issue Home Page
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-10-14
+ * Modify  :: 2025-12-29
+ * Version :: 18
+ *
+ * @return Widget
+ *
+ * @usage system/issue
+ */
 
 use Softganz\DB;
 
 class SystemIssueHome extends Page {
 	var $issueType;
+	var $status;
 	var $host;
 	var $items = 1000;
 	var $right;
 
  	function __construct() {
 		parent::__construct([
-			'issueType' => post('type'),
-			'host' => post('host'),
-			'items' => SG\getFirstInt(post('items'), $this->items),
+			'issueType' => SG\getFirst(Request::all('type')),
+			'status' => SG\getFirst(Request::all('status')),
+			'host' => SG\getFirst(Request::all('host')),
+			'items' => SG\getFirstInt(Request::all('items'), $this->items),
 			'right' => (Object) [
 				'access' => is_admin(),
 			],
@@ -53,39 +56,56 @@ class SystemIssueHome extends Page {
 							function($item) {
 								return new Card([
 									'children' => [
-										new ListTile([
+										new Header([
 											'crossAxisAlignment' => 'center',
 											'title' => $item->host,
 											'leading' => new Icon($this->issueIcon($item->issueType)),
 											// 'subtitle' => ($item->reportBy ? 'By : '.$item->reportBy : NULL)
 												// . (' @'.$item->reportDate),
-											'trailing' => new Nav([
+											'trailing' => new Row([
 												'children' => [
-													new Button([
-														'type' => 'link',
-														'href' => url('api/system/issue/close/'.$item->issueId),
-														'icon' => new Icon('done'),
-														'class' => 'sg-action',
-														'rel' => 'none',
-														'done' => 'remove:parent .widget-card',
-														'attribute' => ['data-title' => 'Close Issue', 'data-confirm' => 'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?',]
-													]), // Button
-													new Button([
-														'type' => 'link',
-														'href' => url('system/issue/'.$item->issueId),
-														'icon' => new Icon('find_in_page'),
-														'class' => 'sg-action',
-														'rel' => 'box',
-														'attribute' => ['data-width' => 'full']
-													]), // Button
-													new Button([
-														'type' => 'link',
-														'href' => $this->createTargetUrl($item),
-														'icon' => new Icon('public'),
-														'attribute' => ['target' => '_blank']
-													]), // Button
+													new Nav([
+														'children' => [
+															$item->status == _COMPLETE ? NULL : new Button([
+																'type' => 'link',
+																'href' => url('api/system/issue/close/'.$item->issueId),
+																'icon' => new Icon('done'),
+																'class' => 'sg-action',
+																'rel' => 'none',
+																'done' => 'remove:parent .widget-card',
+																'attribute' => ['data-title' => 'Close Issue', 'data-confirm' => 'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?',]
+															]), // Button
+															new Button([
+																'type' => 'link',
+																'href' => url('system/issue/'.$item->issueId),
+																'icon' => new Icon('find_in_page'),
+																'class' => 'sg-action',
+																'rel' => 'box',
+																'attribute' => ['data-width' => 'full']
+															]), // Button
+															new Button([
+																'type' => 'link',
+																'href' => $this->createTargetUrl($item),
+																'icon' => new Icon('public'),
+																'attribute' => ['target' => '_blank']
+															]), // Button
+														], // children
+													]), // Nav
+													new Dropbox([
+														'children' => [
+															new Button([
+																'class' => 'sg-action',
+																'href' => url('api/system/issue/delete/'.$item->issueId),
+																'text' => 'Delete',
+																'icon' => new Icon('delete'),
+																'rel' => 'none',
+																'done' => 'remove:parent .widget-card',
+																'attribute' => ['data-title' => 'Delete Issue', 'data-confirm' => 'ต้องการลบรายการนี้ออกจากระบบ กรุณายืนยัน?',]
+															]), // Button
+														]
+													])
 												], // children
-											]), // Nav
+											]), // Row
 										]), // ListTile
 										new ScrollView([
 											'child' => new Column([
@@ -158,7 +178,7 @@ class SystemIssueHome extends Page {
 			LIMIT $ITEMS$',
 			'where' => [
 				'%WHERE%' => [
-					['`issue`.`status` != :complete', ':complete' => _COMPLETE],
+					$this->status === 'all' ? NULL : ['`issue`.`status` != :complete', ':complete' => _COMPLETE],
 					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
 					$this->host ? ['`issue`.`host` = :host', ':host' => $this->host] : NULL,
 				]
@@ -174,14 +194,31 @@ class SystemIssueHome extends Page {
 			'crossAxisAlignment' => 'center',
 			'children' => [
 				new Form([
+					'class' => 'form-report',
 					'action' => url('system/issue'),
 					'method' => 'GET',
 					'children' => [
+						'status' => [
+							'type' => 'checkbox',
+							'onChange' => 'submit',
+							'value' => $this->status,
+							'choices' => ['all' => 'All']
+						],
 						'type' => [
 							'type' => 'select',
 							'onChange' => 'submit',
 							'value' => $this->issueType,
-							'options' => ['' => 'All', 'Fatal Error' => 'Fatal Error', 'Create user' => 'Create user'],
+							'choices' => array_merge(
+								['' => 'All'],
+								(Array) DB::select([
+									'SELECT `issueType`
+									FROM %system_issue%
+									WHERE `issueType` IS NOT NULL
+									GROUP BY `issueType`
+									ORDER BY `issueType` ASC',
+									'options' => ['key' => 'issueType', 'value' => 'issueType'],
+								])->items
+							),
 						],
 						'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : NULL,
 					], // children
@@ -189,7 +226,7 @@ class SystemIssueHome extends Page {
 				new Button([
 					'type' => 'secondary',
 					'class' => 'sg-action',
-					'href' => url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host]),
+					'href' => url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
 					'rel' => 'notify',
 					'done' => 'reload',
 					'icon' => new Icon('done_all'),
@@ -201,7 +238,7 @@ class SystemIssueHome extends Page {
 				new Button([
 					'type' => 'secondary',
 					// 'class' => 'sg-action',
-					'href' => url('system/issue', ['type' => $this->issueType, 'host' => $this->host]),
+					'href' => url('system/issue', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
 					// 'rel' => '#main',
 					'icon'=> new Icon('refresh'),
 				]),  // Button

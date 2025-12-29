@@ -1,16 +1,17 @@
 <?php
 /**
-* System  :: System API
-* Created :: 2025-02-25
-* Modify  :: 2025-02-25
-* Version :: 1
-*
-* @param String $action
-* @param Int $tranId
-* @return String
-*
-* @usage api/system/issue/{action}[/{tranId}]
-*/
+ * System  :: System API
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2025-02-25
+ * Modify  :: 2025-12-29
+ * Version :: 2
+ *
+ * @param String $action
+ * @param Int $tranId
+ * @return String
+ *
+ * @usage api/system/issue/{action}[/{tranId}]
+ */
 
 use Softganz\DB;
 
@@ -36,24 +37,40 @@ class SystemIssueApi extends PageApi {
 	public function close() {
 		if (!$this->right->admin) return $this->_accessDenied();
 
-		$issueType = post('type');
-		$host = post('host');
+		$issueId = $this->tranId;
+		$issueType = Request::all('type');
+		$host = Request::all('host');
 
-		if ($issueId = $this->tranId) {
-			DB::query([
-				'UPDATE %system_issue%
-				SET `status` = :status
-				%WHERE%',
-				'where' => [
-					'%WHERE%' => [
-						$issueId === '*' ? ['`status` = :draft', ':draft' => _START] : ['`issueId` = :issueId', ':issueId' => $issueId],
-						$issueType ? ['`issueType` = :issueType', ':issueType' => $issueType] : NULL,
-						$host ? ['`host` = :host', ':host' => $host] : NULL,
-					]
-				], // where
-				'var' => [':status' => _COMPLETE]
-			]);
-		}
+		if (empty($issueId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีหมายเลข issue');
+
+		DB::query([
+			'UPDATE %system_issue%
+			SET `status` = :status
+			%WHERE%',
+			'where' => [
+				'%WHERE%' => [
+					$issueId === '*' ? ['`status` = :draft', ':draft' => _START] : ['`issueId` = :issueId', ':issueId' => $issueId],
+					$issueType ? ['`issueType` = :issueType', ':issueType' => $issueType] : NULL,
+					$host ? ['`host` = :host', ':host' => $host] : NULL,
+				]
+			], // where
+			'var' => [':status' => _COMPLETE]
+		]);
+	}
+
+	public function delete() {
+		if (!$this->right->admin) return $this->_accessDenied();
+
+		$issueId = $this->tranId;
+
+		if (empty($issueId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีหมายเลข issue');
+
+		DB::query([
+			'DELETE FROM %system_issue%
+			WHERE `issueId` = :issueId
+			LIMIT 1',
+			'var' => [':issueId' => $issueId]
+		]);
 	}
 }
 ?>
