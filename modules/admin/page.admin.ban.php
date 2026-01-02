@@ -1,9 +1,10 @@
 <?php
 /**
  * Admin   :: Ban Management
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2024-07-08
- * Modify  :: 2025-12-29
- * Version :: 3
+ * Modify  :: 2026-01-02
+ * Version :: 4
  *
  * @return Widget
  *
@@ -80,7 +81,7 @@ class AdminBan extends Page {
 							]), // Nav
 						];
 					},
-					(Array) BanModel::getList()->items,
+					(Array) BanModel::getList()->items
 				)
 			])
 		]);
