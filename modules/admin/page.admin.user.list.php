@@ -1,14 +1,15 @@
 <?php
 /**
-* Admin   :: List All Member
-* Created :: 2019-09-01
-* Modify  :: 2025-01-30
-* Version :: 3
-*
-* @return Widget
-*
-* @usage admin/user/list
-*/
+ * Admin   :: List All Member
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2019-09-01
+ * Modify  :: 2026-01-02
+ * Version :: 4
+ *
+ * @return Widget
+ *
+ * @usage admin/user/list
+ */
 
 class AdminUserList extends Page {
 	var $role;
@@ -129,8 +130,8 @@ class AdminUserList extends Page {
 									$menu->add('<a class="sg-action" href="'.url('admin/user/edit/'.$rs->uid).'" data-rel="box" title="Edit user property" data-width="640"><i class="icon -material">edit</i></a>');
 
 									return [
-										'<img class="profile-photo" src="'.BasicModel::user_photo($rs->username).'" width="48" height="48" />',
-										'<strong>'.$rs->name.'</strong><br />'.$rs->username.'('.$rs->uid.')',
+										'<a class="sg-action" href="'.url('profile/'.$rs->uid).'" title="View user profile" data-rel="box" data-width="640"><img class="profile-photo" src="'.BasicModel::user_photo($rs->username).'" width="48" height="48" /></a>',
+										'<a class="sg-action" href="'.url('profile/'.$rs->uid).'" title="View user profile" data-rel="box" data-width="640"><strong>'.$rs->name.'</strong><br />'.$rs->username.'('.$rs->uid.')</a>',
 										$rs->email,
 										$rolesList ? implode(', ', $rolesList) : '',
 										number_format($rs->hits),
