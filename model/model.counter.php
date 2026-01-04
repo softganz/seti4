@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-11-26
  * Modify  :: 2026-01-04
- * Version :: 15
+ * Version :: 16
  *
  * @usage new CounterModel([])
  * @usage CounterModel::function($conditions, $options)
@@ -319,6 +319,7 @@ class CounterModel {
 
 	public static function addLog($date, $newUser) {
 		$debug = false; //i()->username == 'softganz';
+		$logWaitingStmt = '';
 
 		if (!cfg('system')->logApiCounter && isApiRequest()) return false;
 
@@ -342,7 +343,7 @@ class CounterModel {
 			'ip' => ip2long(getenv('REMOTE_ADDR')),
 			'new_user' => $newUser ? 1 : NULL,
 			'url' => $request_url,
-			'referer' => $_SERVER['HTTP_REFERER'],
+			'referer' => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : NULL,
 			'browser' => $_SERVER['HTTP_USER_AGENT'],
 		];
 
