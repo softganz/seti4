@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
  * Modify  :: 2026-01-04
- * Version :: 31
+ * Version :: 32
  *
  * @param Array $args
  * @return Object
@@ -13,6 +13,8 @@
  */
 
 namespace Softganz;
+
+use AllowDynamicProperties;
 
 class DataModel {
 	function __construct($args) {
@@ -40,6 +42,7 @@ class JsonArrayDataModel extends DataModel {
 	}
 }
 
+#[AllowDynamicProperties]
 class DbSelect {
 	private $DB;
 
@@ -59,6 +62,7 @@ class DbSelect {
 	}
 }
 
+#[AllowDynamicProperties]
 class DbQuery {
 	var $query;
 	private $DB;
@@ -104,6 +108,7 @@ class DbException extends \Exception {
 * options    :: Array of debug, key, value, group
 */
 
+#[AllowDynamicProperties]
 class DB {
 	private $status = false;
 	private $srcStmt;
