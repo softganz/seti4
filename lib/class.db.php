@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
  * Modify  :: 2026-01-04
- * Version :: 32
+ * Version :: 33
  *
  * @param Array $args
  * @return Object
@@ -679,7 +679,7 @@ class DB {
 		return $result;
 	}
 
-	private function quote($value, $type = NULL) {return $this->PDO->quote($value, $type);}
+	private function quote($value) {return is_null($value) ? NULL : $this->PDO->quote($value);}
 
 	/**
 	 * Set & get table with keyword
