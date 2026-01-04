@@ -3,8 +3,8 @@
  * Ban     :: Ban Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2025-12-26
- * Modify  :: 2025-12-29
- * Version :: 1
+ * Modify  :: 2026-01-04
+ * Version :: 2
  *
  * @param Array $args
  * @return Object
@@ -80,7 +80,7 @@ class BanModel {
 		return $banId;
 	}
 
-	public static function deleteExpiredBan($currentTime) {
+	public static function deleteExpiredBan() {
 		DB::query([
 			'DELETE FROM %ban% WHERE `end` IS NOT NULL AND :currentTime > `end`',
 			'var' => [':currentTime' => date('Y-m-d H:i:s')],
