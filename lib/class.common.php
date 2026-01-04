@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2025-09-29
-* Version :: 12
+* Modify  :: 2026-01-04
+* Version :: 13
 */
 
 use Softganz\DB;
@@ -233,6 +233,11 @@ class Session implements SessionHandlerInterface {
 	#[\ReturnTypeWillChange]
 	public function write($sess_id = NULL, $data = NULL) {
 		$debug = false;
+		$userInfo = (Object) [
+			'ok' => NULL,
+			'username' => NULL,
+			'remember' => NULL,
+		];
 
 		// NOTES : If user mydb::query , cannot use :sess_id, :data
 		$mydb = new MyDb(cfg('db'));
@@ -250,7 +255,7 @@ class Session implements SessionHandlerInterface {
 			VALUES
 			(
 				"'.$mydb->escape($sess_id).'"
-				, "'.$mydb->escape($userInfo->username).'"
+				, "'.($mydb->escape($userInfo->username)).'"
 				, NOW()
 				, NOW()
 				, "'.$mydb->escape($data).'"
