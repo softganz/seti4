@@ -3,8 +3,8 @@
  * Counter :: Counter Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-11-26
- * Modify  :: 2025-12-22
- * Version :: 14
+ * Modify  :: 2026-01-04
+ * Version :: 15
  *
  * @usage new CounterModel([])
  * @usage CounterModel::function($conditions, $options)
@@ -284,21 +284,29 @@ class CounterModel {
 	
 		// Check logApiHit configuration
 		if (!cfg('system')->logApiHit && isApiRequest()) {
-			DB::query([
-				'UPDATE %users%
-				SET `lastHitTime` = NOW()
-				WHERE uid = :userId LIMIT 1',
-				'var' => [':userId' => i()->uid]
-			]);
+			try {
+				DB::query([
+					'UPDATE %users%
+					SET `lastHitTime` = NOW()
+					WHERE uid = :userId LIMIT 1',
+					'var' => [':userId' => i()->uid]
+				]);
+			} catch (Exception $e) {
+				if (i()->uid === 1) debugMsg('Update user hit error: '.$e->getMessage());
+			}
 			return false;
 		}
 
-		DB::query([
-			'UPDATE %users%
-			SET `hits` = `hits` + 1, `lastHitTime` = NOW()
-			WHERE uid = :userId LIMIT 1',
-			'var' => [':userId' => i()->uid]
-		]);
+		try {
+			DB::query([
+				'UPDATE %users%
+				SET `hits` = `hits` + 1, `lastHitTime` = NOW()
+				WHERE uid = :userId LIMIT 1',
+				'var' => [':userId' => i()->uid]
+			]);
+		} catch (Exception $e) {
+			if (i()->uid === 1) debugMsg('Update user hit error: '.$e->getMessage());
+		}
 	}
 
 	/**
