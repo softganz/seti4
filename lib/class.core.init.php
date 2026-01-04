@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
  * Modify  :: 2026-01-04
- * Version :: 22
+ * Version :: 23
  */
 
 global $R;
@@ -189,8 +189,7 @@ error_reporting(cfg('error_reporting'));
 
 //echo 'error after load config '.error_reporting().' : '.decbin(error_reporting()).'<br />';
 
-// Create new mydb database constant
-$R->myDb = new MyDb(cfg('db'));
+// Create new mydb database constant, If cannot connect DB class will throw exception
 $R->DB = new DB([
 	'connection' => [
 		'uri' => cfg('db'),
@@ -199,9 +198,15 @@ $R->DB = new DB([
 		'collationConnection' => cfg('db.collation_connection'),
 	]
 ]);
+
+if ($R->DB->connectionTime > cfg('system')->maxDbConnectionTime) {
+	throw new \Exception('+ฐานข้อมูลยังไม่สามารถรองรับการใช้งานหนักได้');
+}
+
 $R->DB->version = DB::select(['SELECT VERSION() `version` LIMIT 1'])->version;;
 
 // If connect database error, end process
+$R->myDb = new MyDb(cfg('db'));
 if (!$R->myDb->status) {
 	// if not set_theme, cannot find index template file
 	set_theme();

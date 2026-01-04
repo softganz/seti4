@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
  * Modify  :: 2026-01-04
- * Version :: 34
+ * Version :: 35
  *
  * @param Array $args
  * @return Object
@@ -126,6 +126,7 @@ class DB {
 	private $multipleQuery = false; // Use for multiple query in one statement, default is single query
 	private $callerFrom;
 
+	public $connectionTime;
 	public $count = 0;
 	public $items = [];
 
@@ -458,6 +459,8 @@ class DB {
 
 		$dsn = $connection['type'].':dbname='.$connection['database'].';host='.$connection['host'];
 
+		$start_time = microtime(true);
+
 		try {
 			$pdoOptions = [
 				\PDO::ATTR_EMULATE_PREPARES   => $this->multipleQuery, // turn off emulation mode for "real" prepared statements
@@ -466,11 +469,16 @@ class DB {
 				\PDO::MYSQL_ATTR_FOUND_ROWS		=> true
 			];
 			$this->PDO = new \PDO($dsn, $connection['user'], $connection['password'], $pdoOptions);
-			// $this->PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		} catch (\PDOException $e) {
 			$this->errors[] = $this->errorMsg = $e->getMessage();
+			throw new \Exception('+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล');
 			return false;
 		}
+
+		$end_time = microtime(true);
+		$connection_time = ($end_time - $start_time);
+
+		$this->connectionTime = round($connection_time, 4);
 
 		$this->status = true;
 
