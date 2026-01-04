@@ -3,8 +3,8 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2025-12-29
- * Version :: 31
+ * Modify  :: 2026-01-04
+ * Version :: 32
  */
 
 /* Core Function */
@@ -866,7 +866,7 @@ function core_version_check() {
 function banRequest($ip = NULL, $host = NULL) {
 	// Delete expired ban or create ban table
 	try {
-		BanModel::deleteExpiredBan($currentTime);
+		BanModel::deleteExpiredBan();
 	} catch (Exception $e) {
 		// Table not exists -> create ban table
 		if (!DB::tableExists('%ban%')) {
