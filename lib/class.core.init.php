@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
  * Modify  :: 2026-01-04
- * Version :: 21
+ * Version :: 22
  */
 
 global $R;
@@ -293,11 +293,11 @@ if (isset($_GET['devMode'])) {
 
 // Check user login state or new sign in
 $R->user = UserModel::checkLogin();
-if ($R->user->signInResult) {
+if (isset($R->user->signInResult) && $R->user->signInResult) {
 	sendHeader('application/json');
 	http_response_code($R->user->ok ? _HTTP_OK :_HTTP_ERROR_UNAUTHORIZED);
 	die(\SG\json_encode($R->user));
-} else if ($R->user->signInErrorMessage) {
+} else if (isset($R->user->signInErrorMessage) && $R->user->signInErrorMessage) {
 	$R->message->signInErrorInSignForm = $R->user->signInErrorMessage;
 }
 
