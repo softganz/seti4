@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
  * Modify  :: 2026-01-02
- * Version :: 29
+ * Version :: 30
  *
  * @param Array $args
  * @return Object
@@ -175,7 +175,7 @@ class DB {
 			}
 		}
 
-		if (is_array($args) && isset($args['onComplete']) && $args['onComplete'] && is_callable($args['onComplete'])) $args['onComplete']($result);
+		if (isset($args['onComplete']) && is_callable($args['onComplete'])) $args['onComplete']($result);
 
 		if (isset($selectResult->options->sum) && $selectResult->options->sum) $result->sum = $selectResult->options->sum;
 
@@ -313,7 +313,7 @@ class DB {
 			$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
 		);
 
-		if ($this->args['onComplete'] && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
+		if (isset($this->args['onComplete']) && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
 		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
 	}
 
