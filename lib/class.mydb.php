@@ -8,7 +8,7 @@
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
 * Created :: 2009-07-06
 * Modify  :: 2026-01-04
-* Version :: 8
+* Version :: 9
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 /**
 * shotcut to 	call $GLOBALS['mydb']
 */
-
-use AllowDynamicProperties; // Add this line if needed
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -44,6 +42,7 @@ class MyDbResult {
 	}
 }
 
+#[AllowDynamicProperties]
 class MyDb {
 	public $class = 'mydb';
 	public static $version = '4.00';
