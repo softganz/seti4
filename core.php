@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
  * @modify  :: 2026-01-02
- * @version :: 32
+ * @version :: 33
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -398,11 +398,25 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 
 	if (sgIsFatalError($code)) {
 		$fullDescription = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
-		$shortDesc = preg_match('/(.*)( in )/', $description, $out) ? $out[1] : '';
+		
+		// Remove "Uncaught Exception: +" prefix if present
+		$cleanDescription = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
+		
+		// Extract short description (everything before " in ")
+		$cleanDescription = preg_match('/(.*)( in )/', $cleanDescription, $out) ? $out[1] : '';
+
+		// If first charactoe is + then force show that error message
+		if (substr($cleanDescription, 0, 1) === '+') {
+			$cleanDescription = substr($cleanDescription, 1);
+		} else {
+			$cleanDescription = 'Oops! An Error Occurred';
+		}
+
+		$cleanDescription = $cleanDescription.' [code = '.$code.']';
 
 		die(
 			showError([
-				'Title' => $isDebug ? $shortDesc : 'Oops! An Error Occurred',
+				'Title' => $cleanDescription,
 				'Message' => $isDebug ? 'There is error in <b>'.$reportFileName.'</b> '
 					. 'line <b>'.$line.'</b>. '
 					. '<br /><br />Error at line <b>'.$line.'</b><br />'
