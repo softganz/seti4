@@ -2,7 +2,7 @@
 $cfg['version.autoupgrade'] = false;
 
 
-$cfg['error_reporting'] = E_ALL & ~E_STRICT & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED;
+$cfg['error_reporting'] = E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED;
 // $cfg['show_error'] = false;
 
 /* website charactor encoding */
