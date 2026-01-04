@@ -1,17 +1,23 @@
 <html>
 	<head>
 		<title>{{ .Title }}</title>
+		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=brightness_alert,expand_more" rel="stylesheet" />
 		<style>
-			@import url(/css/icons.css);
 			* {box-sizing: border-box;}
 			html {height: 100vh; font-size: 62.5%;}
-			body {height: 100vh; font: 1.7rem/2.0rem sans-serif; display: flex; flex-wrap: wrap;}
+			body {height: 100vh; font: 1.7rem/2.0rem sans-serif; display: flex; flex-wrap: wrap; gap: 16px;}
+			header {
+				margin: 0; padding: 0;
+				display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+				.-title {margin: 0; padding: 0; font-size: 3rem;}
+				.-version {font-size: 1.6rem;}
+				.icon.-error {font-size: 4.6rem; width: 4.6rem; height: 4.6rem; color: red; font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48;}
+			}
 			.container {
 				align-content: center; margin: 0 auto;
 				>* {margin: 0 auto 16px;}
+				.message {border: 1px solid rgb(210, 210, 210); border-radius: 8px; background-color: rgb(241, 241, 241); padding: 30px; max-width: 100rem;}
 			}
-			.icon.-error {font-size: 4.6rem; width: 4.6rem; height: 4.6rem; color: red; margin: 0 16px 0 0;}
-			.message {border: 1px solid rgb(210, 210, 210); border-radius: 8px; background-color: rgb(241, 241, 241); padding: 30px;}
 			.debug-msg {
 				margin: 8px 0; padding: 8px; background-color: #f5f5f5;
 				border-radius: 8px; border: 1px #999 dotted;
@@ -27,13 +33,49 @@
 				.-call-from {margin-top: 8px; padding-top: 8px; border-top: 1px #ccc dashed; font-size: 1.2rem; color: #666;}
 				.sg-expand {cursor: pointer; margin: 0; padding: 0;}
 				>.sg-expand {position: absolute; right: 16px;}
+				.icon.-material {
+					--icon-font: 'Material Symbols Outlined';
+					--icon-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48;
+
+					font-size: 2.4rem;
+					width: 2.4rem;
+					height: 2.4rem;
+					padding: 0;
+					margin: 0;
+					border: none;
+					box-shadow: none;
+					overflow: hidden;
+					display: inline-block;
+					vertical-align: middle;
+					background: transparent none no-repeat 0 0;
+					color: var(--font-color);
+					font-weight: normal;
+					font-style: normal;
+					line-height: 1;
+					letter-spacing: normal;
+					text-align: center;
+					text-transform: none;
+					white-space: nowrap;
+					word-wrap: normal;
+					direction: ltr;
+					/* Support for all WebKit browsers. */
+					-webkit-font-smoothing: antialiased;
+					/* Support for Safari and Chrome. */
+					text-rendering: optimizeLegibility;
+					/* Support for Firefox. */
+					-moz-osx-font-smoothing: grayscale;
+					/* Support for IE. */
+					font-feature-settings: 'liga';
+					font-family: var(--icon-font);
+					font-variation-settings: var(--icon-settings);
+				}
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 			<div class="message">
-				<h1><i class="icon -material -error">bomb</i>{{ .Title }} {{ .Version }}</h1>
+				<header><i class="material-symbols-outlined icon -error">brightness_alert</i><h1 class="-title">{{ .Title }}</h1><span class="-version">{{ .Version }}</span></header>
 				<p>Sorry, something went wrong. We are working on fixing this issue.</p>
         <p>Please try again later or contact support or webmaster if the problem persists.</p>
 				<p>The requested URL <b>{{ .Url }}</b> was error.</p>

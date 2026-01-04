@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2025-12-17
- * @version :: 31
+ * @modify  :: 2026-01-02
+ * @version :: 32
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
 
 // Current version will compare with version.install for upgrade database table
-cfg('core.version.install', '4.0');
+cfg('core.version.install',			'4.0');
 
 // set to the user defined error handler
 set_error_handler('sgErrorHandler');
@@ -81,6 +81,7 @@ $request = requestString();
 $ext = strtolower(substr($request,strrpos($request,'.')+1));
 
 if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && basename($request) != 'theme.css')) {
+	// echo "/* Load JS/CSS ".$request." */\r\n";
 	die(loadJS($request,$ext));
 } else if (in_array($ext, ['ico', 'jpg', 'gif', 'png', 'htm', 'html', 'php', 'xml', 'pdf', 'doc', 'swf'])) {
 	die(fileNotFound());
@@ -145,6 +146,7 @@ function loadJS($requestFile, $ext) {
 	header('Content-Type: '.$headerType);
 
 	// echo "Request = $requestFile \rFirstFolder = $firstFolder \rModule = $module \rFile location = $fileName\r\r";
+
 	if (file_exists($fileName)) require($fileName);
 	// else echo '// '.$requestFile.' '.$fileName.' not found!!!';
 
@@ -155,7 +157,6 @@ function loadJS($requestFile, $ext) {
 
 	return;
 }
-
 
 /**
  * Get request string from first key of $_GET
@@ -331,6 +332,33 @@ function debugMsg($msg = NULL, $varname = NULL) {
 	return $debugMsg;
 }
 
+function showError($message = []) {
+	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
+	$debugMsg = debugMsg();
+
+	$content = file_get_contents(__DIR__.'/assets/template/fatal.html');
+
+	$var = array_replace_recursive(
+		[
+			'Title' => 'Oops! An Error Occurred',
+			'Version' => $isDebug ? '@PHP Version '.phpversion() : '',
+			'Url' => _DOMAIN.$_SERVER['REQUEST_URI'],
+			'ServerName' => $_SERVER['SERVER_NAME'],
+			'Message' => '',
+			'DebugMessage' => $isDebug && $debugMsg ? $debugMsg : '',
+		],
+		(Array) $message
+	);
+
+	$content = preg_replace_callback(
+		'/\{\{\s*\.([\w]*)\s*\}\}/s',
+		function ($m) use ($var) {
+			return isset($var[$m[1]]) ? $var[$m[1]] : $m[0];
+		}, $content);
+		
+	return $content;
+}
+
 /**
  * Custom error handler
  * @param integer $code
@@ -340,88 +368,64 @@ function debugMsg($msg = NULL, $varname = NULL) {
  * @param mixed $context
  * @return boolean
  */
-function sgErrorHandler($code, $description, $file = null, $line = null, $context = null) {
+function sgErrorHandler($code, $description, $file = null, $line = null) {
+	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 	$displayErrors = strtolower(ini_get("display_errors"));
 
-	// $message = 'Debug Error: <b>'.$description.'</b><br>code : <b>'.$code.'</b>, display : <b>'.$displayErrors.'</b> in file <b>' . $file . '</b>, line <b>' . $line . '</b>'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code);
-	$message = 'Debug Error: <b>'.$description.'</b><br>code : <b>'.$code.'</b>, display : <b>'.$displayErrors.'</b> error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code);
+	static $count = 0;
 
-	// echo 'show_error = '.(cfg('show_error') ? 'TRUE' : FALSE);
-	// echo error_reporting()."\n";
-	// error_reporting(0);
+	if ($isDebug) {
+		$reportFileName = $file;
+	} else {
+		$reportFileName = basename($file);
+		$reportFileName = preg_replace('/^class\.|func\./', '', $reportFileName);
+		$reportFileName = preg_replace('/\.php$/', '', $reportFileName);
+	}
 
-	$description = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
 
-	if (sgIsFatalError($code)) echo sgFatalError($code, $description, $file, $line);
+	// echo '<div style="flex: 0 0 100%; border: 1px #eee solid; padding: 8px; border-radius: 8px;">Debug Error #'.(++$count).': <b>'.getErrorTypeName($code).' : ' .$description.'</b><br>code : <b>'.$code.'</b>, display : <b>'.$displayErrors.'</b> in file <b>' . $file . '</b>, line <b>' . $line . '</b>'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code).'</div>';
 
 	if ($displayErrors === 'off') {
 		return false;
 	} else if (!(error_reporting() & $code)) {
-		// This error code is not included in error_reporting
+		// This error code is not included in error_reporting.
+		return false;
+	} else if (in_array($code, [E_DEPRECATED, E_USER_DEPRECATED])) {
+		// Do not throw an Exception for deprecation warnings as new or unexpected
+		// deprecations would break the application.
 		return false;
 	}
 
-	//$errstr=str_replace("\n", "<br />\n", $errstr);
-	list($error, $log) = sgMapErrorCode($code);
-	$data = [
-		'level' => $log,
-		'code' => $code,
-		'error' => $error,
-		'description' => $description,
-		'file' => $file,
-		'line' => $line,
-		'context' => $context,
-		'path' => $file,
-		'message' => '<b>'.$error . '</b> (' . $code . ') in file <b>' . $file . '</b>, line <b>' . $line . '</b>' . $description
-	];
-	debugMsg('<p class="error">'.$data['message'].'</p><p>'.$message.'</p>');
-	return true;
+	if (sgIsFatalError($code)) {
+		$fullDescription = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
+		$shortDesc = preg_match('/(.*)( in )/', $description, $out) ? $out[1] : '';
+
+		die(
+			showError([
+				'Title' => $isDebug ? $shortDesc : 'Oops! An Error Occurred',
+				'Message' => $isDebug ? 'There is error in <b>'.$reportFileName.'</b> '
+					. 'line <b>'.$line.'</b>. '
+					. '<br /><br />Error at line <b>'.$line.'</b><br />'
+					. $fullDescription : '',
+			])
+		);
+
+		// throw new \ErrorException($description, 0, $code, $file, $line);
+	}	
 }
 
-/**
- * Map an error code into an Error word, and log location.
- *
- * @param int $code Error code to map
- * @return array Array of error word, and log location.
- */
-function sgMapErrorCode($code) {
-	$error = $log = null;
-	switch ($code) {
-		case E_PARSE:
-		case E_ERROR:
-		case E_CORE_ERROR:
-		case E_COMPILE_ERROR:
-		case E_USER_ERROR:
-			$error = 'Fatal Error';
-			$log = LOG_ERR;
-			break;
-		case E_WARNING:
-		case E_USER_WARNING:
-		case E_COMPILE_WARNING:
-		case E_RECOVERABLE_ERROR:
-			$error = 'Warning';
-			$log = LOG_WARNING;
-			break;
-		case E_NOTICE:
-		case E_USER_NOTICE:
-			$error = 'Notice';
-			$log = LOG_NOTICE;
-			break;
-		// case E_STRICT:
-		// 	$error = 'Strict';
-		// 	$log = LOG_NOTICE;
-		// 	break;
-		case E_DEPRECATED:
-		case E_USER_DEPRECATED:
-			$error = 'Deprecated';
-			$log = LOG_NOTICE;
-			break;
-		default :
-			break;
+// Function to convert error codes to string names
+function getErrorTypeName($code) {
+	$constants = get_defined_constants(true)['Core'];
+	foreach ($constants as $name => $value) {
+		if (str_starts_with($name, 'E_') && $value === $code) {
+			return $name;
+		}
 	}
-	return [$error, $log];
+	return "Unknown Error Type";
 }
 
+// Function to send error to service site
 function sgSendLog($data = []) {
 	$forceSend = $_GET['forceSendLog'];
 	$sendLogToUrl = cfg('error')->sendLog->toUrl;
@@ -480,56 +484,20 @@ function sgSendLog($data = []) {
 	}
 }
 
-function sgFatalError($code, $description, $file, $line) {
-	$accessDebug = function_exists('user_access') ? user_access('access debugging program') : NULL;
-	$isAdmin = (function_exists('i') && i()->uid == 1) || $accessDebug;
-	$reportFileName = $file;
-	$debugMsg = debugMsg();
-
-	if (!$isAdmin) {
-		$reportFileName = basename($file);
-		$reportFileName = preg_replace('/^class\.|func\./', '', $reportFileName);
-		$reportFileName = preg_replace('/\.php$/', '', $reportFileName);
-	}
-
-	sgSendLog([
-		'type' => 'Fatal Error',
-		'file' => $file,
-		'line' => $line,
-		'description' => 'Error at line <b>'.$line.'</b><br />'.$description,
-	]);
-
-	$content = file_get_contents(__DIR__.'/assets/template/fatal.html');
-
-	$var = [
-		'Title' => 'Oops! An Error Occurred',
-		'Version' => $isAdmin ? '<span style="font-size: 0.6em;"> @PHP Version '.phpversion().'</span>' : '',
-		'Url' => _DOMAIN.$_SERVER['REQUEST_URI'],
-		'ServerName' => $_SERVER['SERVER_NAME'],
-		'Message' => $isAdmin ? 'There is error in <b>'.$reportFileName.'</b> '
-			. 'line <b>'.$line.'</b>. '
-			. '<br /><br />Error at line <b>'.$line.'</b><br />'.$description : '',
-		'DebugMessage' => $isAdmin && $debugMsg ? $debugMsg : '',
-	];
-
-	$content = preg_replace_callback(
-		'/\{\{\s*\.([\w]*)\s*\}\}/s',
-		function ($m) use ($var) {
-			return isset($var[$m[1]]) ? $var[$m[1]] : $m[0];
-		}, $content);
-		
-	return $content;
-}
-
+// Function check error to is fatal error
 function sgIsFatalError($code) {
 	return in_array($code, [E_PARSE, E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR]);
 }
 
+// Function to run when progrom is done
 function sgShutdown() {
 	global $R;
 	$error = error_get_last();
 	if ( sgIsFatalError($error["type"]) ) {
 		sgErrorHandler( $error["type"], $error["message"], $error["file"], $error["line"] );
+	}
+	if (is_object($R->DB) && method_exists($R->DB,'close')) {
+		$R->DB->close();
 	}
 	if (is_object($R->myDb) && method_exists($R->myDb,'close')) {
 		$R->myDb->close();
