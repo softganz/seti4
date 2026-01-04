@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2025-12-20
- * Version :: 20
+ * Modify  :: 2026-01-04
+ * Version :: 21
  */
 
 global $R;
@@ -325,7 +325,7 @@ set_theme();
 cfg('core.message',core_version_check());
 
 // Initialize I am
-i()->am;
+// i()->am;
 
 // End of core process
 ?>
