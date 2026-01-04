@@ -1,9 +1,10 @@
 <?php
 /**
  * DB      :: Database Management
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2025-12-05
- * Version :: 28
+ * Modify  :: 2026-01-02
+ * Version :: 29
  *
  * @param Array $args
  * @return Object
@@ -61,7 +62,9 @@ class DbQuery {
 	private $DB;
 
 	function __construct($args = []) {
-		foreach ($args as $key => $value) $this->{$key} = $value;
+		foreach ($args as $key => $value) {
+			$this->{$key} = $value;
+		}
 	}
 
 	public function DB($db = NULL) {
@@ -172,9 +175,9 @@ class DB {
 			}
 		}
 
-		if (is_array($args) && $args['onComplete'] && is_callable($args['onComplete'])) $args['onComplete']($result);
+		if (is_array($args) && isset($args['onComplete']) && $args['onComplete'] && is_callable($args['onComplete'])) $args['onComplete']($result);
 
-		if ($selectResult->options->sum) $result->sum = $selectResult->options->sum;
+		if (isset($selectResult->options->sum) && $selectResult->options->sum) $result->sum = $selectResult->options->sum;
 
 		return $result;
 	}
