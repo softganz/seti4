@@ -7,8 +7,8 @@
 * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
 * Created :: 2009-07-06
-* Modify  :: 2025-10-27
-* Version :: 6
+* Modify  :: 2026-01-04
+* Version :: 7
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -175,6 +175,8 @@ class MyDb {
 	* @return String
 	*/
 	public static function prepare_stmt($myDb, $stmt, $args = []) {
+		$debug = false;
+		
 		if (empty($myDb)) $myDb = mydb();
 
 		//print_o($args,'prepare_stmt $args',1);
