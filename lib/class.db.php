@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
  * Modify  :: 2026-01-04
- * Version :: 33
+ * Version :: 34
  *
  * @param Array $args
  * @return Object
@@ -391,6 +391,8 @@ class DB {
 	function options() {return $this->options;}
 
 	function PDO() {return $this->PDO;}
+
+	function close() {$this->PDO = NULL;}
 
 	// Create statement with message and error code
 	private function stmt($addMessage = []) {
