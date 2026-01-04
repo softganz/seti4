@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-01-02
- * Version :: 30
+ * Modify  :: 2026-01-04
+ * Version :: 31
  *
  * @param Array $args
  * @return Object
@@ -44,7 +44,9 @@ class DbSelect {
 	private $DB;
 
 	function __construct($args = []) {
-		foreach ($args as $key => $value) $this->{$key} = $value;
+		if ($args) {
+			foreach ($args as $key => $value) $this->{$key} = $value;
+		}
 	}
 
 	public function valueOf($field) {
