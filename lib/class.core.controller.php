@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2006-12-16
- * Modify  :: 2025-12-20
- * Version :: 47
+ * Modify  :: 2026-01-04
+ * Version :: 48
  */
 
 /*************************************************************
@@ -398,7 +398,7 @@ class SgCore {
 		$mainFolder = '';
 		$paths = [];
 		$fileName = '';
-		$funcName = NULL;
+		$funcName = '';
     $className = NULL;
 		$isDebugable = true;
 		$debugLoadfile = debug('load') || $debugResourceFile;
