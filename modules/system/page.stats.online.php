@@ -96,7 +96,7 @@ class StatsOnline extends Page {
 									($this->right->fullView ? '<a href="'.url('stats/list',array('ip'=>$full_ip)).'">' : '')
 									. $show_ip
 									. ($this->right->fullView ? '</a>' : ''),
-									$rs->username ? '<img class="profile-photo -sg-24" src="'.BasicModel::user_photo($rs->username).'" />' : '',
+									$rs->username ? '<img class="profile-photo -sg-32" src="'.BasicModel::user_photo($rs->username).'" />' : '',
 									$this->right->fullView && $rs->name ? '<a href="'.url('stats/list',array('user'=>$rs->uid)).'">'.$rs->name.'</a>' : $rs->name,
 									date(($current_date != date('Y-m-d',$rs->coming) ? 'Y-m-d ' : '').'H:i:s',$rs->coming),
 									date(($current_date != date('Y-m-d',$rs->access) ? 'Y-m-d ' : '').'H:i:s',$rs->access),
