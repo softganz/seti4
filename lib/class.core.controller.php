@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2006-12-16
- * Modify  :: 2026-01-04
- * Version :: 48
+ * Modify  :: 2026-01-12
+ * Version :: 49
  */
 
 /*************************************************************
@@ -471,23 +471,26 @@ class SgCore {
 		if (is_dir('./modules/'.$module)) $mainFolder .= '.;';
 		$mainFolder .= $coreFolder;
 
-		// Add template tp path
+		// Add template to path
 		if ($template && in_array($resourceType, ['widget', 'model', 'page', 'api', 'asset', /* @deprecated */ 'r', 'view', 'on'])) {
-			foreach (explode(';', $template) as $item) {
-				$item = trim($item);
+			foreach (explode(';', $template) as $templateName) {
+				$templateName = trim($templateName);
 
-				// debugMsg($coreFolder.'/modules/'.$module.'/template/'.$item.(is_dir($coreFolder.'/modules/'.$module.'/template/'.$item) ? ' Exists' : ' Not Exists'));
+				// debugMsg($coreFolder.'/modules/'.$module.'/template/'.$templateName.(is_dir($coreFolder.'/modules/'.$module.'/template/'.$templateName) ? ' Exists' : ' Not Exists'));
 
 				if (in_array($resourceType, ['widget', 'model', 'api'])) {
-					if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$fixFolders[$resourceType];
-					$paths[] = 'modules/'.$module.'/template/'.$item.'/model';
+					if ($subModule) {
+						$paths[] = 'modules/'.$module.'/template/'.$templateName.'/'.$subModule.'/'.$fixFolders[$resourceType];
+						$paths[] = 'modules/'.$module.'/template/'.$templateName.'/'.$subModule;
+					}
+					$paths[] = 'modules/'.$module.'/template/'.$templateName.'/'.$fixFolders[$resourceType];
 				} else if (in_array($resourceType, ['page'])) {
 					if ($subModule && $actionModule) {
-						$paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule.'/'.$actionModule;
+						$paths[] = 'modules/'.$module.'/template/'.$templateName.'/'.$subModule.'/'.$actionModule;
 					}
 				}
-				if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$item.'/'.$subModule;
-				$paths[] = 'modules/'.$module.'/template/'.$item;
+				if ($subModule) $paths[] = 'modules/'.$module.'/template/'.$templateName.'/'.$subModule;
+				$paths[] = 'modules/'.$module.'/template/'.$templateName;
 			}
 		}
 
@@ -542,12 +545,25 @@ class SgCore {
 				$paths[] = 'core/model';
 				break;
 
-			case 'api' : // Page Resource
+			case 'api' : // API Resource
 				$fileName = 'api.';
 				$className = implode('', array_map(function ($v) {return strtoupper(substr($v, 0,1)).strtolower(substr($v,1));},$request)).'Api';
 
-				if ($subModule && $template) $paths[] = 'modules/'.$module.'/template/'.$template.'/'.$subModule.'/api';
-				$paths[] = 'modules/'.$module.'/template/'.$template;
+				// debugMsg('Load API '.$className.' $subModule='.$subModule.' $template='.$template);
+
+				// @deprecated
+				// if ($subModule && $template) {
+				// 	$paths[] = 'modules/'.$module.'/template/'.$template.'/'.$subModule.'/api';
+				// }
+
+				// @deprecated
+				// Templaye folder
+				// if ($template) {
+				// 	$paths[] = 'modules/'.$module.'/template/'.$template.'/api';
+				// 	$paths[] = 'modules/'.$module.'/template/'.$template;
+				// }
+
+				// Sub module folder
 				if ($subModule) {
 					$paths[] = 'modules/'.$module.'/'.$subModule.'/api';
 					if (isset($request[2]) && is_string($request[2])) {
@@ -555,7 +571,11 @@ class SgCore {
 					}
 					$paths[] = 'modules/'.$module.'/'.$subModule;
 				}
+
+				// Module folder
 				$paths[] = 'modules/'.$module.'/api';
+
+				// Core folder
 				if ($subModule) {
 					$paths[] = 'core/modules/'.$module.'/'.$subModule;
 				}
@@ -593,7 +613,7 @@ class SgCore {
 				$paths[] = 'core/'.$packageFolder;
 				break;
 
-			case 'asset':
+				case 'asset':
 				$paths[] = 'modules/'.$packageFolder.'/assets';
 				$paths[] = 'core/'.$packageFolder.'/assets';
 				break;
@@ -635,6 +655,9 @@ class SgCore {
 				$paths[] = 'core/model';
 				break;
 		}
+
+		$paths = array_unique($paths);
+		// debugMsg($paths, '$paths');
 
 		// Load module configuration file in json format, if nerver loaded
 		if (!in_array($module, $loadCfg)) {
