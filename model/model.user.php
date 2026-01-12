@@ -3,8 +3,8 @@
  * Model   :: User Information
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-07-22
- * Modify  :: 2025-12-29
- * Version :: 22
+ * Modify  :: 2026-01-12
+ * Version :: 23
  *
  * @param Int $userId
  * @return Object
@@ -559,9 +559,14 @@ class UserModel {
 			'roles' => [],
 		];
 
-		// echo ('Get login '.print_o($_COOKIE,'$_COOKIE'));
+		// TODO: PHP Authen
+		// "PHP_AUTH_USER": "aaaa",
+		// "PHP_AUTH_PW": "sssss",
 
-		if (function_exists("apache_request_headers")) {
+		// Check Bearer Token
+		if (isset($_SERVER['HTTP_AUTHORIZATION']) && !empty($_SERVER['HTTP_AUTHORIZATION'])) {
+			$authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+		} else if (function_exists("apache_request_headers")) {
 			$headers = apache_request_headers();
 			$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 		}
@@ -649,10 +654,9 @@ class UserModel {
 				]);
 				return (Object) ['signInResult' => 'Invalid user signin'];
 			}
-		} else if ($authHeader) {
+		} else if (isset($authHeader) && $authHeader) {
 			list($authType, $authToken) = explode(' ', $authHeader);
 			$user = Cache::get('user:'.$authToken)->data;
-			// $user->authHeader = $authHeader;
 			return $user;
 		} else if ($token = post('token')) {
 			$user = Cache::get('user:'.$token)->data;
