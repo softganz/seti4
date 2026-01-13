@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-01-04
- * Version :: 35
+ * Modify  :: 2026-01-13
+ * Version :: 36
  *
  * @param Array $args
  * @return Object
@@ -86,16 +86,22 @@ class DbQuery {
 // Add custom exception class
 class DbException extends \Exception {
 	var $error = false;
+	private $state;
 	private $query;
 	
-	public function __construct($message = NULL, $code = NULL, $query = NULL) {
+	public function __construct($message = NULL, $code = NULL, $error = NULL) {
 		parent::__construct($message, (Int) $code);
 		$this->error = true;
-		$this->query = $query;
+		$this->state = $error->state;
+		$this->query = $error->query;
 	}
 	
 	public function getQuery() {
 		return $this->query;
+	}
+
+	public function getState() {
+		return $this->state;
 	}
 }
 
@@ -114,9 +120,10 @@ class DB {
 	private $srcStmt;
 	private $stmt;
 	private $args = [];
-	private static $errors = [];
+	private $error = [];
 	private $errorMsg;
 	private $PDO;
+	private static $errors = [];
 	private $queryItems = [];
 	private $debug = false;
 	private $debugMessage = [];
@@ -153,13 +160,13 @@ class DB {
 		$selectResult = new DB($args);
 		$selectResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $selectResult->multipleQuery);
 		$selectResult->callerFrom = get_caller(__FUNCTION__)['from'];
-		$selectResult->selectResult();
+		$result = $selectResult->selectResult();
 
-		if ($selectResult->errorMsg) {
+		// Query error, return exception
+		if ($result->error) {
 			$errorMessage = $selectResult->stmt.'; <span style="color:red;">-- ERROR :: '.$selectResult->errorMsg.'</font>';
 			$selectResult->setDebugMessage('PREPARE', $errorMessage);
-
-			return new DbSelect(['errorMsg' => $selectResult->errorMsg, 'DB' => $selectResult]);
+			throw $result;
 		}
 
 		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $selectResult->stmt)) {
@@ -193,18 +200,22 @@ class DB {
 	public static function query($args) {
 		$queryResult = new DB($args);
 		$queryResult->callerFrom = get_caller(__FUNCTION__)['from'];
-		$queryResult->queryResult();
-		// debugMsg('QUERY RESULT');
-		// debugMsg($queryResult);
+		$result = $queryResult->queryResult();
+
+		// Query error, return exception
+		if ($result->error) {
+			$errorMessage = $selectResult->stmt.'; <span style="color:red;">-- ERROR :: '.$selectResult->errorMsg.'</font>';
+			$queryResult->setDebugMessage('PREPARE', $errorMessage);
+			throw $result;
+		}
+		
 		unset($queryResult->items, $queryResult->count);
 		$queryResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $queryResult->multipleQuery);
 
-		$result = new DbQuery([
+		return new DbQuery([
 			'query' => $queryResult->stmt,
 			'DB' => $queryResult
 		]);
-
-		return $result;
 	}
 
 	public static function tableExists($table) {
@@ -257,20 +268,30 @@ class DB {
 			$this->items = $this->fetchRow($query);
 
 			$this->count = count($this->items);
-		} catch (\PDOException $e) {
+		} catch (\PDOException $exception) {
 			$queryError = $this->PDO->errorInfo();
-			$errorCode = $queryError[1] ? $queryError[1] : $e->getCode();
-			$errorMsg = $e->getMessage();
+			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
+			$errorMsg = $exception->getMessage();
+			$queryStmt = $this->stmt([
+				'errorCode' => $queryError[1] ? $queryError[1] : $exception->getCode(),
+				'errorMessage' => $exception->getMessage(),
+				'SqlState' => $exception->getCode()
+			]);
 
 			$this->updateLastQueryStmt(
 				'Select',
-				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
+				$queryStmt,
 				$queryError
 			);
 
-			if (!$this->options->debug) {
-				throw new DbException($errorMsg, $errorCode, $this->stmt);
-			}
+			return new DbException(
+				$errorMsg,
+				$errorCode,
+				(Object) [
+					'state' => $queryError[0],
+					'query' => $queryStmt
+				]
+			);
 		}
 		
 		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
@@ -292,26 +313,30 @@ class DB {
 
 		try {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
-		} catch (\PDOException $e) {
-			// debugMsg("ERROR");
+		} catch (\PDOException $exception) {
 			$queryError = $this->PDO->errorInfo();
-			$errorCode = $queryError[1] ? $queryError[1] : $e->getCode();
-			$errorMsg = $e->getMessage();
+			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
+			$errorMsg = $exception->getMessage();
+			$queryStmt = $this->stmt([
+				'errorCode' => $queryError[1] ? $queryError[1] : $exception->getCode(),
+				'errorMessage' => $exception->getMessage(),
+				'SqlState' => $exception->getCode()
+			]);
 
 			$this->updateLastQueryStmt(
 				'Query',
-				$this->stmt(['errorCode' => $queryError[1] ? $queryError[1] : $e->getCode(), 'errorMessage' => $e->getMessage(), 'SqlState' => $e->getCode()]),
+				$queryStmt,
 				$queryError
 			);
 
-			// debugMsg('$errorMsg = '.$errorMsg.'<br>$errorCode = '.$errorCode.'<br><pre<'.$this->stmt.'</pre>');
-			if (!$this->options->debug) {
-				throw new DbException($errorMsg, $errorCode, $this->stmt);
-			}
-			// throw new \Exception('Cannot divide by zero');
-			// throw new DbException($errorMsg, $errorCode, $this->stmt);
-			// trigger_error("Custom Error", E_USER_ERROR);
-			return $queryError;
+			return new DbException(
+				$errorMsg,
+				$errorCode,
+				(Object) [
+					'state' => $queryError[0],
+					'query' => $queryStmt
+				]
+			);
 		}
 
 		// Query complete
