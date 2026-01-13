@@ -3,8 +3,8 @@
  * Log     :: Log Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2024-06-26
- * Modify  :: 2025-12-21
- * Version :: 3
+ * Modify  :: 2026-01-13
+ * Version :: 4
  *
  * @param Array $args
  * @return Object
@@ -41,7 +41,7 @@ class LogModel {
 		];
 
 		try {
-			$r = DB::query([
+			$dbResult = DB::query([
 				'INSERT INTO %watchdog%
 				( `date`, `uid` , `ip` , `module` , `keyword` , `message` , `url` , `referer` , `browser`, `keyid`, `fldname` )
 				VALUES
@@ -52,6 +52,8 @@ class LogModel {
 		} catch (Exception $e) {
 			return false;
 		}
+
+		return $dbResult->insertId();
 	}
 }
 ?>
