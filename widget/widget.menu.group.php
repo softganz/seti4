@@ -1,26 +1,29 @@
 <?php
 /**
-* Widget  :: Menu Group Widget
-* Created :: 2022-09-07
-* Modify  :: 2025-07-05
-* Version :: 2
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new MenuGroupWidget([])
-*/
+ * Widget  :: Menu Group Widget
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-09-07
+ * Modify  :: 2026-01-17
+ * Version :: 3
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @usage new MenuGroupWidget([])
+ */
 
 class MenuGroupWidget extends Widget {
 	var $use = '';
 	var $menu; // Object
-	var $dropbox;
+	var $dropbox; // Array('menu' => Array, 'use' => String)
 	var $variable; // Object
+	var $callFrom; // Object
 
 	function __construct($args = []) {
 		parent::__construct($args);
 	}
 
+	#[\Override]
 	function build() {
 		return new Row([
 			'children' => (function() {
@@ -30,6 +33,7 @@ class MenuGroupWidget extends Widget {
 				foreach (explode(',', $this->use) as $navKey) {
 					$menuItem = $this->menu->{$navKey};
 
+					// Replace {{ variable }} with $this->variable
 					foreach ($menuItem as $menuItemKey => $menuItemValue) {
 						if (!is_string($menuItemValue)) continue;
 						$menuItem->{$menuItemKey} = preg_replace_callback(
@@ -41,7 +45,19 @@ class MenuGroupWidget extends Widget {
 						);
 					}
 
-					if ($menuItem->call) {
+					// Create menu button
+					if ($menuItem->widget) {
+						// Menu is widget
+						try {
+							$widget = new $menuItem->widget($this->callFrom);
+							foreach((Array) $widget->children as $button) {
+								$childrens[] = $button;
+							}
+						} catch (Throwable $exception) {
+							$childrens[] = '?';
+						}
+					} else if ($menuItem->call) {
+						// Menu is method
 						if (is_object($this->callFrom) && method_exists($this->callFrom, $menuItem->call)) {
 							$callButtons = (Array) $this->callFrom->{$menuItem->call}();
 							foreach($callButtons as $button) {
@@ -49,6 +65,7 @@ class MenuGroupWidget extends Widget {
 							}
 						}
 					} else if ($button = $this->_renderButton($menuItem, $this->variable)) {
+						// Menu is button
 						$childrens[$navKey] = $button;
 					}
 				}
