@@ -407,7 +407,7 @@
 
 /* widget-header */
 .widget-header {
-	display: flex; flex-wrap: wrap; justify-content: space-between; padding: 8px; align-items: center;
+	display: flex; flex-wrap: wrap; justify-content: space-between; padding: 8px 0; align-items: center;
 	>.-title {
 		flex: 1;
 		>* {display: block;}
