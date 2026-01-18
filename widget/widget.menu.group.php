@@ -3,8 +3,8 @@
  * Widget  :: Menu Group Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-09-07
- * Modify  :: 2026-01-17
- * Version :: 3
+ * Modify  :: 2026-01-18
+ * Version :: 4
  *
  * @param Array $args
  * @return Widget
@@ -85,6 +85,13 @@ class MenuGroupWidget extends Widget {
 							return $childrens;
 						})(),
 					]);
+
+					// Clear dropbox if empty
+					foreach ((Array) $childrens['dropbox']->children as $key => $children) {
+						if (is_null($children)) unset($childrens['dropbox']->children[$key]);
+					}
+
+					if (empty($childrens['dropbox']->children)) unset($childrens['dropbox']);
 				}
 
 				return $childrens;
@@ -94,10 +101,43 @@ class MenuGroupWidget extends Widget {
 
 	private function _renderButton($menuItem, $info) {
 		if (empty($menuItem)) return NULL;
-		if ($menuItem->access) {
-			if (!defined($menuItem->access)) return NULL;
-			else if (!($info->RIGHT & constant($menuItem->access))) return NULL;
+
+		// Check right to create menu
+		if ($menuItem->right) {
+			if (!is_object($this->callFrom)) return NULL;
+
+			$hasRightToCreateButton = false;
+
+			$rights = explode(',', $menuItem->right);
+			foreach ($rights as $right) {
+				$right = trim($right);
+				if (empty($right)) continue;
+				if ($this->callFrom->right->{$right}) {
+					$hasRightToCreateButton = true;
+					break;
+				}
+			}
+			if (!$hasRightToCreateButton) return NULL;
+		} else {
+			// @deprecated
+			if ($menuItem->access) {
+				if (!defined($menuItem->access)) return NULL;
+				else if (!($info->RIGHT & constant($menuItem->access))) return NULL;
+			}
 		}
+
+		foreach ($menuItem as $key => $value) {
+			if (!is_string($value)) continue;
+
+			$menuItem->{$key} = preg_replace_callback(
+				'/(\{\{(.*?)\}\})/',
+				function($match) {
+					return $this->variable->{$match[2]};
+				},
+				$value
+			);			
+		}
+
 		if ($menuItem->icon) $menuItem->icon = new Icon($menuItem->icon);
 		if ($menuItem->href) $menuItem->href = url($menuItem->href);
 
