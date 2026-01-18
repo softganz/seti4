@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-01-02
- * @version :: 33
+ * @modify  :: 2026-01-18
+ * @version :: 34
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,10 +100,11 @@ if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && b
 
 /**
  * Generate file not found from include file
- *
+ * 
+ * @param String $message
  * @return String
  */
-function fileNotFound($msg=NULL) {
+function fileNotFound($message = NULL) {
 	ob_start();
 	include('error/404.php');
 	$ret = ob_get_contents();
@@ -111,11 +112,15 @@ function fileNotFound($msg=NULL) {
 	return $ret;
 }
 
-/** Load module JS file
- * @param String jsfile
+/**
+ * Load module JS file
+ * 
+ * @param String $requestFile
+ * @param String $ext
  * @return String file content
- * */
+ */
 function loadJS($requestFile, $ext) {
+	$cacheTime = 1*60*60; // in minutes
 	$dir = explode('/', dirname($requestFile));
 	// $firstFolder = reset($dir);
 	$module = end($dir);
@@ -131,19 +136,26 @@ function loadJS($requestFile, $ext) {
 		$fileName .=  _CORE_FOLDER.'/modules/'.$requestFile;
 	}
 
-	if ($ext == 'js') {
-		$headerType = 'text/javascript'.'; charset=utf-8';
-	} else if ($ext == 'css') {
-		$headerType = 'text/css'.'; charset=utf-8';
-	} else if ($ext == 'png') {
-		$headerType = 'image/png';
-	} else if ($ext == 'gif') {
-		$headerType = 'image/gif';
-	}	else {
-		$headerType = 'text/plain';
+	switch ($ext) {
+		case 'js': $headerType = 'text/javascript'.'; charset=utf-8'; break;
+		case 'css': $headerType = 'text/css'.'; charset=utf-8'; break;
+		case 'png': $headerType = 'image/png'; break;
+		case 'gif': $headerType = 'image/gif'; break;
+		default: $headerType = 'text/plain';
 	}
 
 	header('Content-Type: '.$headerType);
+
+	if ($cacheTime > 0) {
+		header("Cache-Control: public, max-age=" . $cacheTime); // HTTP/1.1
+		header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cacheTime) . " GMT");
+	} else {
+		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+		header("Pragma: no-cache"); // HTTP/1.0
+	}
+	header("Date: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
+	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
 
 	// echo "Request = $requestFile \rFirstFolder = $firstFolder \rModule = $module \rFile location = $fileName\r\r";
 
@@ -207,7 +219,11 @@ function requestString() {
 	return $request;
 }
 
-// Load all config file
+/**
+ * Load all config file
+ * 
+ * @param String $configFolder
+ */
 function initConfig($configFolder) {
 	SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
 	SgCore::loadConfig('conf.core.json', $configFolder); // load core config file
@@ -215,7 +231,11 @@ function initConfig($configFolder) {
 	SgCore::loadConfig(_CONFIG_FILE, 'conf.local'); // load local config file
 }
 
-// Set auto loader file
+/**
+ * Set auto loader file
+ * 
+ * @param String $class
+ */
 function sg_autoloader($class) {
 	$debug = debug('autoload');
 	$registerFileList = (Array) R()->core->autoLoader->items;
@@ -262,7 +282,8 @@ function sg_autoloader($class) {
  * Set & get config value
  *
  * @param Mixed $key
- * @param Mixed $value
+ * @param Mixed $new_value
+ * @param String $action
  * @return Mixed
  */
 function cfg($key = NULL, $new_value = NULL, $action = NULL) {
@@ -312,26 +333,33 @@ function sendHeader($type = 'text/html') {
 /**
  * Store debug message and display in div class="debug" of page
  *
- * @param String $msg
+ * @param Mixed $message
+ * @param String $varname
  * @return String
  */
-function debugMsg($msg = NULL, $varname = NULL) {
+function debugMsg($message = NULL, $varname = NULL) {
 	static $debugMsg = '';
 	$callerFrom = debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'];
 	// echo '<br><br><br><br><br><br><pre>'.print_r(debug_backtrace(),1).'</pre>';
 
 	// No need to check "access debugging program" because will check in index.tpl.php
 
-	if (isset($msg)) {
-		$msg = in_array('DebugMsg', get_declared_classes()) ? (new DebugMsg($msg, $varname, $callerFrom))->build() : '<div class="debug-msg">'.print_r($msg, 1).'</div>';
+	if (isset($message)) {
+		$message = in_array('DebugMsg', get_declared_classes()) ? (new DebugMsg($message, $varname, $callerFrom))->build() : '<div class="debug-msg">'.print_r($message, 1).'</div>';
 
-		$debugMsg .= $msg;
-		return $msg;
+		$debugMsg .= $message;
+		return $message;
 	}
 
 	return $debugMsg;
 }
 
+/**
+ * Show Error Message
+ * 
+ * @param String $message
+ * @return String
+ */
 function showError($message = []) {
 	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 	$debugMsg = debugMsg();
@@ -361,6 +389,7 @@ function showError($message = []) {
 
 /**
  * Custom error handler
+ * 
  * @param integer $code
  * @param string $description
  * @param string $file
@@ -428,7 +457,12 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 	}	
 }
 
-// Function to convert error codes to string names
+/**
+ * Function to convert error codes to string names
+ * 
+ * @param Int $code
+ * @return String
+ */
 function getErrorTypeName($code) {
 	$constants = get_defined_constants(true)['Core'];
 	foreach ($constants as $name => $value) {
@@ -439,7 +473,11 @@ function getErrorTypeName($code) {
 	return "Unknown Error Type";
 }
 
-// Function to send error to service site
+/**
+ * Function to send error to service site
+ * 
+ * @param Array $data
+ */
 function sgSendLog($data = []) {
 	$forceSend = $_GET['forceSendLog'];
 	$sendLogToUrl = cfg('error')->sendLog->toUrl;
@@ -498,12 +536,19 @@ function sgSendLog($data = []) {
 	}
 }
 
-// Function check error to is fatal error
+/**
+ * Function check error to is fatal error
+ * 
+ * @param Int @code
+ * @return Boolean
+ */
 function sgIsFatalError($code) {
 	return in_array($code, [E_PARSE, E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR]);
 }
 
-// Function to run when progrom is done
+/**
+ * Function to run when progrom is done
+ */
 function sgShutdown() {
 	global $R;
 	$error = error_get_last();
