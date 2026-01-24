@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-01-13
- * Version :: 36
+ * Modify  :: 2026-01-24
+ * Version :: 37
  *
  * @param Array $args
  * @return Object
@@ -129,7 +129,7 @@ class DB {
 	private $debugMessage = [];
 	private $var = [];
 	private $where = [];
-	private $options; // key, value, group, sum, jsonDecode, multiple, history, log, debug
+	private $options; // key, value, group, sum, jsonDecode, multiple, history, log, debug, showResult
 	private $multipleQuery = false; // Use for multiple query in one statement, default is single query
 	private $callerFrom;
 
@@ -193,6 +193,10 @@ class DB {
 		if (isset($args['onComplete']) && is_callable($args['onComplete'])) $args['onComplete']($result);
 
 		if (isset($selectResult->options->sum) && $selectResult->options->sum) $result->sum = $selectResult->options->sum;
+
+		if ($selectResult->options->showResult) {
+			if (function_exists('debugMsg')) debugMsg($result, 'DB::select');
+		}
 
 		return $result;
 	}
@@ -537,6 +541,7 @@ class DB {
 				'value' => NULL,
 				'group' => NULL,
 				'multiple' => false,
+				'showResult' => false,
 				'debug' => false,
 				'sum' => [],
 				'jsonDecode' => [],
