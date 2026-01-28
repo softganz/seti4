@@ -1,8 +1,9 @@
 /**
  * sgui    :: Javascript Library For SoftGanz
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2025-12-14
- * Version :: 60
+ * Modify  :: 2026-01-28
+ * Version :: 61
  */
 
 'use strict'
@@ -1319,7 +1320,8 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		let defaults = {
 			type: inputType,
 			result: 'json',
-			container : $inlineField,
+			container: $inlineField,
+			value: $inlineField.data('value'),
 			// Use 'cancel', 'submit', 'ignore' or function. If function returns false, the form is cancelled
 			onblur: $inlineField.data('onblur') ? $inlineField.data('onblur') : 'submit', // submit,nothing
 			// onblur: function(inputValue, settings, form) {
@@ -1343,6 +1345,30 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			onreset: function(settings, original) {},
 			// called before submit
 			onsubmit: function(settings, original) {
+				const value = $('input', this).val();
+				const textareaValue = $('input, textarea', this).val();
+				const revert = original.revert;
+				// console.log("INLINEEDIT NOT CHANGE");
+				// console.log("settings", settings);
+				// console.log("original", original);
+				// console.log("original.revert", original.revert);
+				// console.log("value          ", $('input', this).val());
+
+				// Compare current input value with the original text, if same then do not save
+				if (settings.type == "text" && $(original.revert).hasClass("placeholder") && value == "") {
+					original.reset(); // Revert to original if no change
+					return false; // Cancel submission
+				} else if (settings.type == "text" && origin.revert == "" && value == "") {
+					original.reset(); // Revert to original if no change
+					return false; // Cancel submission
+				} else if (settings.type == "text" && original.revert == value) {
+					original.reset(); // Revert to original if no change
+					return false; // Cancel submission
+				} else if (settings.type == "textarea" && settings.value == textareaValue) {
+					original.reset(); // Revert to original if no change
+					return false; // Cancel submission
+				}
+
 				let options = $inlineField.data('options')
 				let callbackFunction = options != undefined && options.hasOwnProperty('onSubmit') ? options.onSubmit : null
 				if (callbackFunction && typeof window[callbackFunction] === 'function') {
@@ -1514,7 +1540,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 					$inlineField.find('.-for-input').html(selectValue)
 				} else {
-					// console.log('REPLACE VALUE = ',data.value)
+					console.log('REPLACE VALUE = ',data.value)
 					// console.log($this)
 					// $this.html('<span>'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
 
@@ -2096,7 +2122,6 @@ $(document).on('submit', 'form.sg-form', function(event) {
 */
 (function($) {	// sg-expand
 	$(document).on("click", ".sg-expand", function() {
-		console.log('SG-EXPAND CLICK');
 		let $this = $(this);
 		let $icon = $(this).find('.icon');
 
@@ -2108,6 +2133,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			$this.nextAll().toggle();
 		} else if ($this.data('rel')) {
 			$($this.data('rel')).toggle();
+		} else if ($this.closest('.widget-header').length) {
+			let $parent = $(this).closest('.widget-header');
+			$parent.next().toggle();
+			console.log("WIDGET HEADER TOGGLE");
 		} else {
 			let $parent = $(this).closest('.widget-listtile');
 			$parent.next().toggle();
