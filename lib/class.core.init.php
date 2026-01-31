@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-01-04
- * Version :: 23
+ * Modify  :: 2026-01-31
+ * Version :: 24
  */
 
 global $R;
@@ -285,8 +285,15 @@ rateLimit(cfg('system')->rateLimit->limit, cfg('system')->rateLimit->seconds); /
 
 // Set JS Min file, ?jsMin=no/yes/clear
 if (isset($_GET['devMode'])) {
-	if (in_array($_GET['devMode'], ['','clear'])) unset($_SESSION['devMode']);
-	else $_SESSION['devMode'] = 'yes';
+	if (in_array($_GET['devMode'], ['','clear'])) {
+		unset($_SESSION['devMode']);
+		unset($_COOKIE['devMode']);
+		setcookie('devMode', 'yes', time() - 1000, '/');
+	} else {
+		$_SESSION['devMode'] = 'yes';
+		$_COOKIE['devMode'] = 'yes';
+		setcookie('devMode', 'yes', time()+365*24*60*60, '/');
+	}
 }
 
 
