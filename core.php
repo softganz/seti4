@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-01-18
- * @version :: 34
+ * @modify  :: 2026-01-31
+ * @version :: 35
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
 cfg('core.version.code',        16);
 cfg('core.version',             '4.4.00');
-cfg('core.release',             '2025-12-20');
+cfg('core.release',             '2026-01-31');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
@@ -120,9 +120,8 @@ function fileNotFound($message = NULL) {
  * @return String file content
  */
 function loadJS($requestFile, $ext) {
-	$cacheTime = 1*60*60; // in minutes
+	$cacheTime = $_COOKIE['devMode'] ? 0 : 1*60*60; // in minutes
 	$dir = explode('/', dirname($requestFile));
-	// $firstFolder = reset($dir);
 	$module = end($dir);
 
 	if (preg_match('/^(js|css)\//', $requestFile)) {
@@ -157,7 +156,7 @@ function loadJS($requestFile, $ext) {
 	header("Date: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
 
-	// echo "Request = $requestFile \rFirstFolder = $firstFolder \rModule = $module \rFile location = $fileName\r\r";
+	// echo "Request = $requestFile \r\nModule = $module \r\nFile location = $fileName\r\n\r\n";
 
 	if (file_exists($fileName)) require($fileName);
 	// else echo '// '.$requestFile.' '.$fileName.' not found!!!';
@@ -339,8 +338,7 @@ function sendHeader($type = 'text/html') {
  */
 function debugMsg($message = NULL, $varname = NULL) {
 	static $debugMsg = '';
-	$callerFrom = debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'];
-	// echo '<br><br><br><br><br><br><pre>'.print_r(debug_backtrace(),1).'</pre>';
+	$callerFrom = debug_backtrace();
 
 	// No need to check "access debugging program" because will check in index.tpl.php
 
@@ -348,6 +346,7 @@ function debugMsg($message = NULL, $varname = NULL) {
 		$message = in_array('DebugMsg', get_declared_classes()) ? (new DebugMsg($message, $varname, $callerFrom))->build() : '<div class="debug-msg">'.print_r($message, 1).'</div>';
 
 		$debugMsg .= $message;
+
 		return $message;
 	}
 
