@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2025-12-20
- * Version :: 63
+ * Modify  :: 2026-01-31
+ * Version :: 64
  *
  * @param Array $args
  * @return Widget
@@ -100,7 +100,7 @@ class Widget extends WidgetBase {
 	}
 
 	// @override
-	function initWidget() {}
+	protected function initWidget() {}
 
 	function initConfig() {
 		$this->config = (Object) [
@@ -616,12 +616,18 @@ class DebugMsg extends Widget {
 		parent::__construct([
 			'msg' => $msg,
 			'varName' => is_object($msg) && !isset($varName) ? get_class($msg) : $varName,
-			'callFrom' => isset($callFrom) ? $callFrom : debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'],
+			'callFrom' => isset($callFrom) ? $callFrom : debug_backtrace(),
 		]);
 	}
 
 	function build() {
 		if (!user_access('access debugging program')) return;
+
+		$callString = '<details><summary>Call from : '.$this->callFrom[0]['file'].' @line '.$this->callFrom[0]['line'].'</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">';
+		foreach ($this->callFrom as $key => $value) {
+			$callString .= $value['file'].' @line '.$value['line'].'<br>';
+		}
+		$callString .= '</pre></div></details>';
 
 		if (is_object($this->msg) || is_array($this->msg)) {
 			$this->msg = '<div>'.self::printObject($this->msg, $this->varName).'</div>';
@@ -634,7 +640,7 @@ class DebugMsg extends Widget {
 		return "\r\n".'<div class="debug-msg">'
 			. '<span class="widget-button sg-expand" data-rel="next"><i class="icon -material">expand_more</i></span>'
 			. $this->msg
-			. ($this->callFrom ? '<div class="-call-from">Called from : '.$this->callFrom.'</div>' : '')
+			. ($this->callFrom ? '<div class="-call-from">'.$callString.'</div>' : '')
 			. '</div>'
 			. "\r\n";
 	}
