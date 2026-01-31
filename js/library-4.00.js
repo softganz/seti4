@@ -3,8 +3,8 @@
  *
  * library :: Javascript Library For SoftGanz
  * Created :: 2009-09-22
- * Modify  :: 2025-12-29
- * Version :: 4
+ * Modify  :: 2026-01-31
+ * Version :: 5
  * Version :: 4.00.09
  *
  * Copyright :: Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
@@ -380,7 +380,7 @@ $(document).on('mousemove','[data-tooltip]', function(e) {
 	var windowLeft = $(window).width() - 40
 	var windowRight = 0
 	var maxLeft = e.pageX - (parseInt(moveLeft) + $(target).outerWidth() + 20)
-	var text=$(this).attr("data-tooltip")
+	var text=$(this).data("tooltip")
 	$(target).html(text).show()
 
 	if(maxRight > windowLeft && maxLeft > windowRight) {
