@@ -1,8 +1,9 @@
 /**
  * SoftGanz Ui CSS
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2025-12-29
- * Version :: 34
+ * Modify  :: 2026-01-31
+ * Version :: 35
  */
 
 @charset "UTF-8";
@@ -230,7 +231,7 @@
 
 /* widget-form */
 .widget-form, .form {
-	--input-height: 34px;
+	--input-height: 3.6rem;
 	--bg-color: #fff;
 	--border-color: #ccc;
 	--hover-bg-color: #ffffcc;
@@ -257,7 +258,7 @@
 	.form-text {height: var(--input-height); padding: 0 8px; background-color: var(--bg-color); color: var(--font-color);}
 	.form-password {height: var(--input-height); padding: 0 8px; background-color: var(--bg-color); color: var(--font-color);}
 	.form-textarea {padding: 8px; background-color: var(--bg-color); color: var(--font-color);}
-	.form-select {height: var(--input-height); padding: 0 24px 0 8px; font-family: sans-serif; font-size: 1em; border-radius: 3px; border: 1px var(--border-color) solid; appearance: none; -moz-appearance: none; appearance: none; background-color: var(--bg-color); color: var(--font-color);
+	.form-select {height: var(--input-height); padding: 0 24px 0 16px; font-family: sans-serif; font-size: 1em; border-radius: 3px; border: 1px var(--border-color) solid; appearance: none; -moz-appearance: none; appearance: none; background-color: var(--bg-color); color: var(--font-color);
 	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23cccccc' viewBox='0 0 24 24'%3E%3Cpath d='M7.41 7.84l4.59 4.58 4.59-4.58 1.41 1.41-6 6-6-6z'/%3E%3Cpath d='M0-.75h24v24h-24z' fill='none'/%3E%3C/svg%3E");
 	background-position: right 8px center;
 	background-repeat: no-repeat;
@@ -642,26 +643,22 @@
 .widget-inlineedit {
 	.-for-input {
 		box-sizing: border-box;
-		display: block; line-height: 3.1rem; min-height: 3.2rem;
-		border-bottom: 0.1rem dotted #ccc; cursor: text;
+		display: block; line-height: 3.5rem; min-height: 3.5rem;
+		border-bottom: 1px dotted #ccc; cursor: text;
 		&:hover {
 			border-bottom: 1px dotted #f60;
 		}
 	}
 
 	.placeholder {color: #ccc; font-style: italic; font-size: 0.9em;}
-	.form-text, .form-datepicker {width: calc(100% - 16px); font-size: 1em; box-shadow: none; display: block; height: auto; margin: 0;}
+	.form-text, .form-datepicker {width: 100%; font-size: 1em; box-shadow: none; display: block; height: 3.5rem; margin: 0; padding: 0; border: none; box-shadow: none;}
 	.form-select {width: 100%; padding: 5px 7px; height: 36px; font-size: 1em; border: none;}
-	.form-textarea {width: calc(100% - 16px); margin: 0; padding: 6px 8px 24px 6px; font-size: 1em; border: none; box-shadow: none; background-color: #ffffcc; border-radius: 0;}
+	.form-textarea {width: 100%; margin: 0; padding: 0; font-size: 1em; border: none; box-shadow: none; border-radius: 0;}
 
+	.-for-input:focus-within {background-color: #ffffcc;}
 	.form-text:focus,
-	.form-select:focus {border: none; border-radius: 0; box-shadow: none; background-color: transparent; padding: 0; box-shadow: none;}
-	.form-textarea:focus {padding-top: 4px;}
-	.form-text:hover,
-	.form-select:hover {box-shadow: none;}
-	.form-text:focus,
-	.form-select:focus {border: none; border-radius: 0; box-shadow: none; background-color: transparent; padding: 0; box-shadow: none;}
-	.form-textarea:focus {padding-top: 4px;}
+	.form-select:focus {border: none; border-radius: 0; box-shadow: none; background-color: unset; box-shadow: none; padding-bottom: 2px;}
+	.form-textarea:focus {padding-top: 5px; background-color: unset;}
 	.form-text:hover,
 	.form-select:hover {box-shadow: none;}
 
@@ -671,14 +668,14 @@
 	.inlineedit-field-disable {color: blue; display: inline-block; min-width: 100px; min-height: 1.4em; border-bottom: 1px dotted #ccc; vertical-align: top;}
 
 	form {
-		display: block; margin: 0; padding: 0;
+		display: block; margin: 0; padding: 0; position: relative;
 		>* {padding: 0;}
-		>div {padding: 8px; margin-right: 1px; text-align: right; position: absolute; bottom: 0; right: 0;}
+		>div {padding: 8px; margin-right: 1px; text-align: right; position: absolute; bottom: -8px; right: 24px; opacity: 0.6;}
 	}
 
 	/* @group inlineedit-field */
 	.inlineedit-field, .inline-edit-field {
-		padding: 0; margin: 0; color: var(--font-color); display: inline-block; min-width: 100px; width: auto; min-height: 1.4em; vertical-align: middle;
+		padding: 0; margin: 0; color: var(--font-color); display: inline-block; min-width: 100px; width: auto; vertical-align: middle;
 
 		>label {font-weight: bold;}
 		&:hover {
@@ -698,8 +695,8 @@
 		&.-disabled {color: #999;}
 		&.-primary {font-weight: bold; background-color: #f5f5f5; border: 1px #999 solid;}
 		&.-datepicker {
-			text-align: center;
-			.form-text {text-align: center;}
+			.-for-input, .-for-view {text-align: center;}
+			.form-datepicker {text-align: center; border: none; box-shadow: none;}
 		}
 		&.-textarea {
 			display: block;
@@ -710,9 +707,14 @@
 			text-align: center;
 			.form-text {margin: 0; text-align: center;}
 		}
-		&.-numeric {
+		&.-numeric, &.-number {
 			text-align: center;
-			.form-text {text-align: center;}
+			.form-text, .form-number {
+				text-align: center;
+				background-color: unset;
+				border: none;
+				width: 100%;
+			}
 		}
 		&.-incomplete {color: #999;}
 		&.-text input:hover {border: none;}
@@ -778,6 +780,19 @@
 	>*>a {display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
 	>*>.-hover {position: absolute; top: 4px; right: 4px;}
 	.widget-inlineedit {position: absolute; z-index: 1; left: 0; right: 0; bottom: 0;}
+	>li.-photo-wide {
+		.-photo {
+			width: auto; height: 100%;
+			left: -37.5%;
+		}
+	}
+	>.-item.-photo-tall {
+		.-photo {
+			width: 100%; height: auto;
+			top: -12.5%;
+			left: 0;
+		}
+	}
 }
 
 /* widget-signin */
