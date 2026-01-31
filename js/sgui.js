@@ -2,8 +2,8 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-01-28
- * Version :: 61
+ * Modify  :: 2026-01-31
+ * Version :: 62
  */
 
 'use strict'
@@ -1463,6 +1463,9 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		}
 
 		self.saveToServer = ($inlineField, value, callback) => {
+			let inputName = $inlineField.data('inputName');
+			let inputKey = "_" + Math.floor(Date.now() / 1000);
+
 			$inlineField.removeClass("-error");
 
 			if (postUrl === undefined) {
@@ -1485,8 +1488,13 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			para.action = 'save';
 			para.value = typeof value === 'string' ? value.replace(/\"/g, "\"") : value
-			if ($inlineField.data('inputName')) {
-				para[$inlineField.data('inputName')] = value
+			if (inputName) {
+				if (inputName.includes("{{key}}")) {
+					inputName = inputName.replace(/\{\{key\}\}/, inputKey);
+					para['inputKey'] = inputKey;
+				}
+				para['inputName'] = inputName;
+				para[inputName] = value;
 			}
 			if (settings.var) para[settings.var] = para.value
 			$inlineField.data('value', para.value)
