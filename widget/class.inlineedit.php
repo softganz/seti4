@@ -3,8 +3,8 @@
  * Widget  :: InlineEdit
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-12-08
- * Modify  :: 2026-01-28
- * Version :: 22
+ * Modify  :: 2026-01-31
+ * Version :: 23
  *
  * @param Array $args
  * @return Widget
@@ -20,6 +20,7 @@ class InlineEdit extends Widget {
 	var $childTagName = 'span';
 
 	// Parent propoty
+	var $id;
 	var $class;
 	var $editMode = false;
 	var $action;
@@ -56,6 +57,7 @@ class InlineEdit extends Widget {
 		else if (isset($child['method'])) $child['type'] = 'method';
 		if (in_array($child['type'], ['widget', 'method'])) return '<span class="'.($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName).' -'.$child['type'].'">'._NL;
 
+		$attributes['id'] = $child['id'];
 		if ($this->editMode) {
 			$attributes['class'] = $this->editFieldClassName;
 			if ($child['action']) $attributes['data-action'] = $child['action'];
@@ -98,7 +100,8 @@ class InlineEdit extends Widget {
 		$childAttribute = $child['attribute'];
 
 		unset(
-			$child['action'], $child['class'], $child['options'],
+			$child['id'], $child['class'],
+			$child['action'], $child['options'],
 			$child['placeholder'], $child['inputClass'],
 			$child['editMode'], $child['text'], $child['value'], $child['label'],
 			$child['onClick'], $child['onBlur'], $child['attribute'],
