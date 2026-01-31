@@ -1,9 +1,10 @@
 <?php
 /**
  * Widget  :: Form Widget
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2025-11-11
- * Version :: 37
+ * Modify  :: 2026-01-31
+ * Version :: 38
  *
  * @param Array $args
  * @return Widget
@@ -573,6 +574,12 @@ class Form extends Widget {
 			} else if (preg_match('/^SEPARATOR$/', $optionValue)) {
 				// Option is seperatpr
 				$ret .= '<option class="-sep" disabled="disabled" style="height: 1px; display: block;">---</option>';
+			} else if (preg_match('/^DISABLED\:/', $optionValue)) {
+				// Option is disabled
+				$ret .= '<option disabled="disabled">'.preg_replace('/^DISABLED\:/', '', $optionValue).'</option>';
+			} else if (preg_match('/^HIDE\:/', $optionValue)) {
+				// Option is hide
+				$ret .= '<option class="-hidden">'.preg_replace('/^HIDE\:/', '', $optionValue).'</option>';
 			} else {
 				// Option is string
 				$ret .= '	<option value="'.$optionKey.'"'.(in_array($optionKey, $inputValue) ? ' selected="selected"' : '').'>'.$optionValue.'</option>'._NL;
