@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-12-08
  * Modify  :: 2026-01-31
- * Version :: 23
+ * Version :: 24
  *
  * @param Array $args
  * @return Widget
@@ -55,7 +55,14 @@ class InlineEdit extends Widget {
 
 		if (isset($child['widget'])) $child['type'] = 'widget';
 		else if (isset($child['method'])) $child['type'] = 'method';
-		if (in_array($child['type'], ['widget', 'method'])) return '<span class="'.($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName).' -'.$child['type'].'">'._NL;
+		if (in_array($child['type'], ['widget', 'method'])) {
+			return '<span '
+				. ($child['id'] ? 'id="'.$child['class'].'" ' : '')
+				. 'class="'.($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName)
+					.' -'.$child['type']
+					.($child['class'] ? ' '.$child['class'] : '')
+				. '">'._NL;
+		}
 
 		$attributes['id'] = $child['id'];
 		if ($this->editMode) {
