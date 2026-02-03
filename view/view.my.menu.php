@@ -1,11 +1,13 @@
 <?php
 /**
-* My :: Side Menu
-*
-* @return Widget
-*/
-
-$debug = true;
+ * My :: Side Menu
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 20xx-xx-xx
+ * Modify  :: 2026-02-03
+ * Version :: 2
+ *
+ * @return Widget
+ */
 
 function view_my_menu() {
 	$isAdmin = user_access('access administrator pages');
@@ -19,6 +21,7 @@ function view_my_menu() {
 						'<a href="'.url('my/change/detail').'"><i class="icon -material">person</i><span>{tr:Change Your Profile Details}</span></a>',
 						'<a class="sg-action" href="'.url('my/change/password').'" data-rel="#main"><i class="icon -material">enhanced_encryption</i><span>{tr:Change Password}</span></a>',
 						'<a href="'.url('my/change/photo').'"><i class="icon -material">add_a_photo</i><span>{tr:Change Photo}</span></a>',
+						'<a class="-change-color-scheme"><i class="icon -material -change-color-scheme">'.(R()->colorScheme === 'dark' ? 'dark_mode' : 'light_mode').'></i><span class="-change-color-scheme">Theme mode</span></a>',
 					], // children
 				]), // Ui
 				'<h3>My Actions</h3>',
