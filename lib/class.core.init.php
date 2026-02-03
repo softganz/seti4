@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-01-31
- * Version :: 24
+ * Modify  :: 2026-02-03
+ * Version :: 25
  */
 
 global $R;
@@ -292,7 +292,7 @@ if (isset($_GET['devMode'])) {
 	} else {
 		$_SESSION['devMode'] = 'yes';
 		$_COOKIE['devMode'] = 'yes';
-		setcookie('devMode', 'yes', time()+365*24*60*60, '/');
+		setcookie('devMode', 'yes', time()+7*24*60*60, '/');
 	}
 }
 
