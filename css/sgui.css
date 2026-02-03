@@ -2,8 +2,8 @@
  * SoftGanz Ui CSS
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-01-31
- * Version :: 35
+ * Modify  :: 2026-02-03
+ * Version :: 36
  */
 
 @charset "UTF-8";
@@ -565,7 +565,7 @@
 }
 
 .widget-sidebar {
-	display: flex; flex-direction: column; width: 100px;
+	display: flex; flex-direction: column; width: 10rem;
 	z-index: 1;
 	background-color: var(--sidebar-bg-color);
 	.-header>.icon {width: 32px; height: 32px; display: block; padding: 4px;}
@@ -578,6 +578,9 @@
 	>nav nav.-vertical {
 		ul>li>a {padding: 2px 0 2px 16px;}
 		.icon {width: 1.6rem; height: 1.6rem; font-size: 1.6rem;}
+	}
+	&.-type-wide {
+		width: 30rem;
 	}
 }
 
@@ -903,17 +906,23 @@
 		>.-content {
 			margin-top: -4px; padding: 0; opacity: 1; text-align: left; border-radius: 4px 4px 2px 2px;
 			overflow: auto;
-			border: 1px #D2D2D2 solid;
-			background-color: #f5f5f5;
-			box-shadow: 4px 4px 4px #aaa;
-			>ul {padding: 0;}
-			>ul>li {padding: 0;}
-			>ul>li>a {padding: 4px 24px 4px 16px; white-space: nowrap; display: flex; flex-wrap: nowrap;}
-			>ul>li>a>span {white-space: nowrap;}
-			>ul>li>a>.icon {margin-right: 4px;}
-			>ul>li>.iconset {padding: 0;}
-			>ul>li>.iconset>a {padding: 0;}
-			>ul>li.-sep {height: 4px; margin: 0; padding: 0;}
+			background-color: var(--dropbox-bg-color);
+			>ul {
+				padding: 0;
+				>li {
+					padding: 0;
+					>a {
+						padding: 4px 24px 4px 16px; white-space: nowrap; display: flex; flex-wrap: nowrap; color: #000;
+						border-radius: 0;
+						>span {white-space: nowrap;}
+						>.icon {margin-right: 4px; color: #000}
+						&:hover {background-color: #aeaeae;}
+					}
+					>.iconset {padding: 0;}
+					>.iconset>a {padding: 0;}
+					&.-sep {height: 4px; margin: 0; padding: 0;}
+				}
+			}
 			>.ui-action>.ui-item.-sep {width: auto;}
 		}
 		>.-arrow {
