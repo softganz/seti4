@@ -143,22 +143,22 @@ if (cfg('web.header')===false) {
 
 <div id="content-wrapper" class="page -content">
 <?php echo user_access('access debugging program') ? debugMsg() : '';?>
-<?php if (cfg('web.primary')) echo '<div id="primary" class="page -primary">'._NL;?>
+<?php if (cfg('web.primary')) echo '<main id="primary" class="page -primary">'._NL;?>
 <?php if (cfg('web.message')) echo '<div id="web-message">'.cfg('web.message').'</div>'._NL;?>
 <?php echo $GLOBALS['request_result'];?>
-<?php if (cfg('web.primary')) echo '</div><!--primary-->'._NL;?>
+<?php if (cfg('web.primary')) echo '</main><!--primary-->'._NL;?>
 
-<?php if (is_string(cfg('web.secondary'))) echo process_widget(eval_php(cfg('web.secondary'),_NL.'<div id="secondary" class="page -secondary">'._NL,_NL.'</div><!--secondary-->'._NL)); ?>
+<?php if (is_string(cfg('web.secondary'))) echo process_widget(eval_php(cfg('web.secondary'),_NL.'<aside id="secondary" class="page -secondary">'._NL,_NL.'</aside><!--secondary-->'._NL)); ?>
 <div id="content-footer" class="page -content-footer"></div>
 </div><!--content-wrapper-->
 
 <?php
 if (cfg('web.footer')) {
-	echo '	<div id="footer-wrapper" class="page -footer">
+	echo '	<footer id="footer-wrapper" class="page -footer">
 	<div class="wrapper warpper--footer">
 	'.process_widget(eval_php(cfg('web.footer'),NULL,_NL)).'
 	</div>
-	</div><!--footer-wrapper-->';
+	</footer><!--footer-wrapper-->';
 }
 ?>
 
