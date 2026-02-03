@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-01-31
- * Version :: 64
+ * Modify  :: 2026-02-03
+ * Version :: 65
  *
  * @param Array $args
  * @return Widget
@@ -595,6 +595,12 @@ class Nav extends Widget {
 class SideBar extends Widget {
 	var $widgetName = 'SideBar';
 	var $tagName = 'aside';
+
+	function __construct($args = []) {
+		parent::__construct($args);
+
+		if ($args['type']) $this->class = '-type-'.$args['type'].($this->class ? ' '.$this->class : '');
+	}
 } // End of class Nav
 
 class ScrollView extends Widget {
@@ -650,12 +656,12 @@ class DebugMsg extends Widget {
 		else if ($name && is_array($arr)) {$prefix = '['; $suffix = ']';}
 		else $prefix = $suffix = '';
 
-		$result = '<ul class="array-value '.(isset($options['class']) ? $options['class'] : '').'" style="margin:0 0 0 15px;padding:0px;">'._NL;
+		$result = '<ul class="-array-value '.(isset($options['class']) ? $options['class'] : '').'">'._NL;
 		if ( is_object($arr) || (is_array($arr) and count($arr) > 0) ) {
 			foreach ( $arr as $key=>$value ) {
 				$vtype = GetType($value);
 				$hasChild = in_array($vtype, ['array', 'object']);
-				$result .= '<li><span style="color:#ff9a56">'
+				$result .= '<li><span>'
 					. '<span class="'.($hasChild ? 'widget-button sg-expand' : '').'" data-rel="next">'
 					. $name.$prefix.$key.$suffix
 					. ($hasChild ? '<i class="icon -material">expand_more</i>' : '')
@@ -665,7 +671,7 @@ class DebugMsg extends Widget {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
 					case 'array' : $result .= self::printObject($value,$name.$prefix.$key.$suffix); break;
 					case 'object' : $result .= self::printObject($value,$name.$prefix.$key.$suffix); break;
-					default : $result .= '<font color="#ff9a56">'.$value.'</font>'; break;
+					default : $result .= '<span class="-value">'.$value.'</font>'; break;
 				}
 				$result .= '</li>'._NL;
 			}
@@ -1088,8 +1094,12 @@ class ProfilePhoto extends Widget {
 	}
 } // End of class ProfilePhoto
 
+class Stack extends Widget {
+}
 
+class GridView extends Widget {}
 
+class Drawer extends Widget {}
 
 // Complex Widget
 

@@ -8,8 +8,8 @@
  * Author      :: Little Bear<softganz@gmail.com>
  * Author URI  :: https://softganz.com
  * Created     :: 2018-10-15
- * Last Modify :: 2025-12-24
- * Version     :: 20
+ * Last Modify :: 2026-02-03
+ * Version     :: 21
  */
 
 @import url(reset.css);
@@ -37,6 +37,7 @@
 	--appbar-nav-text-color: unset;
 
 	--card-bg-color: #f3f3f3;
+	--dropbox-bg-color: #f5f5f5;
 	--side-nav-hover-bg-color: unset;
 
 	--sidebar-bg-color: #f6f6f6;
@@ -44,6 +45,10 @@
 
 	--box-bg-color: aliceblue;
 	--box-close-img: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23555555' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z'/%3E%3Cpath d='M0 0h24v24h-24z' fill='none'/%3E%3C/svg%3E");
+
+	--debug-bg-color: #f5f5f5;
+	--debug-font-color: #e68b4d;
+	--debug-value-font-color: #ff9a56;
 }
 
 /* Dark Theme Color */
@@ -51,6 +56,9 @@
 	--font-color: #bcbcbc;
 	--bg-color: #171717;
 	--card-bg-color: #383838;
+	--dropbox-bg-color: #5a5a5a;
+	--debug-bg-color: #525252;
+	--debug-font-color: #bb6f3b;
 	.widget-form, .form {
 		--bg-color: #171717;
 		--require-border-color: #56473d;
@@ -176,9 +184,9 @@ h2.header {text-align: right; font-size: 1.2em;}
 .pagenotfound hr {margin:10px 0;border: none; height:1px; background: #ccc;}
 
 .debug-msg {
-	margin: 8px; padding: 8px; background-color: #f5f5f5;
-	border-radius: 8px; border: 1px #999 dotted;
-	overflow: scroll; color: #ff9a56; text-align: left;
+	margin: 8px; padding: 8px; background-color: var(--debug-bg-color);
+	border-radius: 8px;
+	overflow: scroll; color: var(--debug-font-color); text-align: left;
 	font-size: 1.4rem;
 	font-family: monospace;
 	tab-size: 1;
@@ -188,7 +196,9 @@ h2.header {text-align: right; font-size: 1.2em;}
 	* {font-style: normal;}
 	pre {white-space: pre-wrap;}
 	.-call-from {margin-top: 8px; padding-top: 8px; border-top: 1px #ccc dashed; font-size: 1.2rem; color: #666;}
+	.-value {color: var(--debug-value-font-color);}
 	.sg-expand {cursor: pointer; margin: 0; padding: 0;}
+	.-array-value {margin: 0 0 0 15px; padding: 0px;}
 	>.sg-expand {position: absolute; right: 16px;}
 }
 
