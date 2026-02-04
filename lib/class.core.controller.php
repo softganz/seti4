@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2006-12-16
- * Modify  :: 2026-01-12
- * Version :: 49
+ * Modify  :: 2026-02-04
+ * Version :: 50
  */
 
 /*************************************************************
@@ -1106,6 +1106,7 @@ class SgCore {
 			$pageClassWidget = new $retClass(...$funcArg);
 			// debugMsg($pageClassWidget, '$pageClassWidget');
 
+			// TODO: การตรวจสอบซ้ำกับใน processController ควรตรวจสอบครั้งเดียว
 			// Check methid is public
 			if (($pageBuildReflection = new ReflectionMethod($pageClassWidget, $buildMethod))
 				&& $pageBuildReflection->isPublic()
