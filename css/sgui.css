@@ -403,7 +403,18 @@
 
 /* widget-message */
 .widget-message {
-	padding: 32px 8px; text-align: center;
+	padding: 32px 8px; text-align: center; position: relative;
+	--font-color: red;
+	header {
+		margin-bottom: 1rem;
+		display: flex; justify-content: center; gap: 1rem; align-items: baseline; position: relative;
+		.-title {color: var(--font-color); font-size: 3.0rem;}
+		.-version {font-size: 80%;}
+		.icon {}
+	}
+	&.-error {
+		color: var(--font-color);
+	}
 }
 
 /* widget-header */

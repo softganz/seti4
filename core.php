@@ -335,9 +335,18 @@ function sendHeader($type = 'text/html') {
  * @param Mixed $message
  * @param String $varname
  * @return String
+ * $message:
+ * 	"clear" : Clear all value
+ * 	String  : Show string value
+ * 	Array   : Show array value
+ *  Object  : Show object value
+ * $varname
+ * 	Show as name of array or object
  */
 function debugMsg($message = NULL, $varname = NULL) {
 	static $debugMsg = '';
+	if ($message === 'clear') return $debugMsg = '';
+
 	$callerFrom = debug_backtrace();
 
 	// No need to check "access debugging program" because will check in index.tpl.php
@@ -363,7 +372,8 @@ function showError($message = []) {
 	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 	$debugMsg = debugMsg();
 
-	$content = file_get_contents(__DIR__.'/assets/template/fatal.html');
+	$templateFile = isset($message['template']) ? $message['template'] : 'fatal';
+	$content = file_get_contents(__DIR__.'/assets/template/'.$templateFile.'.html');
 
 	$var = array_replace_recursive(
 		[

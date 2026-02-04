@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-02-03
- * Version :: 65
+ * Modify  :: 2026-02-04
+ * Version :: 66
  *
  * @param Array $args
  * @return Widget
@@ -666,7 +666,7 @@ class DebugMsg extends Widget {
 					. $name.$prefix.$key.$suffix
 					. ($hasChild ? '<i class="icon -material">expand_more</i>' : '')
 					. '</font> '
-					. '<font color=gray>['.(is_object($value) ? get_class($value).' ' : '').$vtype.']</font> : </span>';
+					. '<span class="-var-type">['.(is_object($value) ? get_class($value).' ' : '').$vtype.']</span> : </span>';
 				switch ($vtype) {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
 					case 'array' : $result .= self::printObject($value,$name.$prefix.$key.$suffix); break;

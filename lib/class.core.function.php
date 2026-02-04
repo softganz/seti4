@@ -3,8 +3,8 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-01-04
- * Version :: 32
+ * Modify  :: 2026-02-04
+ * Version :: 33
  */
 
 /* Core Function */
@@ -1149,15 +1149,13 @@ function htmlview($html, $title = NULL, $line_no = true) {
  *
  * @return String
  */
-function error($code, String $message, $debugMsg = NULL) {
-	// Generate debug message
-	if (isset($debugMsg) && user_access('access debugging program')) {
-		$callFrom = debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'];
-		if (is_array($debugMsg)) {
-			foreach ($debugMsg as $key => $value) $message .= (new DebugMsg($value, NULL, $callFrom))->build();
-		} else if (is_object($debugMsg)) $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
-		else $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
-	}
+function error($code, String $message, $detail = NULL) {
+	$message = showError([
+		'template' => 'error',
+		'Title' => $message,
+		'Message' => isset($detail) ? $detail : '',
+	]);
+	debugMsg('clear');
 
 	if (strtolower($message) === 'access denied') {
 		LogModel::save([
