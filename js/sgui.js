@@ -2,8 +2,8 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-01-31
- * Version :: 62
+ * Modify  :: 2026-02-03
+ * Version :: 63
  */
 
 'use strict'
@@ -1548,7 +1548,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 					$inlineField.find('.-for-input').html(selectValue)
 				} else {
-					console.log('REPLACE VALUE = ',data.value)
+					// console.log('REPLACE VALUE = ',data.value)
 					// console.log($this)
 					// $this.html('<span>'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
 
