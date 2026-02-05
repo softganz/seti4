@@ -2,8 +2,8 @@
 /**
  * render  :: Widget
  * Created :: 2025-10-31
- * Modify  :: 2025-10-31
- * Version :: 1
+ * Modify  :: 2026-02-05
+ * Version :: 2
  *
  * @param Array $args
  * @return Object
@@ -63,9 +63,15 @@ class renderAjaxWidget extends Widget {
 	private function renderWidget() {
 		$ret = '';
 		if ($this->requestResult->appBar->boxHeader) {
+			// Show header from text of boxHeader
+			if (is_string($this->requestResult->appBar->boxHeader)) {
+				$this->requestResult->appBar->title = $this->requestResult->appBar->boxHeader;
+				unset($this->requestResult->appBar->trailing, $this->requestResult->appBar->subTitle);
+			}
 			$ret .= $this->requestResult->appBar->build();
 		}
 		$ret .= $this->requestResult->build();
+
 		return $ret;
 	}
 }
