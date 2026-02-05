@@ -58,7 +58,7 @@
 
 .-spacer {flex: 1 !important;}
 
-[class^="widget-"]{
+[class^="widget-"] {
 	* {box-sizing: border-box;}
 	&.-main-axis-start {justify-content: flex-start;}
 	&.-main-axis-center {justify-content: center;}
@@ -69,6 +69,7 @@
 	&.-cross-axis-start {align-items: flex-start;}
 	&.-cross-axis-center {align-items: center;}
 	&.-cross-axis-end {align-items: flex-end;}
+	&.-flex-no-wrap {flex-wrap: nowrap !important;}
 }
 
 /* widget-button */

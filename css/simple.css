@@ -449,7 +449,7 @@ $SCREENS
 		margin: 0; padding: 4px 16px !important; display: none; font-weight: bold; white-space: nowrap; font-size: 9pt; text-align: center; background-color: #FAD163; position: fixed; top: 4px; border-radius: 24px; z-index: 999999; max-width: 70%; max-height: 30%;  overflow: scroll; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */
 		&::-webkit-scrollbar {display: none; width: 0 !important; height: 0 !important; background-color: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
 		ul {text-align: left;}
-		title, h1, h2 {display: none;}
+		title, h1, h2 {font-family: unset; font-size: 1.6rem;}
 		.loader {margin-right: 16px;}
 	}
 
