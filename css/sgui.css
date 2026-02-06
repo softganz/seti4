@@ -401,7 +401,6 @@
 		display: flex; justify-content: center; gap: 1rem; align-items: baseline; position: relative;
 		.-title {color: var(--font-color); font-size: 3.0rem;}
 		.-version {font-size: 80%;}
-		.icon {}
 	}
 	&.-error {
 		color: var(--font-color);
@@ -484,9 +483,9 @@
 	--trailing-btn-bg-color: #b8b8b8;
 	--trailing-btn-bg-color-hover: #aaaaaa;
 	--nav-text-color: var(--text-color);
-	--nav-bg-color: #e3e3e3;
-	--nav-btn-bg-color: var(--nav-bg-color);
-	--nav-btn-hover-color: #d2d2d2;
+	--nav-bg-color: unset;
+	--nav-btn-bg-color: #eee;
+	--nav-btn-hover-color: #ddd;
 	--nav-icon-color: var(--text-color);
 
 	.theme-dark & {
