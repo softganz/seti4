@@ -2,13 +2,13 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-02-03
- * Version :: 63
+ * Modify  :: 2026-02-06
+ * Version :: 64
  */
 
 'use strict'
 
-let sgUiVersion = '4.00.20'
+let sgUiVersion = '4.00.21'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -1348,6 +1348,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				const value = $('input', this).val();
 				const textareaValue = $('input, textarea', this).val();
 				const revert = original.revert;
+
 				// console.log("INLINEEDIT NOT CHANGE");
 				// console.log("settings", settings);
 				// console.log("original", original);
@@ -1355,7 +1356,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				// console.log("value          ", $('input', this).val());
 
 				// Compare current input value with the original text, if same then do not save
-				if (settings.type == "text" && $(original.revert).hasClass("placeholder") && value == "") {
+				if (settings.type == "text" && original.revert.startsWith("<span") && value == "") {
 					original.reset(); // Revert to original if no change
 					return false; // Cancel submission
 				} else if (settings.type == "text" && origin.revert == "" && value == "") {
