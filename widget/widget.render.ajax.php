@@ -2,8 +2,8 @@
 /**
  * render  :: Widget
  * Created :: 2025-10-31
- * Modify  :: 2026-02-05
- * Version :: 2
+ * Modify  :: 2026-02-11
+ * Version :: 3
  *
  * @param Array $args
  * @return Object
@@ -71,6 +71,8 @@ class renderAjaxWidget extends Widget {
 			$ret .= $this->requestResult->appBar->build();
 		}
 		$ret .= $this->requestResult->build();
+
+		if ($this->requestResult->var) $ret = SgCore::processTemplate($ret, $this->requestResult->var);
 
 		return $ret;
 	}
