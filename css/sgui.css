@@ -231,6 +231,9 @@
 	--require-border-color: #ffd8be;
 	--require-hover-border-color: #86b7fe;
 	--line-focus-border-color: #4285F4;
+	.theme-dark & {
+		--border-color: transparent;
+	}
 
 	optgroup[label] {font-weight: bold;}
 	&.-sg-flex {margin: 0;}
@@ -573,7 +576,17 @@
 
 /* widget-nav */
 .widget-nav {
+	--bg-color: transparent;
+	--item-bg-color: #fff;
+	--line-color: #eee;
+	.theme-dark & {
+		--bg-color: #333;
+		--item-bg-color: #333;
+		--line-color: #555;
+	}
+
 	display: flex; overflow: scroll; flex-direction: row; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */
+	background-color: var(--bg-color);
 
 	.widget-nav::-webkit-scrollbar {display: none; width: 0 !important; height: 0 !important; background-color: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
 	>ul {display: flex; flex-wrap: nowrap; justify-content: space-around; list-style-type: none; margin: 0; padding: 0; width: fit-content;}
@@ -592,6 +605,76 @@
 	&.-button-menu>ul>li>a {line-height: 4.8rem; border-radius: 4.8rem; margin: 8px 0; align-items: center; padding: 0;}
 	&.-button-menu>ul>li>a>span {text-align: center; font-size: 1.6rem;}
 	&.-button-menu>ul>li>a>.icon {border-radius: 50%; opacity: 0.8; width: 5.2rem; height: 5.2rem; font-size: 4.4rem; padding: 2px;}
+
+	&.-type-app-icon {
+		flex-direction: column;
+		justify-content: center;
+		gap: 0;
+		margin: -2px 0 0 0; padding: 0;
+		* {box-sizing: border-box;}
+		>ul {flex-wrap: wrap; justify-content: flex-start; flex: 1 0 100%; margin: 0; padding: 0;}
+		.-item {
+			width: auto; height: 20rem;
+			margin: 0; padding: 0; border-radius: 0;
+			position: relative;
+			background-color: var(--item-bg-color);
+			>a {
+				margin: 0; padding: 16px 0; height: 100%;
+				text-align: center;
+				display: flex; flex-direction: row; flex-wrap: wrap; justify-items: center;
+				background-color: transparent; border-radius: 0;
+				>* {flex: 1 0 100%; margin: 0; padding: 0;}
+				.-label {font-size: 2.0rem; padding: 4px 0; height: 3rem;}
+				.-desc {color: #999; height: 8.0rem; flex: 0 0 70%; margin: 0 auto; white-space: normal; text-align: center;}
+				.icon {
+					width: 48px; height: 48px; font-size: 32px; padding: 8px; flex: 0 0 48px;
+					margin: 0 auto 8px;
+					border-radius: 4px; align-content: center;
+					color: #686868; background-color: #d0d0d0;
+				}
+			}
+			&::before {
+				content: "";
+				width: calc(100% - 68px);
+				height: 1px;
+				position: absolute;
+				right: 34px; bottom: 0;
+				background-color: var(--line-color);
+			}
+			&::after {
+				content: "";
+				width: 1px;
+				height: calc(100% - 68px);
+				position: absolute;
+				right: 0; bottom: 34px;
+				background-color: var(--line-color);
+				display: none;
+			}
+			&:nth-child(1)>a>.icon {color: #2277B8; background-color: #7fc7ff;}
+			&:nth-child(2)>a>.icon {color: #9d8f23; background-color: #ffeb4f;}
+			&:nth-child(3)>a>.icon {color: #CA7501; background-color: #F99301;}
+			&:nth-child(4)>a>.icon {color: #11822b; background-color: #1cc145;}
+			&:nth-child(5)>a>.icon {color: #28718f; background-color: #47c9ff;}
+			&:nth-child(6)>a>.icon {color: #85589c; background-color: #db94ff;}
+			&:nth-child(7)>a>.icon {color: #804474; background-color: #ff86e6;}
+			&:nth-child(8)>a>.icon {color: #9e7b16; background-color: #ffc623;}
+			&:nth-child(9)>a>.icon {color: #6f913f; background-color: #b0e562;}
+			&:nth-child(10)>a>.icon {color: #7c7e38; background-color: #dde05f;}
+		}
+	}
+
+	@media (min-width: 43.75em) { /* 700/16 : Responsive Menu */
+		&.-type-app-icon {
+			flex-direction: row; flex-wrap: wrap;
+			.-item {
+				flex: 0 0 33.3333333%;
+				padding: 0 16px; height: 18rem;
+				&::after {display: block;}
+				&:nth-child(3n)::after {display: none;} /* last column, hide right border */
+				&:nth-last-child(-n + 3)::before {display: none;} /* last row, hide bottom border */
+			}
+		}
+	}
 }
 
 .widget-sidebar {
@@ -998,6 +1081,14 @@
 
 /* @group widget-toolbar */
 .widget-report {
+	--filter-bg-color: #fff;
+	--group-bg-color: #fff;
+	--group-border-color: #dddddd;
+	.theme-dark & {
+		--filter-bg-color: #333;
+		--group-bg-color: #333;
+		--group-border-color: #555555;
+	}
 	.report-output {
 		min-height: 300px;
 
@@ -1026,15 +1117,15 @@
 		.form-item {display: flex; gap: 8px; padding: 0;}
 		.form-text {padding: 0 8px; border-radius: 24px;}
 		.form-select { border-radius: 24px;}
-		.-text {background-color: #eee; padding: 4px; border-radius: 4px 0 0 4px; border: 1px #ddd solid; white-space: nowrap;}
-		.-select {margin: 0 16px 0 0; padding: 4px; border-radius: 0 4px 4px 0; border: 1px #ddd solid; border-left: none; flex: 1; display: flex; gap: 8px;}
+		.-text {padding: 4px; border-radius: 4px 0 0 4px; background-color: var(--filter-bg-color); white-space: nowrap;}
+		.-select {margin: 0 16px 0 0; padding: 4px; border-radius: 0 4px 4px 0; border-left: none; flex: 1; display: flex; gap: 8px; background-color: var(--filter-bg-color);}
 		.-select>.-item {display: flex; flex-wrap: wrap; flex: 1;}
 		.-select>.-item>span {padding: 2px 0 2px 6px; margin: 1px 8px 1px 0; font-size: 0.85em; background-color: #eee; border-radius: 4px;}
 		.toolbar-report-filter-items {flex: 1;}
 	}
 
 	.-toolbar>.-group {
-		position: relative; height: 40px; margin: 0 0 9px 0; display: flex; border: 1px #ccc solid; border-bottom: 2px #dddddd solid; border-radius: 4px;
+		position: relative; height: 40px; margin: 0 0 9px 0; display: flex; background-color: var(--group-bg-color); border-bottom: 2px var(--group-border-color) solid; border-radius: 4px;
 
 		>* {display: block;}
 		.-content {padding: 8px;}
@@ -1043,16 +1134,16 @@
 			flex: 0 0 29px; margin: 0; padding: 0; text-align: center; font-size: 20px;z-index: 1;
 			align-content: center;
 			background-color: #fff;
-			&.-left {border-radius: 4px 0 0 4px; border-right: 1px #dddddd solid;}
+			&.-left {border-radius: 4px 0 0 4px; border-right: 1px var(--group-border-color) solid;}
 			&.-left:focus {outline: none;}
-			&.-right {right: 4px; border-left: 1px #dddddd solid; border-radius: 0 4px 4px 0; position: absolute; right: 0; height: 100%;}
+			&.-right {right: 4px; border-left: 1px var(--group-border-color) solid; border-radius: 0 4px 4px 0; position: absolute; right: 0; height: 100%;}
 			&.-right:focus {outline: none;}
 		}
 
 		>ul {
 			display: flex; flex-wrap: nowrap; margin: 0; padding: 0; position: relative; list-style-type: none;
 			>li {
-				flex: 0 0 90px; height: 100%; border-right: 1px #dddddd solid; position: relative; display: flex;  align-items: center;
+				flex: 0 0 90px; height: 100%; border-right: 1px var(--group-border-color) solid; position: relative; display: flex;  align-items: center;
 				.widget-dropbox {
 					height: 100%; flex: 1 0 100%; position: relative;
 					abbr {display: block; padding: 4px; white-space: nowrap;}

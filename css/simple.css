@@ -45,7 +45,7 @@
 	--card-bg-color: #383838;
 	--dropbox-bg-color: #5a5a5a;
 	.widget-form, .form {
-		--bg-color: #171717;
+		--bg-color: #666;
 		--require-border-color: #56473d;
 		--hover-bg-color: #2f2f2f;
 		--focus-bg-color: #2e2e2e;
@@ -1296,16 +1296,17 @@ $SCREENS
 			Change the following styles to modify the appearance of Colorbox.  They are
 			ordered & tabbed in a way that represents the nesting of the generated HTML.
 		*/
-		.cboxIframe {background-color: #fff;}
+		#colorbox {background-color: var(--bg-color);}
+		.cboxIframe {background-color: var(--bg-color);}
 		#cboxOverlay {background-color: #000; max-width: none !important;}
 		#colorbox {outline: 0; border-radius: 2px; border-radius: 10px;}
 		#cboxWrapper {border-radius: 2px;}
 		#cboxContent {margin-top: 48px; overflow: visible; border: none;}
 		#cboxContent .login {width: auto; margin: 0; border: none; background-color: transparent;}
 		#cboxError {padding: 50px; border: 1px solid #ccc;}
-		#cboxLoadedContent {padding: 0; overscroll-behavior-y: contain; background-color: var(--box-bg-color);}
+		#cboxLoadedContent {padding: 0; overscroll-behavior-y: contain;}
 		#cboxLoadingGraphic {background-image: url(https://softganz.com/library/img/loading.1.gif) no-repeat center center;}
-		#cboxLoadingOverlay {background-color: #fff;}
+		#cboxLoadingOverlay {background-color: var(--bg-color);}
 		#cboxTitle {position: absolute; top: -48px; left: 0px; color: #333; height: 48px; line-height: 48px; padding: 0; z-index: 0; background-color: var(--appbar-bg-color); box-sizing: border-box; width: 100%;}
 		#cboxCurrent {position: absolute; top: -22px; right: 205px; text-indent: -9999px; z-index: 2;}
 
