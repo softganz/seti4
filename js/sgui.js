@@ -2,13 +2,13 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-02-06
- * Version :: 64
+ * Modify  :: 2026-02-11
+ * Version :: 65
  */
 
 'use strict'
 
-let sgUiVersion = '4.00.21'
+let sgUiVersion = '4.00.22'
 let debugSG = false
 let defaultRelTarget = "#main"
 let sgBoxPageCount = 0
@@ -2477,7 +2477,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 
 			const waiting = document.createElement('div');
 			waiting.id = 'draw-report-waiting';
-			waiting.innerHTML = '<span style="text-align: center;"><div class="loader -rotate" style="width: 64px; height: 64px;"></div><br><br>กรุณารอสักครู่ กำลังประมวลผลข้อมูล</span>';
+			waiting.innerHTML = '<span class="draw-report-waiting" style="text-align: center;"><div class="loader -rotate" style="width: 64px; height: 64px;"></div><br><br>กรุณารอสักครู่ กำลังประมวลผลข้อมูล</span>';
 			waiting.style.display = 'flex';
 			waiting.style.position = 'absolute';
 			waiting.style.top = 0;
@@ -2486,7 +2486,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			waiting.style.right = 0;
 			waiting.style.alignItems = 'center';
 			waiting.style.justifyContent = 'center';
-			waiting.style.backgroundColor = '#FFFFFF';
+			waiting.style.backgroundColor = '#808080';
 			waiting.style.opacity = 0.9;
 			waiting.style.zIndex = 1000;
 
