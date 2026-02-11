@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-02-04
- * Version :: 66
+ * Modify  :: 2026-02-11
+ * Version :: 67
  *
  * @param Array $args
  * @return Widget
@@ -551,6 +551,7 @@ class Nav extends Widget {
 	function __construct($args = []) {
 		parent::__construct($args);
 
+		if ($args['type']) $this->class .= ' -type-'.$args['type'];
 		if ($args['direction']) $this->class .= ' -'.$args['direction'];
 	}
 
