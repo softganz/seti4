@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-02-03
- * Version :: 25
+ * Modify  :: 2026-02-11
+ * Version :: 26
  */
 
 global $R;
@@ -221,7 +221,15 @@ $R->mysql = (Object) [
 ];
 
 // Load config variable from table
-SgCore::loadConfig(cfg_db());
+try {
+	SgCore::loadConfig(cfg_db());
+} catch (Exception $exception) {
+	die(
+		showError([
+			'Title' => 'Oops! An Configuration Error Occurred',
+		])
+	);
+}
 
 // Ban request from IP and hostname
 if (banRequest(getenv('REMOTE_ADDR'), gethostbyaddr(getenv('REMOTE_ADDR')))) {

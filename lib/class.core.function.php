@@ -3,8 +3,8 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-02-04
- * Version :: 33
+ * Modify  :: 2026-02-11
+ * Version :: 34
  */
 
 /* Core Function */
@@ -312,10 +312,18 @@ function cfg_db($name = NULL, $value = NULL) {
 		$result = $value;
 		cfg($name,$value);
 	} else if (isset($name)) {
-		$rs = mydb::select('SELECT `name`, `value` FROM %variable% WHERE name = :name LIMIT 1; -- {reset: true}',':name',$name);
+		$rs = DB::select([
+			'SELECT `name`, `value` FROM %variable% WHERE name = :name LIMIT 1;',
+			'var' => [':name' => $name]
+		]);
 		$result = ($rs->_num_rows) ? __is_serialized($rs->value)?unserialize($rs->value) : $rs->value : NULL;
 	} else {
-		$dbs = DB::select(['SELECT `name`, `value` FROM %variable%']);
+		try {
+			$dbs = DB::select(['SELECT `name`, `value` FROM %variable%']);
+		} catch (Exception $exception) {
+			throw new Exception($exception->getMessage(), _HTTP_ERROR_NOT_IMPLEMENTED);
+		}
+
 		$conf = [];
 		if (isset($dbs->items) && $dbs->items) {
 			foreach ($dbs->items as $item) {
