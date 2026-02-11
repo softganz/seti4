@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-01-24
- * Version :: 37
+ * Modify  :: 2026-02-11
+ * Version :: 38
  *
  * @param Array $args
  * @return Object
@@ -26,6 +26,7 @@ class DataModel {
 
 class SetDataModel extends DataModel {
 	function __construct($args) {
+		if (is_string($args)) $args = explode(',', $args);
 		foreach ($args as $key => $value) $this->{$key} = $value;
 	}
 }
