@@ -1,14 +1,15 @@
 <?php
 /**
-* User    :: New User Register
-* Created :: 2024-02-14
-* Modify  :: 2024-05-11
-* Version :: 4
-*
-* @return Widget
-*
-* @usage user/register
-*/
+ * User    :: New User Register
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2024-02-14
+ * Modify  :: 2026-01-18
+ * Version :: 5
+ *
+ * @return Widget
+ *
+ * @usage user/register
+ */
 
 class UserRegister extends Page {
 	var $confirm;
@@ -126,7 +127,7 @@ class UserRegister extends Page {
 	}
 
 	function verify() {
-		return Poison::getDayKey(5,true);
+		return (Object) ['text' => Poison::getDayKey(5,true)];
 	}
 
 	function save() {

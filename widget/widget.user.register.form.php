@@ -1,16 +1,17 @@
 <?php
 /**
-* User    :: Register Form
-* Created :: 2019-05-06
-* Modify  :: 2025-10-10
-* Version :: 11
-*
-* @param Object $register
-* @return Widget
-*
-* @usage import('widget:user.register.form.php')
-* @usage new UserRegisterFormWidget([])
-*/
+ * User    :: Register Form Widget
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2019-05-06
+ * Modify  :: 2026-02-18
+ * Version :: 12
+ *
+ * @param Object $register
+ * @return Widget
+ *
+ * @usage import('widget:user.register.form.php')
+ * @usage new UserRegisterFormWidget([])
+ */
 
 class UserRegisterFormWidget extends Widget {
 	protected $captchaKey;
@@ -515,7 +516,7 @@ class UserRegisterFormWidget extends Widget {
 								
 
 								const data = await response.json();
-								$("#spamword").text(data)
+								$("#spamword").text(data.text)
 								// return data.text || false;
 									
 							} catch (error) {
