@@ -1387,6 +1387,7 @@ $SCREENS
 	#colorbox.-transparent {
 		background-color: transparent;
 		.box-page {background-color: transparent; padding-left: 0; padding-right: 0;}
+		.widget-appbar {border-radius: 8px; overflow: clip;}
 		.widget-card {border-radius: 8px;}
 		.widget-table:last-child {border-radius: 8px;}
 		.widget-table tr:last-child>td {border-bottom: none;}
