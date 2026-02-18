@@ -2,8 +2,8 @@
 /**
 * Widget  :: Paper List Widget
 * Created :: 2023-07-25
-* Modify  :: 2023-07-25
-* Version :: 1
+* Modify  :: 2026-02-17
+* Version :: 2
 *
 * @param Array $args
 * @return Widget
@@ -37,30 +37,36 @@ class PaperListWidget extends \Widget {
 			'children' => array_map(
 				function($topic) {
 					return new \Card([
-						'class' => 'topic-list -style-div',
 						'children' => [
 							// Show title
-							new \ListTile(['title' => '<a href="'.url('paper/'.$topic->nodeId).'">'.$topic->title.'</a>', 'titleTag' => 'h2']),
+							new \Header(['title' => '<a href="'.url('paper/'.$topic->nodeId).'">'.$topic->title.'</a>', 'titleTag' => 'h2', 'class' => '-title']),
 
 							// Show timestamp
 							new \Container([
-								'class' => 'timestamp'.($topic->sticky == _CATEGORY_STICKY?' sticky':''),
+								'class' => '-timestamp'.($topic->sticky == _CATEGORY_STICKY?' sticky':''),
 								'child' => tr('Submitted by').' '.$topic->ownerName.' on '.sg_date($topic->created,cfg('dateformat'))
 									. ($topic->tag ? ' Tags: '.$topic->tag : ''),
 							]), // Container
 
+							// Show photo
+							new \Container([
+								'class' => '-photo',
+								'children' => [
+									$topic->photo->exists ? '<a href="'.url('paper/'.$topic->nodeId).'"><img class="-image -photo-'.($topic->photo->width > $topic->photo->height ? 'wide' : 'tall').'"'.' src="'.$topic->photo->url.'" alt="'.htmlspecialchars($topic->photo->title).'" /></a>' : NULL,
+								], // children
+							]), // Container
+
 							// Show content
 							new \Container([
-								'class' => 'summary',
+								'class' => '-summary',
 								'children' => [
-									$topic->photo->exists ? '<a href="'.url('paper/'.$topic->nodeId).'"><img class="image photo-'.($topic->photo->size->width > $topic->photo->size->height ? 'wide' : 'tall').'"'.' src="'.$topic->photo->url.'" alt="'.htmlspecialchars($topic->photo->title).'" /></a>' : NULL,
 									preg_match('/<p>/',$topic->summary)?$topic->summary:'<p>'.$topic->summary.'</p>',
 								], // children
 							]), // Container
 
 							// Show footer
 							new \Container([
-								'class' => 'footer',
+								'class' => '-footer',
 								'children' => [
 									$topic->view.' reads | ',
 									($topic->reply ? '<a href="'.url('paper/'.$topic->nodeId).'#comment">'.$topic->reply.' comments</a>' : '<a href="'.url('paper/'.$topic->nodeId).'#comment">'.tr('add new comment').'</a>'),
@@ -69,6 +75,7 @@ class PaperListWidget extends \Widget {
 								], // children
 							]), // Container
 
+							// new \DebugMsg($topic->photo),
 						isset($GLOBALS['ad']->topic_list) && ++$adsCount <= 3 ? '<div id="ad-topic_list" class="ads">'.$GLOBALS['ad']->topic_list.'</div>' : NULL,
 
 						], // children

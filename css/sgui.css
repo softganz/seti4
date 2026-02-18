@@ -2,8 +2,8 @@
  * SoftGanz Ui CSS
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-02-03
- * Version :: 36
+ * Modify  :: 2026-02-18
+ * Version :: 37
  */
 
 @charset "UTF-8";
@@ -97,6 +97,10 @@
 	--disabled-text-color: #a0a0a0;
 	--disabled-bg-color: #d0d0d0;
 	
+	.theme-dark & {
+		--link-text-color: var(--font-color);
+	}
+
 	box-sizing: border-box;
 	display: inline-flex;
 	flex-wrap: nowrap;
@@ -197,7 +201,7 @@
 	&.-hidden {display: none;}
 	&:has(:only-child) {padding: 6px;}
 	&:has(.-desc) {border-radius: 128px;}
-	&.-fill {width: 100%; padding-left: 0; padding-right: 0; justify-content: center;}
+	&.-fill {width: 100%; justify-content: center;}
 	&.-wrap {white-space: normal;}
 	&.-disabled {
 		color: var(--disabled-text-color); background-color: var(--disabled-bg-color);
@@ -412,14 +416,18 @@
 
 /* widget-header */
 .widget-header {
+	--header-text-color: var(--font-color);
+	--header-bg-color: var(--card-bg-color);
 	display: flex; flex-wrap: wrap; justify-content: space-between; padding: 8px 0; align-items: center;
-	>.-title {
+	background-color: var(--header-bg-color); color: var(--header-text-color);
+	> .-title {
 		flex: 1;
 		>* {display: block;}
-		>.-title-text, >.-title-text>a {font-weight: bold;}
+		>.-title-text, >.-title-text>a {font-weight: bold; color: var(--header-text-color)}
 		>.-subtitle-text {font-size: 0.85em;}
 	}
-	>.-leading {padding-right: 8px;}
+	> .-timestamp
+	> .-leading {padding-right: 8px;}
 }
 
 /* widget-listtile */
@@ -1230,7 +1238,26 @@
 }
 
 
-
+.widget-paperlist {
+	display: flex; flex-wrap: wrap; gap: 16px;
+	margin: 8px;
+	> * {
+		margin: 0;
+		border: none; box-shadow: none; border-radius: 16px; overflow: hidden;
+		display: flex; flex-wrap: wrap; flex: 0 0 100%;
+		> * {flex: 1 1 100%;}
+		> .-photo {
+			overflow: hidden;
+			.-image {width: 100%; height: auto;}
+		}
+		> .-title {
+			padding: 0 16px; display: block;
+		}
+		> .-timestamp {font-size: 90%; padding: 8px 16px; font-style: italic;}
+		> .-summary {padding: 0 16px;}
+		> .-footer {padding: 16px; text-align: right;}
+	}
+}
 
 
 
