@@ -1,16 +1,17 @@
 <?php
 /**
-* Schema  :: Schema Model
-* Created :: 2022-09-23
-* Modify 	:: 2022-09-23
-* Version :: 2
-*
-* @param Array $args
-* @return Object
-*
-* @usage new SchemaModel([])
-* @usage SchemaModel::function($conditions, $options)
-*/
+ * Schema  :: Schema Model
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-09-23
+ * Modify  :: 2026-02-18
+ * Version :: 3
+ *
+ * @param Array $args
+ * @return Object
+ *
+ * @usage new SchemaModel([])
+ * @usage SchemaModel::function($conditions, $options)
+ */
 
 class SchemaModel {
 	var $schemaName;
@@ -28,7 +29,7 @@ class SchemaModel {
 		return json_decode(R::Asset($schemaName));
 	}
 
-	public static function indicator($section) {
+	public function indicator($section) {
 		foreach ($this->body as $metrix) {
 			foreach ($metrix->items as $metrinItem) {
 				foreach ($metrinItem->indicator as $indicator) {
