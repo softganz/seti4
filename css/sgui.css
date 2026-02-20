@@ -2,8 +2,8 @@
  * SoftGanz Ui CSS
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-02-18
- * Version :: 37
+ * Modify  :: 2026-02-20
+ * Version :: 38
  */
 
 @charset "UTF-8";
@@ -418,7 +418,8 @@
 .widget-header {
 	--header-text-color: var(--font-color);
 	--header-bg-color: var(--card-bg-color);
-	display: flex; flex-wrap: wrap; justify-content: space-between; padding: 8px 0; align-items: center;
+	display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+	margin: 8px 0; padding: 8px 0;
 	background-color: var(--header-bg-color); color: var(--header-text-color);
 	> .-title {
 		flex: 1;
@@ -426,7 +427,6 @@
 		>.-title-text, >.-title-text>a {font-weight: bold; color: var(--header-text-color)}
 		>.-subtitle-text {font-size: 0.85em;}
 	}
-	> .-timestamp
 	> .-leading {padding-right: 8px;}
 }
 
