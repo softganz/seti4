@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-02-11
- * Version :: 38
+ * Modify  :: 2026-02-20
+ * Version :: 39
  *
  * @param Array $args
  * @return Object
@@ -141,6 +141,7 @@ class DB {
 	function __construct($args = NULL) {
 		$args = is_string($args) ? [0 => $args] : (Array) $args;
 
+		// Connect to database
 		if (isset($args['connection']) && $args['connection']) {
 			$this->createDbConnection($args['connection']);
 		} else if (function_exists('R')) {
@@ -149,6 +150,7 @@ class DB {
 		}
 
 		if (!$this->status) return;
+
 		$this->srcStmt = isset($args[0]) ? trim($args[0]) : NULL;
 		unset($args[0]);
 		$this->args = $args;
@@ -576,6 +578,14 @@ class DB {
 	}
 
 	private function setWhere() {
+		// If %WHERE% exist in args, convert to where with key %WHERE% and value is array of where item
+		foreach ($this->args as $argKey => $argValue) {
+			if (preg_match('/^%WHERE.*%$/', $argKey)) {
+				$this->args['where'][$argKey] = $argValue;
+				unset($this->args[$argKey]);
+			}
+		}
+
 		if (empty($this->args['where'])) return;
 
 		foreach ($this->args['where'] as $whereKey => $whereGroup) {
