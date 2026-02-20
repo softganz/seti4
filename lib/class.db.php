@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
  * Modify  :: 2026-02-20
- * Version :: 39
+ * Version :: 40
  *
  * @param Array $args
  * @return Object
@@ -291,6 +291,12 @@ class DB {
 				$queryError
 			);
 
+			// Show debug message if debug mode is on, otherwise return exception
+			if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) {
+				debugMsg($this->debugMsg());
+				return;
+			}
+
 			return new DbException(
 				$errorMsg,
 				$errorCode,
@@ -299,9 +305,12 @@ class DB {
 					'query' => $queryStmt
 				]
 			);
+		}		
+
+		// Show debug message if debug mode is on
+		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) {
+			debugMsg($this->debugMsg());
 		}
-		
-		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
 	}
 
 	function queryResult() {
@@ -335,6 +344,12 @@ class DB {
 				$queryStmt,
 				$queryError
 			);
+
+			// Show debug message if debug mode is on, otherwise return exception
+			if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) {
+				debugMsg($this->debugMsg());
+				return;
+			}
 
 			return new DbException(
 				$errorMsg,
