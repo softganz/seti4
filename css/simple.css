@@ -1213,6 +1213,9 @@ $SCREENS
 			>.form-group>*:first-child {border-radius: 32px 0 0 32px;}
 			>.form-group>*:last-child {border-radius: 0 32px 32px 0;}
 		}
+		&.-full-width {
+			.form-text, .form-select {max-width: unset;}
+		}
 	}
 
 	.admin-panel {
