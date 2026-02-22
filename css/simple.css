@@ -465,7 +465,9 @@ $SCREENS
 	.-hover-parent {
 		position: relative;
 		.-hover {
-			visibility: hidden; width: 0; height: 0; position: absolute; z-index: 1; border-radius: 8px;
+			visibility: hidden; width: 0; height: 0;
+			position: absolute; z-index: 1; top: 0; right: 0;
+			border-radius: 8px;
 			padding: 4px;
 			background-color: #ffffff; opacity: 0.85;
 			z-index: 1001;
@@ -487,6 +489,7 @@ $SCREENS
 
 	}
 	tr:hover>td.-hover-parent>.-hover {visibility: visible; top: 4px; right: 4px; width: auto; height: auto;}
+	.widget-listtile.-hover-parent:hover .-hover {visibility: visible; width: auto; height: auto;}
 	.ui-card.-hover-parent:hover .-hover {visibility: visible; width: auto; height: auto;}
 	.ui-menu.-hover-parent:hover .-hover {visibility: visible; top: 0; right: 0; width: auto; height: auto;}
 
