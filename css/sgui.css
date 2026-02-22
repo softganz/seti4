@@ -2,8 +2,8 @@
  * SoftGanz Ui CSS
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-02-20
- * Version :: 38
+ * Modify  :: 2026-02-22
+ * Version :: 39
  */
 
 @charset "UTF-8";
@@ -49,7 +49,7 @@
 .-spacer {flex: 1 !important;}
 
 [class^="widget-"] {
-	* {box-sizing: border-box;}
+	box-sizing: border-box;
 	&.-main-axis-start {justify-content: flex-start;}
 	&.-main-axis-center {justify-content: center;}
 	&.-main-axis-end {justify-content: flex-end;}
@@ -101,25 +101,15 @@
 		--link-text-color: var(--font-color);
 	}
 
-	box-sizing: border-box;
-	display: inline-flex;
-	flex-wrap: nowrap;
-	margin: 0px;
-	padding: var(--button-padding);
-	min-height: var(--button-height);
+	display: inline-flex; flex-wrap: nowrap; align-items: center; gap: 4px;
+	margin: 0px; padding: var(--button-padding);
 	font-weight: normal;
-	border: none;
-	border-radius: 36px;
+	border: none; box-shadow: none; border-radius: 36px;
 	cursor: pointer;
-	align-items: center;
-	box-shadow: none;
-
+	
 	>.-desc {flex: 0 0 100%; text-align: center; font-size: 1.4rem;}
-	>.icon {margin: 0;}
-	>.icon:only-child {margin: 0;}
-	>span {padding: 0 6px; white-space: nowrap;}
+	>span {padding: 6px; white-space: nowrap;}
 	>span.-hidden {display: none;}
-	>.icon+span {padding-left: 4px;}
 	>.icon-group {padding: 0;}
 	>span>em {font-weight: normal; font-size: 1.4rem; font-style: italic; display: block;}
 
@@ -506,10 +496,11 @@
 		--nav-btn-hover-color: #676767;
 	}
 
-	flex: 1 0 100%; display: flex; margin: 0 0 2px 0; padding: 0; flex-wrap: wrap; align-items: center; position: relative; -ms-overflow-style: none; scrollbar-width: none;
+	margin: 0; padding: 0;
+	flex: 1 0 100%; display: flex; flex-wrap: wrap; align-items: center; position: relative; -ms-overflow-style: none; scrollbar-width: none;
 	color: var(--text-color);
-	.icon {color: var(--icon-color);}
 
+	.icon {color: var(--icon-color);}
 	&::-webkit-scrollbar {display: none; width: 0 !important; height: 0 !important; background-color: transparent;}
 	&.-report>.-nav {background-color: transparent;}
 
@@ -529,11 +520,15 @@
 	}
 
 	>.-trailing {
-		height: 4.8rem; padding-right: 8px; display: flex; align-items: center; color: var(--trailing-text-color); background-color: var(--trailing-bg-color);
-		.widget-row {gap: 8px;}
-		.widget-row>*>a {color: var(--trailing-btn-text-color); background-color: var(--trailing-btn-bg-color);}
-		.widget-row>*>a:hover {background-color: var(--trailing-btn-bg-color-hover);}
-		.widget-row>*>a>.icon {color: var(--trailing-text-color);}
+		height: 4.8rem; padding-right: 8px; display: flex; align-items: center;
+		color: var(--trailing-text-color); background-color: var(--trailing-bg-color);
+		.widget-row {
+			gap: 8px;
+			align-items: center;
+			>*>a {height: 3.6rem; color: var(--trailing-btn-text-color); background-color: var(--trailing-btn-bg-color);}
+			>*>a:hover {background-color: var(--trailing-btn-bg-color-hover);}
+			>*>a>.icon {color: var(--trailing-text-color);}
+		}
 		.widget-nav>ul {align-items: center;}
 		.widget-dropbox>a {color: var(--trailing-text-color); background-color: var(--trailing-btn-bg-color); box-shadow: none;}
 		.widget-dropbox>a:hover {background-color: var(--trailing-btn-bg-color-hover);}
@@ -1037,9 +1032,10 @@
 				>li {
 					padding: 0;
 					>a {
-						padding: 4px 24px 4px 16px; white-space: nowrap; display: flex; flex-wrap: nowrap; color: #000;
+						padding: 4px 24px 4px 16px; white-space: nowrap;
+						display: flex; flex-wrap: nowrap; color: #000;
 						border-radius: 0;
-						>span {white-space: nowrap;}
+						>.-label {white-space: nowrap;}
 						>.icon {margin-right: 4px; color: #000}
 						&:hover {background-color: #aeaeae;}
 					}

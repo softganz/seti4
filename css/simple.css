@@ -8,8 +8,8 @@
  * Author      :: Little Bear<softganz@gmail.com>
  * Author URI  :: https://softganz.com
  * Created     :: 2018-10-15
- * Last Modify :: 2026-02-03
- * Version     :: 21
+ * Last Modify :: 2026-02-22
+ * Version     :: 22
  */
 
 @import url(reset.css);
@@ -462,18 +462,33 @@ $SCREENS
 
 
 	/* Hover DOM controle with -hover-parent */
-	.-hover-parent {position: relative;}
-	.-hover {visibility: hidden; position: absolute; z-index: 1; border-radius: 8px;}
-	.-hover.-center-right {top: calc( 50% - 12px); right: 4px;}
-	.-hover.-top-right {top: 4px; right: 4px;}
-	.-hover.-top-left {top: 4px; left: 4px;}
-	.-hover.-bottom-right {bottom: 4px; right: 4px;}
-	.-hover.-bottom-left {bottom: 4px; left: 4px;}
-		.-hover-parent:hover>.-hover {visibility: visible;}
-		.ui-card.-hover-parent:hover .-hover {visibility: visible;}
-		.ui-menu.-hover-parent:hover .-hover {visibility: visible; top: 0; right: 0;}
-		tr:hover>td.-hover-parent>.-hover {padding: 4px; visibility: visible; top: 4px; right: 4px; background-color: #ffffff; opacity: 0.85;}
+	.-hover-parent {
+		position: relative;
+		.-hover {
+			visibility: hidden; width: 0; height: 0; position: absolute; z-index: 1; border-radius: 8px;
+			padding: 4px;
+			background-color: #ffffff; opacity: 0.85;
+			z-index: 1001;
+			&.-center-right {top: calc( 50% - 12px); right: 4px;}
+			&.-top-right {top: 4px; right: 4px;}
+			&.-top-left {top: 4px; left: 4px;}
+			&.-bottom-right {bottom: 4px; right: 4px;}
+			&.-bottom-left {bottom: 4px; left: 4px;}
+		}
+		/* tr:hover .-hover {visibility: visible; width: auto; height: auto;} */
+		/* tr:hover & {
+			font-weight: bold;
+			a {color: red;}
+			td {color: green;}
+			>td>.-hover {color: red;}
+			.-hover-parent {color: blue;}
+			> td.-hover-parent>.-hover {padding: 4px; visibility: visible; top: 4px; right: 4px; background-color: #ffffff; opacity: 0.85; width: auto; height: auto;}
+		} */
 
+	}
+	tr:hover>td.-hover-parent>.-hover {visibility: visible; top: 4px; right: 4px; width: auto; height: auto;}
+	.ui-card.-hover-parent:hover .-hover {visibility: visible; width: auto; height: auto;}
+	.ui-menu.-hover-parent:hover .-hover {visibility: visible; top: 0; right: 0; width: auto; height: auto;}
 
 	button, .button {font-size: 1em; color: #050505; margin-right: 20px; padding: 3px 10px; border-radius: 2px; display: inline-block; background-color: #f0f0f0; box-shadow: none; border:none;}
 	button:hover, .button:hover {background-color: #e5e5e5;}
@@ -1314,7 +1329,6 @@ $SCREENS
 		#cboxCurrent {position: absolute; top: -22px; right: 205px; text-indent: -9999px; z-index: 2;}
 
 	#cboxLoadedContent {
-		.-hover {z-index: 1001;}
 		.header {
 			>.nav.-back {display: none;}
 			h2:not(.-text),
