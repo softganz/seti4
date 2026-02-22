@@ -2,8 +2,8 @@
 /**
 * Widget  :: Node Share
 * Created :: 2021-12-17
-* Modify 	:: 2025-08-18
-* Version :: 3
+* Modify 	:: 2026-02-22
+* Version :: 4
 *
 * @param Array $args
 * @return Widget
@@ -59,7 +59,7 @@ class NodeShareWidget extends Widget {
 				]) : NULL, // Card
 
 				// Add member form and member list
-				$this->shareMember ? new Card([
+				new Card([
 					'class' => 'widget-share-member-list',
 					'style' => 'margin: 8px;',
 					'children' => [
@@ -68,7 +68,7 @@ class NodeShareWidget extends Widget {
 							'title' => 'Share with people',
 						]), // ListTile
 
-						new Form([
+						$this->shareMember ? new Form([
 							'action' => $this->shareMember['action'],
 							'class' => 'sg-form -sg-flex',
 							'rel' => 'notify',
@@ -96,12 +96,12 @@ class NodeShareWidget extends Widget {
 									'container' => '{style: "flex: 1", class: "-group"}',
 								],
 							], // children
-						]), // Form
+						]) : NULL, // Form
 
 						// Share member list
 						$this->members,
 					], // children
-				]) : NULL, // Card
+				]), // Card
 
 			], // children
 		]);
