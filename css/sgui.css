@@ -342,8 +342,8 @@
 			>*:first-child {border-radius: 3px 0 0 3px;}
 			>*:last-child {border-radius: 0 3px 3px 0;}
 			>input {flex: 1;}
-			>input:hover {box-shadow: none;}
-			>input:focus {box-shadow: none;}
+			>input:hover {box-shadow: none; border: none;}
+			>input:focus {box-shadow: none; border: none;}
 			>*>.form-select {height: 36px;}
 			>*>span>* {height: 100%; border: none; box-shadow: none;}
 			>*>span>.btn {padding: 0; display: block; border-radius: 0;}
