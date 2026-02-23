@@ -3,8 +3,8 @@
  * Model   :: User Information
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-07-22
- * Modify  :: 2026-01-12
- * Version :: 23
+ * Modify  :: 2026-02-23
+ * Version :: 24
  *
  * @param Int $userId
  * @return Object
@@ -186,6 +186,40 @@ class UserModel {
 		$result->process[] = 'UserModel::create() => create complete';
 
 		return $result;
+	}
+
+	public static function getUsers($condition = []) {
+		$condition = (Object) array_replace(
+			[
+				'query' => NULL,
+				'username' => NULL,
+				'email' => NULL,
+				'status' => 'all', // all,enable,disable,block,waiting,locked
+				'option' => [
+					'item' => NULL,
+				],
+			],
+			(Array) $condition
+		);
+
+		$condition->option = (Object) $condition->option;
+
+		return DB::select([
+			'SELECT `user`.`uid` AS `userId`, `user`.`username`, `user`.`name`, `user`.`email`, `user`.`status`
+			FROM %users% `user`
+			%WHERE%
+			ORDER BY CONVERT(`user`.`name` USING tis620) ASC
+			$LIMIT$',
+			'%WHERE%' => [
+				$condition->status && $condition->status != 'all' ? ['`user`.`status` = :status', ':status' => $condition->status] : NULL,
+				$condition->queryText ? ['(`user`.`username` LIKE :queryText OR `user`.`name` LIKE :queryText  OR `user`.`email` LIKE :queryText)', ':queryText' => '%'.$condition->queryText.'%'] : NULL,
+				$condition->username ? ['`user`.`username` LIKE :username', ':username' => $condition->username.'%'] : NULL,
+				$condition->email ? ['`user`.`email` LIKE :email', ':email' => $condition->email.'%'] : NULL,
+			],
+			'var' => [
+				'$LIMIT$' => $condition->option->item ? 'LIMIT '.$condition->option->item : '',
+			],
+		]);
 	}
 
 	//TODO: Change value in table cache/session
