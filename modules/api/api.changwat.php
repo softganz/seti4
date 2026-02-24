@@ -1,14 +1,14 @@
 <?php
 /**
-* API     :: Changwat API
-* Created :: 2024-01-22
-* Modify  :: 2024-01-22
-* Version :: 1
-*
-* @return Array
-*
-* @usage api/changwat?areaFund=areaId
-*/
+ * API     :: Changwat API
+ * Created :: 2024-01-22
+ * Modify  :: 2026-02-24
+ * Version :: 2
+ *
+ * @return Array
+ *
+ * @usage api/changwat?areaFund=areaId
+ */
 
 use Softganz\DB;
 
@@ -24,24 +24,22 @@ class ChangwatApi extends PageApi {
 	function build() {
 		$result = [];
 
-		// if (empty($this->changwat)) return $result;
-
-		$dbs = DB::select([
-			'SELECT `provId`, `provName`
-				FROM %co_province% cop
-				%WHERE%
-				ORDER BY CONVERT(`provName` USING tis620) ASC',
-			'where' => [
-				'%WHERE%' => [
-					['RIGHT(`provname`,1) != "*"'],
-					'areaFund' => $this->areaFund ? ['`cop`.`provId` IN (SELECT `changwat` FROM %project_fund% WHERE `areaId` = :areaId)', ':areaId' => $this->areaFund] : NULL,
-				]
-			],
-			// [
-			// 	':q' => '%'.$this->changwat.'%',
-			// 	':provid' => $this->changwat
-			// ]
-		]);
+		try {
+			$dbs = DB::select([
+				'SELECT `provId`, `provName`
+					FROM %co_province% cop
+					%WHERE%
+					ORDER BY CONVERT(`provName` USING tis620) ASC',
+				'where' => [
+					'%WHERE%' => [
+						['RIGHT(`provname`,1) != "*"'],
+						'areaFund' => $this->areaFund ? ['`cop`.`provId` IN (SELECT `changwat` FROM %project_fund% WHERE `areaId` = :areaId)', ':areaId' => $this->areaFund] : NULL,
+					]
+				],
+			]);
+		} catch (Exception $e) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'Invalid areaFund parameter.');
+		}
 
 		foreach ($dbs->items as $rs) {
 			$label = $rs->provName;
