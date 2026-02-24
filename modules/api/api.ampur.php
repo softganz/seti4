@@ -1,14 +1,15 @@
 <?php
 /**
-* API     :: Ampur API
-* Created :: 2022-11-19
-* Modify  :: 2022-11-19
-* Version :: 2
-*
-* @return Array
-*
-* @usage api/ampur?changwat=changwatId
-*/
+ * API     :: Ampur API
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-11-19
+ * Modify  :: 2026-02-24
+ * Version :: 3
+ *
+ * @return Array
+ *
+ * @usage api/ampur?changwat=changwatId
+ */
 
 class AmpurApi extends PageApi {
 	var $changwat;
@@ -42,7 +43,7 @@ class AmpurApi extends PageApi {
 			$label = is_numeric($this->changwat) ? htmlspecialchars($rs->distname) : htmlspecialchars(' อำเภอ'.$rs->distname.' จังหวัด'.$rs->provname);
 
 			$result[] = [
-				'value' => $rs->subdistid,
+				'value' => $rs->distid,
 				'ampur' => substr($rs->distid, -2),
 				'label' => $label
 			];
