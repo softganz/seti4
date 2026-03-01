@@ -4,6 +4,7 @@
 <ul>
 	<li><a href="#info">info</a></li>
 	<li><a href="#get">get</a></li>
+	<li><a href="#getProposals">getProposals</a></li>
 	<li><a href="#getProblem">getProblem</a></li>
 	<li><a href="#getObjective">getObjective</a></li>
 	<li><a href="#getBigData">getBigData</a></li>
@@ -32,5 +33,18 @@
 	Parameter:
 	Array $args
 
+	Result:
+</pre>
+
+<h3 id="getProposals">ProjectProposalModel::getProposals($condition)</h3>
+<pre>
+	Parameter:
+	Array $condition
+		userId: id, "member"
+		option
+			order: "id"
+			sort: "DESC"
+			item: 100
+			debug: false
 	Result:
 </pre>
