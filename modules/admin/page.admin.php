@@ -3,8 +3,8 @@
  * Admin   :: Main Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2016-11-08
- * Modify  :: 2026-01-13
- * Version :: 5
+ * Modify  :: 2026-03-01
+ * Version :: 6
  *
  * @return Widget
  *
@@ -28,7 +28,11 @@ class Admin extends Page {
 			// 'help' => ''
 		];
 
-		return new Scaffold([
+		if (is_string(cfg('db')) && preg_match('/\/([a-zA-Z_]+)$/', cfg('db'), $out)) {
+			$databaseName = $out[1];
+		}
+
+			return new Scaffold([
 			'appBar' => new AdminAppBarWidget(),
 			'body' => new Widget([
 				'children' => [
@@ -36,7 +40,7 @@ class Admin extends Page {
 
 					'<p>Core folder <b>'.cfg('core.version').'@'.cfg('core.folder').'</b></p>',
 					'<p>PHP version <b>'.phpversion().'</b></p>',
-					'<p>MariaDB version <b>'.R('DB')->version.'</b></p>',
+					'<p>MariaDB version <b>'.R('DB')->version.'@'.$databaseName.'</b></p>',
 					'<p><em>Today is <strong>'.date('Y-m-d H:i:s').'</strong> and server timezone offset is <strong>'.cfg('server.timezone.offset').' hours</strong> so datetime to use by program is <strong>????-??-??</strong></em></p>',
 					(cfg('version.install') < cfg('core.version.install')?'<p>New version was release. Please <a href="'.url('admin/site/upgrade').'">upgrade database table</a>.</p>':''),
 
