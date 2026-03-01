@@ -1,16 +1,17 @@
 <?php
 /**
-* Calendar:: Calendar Model
-* Created :: 2023-01-15
-* Modify  :: 2025-11-24
-* Version :: 3
-*
-* @param Array $args
-* @return Object
-*
-* @usage new CalendarModel([])
-* @usage CalendarModel::function($conditions, $options)
-*/
+ * Calendar:: Calendar Model
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2023-01-15
+ * Modify  :: 2026-03-01
+ * Version :: 4
+ *
+ * @param Array $args
+ * @return Object
+ *
+ * @usage new CalendarModel([])
+ * @usage CalendarModel::function($conditions, $options)
+ */
 
 use Softganz\DB;
 
@@ -146,7 +147,7 @@ class CalendarModel {
 
 		if ($args->callFrom === 'project') {
 			$joins[] = 'LEFT JOIN %project_tr% `activity` ON `activity`.`formId` = "info" AND `activity`.`part` = "activity" AND `activity`.`calId` = `c`.`id`';
-			mydb::where('`activity`.`tagName` IS NULL OR `activity`.`tagName` != "group"');
+			mydb::where('(`activity`.`tagName` IS NULL OR `activity`.`tagName` != "group")');
 			$fields[] = '`activity`.`tagName`';
 		}
 
