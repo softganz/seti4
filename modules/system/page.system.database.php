@@ -3,8 +3,8 @@
  * System  :: Database Field In All Table Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2026-02-08
- * Modify  :: 2026-02-08
- * Version :: 1
+ * Modify  :: 2026-03-02
+ * Version :: 2
  *
  * @return Widget
  *
@@ -41,6 +41,7 @@ class SystemDatabase extends Page {
 			'appBar' => new AppBar([
 				'title' => 'System Data In All Table',
 				'leading' => new Icon('database'),
+				'boxHeader' => true,
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
