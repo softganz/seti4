@@ -2,8 +2,8 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-02-11
- * Version :: 65
+ * Modify  :: 2026-03-02
+ * Version :: 66
  */
 
 'use strict'
@@ -968,7 +968,7 @@ $(document).on('submit','form[data-confirm]',function(ele) {
 		backgroundDismiss: false,
 		escapeKey: 'Cancel',
 		scrollToPreviousElement: false,
-		boxWidth: '300px',
+		boxWidth: $this.data('confirm-width') || '80%',
 		useBootstrap: false,
 		theme: 'material',
 		buttons: {
@@ -1380,7 +1380,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 			},
 			data: function(value, settings) {
 				if ($inlineField.data('data')) return $inlineField.data('data');
-				else if ($inlineField.data('value') != undefined) return $inlineField.data('value');
+				else if ($inlineField.attr('data-value') != undefined) return $inlineField.attr('data-value');
 				else if (value == '...') return '';
 				return value;
 			},
@@ -1498,7 +1498,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 				para[inputName] = value;
 			}
 			if (settings.var) para[settings.var] = para.value
-			$inlineField.data('value', para.value)
+			$inlineField.attr('data-value', para.value); // would update the actual HTML data-value attribute in the DOM, cannot use jQuery.data()
 
 			if (debug) para.debug = 'inline';
 
@@ -1530,13 +1530,10 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					if (debug) data.msg = tempData
 				}
 
-				//if (data == '' || data == '<p>&nbsp;</p>')
-				//	data = '...';
-
 				if (returnType == 'refresh') {
 					window.location = window.location
 				} else if (inputType == 'autocomplete') {
-					$inlineField.data('value',para.value)
+					$inlineField.attr('data-value', data.value)
 					$inlineField.find('.-for-input').html(data.value);
 				} else if (inputType == 'radio') {
 				} else if (inputType == 'checkbox') {
@@ -1549,13 +1546,7 @@ $(document).on('submit', 'form.sg-form', function(event) {
 					}
 					$inlineField.find('.-for-input').html(selectValue)
 				} else {
-					// console.log('REPLACE VALUE = ',data.value)
-					// console.log($this)
-					// $this.html('<span>'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
-
 					$inlineField.find('.-for-input').html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
-					// $this.html('<span class="-for-input">'+(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)+'</span>')
-					// $this.html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
 				}
 			}, settings.result)
 			.fail(function(response) {

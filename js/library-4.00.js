@@ -3,8 +3,8 @@
  *
  * library :: Javascript Library For SoftGanz
  * Created :: 2009-09-22
- * Modify  :: 2026-01-31
- * Version :: 5
+ * Modify  :: 2026-03-02
+ * Version :: 6
  * Version :: 4.00.09
  *
  * Copyright :: Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
@@ -425,7 +425,7 @@ $(document).on('click','a[data-confirm]',function(ele) {
 		backgroundDismiss: false,
 		escapeKey: 'Cancel',
 		scrollToPreviousElement: false,
-		boxWidth: '300px',
+		boxWidth: $this.data('confirm-width') || '80%',
 		useBootstrap: false,
 		theme: 'material',
 		buttons: {
