@@ -162,8 +162,16 @@ pre {tab-size: 1;}
 a.-disabled {color:#ccc;}
 h2.header {text-align: right; font-size: 1.2em;}
 
-
-.jconfirm-box {width: 200px;}
+.jconfirm.jconfirm-material {
+	.jconfirm-content-pane em {color: red;}
+	.jconfirm-box {
+		max-width: 600px;
+		.jconfirm-buttons button {
+			width: auto;
+			&.-cancel {margin-right: 32px;}
+		}
+	}
+}
 
 .pagenotfound {margin:40px 0; border:1px solid rgb(210, 210, 210);background-color: rgb(241, 241, 241);padding:30px;border-radius:10px;}
 .pagenotfound hr {margin:10px 0;border: none; height:1px; background: #ccc;}
@@ -477,16 +485,7 @@ $SCREENS
 			&.-bottom-right {bottom: 4px; right: 4px;}
 			&.-bottom-left {bottom: 4px; left: 4px;}
 		}
-		/* tr:hover .-hover {visibility: visible; width: auto; height: auto;} */
-		/* tr:hover & {
-			font-weight: bold;
-			a {color: red;}
-			td {color: green;}
-			>td>.-hover {color: red;}
-			.-hover-parent {color: blue;}
-			> td.-hover-parent>.-hover {padding: 4px; visibility: visible; top: 4px; right: 4px; background-color: #ffffff; opacity: 0.85; width: auto; height: auto;}
-		} */
-
+		&:hover>.-hover {visibility: visible; width: auto; height: auto;}
 	}
 	tr:hover>td.-hover-parent>.-hover {visibility: visible; top: 4px; right: 4px; width: auto; height: auto;}
 	.widget-listtile.-hover-parent:hover .-hover {visibility: visible; width: auto; height: auto;}
@@ -1290,10 +1289,6 @@ $SCREENS
 
 	/* Other Module */
 
-	.jconfirm {
-		.jconfirm-box .jconfirm-buttons>button.-cancel {margin-right: 32px;}
-		.jconfirm-content-pane em {color: red;}
-	}
 
 	/*
 	Colorbox Core Style:

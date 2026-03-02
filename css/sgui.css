@@ -110,6 +110,7 @@
 	>.-desc {flex: 0 0 100%; text-align: center; font-size: 1.4rem;}
 	>span {padding: 6px; white-space: nowrap;}
 	>span.-hidden {display: none;}
+	&:has(.icon:only-child) {width: 3.6rem; height: 3.6rem; padding: 0px; text-align: center; justify-content: center; align-items: center;}
 	>.icon-group {padding: 0;}
 	>span>em {font-weight: normal; font-size: 1.4rem; font-style: italic; display: block;}
 
@@ -118,7 +119,6 @@
 	&.-default {
 		padding: 0;
 		flex-direction: row; align-items: start; flex-wrap: wrap;
-		&:has(:only-child) {padding: 0;}
 		>.-label {flex: 1; white-space: wrap; padding: 0;}
 		>.-desc {padding: 0; flex: 1 0 100%; text-align: left;}
 	}
@@ -171,9 +171,9 @@
 		>.icon {color: var(--floating-text-color);}
 	}
 
-	&.-circle24 {width: 24px; height: 24px; padding: 0px; border-radius: 50%;}
-	&.-circle32 {width: 32px; height: 32px; padding: 4px !important; border-radius: 50%;}
-	&.-circle48 {width: 48px; height: 48px; padding: 12px !important; border-radius: 50%;}
+	&.-circle24 {width: 24px; height: 24px;}
+	&.-circle32 {width: 32px; height: 32px;}
+	&.-circle48 {width: 48px; height: 48px;}
 
 	/*
 	button.btn.-circle32 {width: 32px; height: 32px; padding: 0;}
@@ -189,7 +189,6 @@
 	&.-no-wrap {flex-wrap: nowrap;}
 	&.-big {padding-top: 16px; padding-bottom: 16px; border-radius: 64px; font-size: 1.8rem;}
 	&.-hidden {display: none;}
-	&:has(:only-child) {padding: 6px;}
 	&:has(.-desc) {border-radius: 128px;}
 	&.-fill {width: 100%; justify-content: center;}
 	&.-wrap {white-space: normal;}
@@ -246,11 +245,16 @@
 	.form-text {height: var(--input-height); padding: 0 8px; background-color: var(--bg-color); color: var(--font-color);}
 	.form-password {height: var(--input-height); padding: 0 8px; background-color: var(--bg-color); color: var(--font-color);}
 	.form-textarea {padding: 8px; background-color: var(--bg-color); color: var(--font-color);}
-	.form-select {height: var(--input-height); padding: 0 32px 0 16px; font-family: sans-serif; font-size: 1em; border-radius: 3px; border: 1px var(--border-color) solid; appearance: none; -moz-appearance: none; appearance: none; background-color: var(--bg-color); color: var(--font-color);
-	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23cccccc' viewBox='0 0 24 24'%3E%3Cpath d='M7.41 7.84l4.59 4.58 4.59-4.58 1.41 1.41-6 6-6-6z'/%3E%3Cpath d='M0-.75h24v24h-24z' fill='none'/%3E%3C/svg%3E");
-	background-position: right 8px center;
-	background-repeat: no-repeat;
-	background-size: 24px;}
+	.form-select {
+		height: var(--input-height); padding: 0 32px 0 16px;
+		font-family: sans-serif; font-size: 1em;
+		border-radius: 3px; border: 1px var(--border-color) solid; appearance: none; -moz-appearance: none; appearance: none;
+		background-color: var(--bg-color); color: var(--font-color);
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23cccccc' viewBox='0 0 24 24'%3E%3Cpath d='M7.41 7.84l4.59 4.58 4.59-4.58 1.41 1.41-6 6-6-6z'/%3E%3Cpath d='M0-.75h24v24h-24z' fill='none'/%3E%3C/svg%3E");
+		background-position: right 8px center;
+		background-repeat: no-repeat;
+		background-size: 24px;
+	}
 	.form-text.-numeric {text-align: center;}
 	.form-text.-money {text-align: center;}
 	.form-text.-date {text-align: center;}
@@ -543,6 +547,7 @@
 		a {white-space: nowrap; display: block; color: var(--nav-text-color); background-color: var(--nav-btn-bg-color); margin: 2px 2px 0 0; padding: 4px 8px; border-radius: 0px; text-align: center;}
 		a:hover {background-color: var(--nav-btn-hover-color);}
 		a>.icon {display: block; margin: 0 auto; color: var(--nav-icon-color);}
+		.widget-nav {background-color: unset;}
 		>ul {display: flex; flex-wrap: nowrap; flex: none; margin: 0 8px 0 0; padding: 0; overflow: auto; list-style-type: none;}
 		>ul:last-child {margin-right: 0;}
 		>.-more {position: absolute; right: 8px; top: 8px; overflow: visible;}
@@ -898,7 +903,7 @@
 	>* .widget-inlineedit.-photodetail {position: absolute; bottom: 0; left: 0; right: 0;}
 	>*.-upload {background-color: transparent;}
 	>*.-upload>* {position: absolute; margin: 0; padding: 0; top: 0; left: 0; right: 0; bottom: 0; text-align: center; height: auto; display: block; align-content: center;}
-	>*.-upload .btn {margin: 0; padding: 0; padding-top: calc(50% - 24px); box-shadow: none; border: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 8px; background-color: var(--secondary-bg-color);}
+	>*.-upload .btn {width: 100%; height: 100%; margin: 0; padding: 0; padding-top: calc(50% - 24px); box-shadow: none; border: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 8px; background-color: var(--secondary-bg-color);}
 	>*.-upload>form .btn>span {display: block; flex: 1 0 100%; padding: 0;}
 	>*>a {display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
 	>*>.-hover {position: absolute; top: 4px; right: 4px;}
