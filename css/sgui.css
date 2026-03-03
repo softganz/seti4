@@ -60,6 +60,7 @@
 	&.-cross-axis-center {align-items: center;}
 	&.-cross-axis-end {align-items: flex-end;}
 	&.-flex-no-wrap {flex-wrap: nowrap !important;}
+	&.-margin-norm {margin: 1.6rem 0;}
 }
 
 /* widget-button */
