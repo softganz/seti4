@@ -48,15 +48,15 @@
 .icon.-sg-48 {font-size: 4.8rem;}
 .icon.-sg-64 {font-size: 6.4rem;}
 
-.icon.-material.-material.-gray {color: #808080;}
-.icon.-material.-white {color: #f5f5f5; opacity: 0.9;}
-.icon.-material.-green {color: green;}
-.icon.-material.-yellow {color: #ffb200;}
-.icon.-material.-red {color: red;}
-.icon.-material.-blue {color: blue;}
-.icon.-material.-violet {color: #ff00fb;}
-.icon.-material.-sg-active {color: green;}
-.icon.-material.-sg-inactive {color: #b0b0b0;}
+.icon.-material.-material.-gray {color: #808080 !important;}
+.icon.-material.-white {color: #f5f5f5 !important; opacity: 0.9;}
+.icon.-material.-green {color: green !important;}
+.icon.-material.-yellow {color: #ffb200 !important;}
+.icon.-material.-red {color: red !important;}
+.icon.-material.-blue {color: blue !important;}
+.icon.-material.-violet {color: #ff00fb !important;}
+.icon.-material.-sg-active {color: green !important;}
+.icon.-material.-sg-inactive {color: #b0b0b0 !important;}
 
 .icon.-material {
 	font-family: var(--icon-font);

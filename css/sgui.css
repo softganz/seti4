@@ -414,7 +414,7 @@
 	--header-text-color: var(--font-color);
 	--header-bg-color: var(--card-bg-color);
 	display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-	margin: 8px 0; padding: 8px 0;
+	margin: 8px 0; padding: 8px; border-radius: 8px;
 	background-color: var(--header-bg-color); color: var(--header-text-color);
 	> .-title {
 		flex: 1;
@@ -497,8 +497,9 @@
 	.theme-dark & {
 		--bg-color: #747474;
 		--text-color: #dbdbdb;
-		--nav-bg-color: #505050;
-		--nav-btn-hover-color: #676767;
+		--nav-icon-color: var(--text-color);
+		--nav-btn-bg-color: unset;
+		--nav-btn-hover-color: #555;
 	}
 
 	margin: 0; padding: 0;
@@ -707,7 +708,7 @@
 }
 
 /* widget-table */
-.widget-table {
+.widget-table {	
 	--bg-color: #fff;
 	--border-color: #f5f5f5;
 	--caption-text-color: #333;
@@ -715,9 +716,7 @@
 	--header-bg-color: #f7f7f7;
 	--footer-bg-color: #f7f7f7;
 	--tr-bg-hover-color: #fafafa;
-}
 
-.widget-table {	
 	width: 100%; margin: 0; padding: 0; border-collapse: collapse; border-spacing: 0; border: none; background-color: var(--bg-color); display: table;
 	&.-table {width: auto;}
 	&.-cross-axis-center>tbody>tr>td {vertical-align: middle;}
@@ -731,8 +730,8 @@
 	&.-header-nowrap th {white-space: nowrap;}
 	td {padding: 8px 4px; vertical-align: top; border-bottom: 1px var(--border-color) solid;}
 	td.-fill {width: 100%;}
-	.subheader {font-weight: bold; background-color: #ddd;}
-	.subfooter {font-weight: bold; background-color: #eaeaea;}
+	.subheader {font-weight: bold; background-color: var(--header-bg-color);}
+	.subfooter {font-weight: bold; background-color: var(--header-bg-color);}
 	.newitem td {background-color: #E5BBA0;}
 	&.-center td, &.-center th {text-align: center;}
 	&.-cols8 td {width: 12.5%;}
@@ -1017,6 +1016,8 @@
 	&.-guage>* {
 		.sg-chart {width: 20rem; height: 20rem;}
 	}
+	&.-width-wide>* {flex: 0 0 20rem;}
+	&.-width-wideer>* {flex: 0 0 30rem;}
 }
 
 /* sg-dropbox : dropdown box on click or hover */
@@ -1341,7 +1342,7 @@
 	list-style-type: none; width: 100%; margin: 0; padding: 0;
 	>.header {flex: 0 0 100%;}
 	>.header>h3 {flex: 1;}
-	>.ui-item {position: relative; margin-bottom: 16px; border: 1px #efefef solid; display: block;}
+	>.ui-item {position: relative; margin-bottom: 16px; display: block;}
 	>.ui-item.-empty {margin: 0 !important
 		; padding: 0 !important; border: none; height: 0 !important; overflow: hidden !important;}
 	>.ui-item>h3 {padding: 8px;}
