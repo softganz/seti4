@@ -3,8 +3,8 @@
  * System  :: Show IP Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2026-03-04
- * Modify  :: 2026-03-04
- * Version :: 1
+ * Modify  :: 2026-03-14
+ * Version :: 2
  *
  * @return Widget
  *
@@ -28,13 +28,6 @@ class SystemIp extends Page {
 		
 		// Fallback to the immediate remote address
 		return $_SERVER['REMOTE_ADDR'];
-		
-		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'IP',
-			]), // AppBar
-			'body' => 'Your IP is '.get_re
-		]);
 	}
 }
 ?>
