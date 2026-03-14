@@ -3,8 +3,8 @@
  * Widget  :: InlineEdit
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-12-08
- * Modify  :: 2026-01-31
- * Version :: 24
+ * Modify  :: 2026-03-01
+ * Version :: 25
  *
  * @param Array $args
  * @return Widget
@@ -112,7 +112,8 @@ class InlineEdit extends Widget {
 			$child['placeholder'], $child['inputClass'],
 			$child['editMode'], $child['text'], $child['value'], $child['label'],
 			$child['onClick'], $child['onBlur'], $child['attribute'],
-			$child['description'], $child['postText']
+			$child['description'],
+			// $child['postText']
 		);
 
 		foreach ($child as $key => $value) {
@@ -193,9 +194,10 @@ class InlineEdit extends Widget {
 			default: $ret .= $this->_renderTypeText($widget, $text); break;
 		}
 
+		if (isset($widget->postText)) $ret .= '<span class="-post-text">' . $widget->postText . '</span>';
 		if ($widget->description) {
 			$ret .= '<div class="-description">';
-				$ret .= $this->_renderChildren([$widget->description]);
+			$ret .= $this->_renderChildren([$widget->description]);
 			$ret .= '</div>';
 		}
 

@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2006-12-16
- * Modify  :: 2026-02-04
- * Version :: 50
+ * Modify  :: 2026-02-27
+ * Version :: 51
  */
 
 /*************************************************************
@@ -110,6 +110,8 @@ class R {
 		}
 
 		list($className, $found, $fileName, $resourceType) = SgCore::loadResourceFile($filePrefix.$pageName);
+
+		// debugMsg('LOAD PAGE WIDGET '.$pageName.' className:'.$className.' '.$resourceType.' '.($found ? 'FOUND' : 'NOT FOUND'));
 
 		if ($found && class_exists($className) && method_exists($className, $buildMethod)) {
 			// Found page widget then build method
@@ -725,7 +727,33 @@ class SgCore {
 							$found = true;
 							$debugStr .= '<span style="color:green;">Found and get file content <b>'.$resourceFileToLoad.'</b></span><br />'._NL;
 						} else {
-							require_once($resourceFileToLoad);
+							$namespace = require_once($resourceFileToLoad);
+
+							// Check namespace of load file
+							if (is_string($namespace)) {
+								// File return __NAMESPACE__
+								$className = '\\'.$namespace.'\\'.$className;
+							} else if (preg_match('/modules\/([a-zA-Z]+)\/template\/([a-zA-Z]+)\//', $resourceFileToLoad, $out)) {
+								// File load from template, set class to Module\Template\className
+								if ($out[1] && $out[2]) {
+									$namespace = ucfirst($out[1]).'\\'.ucfirst($out[2]);
+									$namespaceClassName = '\\'.$namespace.'\\'.$className;
+									if (class_exists($namespaceClassName)) {
+										$className = $namespaceClassName;
+									}
+								}
+							} else if (preg_match('/modules\/([a-zA-Z]+)\//', $resourceFileToLoad, $out)) {
+								// File load from modules, set class to Module\className
+								if ($out[1]) {
+									$namespace = ucfirst($out[1]);
+									$namespaceClassName = '\\'.$namespace.'\\'.$className;
+									if (class_exists($namespaceClassName)) {
+										$className = $namespaceClassName;
+									}
+								}
+							}
+
+							// debugMsg('resourceFileToLoad = '.$resourceFileToLoad.' $namespace = '.$namespace.'<br>$className='.$className);
 							// debugMsg($loadFiles,'$loadFiles');
 
 							// Set Debug Load Resource from $debugLoadResource in resource file
@@ -737,6 +765,7 @@ class SgCore {
 							if ($importOnly) {
 								$found = true;
 							} else if ($className && class_exists($className)) {
+								// debugMsg('FOUND CLASS '.$className);
 								$debugStr .= '<span style="color:green;">Found Execute class <b>'.$className.'()</b>.</span><br />'._NL;
 								$found = true;
 								break;
@@ -1100,14 +1129,13 @@ class SgCore {
 		// debugMsg($menuArgs, '$menuArgs-after');
 		// debugMsg($funcName, '$funcName');
 		// debugMsg($funcArg, '$funcArg');
-		// debugMsg($funcArg, '$funcArg');
 
 		if ($found && class_exists($retClass) && method_exists($retClass, $buildMethod)) {
 			$pageClassWidget = new $retClass(...$funcArg);
 			// debugMsg($pageClassWidget, '$pageClassWidget');
 
 			// TODO: การตรวจสอบซ้ำกับใน processController ควรตรวจสอบครั้งเดียว
-			// Check methid is public
+			// Check method is public
 			if (($pageBuildReflection = new ReflectionMethod($pageClassWidget, $buildMethod))
 				&& $pageBuildReflection->isPublic()
 			) {

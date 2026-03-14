@@ -1,80 +1,78 @@
 <?php
 /**
-* API     :: User API
-* Created :: 2022-11-19
-* Modify  :: 2022-11-19
-* Version :: 2
-*
-* @return Array
-*
-* @usage api/user
-*/
+ * API     :: User API
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-11-19
+ * Modify  :: 2026-02-23
+ * Version :: 3
+ *
+ * @return Array
+ *
+ * @usage api/user
+ */
 
 class UserApi extends PageApi {
 	var $queryText;
 	var $username;
 	var $email;
-	var $page;
-	var $items;
+	var $status = 'enable';
+	var $page = 1;
+	var $item = 10;
 
 	function __construct() {
 		parent::__construct([
-			'queryText' => \SG\getFirst(post('q')),
-			'username' => post('username'),
-			'email' => post('email'),
-			'page' => \SG\getFirst(post('page'), post('p'), 1),
-			'items' => \SG\getFirst(post('item'), post('n'), 10),
+			'queryText' => SG\getFirst(Request::all('q')),
+			'username' => Request::all('username'),
+			'email' => Request::all('email'),
+			'status' => SG\getFirst(Request::all('status'), $this->status),
+			'page' => SG\getFirst(Request::all('page'), Request::all('p'), $this->page),
+			'item' => SG\getFirst(Request::all('item'), Request::all('n'), $this->item),
 		]);
 	}
 
 	function build() {
 		$result = [];
 
-		// Only referer form same site
-		if ((empty($this->queryText) && empty($this->username) && empty($this->email)) || !i()->ok || _HOST != _REFERER) return $result;
+		// Only referer form same site except admin, to prevent abuse of this API to query user information without permission.
+		if (is_admin()) {
+			// Admin can query without referer
+		} else if (
+			(empty($this->queryText) && empty($this->username) && empty($this->email))
+			|| !i()->ok || _HOST != _REFERER
+		) {
+			return $result;
+		}
 
 		$isAdmin = i()->admin;
 
-		if ($this->queryText) {
-			mydb::where('u.`username` LIKE :q OR u.`name` LIKE :q  OR u.`email` LIKE :q', ':q','%'.$this->queryText.'%');
-		}
+		$users = UserModel::getUsers([
+			'queryText' => $this->queryText,
+			'username' => $this->username,
+			'email' => $this->email,
+			'status' => $this->status,
+			'option' => [
+				'page' => $this->page,
+				'item' => $this->item,
+			],
+		]);
 
-		if ($this->username) {
-			mydb::where('u.`username` = :username', ':username', $this->username);
-		}
+		foreach ($users->items as $user) {
+			$desc = (new ProfilePhoto($user->username))->build()
+				. $user->name
+				. ($isAdmin ? '<span class="email">('.$user->username.($user->email ? ' : '.$user->email : '').')</span>' : '');
 
-		if ($this->email) {
-			mydb::where('u.`email` = :email', ':email', $this->email);
-		}
-
-		mydb::value('$LIMIT$',$this->items);
-
-		$dbs = mydb::select(
-			'SELECT `uid`, `username`, `name`, `email`
-			FROM %users% u
-			%WHERE%
-			ORDER BY u.`name` ASC
-			LIMIT $LIMIT$'
-		);
-
-		// debugMsg($dbs, '$dbs');
-		foreach ($dbs->items as $rs) {
-			$desc = '<img src="'.BasicModel::user_photo($rs->username).'" width="24" height="24" />'
-				.$rs->name
-				.($isAdmin ? '<span class="email">('.$rs->username.($rs->email ? ' : '.$rs->email : '').')</span>' : '');
-
-			$result[] = array(
-				'value' => $rs->uid,
-				'label' => htmlspecialchars($rs->name),
+			$result[] = [
+				'value' => $user->userId,
+				'label' => htmlspecialchars($user->name),
 				'altLabel' => $desc,
-			);
+			];
 		}
-		if ($dbs->_num_rows>=$this->items) $result[] = ['value'=>'...','label'=>'ยังมีอีก','desc'=>''];
+		if ($users->count >= $this->item) $result[] = ['value' => '...', 'label' => 'ยังมีอีก', 'desc' => ''];
 
 		if (debug('api')) {
-			$result[] = ['value'=>'query','label'=>$dbs->_query];
-			$result[] = ['value'=>'num_rows','label'=>'Result is '.$dbs->_num_rows.' row(s).'];
+			$result[] = ['value' => 'num_rows','label' => 'Result is '.count($users).' row(s).'];
 		}
+
 		return $result;
 	}
 }

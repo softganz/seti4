@@ -3,8 +3,8 @@
  * Counter :: Counter Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-11-26
- * Modify  :: 2026-01-04
- * Version :: 16
+ * Modify  :: 2026-03-14
+ * Version :: 17
  *
  * @usage new CounterModel([])
  * @usage CounterModel::function($conditions, $options)
@@ -468,6 +468,10 @@ class CounterModel {
 
 	public static function onlineCount() {
 		return DB::select(['SELECT COUNT(*) `total` FROM %users_online% LIMIT 1'])->total;
+	}
+
+	public static function onlineMemberCount() {
+		return DB::select(['SELECT COUNT(*) `total` FROM %users_online% WHERE `uid` IS NOT NULL LIMIT 1'])->total;
 	}
 
 	public static function onlineUsers($conditions = []) {

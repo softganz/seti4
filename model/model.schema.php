@@ -29,8 +29,8 @@ class SchemaModel {
 		return json_decode(R::Asset($schemaName));
 	}
 
-	public function indicator($section) {
-		foreach ($this->body as $metrix) {
+	public static function indicator($schema, $section) {
+		foreach ($schema->body as $metrix) {
 			foreach ($metrix->items as $metrinItem) {
 				foreach ($metrinItem->indicator as $indicator) {
 					// debugMsg($indicator, '$indicator');
