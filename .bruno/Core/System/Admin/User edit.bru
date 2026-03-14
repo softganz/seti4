@@ -1,0 +1,19 @@
+meta {
+  name: User edit
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{host}}/api/admin/user/2/edit
+  body: none
+  auth: inherit
+}
+
+query {
+  ~profile[username]: momo
+  ~profile[email]: 
+  ~profile[password]: 
+  ~profile[repassword]: 
+  ~profile[roles]: 
+}

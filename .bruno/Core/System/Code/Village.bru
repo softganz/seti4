@@ -1,0 +1,16 @@
+meta {
+  name: Village
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{host}}/api/village?q=คลองแห้ง
+  body: none
+  auth: inherit
+}
+
+query {
+  q: คลองแห้ง
+  ~q: 610802
+}

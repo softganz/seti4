@@ -1,0 +1,19 @@
+meta {
+  name: Get backend
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{host}}/api/paper/3014/backend
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  detail[phpBackend]: <?php echo "test";?>
+  detail[css]: .-text {color: black;}
+  detail[script]: <script>consolg.log("test")</script>
+  detail[data]: {"x": "test"}
+  detail[body]: 1
+}

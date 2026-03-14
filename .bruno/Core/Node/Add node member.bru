@@ -1,0 +1,16 @@
+meta {
+  name: Add node member
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/api/node/3001/member.add?userId=24&membership=OWNER
+  body: none
+  auth: inherit
+}
+
+query {
+  userId: 24
+  membership: OWNER
+}

@@ -1,0 +1,15 @@
+meta {
+  name: User block
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{host}}/api/admin/user/2/block
+  body: none
+  auth: inherit
+}
+
+query {
+  ~confirm: yes
+}

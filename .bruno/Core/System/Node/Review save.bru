@@ -1,0 +1,15 @@
+meta {
+  name: Review save
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/api/node/info/27/review.save?rate=1
+  body: none
+  auth: inherit
+}
+
+query {
+  rate: 1
+}

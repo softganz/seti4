@@ -1,0 +1,23 @@
+meta {
+  name: Paper detail update
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{host}}/api/paper/3014/detail.update
+  body: multipartForm
+  auth: inherit
+}
+
+query {
+  ~confirm: yes
+}
+
+body:multipart-form {
+  detail[phpBackend]: <?php echo "test";?>
+  detail[css]: .-text {color: black;}
+  detail[script]: <script>consolg.log("test")</script>
+  detail[data]: {"x": "test"}
+  detail[body]: 1
+}

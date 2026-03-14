@@ -1,0 +1,11 @@
+meta {
+  name: Get node members
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/node/1/members
+  body: none
+  auth: inherit
+}

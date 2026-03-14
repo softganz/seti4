@@ -1,0 +1,19 @@
+meta {
+  name: Doc add
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{host}}/api/paper/3014/doc.add
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  detail[phpBackend]: <?php echo "test";?>
+  detail[css]: .-text {color: black;}
+  detail[script]: <script>consolg.log("test")</script>
+  detail[data]: {"x": "test"}
+  detail[body]: 1
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Photo add
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{host}}/api/paper/3014/photo.add
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  detail[phpBackend]: <?php echo "test";?>
+  detail[css]: .-text {color: black;}
+  detail[script]: <script>consolg.log("test")</script>
+  detail[data]: {"x": "test"}
+  detail[body]: 1
+}

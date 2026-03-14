@@ -1,0 +1,19 @@
+meta {
+  name: User list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/api/user?q=mo&status=enable
+  body: none
+  auth: inherit
+}
+
+query {
+  q: mo
+  status: enable
+  ~item: 10
+  ~username: 
+  ~email: 
+}

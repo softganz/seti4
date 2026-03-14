@@ -1,0 +1,16 @@
+meta {
+  name: Check user exists
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{host}}/api/user/exists?name=momo
+  body: none
+  auth: inherit
+}
+
+query {
+  name: momo
+  ~email: 
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Address split
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/address/split?address=1 ซอยทดสอบ ถนนทดสอบ ม.1 ต. คลองแห อ.หาดใหญ่ จ.สงขลา&type=long
+  body: none
+  auth: inherit
+}
+
+query {
+  address: 1 ซอยทดสอบ ถนนทดสอบ ม.1 ต. คลองแห อ.หาดใหญ่ จ.สงขลา
+  type: long
+}

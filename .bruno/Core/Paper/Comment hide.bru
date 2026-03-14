@@ -1,0 +1,19 @@
+meta {
+  name: Comment hide
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{host}}/api/paper/3014/comment.hide
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  detail[phpBackend]: <?php echo "test";?>
+  detail[css]: .-text {color: black;}
+  detail[script]: <script>consolg.log("test")</script>
+  detail[data]: {"x": "test"}
+  detail[body]: 1
+}

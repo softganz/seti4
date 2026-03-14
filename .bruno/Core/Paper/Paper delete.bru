@@ -1,0 +1,15 @@
+meta {
+  name: Paper delete
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{host}}/api/paper/3013/delete
+  body: none
+  auth: inherit
+}
+
+query {
+  ~confirm: yes
+}
