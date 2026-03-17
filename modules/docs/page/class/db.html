@@ -59,14 +59,23 @@ Array | String $connection
 <h5>var</h5>
 <code>
 	var => [
-		'$variable'  => value, // Value quote with '
-		'$variable$' => value, // Value not qoute
-		':variable'  => value, // Value quote with '
-		':`variable`' => value, // Value is quote with `
-		':variable' => new DataModel()
-		':variable' => SetDataModel()
-		':variable' => JsonDataModel()
-		':variable' => JsonArrayDataModel()
+		'::variable::'  => String, // Value quote with "
+		':`variable`' => String, // Value is field and quote with `
+		'$variable$' => String, // Value not qoute
+		'$variable'  => String, // Value quote with '
+		':variable'  => String, // Value quote with '
+		':variable' => new DataModel(), // Value is DataModel class
+		':variable' => new SetDataModel(), // Value is SetDataModel class
+		':variable' => new JsonDataModel(), // Value is JsonDataModel class
+		':variable' => new JsonArrayDataModel(), // Value is JsonArrayDataModel class
+		':variable' => NULL // Replace with NULL
+		':variable' => Object, // Value is object
+		':variable' => Array, // Value is array
+		':variable' => func.funcName(), // Value is function and not quote
+		':variable' => Numeric, // Value not quote
+
+		// Deprecate
+		':variable' => :JSON_OBJECT:xxx,
 	]
 </code>
 
@@ -77,10 +86,11 @@ Array | String $connection
 		"group"				=> "fieldName",
 		"key"					=> "fieldName",
 		"value" 			=> "fieldName",
-		"log"					=> boolean,
-		"history"			=> boolean,
-		"multiple"		=> boolean,
-		"debug"				=> boolean,
+		"log"					=> boolean, // Default is true
+		"history"			=> boolean, // Default is true
+		"multiple"		=> boolean, // Multiple query, default is false
+		"showResult"	=> boolean. // Default is false
+		"debug"				=> boolean, // Default is false
 		"jsonDecode"	=> [
 			['field' => 'fieldName', 'type' => 'merge,default']
 			...
@@ -88,7 +98,54 @@ Array | String $connection
 	]
 </code>
 
-Data Model
+<h4>Method :</h4>
+<code>
+DB::Constructor ( $dburi )
+
+DB::query ([
+	$stmt ,
+	'%WHERE%' => [
+		[condition, ':key' => $value],
+		[condition, ':key' => $value],
+	],
+	'where' => [
+		'%WHERE%' => [
+			[condition, ':key' => $value],
+			[condition, ':key' => $value],
+		],
+	],
+	'var' => [
+		':key' => $value,
+		':key' => $value,
+		':key' => $value,
+	]
+])
+
+DB::select ([
+	$stmt ,
+	'%WHERE%' => [
+		[condition, ':key' => $value],
+		[condition, ':key' => $value],
+	],
+	'where' => [
+		'%WHERE%' => [
+			[condition, ':key' => $value],
+			[condition, ':key' => $value],
+		],
+	],
+	'var' => [
+		':key' => $value,
+		':key' => $value,
+		':key' => $value,
+	]
+])
+</code>
+
+<h4>Method description</h4>
+<code>
+</code>
+
+<h4>Data Model</h4>
 <code>
 class DataModel()
 class SetDataModel()
@@ -96,80 +153,6 @@ class JsonDataModel()
 class JsonArrayDataModel()
 </code>
 
-
-====== END ======
-
 <h4>Property :</h4>
 <code>
-public $class='mydb';
-public static $version='3.10';
-public $dburi;
-private $server;
-private $user;
-private $password;
-private $host;
-public $db;
-private $mydb;
-
-public $status=false;
-public $simulate=false;
-public $_watchlog=true;
-
-public $_query;
-public $_affected_rows;
-public $_error;
-public $_error_no;
-public $_errors=array();
-public $_query_count=0;
-public $_query_items=array();
-public $_field=array();
-public $_where=array();
-public $_values=array();
-
-private $multiquery=false;
 </code>
-<h4>Method :</h4>
-<code>
-mydb::Constructor ( $dburi )
-mydb::where ( $condition , $key , $value [, $key , $value] )
-mydb::query ( $stmt , $key , $value [, $key , $value] , $object , $array )
-mydb::select ( $stmt , $key , $value [, $key , $value] , $object , $array )
-mydb::clearProp ( $rs )
-mydb::table_list ()
-mydb::table_exists ( $table_name )
-mydb::columns ( $table,$col_name, $dbname )
-mydb::clear_autoid ( $table )
-mydb::get_set_member ( $table_name, $col_name )
-mydb::make_set ( $set_value=array() )
-mydb::convert_record_to_recordset ( $rs )
-mydb::create_insert_cmd ( $table_name, $values=array() )
-mydb::create_update_cmd ( $table_name, $values=array(), $cond )
-mydb::table_is_lock ( $table_name, $db_name )
-mydb::printTable ( $dbs )
-mydb::setMultiQuery ( $value )
-</code>
-
-<h4>Method description</h4>
-<code>
-mydb::Constructor ( $dburi )
-array mydb::where ( string $condition [, string $key , mixed $value [,...]] )
-array , object mydb::query ( $stmt , [, string $key , mixed $value [,...]] , $object , $array )
-object mydb::select ( $stmt , [, string $key , mixed $value [,...]] , $object , $array )
-object mydb::clearProp ( object $rs )
-array mydb::table_list ()
-bool mydb::table_exists ( string $table_name )
-array , bool mydb::columns ( string $table , string $col_name, string $dbname )
-int mydb::clear_autoid ( string $table )
-string mydb::get_set_member ( string $table_name, string $col_name )
-string mydb::make_set ( array $set_value )
-object mydb::convert_record_to_recordset ( object $rs )
-string mydb::create_insert_cmd ( string $table_name, array $values )
-string mydb::create_update_cmd ( string $table_name, array $values, string $cond )
-bool mydb::table_is_lock ( string $table_name, string $db_name )
-string mydb::printTable ( object $dbs )
-mydb::setMultiQuery ( bool $value )
-</code>
-
-
-
-
