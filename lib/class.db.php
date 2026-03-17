@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-02-20
- * Version :: 40
+ * Modify  :: 2026-03-17
+ * Version :: 41
  *
  * @param Array $args
  * @return Object
@@ -645,6 +645,9 @@ class DB {
 		} else if (preg_match('/^(\:\`).*(\`)$/', $key)) {
 			// If key leading with :` and end with ` then value is quote and remove ' and add ` at front and end
 			$value = '`'.trim($this->quote($value), '\'').'`';
+		} else if (preg_match('/^(\:\:).*(\:\:)$/', $key)) {
+			// If key leading with :" and end with " then value is quote and remove ' and add ` at front and end
+			$value = trim($this->quote($value), '\'');
 		} else if (preg_match('/^\$([a-zA-Z0-9_]*)\$$/', $key)) {
 			// If key leading and ending with $ and function name format, Don't quote
 			$value = $value;
