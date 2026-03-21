@@ -2,8 +2,8 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-03-02
- * Version :: 66
+ * Modify  :: 2026-03-21
+ * Version :: 67
  */
 
 'use strict'
@@ -952,7 +952,7 @@ $(document).ready(function(){
 
 
 // Must add event before submit form
-$(document).on('submit','form[data-confirm]',function(ele) {
+$(document).on('submit','form[data-confirm]',function(ele) { // confirm box
 	//console.log("Data Confirm Click by CONFIRM")
 	var $this = $(this)
 	//console.log($this.attr('href'))
@@ -1005,7 +1005,8 @@ $(document).on('submit','form[data-confirm]',function(ele) {
 * https://softganz.com
 * Using <form class="sg-form"></form>
 */
-$(document).on('submit', 'form.sg-form', function(event) {
+$(document).on('submit', 'form.sg-form', function(event) { // sg-form
+	let element = this;
 	let $this = $(this)
 	let relTarget = $this.data('rel')
 	let retUrl = $this.data('ret')
@@ -1130,14 +1131,17 @@ $(document).on('submit', 'form.sg-form', function(event) {
 		});
 	} else {
 		let para = $this.serialize();
-		// let $clickButton = $(document.activeElement);
+		let $clickButton = $(document.activeElement);
 
-		// if ($clickButton.attr("name") != undefined) {
-		// 	para += '&' + $clickButton.attr("name") + "=" + $clickButton.val();
-		// }
+		if ($clickButton.attr("name") != undefined) {
+			para += (para ? '&' : '?') + $clickButton.attr("name") + "=" + $clickButton.val();
+		}
 
 		// Start post form
-		// console.log('FORM DATA ',$this.serialize());
+		// console.log('FORM DATA ', para);
+
+		// const formData = new FormData(element);
+		// console.log("formData", formData, element);
 
 		$.post(
 			$this.attr('action'),
