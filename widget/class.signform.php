@@ -2,8 +2,8 @@
 /**
 * SignIn  :: Sign Form Widget
 * Created :: 2022-07-20
-* Modify  :: 2025-12-14
-* Version :: 5
+* Modify  :: 2025-12-17
+* Version :: 6
 *
 * @param Array $args
 * @return Widget
@@ -59,7 +59,7 @@ class SignForm extends Widget {
 			'tagName' => 'div',
 			'class' => 'widget-signform '.($this->class ? ' '.$this->class : ''),
 			'children' => [
-				'<header><h3>กรณีเป็นสมาชิกเว็บอยู่แล้ว</h3></header>',
+				'<header><h3><i class="icon -material">login</i><span> กรณีเป็นสมาชิกเว็บอยู่แล้ว</span></h3></header>',
 				new Form([
 					'action' => $this->formAction,
 					'id' => $this->id ? $this->id : 'signin-'.$id,
