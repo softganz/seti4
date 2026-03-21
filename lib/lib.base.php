@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2025-10-23
- * Version :: 14
+ * Modify  :: 2026-03-21
+ * Version :: 15
  */
 
 namespace SG;
@@ -409,7 +409,8 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 
 	if ($is_edit) {
 
-		if (is_string($data)) $data = explode(',', '==เลือก==,' . $data);
+		if ($dataOptions->noEmptyChoice) ;
+		else if (is_string($data)) $data = explode(',', '==เลือก==,' . $data);
 		else if (is_array($data) && count($data) > 0) $data = array('==เลือก==') + $data;
 
 		if ($fld['fld']) $attr .= 'data-fld="' . $fld['fld'] . '" ';
@@ -493,7 +494,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 					.$attr
 					.' data-type="'.$input_type.'" '
 					.'data-value="'.htmlspecialchars($value).'" '
-					.($data ? ' data-data="'.htmlspecialchars(\json_encode($data)).'"' : '')
+					.($data ? ' data-data="'.htmlspecialchars(json_encode($data, JSON_UNESCAPED_UNICODE)).'"' : '')
 					.' title="คลิกเพื่อแก้ไข">'
 					.'<span class="-for-input">'.$text.'</span>'
 					.'</span>'
