@@ -445,6 +445,10 @@ $SCREENS
 	.debug {width: 100%; background: #fff; font-size: 9pt;}
 
 	.notify-main {
+		--bg-color: #FAD163;
+		.theme-dark & {
+			--bg-color: #533c00;
+		}
 		margin: 0; padding: 4px 16px !important; display: none; font-weight: bold; white-space: nowrap; font-size: 9pt; text-align: center; background-color: #FAD163; position: fixed; top: 4px; border-radius: 24px; z-index: 999999; max-width: 70%; max-height: 30%;  overflow: scroll; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */
 		&::-webkit-scrollbar {display: none; width: 0 !important; height: 0 !important; background-color: transparent;} /* Hide scrollbar for Chrome, Safari and Opera */
 		ul {text-align: left;}
@@ -979,28 +983,39 @@ $SCREENS
 
 
 
-	.login {margin: 0; padding: 0 16px;}
-		.login h3 {margin-bottom: 16px; font-size: 1.3em; text-align: center;}
-		.login h5 {margin:0;padding:16px 0 0 0;border-top:1px #ccc solid;clear:both;}
-		.login>.-form>.form {max-width: 230px; margin: 0 auto; padding: 16px; border-radius: 8px; background-color: #fff;}
-		.login>.-info .btn {border: none;}
-		.login>.-info .btn.-fill {max-width: 260px; margin: 32px auto;}
-		.login>.-form>.form>.ui-action {display: block; text-align: center;}
-		.login .signform .form-item {margin-bottom: 8px; position: relative;}
-		.login .signform label {margin: 0; padding: 2px 8px; font-style: italic; left: 12px;}
-		.login .signform .form-text, .login .signform .form-password {padding: 12px 16px 0; width: 100%; border-radius: 32px; box-sizing: border-box; height: 46px; background-color: transparent;}
-		.signform .form-item>.form-group {border-radius: 32px;}
-		.signform .form-item>.form-group .icon {position: absolute; right: 8px;}
-		.login .signform .form-select {border-radius: 32px; padding: 14px 24px 15px 12px; height: auto;}
-		.login .signform .btn.-primary {padding: 11px 0; border-radius: 32px;}
-		.login .member-zone {padding: 10px; margin-bottom: 0; border-bottom:1px #ccc solid;}
-		.login .member-zone .form-item {padding: 4px;}
-		.login .member-zone .form-item .form-select {width: 100%; background: #fff; text-align: left;}
-		.login .member-zone .form-item .btn.-fill {width: 100%; padding:8px 0; }
-		.login .member-zone .form-item .button-signin:hover {background-color: #286090; color:#fff;}
+	.login {
+		margin: 64px auto; padding: 8px 24px 32px; border-radius: 8px;
+		max-width: 320px;
+		background-color: var(--card-bg-color);
+		h3 {margin-bottom: 16px; font-size: 1.3em; text-align: center;}
+		h5 {margin:0;padding:16px 0 0 0;border-top:1px #ccc solid;clear:both;}
+		.signform {
+			label {margin: 0; padding: 2px 8px; font-style: italic; left: 12px;}
+			.btn.-primary {padding: 11px 0; border-radius: 32px;}
+			.form-item {margin-bottom: 8px; position: relative;}
+			.form-text, .login .signform .form-password {padding: 12px 16px 0; width: 100%; border-radius: 32px; box-sizing: border-box; height: 46px; background-color: transparent;}
+			.form-item>.form-group {border-radius: 32px;}
+			.form-item>.form-group .icon {position: absolute; right: 8px;}
+			.form-select {border-radius: 32px; padding: 14px 24px 15px 12px; height: auto;}
+		}
+		.member-zone {
+			padding: 10px; margin-bottom: 0; border-bottom:1px #ccc solid;
+			.form-item {
+				padding: 4px;
+				.form-select {width: 100%; background: #fff; text-align: left;}
+				.btn.-fill {width: 100%; padding:8px 0; }
+				.button-signin:hover {background-color: #286090; color:#fff;}
+			}
+		}
+		>.-form>.form {max-width: 230px; margin: 0 auto; padding: 16px; border-radius: 8px; background-color: unset;}
+		>.-info {
+			.btn {border: none;}
+			.btn.-fill {max-width: 260px; margin: 32px auto;}
+		}
+		>.-form>.form>.ui-action {display: block; text-align: center;}
 
-		.login .g_id_signin iframe {margin: 2px auto !Important;}
-
+		.g_id_signin iframe {margin: 2px auto !Important;}
+	}
 
 
 	.page-nv {
@@ -1447,7 +1462,7 @@ $SCREENS
 	}
 
 	@media (min-width:45em) {		/* 720/16 = 45 */
-		.login {width:560px; margin:20px auto;}
+		.login {max-width: 560px;}
 
 		.sg-toolbar .search-box {width:300px;}
 		.item__card>thead {display: table-header-group;}
