@@ -3,8 +3,8 @@
  * Widget  :: Form Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-01-31
- * Version :: 38
+ * Modify  :: 2026-03-21
+ * Version :: 39
  *
  * @param Array $args
  * @return Widget
@@ -282,6 +282,14 @@ class Form extends Widget {
 			case 'textfield' : $ret .= $this->_renderTextField($tag_id, $name, $formElement); break;
 			case 'hidden': $ret .= $this->_renderHidden($tag_id, $name, $formElement); break;
 			case 'text' :
+			case 'number':
+			case 'date':
+			case 'time':
+			case 'email':
+			case 'search':
+			case 'tel':
+			case 'datetime-local':
+			case 'color':
 			case 'password' : $ret .= $this->_renderTextPassword($tag_id, $name, $formElement); break;
 			case 'textarea' : $ret .= $this->_renderTextArea($tag_id, $name, $formElement); break;
 			case 'radio' :
@@ -355,10 +363,10 @@ class Form extends Widget {
 			. ($formElement->size ? ' size="'.$formElement->size.'"' : '')
 			. ($name ? ' name="'.$name.'"' : ' ')
 			. ' id="'.$tag_id.'"'
-			. ' class="form-'.$formElement->type
-				. ($formElement->class ? ' '.$formElement->class : '')
-				. ($formElement->require ? ' -require' : '')
-				. ($formElement->readonly ? ' -readonly' : '')
+			. ' class="'.($formElement->type != 'text' ? 'form-text ' : '').'form-'.$formElement->type . ' '
+				. ($formElement->class ? $formElement->class.' ' : '')
+				. ($formElement->require ? '-require ' : '')
+				. ($formElement->readonly ? '-readonly ' : '')
 				. '"'
 			. ' type="'.$formElement->type.'"'
 			. ($formElement->attribute ? ' '.$formElement->attribute : '')
