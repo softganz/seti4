@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-02-11
- * Version :: 67
+ * Modify  :: 2026-03-21
+ * Version :: 68
  *
  * @param Array $args
  * @return Widget
@@ -525,14 +525,14 @@ class Card extends Widget {
 		return $this->_renderWidgetContainerStart()
 			. (
 				$this->header ?
-					'<div class="-header">'
+					'<header class="-header">'
 					. ($this->header['leading'] ? '<div class="-leading">'.$this->_renderEachChildWidget(NULL, $this->header['leading']).'</div>'._NL : '')
 					. '<div class="-title">'
 					. ($this->header['title'] ? '<'.SG\getFirst($this->header['titleTag'], $this->titleTag).' class="-title-text">'.$this->_renderEachChildWidget(NULL, $this->header['title']).'</'.SG\getFirst($this->header['titleTag'], $this->titleTag).'>' : '')
 					. ($this->header['subtitle'] ? '<span class="-subtitle-text">'.$this->_renderEachChildWidget(NULL, $this->header['subtitle']).'</span>' : '')
 					. '</div>'._NL
 					. ($this->header['trailing'] ? '<div class="-trailing">'.$this->_renderEachChildWidget(NULL, $this->header['trailing']).'</div>'._NL : '')
-					. '</div><!-- header -->'
+					. '</header><!-- header -->'
 			 : '' // header
 			)
 			. $this->_renderChildren($this->children())
@@ -1098,9 +1098,11 @@ class ProfilePhoto extends Widget {
 class Stack extends Widget {
 }
 
-class GridView extends Widget {}
+class GridView extends Widget {
+}
 
-class Drawer extends Widget {}
+class Drawer extends Widget {
+}
 
 // Complex Widget
 
