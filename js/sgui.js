@@ -677,32 +677,32 @@ function showError(response, time = 5000) {
 * <a class="sg-action" data-rel="target" data-done="action[->targetAction]:target:url | ..."></a>
 */
 (function($) {
-	let version = '1.01'
-	let sgActionType = 'click'
-	let actionResult
-	let debug
+	let version = '1.02';
+	let sgActionType = 'click';
+	let actionResult;
+	let debug = false;
 
 	$.fn.sgAction = function(event, options = {}) {
-		let $this = $(this)
-		let linkData = $this.data()
-		let dataOptions = linkData.options
-		let href = $this.attr('href')
-		let relTarget = linkData.rel
-		let retUrl = linkData.ret
+		let $this = $(this);
+		let linkData = $this.data();
+		let dataOptions = linkData.options;
+		let href = $this.attr('href') || '';
+		let relTarget = linkData.rel;
+		let retUrl = linkData.ret;
+		let $boxElement = $('#cboxLoadedContent');
+		let confirm = linkData.confirm == undefined || linkData.confirmed;
+		let callback = linkData.callback;
+		let relAction;
+		let doneResult;
 		let para = {}
-		let $boxElement = $('#cboxLoadedContent')
-		let confirm = linkData.confirm == undefined || linkData.confirmed
-		let callback = linkData.callback
-		let relAction
-		let doneResult
 
-		if (href === 'javascript:void(0)') href = linkData.url
+		if (href === 'javascript:void(0)') href = linkData.url;
 
-		console.log('$.sgAction version ' + version + ' start')
+		console.log('$.sgAction version ' + version + ' start');
 
 		if (relTarget) {
-			relAction = relTarget.split('->')[1]
-			relTarget = relTarget.split('->')[0]
+			relAction = relTarget.split('->')[1];
+			relTarget = relTarget.split('->')[0];
 		}
 
 		let defaults = {
@@ -713,7 +713,7 @@ function showError(response, time = 5000) {
 			callback : false,
 		}
 
-		let settings = $.extend({}, $.fn.sgAction.defaults, defaults, dataOptions, options)
+		let settings = $.extend({}, $.fn.sgAction.defaults, defaults, dataOptions, options);
 		// console.log(dataOptions)
 		// console.log(settings)
 
@@ -723,46 +723,46 @@ function showError(response, time = 5000) {
 			//console.log('$THIS is ',$this)
 
 			if (!confirm) {
-				return
+				return;
 			} else if (linkData.confirmed) {
-				$this.removeData('confirmed')
-				para.confirm = 'yes'
+				$this.removeData('confirmed');
+				para.confirm = 'yes';
 			}
 
 			if (relTarget == 'box' && relAction == 'clear') {
-				sgBoxPageCount = 0
-				$boxElement.empty()
+				sgBoxPageCount = 0;
+				$boxElement.empty();
 			}
 
 			// Process before action
 			if (linkData.before) {
-				sgActionDone(linkData.before, $this)
+				sgActionDone(linkData.before, $this);
 			}
 
 			// Replace data-rel="close" with data-rel="none" data-done="close"
 			// Replace data-rel="back" with data-rel="none" data-done="back"
 			if (relTarget == 'close') {
 				if ($this.closest('.sg-dropbox.box').length != 0) {
-					$('.sg-dropbox.box').children('div').hide()
-					$('.sg-dropbox.box.active').removeClass('active')
-					return
+					$('.sg-dropbox.box').children('div').hide();
+					$('.sg-dropbox.box.active').removeClass('active');
+					return;
 				} else if ($('#cboxLoadedContent').length) {
-					sgBoxBack({close: true})
-					return
+					sgBoxBack({close: true});
+					return;
 				} else if (isFlutterInAppWebViewReady) {
 					window.flutter_inappwebview.callHandler("closeWebView");
-					return
+					return;
 				} else if (isAndroidWebViewReady) {
-					Android.closeWebView()
-					return
+					Android.closeWebView();
+					return;
 				} else {
 					// If no active box do after
-					relTarget = undefined
+					relTarget = undefined;
 				}
 			} else if (relTarget == 'back' && $boxElement.length) {
 				// console.log('BACK BUTTON CLICK')
 				// sgBoxBack()
-				history.back()
+				history.back();
 				// let $boxPage = $('.box-page')
 				// if ($boxPage.length <= 1) {
 				// 	$.colorbox.close()
@@ -776,140 +776,139 @@ function showError(response, time = 5000) {
 				// 	// Show last box after remove
 				// 	$boxElement.children('.box-page').last().show()
 				// }
-				return
+				return;
 			} else if (relTarget == 'img') {
-				sgShowBox(null, $this, null, event)
-				return
+				sgShowBox(null, $this, null, event);
+				return;
 			}
 
 			if (relTarget == undefined && retUrl == undefined) {
 				// No attribute data-rel and data-ret
 				// Redirect to href
 				let hasPara = JSON.stringify(para) != '{}'
-				let hrefUrl = $this.attr('href')
-				hrefUrl = hrefUrl + (hasPara ? (hrefUrl.indexOf('?') == -1 ? '?' : '&') + $.param(para) : '')
-				window.location = hrefUrl
+				let hrefUrl = $this.attr('href');
+				hrefUrl = hrefUrl + (hasPara ? (hrefUrl.indexOf('?') == -1 ? '?' : '&') + $.param(para) : '');
+				window.location = hrefUrl;
 				return true
 			} else if (href && href.substr(0,1) === '#') {
 				// href is begin with #
 				// Get HTML from #id and send to data-rel
-				let html = null
-				if (href.length > 1 && $(href).length) html = $(href).get(0).innerHTML
-				sgUpdateData(html, relTarget, $this)
-				sgActionDone(linkData.done, $this, doneResult)
-				return
+				let html = null;
+				if (href.length > 1 && $(href).length) html = $(href).get(0).innerHTML;
+				sgUpdateData(html, relTarget, $this);
+				sgActionDone(linkData.done, $this, doneResult);
+				return;
 			}
 
 
-			if (debugSG) console.log("Load from url "+href)
+			if (debugSG) console.log("Load from url "+href);
 			if (!settings.silent) notify(settings.indicator);
 
 			// Show iframe in box
 			if ($this.data('type') == 'iframe') {
-				sgShowBox('<iframe src="'+href+'"></iframe>', $this, {clearBoxContent: relTarget == 'clear'})
-				notify('')
-				return
+				sgShowBox('<iframe src="'+href+'"></iframe>', $this, {clearBoxContent: relTarget == 'clear'});
+				notify('');
+				return;
 			}
 
 
 			// console.log('URL = '+href)
-			let hrefMatch = href.match(/^(function|javascript)\:(.*)/)
+			let hrefMatch = href.match(/^(function|javascript)\:(.*)/);
 
 			if (hrefMatch) {
-				let urlFunction = hrefMatch[2]
+				let urlFunction = hrefMatch[2];
 				// console.log(urlFunction,hrefMatch)
 
 				if (hrefMatch[1] === 'javascript') {
-					eval(urlFunction)
+					eval(urlFunction);
 				} else {
-					let exeFunction = window[urlFunction]
+					let exeFunction = window[urlFunction];
 					await exeFunction($this).then(function(){
-						notify()
-						sgActionDone(linkData.done, $this, doneResult)
+						notify();
+						sgActionDone(linkData.done, $this, doneResult);
 					})
 				}
-				return
+				return;
 			}
 
 			if (settings.fragment) history.pushState({}, document.title, '#'+href);
 
 			$.post(href, para, function(html) {
-				doneResult = html
-				notify()
-				if (!settings.silent) console.log("Load completed.")
+				doneResult = html;
+				notify();
+				if (!settings.silent) console.log("Load completed.");
 
 				if (retUrl) {
-					if (debugSG) console.log("Return URL "+retUrl)
+					if (debugSG) console.log("Return URL "+retUrl);
 					$.post(retUrl, function(html) {
-						sgUpdateData(html, relTarget, $this)
-						notify()
+						sgUpdateData(html, relTarget, $this);
+						notify();
 					})
 				} else {
-					sgUpdateData(html, relTarget, $this)
+					sgUpdateData(html, relTarget, $this);
 				}
 
 				// @deprecated => use data-done="remove:parent element"
 				// REMOVE element after done
 				if (linkData.removeparent) {
-					let removeTag = linkData.removeparent
-					let $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag)
-					$removeElement.remove()
+					let removeTag = linkData.removeparent;
+					let $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag);
+					$removeElement.remove();
 				}
 
 				// Process CALLBACK function
-				if (settings.callback) settings.callback($this,html)
+				if (settings.callback) settings.callback($this,html);
 
 				if (callback && typeof window[callback] === 'function') {
-					window[callback]($this,html)
+					window[callback]($this,html);
 				} else if (callback) {
-					window.location = callback
+					window.location = callback;
 				}
 			})
 			.done(function(response) {
-				if (response.responseCode && response.text) notify(response.text, 3000)
-				sgActionDone(linkData.done, $this, doneResult)
+				if (response.responseCode && response.text) notify(response.text, 3000);
+				sgActionDone(linkData.done, $this, doneResult);
 			})
 			.fail(function(response) {
 				return showError(response);
 			});
 
-			return
+			return;
 		}
 
 
-		self.test = function () {console.log('THIS IS A TEST')}
+		self.test = function () {console.log('THIS IS A TEST');}
 
-		$this.actionResult = self.doAction() === false ? false : true
+		$this.actionResult = self.doAction() === false ? false : true;
 
 		// RETURN function that can call from outside
 		$this.version = function() {
-			console.log('$.sgAction version is '+version)
-			return $this
+			console.log('$.sgAction version is '+version);
+			return $this;
 		}
 
-		return $this
+		return $this;
 
 		return {
 			ok : $this.actionResult,
 
 			// GET VERSION
 			version: function() {
-				console.log('$.sgAction version is '+version)
-				return $this
+				console.log('$.sgAction version is '+version);
+				return $this;
 			},
 
 			// SAVE DATA IN FORM TO TARGET
 			update: function($this, value, callback) {
-				//self.something($this, value, callback)
+				//self.something($this, value, callback);
 			},
 
-			test: function() {return 'Test'},
+			test: function() {return 'Test';},
 		}
 	}
 
 	$.fn.sgForm = function() {
-
-		return this
+		return this;
 	}
 
 	/* Publicly accessible defaults. */
@@ -927,9 +926,9 @@ function showError(response, time = 5000) {
 	}
 
 	$(document).on(sgActionType, '.sg-action', function(event) {
-		let result = $(this).sgAction(event,{aTestOpt: "This is test option"})
+		let result = $(this).sgAction(event,{aTestOpt: "This is test option"});
 		//console.log('RESULT ', result)
-		return !result.actionResult
+		return !result.actionResult;
 	});
 })(jQuery);
 
