@@ -3,8 +3,8 @@
  * Widget  :: Menu Group Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-09-07
- * Modify  :: 2026-01-18
- * Version :: 4
+ * Modify  :: 2026-03-22
+ * Version :: 5
  *
  * @param Array $args
  * @return Widget
@@ -33,13 +33,23 @@ class MenuGroupWidget extends Widget {
 				foreach (explode(',', $this->use) as $navKey) {
 					$menuItem = $this->menu->{$navKey};
 
-					// Replace {{ variable }} with $this->variable
+					// Replace {{variable[.variable]}} with $this->variable
 					foreach ($menuItem as $menuItemKey => $menuItemValue) {
 						if (!is_string($menuItemValue)) continue;
 						$menuItem->{$menuItemKey} = preg_replace_callback(
 							'/(\{\{(.*?)\}\})/',
-							function($match) {
-								return $this->variable->{$match[2]};
+							function($match) use($menuItemKey, &$menuItemValue) {
+								$matchVar = explode('.', $match[2]);
+
+								if ($menuItemKey === 'condition') {
+									return '$this->variable->' . implode('->', $matchVar);
+								} else {
+									if (count($matchVar) === 1) {
+										return $this->variable->{$matchVar[0]};
+									} else if (count($matchVar) === 2) {
+										return $this->variable->{$matchVar[0]}->{$matchVar[1]};
+									}
+								}
 							},
 							$menuItemValue
 						);
@@ -118,6 +128,16 @@ class MenuGroupWidget extends Widget {
 				}
 			}
 			if (!$hasRightToCreateButton) return NULL;
+			// "condition": "empty($projectInfo->info->allocateDate)",
+			if ($menuItem->condition) {
+				try {
+					$showCondition = eval('return ' . $menuItem->condition . ';');
+				} catch (ParseError $exception) {
+					return '?';
+				}
+
+				if (!$showCondition) return NULL;
+			}
 		} else {
 			// @deprecated
 			if ($menuItem->access) {
