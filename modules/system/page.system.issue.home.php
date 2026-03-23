@@ -3,8 +3,8 @@
  * System  :: Issue Home Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-10-14
- * Modify  :: 2025-12-29
- * Version :: 18
+ * Modify  :: 2026-03-23
+ * Version :: 19
  *
  * @return Widget
  *
@@ -47,21 +47,33 @@ class SystemIssueHome extends Page {
 				'title' => $dbs->count.' Issues Report',
 				'trailing' => $this->trailing(),
 			]), // AppBar
-			'body' => new Widget([
+			'body' => new Container([
+				'class' => 'system-issue-list',
 				'children' => [
 					empty($this->host) ? $this->domainCount() : NULL,
 					new Widget([
 						// 'thead' => ['ID', 'Host', 'Url', 'Report By', 'report-date -date' => 'Date', '', ''],
 						'children' => array_map(
 							function($item) {
+								// Convert description
+								if (preg_match('/^[\[\{]/', $item->description)) {
+									$descriptionList = json_decode($item->description);
+									$description = '<details class="-description"><summary>Description: ' . array_values((Array) $descriptionList)[0] . '</summary>Message: <ul><li>'. implode('</li><li>',  array_values((Array) $descriptionList)) . '</li></ul></details>';
+								} else if ($item->description) {
+									$description = '<details class="-description"><summary>Description: ' . preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : ' . $item->description . '</details>';
+								} else {
+									$description = '';
+								}
+
+								$link = $item->host . $item->path . ($item->query ? '?' . $item->query : '');
+
 								return new Card([
+									'class' => '-error-'.str_replace(' ', '-', strtolower($item->issueType)),
 									'children' => [
 										new Header([
-											'crossAxisAlignment' => 'center',
-											'title' => $item->host,
+											'title' => $item->issueType,
 											'leading' => new Icon($this->issueIcon($item->issueType)),
-											// 'subtitle' => ($item->reportBy ? 'By : '.$item->reportBy : NULL)
-												// . (' @'.$item->reportDate),
+											'subtitle' => '@' . $item->reportDate,
 											'trailing' => new Row([
 												'children' => [
 													new Nav([
@@ -111,14 +123,14 @@ class SystemIssueHome extends Page {
 											'child' => new Column([
 												'class' => '-sg-paddingnorm -nowrap',
 												'children' => [
-													'<b>Link : '.$item->host.$item->path.($item->query ? '?'.$item->query : '').'</b>',
-													$item->reportBy ? 'By : '.$item->reportBy : NULL,
+													'<b>Host: ' . '<a href="' . $item->host . '" target="_blank">' . $item->host . '</a></b>',
+													'<b>Link : </b><a href="' . $link . '" target="_blank">' . $link . '</a>',
+													$item->reportBy ? 'By : ' . $item->reportBy : NULL,
 													// $item->issueType === 'Create user' ? $this->showCreateUserInfo($item) : NULL,
-													'Date : '.$item->reportDate,
-													'Referer : <a href="'.$item->referer.'" target="_blank">'.$item->referer.'</a>',
-													'Agent : '.$item->agent,
-													$item->description ? '<details><summary>Description: '.preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : '.$item->description.'</details>' : NULL,
-													$item->data ? '<details><summary>Data: '.number_format(strlen($item->data)).' chars.</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">'.$item->data.'</pre></div></details>' : ''
+													'Referer : <a href="' . $item->referer . '" target="_blank">' . $item->referer . '</a>',
+													'Agent : ' . $item->agent,
+													$description,
+													$item->data ? '<details class="-descdataription"><summary>Data: '.number_format(strlen($item->data)) . ' chars.</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">' . $item->data . '</pre></div></details>' : ''
 												]
 											]), // Column
 										]), // ScrollView
@@ -248,8 +260,9 @@ class SystemIssueHome extends Page {
 
 	private function issueIcon($issueType) {
 		$icons = [
-			'Fatal Error' => 'error',
+			'Fatal Error' => 'dangerous',
 			'Create user' => 'person_add',
+			'Password request' => 'passkey',
 			'Other' => 'priority_high'
 		];
 
