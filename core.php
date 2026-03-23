@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-02-24
- * @version :: 36
+ * @modify  :: 2026-03-23
+ * @version :: 37
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -436,7 +436,35 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 
 	if (sgIsFatalError($code)) {
 		$fullDescription = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
-		
+
+		$errorDescription = [
+			'Error: ' . $description,
+			'Line: ' . $line,
+			'File: ' . $file,
+			'CALL STACK'
+		];
+
+		foreach (debug_backtrace() as $key => $value) {
+			if (isset($value['file'])) {
+				$errorDescription[] = $value['file']
+					. ' @line ' . $value['line']
+					. (isset($value['function']) ? ' in ' . $value['function'] . '()' : '');
+				continue;
+			}
+			if (isset($value['function'])) {
+				$errorDescription[] = 'function ' . $value['function'] . '()';
+			}
+		}
+
+		sgSendLog([
+			'file' => $file,
+			'line' => $line,
+			'type' => 'Fatal Error',
+			'user' => function_exists('i') ? i()->uid : NULL,
+			'name' => function_exists('i') ? i()->name : NULL,
+			'description' => $errorDescription
+		]);
+
 		// Remove "Uncaught Exception: +" prefix if present
 		$cleanDescription = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
 		
