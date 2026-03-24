@@ -7,8 +7,8 @@
 * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
 * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
 * Created :: 2009-07-06
-* Modify  :: 2026-01-04
-* Version :: 9
+* Modify  :: 2026-03-24
+* Version :: 10
 * ============================================
 * This program is free software. You can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,13 @@ class MyDb {
 		// url format -> mysql://username:password@host/db
 		list(,$this->server,$this->user,$this->password,$this->host,$this->db) = $out;
 
-		$mysqli = @new mysqli($this->host,$this->user,$this->password);
+		try {
+			$mysqli = @new mysqli($this->host,$this->user,$this->password);
+		} catch (mysqli_sql_exception $exception) {
+			throw new Exception('+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล');
+		} catch (Exception $exception) {
+			throw new Exception('+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล');
+		}
 
 		if (empty($dbUri) || $mysqli->connect_error) {
 			$this->_errors[] = $this->error_msg = 'Connect Error (' . $mysqli->connect_errno . ') : ' . $mysqli->connect_error;
