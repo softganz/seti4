@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-03-23
- * @version :: 37
+ * @modify  :: 2026-03-24
+ * @version :: 38
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -421,8 +421,6 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 	}
 
 
-	// echo '<div style="flex: 0 0 100%; border: 1px #eee solid; padding: 8px; border-radius: 8px;">Debug Error #'.(++$count).': <b>'.getErrorTypeName($code).' : ' .$description.'</b><br>code : <b>'.$code.'</b>, display : <b>'.$displayErrors.'</b> in file <b>' . $file . '</b>, line <b>' . $line . '</b>'.'<br />error_reporting : '.decbin(error_reporting()).' error code : '.decbin($code).'</div>';
-
 	if ($displayErrors === 'off') {
 		return false;
 	} else if (!(error_reporting() & $code)) {
@@ -434,25 +432,23 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 		return false;
 	}
 
+	// On fatal error
 	if (sgIsFatalError($code)) {
 		$fullDescription = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
+		$errorDescription = explode("\n", str_replace('\\', '\\\\', $description));
 
-		$errorDescription = [
-			'Error: ' . $description,
-			'Line: ' . $line,
-			'File: ' . $file,
-			'CALL STACK'
-		];
-
-		foreach (debug_backtrace() as $key => $value) {
-			if (isset($value['file'])) {
-				$errorDescription[] = $value['file']
-					. ' @line ' . $value['line']
-					. (isset($value['function']) ? ' in ' . $value['function'] . '()' : '');
-				continue;
-			}
-			if (isset($value['function'])) {
-				$errorDescription[] = 'function ' . $value['function'] . '()';
+		if (count($errorDescription) === 1) {
+			$errorDescription[0] .= ' in ' . $file . ':' . $line;
+			foreach (debug_backtrace() as $key => $value) {
+				if (isset($value['file'])) {
+					$errorDescription[] = $value['file']
+						. ' @line ' . $value['line']
+						. (isset($value['function']) ? ' in ' . $value['function'] . '()' : '');
+					continue;
+				}
+				if (isset($value['function'])) {
+					$errorDescription[] = 'function ' . $value['function'] . '()';
+				}
 			}
 		}
 
@@ -489,8 +485,6 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 					. $fullDescription : '',
 			])
 		);
-
-		// throw new \ErrorException($description, 0, $code, $file, $line);
 	}	
 }
 
@@ -517,7 +511,7 @@ function getErrorTypeName($code) {
  */
 function sgSendLog($data = []) {
 	$forceSend = $_GET['forceSendLog'];
-	$sendLogToUrl = cfg('error')->sendLog->toUrl;
+	$sendLogToUrl = $forceSend ? $forceSend : cfg('error')->sendLog->toUrl;
 	$domainNotSendLog = (Array) cfg('error')->sendLog->domainNotSend;
 	
 	if (empty($sendLogToUrl)) return;
