@@ -3,8 +3,8 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-02-11
- * Version :: 34
+ * Modify  :: 2026-03-24
+ * Version :: 35
  */
 
 /* Core Function */
@@ -310,19 +310,15 @@ function cfg_db($name = NULL, $value = NULL) {
 		]);
 
 		$result = $value;
-		cfg($name,$value);
+		cfg($name, $value);
 	} else if (isset($name)) {
 		$rs = DB::select([
 			'SELECT `name`, `value` FROM %variable% WHERE name = :name LIMIT 1;',
 			'var' => [':name' => $name]
 		]);
-		$result = ($rs->_num_rows) ? __is_serialized($rs->value)?unserialize($rs->value) : $rs->value : NULL;
+		$result = $rs->name ? (__is_serialized($rs->value) ? unserialize($rs->value) : $rs->value) : NULL;
 	} else {
-		try {
-			$dbs = DB::select(['SELECT `name`, `value` FROM %variable%']);
-		} catch (Exception $exception) {
-			throw new Exception($exception->getMessage(), _HTTP_ERROR_NOT_IMPLEMENTED);
-		}
+		$dbs = DB::select(['SELECT `name`, `value` FROM %variable%']);
 
 		$conf = [];
 		if (isset($dbs->items) && $dbs->items) {
@@ -682,7 +678,13 @@ function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
  */
 function url_alias($request = NULL) {
 	static $alias = NULL;
-	if (!isset($alias)) $alias = DB::select(['SELECT * FROM %url_alias% ORDER BY `alias` ASC']);
+
+	try {
+		if (!isset($alias)) $alias = DB::select(['SELECT * FROM %url_alias% ORDER BY `alias` ASC']);
+	} catch (Exception $exception) {
+		// Do not throw becuase it run before install database
+	}
+
 	if (!isset($request)) return $alias;
 
 	$result = (Object) [];

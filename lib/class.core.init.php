@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-02-11
- * Version :: 26
+ * Modify  :: 2026-03-24
+ * Version :: 27
  */
 
 global $R;
@@ -190,45 +190,45 @@ error_reporting(cfg('error_reporting'));
 //echo 'error after load config '.error_reporting().' : '.decbin(error_reporting()).'<br />';
 
 // Create new mydb database constant, If cannot connect DB class will throw exception
-$R->DB = new DB([
-	'connection' => [
-		'uri' => cfg('db'),
-		'characterSetClient' => cfg('db.character_set_client'),
-		'characterSetConnection' => cfg('db.character_set_connection'),
-		'collationConnection' => cfg('db.collation_connection'),
-	]
-]);
+try {
+	$R->DB = new DB([
+		'connection' => [
+			'uri' => cfg('db'),
+			'characterSetClient' => cfg('db.character_set_client'),
+			'characterSetConnection' => cfg('db.character_set_connection'),
+			'collationConnection' => cfg('db.collation_connection'),
+		]
+	]);
+} catch (Exception $exception) {
+	throw new Exception($exception->getMessage());
+}
 
+// <strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ
 if ($R->DB->connectionTime > cfg('system')->maxDbConnectionTime) {
-	throw new \Exception('+ฐานข้อมูลยังไม่สามารถรองรับการใช้งานหนักได้');
+	throw new Exception('+ฐานข้อมูลยังไม่สามารถรองรับการใช้งานหนักได้');
 }
 
 $R->DB->version = DB::select(['SELECT VERSION() `version` LIMIT 1'])->version;;
 
 // If connect database error, end process
-$R->myDb = new MyDb(cfg('db'));
-if (!$R->myDb->status) {
-	// if not set_theme, cannot find index template file
-	set_theme();
-	die(SgCore::processIndex('index', message('error','OOOPS!!! Database connection error')));
-}
+try {
+	$R->myDb = new MyDb(cfg('db'));
 
-// Get mysql version from string eg "mysqlnd 8.2.19"
-$R->mysql = (Object) [
-	'clientInfo' => mysqli_get_client_info(),
-	'version' => preg_filter('/^\w*\s([\d\.].*)$/i', '$1', mysqli_get_client_info()),
-	'verionCode' => intval(preg_filter('/^\w*\s([\d])[\.\d]*/i', '$1', mysqli_get_client_info())),
-];
+	// Get mysql version from string eg "mysqlnd 8.2.19"
+	$R->mysql = (Object) [
+		'clientInfo' => mysqli_get_client_info(),
+		'version' => preg_filter('/^\w*\s([\d\.].*)$/i', '$1', mysqli_get_client_info()),
+		'verionCode' => intval(preg_filter('/^\w*\s([\d])[\.\d]*/i', '$1', mysqli_get_client_info())),
+	];
+} catch (Exception $exception) {
+	throw new Exception($exception->getMessage());
+}
 
 // Load config variable from table
 try {
 	SgCore::loadConfig(cfg_db());
 } catch (Exception $exception) {
-	die(
-		showError([
-			'Title' => 'Oops! An Configuration Error Occurred',
-		])
-	);
+	// die(showError(['Title' => 'Oops! An Configuration Error Occurred']));
 }
 
 // Ban request from IP and hostname
@@ -236,15 +236,6 @@ if (banRequest(getenv('REMOTE_ADDR'), gethostbyaddr(getenv('REMOTE_ADDR')))) {
 	http_response_code(_HTTP_ERROR_NOT_FOUND);
 	die('Sorry!!!! You were banned.');
 }
-
-// if ($site_message) {
-// 	$ret .= '<p class="notify">'.tr('<h2>Website temporary out of service.</h2><p>My Website is currently out of service ('.$site_message.'). We should be back shortly. Thank you for your patience.</p>','<strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ').'</p>';
-// 	ob_start();
-// 	SgCore::loadTemplate('home');
-// 	$ret .= ob_get_contents();
-// 	ob_end_clean();
-// 	die($ret);
-// }
 
 // Return robot text
 if ($request == 'robots.txt') die(cfg('robots.txt'));
@@ -285,8 +276,11 @@ SgCore::setLang();
 // echo session_cache_expire();
 
 // Start session handler register using database
-session_set_save_handler(new Session(), true);
-session_start();
+// Session use database
+try {
+	session_set_save_handler(new Session(), true);
+	session_start();
+} catch (Exception $exception) {}
 
 // Check request rate limit and die if over limit
 rateLimit(cfg('system')->rateLimit->limit, cfg('system')->rateLimit->seconds); // 60 requests per 60 seconds
@@ -311,17 +305,20 @@ if (isset($_GET['devMode'])) {
 * do not call debug() before here , It posible mistake roles from table
 */
 
-// Check user login state or new sign in
-$R->user = UserModel::checkLogin();
-if (isset($R->user->signInResult) && $R->user->signInResult) {
-	sendHeader('application/json');
-	http_response_code($R->user->ok ? _HTTP_OK :_HTTP_ERROR_UNAUTHORIZED);
-	die(\SG\json_encode($R->user));
-} else if (isset($R->user->signInErrorMessage) && $R->user->signInErrorMessage) {
-	$R->message->signInErrorInSignForm = $R->user->signInErrorMessage;
-}
+// Check user login state or new sign in from database
+// It'll error on install
+try {
+	$R->user = UserModel::checkLogin();
+	if (isset($R->user->signInResult) && $R->user->signInResult) {
+		sendHeader('application/json');
+		http_response_code($R->user->ok ? _HTTP_OK :_HTTP_ERROR_UNAUTHORIZED);
+		die(\SG\json_encode($R->user));
+	} else if (isset($R->user->signInErrorMessage) && $R->user->signInErrorMessage) {
+		$R->message->signInErrorInSignForm = $R->user->signInErrorMessage;
+	}
 
-if (is_object($R->user)) $R->user->admin = user_access('access administrator pages');
+	if (is_object($R->user)) $R->user->admin = user_access('access administrator pages');
+} catch (Exception $exception) {}
 
 // Check site status
 if (cfg('web.status') == 0 && !$R->user->admin) {
