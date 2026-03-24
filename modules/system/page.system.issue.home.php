@@ -3,8 +3,8 @@
  * System  :: Issue Home Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-10-14
- * Modify  :: 2026-03-23
- * Version :: 19
+ * Modify  :: 2026-03-24
+ * Version :: 20
  *
  * @return Widget
  *
@@ -52,7 +52,6 @@ class SystemIssueHome extends Page {
 				'children' => [
 					empty($this->host) ? $this->domainCount() : NULL,
 					new Widget([
-						// 'thead' => ['ID', 'Host', 'Url', 'Report By', 'report-date -date' => 'Date', '', ''],
 						'children' => array_map(
 							function($item) {
 								// Convert description
@@ -126,7 +125,6 @@ class SystemIssueHome extends Page {
 													'<b>Host: ' . '<a href="' . $item->host . '" target="_blank">' . $item->host . '</a></b>',
 													'<b>Link : </b><a href="' . $link . '" target="_blank">' . $link . '</a>',
 													$item->reportBy ? 'By : ' . $item->reportBy : NULL,
-													// $item->issueType === 'Create user' ? $this->showCreateUserInfo($item) : NULL,
 													'Referer : <a href="' . $item->referer . '" target="_blank">' . $item->referer . '</a>',
 													'Agent : ' . $item->agent,
 													$description,
@@ -134,15 +132,8 @@ class SystemIssueHome extends Page {
 												]
 											]), // Column
 										]), // ScrollView
-										// new DebugMsg($item, '$item'),
 									], // children
 								]);
-								// 	$item->issueId,
-								// 	$item->host,
-								// 	$item->path,
-								// 	$item->reportBy,
-								// 	$item->reportDate,
-								// ];
 							},
 							$dbs->items
 						)
