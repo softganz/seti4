@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-10-14
  * Modify  :: 2026-03-24
- * Version :: 20
+ * Version :: 21
  *
  * @return Widget
  *
@@ -73,48 +73,40 @@ class SystemIssueHome extends Page {
 											'title' => $item->issueType,
 											'leading' => new Icon($this->issueIcon($item->issueType)),
 											'subtitle' => '@' . $item->reportDate,
-											'trailing' => new Row([
+											'trailing' => new Nav([
 												'children' => [
-													new Nav([
-														'children' => [
-															$item->status == _COMPLETE ? NULL : new Button([
-																'type' => 'link',
-																'href' => url('api/system/issue/close/'.$item->issueId),
-																'icon' => new Icon('done'),
-																'class' => 'sg-action',
-																'rel' => 'none',
-																'done' => 'remove:parent .widget-card',
-																'attribute' => ['data-title' => 'Close Issue', 'data-confirm' => 'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?',]
-															]), // Button
-															new Button([
-																'type' => 'link',
-																'href' => url('system/issue/'.$item->issueId),
-																'icon' => new Icon('find_in_page'),
-																'class' => 'sg-action',
-																'rel' => 'box',
-																'attribute' => ['data-width' => 'full']
-															]), // Button
-															new Button([
-																'type' => 'link',
-																'href' => $this->createTargetUrl($item),
-																'icon' => new Icon('public'),
-																'attribute' => ['target' => '_blank']
-															]), // Button
-														], // children
-													]), // Nav
-													new Dropbox([
-														'children' => [
-															new Button([
-																'class' => 'sg-action',
-																'href' => url('api/system/issue/delete/'.$item->issueId),
-																'text' => 'Delete',
-																'icon' => new Icon('delete'),
-																'rel' => 'none',
-																'done' => 'remove:parent .widget-card',
-																'attribute' => ['data-title' => 'Delete Issue', 'data-confirm' => 'ต้องการลบรายการนี้ออกจากระบบ กรุณายืนยัน?',]
-															]), // Button
-														]
-													])
+													$item->status == _COMPLETE ? NULL : new Button([
+														'type' => 'link',
+														'href' => url('api/system/issue/close/'.$item->issueId),
+														'icon' => new Icon('done'),
+														'class' => 'sg-action',
+														'rel' => 'none',
+														'done' => 'remove:parent .widget-card',
+														'attribute' => ['data-title' => 'Close Issue', 'data-confirm' => 'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?',]
+													]), // Button
+													new Button([
+														'type' => 'link',
+														'href' => url('system/issue/'.$item->issueId),
+														'icon' => new Icon('find_in_page'),
+														'class' => 'sg-action',
+														'rel' => 'box',
+														'attribute' => ['data-width' => 'full']
+													]), // Button
+													new Button([
+														'type' => 'link',
+														'href' => $this->createTargetUrl($item),
+														'icon' => new Icon('public'),
+														'attribute' => ['target' => '_blank']
+													]), // Button
+													new Button([
+														'type' => 'link',
+														'class' => 'sg-action',
+														'href' => url('api/system/issue/delete/'.$item->issueId),
+														'icon' => new Icon('delete'),
+														'rel' => 'none',
+														'done' => 'remove:parent .widget-card',
+														'attribute' => ['data-title' => 'Delete Issue', 'data-confirm' => 'ต้องการลบรายการนี้ออกจากระบบ กรุณายืนยัน?',]
+													]), // Button
 												], // children
 											]), // Row
 										]), // ListTile
