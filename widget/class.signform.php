@@ -2,8 +2,8 @@
 /**
 * SignIn  :: Sign Form Widget
 * Created :: 2022-07-20
-* Modify  :: 2025-12-17
-* Version :: 6
+* Modify  :: 2026-03-27
+* Version :: 7
 *
 * @param Array $args
 * @return Widget
@@ -40,7 +40,9 @@ class SignForm extends Widget {
 					'showRegisterButton' => $this->showRegisterButton,
 					'showGuide' => $this->showGuide,
 					'registerText' => $this->registerText,
-					'guideText' => $this->guideText
+					'guideText' => $this->guideText,
+					'preText' => NULL,
+					'postText' => NULL,
 				],
 				$args
 			)
@@ -59,7 +61,9 @@ class SignForm extends Widget {
 			'tagName' => 'div',
 			'class' => 'widget-signform '.($this->class ? ' '.$this->class : ''),
 			'children' => [
+				// $this->preText ? '<div class="-pre-text">'.$this->_renderChildren([$this->preText]).'</div>' : NULL,
 				'<header><h3><i class="icon -material">login</i><span> กรณีเป็นสมาชิกเว็บอยู่แล้ว</span></h3></header>',
+				$this->preText ? new Widget(['children' => SG\getFirst($this->preText->children, [$this->preText])]) : NULL,
 				new Form([
 					'action' => $this->formAction,
 					'id' => $this->id ? $this->id : 'signin-'.$id,
@@ -114,6 +118,7 @@ class SignForm extends Widget {
 							'class' => '-primary -fill',
 							'value' => '<i class="icon -material">login</i><span>'.tr('Sign in').'</span>',
 						],
+						$this->postText ? $this->postText : NULL,
 					], // children
 				]), // Form
 				'<div class="-more">',
@@ -144,7 +149,8 @@ class SignForm extends Widget {
 						// '<a class="btn -link -fill" href="javascript:void(0)" onclick="window.location=\''.url('user/password').'\';return false;"><i class="icon -material -gray">restore</i><span>'.tr('Request new password').'?</span></a></span>',
 					], // children
 				]), // Column
-				$this->showGuide ? $this->guideText : NULL,
+				$this->showGuide ? new Widget(['children' => SG\getFirst($this->guideText->children, [$this->guideText])]) : NULL,
+				$this->postText ? new Widget(['children' => SG\getFirst($this->postText->children, [$this->postText])]) : NULL,
 			], // children
 		]);
 	}
