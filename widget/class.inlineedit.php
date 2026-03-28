@@ -3,8 +3,8 @@
  * Widget  :: InlineEdit
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-12-08
- * Modify  :: 2026-03-01
- * Version :: 25
+ * Modify  :: 2026-03-28
+ * Version :: 26
  *
  * @param Array $args
  * @return Widget
@@ -145,21 +145,25 @@ class InlineEdit extends Widget {
 
 	// @override
 	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
-		return parent::_renderEachChildWidget($key, $widget, [
-			'array' => function($key, $widget) {
-				if (isset($widget['options'])) $widget['options'] = (Object) $widget['options'];
-				return $this->_renderChildType($key, (Object) $widget);
-			},
-			'object' => function($key, $widget) {
-				while (is_object($widget) && method_exists($widget, 'build')) {
-					$widget = $widget->build();
-					if (!is_object($widget)) return $widget;
+		return parent::_renderEachChildWidget(
+			$key,
+			$widget,
+			[
+				'array' => function($key, $widget) {
+					if (isset($widget['options'])) $widget['options'] = (Object) $widget['options'];
+					return $this->_renderChildType($key, (Object) $widget);
+				},
+				'object' => function($key, $widget) {
+					while (is_object($widget) && method_exists($widget, 'build')) {
+						$widget = $widget->build();
+						if (!is_object($widget)) return $widget;
+					}
+				},
+				'text' => function($key, $text) {
+					return $text._NL;
 				}
-			},
-			'text' => function($key, $text) {
-				return $text._NL;
-			}
-		]);
+			]
+		);
 	}
 
 	private function _renderChildType($key, $widget = '{}') {
@@ -208,7 +212,7 @@ class InlineEdit extends Widget {
 		return $ret;
 	}
 
-	private function _renderLabel($widget) {
+	private function _renderLabel($widget, $postfix = '') {
 		if (empty($widget->label)) return;
 
 		return '<label class="-label'
@@ -217,10 +221,12 @@ class InlineEdit extends Widget {
 			. ($widget->labelStyle ? ' style="'.$widget->labelStyle.'"' : '')
 			. ' for=""'
 			. '>'
-			. ($widget->options->numbering ? '<span class="-numbering">'.(++$this->numbering).'.</san>' : '')
-			. $widget->label
+			. ($widget->options->numbering ? '<span class="-numbering">'.(++$this->numbering).'.</span>' : '')
+			. ($widget->options->labelPrefix ? '<span class="-label-prefix">'.$widget->options->labelPrefix.'</span>' : '')
+			. '<span class="-label-text">' . $widget->label . '</span>'
 			. ($widget->options->labelSubfix ? '<span class="-label-subfix">'.$widget->options->labelSubfix.'</span>' : '')
-			. ($widget->unit ? ' ('.$widget->unit.')' : '')
+			. ($widget->unit ? '<span class="-unit"> ('.$widget->unit.')</span>' : '')
+			. '<span class="-postfix">' . $postfix . '</span>'
 			. '</label>'._NL;
 	}
 
