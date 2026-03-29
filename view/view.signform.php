@@ -1,18 +1,19 @@
 <?php
 /**
-* View User Sign In Form
-* Created :: 2019-05-06
-* Modify  :: 2026-03-17
-* Version :: 3
-*
-* @param Object $options
-* @return String
-*/
+ * View User Sign In Form
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2019-05-06
+ * Modify  :: 2026-03-29
+ * Version :: 3
+ *
+ * @param Object $options
+ * @return String
+ */
 
-$debug = false;
+// @Deprecated
 
 function view_signform($options = '{}') {
-	$defaults = '{debug: false, id: "signin-'.uniqid().'", class: "signform", time: 10080, showTime: true, showInfo: true, showGuide: true, showRegist: true, rel: null, signret: null, done: null, regRel: "#main"}';
+	$defaults = '{debug: false, id: "signin-'.uniqid().'", class: "signform", time: 10080, showTime: true, showInfo: true, showGuide: true, showRegist: true, rel: null, signret: null, done: "reload", regRel: "#main"}';
 	$options = \SG\json_decode($options, $defaults);
 	$debug = $options->debug;
 
