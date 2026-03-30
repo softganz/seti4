@@ -3,8 +3,8 @@
  * Widget  :: InlineEdit
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-12-08
- * Modify  :: 2026-03-28
- * Version :: 26
+ * Modify  :: 2026-03-30
+ * Version :: 27
  *
  * @param Array $args
  * @return Widget
@@ -112,7 +112,7 @@ class InlineEdit extends Widget {
 			$child['placeholder'], $child['inputClass'],
 			$child['editMode'], $child['text'], $child['value'], $child['label'],
 			$child['onClick'], $child['onBlur'], $child['attribute'],
-			$child['description'],
+			$child['description']
 			// $child['postText']
 		);
 
