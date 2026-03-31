@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-03-24
- * @version :: 38
+ * @modify  :: 2026-03-31
+ * @version :: 39
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -434,6 +434,13 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 
 	// On fatal error
 	if (sgIsFatalError($code)) {
+		$errorType = 'Fatal Error';
+		$description = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
+		if (preg_match('/^(\[(\w.*)\])/', $description, $out)) {
+			$errorType = $out[2];
+			$description = str_replace($out[1], '', $description);
+		}
+
 		$fullDescription = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
 		$errorDescription = explode("\n", str_replace('\\', '\\\\', $description));
 
@@ -455,7 +462,7 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 		sgSendLog([
 			'file' => $file,
 			'line' => $line,
-			'type' => 'Fatal Error',
+			'type' => $errorType,
 			'user' => function_exists('i') ? i()->uid : NULL,
 			'name' => function_exists('i') ? i()->name : NULL,
 			'description' => $errorDescription
@@ -583,14 +590,14 @@ function sgIsFatalError($code) {
 function sgShutdown() {
 	global $R;
 	$error = error_get_last();
-	if ( sgIsFatalError($error["type"]) ) {
-		sgErrorHandler( $error["type"], $error["message"], $error["file"], $error["line"] );
-	}
 	if (is_object($R->DB) && method_exists($R->DB,'close')) {
 		$R->DB->close();
 	}
 	if (is_object($R->myDb) && method_exists($R->myDb,'close')) {
 		$R->myDb->close();
+	}
+	if ( sgIsFatalError($error["type"]) ) {
+		sgErrorHandler( $error["type"], $error["message"], $error["file"], $error["line"] );
 	}
 }
 ?>
