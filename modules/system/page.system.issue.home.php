@@ -3,8 +3,8 @@
  * System  :: Issue Home Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-10-14
- * Modify  :: 2026-03-24
- * Version :: 21
+ * Modify  :: 2026-03-31
+ * Version :: 22
  *
  * @return Widget
  *
@@ -246,6 +246,7 @@ class SystemIssueHome extends Page {
 			'Fatal Error' => 'dangerous',
 			'Create user' => 'person_add',
 			'Password request' => 'passkey',
+			'Database Connection' => 'dangerous',
 			'Other' => 'priority_high'
 		];
 
