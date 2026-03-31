@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-03-24
- * Version :: 27
+ * Modify  :: 2026-03-31
+ * Version :: 28
  */
 
 global $R;
@@ -200,15 +200,8 @@ try {
 		]
 	]);
 } catch (Exception $exception) {
-	throw new Exception($exception->getMessage());
+	throw new Exception('[Database Connection]'.$exception->getMessage(), $exception->getCode());
 }
-
-// <strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ
-if ($R->DB->connectionTime > cfg('system')->maxDbConnectionTime) {
-	throw new Exception('+ฐานข้อมูลยังไม่สามารถรองรับการใช้งานหนักได้');
-}
-
-$R->DB->version = DB::select(['SELECT VERSION() `version` LIMIT 1'])->version;;
 
 // If connect database error, end process
 try {
@@ -221,8 +214,15 @@ try {
 		'verionCode' => intval(preg_filter('/^\w*\s([\d])[\.\d]*/i', '$1', mysqli_get_client_info())),
 	];
 } catch (Exception $exception) {
-	throw new Exception($exception->getMessage());
+	throw new Exception('[Database Connection]'.$exception->getMessage(), $exception->getCode());
 }
+
+// <strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ
+if ($R->DB->connectionTime > cfg('system')->maxDbConnectionTime) {
+	throw new Exception('+ฐานข้อมูลยังไม่สามารถรองรับการใช้งานหนักได้');
+}
+
+$R->DB->version = DB::select(['SELECT VERSION() `version` LIMIT 1'])->version;;
 
 // Load config variable from table
 try {
