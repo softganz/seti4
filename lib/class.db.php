@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-03-28
- * Version :: 42
+ * Modify  :: 2026-03-31
+ * Version :: 43
  *
  * @param Array $args
  * @return Object
@@ -518,8 +518,7 @@ class DB {
 			$this->PDO = new \PDO($dsn, $connection['user'], $connection['password'], $pdoOptions);
 		} catch (\PDOException $e) {
 			$this->errors[] = $this->errorMsg = $e->getMessage();
-			throw new \Exception('+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล');
-			return false;
+			throw new \Exception('+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล', $e->getCode());
 		}
 
 		$end_time = microtime(true);
@@ -862,7 +861,12 @@ class DB {
 				\LogModel::save([
 					'module' => 'DB',
 					'keyword' => $method,
-					'message' => $stmt,
+					'message' => $stmt
+					. '<pre>'
+					. '<hr>GET: ' . \json_encode($_GET, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+					. '<hr>POST: ' . \json_encode($_POST, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+					. '<hr>FILES: ' . \json_encode($_FILES, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+					. '</pre>',
 				]);
 			}		
 		}
