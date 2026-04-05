@@ -2,15 +2,13 @@
 /**
 * API     :: User Sign In
 * Created :: 2021-06-21
-* Modify  :: 2022-11-19
-* Version :: 2
+* Modify  :: 2026-04-05
+* Version :: 3
 *
 * @return JSON
 *
 * @usage api/signin
 */
-
-import('model:user.php');
 
 class SigninApi extends PageApi {
 	var $username;
@@ -22,13 +20,15 @@ class SigninApi extends PageApi {
 	var $time = -1;
 
 	function __construct() {
-		$this->username = $_SERVER['HTTP_USERNAME'];
-		$this->password = $_SERVER['HTTP_PASSWORD'];
-		$this->time = SG\getFirst($_SERVER['HTTP_TIME'], $this->time);
-		$this->appId = $_SERVER['HTTP_APPID'];
-		$this->appToken = $_SERVER['HTTP_APPTOKEN'];
-		$this->token = $_SERVER['HTTP_SIGNINTOKEN'];
-		$this->email = $_SERVER['HTTP_SIGNINEMAIL'];
+		parent::__construct([
+			'username' => $_SERVER['HTTP_USERNAME'],
+			'password' => $_SERVER['HTTP_PASSWORD'],
+			'time' => SG\getFirst($_SERVER['HTTP_TIME'], $this->time),
+			'appId' => $_SERVER['HTTP_APPID'],
+			'appToken' => $_SERVER['HTTP_APPTOKEN'],
+			'token' => $_SERVER['HTTP_SIGNINTOKEN'],
+			'email' => $_SERVER['HTTP_SIGNINEMAIL'],
+		]);
 		// Old version use post('user') && post('pw')
 	}
 
@@ -42,31 +42,15 @@ class SigninApi extends PageApi {
 			'signed' => NULL,
 			'status' => NULL,
 			'username' => $this->username,
-			// 'password' => $this->password,
-			// "headerError" => "Text",
-			// "descriptionError" => "Text"
-			// 'server' => $_SERVER,
-			// 'this' => $this,
-			// 'headers' => $headers,
+			'token' => NULL,
+			'code' => NULL,
+			'text' => NULL,
 		];
 
 		$user = NULL;
 
 		if ($this->username && $this->password) {
-			// debugMsg('SIGN');
 			$user = UserModel::signInProcess($this->username, $this->password, $this->time);
-			// $result->user = $user;
-			// debugMsg($result, '$result');
-			// $user = i();
-			// $json->result = $result;
-		// } else if ($token = post('token')) {
-		// 	$userCache = Cache::get('user:'.$token);
-		// 	if ($userCache->count()) {
-		// 		$user = $userCache->data;
-		// 	}
-		// } else {
-		// 	$user = i();
-		// 	// $result->already=true;
 		}
 
 		$result->signed = $user->ok ? true : false;
@@ -77,8 +61,6 @@ class SigninApi extends PageApi {
 			$result->name = $user->name;
 			$result->token = $user->session;
 			$result->roles = $user->roles;
-			// $result->time = $this->time;
-			// $result->user = i();
 		} else {
 			http_response_code(_HTTP_ERROR_UNAUTHORIZED);
 			$result->status = 'fail';

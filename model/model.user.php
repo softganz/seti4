@@ -3,8 +3,8 @@
  * Model   :: User Information
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-07-22
- * Modify  :: 2026-02-23
- * Version :: 24
+ * Modify  :: 2026-04-05
+ * Version :: 25
  *
  * @param Int $userId
  * @return Object
@@ -354,6 +354,8 @@ class UserModel {
 	}
 
 	public static function signInProcess($username = NULL, $password = NULL, $cookielength = NULL) {
+		$debug = false; //$username=='softganz';
+
 		if (empty($username) || empty($password)) return false;
 
 		// Check username is email
@@ -419,8 +421,6 @@ class UserModel {
 
 		setcookie(cfg('cookie.id'),$session_id,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
 		setcookie(cfg('cookie.u'),$rs->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
-
-		$debug = false;//$username=='softganz';
 
 		$debug_str .= '<p>cookie.id : '.cfg('cookie.id').'</p>';
 		$debug_str .= '<p>cookie.u : '.cfg('cookie.u').'</p>';
