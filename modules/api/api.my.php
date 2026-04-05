@@ -1,17 +1,16 @@
 <?php
 /**
-* My      :: My Information API
-* Created :: 2022-07-11
-* Modify  :: 2024-06-05
-* Version :: 6
-*
-* @param String $action
-* @return Array/Object
-*
-* @usage api/my/{action}
-*/
-
-import('model:user.php');
+ * My      :: My Information API
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-07-11
+ * Modify  :: 2025-04-05
+ * Version :: 7
+ *
+ * @param String $action
+ * @return Array/Object
+ *
+ * @usage api/my/{action}
+ */
 
 class MyApi extends PageApi {
 	var $action;
@@ -23,15 +22,13 @@ class MyApi extends PageApi {
 		]);
 	}
 
-	function build() {
-		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+	function rightToBuild() {
+		if (!i()->ok) return apiError(_HTTP_ERROR_UNAUTHORIZED, 'Not sign in');
 
-		return parent::build();
+		return true;
 	}
 
 	function info() {
-		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Not Login');
-
 		return (Object) [
 			'id' => i()->uid,
 			'username' => i()->username,
@@ -42,7 +39,7 @@ class MyApi extends PageApi {
 		];
 	}
 
-	public function passwordChange() {
+	function passwordChange() {
 		$post = (Object) post('profile', _TRIM);
 
 		$userInfo = R::Model('user.get', i()->uid);
@@ -63,14 +60,15 @@ class MyApi extends PageApi {
 
 		UserModel::updatePassword(i()->uid, $post->password);
 
-		return success('New password was change : บันทึกรหัสผ่านใหม่เรียบร้อย');
+		return apiSuccess('New password was change : บันทึกรหัสผ่านใหม่เรียบร้อย');
 	}
 
-	public function accountDelete() {
+	function accountDelete() {
 		debugMsg(post(), 'post()');
 		if (!\SG\confirm()) return error(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
 		UserModel::deleteAccount(i()->uid);
-		return success('ลบบัญชีเรียบร้อย');
+
+		return apiSuccess('ลบบัญชีเรียบร้อย');
 	}
 }
 ?>
