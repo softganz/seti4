@@ -1,14 +1,15 @@
 <?php
 /**
- * render  :: Widget
+ * Widget  :: Render AJAX Call Widget
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2025-10-31
- * Modify  :: 2026-02-11
- * Version :: 3
+ * Modify  :: 2026-04-06
+ * Version :: 4
  *
  * @param Array $args
  * @return Object
  *
- * @usage import('widget:module.widgetlname.php')
+ * @usage import('widget:render.ajax.php')
  * @usage new renderAjaxWidgetl([])
  */
 
@@ -70,11 +71,22 @@ class renderAjaxWidget extends Widget {
 			}
 			$ret .= $this->requestResult->appBar->build();
 		}
-		$ret .= $this->requestResult->build();
+
+		$ret .= self::buildRequest($this->requestResult);
 
 		if ($this->requestResult->var) $ret = SgCore::processTemplate($ret, $this->requestResult->var);
 
 		return $ret;
+	}
+
+	// Build widget
+	private static function buildRequest($widget) {
+		if (is_object($widget) && method_exists($widget, 'build')) {
+			$buildResult = $widget->build();
+			return is_object($buildResult) && method_exists($buildResult, 'build') ? self::buildRequest($buildResult) : $buildResult;
+		}
+
+		return $widget;
 	}
 }
 ?>
