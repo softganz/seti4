@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-14
  * Modify  :: 2026-04-06
- * Version :: 5
+ * Version :: 6
  *
  * @return Widget
  *
@@ -22,7 +22,6 @@ class My extends Page {
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => '@'.i()->name,
-				// 'boxHeader' => true,
 				'leading' => _HEADER_BACK,
 			]), // AppBar
 			'sideBar' => R::View('my.menu'),
@@ -34,9 +33,9 @@ class My extends Page {
 							new Form([
 								'class' => 'sg-form -upload -upload-profile-photo',
 								'enctype' => 'multipart/form-data',
-								'action' => url('my/api/photo.change'),
+								'action' => Url::link('my/api/photo.change'),
 								'rel' => 'notify',
-								'done' => 'load:#main:'.url('my'),
+								'done' => 'load:#main:'.Url::link('my'),
 								'children' => [
 									'<span class="fileinput-button"><i class="icon -material">add_a_photo</i><input type="file" name="photo" class="inline-upload" accept="image/*;capture=camcorder" onchange="$(this).closest(form).submit(); return false;"></span>'
 									], // children
@@ -44,16 +43,16 @@ class My extends Page {
 
 							user_access('administer users') ? new Container([
 								'class' => '-sg-text-center',
-								'child' => 'ชื่อที่ใช้ในการเข้าระบบ'.' : <strong><a href="'.url('admin/user/edit/'.$userInfo->uid).'">'.$userInfo->username.'</a></strong> | <a href="'.url('profile/'.$uid).'" class="sg-action" data-rel="#main">Refresh</a>']
+								'child' => 'ชื่อที่ใช้ในการเข้าระบบ'.' : <strong><a href="'.Url::link('admin/user/edit/'.$userInfo->uid).'">'.$userInfo->username.'</a></strong> | <a href="'.Url::link('profile/'.$uid).'" class="sg-action" data-rel="#main">Refresh</a>']
 							) : NULL,
 
 							user_access('administer users','change own profile',$userInfo->uid) ? new Row([
 								'mainAxisAlignment' => 'center',
 								'style' => 'gap: 16px;',
 								'children' => [
-									'<a class="btn" href="'.url('my/change/detail').'"><i class="icon -material">person</i><span>'.tr('change your profile details').'</span></a>',
-									'<a class="sg-action btn" href="'.url('my/change/password').'" data-rel="#main"><i class="icon -material">enhanced_encryption</i><span>'.tr('change password').'</span></a>',
-									'<a class="btn" href="'.url('my/change/photo').'"><i class="icon -material">add_a_photo</i><span>'.tr('change photo').'</span></a>',
+									'<a class="btn" href="'.Url::link('my/change/detail').'"><i class="icon -material">person</i><span>'.tr('change your profile details').'</span></a>',
+									'<a class="sg-action btn" href="'.Url::link('my/change/password').'" data-rel="#main"><i class="icon -material">enhanced_encryption</i><span>'.tr('change password').'</span></a>',
+									'<a class="btn" href="'.Url::link('my/change/photo').'"><i class="icon -material">add_a_photo</i><span>'.tr('change photo').'</span></a>',
 								],
 							]) : NULL,
 						], // children
@@ -61,7 +60,7 @@ class My extends Page {
 
 					new Card([
 						'children' => [
-							'<p><a href="'.url('paper/user/'.$userInfo->uid).'">'.tr('หัวข้อที่เขียนโดย ').$userInfo->name.'</a></p>',
+							'<p><a href="'.Url::link('paper/user/'.$userInfo->uid).'">'.tr('หัวข้อที่เขียนโดย ').$userInfo->name.'</a></p>',
 
 							$userInfo->real_name || $userInfo->mid_name || $userInfo->last_name ? 'ชื่อจริง : '.($userInfo->name_prefix?$userInfo->name_prefix.' ':'').$userInfo->real_name.($userInfo->mid_name?' ('.$userInfo->mid_name.')':'').' '.$userInfo->last_name.'<br /><br />' : '',
 
