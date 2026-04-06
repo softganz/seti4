@@ -1,19 +1,20 @@
 <?php
 /**
-* My      :: My Home
-* Created :: 2021-12-14
-* Modify  :: 2025-12-09
-* Version :: 4
-*
-* @return Widget
-*
-* @usage my
-*/
+ * My      :: My Home
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2021-12-14
+ * Modify  :: 2026-04-06
+ * Version :: 5
+ *
+ * @return Widget
+ *
+ * @usage my
+ */
 
 class My extends Page {
 	#[\Override]
 	function build() {
-		if (!i()->ok) return $this->signForm();
+		if (!i()->ok) return new SignForm();
 
 		$uid = i()->uid;
 		$userInfo = UserModel::get($uid);
@@ -90,12 +91,6 @@ class My extends Page {
 					</script>',
 				], // children
 			]), // Widget
-		]);
-	}
-
-	private function signForm() {
-		return new SignForm([
-			'action' => url('my'),
 		]);
 	}
 }
