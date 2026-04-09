@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-03-31
- * Version :: 43
+ * Modify  :: 2026-04-09
+ * Version :: 44
  *
  * @param Array $args
  * @return Object
@@ -706,7 +706,7 @@ class DB {
 			// debugMsg($out, '$out');
 
 			// Convert format from `table`.`field` ->> "$.jsonKey" to JSON_UNQUOTE(JSON_EXTRACT())
-			$this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.[\w\-\_]*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
+			$this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.[\w\-\_\.0-9]*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
 			# $this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.[\u0E01-\u0E5B]*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
 
 
