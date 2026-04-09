@@ -17,7 +17,7 @@
 @import url(icons.css?v=5);
 @import url(basic/jquery.ui-1.10.css);
 @import url(jquery-confirm.css);
-@import url(sgui.css);
+@import url(sgui.css?v=1);
 
 :root {
 	--font-color: #333;
@@ -1405,7 +1405,7 @@ $SCREENS
 		, #cboxLoadedContent {width: 100% !important; height: 100vh !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; margin-top: 0; float: none !important; border-radius: 0;}
 		#cboxWrapper>div:nth-child(2) {height: 100vh !important;}
 		#cboxTitle {top: 0;}
-		#cboxLoadedContent .widget-appbar {top: 0; right: 32px;}
+		#cboxLoadedContent .widget-appbar {top: 0; right: 0;}
 		#cboxPrevious, #cboxNext, #cboxSlideshow, #cboxClose {top: 12px;}
 		.box-page {padding-top: 48px;}
 	}
