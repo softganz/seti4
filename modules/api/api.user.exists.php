@@ -1,14 +1,15 @@
 <?php
 /**
-* User    :: Check User Exists API
-* Created :: 2024-02-14
-* Modify  :: 2024-07-03
-* Version :: 2
-*
-* @return Array/Object
-*
-* @usage api/user/exists
-*/
+ * User    :: Check User Exists API
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2024-02-14
+ * Modify  :: 2026-04-19
+ * Version :: 3
+ *
+ * @return Array/Object
+ *
+ * @usage api/user/exists
+ */
 
 use Softganz\DB;
 
@@ -40,7 +41,7 @@ class UserExistsApi extends PageApi {
 	}
 
 	private function checkEmail() {
-		if (empty($this->email)) return apiError(_HTTP_OK_NO_CONTENT, 'ไม่ระบุอีเมล์');
+		if (empty($this->email)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่ระบุอีเมล์');
 
 		$userInfo = UserModel::get(['email' => $this->email]);
 		// debugMsg($userInfo);
