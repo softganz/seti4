@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-03-21
- * Version :: 68
+ * Modify  :: 2026-04-20
+ * Version :: 69
  *
  * @param Array $args
  * @return Widget
@@ -1095,6 +1095,24 @@ class ProfilePhoto extends Widget {
 	}
 } // End of class ProfilePhoto
 
+class Notify extends Widget {
+	var $widgetName = 'Notify';
+	var $tagName = 'div';
+	var $titleTag = 'div';
+	var $class = 'notify';
+
+	function __construct($args = []) {
+		parent::__construct($args);
+	}
+
+	// @override
+	function toString() {
+		return $this->_renderWidgetContainerStart()
+			. $this->_renderChildren($this->children())
+			. $this->_renderWidgetContainerEnd();
+	}
+} // End of class Card
+
 class Stack extends Widget {
 }
 
@@ -1287,7 +1305,7 @@ class Page extends PageBase {
 
 	function __construct($args = []) {
 		parent::__construct($args);
-		$this->theme = (Object) ['option' => cfg('topic.property')->option];
+		// $this->theme = (Object) ['option' => cfg('topic.property')->option];
 	}
 
 	function build() {
