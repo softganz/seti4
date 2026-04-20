@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-03-31
- * @version :: 39
+ * @modify  :: 2026-04-20
+ * @version :: 40
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        17);
-cfg('core.version',             '4.4.00');
-cfg('core.release',             '2026-02-24');
+cfg('core.version.code',        40);
+cfg('core.version',             '4.4.01');
+cfg('core.release',             '2026-04-20');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
@@ -372,7 +372,7 @@ function showError($message = []) {
 	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 	$debugMsg = debugMsg();
 
-	$templateFile = isset($message['template']) ? $message['template'] : 'fatal';
+	$templateFile = isset($message['template']) ? $message['template'] : (_AJAX ? 'error' : 'fatal');
 	$content = file_get_contents(__DIR__.'/assets/template/'.$templateFile.'.html');
 
 	$var = array_replace_recursive(
@@ -387,6 +387,7 @@ function showError($message = []) {
 		(Array) $message
 	);
 
+	// Replace {{ .Name }} with variable
 	$content = preg_replace_callback(
 		'/\{\{\s*\.([\w]*)\s*\}\}/s',
 		function ($m) use ($var) {
