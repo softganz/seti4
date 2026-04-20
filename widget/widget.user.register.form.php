@@ -3,8 +3,8 @@
  * User    :: Register Form Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2019-05-06
- * Modify  :: 2026-02-18
- * Version :: 12
+ * Modify  :: 2026-03-20
+ * Version :: 13
  *
  * @param Object $register
  * @return Widget
@@ -214,6 +214,15 @@ class UserRegisterFormWidget extends Widget {
 
 	private function script() {
 		return '<script type="text/javascript">
+			// const noop = () => {}
+			// ["assert", "clear", "count", "debug", "dir", "dirxml", "error",
+			// 	"exception", "group", "groupCollapsed", "groupEnd", "info", "log",
+			// 	"markTimeline", "profile", "profileEnd", "table", "time", "timeEnd",
+			// 	"timeline", "timelineEnd", "timeStamp", "trace", "warn",
+			// ].forEach((method) => {
+			// 	window.console[method] = noop
+			// });
+			
 			$.getScript("https://www.google.com/recaptcha/api.js", function(data, textStatus, jqxhr) {})
 
 			function onSubmit(token) {
@@ -271,28 +280,6 @@ class UserRegisterFormWidget extends Widget {
 					return "<ul><li>"+errors.join("</li><li>")+"</li></ul>"
 				}
 
-				// function userExists(para) {
-				// 	let exists = false;
-				// 	const baseUrl = SG.url("api/user/exists");
-				// 	const url = new URL(baseUrl, window.location.origin);
-				// 	jQuery.ajaxSetup({async:false});
-
-				// 	$.get(
-				// 		url,
-				// 		para,
-				// 	).fail(function(response) {
-				// 		console.clear();
-				// 		// console.log("response ERROR", response)
-				// 		exists = response.responseJSON.text || "Network error occurred";
-				// 	});
-				// 	// .done(function(data) {
-				// 	// 	// console.log("DONE", data)
-				// 	// 	exists = data.text
-				// 	// });
-
-				// 	return exists
-				// }
-
 				async function userExists(para) {
 					let exists = false;
 					try {
@@ -316,9 +303,7 @@ class UserRegisterFormWidget extends Widget {
 						if (!response.ok) {
 							const error = await response.json();
 							// console.log("ERROR: ",error);
-							return error.text || "Network error occurred";
-							// exists = error.text || "Network error occurred";
-							// exists = "ERROR";
+							return error.errorMessage || "Network error occurred";
 						}
 						
 						// const data = await response.json();
@@ -332,27 +317,6 @@ class UserRegisterFormWidget extends Widget {
 					// console.log("exists is ", exists);
 					return exists
 				}
-
-				// function userExists(para) {
-				// 	let exists = false;
-				// 	const baseUrl = SG.url("api/user/exists");
-				// 	const url = new URL(baseUrl, window.location.origin);
-				// 	jQuery.ajaxSetup({async:false});
-
-				// 	$.ajax({
-				// 		type: "GET",
-				// 		url: SG.url("api/user/exists"),
-				// 		async: false,
-				// 		data: para,
-				// 		error: function(response) {
-				// 			console.clear()
-				// 			// console.log("response ERROR", response)
-				// 			exists = response.responseJSON.text
-				// 		}
-				// 	});
-
-				// 	return exists
-				// }
 
 				this.checkUserValid = async function (element) {
 					let $this = $(element)
@@ -514,46 +478,13 @@ class UserRegisterFormWidget extends Widget {
 									// exists = "ERROR";
 								}
 								
-
 								const data = await response.json();
 								$("#spamword").text(data.text)
-								// return data.text || false;
-									
+								// return data.text || false;		
 							} catch (error) {
 								console.error("Error:", error);
 								return "Network error occurred. Please try again.";
 							}
-								
-						// jQuery.ajaxSetup({async:false});
-							// $.get(
-							// 	SG.url("user/register..verify"),
-							// ).fail(function(response) {
-							// 	// console.clear();
-							// 	// console.log("response ERROR", response);
-							// 	// statusText
-							// 	exists = response.responseJSON.text
-							// })
-							// .done(function(data) {
-							// 	// console.log(data);
-							// 	$("#spamword").text(data)
-							// });
-
-
-							// $.ajax({
-							// 	type: "GET",
-							// 	url: SG.url("user/register..verify"),
-							// 	async: false,
-							// 	error: function(response) {
-							// 		// console.clear();
-							// 		console.log("response ERROR", response);
-							// 		// statusText
-							// 		// exists = response.responseJSON.text								
-							// 	}
-							// })
-							// .done(function(data) {
-							// 	console.log("VERIFY DONE", data)
-							// 	$("#spamword").text(data)
-							// })
 						}
 					} else {
 						$verifyElement.hide()
