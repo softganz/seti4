@@ -3,8 +3,8 @@
  * Widget  :: Form Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-03-21
- * Version :: 39
+ * Modify  :: 2026-04-20
+ * Version :: 40
  *
  * @param Array $args
  * @return Widget
@@ -524,7 +524,8 @@ class Form extends Widget {
 		$ret = '	<select '
 			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" ' : '').' '
 			. ($formElement->multiple ? 'multiple="multiple" ' : '').($formElement->size?'size="'.$formElement->size.'" ':'')
-			. ' name="'.$name.'" id="'.$tag_id.'" '
+			. 'name="'.$name.'" '
+			. 'id="'.$tag_id.'" '
 			. 'class="form-'.$formElement->type.($formElement->class ? ' '.$formElement->class : '').($formElement->require ? ' -require' : '').($this->readonly || $formElement->readonly ? ' -disabled' : '').'"'
 			. $this->onElementEvent('onChange', $formElement->onChange)
 			. ($formElement->style ? 'style="'.$formElement->style.'"' : '')
