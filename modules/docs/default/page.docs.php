@@ -2,14 +2,16 @@
 /**
 * Docs    :: Docs Page Controller
 * Created :: 2024-07-14
-* Modify  :: 2025-06-21
-* Version :: 3
+* Modify  :: 2025-06-26
+* Version :: 4
 *
 * @param String $args
 * @return Widget
 *
 * @usage docs
 */
+
+import('package:external/parsedown/Parsedown.php'); // https://github.com/shuchkin/simplexlsxgen
 
 class Docs extends PageController {
 	var $args;
@@ -23,11 +25,11 @@ class Docs extends PageController {
 			'appBar' => new AppBar([
 				'title' => 'Documentation',
 				'navigator' => [
-					'<a href="'.url('docs').'">Overview</a>',
-					'<a href="'.url('docs/guides').'">Giudes</a>',
-					'<a href="'.url('docs/reference').'">Reference</a>',
-					'<a href="'.url('docs/page/docs/samples').'">Samples</a>',
-					'<a href="'.url('docs/libraies').'">Libraries</a>',
+					'<a href="'.Url::link('docs').'">Overview</a>',
+					'<a href="'.Url::link('docs/guides').'">Giudes</a>',
+					'<a href="'.Url::link('docs/reference').'">Reference</a>',
+					'<a href="'.Url::link('docs/page/docs/samples').'">Samples</a>',
+					'<a href="'.Url::link('docs/libraies').'">Libraries</a>',
 				]
 			]),
 			'sideBar' => $this->load('docs.list'),
@@ -43,33 +45,29 @@ class Docs extends PageController {
 	private function loadPage() {
 		return new Widget([
 			'children' => [
-				// new Container([
-				// 	'tagName' => 'nav',
-				// 	'class' => 'nav docs-nav',
-				// 	'child' => $this->load('docs.list'),
-				// ]), // Container
-
 				new Container([
 					'class' => 'docs-article',
 					'tagName' => 'article',
 					'child' => new Container([
 						'class' => 'docs-article-body',
 						'child' => (function() {
-							if ($this->args[0] == 'page') {
-								array_shift($this->args);
-								$page = implode('.',$this->args);
-								return R::PageWidget($page);
-							} else {
-								if (count($this->args) >= 3) {
-									$file = implode('/',array_slice($this->args,0,2)).'/'.implode('.',array_slice($this->args,2));
-								} else if (count($this->args) >= 2) {
-									$file = implode('/',array_slice($this->args,0,1)).'/'.implode('.',array_slice($this->args,1));
-								} else {
-									$file = $this->args[0];
-								}
-								$ret .= $this->load($file);
-							}
-							return $ret;
+							// if ($this->args[0] == 'page') {
+							// 	array_shift($this->args);
+							// 	$page = implode('.',$this->args);
+							// 	return R::PageWidget($page);
+							// } else {
+							// 	if (count($this->args) >= 3) {
+							// 		$file = implode('/',array_slice($this->args,0,2)).'/'.implode('.',array_slice($this->args,2));
+							// 	} else if (count($this->args) >= 2) {
+							// 		$file = implode('/',array_slice($this->args,0,1)).'/'.implode('.',array_slice($this->args,1));
+							// 	} else {
+							// 		$file = $this->args[0];
+							// 	}
+							// 	$ret .= $this->load($file);
+							// }
+							$file = implode('/', (Array) $this->args);
+
+							return $this->load($file);
 						})(), // child
 					]), // Container
 				]), // Container
@@ -79,19 +77,19 @@ class Docs extends PageController {
 
 	private function load($file) {
 		$file = dirname(__FILE__).'/../page/'.$file.'.html';
+
 		$ret = file_get_contents($file);
-		//$ret.=$file;
-		//preg_replace('/href=\"\{class\/form\}\"/',$ret,'aaaa');
 		$ret = preg_replace_callback('/\{([a-z0-9_\-\/\.]+)\}/i', 'Docs::url_replace' ,$ret);
 		$ret = preg_replace_callback("#\<code(.*?)\>(.*?)\</code\>#si", '__sg_encode_code_callback', $ret); // [code]...[/code]
-
-		//$ret = preg_replace('/<code>(\n)<\/code>/i', '<br />' ,$ret);
+		
+		$parser = new Parsedown();
+		$ret = $parser->text($ret);
 
 		return $ret;
 	}
 
 	public static function url_replace($m) {
-		return ' '.url('docs/'.$m[1]);
+		return ' '.Url::link('docs/'.$m[1]);
 	}
 
 	private function script() {
