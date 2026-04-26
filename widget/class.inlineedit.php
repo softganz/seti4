@@ -3,8 +3,8 @@
  * Widget  :: InlineEdit
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-12-08
- * Modify  :: 2026-03-30
- * Version :: 27
+ * Modify  :: 2026-04-26
+ * Version :: 28
  *
  * @param Array $args
  * @return Widget
@@ -36,7 +36,7 @@ class InlineEdit extends Widget {
 	function __construct($args = []) {
 		parent::__construct($args);
 
-		if ($this->editMode && !$this->useParentEditClass) $this->class .= ' '.$this->editModeClassName;
+		if ($this->editMode && !$this->useParentEditClass) $this->class .= ' ' . $this->editModeClassName;
 		if ($this->editMode && $this->action) $this->attribute['data-action'] = $this->action;
 	}
 
@@ -57,11 +57,11 @@ class InlineEdit extends Widget {
 		else if (isset($child['method'])) $child['type'] = 'method';
 		if (in_array($child['type'], ['widget', 'method'])) {
 			return '<span '
-				. ($child['id'] ? 'id="'.$child['class'].'" ' : '')
-				. 'class="'.($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName)
-					.' -'.$child['type']
-					.($child['class'] ? ' '.$child['class'] : '')
-				. '">'._NL;
+				. ($child['id'] ? 'id="' . $child['class'] . '" ' : '')
+				. 'class="' . ($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName)
+					.' -' . $child['type']
+					.($child['class'] ? ' ' . $child['class'] : '')
+				. '">' . _NL;
 		}
 
 		$attributes['id'] = $child['id'];
@@ -71,11 +71,11 @@ class InlineEdit extends Widget {
 		} else {
 			$attributes['class'] = $this->viewFieldClassName;
 		}
-		$attributes['class'] .= ' -'.$child['type'];
-		if ($child['inputName']) $attributes['class'] .= ' -name-'.preg_replace_callback('/([A-Z])/', function($matches) {return '-'.strtolower($matches[1]);}, $child['inputName']);
+		$attributes['class'] .= ' -' . $child['type'];
+		if ($child['inputName']) $attributes['class'] .= ' -name-' . preg_replace_callback('/([A-Z])/', function($matches) {return '-' . strtolower($matches[1]);}, $child['inputName']);
 
-		if ($child['class']) $attributes['class'] .= ' '.$child['class'];
-		if ($child['inputClass']) $attributes['class'] .= ' -input-'.$child['inputClass'];
+		if ($child['class']) $attributes['class'] .= ' ' . $child['class'];
+		if ($child['inputClass']) $attributes['class'] .= ' -input-' . $child['inputClass'];
 
 		$attributes['class'] = trim($attributes['class']);
 
@@ -91,13 +91,13 @@ class InlineEdit extends Widget {
 		}
 
 		if ($child['type'] === 'select') {
-			$child['data'] = json_encode($this->processChoice(SG\getFirst($child['choices'], $child['data'])), JSON_UNESCAPED_UNICODE);
+			$child['data'] = json_encode($this->processChoice(\SG\getFirst($child['choices'], $child['data'])), JSON_UNESCAPED_UNICODE);
 			unset($child['choices']);
 		} else if ($child['choices']) {
 			$child['choices'] = json_encode($child['choices'], JSON_UNESCAPED_UNICODE);
 		}
 
-		$options = (Object) SG\getFirst($child['options']);
+		$options = (Object) \SG\getFirst($child['options']);
 		if ($child['placeholder']) $options->placeholder = $child['placeholder'];
 		if ($child['onBlur']) $options->onblur = $child['onBlur'];
 		if ($child['type'] === 'textarea' && $options->button !== false) $options->button = 'yes';
@@ -113,18 +113,15 @@ class InlineEdit extends Widget {
 			$child['editMode'], $child['text'], $child['value'], $child['label'],
 			$child['onClick'], $child['onBlur'], $child['attribute'],
 			$child['description']
-			// $child['postText']
 		);
 
 		foreach ($child as $key => $value) {
-			$key = preg_replace_callback('/([A-Z]+)/', function ($word) {return '-'.strtolower($word[1]);}, $key);
+			$key = preg_replace_callback('/([A-Z]+)/', function ($word) {return '-' . strtolower($word[1]);}, $key);
 
 			$attributes['data-'.$key] = $value;
 		}
 
 		foreach ($childAttribute as $key => $value) $attributes[$key] = $value;
-
-		// debugMsg('$childKey = '.$childKey); debugMsg($attributes, '$attributes'); debugMsg($child, '$child');
 
 		if (is_array($this->debug) && in_array('childContainer', $this->debug)) {
 			debugMsg('$childKey = '.$childKey);
@@ -143,11 +140,11 @@ class InlineEdit extends Widget {
 		return parent::_renderChildContainerEnd($childKey, $child);
 	}
 
-	// @override
-	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
+	#[\Override]
+	protected function _renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
 		return parent::_renderEachChildWidget(
-			$key,
 			$widget,
+			$key,
 			[
 				'array' => function($key, $widget) {
 					if (isset($widget['options'])) $widget['options'] = (Object) $widget['options'];
@@ -169,14 +166,14 @@ class InlineEdit extends Widget {
 	private function _renderChildType($key, $widget = '{}') {
 		if (isset($widget->widget)) $widget->type = 'widget';
 		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
-		$text = SG\getFirst($widget->value, $widget->text);
-		$widget->dataType = SG\getFirst($widget->dataType, $widget->retType);
+		$text = \SG\getFirst($widget->value, $widget->text);
+		$widget->dataType = \SG\getFirst($widget->dataType, $widget->retType);
 		unset($widget->retType);
 
-		if ((is_null($text) || $text == '') && $this->editMode) $text = '<span class="placeholder -no-print">'.SG\getFirst($widget->options->placeholder, $widget->placeholder).'</span>';
+		if ((is_null($text) || $text == '') && $this->editMode) $text = '<span class="placeholder -no-print">' . \SG\getFirst($widget->options->placeholder, $widget->placeholder) . '</span>';
 		else if ($widget->dataType === 'nl2br') $text = trim(nl2br($text));
 		else if ($widget->dataType === 'html') $text = trim(sg_text2html($text));
-		else if ($widget->dataType === 'text') $text = trim(str_replace("\n",'<br />',$text));
+		else if ($widget->dataType === 'text') $text = trim(str_replace("\n", '<br />',$text));
 		else if ($widget->dataType === 'money' && $text != '') $text = number_format(sg_strip_money($text), 2);
 		else if (preg_match('/^date/i', $widget->dataType) && $text) {
 			list($widget->dataType, $retFormat) = explode(':', $widget->dataType);
@@ -216,23 +213,23 @@ class InlineEdit extends Widget {
 		if (empty($widget->label)) return;
 
 		return '<label class="-label'
-			. ($widget->labelClass ? ' '.$widget->labelClass : '')
+			. ($widget->labelClass ? ' ' . $widget->labelClass : '')
 			. '"'
-			. ($widget->labelStyle ? ' style="'.$widget->labelStyle.'"' : '')
+			. ($widget->labelStyle ? ' style="' . $widget->labelStyle . '"' : '')
 			. ' for=""'
 			. '>'
-			. ($widget->options->numbering ? '<span class="-numbering">'.(++$this->numbering).'.</span>' : '')
-			. ($widget->options->labelPrefix ? '<span class="-label-prefix">'.$widget->options->labelPrefix.'</span>' : '')
+			. ($widget->options->numbering ? '<span class="-numbering">' . (++$this->numbering) . '.</span>' : '')
+			. ($widget->options->labelPrefix ? '<span class="-label-prefix">' . $widget->options->labelPrefix . '</span>' : '')
 			. '<span class="-label-text">' . $widget->label . '</span>'
-			. ($widget->options->labelSubfix ? '<span class="-label-subfix">'.$widget->options->labelSubfix.'</span>' : '')
-			. ($widget->unit ? '<span class="-unit"> ('.$widget->unit.')</span>' : '')
+			. ($widget->options->labelSubfix ? '<span class="-label-subfix">' . $widget->options->labelSubfix . '</span>' : '')
+			. ($widget->unit ? '<span class="-unit"> (' . $widget->unit . ')</span>' : '')
 			. '<span class="-postfix">' . $postfix . '</span>'
-			. '</label>'._NL;
+			. '</label>' . _NL;
 	}
 
 	function _renderTypeTextField($widget) {
 		return $this->_renderLabel($widget)
-			. (isset($widget->text) ? '<span>'.self::_renderEachChildWidget(NULL, $widget->text).'</span>' : '');
+			. (isset($widget->text) ? '<span>' . parent::_renderEachChildWidget($widget->text) . '</span>' : '');
 	}
 
 	function _renderTypeLabel($widget) {
@@ -247,39 +244,34 @@ class InlineEdit extends Widget {
 		switch ($type) {
 			case 'numeric':
 				if (is_null($text)) break;
-				// $text = preg_replace('/[^0-9\.]/', '', $text);
-				// $text = number_format(floatval($text));
 				break;
 		}
 
 		$ret = '';
-		// $ret .= $text.'<hr>';
-		// $ret .= (new DebugMsg($widget, '$widget'))->build();
 
 		$ret .= $this->_renderLabel($widget);
 
 		if ($childEditMode) {
-			$ret .= '<span class="-for-input">'.($text == '' ? '<span class="placeholder -no-print">'.$widget->options->placeholder.'</span>' : $text).'</span>'._NL;
+			$ret .= '<span class="-for-input">' . ($text == '' ? '<span class="placeholder -no-print">' . $widget->options->placeholder . '</span>' : $text) . '</span>' . _NL;
 		} else {
-			$ret .= '<span class="-for-view">'.$text.'</span>'._NL;
+			$ret .= '<span class="-for-view">' . $text . '</span>' . _NL;
 		}
-		// if ($widget->description) $ret .= '<div class="-description">'.$widget->description.'</div>';
 		return $ret;
 	}
 
 	function _renderTypeSelect($widget) {
 		$childEditMode = $this->editMode || $widget->editMode;
-		$widget->data = $this->processChoice(SG\getFirst($widget->choices, $widget->data));
+		$widget->data = $this->processChoice(\SG\getFirst($widget->choices, $widget->data));
 
 		$ret = '';
 		$ret .= $this->_renderLabel($widget, ':');
 
-		$text = SG\getFirst($widget->data[$widget->value], $widget->options->placeholder ? '<span class="placeholder -no-print">'.$widget->options->placeholder.'</span>' : NULL);
+		$text = \SG\getFirst($widget->data[$widget->value], $widget->options->placeholder ? '<span class="placeholder -no-print">' . $widget->options->placeholder . '</span>' : NULL);
 
 		if ($childEditMode) {
-			$ret .= '<span class="-for-input">'.$text.'</span>'._NL;
+			$ret .= '<span class="-for-input">' . $text . '</span>' . _NL;
 		} else {
-			$ret .= '<span class="-for-view">'.$text.'</span>'._NL;
+			$ret .= '<span class="-for-view">' . $text . '</span>' . _NL;
 		}
 		return $ret;
 	}
@@ -334,14 +326,14 @@ class InlineEdit extends Widget {
 				$isCheck = $key == $widget->value;
 			}
 
-			$ret .= '<abbr class="'.$widget->type.' -block">'
+			$ret .= '<abbr class="' . $widget->type . ' -block">'
 				. '<label>'
-				. '<input class="-for-input" type="'.$widget->type.'"'
-				. ' name="'.$widget->inputName.'"'
-				. ' value="'.$key.'"'
+				. '<input class="-for-input" type="' . $widget->type . '"'
+				. ' name="' . $widget->inputName . '"'
+				. ' value="' . $key . '"'
 				. ($isCheck ? ' checked="checked"' : '')
 				. ' />'
-				. '<span>'.$choiceText.'</span>'
+				. '<span>' . $choiceText . '</span>'
 				. '</label>'
 				. '</abbr>';
 		}
@@ -355,9 +347,9 @@ class InlineEdit extends Widget {
 		$ret = $this->_renderLabel($widget, ':');
 
 		if ($childEditMode) {
-			$ret .= $this->_renderRadioItem($widget)._NL;
+			$ret .= $this->_renderRadioItem($widget) . _NL;
 		} else {
-			$ret .= '<span class="-for-view">'.$this->_renderRadioItem($widget).'</span>'._NL;
+			$ret .= '<span class="-for-view">' . $this->_renderRadioItem($widget) . '</span>' . _NL;
 		}
 
 		return $ret;
@@ -365,14 +357,14 @@ class InlineEdit extends Widget {
 
 	function _renderTypeWidget($widget) {
 		$ret = $this->_renderLabel($widget);
-		$ret .= $this->_renderEachChildWidget(NULL, $widget->widget);
+		$ret .= $this->_renderEachChildWidget($widget->widget);
 
 		return $ret;
 	}
 
 	function _renderTypeMethod($widget) {
 		$ret = $this->_renderLabel($widget);
-		$ret .= $this->_renderEachChildWidget(NULL, $widget->method);
+		$ret .= $this->_renderEachChildWidget($widget->method);
 
 		return $ret;
 	}
@@ -382,22 +374,22 @@ class InlineEdit extends Widget {
 		if (is_object($this) && method_exists($this, 'build')) {
 		} else {
 			$ret .= '<span class="inline-edit-view '
-				.'-'.$this->type
-				.($this->inputClass ? ' '.$this->inputClass : '').'" '
-				.'>';
+				. '-' . $this->type
+				. ($this->inputClass ? ' ' . $this->inputClass : '') . '" '
+				. '>';
 			if ($this->dataType === 'html') {
 				$ret .= trim(sg_text2html($this->text));
 			} else if ($this->dataType === 'text') {
 				$ret .= trim(str_replace("\n", '<br />', $this->text));
 			} else if ($input_type == "money") {
 				$ret .= number_format(sg_strip_money($this->text), 2);
-			} else if (in_array($input_type, array('radio', 'checkbox'))) {
+			} else if (in_array($input_type, ['radio', 'checkbox'])) {
 				list($choice, $label, $info) = explode(':', $this->text);
 				$choice = trim($choice);
-				$name = getFirst($fld['name'],$fld['fld']);
+				$name = \SG\getFirst($fld['name'], $fld['fld']);
 				if ($label == '' && strpos($this->text, ':') == false) $label = $choice;
 				$label = trim($label);
-				$ret .= '<input type="'.$input_type.'" '
+				$ret .= '<input type="' . $input_type . '" '
 					.($fld['value'] == $choice ? 'checked="checked" readonly="readonly" disabled="disabled"' : 'disabled="disabled"')
 					.' style="margin:0;margin-top: -1px; display:inline-block;min-width: 1em; vertical-align: middle;" /> '
 					.$label;

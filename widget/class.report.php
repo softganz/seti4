@@ -1,9 +1,10 @@
 <?php
 /**
  * Widget  :: Report Widget
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2025-08-26
- * Version :: 12
+ * Modify  :: 2026-04-26
+ * Version :: 13
  *
  * @param Array $args
  * @return Widget
@@ -40,7 +41,7 @@ class Report extends Widget {
 			parent::__construct($queryUrl);
 		} else {
 			$this->queryUrl = $queryUrl;
-			if ($class) $this->class = $this->class.' '.$class;
+			if ($class) $this->class = $this->class . ' ' . $class;
 		}
 	}
 
@@ -70,17 +71,17 @@ class Report extends Widget {
 
 			$filter = \SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $filterValue['name'], $filterValue['filter']);
 
-			$renderItem = '<abbr class="'.(preg_match('/^\t/', $selItem->label) ? '-level-2' : '').'">'
+			$renderItem = '<abbr class="' . (preg_match('/^\t/', $selItem->label) ? '-level-2' : '') . '">'
 				. '<label>'
 				. '<input '
-				. 'id="'.$filter.'_'.$selKey.'" '
-				. 'class="-checkbox-'.$filter.' -filter-checkbox'.($filterValue['class'] ? ' '.$filterValue['class'] : '').'" '
-				. 'type="'.$inputType.'" '
-				. 'name="'.$filter.($inputTypeMultiple ? '[]' : '').'" '
-				. 'value="'.$selKey.'" '
-				. sg_implode_attr($selItem->attribute).' '
+				. 'id="' . $filter . '_' . $selKey . '" '
+				. 'class="-checkbox-' . $filter . ' -filter-checkbox' . ($filterValue['class'] ? ' ' . $filterValue['class'] : '') . '" '
+				. 'type="' . $inputType . '" '
+				. 'name="' . $filter . ($inputTypeMultiple ? '[]' : '') . '" '
+				. 'value="' . $selKey . '" '
+				. sg_implode_attr($selItem->attribute) . ' '
 				. '/>'
-				. '<span>'.$selItem->label.'</span>'
+				. '<span>' . $selItem->label . '</span>'
 				. '</label>';
 			$renderItem .= '</abbr>';
 			$inputs[] = $renderItem;
@@ -95,9 +96,9 @@ class Report extends Widget {
 			if (is_null($filterValue)) continue;
 
 			if (is_object($filterValue)) {
-				$groupUi->add($this->_renderEachChildWidget(NULL, $filterValue));
+				$groupUi->add($this->_renderEachChildWidget($filterValue));
 			} else if (is_array($filterValue)) {
-				$groupUiStr = $filterValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#'.$filterKey.'"><span>'.$filterValue['group'].'</span></a></span>' : '';
+				$groupUiStr = $filterValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#' . $filterKey . '"><span>' . $filterValue['group'] . '</span></a></span>' : '';
 				$groupUiStr .= (new Dropbox([
 					'text' => $filterValue['text'],
 					'position' => 'right',
@@ -109,10 +110,10 @@ class Report extends Widget {
 						],
 					]),
 				]))->build();
-				$groupUiStr .= '<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>'._NL;
+				$groupUiStr .= '<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>' . _NL;
 				$groupUi->add(
 					$groupUiStr,
-					'{class: "'.('-group-'.$filterValue['filter']).($filterValue['active'] ? '-active' : '').($filterValue['group'] ? '' : ' -no-name').'"}'
+					'{class: "' . ('-group-'.$filterValue['filter']) . ($filterValue['active'] ? '-active' : '') . ($filterValue['group'] ? '' : ' -no-name') . '"}'
 				);
 			} else {
 				$groupUi->add($filterValue);
@@ -135,7 +136,7 @@ class Report extends Widget {
 			}
 
 			foreach ($this->output as $key => $html) {
-				$attributes['data-show-'.$key] = '#report-output-'.$key;
+				$attributes['data-show-' . $key] = '#report-output-' . $key;
 			}
 
 			return sg_implode_attr($attributes, "\r");
@@ -146,9 +147,9 @@ class Report extends Widget {
 			'class' => 'form',
 			'action' => 'javascript:void(0)',
 			'children' => [
-				'<input type="hidden" name="dataType" value="'.$this->dataType.'" />',
+				'<input type="hidden" name="dataType" value="' . $this->dataType . '" />',
 				'<input type="hidden" name="r" id="reporttype" value="" />',
-				'<input type="hidden" name="g" id="graphtype" value="'.$this->graphType.'" />',
+				'<input type="hidden" name="g" id="graphtype" value="' . $this->graphType . '" />',
 				'<input type="hidden" name="metric" id="metric" value="" />',
 				new Children(['children' => (Array) $this->input]),
 				// ...$this->input, // error on php 7.2
@@ -157,28 +158,28 @@ class Report extends Widget {
 
 				'<div class="-toolbar">',
 				// Metric
-				'<div class="-metric">'.$this->_renderChildren($this->metric).'</div><!-- -metric -->',
+				'<div class="-metric">' . $this->_renderChildren($this->metric) . '</div><!-- -metric -->',
 				// filter bar & submit button
 				'<div class="-filter">'
 					. '<span class="-title -text">'
-					. (is_array($this->filterBar) ? $this->_renderEachChildWidget(NULL, SG\getFirst($this->filterBar['title'], '{tr:Filter by}')) : SG\getFirst($this->filterBar, '{tr:Filter by}'))
+					. (is_array($this->filterBar) ? $this->_renderEachChildWidget(\SG\getFirst($this->filterBar['title'], '{tr:Filter by}')) : \SG\getFirst($this->filterBar, '{tr:Filter by}'))
 					. '</span>'
 					. '<span id="toolbar-report-filter" class="-select">'
-					. ($this->filterPretext ? $this->_renderEachChildWidget(NULL, $this->filterPretext) : '')
+					. ($this->filterPretext ? $this->_renderEachChildWidget($this->filterPretext) : '')
 					. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item"></span>'
 					. '</span><!-- toolbar-report-filter -->'
 					. '<span class="">'
-					. '<button class="btn -primary -submit" type="submit">'.($this->submitIcon ? $this->submitIcon : '<i class="icon -material">search</i>').''.($this->submitText ? '<span>'.$this->submitText.'</span>' : '').'</button>'
-					. '</span>'._NL
-					. '</div><!-- -filter -->'._NL,
+					. '<button class="btn -primary -submit" type="submit">' . ($this->submitIcon ? $this->submitIcon : '<i class="icon -material">search</i>') . ($this->submitText ? '<span>'.$this->submitText.'</span>' : '') . '</button>'
+					. '</span>' . _NL
+					. '</div><!-- -filter -->' . _NL,
 
 				// Filter & Metric
 				($groupUi->count() ?
-					'<div class="-group">'._NL
+					'<div class="-group">' . _NL
 						. ($this->showArrowLeft ? '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>' : '')
-						. $groupUi->build()._NL
-						. ($this->showArrowRight ? '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'._NL : '')
-						. '</div>'._NL
+						. $groupUi->build() . _NL
+						. ($this->showArrowRight ? '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>' . _NL : '')
+						. '</div>' . _NL
 					: ''),
 				// Option bar
 				new Row([
@@ -186,7 +187,7 @@ class Report extends Widget {
 					'class' => '-options',
 					'children' => $this->optionBar,
 				]),
-				'</div><!-- toolbar -report -->'._NL,
+				'</div><!-- toolbar -report -->' . _NL,
 			]
 		]);
 
@@ -200,7 +201,7 @@ class Report extends Widget {
 				],
 				array_map(
 					function($html, $key) {
-						return '<div id="report-output-'.$key.'" class="report-output-'.$key.'">'.$html.'</div>';
+						return '<div id="report-output-' . $key . '" class="report-output-' . $key.'">' . $html . '</div>';
 					},
 					$this->output, array_keys($this->output)
 				)
@@ -208,7 +209,7 @@ class Report extends Widget {
 		]);
 
 		$ret .= $this->_renderChildren($this->children());
-		$ret .= $this->_renderWidgetContainerEnd().'<!-- -->';
+		$ret .= $this->_renderWidgetContainerEnd();
 
 		return $ret;
 	}

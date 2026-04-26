@@ -1,9 +1,10 @@
 <?php
 /**
  * Dashboard :: Dashboard Widget
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created   :: 2023-12-16
- * Modify    :: 2023-12-16
- * Version   :: 1
+ * Modify    :: 2026-04-26
+ * Version   :: 2
  *
  * @param Array $args
  * @return Widget
@@ -20,11 +21,11 @@ class DashboardWidget extends Widget {
 		parent::__construct($args);
 	}
 
-	// @override
-	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
+	#[\Override]
+	protected function _renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
 		return parent::_renderEachChildWidget(
-			$key,
 			$widget,
+			$key,
 			[
 				'array' => function($key, $widget) {
 					return $this->_renderChildType($key, (Object) $widget);
@@ -53,12 +54,12 @@ class DashboardWidget extends Widget {
 			'class' => $widget->class,
 			'children' => [
 				$widget->title ? '<span class="-title">'
-					. ($widget->leading ? self::_renderEachChildWidget(NULL, $widget->leading) : '')
-					. '<span>'.self::_renderEachChildWidget(NULL, $widget->title).'</span>'
-					. ($widget->trailing ? self::_renderEachChildWidget(NULL, $widget->trailing) : '')
+					. ($widget->leading ? parent::_renderEachChildWidget($widget->leading) : '')
+					. '<span>' . parent::_renderEachChildWidget($widget->title) . '</span>'
+					. ($widget->trailing ? parent::_renderEachChildWidget($widget->trailing) : '')
 					. '</span>' : NULL,
-				isset($widget->value) ? '<span class="-value">'.self::_renderEachChildWidget(NULL, $widget->value).'</span>' : NULL,
-				$widget->unit ? '<span class="-unit">'.self::_renderEachChildWidget(NULL, $widget->unit).'</span>' : NULL,
+				isset($widget->value) ? '<span class="-value">' . parent::_renderEachChildWidget($widget->value) . '</span>' : NULL,
+				$widget->unit ? '<span class="-unit">' . parent::_renderEachChildWidget($widget->unit) . '</span>' : NULL,
 				$widget->chart ? $this->drawChart($widget) : NULL,
 			], // children
 		]))->build();

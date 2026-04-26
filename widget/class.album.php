@@ -1,24 +1,25 @@
 <?php
 /**
-* Widget  :: Album
-* Created :: 2022-10-09
-* Modify  :: 2023-01-07
-* Version :: 2
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new Album([
-* 	'id' => String,
-* 	'class' => String,
-* 	'img' => String,
-* 	'link' => Widget,
-* 	'title' => Widget,
-* 	'itemClass' => String,
-* 	'navigator' => Widget,
-* 	'children' => [],
-* ])
-*/
+ * Widget  :: Album
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-10-09
+ * Modify  :: 2026-04-26
+ * Version :: 3
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @usage new Album([
+ * 	'id' => String,
+ * 	'class' => String,
+ * 	'img' => String,
+ * 	'link' => Widget,
+ * 	'title' => Widget,
+ * 	'itemClass' => String,
+ * 	'navigator' => Widget,
+ * 	'children' => [],
+ * ])
+ */
 
 class Album extends Widget {
 	var $widgetName = 'Album';
@@ -42,24 +43,25 @@ class Album extends Widget {
 		return parent::_renderChildContainerStart($childrenKey, $args, $childrenValue);
 	}
 
-	function _renderEachChildWidget($key, $widget, $callbackFunction = []) {
-		if (is_object($widget)) return widget::_renderEachChildWidget($key, $widget);
+	#[\Override]
+	protected function _renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
+		if (is_object($widget)) return parent::_renderEachChildWidget($widget, $key);
 
-		$imageTag = '<img class="photoitem -photo" src="'.$widget['img'].'" />';
+		$imageTag = '<img class="photoitem -photo" src="' . $widget['img'] . '" />';
 		$ret = '';
 		if ($widget['link']) {
 			$widget['link']->text = $imageTag;
-			$ret .= Widget::_renderEachChildWidget(NULL, $widget['link']);
+			$ret .= parent::_renderEachChildWidget($widget['link']);
 		} else {
 			$ret .= $imageTag;
 		}
-		if ($widget['title']) $ret .= Widget::_renderEachChildWidget(NULL, $widget['title']);
-		if ($widget['detail']) $ret .= Widget::_renderEachChildWidget(NULL, $widget['detail']);
+		if ($widget['title']) $ret .= parent::_renderEachChildWidget($widget['title']);
+		if ($widget['detail']) $ret .= parent::_renderEachChildWidget($widget['detail']);
 		if ($widget['navigator']) {
 			if (is_array($widget['navigator'])) {
 				$ret .= (new Nav($widget['navigator']))->build();
 			} else {
-				$ret .= Widget::_renderEachChildWidget(NULL, $widget['navigator']);
+				$ret .= parent::_renderEachChildWidget($widget['navigator']);
 			}
 		}
 		return $ret;
