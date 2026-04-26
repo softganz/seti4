@@ -1,4 +1,4 @@
-<h3>Class Form Widget</h3>
+#Class Form Widget
 
 <ul class="docs-page-nav-list">
 <li>Contents</li>
@@ -8,50 +8,55 @@
 <li><a href="#Method">Method</a></li>
 </ul>
 
+##Class constructor
 
-
-
-<h4>Class constructor</h4>
-<code>
+```php
 new Form([
 	String id,
 	String class,
+	String method,
+	String enctype,
 	String action,
-	Strng method,
-	Bool checkValid,
+	String variable,
+	Boolean readonly,
+	Boolean checkValid,
 	String rel,
 	String done,
+	Mixed title,
+	Mixed description,
+	Mixed footer,
+	String onSubmit,
 	String onFormSubmit,
-	Array[Array/Widget] children,
-	String/Widget child,
+	Mixed children,
 	Array attribute,
 ]);
-</code>
 
 <a name="Property"></a>
-<h4>Property :</h4>
-<code>
+##Property :
+
+```php
 id ↔ String default NULL
 class ↔ String default NULL
 method ↔ String GET/POST
 attribute ↔ Array[
 	data-silent ↔ Bool
 ] : default NULL
-</code>
 
 <a name="Method"></a>
-<h4>Method :</h4>
-<code>
-</code>
+##Method :
 
-<h4>Children/Child</h4>
+###Children/Child
 <p>Children can be String/Array/Widget</p>
 <p>Text child:</p>
-<code>
+
+```php
 	<spacer>
-</code>
-<h5>Children type array</h5>
-<code>
+```
+
+###Children type array
+
+```php
+inputName => array(
 	type ↔ String text/textarea/radio/checkbox/select, default is text
 	class ↔ String ex. -fill
 	id ↔ String ex. group-search
@@ -68,7 +73,33 @@ attribute ↔ Array[
 			value submit = form submit when hit enter in text box
 			default NULL
 	]
-</code>
+)
+```
+
+###Children type sub form item
+
+```php
+'children' => [
+	new Children([
+	'children' => [
+		inputName => [
+			...
+		]
+		...
+	]
+])
+	...
+]
+```
+
+###Children type widget
+
+```php
+'children' => [
+	new Widget([ ... ]),
+	...
+]
+```
 
 <h4>Class sg-form</h4>
 <p>When assign class with sg-form and assign rel with any value</p>

@@ -45,7 +45,7 @@ build() -> String
 config($key, $value) -> void
 data($key, $value) -> void
 header($str, $attr = '{}', $options = '{}') -> void
-Private _renderEachChildWidget($key, $widget) -> String
+Private _renderEachChildWidget($widget, $key, $callbackFunction = [], $options = []) -> String
 @override _renderChildContainer($currentStep, $args = []) -> String
 @override _renderChildren($childrens = [], $args = []) -> String
 @override _renderWidgetContainerStart() -> String
