@@ -2,8 +2,8 @@
  * SoftGanz Ui CSS
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-02-22
- * Version :: 39
+ * Modify  :: 2026-04-26
+ * Version :: 40
  */
 
 @charset "UTF-8";
@@ -511,7 +511,7 @@
 	&.-report>.-nav {background-color: transparent;}
 
 	>.-leading {
-		height: 4.8rem; display: flex; align-items: center; padding: 0 4px;
+		height: 4.8rem; display: flex; align-items: center; padding: 0 0 0 8px;
 		color: var(--leading-text-color); background-color: var(--leading-bg-color);
 		.icon {color: var(--leading-icon-color);}
 		>.nav.-back {display: none;}
@@ -817,11 +817,17 @@
 		}
 
 		&.-fill {width:-moz-available !important; width: calc(100%);}
-		&.-inline {padding: 0;}
+		&.-inline {
+			padding: 0;
+			.-for-input {display: inline-block;}
+		}
 		&.-active {border-bottom: 1px dotted #f60; background-color: #ffffcc;}
 
 		&.-disabled {color: #999;}
 		&.-primary {font-weight: bold; background-color: #f5f5f5; border: 1px #999 solid;}
+		&.-center {
+			text-align: center;
+		}
 		&.-datepicker {
 			.-for-input, .-for-view {text-align: center;}
 			.form-datepicker {text-align: center; border: none; box-shadow: none;}
