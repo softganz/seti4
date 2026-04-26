@@ -3,8 +3,8 @@
  * Docs    :: Module Docs Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2026-04-24
- * Modify  :: 2026-04-24
- * Version :: 1
+ * Modify  :: 2026-04-25
+ * Version :: 2
  *
  * @param Array $args
  * @return Widget
@@ -90,8 +90,8 @@ class ModuleDocsWidget extends WidgetBase {
 		h1, h2, h3, h4, h5, h6 {margin: 0; padding:8px 0;}
 		h1 {font-size: 3.5rem;}
 		h2 {font-size: 3.0rem;}
-		h3 {font-size: 2.0em;}
-		h4 {font-size: 2.0em;}
+		h3 {font-size: 1.6em;}
+		h4 {font-size: 1.4em;}
 		h2.title {margin:0; padding:24px 8px;background:#039be5; color:#fff;font-size:1.4em;letter-spacing:0.1em;}
 		pre>code {background: #eee; padding: 8px; border-radius: 4px; display: block;}
 		</style>';
