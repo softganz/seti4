@@ -3,8 +3,8 @@
  * Docs    :: Module Docs Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2026-04-24
- * Modify  :: 2026-04-25
- * Version :: 2
+ * Modify  :: 2026-04-26
+ * Version :: 3
  *
  * @param Array $args
  * @return Widget
@@ -23,16 +23,29 @@ class ModuleDocsWidget extends WidgetBase {
 	var $startPage = 'overview';
 	var $folder;
 	var $docPath;
+	var $leading;
+	var $trailing;
 
 	function __construct($args = []) {
-		parent::__construct($args);
+		parent::__construct(
+			array_replace(
+				[
+					'leading' => new Icon('apk_document'),
+					'trailing' => NULL,
+				],
+				(Array) $args
+			)
+		);
+		
 		if ($this->widgetName === 'Widget') $this->widgetName = get_class($this);
 	}
 
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
+				'leading' => $this->leading,
 				'title' => $this->title,
+				'trailing' => $this->trailing,
 			]),
 			'sideBar' => $this->load($this->sideBarPage),
 			'body' => new Widget([
