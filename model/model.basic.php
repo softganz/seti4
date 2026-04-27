@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * @created 2007-07-09
- * @modify  2025-07-18
- * Version  3
+ * @modify  2026-04-27
+ * Version  4
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -369,98 +369,6 @@ sg_text2html($topic->post->body).'
 			$property->_exists=false;
 		}
 		return $property;
-	}
-
-	public static function get_topic_by_id($tpid,$para=NULL,$revid=NULL) {
-	//	if (is_object($tpid)) $tpid=$tpid->tpid;
-		$sql_cmd = 'SELECT t.* , ty.name type_name , ty.module , ty.description type_description ,
-								u.username as username,u.name as owner , u.status owner_status,
-								r.format , r.body , r.property , r.email , r.homepage , r.redirect ';
-
-		if (module_install('voteit')) $sql_cmd.=do_class_method('voteit','get_topic_by_condition','fields',$para,$tpid);
-
-		$sql_cmd .= '  FROM %topic% t
-								LEFT JOIN %topic_revisions% r ON r.revid='.\SG\getFirst($revid,'t.revid ').'
-								LEFT JOIN %users% u ON t.uid=u.uid
-								LEFT JOIN %topic_types% ty ON ty.type=t.type ';
-
-		if (module_install('voteit')) $sql_cmd.=do_class_method('voteit','get_topic_by_condition','join',$para,$tpid);
-
-		$sql_cmd .= '  WHERE t.tpid='.$tpid.'
-							LIMIT 1';
-
-		$rs = mydb::select($sql_cmd);
-		if ($rs->_num_rows) {
-			$rs->_archive=false;
-		} else if ($rs->_num_rows==0 && DB::tableExists('%archive_topic%')) {
-			$sql_cmd=preg_replace(array('#%topic%#s','#%topic_revisions%#s'),array('%archive_topic%','%archive_topic_revisions%'),$sql_cmd);
-			$rs = mydb::select($sql_cmd);
-			if ($rs->_num_rows) $rs->_archive=true;
-		}
-
-		if ( $rs->_num_rows ) {
-			$tags=mydb::select('SELECT tt.tid,tt.vid,t.name,t.description
-												FROM %'.($rs->_archive?'archive_':'').'tag_topic% tt
-													LEFT JOIN %tag% t ON t.tid=tt.tid
-												WHERE tpid='.$rs->tpid);
-			foreach ($tags->items as $tag) $rs->tags[]=(object)array('tid'=>$tag->tid,'name'=>$tag->name,'vid'=>$tag->vid,'description'=>$tag->description?$tag->description:null);
-
-			// Set topic property
-			$rs->property = sg_json_decode($rs->property, cfg('topic.property'));
-
-			$rs->photo = mydb::select('SELECT * FROM %'.($rs->_archive?'archive_':'').'topic_files% WHERE `tpid`='.$rs->tpid.' AND `cid`=0 AND `type`="photo" ORDER BY fid');
-			foreach ($rs->photo->items as $key=>$photo) $rs->photo->items[$key]=object_merge($rs->photo->items[$key],BasicModel::get_photo_property($photo->file));
-
-			if (cfg('topic.video.allow')) {
-				$rs->video=mydb::select('SELECT f.*,u.username FROM %topic_files% f LEFT JOIN %users% u ON u.uid=f.uid WHERE tpid=:tpid AND type="movie" LIMIT 1',':tpid',$tpid);
-				if ($rs->video->file) {
-					if (preg_match('/^http\:\/\//',$rs->video->file)) {
-						$rs->video->_url=$rs->video->file;
-						$rs->video->_location=NULL;
-					} else {
-						//$rs->video->_url=cfg('domain').cfg('upload.url').$rs->video->username.'/'.$rs->video->file;
-						$rs->video->_url=cfg('upload.url').$rs->video->username.'/'.$rs->video->file;
-						$rs->video->_location=sg_user_folder($rs->username).$rs->video->file;
-					}
-				}
-			}
-
-
-			if ( $rs->profile_picture ) $rs->profile_picture = cfg('url').'upload/member/'.$rs->profile_picture;
-			if (module_install('poll')) {
-				$poll=mydb::select('SELECT * FROM %poll% WHERE `tpid`=:tpid LIMIT 1',':tpid',$rs->tpid);
-				if ($poll->_num_rows) {
-					$rs->poll=$poll;
-					foreach (mydb::select('SELECT * FROM %poll_choice% WHERE `tpid`=:tpid ORDER BY `choice` ASC',':tpid',$rs->tpid)->items as $pollrs) {
-						$rs->poll->items->{$pollrs->choice}=$pollrs;
-					}
-				}
-			}
-
-			// do external module post form
-			$rs->_content_type_property=cfg('topic_options_'.$rs->type);
-			if (function_exists('module2classname')) {
-				$classname=module2classname($rs->module);
-				if (function_exists('module_exists') && module_exists($classname,'__get_topic_by_id')) call_user_func(array($classname,'__get_topic_by_id'),$this,$rs,$para);
-			}
-		}
-		return $rs;
-	}
-
-	public static function get_category_tag($cid) {
-		$categorys=cfg('categorys');
-		return array_key_exists($cid,$categorys)?$categorys[$cid]:NULL;
-	}
-
-	public static function watch_log($module = NULL, $keyword = NULL, $message = NULL, $userId = NULL, $keyId = NULL, $fieldName = NULL) {
-		LogModel::save([
-			'module' => $module,
-			'keyword' => $keyword,
-			'message' => $message,
-			'userId' => $userId,
-			'keyId' => $keyId,
-			'fieldName' => $fieldName,
-		]);
 	}
 
 	/**
