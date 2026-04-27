@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-04-26
- * Version :: 70
+ * Modify  :: 2026-04-27
+ * Version :: 71
  *
  * @param Array $args
  * @return Widget
@@ -228,7 +228,7 @@ class Widget extends WidgetBase {
 	}
 
 	// @override
-	function _renderChildContainerEnd($childKey = NULL, $child = []) {
+	function _renderChildContainerEnd($child = [], $childKey = NULL) {
 		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
 		return $childTagName ? '</' . $childTagName . '>' . _NL : '';
 	}
@@ -665,17 +665,22 @@ class DebugMsg extends Widget {
 			foreach ( $arr as $key=>$value ) {
 				$vtype = GetType($value);
 				$hasChild = in_array($vtype, ['array', 'object']);
-				$result .= '<li><span>'
-					. '<span class="' . ($hasChild ? 'widget-button sg-expand' : '') . '" data-rel="next">'
-					. $name.$prefix . $key . $suffix
+				$result .= '<li>'
+					. '<span>'
+					. '<span class="' . ($hasChild ? 'widget-button sg-expand' : '') . '" '
+					. 'data-rel="next">'
+					. $name . $prefix . $key . $suffix
 					. ($hasChild ? '<i class="icon -material">expand_more</i>' : '')
-					. '</font> '
-					. '<span class="-var-type">[' . (is_object($value) ? get_class($value) . ' ' : '') . $vtype . ']</span> : </span>';
+					. '</span> '
+					. '<span class="-var-type">['
+					. (is_object($value) ? get_class($value) . ' ' : '')
+					. $vtype
+					. ']</span> : </span>';
 				switch ($vtype) {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
 					case 'array' : $result .= self::printObject($value, $name . $prefix . $key . $suffix); break;
 					case 'object' : $result .= self::printObject($value, $name . $prefix . $key . $suffix); break;
-					default : $result .= '<span class="-value">' . $value . '</font>'; break;
+					default : $result .= '<span class="-value">' . $value . '</span>'; break;
 				}
 				$result .= '</li>' . _NL;
 			}
@@ -783,7 +788,7 @@ class Button extends Widget {
 			. '>'
 			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
 			. ($this->text ? '<span class="-label">' . $this->_renderChildren([$this->text]) . '</span>' : '')
-			. ($this->description ? '<span class="-desc">' . $this->_renderChildren([$this->description]) : '')
+			. ($this->description ? '<span class="-description">' . $this->_renderChildren([$this->description]) . '</span>' : '')
 			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
 			. '</a>';
 		return $button;
@@ -843,7 +848,7 @@ class BackButton extends Widget {
 			. '>'
 			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
 			. ($this->text ? '<span class="-label">' . $this->_renderChildren([$this->text]) . '</span>' : '')
-			. ($this->description ? '<span class="-desc">' . $this->_renderChildren([$this->description]) : '')
+			. ($this->description ? '<span class="-description">' . $this->_renderChildren([$this->description]) . '</span>' : '')
 			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
 			. '</' . $this->tagName . '>';
 		return $button;
@@ -1177,7 +1182,7 @@ class AppBar extends Widget {
 			foreach ($navigators as $key => $value) {
 				if (is_array($value)) {
 					$widget = new Nav(['children' => $value]);
-					$navigatorText .= $this->_renderEachChildWidget($widget, ['class' => $key]);
+					$navigatorText .= $this->_renderEachChildWidget($widget, $key);
 				} else if (is_object($value) && method_exists($value, 'build')) {
 					$navigatorText .= $value->build();
 				} else {

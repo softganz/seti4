@@ -3,8 +3,8 @@
  * Widget  :: Form Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-04-26
- * Version :: 41
+ * Modify  :: 2026-04-27
+ * Version :: 42
  *
  * @param Array $args
  * @return Widget
@@ -621,7 +621,7 @@ class Form extends Widget {
 				. '>'
 				// Have parameter icon, show icon and text
 				. ($formElement->icon ? (function($icon, $text) {
-					return ($icon ? $this->_renderEachChildWidget(NULL, $icon) : '')
+					return ($icon ? $this->_renderEachChildWidget($icon) : '')
 						. ($text ? '<span>' . $text . '</span>' : '');
 				})($formElement->icon, $text) : $text)
 				. '</button>';

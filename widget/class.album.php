@@ -3,8 +3,8 @@
  * Widget  :: Album
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-10-09
- * Modify  :: 2026-04-26
- * Version :: 3
+ * Modify  :: 2026-04-27
+ * Version :: 4
  *
  * @param Array $args
  * @return Widget
@@ -32,15 +32,15 @@ class Album extends Widget {
 
 	// Container for each child of children
 	// @override
-	function _renderChildContainerStart($childrenKey, $args = [], $childrenValue = []) {
-		if (is_object($childrenValue)) {
-			$args['class'] = $childrenValue->class;
-			$args['id'] = $childrenValue->id;
+	function _renderChildContainerStart($key, $args = [], $child = []) {
+		if (is_object($child)) {
+			$args['class'] = $child->class;
+			$args['id'] = $child->id;
 		} else {
-			$args['class'] = $childrenValue['class'];
-			$args['id'] = $childrenValue['id'];
+			$args['class'] = $child['class'];
+			$args['id'] = $child['id'];
 		}
-		return parent::_renderChildContainerStart($childrenKey, $args, $childrenValue);
+		return parent::_renderChildContainerStart($key, $args, $child);
 	}
 
 	#[\Override]
