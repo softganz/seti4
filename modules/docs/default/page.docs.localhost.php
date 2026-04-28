@@ -6,9 +6,9 @@ function docs_localhost($self=NULL) {
 	$ret .= '<div class="-sg-flex">';
 
 	$ret .= '<div>';
-	$ret .= '<h3>Local Host</h3>';
+	$ret .= '<h1>Local Host</h1>';
 	foreach ($lookfolder as $item) {
-		$ret .= '<h4>'.$item.'</h4>';
+		$ret .= '<h2>'.$item.'</h2>';
 		$folderList = scandir($dir.$item);
 		$ui = new Ui();
 		foreach ($folderList as $url) {
@@ -24,7 +24,7 @@ function docs_localhost($self=NULL) {
 	$ui->add('<a href="http://handynas.local:5000/" target="_blank">HandyNas.Local</a>');
 
 	$ret .= '<div>'
-		. '<h3>Local Tools</h3>'
+		. '<h1>Local Tools</h1>'
 		. $ui->build().'</div>';
 
 	$ret .= '</div>';
