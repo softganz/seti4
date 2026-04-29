@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-04-27
- * Version :: 71
+ * Modify  :: 2026-04-28
+ * Version :: 72
  *
  * @param Array $args
  * @return Widget
@@ -1322,6 +1322,11 @@ class PageApi extends PageBase {
 	function build() {
 		if ($this->runInternalMethod) return $this->runMethod();
 		else return $this->runExternalMethod();
+	}
+
+	// Test function return Array in PageApi or text in other
+	function foo() {
+		return apiSuccess('Foo' . (Request::all('msg') ? ' with ' . Request::all('msg') : ''));
 	}
 
 	private function runMethod() {
