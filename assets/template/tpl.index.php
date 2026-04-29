@@ -215,6 +215,6 @@ window.cookieconsent.initialise({
 });
 </script>';
 ?>
-<?php echo cfg('mainScript');?>
+<?php echo cfg('mainScript') . _NL;?>
 </body>
 </html>
