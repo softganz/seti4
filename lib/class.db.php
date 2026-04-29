@@ -3,8 +3,8 @@
  * DB      :: Database Management
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-07-28
- * Modify  :: 2026-04-09
- * Version :: 44
+ * Modify  :: 2026-04-29
+ * Version :: 45
  *
  * @param Array $args
  * @return Object
@@ -57,6 +57,15 @@ class DbSelect {
 		return isset($this->{$field}) ? $this->{$field} : NULL;
 	}
 
+	public function values($fields = []) {
+		$values = (Object) [];
+		foreach ((Array) $fields as $field) {
+			$values->{$field} = isset($this->{$field}) ? $this->{$field} : NULL;
+		}
+
+		return $values;
+	}
+
 	public function DB($db = NULL) {
 		if (isset($db)) $this->DB = $db;
 		return $this->DB;
@@ -90,20 +99,16 @@ class DbException extends \Exception {
 	private $state;
 	private $query;
 	
-	public function __construct($message = NULL, $code = NULL, $error = NULL) {
+	public function __construct($message = NULL, $code = NULL, $error = NULL, $state = NULL) {
 		parent::__construct($message, (Int) $code);
 		$this->error = true;
-		$this->state = $error->state;
-		$this->query = $error->query;
+		$this->query = $error;
+		$this->state = $state;
 	}
 	
-	public function getQuery() {
-		return $this->query;
-	}
+	public function getQuery() {return $this->query;}
 
-	public function getState() {
-		return $this->state;
-	}
+	public function getState() {return $this->state;}
 }
 
 /**
@@ -155,11 +160,13 @@ class DB {
 		unset($args[0]);
 		$this->args = $args;
 
-		if (isset($args['options'])) $this->setOptions((Array) $args['options']);
+		$this->setOptions((Array) $args['options']);
 	}
 
 	// Call by static method
 	public static function select($args) {
+		// $debugSelect = $args['options']['debugTest'];
+
 		$selectResult = new DB($args);
 		$selectResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $selectResult->multipleQuery);
 		$selectResult->callerFrom = get_caller(__FUNCTION__)['from'];
@@ -167,10 +174,21 @@ class DB {
 
 		// Query error, return exception
 		if ($result->error) {
-			$errorMessage = $selectResult->stmt.'; <span style="color:red;">-- ERROR :: '.$selectResult->errorMsg.'</font>';
+			$errorMessage = $selectResult->stmt
+				. '; <span style="color:red;">-- ERROR :: '
+				. ($selectResult->errorMsg ?? 'Select data from database was error.')
+				. '</font>';
 			$selectResult->setDebugMessage('PREPARE', $errorMessage);
-			throw $result;
+			// debugMsg('errorMessage='.$errorMessage);
+			// debugMsg($selectResult, '$selectResult');
+			// debugMsg($result, '$result');
+			throw new DbException(
+				'Select data from database was error.',
+				503,
+				$errorMessage
+			);
 		}
+		// if ($debugSelect) return;
 
 		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $selectResult->stmt)) {
 			$result = new DbSelect(reset($selectResult->items));
@@ -211,9 +229,17 @@ class DB {
 
 		// Query error, return exception
 		if ($result->error) {
-			$errorMessage = $selectResult->stmt.'; <span style="color:red;">-- ERROR :: '.$selectResult->errorMsg.'</font>';
+			$errorMessage = $selectResult->stmt
+				. '; <span style="color:red;">-- ERROR :: '
+				. ($selectResult->errorMsg ?? 'Update data to database was error.')
+				. '</font>';
 			$queryResult->setDebugMessage('PREPARE', $errorMessage);
-			throw $result;
+			throw new DbException(
+				'Update data to database was error.',
+				503,
+				$errorMessage
+			);
+
 		}
 		
 		unset($queryResult->items, $queryResult->count);
