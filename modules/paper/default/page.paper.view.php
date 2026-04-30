@@ -1,9 +1,10 @@
 <?php
 /**
  * Paper   :: View
+ * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2018-06-04
- * Modify  :: 2025-07-18
- * Version :: 5
+ * Modify  :: 2026-04-30
+ * Version :: 6
  *
  * @param String $nodeInfo
  * @return Widget
@@ -62,15 +63,17 @@ function paper_view($self, $tpid = NULL) {
 	// echo 'TPID = '.$tpid.'<br />';
 	$isTopicUser = DB::tableExists('%topic_user%') && mydb::select('SELECT `uid` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid AND `membership` IN ("Owner","Trainer","Manager") LIMIT 1',':tpid',$tpid,':uid',i()->uid)->uid;
 
-	if (in_array($topicInfo->info->status,array(_DRAFT,_WAITING))
-			&& !(user_access('administer contents,administer papers')
-					|| $topicInfo->uid==i()->uid
-					|| $isTopicUser)
+	if (in_array($topicInfo->info->status, [_DRAFT, _WAITING])
+			&& !(
+				user_access('administer contents,administer papers')
+				|| $topicInfo->uid == i()->uid
+				|| $isTopicUser
+				)
 			) {
 		header('HTTP/1.0 404 Not Found');
 		head('<meta name="robots" content="noarchive" />');
 		head('googlead','<script></script>');
-		return $body->debug.message('error','Access denied');
+		return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
 	} else if ($topicInfo->info->status == _BLOCK && !user_access('administer contents,administer papers,administer '.$topicInfo->info->fid.' paper')) {
 		header('HTTP/1.0 404 Not Found');
 		head('<meta name="robots" content="noarchive" />');
