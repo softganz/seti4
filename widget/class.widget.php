@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-04-28
- * Version :: 72
+ * Modify  :: 2026-04-30
+ * Version :: 73
  *
  * @param Array $args
  * @return Widget
@@ -666,16 +666,16 @@ class DebugMsg extends Widget {
 				$vtype = GetType($value);
 				$hasChild = in_array($vtype, ['array', 'object']);
 				$result .= '<li>'
-					. '<span>'
 					. '<span class="' . ($hasChild ? 'widget-button sg-expand' : '') . '" '
 					. 'data-rel="next">'
 					. $name . $prefix . $key . $suffix
 					. ($hasChild ? '<i class="icon -material">expand_more</i>' : '')
-					. '</span> '
 					. '<span class="-var-type">['
 					. (is_object($value) ? get_class($value) . ' ' : '')
 					. $vtype
-					. ']</span> : </span>';
+					. ']</span>'
+					. (preg_match('/array|object/i', $vtype) ? '' : '<span> : </span>')
+					. '</span>';
 				switch ($vtype) {
 					case 'boolean' : $result .= $value ? 'true' : 'false'; break;
 					case 'array' : $result .= self::printObject($value, $name . $prefix . $key . $suffix); break;
@@ -743,6 +743,8 @@ class Button extends Widget {
 	var $iconPosition = 'left'; // left,right,top,bottom
 	var $variable;
 	var $description;
+	var $boxType; // Set box class name
+	var $boxWidth; // Set box width value
 
 	function __construct($args = [], $variable = NULL) {
 		parent::__construct($args);
@@ -772,6 +774,8 @@ class Button extends Widget {
 				'data-done' => $this->done,
 				'target' => $this->target,
 				'style' => $this->style,
+				'data-class-name' => $this->boxType ? '-'.$this->boxType : NULL,
+				'data-width' => $this->boxWidth ? $this->boxWidth : NULL,
 			],
 			(Array) $this->attribute
 		);
