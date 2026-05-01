@@ -3,8 +3,8 @@
  * Widget  :: Dropbox widget for create Dropbox
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-04-26
- * Version :: 4
+ * Modify  :: 2026-04-30
+ * Version :: 5
  *
  * @param Array $args
  * @return Widget
@@ -42,6 +42,17 @@ class Dropbox extends Widget {
 	}
 
 	function build() {
+		// If no child, do not show
+		$hasChild = false;
+		foreach ($this->children as $child) {
+			if (isset($child)) {
+				$hasChild = true;
+				break;
+			}
+		}
+
+		if (!$hasChild) return;
+
 		if ($this->debug) debugMsg($this, '$this');
 
 		if ($this->position === 'left') $this->class .= ' -leftside';
