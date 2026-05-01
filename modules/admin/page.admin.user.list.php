@@ -3,8 +3,8 @@
  * Admin   :: List All Member
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2019-09-01
- * Modify  :: 2026-01-02
- * Version :: 4
+ * Modify  :: 2026-05-01
+ * Version :: 5
  *
  * @return Widget
  *
@@ -107,42 +107,79 @@ class AdminUserList extends Page {
 							'caption' => 'User listing',
 							'thead' => [
 								'',
-								'name -nowrap'=>'Name <a href="'.url($currentUrl, ['order' => 'name']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'name' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
-								'email'=>'Email <a href="'.url($currentUrl, ['order' => 'email']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'email' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
-								'roles'=>'Roles <a href="'.url($currentUrl, ['order' => 'role']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'role' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'name -nowrap'=>'Name <a href="'.Url::link($currentUrl, ['order' => 'name']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'name' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'email'=>'Email <a href="'.Url::link($currentUrl, ['order' => 'email']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'email' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'roles'=>'Roles <a href="'.Url::link($currentUrl, ['order' => 'role']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'role' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'hits -center' => 'Hits',
-								'reg -date'=>'Register date <a href="'.url($currentUrl, ['order' => 'reg']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'reg' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'reg -date'=>'Register date <a href="'.Url::link($currentUrl, ['order' => 'reg']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'reg' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'currentIn -date' => 'Current Login',
-								'last -date' => 'Last login <a href="'.url($currentUrl, ['order' => 'login']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'login' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
-								'remark -hover-parent' => 'Admin remark',
+								'last -date' => 'Last login <a href="'.Url::link($currentUrl, ['order' => 'login']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'login' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'remark' => 'Admin remark',
+								'icons -hover-parent' => '',
 							],
 							'children' => array_map(
 								function ($rs) {
 									if ($rs->uid == 1) return NULL;
 									$rolesList = [];
 									foreach (explode(',', $rs->roles) as $value) {
-										$rolesList[] = '<a href="'.url('admin/user/list', ['r' => $value]).'">'.$value.'</a>';
+										$rolesList[] = '<a href="'.Url::link('admin/user/list', ['r' => $value]).'">'.$value.'</a>';
 									}
 
-									$menu = new Ui();
-									$menu->addConfig('nav', '{class: "nav -hover -icons -no-print"}');
-									$menu->add('<a class="sg-action" href="'.url('profile/'.$rs->uid).'" title="View user profile" data-rel="box" data-width="640"><i class="icon -material">find_in_page</i></a>');
-									$menu->add('<a class="sg-action" href="'.url('admin/user/edit/'.$rs->uid).'" data-rel="box" title="Edit user property" data-width="640"><i class="icon -material">edit</i></a>');
-
 									return [
-										'<a class="sg-action" href="'.url('profile/'.$rs->uid).'" title="View user profile" data-rel="box" data-width="640"><img class="profile-photo" src="'.BasicModel::user_photo($rs->username).'" width="48" height="48" /></a>',
-										'<a class="sg-action" href="'.url('profile/'.$rs->uid).'" title="View user profile" data-rel="box" data-width="640"><strong>'.$rs->name.'</strong><br />'.$rs->username.'('.$rs->uid.')</a>',
+										new Button([
+											'class' => 'sg-action',
+											'href' => Url::link('profile/' . $rs->uid),
+											'title' => 'View user profile',
+											'rel' => 'box',
+											'text' => '<img class="profile-photo" src="'.BasicModel::user_photo($rs->username).'" width="48" height="48" />',
+											'boxWidth' => 640,
+											'boxType' => 'transparent'
+										]),
+										new Button([
+											'class' => 'sg-action',
+											'href' => Url::link('profile/' . $rs->uid),
+											'title' => 'View user profile',
+											'rel' => 'box',
+											'text' => '<strong>' . $rs->name . '</strong>',
+											'boxWidth' => 640,
+											'boxType' => 'transparent',
+											'description' => $rs->username . '(' . $rs->uid . ')',
+										]),
 										$rs->email,
 										$rolesList ? implode(', ', $rolesList) : '',
 										number_format($rs->hits),
-										sg_date($rs->datein,'M j, Y @G:i'),
-										$rs->login_time ? sg_date($rs->login_time,'M j, Y @G:i') : '',
-										$rs->last_login ? sg_date($rs->last_login,'M j, Y @G:i') : '',
-										$rs->admin_remark
-										.$menu->build(),
+										sg_date($rs->datein, 'M j, Y @G:i'),
+										$rs->login_time ? sg_date($rs->login_time, 'M j, Y @G:i') : '',
+										$rs->last_login ? sg_date($rs->last_login, 'M j, Y @G:i') : '',
+										$rs->admin_remark,
+										new Nav([
+											'class' => '-hover -no-print',
+											'children' => [
+												new Button([
+													'type' => 'link',
+													'class' => 'sg-action',
+													'href' => Url::link('profile/' . $rs->uid),
+													'title' => 'View user profile',
+													'rel' => 'box',
+													'boxWidth' => 640,
+													'boxType' => 'transparent',
+													'icon' => new Icon('find_in_page')
+												]),
+												new Button([
+													'type' => 'link',
+													'class' => 'sg-action',
+													'href' => Url::link('admin/user/edit/' . $rs->uid),
+													'title' => 'dit user property',
+													'rel' => 'box',
+													'boxWidth' => 640,
+													'boxType' => 'transparent',
+													'icon' => new Icon('edit')
+												]),
+											],
+										]),
 										'config' => [
-											'class' => 'user-'.$rs->status,
-											'title' => 'User was '.$rs->status,
+											'class' => 'user-' . $rs->status,
+											'title' => 'User was ' . $rs->status,
 										]
 									];
 								}
