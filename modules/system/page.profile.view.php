@@ -1,15 +1,16 @@
 <?php
 /**
-* Profile :: View User Information
-* Created :: 2021-01-01
-* Modify  :: 2025-11-07
-* Version :: 9
-*
-* @param Int $userInfo
-* @return Widget
-*
-* @usage profile/{userId}
-*/
+ * Profile :: View User Information
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2021-01-01
+ * Modify  :: 2026-05-01
+ * Version :: 10
+ *
+ * @param Int $userInfo
+ * @return Widget
+ *
+ * @usage profile/{userId}
+ */
 
 use Softganz\DB;
 
@@ -40,8 +41,6 @@ class ProfileView extends Page {
 
 	function build() {
 		event_tricker('profile.view.init',$this,$this->userInfo);
-
-		if ($this->userId == i()->uid) location('my');
 
 		// Increase profile view
 		DB::query([
@@ -198,6 +197,17 @@ class ProfileView extends Page {
 							'rel' => 'replace:#profile-status',
 							'icon' => new Icon('refresh'),
 							'text' => 'Refresh',
+						]),
+					]
+				]) : NULL,
+
+				$this->userId == i()->uid ? new Column([
+					'children' => [
+						new Button([
+							'type' => 'link',
+							'href' => Url::link('my'),
+							'text' => 'แก้ไขรายละเอียด',
+							'icon' => new Icon('person')
 						]),
 					]
 				]) : NULL,
