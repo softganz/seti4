@@ -8,8 +8,8 @@
  * Author      :: Little Bear<softganz@gmail.com>
  * Author URI  :: https://softganz.com
  * Created     :: 2018-10-15
- * Last Modify :: 2026-02-22
- * Version     :: 22
+ * Last Modify :: 2026-05-01
+ * Version     :: 23
  */
 
 @import url(reset.css);
@@ -204,7 +204,7 @@ h2.header {text-align: right; font-size: 1.2em;}
 	pre {white-space: pre-wrap;}
 	.-call-from {margin-top: 8px; padding-top: 8px; border-top: 1px #ccc dashed; font-size: 1.2rem; color: var(--debug-call-from-color);}
 	.-value {color: var(--debug-value-font-color);}
-	.sg-expand {cursor: pointer; margin: 0; padding: 0;}
+	.sg-expand {cursor: pointer; margin: 0; padding: 0; display: inline; white-space: nowrap; flex-wrap: nowrap;}
 	.-array-value {margin: 0 0 0 15px; padding: 0px;}
 	.-var-type {color: var(--debug-var-type-color);}
 	>.sg-expand {position: absolute; right: 16px;}
@@ -1330,7 +1330,7 @@ $SCREENS
 		*/
 		#colorbox {background-color: var(--bg-color);}
 		.cboxIframe {background-color: var(--bg-color);}
-		#cboxOverlay {background-color: #000; max-width: none !important;}
+		#cboxOverlay {background-color: #000; max-width: none !important; opacity: 0.7 !important;}
 		#colorbox {outline: 0; border-radius: 2px; border-radius: 10px;}
 		#cboxWrapper {border-radius: 2px;}
 		#cboxContent {margin-top: 48px; overflow: visible; border: none;}
