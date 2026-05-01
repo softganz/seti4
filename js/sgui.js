@@ -129,7 +129,9 @@ function sgShowBox(html, $this, options, e) {
 				await sgActionDone(done, $firstBoxPage);
 			}
 		},
-		onComplete: function() {}
+		onComplete: function() {
+			// $.colorbox.resize();
+		}
 	}
 
 	let $boxElement = $('#cboxLoadedContent')
