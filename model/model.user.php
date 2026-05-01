@@ -3,8 +3,8 @@
  * Model   :: User Information
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-07-22
- * Modify  :: 2026-04-05
- * Version :: 26
+ * Modify  :: 2026-05-01
+ * Version :: 27
  *
  * @param Int $userId
  * @return Object
@@ -97,7 +97,9 @@ class UserModel {
 
 		// debugMsg($user,'$user');
 
-		if (in_array(cfg('member.registration.method'), ['email'])) {
+		if (isset($user->status)) {
+			; // Set status from caller
+		} else if (in_array(cfg('member.registration.method'), ['email'])) {
 			$user->status = 'waiting';
 			$user->code = md5(uniqid(rand())); // better, difficult to guess
 			$result->process[] = 'create user with email registration method';
@@ -126,31 +128,31 @@ class UserModel {
 			$user->userRoles = $user->roles->role;
 		}
 
-		mydb::query(
-			'INSERT INTO %users%
-			( `username` , `password` , `name` , `roles`, `phone` , `email` , `real_name`, `last_name`, `status` , `datein` , `about`, `organization`, `admin_remark` )
-			VALUES
-			( :username , :encryptPassword , :name , :userRoles, :phone , :email , :realName, :lastName, "enable" , :datein , "", :organization, :admin_remark )',
-			$user
-		);
-
-		if (mydb()->_error) {
+		try {
+			$userId = DB::query([
+				'INSERT INTO %users%
+				( `username` , `password` , `name` , `roles`, `phone` , `email` , `real_name`, `last_name`, `status` , `datein` , `about`, `organization`, `admin_remark` )
+				VALUES
+				( :username , :encryptPassword , :name , :userRoles, :phone , :email , :realName, :lastName, :status , :datein , "", :organization, :admin_remark )',
+				'var' => $user
+			])->insertId();
+			if ($debug) $result->process[] = R('query');
+		} catch (Exception $exception) {
 			$result->complete = false;
-			$result->error = mydb()->_error;
 			$result->process[] = 'UserModel::create() => create error';
 			return $result;
 		}
 
-		$result->userId = $result->uid = $user->uid = mydb()->insert_id;
-		$result->password = $user->encryptPassword;
-		if ($debug) $result->process[] = mydb()->_query;
 		$result->complete = true;
+		$result->userId = $result->uid = $user->uid = $userId;
+		$result->password = $user->encryptPassword;
+		$result->status = $user->status;
 
 
 		sgSendLog([
 			'file' => __FILE__,
 			'line' => __LINE__,
-			'type' => 'Create user',
+			'type' => 'Create user' . ($result->status === 'enable' ? '' : ' - ' . $result->status),
 			'user' => SG\getFirst(i()->uid, $result->userId),
 			'name' => SG\getFirst(i()->name, $user->name),
 			'description' => (Object) [
@@ -158,27 +160,27 @@ class UserModel {
 				'name' => $user->name,
 				'id' => $result->userId,
 				'email' => $user->email,
+				'status' => $result->status,
 			],
 		]);
 
 		if ($user->roles) {
-			mydb::query(
+			DB::query([
 				'INSERT INTO %users_role%
 				(`uid`, `role`, `status`, `approved`, `created`)
 				VALUES
 				(:userId, :role, :status, :approved, :created)
 				ON DUPLICATE KEY UPDATE
-				`uid` = :userId
-				',
-				[
+				`uid` = :userId',
+				'var' => [
 					':userId' => $result->uid,
 					':role' => $user->roles->role,
 					':status' => $user->roles->status,
 					':approved' => $user->roles->approved,
 					':created' => date('U'),
 				]
-			);
-			if ($debug) $result->process[] = mydb()->_query;
+			]);
+			if ($debug) $result->process[] = R('query');
 		}
 
 		event_tricker('user.create_user',$self,$user,$form,$result);
@@ -231,45 +233,50 @@ class UserModel {
 		$newUserInfo = UserModel::get(['username' => $newUsername]);
 		if ($newUserInfo->userId) return false;
 
-		mydb::query(
-			'UPDATE %users% SET `username` = :newUsername WHERE `username` = :oldUsername',
-			[
-				':oldUsername' => $oldUsername,
-				':newUsername' => $newUsername,
-			]
-		);
-		if (!mydb()->_error) {
-			$oldFolder = 'file/'.$oldUsername;
-			$newFolder = 'file/'.$newUsername;
-
-			if (file_exists('file/'.$oldUsername)) rename($oldFolder, $newFolder);
-
-			// Rename cache
-			mydb::query(
-				'UPDATE %cache% SET `headers` = :newUsername WHERE `headers` = :oldUsername',
-				[
+		try {
+			DB::query([
+				'UPDATE %users% SET `username` = :newUsername WHERE `username` = :oldUsername',
+				'var' => [
 					':oldUsername' => $oldUsername,
 					':newUsername' => $newUsername,
 				]
-			);
-			// debugMsg(mydb()->_query);
+			]);
+		} catch (Exception $exception) {
+			throw new Exception('เปลี่ยนชื่อไม่สำเร็จ', _HTTP_ERROR_NOT_ACCEPTABLE);
 		}
+
+		$oldFolder = 'file/'.$oldUsername;
+		$newFolder = 'file/'.$newUsername;
+
+		if (file_exists('file/'.$oldUsername)) rename($oldFolder, $newFolder);
+
+		// Rename cache
+		DB::query([
+			'UPDATE %cache% SET `headers` = :newUsername WHERE `headers` = :oldUsername',
+			'var' => [
+				':oldUsername' => $oldUsername,
+				':newUsername' => $newUsername,
+			]
+		]);
 	}
 
 	public static function updatePassword($userId, $password) {
 		$newPassword = sg_encrypt($password,cfg('encrypt_key'));
-		mydb::query(
+		DB::query([
 			'UPDATE %users%
 			SET `password` = :newPassword
 			WHERE `uid` = :userId
 			LIMIT 1',
-			[
+			'var' => [
 				':userId' => $userId,
 				':newPassword' => $newPassword
 			]
-		);
+		]);
 
-		$userName = mydb::select('SELECT `username` FROM %users% WHERE `uid` = :userId LIMIT 1', [':userId' => $userId])->username;
+		$userName = DB::select([
+			'SELECT `username` FROM %users% WHERE `uid` = :userId LIMIT 1',
+			'var' => [':userId' => $userId]
+		])->username;
 
 		LogModel::save([
 			'module' => 'user',
@@ -300,21 +307,21 @@ class UserModel {
 		} else {
 			unset($result->code);
 			$result->message = 'User deleted.';
-			mydb::query(
+			DB::query([
 				'DELETE FROM %users% WHERE `uid` = :uid LIMIT 1',
-				[':uid' => $uid]
-			);
+				'var' => [':uid' => $uid]
+			]);
 
-			mydb::query(
+			DB::query([
 				'DELETE FROM %topic_user% WHERE `uid` = :uid',
-				[':uid' => $uid]
-			);
+				'var' => [':uid' => $uid]
+			]);
 
 			if (DB::tableExists('%org_officer%')) {
-				mydb::query(
+				DB::query([
 					'DELETE FROM %org_officer% WHERE `uid` = :uid',
-					[':uid' => $uid]
-				);
+					'var' => [':uid' => $uid]
+				]);
 			}
 		}
 		return $result;
@@ -373,7 +380,7 @@ class UserModel {
 				'keyword' => 'Invalid signin',
 				'message' => 'user '.$username.' not exists or disabled'
 			]);
-			return false;
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'User not exists or disabled.');
 		}
 
 		$de_password = sg_decrypt($rs->password,cfg('encrypt_key'));
@@ -441,19 +448,21 @@ class UserModel {
 
 		cache::add('user:'.$session_id, $user, $remember_time, $username);
 
-		mydb::query(
+		DB::query([
 			'UPDATE %users% SET
 			`last_login` = `login_time` ,
 			`last_login_ip` = `login_ip` ,
 			`login_time` = :login_time,
 			`login_ip` = :ip
 			WHERE uid = :uid LIMIT 1',
-			[
+			'var' => [
 				':login_time' => date('Y-m-d H:i:s'),
 				':ip' => ip2long($user->ip),
 				':uid' => $user->uid,
 			]
-		);
+		]);
+
+		$debug_str .= '<p>query=' . R('query') . '</p>';
 
 		LogModel::save([
 			'module' => 'user',
@@ -462,7 +471,6 @@ class UserModel {
 			'userId' => $user->uid
 		]);
 
-		$debug_str .= '<p>query='.mydb()->_query.'</p>';
 		$debug_str .= print_o($_COOKIE,'$COOKIE');
 		$debug_str .= print_o($user,'$user');
 		if ($debug) echo $debug_str;
@@ -530,8 +538,11 @@ class UserModel {
 		// if ($cookielength == -1) $cookielength = 10*365*24*60;
 
 		if ($args['email'] && $session_id) {
-			$user = mydb::select('SELECT * FROM %users% WHERE `email` = :email LIMIT 1', [':email' => $args['email']]);
-			$result->query = mydb()->_query;
+			$user = DB::select([
+				'SELECT * FROM %users% WHERE `email` = :email LIMIT 1',
+				'var' => [':email' => $args['email']]
+			]);
+			$result->query = R('query');
 			// debugMsg($user, '$user');
 			if (!$user->uid) return (Object) ['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Invalid email'];
 			$result = (Object) [
@@ -557,19 +568,19 @@ class UserModel {
 			setcookie(cfg('cookie.id'),$session_id,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
 			setcookie(cfg('cookie.u'),$result->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
 
-			mydb::query(
+			DB::query([
 				'UPDATE %users% SET
 				`last_login` = `login_time` ,
 				`last_login_ip` = `login_ip` ,
 				`login_time` = :login_time,
 				`login_ip` = :ip
 				WHERE uid = :uid LIMIT 1',
-				[
+				'var' => [
 					':login_time' => date('Y-m-d H:i:s'),
 					':ip' => ip2long($result->ip),
 					':uid' => $result->uid,
 				]
-			);
+			]);
 			LogModel::save([
 				'module' => 'user',
 				'keyword' => 'Signin by Google',
@@ -715,7 +726,6 @@ class UserModel {
 						':expire' => $remember_time
 					]
 				]);
-				//echo mydb()->_query.'<br />';
 			}
 			return $data;
 		} else {
@@ -745,12 +755,17 @@ class UserModel {
 		if (empty($code)) $result->error[]='Empty registration code';
 
 		if ($code) {
-			$stmt = 'SELECT * FROM %users% WHERE status IN ("","waiting") AND code = :code LIMIT 1';
-			$result->user=$user=mydb::select($stmt, ':code',$code);
-			$result->query[]=mydb()->_query;
-			if ($user->_num_rows) {
-				mydb::query('UPDATE %users% SET status="enable",code=NULL WHERE uid='.$user->uid.' LIMIT 1');
-				$result->query[]=mydb()->_query;
+			$result->user = $user = DB::select([
+				'SELECT * FROM %users% WHERE `status` IN ("","waiting") AND code = :code LIMIT 1',
+				'var' => [':code' => $code]
+			]);
+			$result->query[] = R('query');
+			if ($user->uid) {
+				DB::query([
+					'UPDATE %users% SET `status` = "enable", `code` = NULL WHERE `uid` = :userId LIMIT 1',
+					'var' => [':userId' => $user->uid]
+				]);
+				$result->query[] = R('query');
 				$result->process[]='Email registration confirm complete';
 			} else {
 				$result->error[]='No user for registration code';
@@ -766,10 +781,10 @@ class UserModel {
 		if (empty($prefixUsername)) return NULL;
 
 		$prefixUsername = strtolower($prefixUsername);
-		$lastUsername = mydb::select(
+		$lastUsername = DB::select([
 			'SELECT MAX(`username`) `username` FROM %users% WHERE `username` LIKE :prefixUsername LIMIT 1',
-			[':prefixUsername' => $prefixUsername.$sep.'%']
-		)->username;
+			'var' => [':prefixUsername' => $prefixUsername.$sep.'%']
+		])->username;
 
 		list($username,$lastid) = explode($sep,$lastUsername);
 		if (empty($username)) $username = $prefixUsername;
@@ -791,10 +806,10 @@ class UserModel {
 	}
 
 	public static function deleteAccount($userId) {
-		mydb::query(
+		DB::query([
 			'UPDATE %users% SET `status` = "disable", `admin_remark` = CONCAT(IFNULL(`admin_remark`, ""), "@'.date('Y-m-d H:i:s').' ลบบัญชีโดยเจ้าของ") WHERE `uid` = :userId LIMIT 1',
-			[':userId' => $userId]
-		);
+			'var' => [':userId' => $userId]
+		]);
 	}
 
 	public static function getMemberOfGroup($userId) {
@@ -827,11 +842,13 @@ class UserModel {
 	}
 
 	private function _getUserInfo() {
-		$result = mydb::select('SELECT * FROM %users% u WHERE `uid` = :userId LIMIT 1', ':userId', $this->userId);
+		$result = DB::select([
+			'SELECT * FROM %users% u WHERE `uid` = :userId LIMIT 1',
+			'var' => [':userId' => $this->userId]
+		]);
 
-		if ($result->_empty) return NULL;
+		if (empty($result->uid)) return NULL;
 
-		mydb::clearProp($result);
 		foreach ($result as $key => $value) $this->{$key} = $value;
 		$this->fullName = trim($this->real_name.' '.$this->last_name);
 

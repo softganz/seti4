@@ -3,8 +3,8 @@
  * User    :: New User Register
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2024-02-14
- * Modify  :: 2026-01-18
- * Version :: 5
+ * Modify  :: 2026-05-01
+ * Version :: 6
  *
  * @return Widget
  *
@@ -56,8 +56,6 @@ class UserRegister extends Page {
 
 	function user_register() {
 		if ($_POST['cancel']) location();
-
-		//$self->theme->header->description = R::View('user.menu','register');
 
 		$register = (Object) post('register',_TRIM+_STRIPTAG);
 
@@ -133,7 +131,6 @@ class UserRegister extends Page {
 	function save() {
 		$cfgUserRegister = cfg('user')->register;
 
-
 		// Check referer domain must same as current domain
 		$fromDomain = parse_url($_SERVER['HTTP_REFERER']);
 		if ($fromDomain['host'] != _DOMAIN_SHORT) {
@@ -146,15 +143,18 @@ class UserRegister extends Page {
 			return $errors;
 		}
 
-		// if ($cfgUserRegister->confirmForm && !$this->confirmRegister) {
-		// 	return $this->confirmForm();
-		// }
+		$recaptcha = Request::all('g-recaptcha-response');
+
+		if (cfg('captcha') && !$recaptcha) $this->register->status = 'waiting';
 
 		$result = $this->createUser();
 
 		return [
-			'location' => SG\getFirst($this->register->ret,'my'),
-			'register' => $this->register,
+			'location' => $result->status === 'waiting' ? Url::link('user/waiting', ['u' => $result->username]) : SG\getFirst($this->register->ret, 'my'),
+			// 'status' => $this->register->status,
+			// 'recaptcha' => $recaptcha,
+			// 'register' => $this->register,
+			// 'post' => post(),
 		];
 	}
 
@@ -271,7 +271,10 @@ class UserRegister extends Page {
 				cfg_db('counter',$GLOBALS['counter']);
 				break;
 		}
-		R()->user = UserModel::signInProcess($this->register->username,$this->register->password);
+
+		if ($result->status === 'enable') {
+			R()->user = UserModel::signInProcess($this->register->username,$this->register->password);
+		}
 
 		return $result;
 	}
