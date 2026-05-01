@@ -1,16 +1,17 @@
 <?php
 /**
-* Model.  :: Node Model
-* Created :: 2021-09-30
-* Modify  :: 2025-10-07
-* Version :: 27
-*
-* @param Array $args
-* @return Object
-*
-* @usage new NodeModel([])
-* @usage NodeModel::function($conditions, $options)
-*/
+ * Model   :: Node Model
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2021-09-30
+ * Modify  :: 2026-04-30
+ * Version :: 28
+ *
+ * @param Array $args
+ * @return Object
+ *
+ * @usage new NodeModel([])
+ * @usage NodeModel::function($conditions, $options)
+ */
 
 use Softganz\DB;
 use Softganz\SetDataModel;
@@ -933,6 +934,8 @@ class NodeModel {
 	public static function deleteAllUserNode($userId) {
 		if (empty($userId)) return false;
 
+		R::Manifest('project');
+
 		$dbs = DB::select([
 			'SELECT `tpid`, `type`, `title`
 			 FROM %topic%
@@ -943,8 +946,13 @@ class NodeModel {
 
 		// Delete node
 		foreach ($dbs->items as $rs) {
-			if (!in_array($rs->type, ['story', 'page', 'forum'])) continue;
+			if (!in_array($rs->type, ['story', 'page', 'forum', 'project-develop'])) continue;
 			if (empty($rs->tpid)) continue;
+
+			if ($rs->type === 'project-develop') {
+				ProjectProposalModel::delete($rs->tpid);
+				continue;
+			}
 
 			$nodeDeleteResult = self::delete($rs->tpid);
 			if ($nodeDeleteResult->complete) {
