@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-04-30
- * Version :: 73
+ * Modify  :: 2026-05-05
+ * Version :: 74
  *
  * @param Array $args
  * @return Widget
@@ -14,8 +14,8 @@
 
 // Class :: WidgetBase class for base of all widget
 class WidgetBase {
-	var $widgetName = 'Widget';
-	var $version;
+	public $widgetName = 'Widget';
+	public $version;
 	function __construct($args = []) {
 		foreach ($args as $argKey => $argValue) {
 			$this->{$argKey} = $argValue;
@@ -31,40 +31,40 @@ class WidgetBase {
 
 // Widget for children group
 class Children extends WidgetBase {
-	var $widgetName = 'Children';
-	var $version = '0.00.01';
-	var $type;
-	var $children = [];
+	public $widgetName = 'Children';
+	public $version = '0.00.01';
+	public $type;
+	public $children = [];
 }
 
 class Widget extends WidgetBase {
-	var $widgetName = 'Widget'; // String
-	var $version; // String
-	var $tagName = ''; // String
-	var $childTagName; // String
-	var $id; // String
-	var $class; // String
-	var $header; // String, Widget
-	var $itemClass; // String
-	var $mainAxisAlignment; // String
-	var $crossAxisAlignment; // String
-	var $href; // String
-	var $dataUrl; // String
-	var $webview; // String
-	var $style; // String
-	var $onBuild; // function
-	var $rel; // String
-	var $done; // String
-	var $action; // String
-	var $debug; // String
-	var $child; // Any
-	var $children = []; // Array
-	var $attribute = []; // Array
-	var $childContainer = []; // Array
+	public $widgetName = 'Widget'; // String
+	public $version; // String
+	public $tagName = ''; // String
+	public $childTagName; // String
+	public $id; // String
+	public $class; // String
+	public $header; // String, Widget
+	public $itemClass; // String
+	public $mainAxisAlignment; // String
+	public $crossAxisAlignment; // String
+	public $href; // String
+	public $dataUrl; // String
+	public $webview; // String
+	public $style; // String
+	public $onBuild; // function
+	public $rel; // String
+	public $done; // String
+	public $action; // String
+	public $debug; // String
+	public $child; // Any
+	public $children = []; // Array
+	public $attribute = []; // Array
+	public $childContainer = []; // Array
 
 	// @deprecated
-	var $attributeText;
-	var $config = NULL; // Object
+	public $attributeText;
+	public $config = NULL; // Object
 
 	function __construct($args = []) {
 		$this->initConfig();
@@ -361,11 +361,11 @@ class Widget extends WidgetBase {
 
 // new DOM(['tag' => 'img', 'class' => 'class-name', 'onClick' => 'script', 'child/children'])
 class DOM extends Widget {
-	var $widgetName;
-	var $version = '0.00.01';
-	var $tagName;
-	var $class;
-	var $settings = [];
+	public $widgetName;
+	public $version = '0.00.01';
+	public $tagName;
+	public $class;
+	public $settings = [];
 
 	function __construct($args = []) {
 		$this->tagName = array_shift($args);
@@ -395,18 +395,18 @@ class DOM extends Widget {
 }
 
 class HtmlTemplate extends Widget {
-	var $widgetName = 'Template';
-	var $tagName = 'template';
+	public $widgetName = 'Template';
+	public $tagName = 'template';
 }
 
 class Header extends Widget {
-	var $widgetName = 'Header';
-	var $tagName = 'header';
-	var $titleTag = 'span';
-	var $leading;
-	var $title;
-	var $subtitle;
-	var $trailing;
+	public $widgetName = 'Header';
+	public $tagName = 'header';
+	public $titleTag = 'span';
+	public $leading;
+	public $title;
+	public $subtitle;
+	public $trailing;
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -427,9 +427,9 @@ class Header extends Widget {
 } // End of class Header
 
 class Container extends Widget {
-	var $widgetName = 'Container';
-	var $tagName = 'div';
-	var $fillButton = false;
+	public $widgetName = 'Container';
+	public $tagName = 'div';
+	public $fillButton = false;
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -447,9 +447,9 @@ class Container extends Widget {
 } // End of class Container
 
 class Center extends Widget {
-	var $widgetName = 'Center';
-	var $tagName = 'div';
-	var $class = '-sg-text-center';
+	public $widgetName = 'Center';
+	public $tagName = 'div';
+	public $class = '-sg-text-center';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -457,9 +457,9 @@ class Center extends Widget {
 } // End of class Center
 
 class ListOrder extends Widget {
-	var $widgetName = 'ListOrder';
-	var $tagName = 'ul';
-	var $childContainer = ['tagName' => 'li', 'class' => '-item'];
+	public $widgetName = 'ListOrder';
+	public $tagName = 'ul';
+	public $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -468,9 +468,9 @@ class ListOrder extends Widget {
 } // End of class ListOrder
 
 class Column extends Widget {
-	var $widgetName = 'Column';
-	var $tagName = 'div';
-	var $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public $widgetName = 'Column';
+	public $tagName = 'div';
+	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -478,26 +478,26 @@ class Column extends Widget {
 } // End of class Column
 
 class Row extends Widget {
-	var $widgetName = 'Row';
-	var $version = '0.0.10';
-	var $tagName = 'div';
-	var $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public $widgetName = 'Row';
+	public $version = '0.0.10';
+	public $tagName = 'div';
+	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class Row
 
 class FloatingActionButton extends Widget {
-	var $widgetName = 'FloatingActionButton';
-	var $tagName = 'div';
-	var $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public $widgetName = 'FloatingActionButton';
+	public $tagName = 'div';
+	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class FloatingActionButton
 
 class ListTile extends Widget {
-	var $widgetName = 'ListTile';
-	var $tagName = 'div';
-	var $titleTag = 'span';
-	var $leading;
-	var $title;
-	var $subtitle;
-	var $trailing;
+	public $widgetName = 'ListTile';
+	public $tagName = 'div';
+	public $titleTag = 'span';
+	public $leading;
+	public $title;
+	public $subtitle;
+	public $trailing;
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -518,9 +518,9 @@ class ListTile extends Widget {
 } // End of class ListTile
 
 class Card extends Widget {
-	var $widgetName = 'Card';
-	var $tagName = 'div';
-	var $titleTag = 'div';
+	public $widgetName = 'Card';
+	public $tagName = 'div';
+	public $titleTag = 'div';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -547,10 +547,10 @@ class Card extends Widget {
 } // End of class Card
 
 class Nav extends Widget {
-	var $widgetName = 'Nav';
-	var $tagName = 'nav';
-	var $class = 'nav';
-	var $multipleLevel = false;
+	public $widgetName = 'Nav';
+	public $tagName = 'nav';
+	public $class = 'nav';
+	public $multipleLevel = false;
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -597,8 +597,8 @@ class Nav extends Widget {
 } // End of class Nav
 
 class SideBar extends Widget {
-	var $widgetName = 'SideBar';
-	var $tagName = 'aside';
+	public $widgetName = 'SideBar';
+	public $tagName = 'aside';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -608,9 +608,9 @@ class SideBar extends Widget {
 } // End of class Nav
 
 class ScrollView extends Widget {
-	var $widgetName = 'ScrollView';
-	var $tagName = 'div';
-	var $scrollDirection = 'horizontal';
+	public $widgetName = 'ScrollView';
+	public $tagName = 'div';
+	public $scrollDirection = 'horizontal';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -618,9 +618,9 @@ class ScrollView extends Widget {
 } // End of class ScrollView
 
 class DebugMsg extends Widget {
-	var $msg;
-	var $varName;
-	var $callFrom;
+	public $msg;
+	public $varName;
+	public $callFrom;
 
 	function __construct($msg = NULL, $varName = NULL, $callFrom = NULL) {
 		parent::__construct([
@@ -694,10 +694,10 @@ class DebugMsg extends Widget {
 } // End of class DebugMsg
 
 class Message extends WidgetBase {
-	var $widgetName = 'Message';
-	var $responseCode;
-	var $error = false;
-	var $text;
+	public $widgetName = 'Message';
+	public $responseCode;
+	public $error = false;
+	public $text;
 	function __construct($args = []) {
 		parent::__construct($args);
 
@@ -723,7 +723,7 @@ class Message extends WidgetBase {
 } // End of class Message
 
 class ErrorMessage extends Message {
-	var $widgetName = 'ErrorMessage';
+	public $widgetName = 'ErrorMessage';
 } // End of class ErrorMessage
 
 /**
@@ -733,18 +733,18 @@ class ErrorMessage extends Message {
  * @usage new Button([key => value,...])
  */
 class Button extends Widget {
-	var $widgetName = 'Button';
-	var $version = '0.01';
-	var $tagName = 'a';
-	var $href;
-	var $type = 'default'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
-	var $text;
-	var $icon;
-	var $iconPosition = 'left'; // left,right,top,bottom
-	var $variable;
-	var $description;
-	var $boxType; // Set box class name
-	var $boxWidth; // Set box width value
+	public $widgetName = 'Button';
+	public $version = '0.01';
+	public $tagName = 'a';
+	public $href;
+	public $type = 'default'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
+	public $text;
+	public $icon;
+	public $iconPosition = 'left'; // left,right,top,bottom
+	public $variable;
+	public $description;
+	public $boxType; // Set box class name
+	public $boxWidth; // Set box width value
 
 	function __construct($args = [], $variable = NULL) {
 		parent::__construct($args);
@@ -806,16 +806,16 @@ class Button extends Widget {
  * @usage new BackButton([key => value,...])
  */
 class BackButton extends Widget {
-	var $widgetName = 'BackButton';
-	var $version = '0.01';
-	var $tagName = 'a';
-	var $href = 'javascript:history.back()';
-	var $type; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
-	var $text;
-	var $icon = '<i class="icon -material">arrow_back</i>';
-	var $iconPosition = 'left'; // left,right,top,bottom
-	var $description;
-	var $onClick;
+	public $widgetName = 'BackButton';
+	public $version = '0.01';
+	public $tagName = 'a';
+	public $href = 'javascript:history.back()';
+	public $type; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
+	public $text;
+	public $icon = '<i class="icon -material">arrow_back</i>';
+	public $iconPosition = 'left'; // left,right,top,bottom
+	public $description;
+	public $onClick;
 
 	function __construct($args = [], $variable = NULL) {
 		parent::__construct($args);
@@ -862,11 +862,11 @@ class BackButton extends Widget {
 // Usage: new Icon(iconName, property=[])
 // Usage: new Icon('iconName1,iconName2', property=[])
 class Icon extends Widget {
-	var $widgetName = 'Icon';
-	var $version = '0.03';
-	var $icon;
-	var $secondary; // For secondary icon
-	var $type = 'material';
+	public $widgetName = 'Icon';
+	public $version = '0.03';
+	public $icon;
+	public $secondary; // For secondary icon
+	public $type = 'material';
 
 	function __construct($icon, $args = []) {
 		$this->icon = $icon;
@@ -917,7 +917,7 @@ class Icon extends Widget {
 } // End of class Icon
 
 class ExpandButton extends Widget {
-	var $icon = 'chevron_right';
+	public $icon = 'chevron_right';
 	function toString() {
 		return '<a'
 			. ' class="sg-expand btn -link -no-print' . ($this->class ? ' ' . $this->class : '') . '"'
@@ -930,13 +930,13 @@ class ExpandButton extends Widget {
 } // End of class ExpandButton
 
 class StepMenu extends Widget {
-	var $widgetName = 'StepMenu';
-	var $tagName = 'nav';
-	var $class = '';
-	var $childrenContainer = ['tagName' => 'ul'];
-	var $childContainer = ['tagName' => 'li'];
-	var $currentStep = NULL;
-	var $activeStep = [];
+	public $widgetName = 'StepMenu';
+	public $tagName = 'nav';
+	public $class = '';
+	public $childrenContainer = ['tagName' => 'ul'];
+	public $childContainer = ['tagName' => 'li'];
+	public $currentStep = NULL;
+	public $activeStep = [];
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -954,13 +954,13 @@ class StepMenu extends Widget {
 } // End of class StepMenu
 
 class ListItem extends Widget {
-	var $widgetName = 'ListItem';
-	var $forceBuild = false;
-	var $seperator = ' · ';
-	var $tagName = 'ul';
-	var $uiItemClass = 'ui-item -item';
-	var $wrapperType = array('ul' => 'li','span' => 'span','div' => 'div', 'div a'=>'a', 'ol'=>'li');
-	var $type = 'action';
+	public $widgetName = 'ListItem';
+	public $forceBuild = false;
+	public $seperator = ' · ';
+	public $tagName = 'ul';
+	public $uiItemClass = 'ui-item -item';
+	public $wrapperType = array('ul' => 'li','span' => 'span','div' => 'div', 'div a'=>'a', 'ol'=>'li');
+	public $type = 'action';
 
 	function _renderChildren($childrens = [], $args = []) {
 		$ret = '';
@@ -1056,9 +1056,9 @@ class ListItem extends Widget {
 } // End of class ListItem
 
 class TabBar extends Widget {
-	var $widgetName = 'TabBar';
-	var $tagName = 'div';
-	var $class = 'widget-tabbar sg-tabs';
+	public $widgetName = 'TabBar';
+	public $tagName = 'div';
+	public $class = 'widget-tabbar sg-tabs';
 
 	function _renderChildren($childrens = [], $args = []) {
 		$tabItems = '<ul class="tabs">';
@@ -1084,10 +1084,10 @@ class TabBar extends Widget {
 } // End of class TabWidget
 
 class ProfilePhoto extends Widget {
-	var $widgetName = 'ProfilePhoto';
-	var $version = '0.01';
-	var $username;
-	var $size; // small,big
+	public $widgetName = 'ProfilePhoto';
+	public $version = '0.01';
+	public $username;
+	public $size; // small,big
 	// parent property : $class,$attribute;
 
 	function __construct($username = NULL, $args = []) {
@@ -1111,10 +1111,10 @@ class ProfilePhoto extends Widget {
 } // End of class ProfilePhoto
 
 class Notify extends Widget {
-	var $widgetName = 'Notify';
-	var $tagName = 'div';
-	var $titleTag = 'div';
-	var $class = 'notify';
+	public $widgetName = 'Notify';
+	public $tagName = 'div';
+	public $titleTag = 'div';
+	public $class = 'notify';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -1140,12 +1140,12 @@ class Drawer extends Widget {
 // Complex Widget
 
 class Scaffold extends Widget {
-	var $widgetName = 'Scaffold';
-	var $appBar = NULL;
-	var $sideBar = NULL;
-	var $body = NULL;
-	var $floatingActionButton = NULL;
-	var $script = NULL;
+	public $widgetName = 'Scaffold';
+	public $appBar = NULL;
+	public $sideBar = NULL;
+	public $body = NULL;
+	public $floatingActionButton = NULL;
+	public $script = NULL;
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -1153,18 +1153,18 @@ class Scaffold extends Widget {
 } // End of class Scaffold
 
 class AppBar extends Widget {
-	var $widgetName = 'AppBar';
-	var $tagName = 'div';
-	var $title;
-	var $subtitle;
-	var $leading;
-	var $trailing;
-	var $navigator;
-	var $dropbox;
-	var $boxHeader = false;
-	var $showInBox = false;
-	var $removeOnApp = false;
-	var $navigatorMultipleLevel = false;
+	public $widgetName = 'AppBar';
+	public $tagName = 'div';
+	public $title;
+	public $subtitle;
+	public $leading;
+	public $trailing;
+	public $navigator;
+	public $dropbox;
+	public $boxHeader = false;
+	public $showInBox = false;
+	public $removeOnApp = false;
+	public $navigatorMultipleLevel = false;
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -1255,8 +1255,8 @@ class AppBar extends Widget {
 * For URL page interface
 */
 class PageBase extends WidgetBase {
-	var $widgetName = 'PageBase';
-	var $module = NULL;
+	public $widgetName = 'PageBase';
+	public $module = NULL;
 
 	function __construct($args = []) {
 		$this->widgetName = get_class($this);
@@ -1286,7 +1286,7 @@ class PageBase extends WidgetBase {
 } // End of class PageBase
 
 class Page extends PageBase {
-	var $widgetName = 'Page';
+	public $widgetName = 'Page';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -1301,7 +1301,7 @@ class Page extends PageBase {
 } // End of class Page
 
 class PageApi extends PageBase {
-	var $widgetName = 'PageApi';
+	public $widgetName = 'PageApi';
 	private $runInternalMethod = true;
 	protected $actionDefault;
 	protected $action;
@@ -1360,11 +1360,11 @@ class PageApi extends PageBase {
 } // End of class PageApi
 
 class PageController extends PageBase {
-	var $widgetName = 'PageController';
-	var $action;
-	var $argIndex = 2;
-	var $args = [];
-	var $info;
+	public $widgetName = 'PageController';
+	public $action;
+	public $argIndex = 2;
+	public $args = [];
+	public $info;
 
 	function __construct($args = []) {
 		parent::__construct($args);
