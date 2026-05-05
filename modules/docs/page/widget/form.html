@@ -50,18 +50,19 @@ attribute ↔ Array[
 <p>Text child:</p>
 
 ```php
-	<spacer>
+	
 ```
 
 ###Children type array
 
 ```php
 inputName => array(
-	type ↔ String text/textarea/radio/checkbox/select, default is text
-	class ↔ String ex. -fill
-	id ↔ String ex. group-search
+	type ↔ String
+	id ↔ String
+	class ↔ String
+	name ↔ String | false
 	value ↔ Mixed
-	autocomplete ↔ String ex. ON/OFF
+	autocomplete ↔ String
 	placeholder ↔ String
 	pretext ↔ String
 	posttext ↔ String
@@ -70,10 +71,17 @@ inputName => array(
 		data-query ↔ String
 		data-altfld ↔ String
 		onEnter ↔ String
-			value submit = form submit when hit enter in text box
-			default NULL
 	]
 )
+
+type value is text/textarea/radio/checkbox/select, default is text
+id ex. group-search
+class ex. -fill
+name = false to unset name attribute
+autocomplete value ON/OFF
+onEnter
+	value submit = form submit when hit enter in text box
+	default NULL
 ```
 
 ###Children type sub form item
