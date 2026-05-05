@@ -130,7 +130,7 @@ function sgShowBox(html, $this, options, e) {
 			}
 		},
 		onComplete: function() {
-			// $.colorbox.resize();
+			$.colorbox.resize();
 		}
 	}
 
@@ -838,7 +838,9 @@ function showError(response, time = 5000) {
 			$.post(href, para, function(html) {
 				doneResult = html;
 				notify();
-				if (!settings.silent) console.log("Load completed.");
+				if (!settings.silent) {
+					console.log("Load completed.");
+				}
 
 				if (retUrl) {
 					if (debugSG) console.log("Return URL "+retUrl);
@@ -866,6 +868,7 @@ function showError(response, time = 5000) {
 				} else if (callback) {
 					window.location = callback;
 				}
+				if (relTarget === 'box') $.colorbox.resize();
 			})
 			.done(function(response) {
 				if (response.responseCode && response.text) notify(response.text, 3000);
