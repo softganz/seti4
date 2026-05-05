@@ -531,7 +531,7 @@
 		.widget-row {
 			gap: 8px;
 			align-items: center;
-			>*>a {height: 3.6rem; color: var(--trailing-btn-text-color); background-color: var(--trailing-btn-bg-color);}
+			>*>a:not(.-danger):not(.-primary) {height: 3.6rem; color: var(--trailing-btn-text-color); background-color: var(--trailing-btn-bg-color);}
 			>*>a:hover {background-color: var(--trailing-btn-bg-color-hover);}
 			>*>a>.icon {color: var(--trailing-text-color);}
 		}
