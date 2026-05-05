@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
  * @modify  :: 2026-05-01
- * @version :: 41
+ * @version :: 42
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -545,9 +545,9 @@ function sgSendLog($data = []) {
 	);
 
 	unset(
-		$data->post->register->password,
-		$data->post->register->repassword,
-		$data->post->register->verify
+		$data->data->post['register']['password'],
+		$data->data->post['register']['repassword'],
+		$data->data->post['register']['verify']
 	);
 
 	if (isset($data['forceSend'])) {
