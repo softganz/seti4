@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-09-07
  * Modify  :: 2026-05-05
- * Version :: 6
+ * Version :: 7
  *
  * @param Array $args
  * @return Widget
@@ -140,6 +140,8 @@ class MenuGroupWidget extends Widget {
 	// Replace {{variable[.variable]}} with $this->variable
 	private function setVariable(&$menuValue) {
 		foreach ($menuValue as $menuItemKey => $menuItemValue) {
+			if (!is_string($menuItemValue)) continue;
+
 			$menuValue->{$menuItemKey} = preg_replace_callback(
 				'/(\{\{(.*?)\}\})/',
 				function($match) use($menuItemKey) {
