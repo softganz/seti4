@@ -3,8 +3,8 @@
  * Widget  :: Form Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-04-27
- * Version :: 42
+ * Modify  :: 2026-05-05
+ * Version :: 43
  *
  * @param Array $args
  * @return Widget
@@ -247,9 +247,11 @@ class Form extends Widget {
 			}
 		}
 
-		unset($formElement->container['class']);
+		$containerTagName = $formElement->container['tagName'] ?? 'div';
 
-		$ret .= '<div id="form-item-' . $tag_id . '" '
+		unset($formElement->container['class'], $formElement->container['tagName']);
+
+		$ret .= '<' . $containerTagName . ' id="form-item-' . $tag_id . '" '
 				. 'class="form-' . (in_array($formElement->type, ['','']) ? $formElement->type : 'item -' . $tag_id) . ($containerClass ? ' ' . $containerClass : '')
 				. ($formElement->type === 'hidden' ? ' -hidden' : '')
 				. '"'
@@ -304,7 +306,7 @@ class Form extends Widget {
 
 		if ($isFormGroup) $ret .= '</span><!-- form-group -->' . _NL;
 		if ($formElement->description) $ret .= _NL . '<div class="description">' . $formElement->description . '</div>';
-		$ret .= _NL . '</div>';
+		$ret .= _NL . '</' . $containerTagName .'>';
 
 		$ret .= _NL . _NL;
 		return [$tag_id, $ret];
