@@ -3,8 +3,8 @@
  * Widget  :: Menu Group Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-09-07
- * Modify  :: 2026-03-22
- * Version :: 5
+ * Modify  :: 2026-05-05
+ * Version :: 6
  *
  * @param Array $args
  * @return Widget
@@ -21,6 +21,7 @@ class MenuGroupWidget extends Widget {
 
 	function __construct($args = []) {
 		parent::__construct($args);
+		// debugMsg($this->use, '$this');
 	}
 
 	#[\Override]
@@ -32,29 +33,6 @@ class MenuGroupWidget extends Widget {
 				// Show menu in follow appBar config
 				foreach (explode(',', $this->use) as $navKey) {
 					$menuItem = $this->menu->{$navKey};
-
-					// Replace {{variable[.variable]}} with $this->variable
-					foreach ($menuItem as $menuItemKey => $menuItemValue) {
-						if (!is_string($menuItemValue)) continue;
-						$menuItem->{$menuItemKey} = preg_replace_callback(
-							'/(\{\{(.*?)\}\})/',
-							function($match) use($menuItemKey, &$menuItemValue) {
-								$matchVar = explode('.', $match[2]);
-
-								if ($menuItemKey === 'condition') {
-									return '$this->variable->' . implode('->', $matchVar);
-								} else {
-									if (count($matchVar) === 1) {
-										return $this->variable->{$matchVar[0]};
-									} else if (count($matchVar) === 2) {
-										return $this->variable->{$matchVar[0]}->{$matchVar[1]};
-									}
-								}
-							},
-							$menuItemValue
-						);
-					}
-
 					// Create menu button
 					if ($menuItem->widget) {
 						// Menu is widget
@@ -74,7 +52,7 @@ class MenuGroupWidget extends Widget {
 								$childrens[] = $button;
 							}
 						}
-					} else if ($button = $this->_renderButton($menuItem, $this->variable)) {
+					} else if ($button = $this->renderButton($navKey, $menuItem)) {
 						// Menu is button
 						$childrens[$navKey] = $button;
 					}
@@ -87,7 +65,7 @@ class MenuGroupWidget extends Widget {
 							foreach (explode(',', $this->dropbox['use']) as $navKey) {
 								$menuItem = $this->dropbox['menu']->{$navKey};
 
-								if ($button = $this->_renderButton($menuItem, $this->variable)) {
+								if ($button = $this->renderButton($navKey, $menuItem)) {
 									$childrens[$navKey] = $button;
 								}
 							}
@@ -109,8 +87,10 @@ class MenuGroupWidget extends Widget {
 		]);
 	}
 
-	private function _renderButton($menuItem, $info) {
+	private function renderButton($navKey, $menuItem) {
 		if (empty($menuItem)) return NULL;
+
+		$this->setVariable($menuItem);
 
 		// Check right to create menu
 		if ($menuItem->right) {
@@ -128,41 +108,80 @@ class MenuGroupWidget extends Widget {
 				}
 			}
 			if (!$hasRightToCreateButton) return NULL;
-			// "condition": "empty($projectInfo->info->allocateDate)",
-			if ($menuItem->condition) {
-				try {
-					$showCondition = eval('return ' . $menuItem->condition . ';');
-				} catch (ParseError $exception) {
-					return '?';
-				}
-
-				if (!$showCondition) return NULL;
-			}
-		} else {
-			// @deprecated
-			if ($menuItem->access) {
-				if (!defined($menuItem->access)) return NULL;
-				else if (!($info->RIGHT & constant($menuItem->access))) return NULL;
-			}
 		}
 
-		foreach ($menuItem as $key => $value) {
-			if (!is_string($value)) continue;
+		// Check menu condition
+		if ($menuItem->condition) {
+			try {
+				$showCondition = eval('return ' . $menuItem->condition . ';');
+			} catch (ParseError $exception) {
+				return '?';
+			}
 
-			$menuItem->{$key} = preg_replace_callback(
-				'/(\{\{(.*?)\}\})/',
-				function($match) {
-					return $this->variable->{$match[2]};
-				},
-				$value
-			);			
+			if (!$showCondition) return NULL;
 		}
+
+		// @deprecated
+		// Check menu access from RIGHT
+		if ($menuItem->access) {
+			if (!defined($menuItem->access)) return NULL;
+			else if (!($this->variable->RIGHT & constant($menuItem->access))) return NULL;
+		}
+
+		// Build button
+		unset($menuItem->condition);
 
 		if ($menuItem->icon) $menuItem->icon = new Icon($menuItem->icon);
-		if ($menuItem->href) $menuItem->href = url($menuItem->href);
+		if ($menuItem->href) $menuItem->href = Url::link($menuItem->href);
 
-		return new Button($menuItem, $info);
+		return new Button((Array) $menuItem);
 	}
 
+	// Replace {{variable[.variable]}} with $this->variable
+	private function setVariable(&$menuValue) {
+		foreach ($menuValue as $menuItemKey => $menuItemValue) {
+			$menuValue->{$menuItemKey} = preg_replace_callback(
+				'/(\{\{(.*?)\}\})/',
+				function($match) use($menuItemKey) {
+					$matchVar = explode('.', $match[2]);
+
+					if ($menuItemKey === 'condition') {
+						return '$this->variable->' . implode('->', $matchVar);
+					} else {
+						if (count($matchVar) === 1) {
+							return $this->variable->{$matchVar[0]};
+						} else if (count($matchVar) === 2) {
+							return $this->variable->{$matchVar[0]}->{$matchVar[1]};
+						}
+					}
+				},
+				$menuItemValue
+			);
+		}
+	}
+
+	private function setVariablex() {
+		// Replace {{variable[.variable]}} with $this->variable
+		foreach ($menuItem as $menuItemKey => $menuItemValue) {
+			if (!is_string($menuItemValue)) continue;
+			$menuItem->{$menuItemKey} = preg_replace_callback(
+				'/(\{\{(.*?)\}\})/',
+				function($match) use($menuItemKey, &$menuItemValue) {
+					$matchVar = explode('.', $match[2]);
+
+					if ($menuItemKey === 'condition') {
+						return '$this->variable->' . implode('->', $matchVar);
+					} else {
+						if (count($matchVar) === 1) {
+							return $this->variable->{$matchVar[0]};
+						} else if (count($matchVar) === 2) {
+							return $this->variable->{$matchVar[0]}->{$matchVar[1]};
+						}
+					}
+				},
+				$menuItemValue
+			);
+		}
+	}
 }
 ?>
