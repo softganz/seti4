@@ -2,8 +2,8 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-03-21
- * Version :: 67
+ * Modify  :: 2026-05-11
+ * Version :: 68
  */
 
 'use strict'
@@ -210,13 +210,6 @@ async function sgBoxBack(options = {}) {
 
 	console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options)
 
-	// if ($this.closest('.sg-dropbox.box').length != 0) {
-	// 	$('.sg-dropbox.box').children('div').hide()
-	// 	$('.sg-dropbox.box.active').removeClass('active')
-	// 	return
-	// } else
-	// if ($boxElement.length == 0) return
-
 	if (options.close) {
 		console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
 		if (sgBoxPageCount) {
@@ -247,6 +240,7 @@ async function sgBoxBack(options = {}) {
 		$boxElement.children('.box-page').last().remove()
 		// Show last box after remove
 		$boxElement.children('.box-page').last().show()
+		$.colorbox.resize();
 		if (options.historyBack) {
 			popStateCallback = false
 			await history.back()
@@ -254,18 +248,6 @@ async function sgBoxBack(options = {}) {
 		}
 		sgBoxPageCount--
 	}
-
-	// Close box
-	// let $boxElement = $('#cboxLoadedContent')
-	// if ($boxElement.length) {
-	// 	$.colorbox.close()
-	// } else if (isFlutterInAppWebViewReady) {
-	// 	window.flutter_inappwebview.callHandler("closeWebView");
-	// 	return
-	// } else if (isAndroidWebViewReady) {
-	// 	Android.closeWebView()
-	// 	return false
-	// }
 }
 
 function sgPopState(event) {
@@ -1559,7 +1541,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			}, settings.result)
 			.fail(function(response) {
 				if (response.responseJSON?.debug) console.log('SG INLINE EDIT ERROR', response)
-				showError(response);
+				showError(response, debug ? 300000 : 5000);
 				if (response.status === 406) {
 					$inlineField.addClass("-error");
 				}
