@@ -1,16 +1,19 @@
 <?php
 /**
-* Person   :: Person Model
-* Created :: 2022-09-27
-* Modify  :: 2025-06-30
-* Version :: 4
-*
-* @param Array $args
-* @return Object
-*
-* @usage new PersonModel([])
-* @usage PersonModel::function($conditions, $options)
-*/
+ * Person   :: Person Model
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-09-27
+ * Modify  :: 2026-05-11
+ * Version :: 5
+ *
+ * @param Array $args
+ * @return Object
+ *
+ * @usage new PersonModel([])
+ * @usage PersonModel::function($conditions, $options)
+ */
+
+use Softganz\DB;
 
 class PersonModel {
 	function __construct($args = []) {
@@ -21,7 +24,7 @@ class PersonModel {
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$rs = mydb::select(
+		$rs = DB::select([
 			'SELECT
 			  p.`psnId`, p.`cid`, p.`uid`
 			, p.`preName`
@@ -72,15 +75,11 @@ class PersonModel {
 
 				LEFT JOIN %gis% g ON p.`gis`=g.`gis`
 			WHERE p.`psnId` = :id LIMIT 1',
-			[':id' => $id]
-		);
-
-		//debugMsg(mydb()->_query);
-
-		if (empty($rs->_num_rows)) return NULL;
+			'var' => [':id' => $id],
+		]);
 
 
-		if (!$debug) mydb::clearProp($rs);
+		if (empty($rs->psnId)) return NULL;
 
 		$rs->realname = trim($rs->name.' '.$rs->lname);
 		$rs->fullName = $rs->fullname = trim($rs->prename.' '.$rs->name.' '.$rs->lname);
@@ -249,40 +248,40 @@ class PersonModel {
 		$data->created = date('U');
 		$data->userId = \SG\getFirst($data->userId, NULL);
 
-		$stmt = 'INSERT INTO %db_person%
-			(
-				  `psnId`
-				, `uid`, `cid`, `preName`, `name`, `lname`, `sex`
-				, `birth`, `religion`
-				, `areacode`, `hrareacode`
-				, `house`, `village`, `tambon`, `ampur`, `changwat`, `zip`
-				, `rhouse`, `rvillage`, `rtambon`, `rampur`, `rchangwat`
-				, `graduated`, `faculty`
-				, `phone`, `email`
-				, `created`, `userid`
-			) VALUES (
-				  :psnId
-				, :uid, :cid, :preName, :firstName, :lastName, :sex
-				, :birth, :religion
-				, :areacode, :hrareacode
-				, :house, :village, :tambon, :ampur, :changwat, :zip
-				, :rhouse, :rvillage, :rtambon, :rampur, :rchangwat
-				, :graduated, :faculty
-				, :phone, :email
-				, :created, :userid
-			) ON DUPLICATE KEY UPDATE
-			'.implode(', ' , $updateFields);
-
-		mydb::query($stmt,$data);
-
-		$result->_query[] = mydb()->_query;
-
-		if (mydb()->_error) {
-			$result->_error = mydb()->_error;
-			return $result;
+		try {
+			$insertId = DB::query([
+				'INSERT INTO %db_person%
+				(
+					`psnId`
+					, `uid`, `cid`, `preName`, `name`, `lname`, `sex`
+					, `birth`, `religion`
+					, `areacode`, `hrareacode`
+					, `house`, `village`, `tambon`, `ampur`, `changwat`, `zip`
+					, `rhouse`, `rvillage`, `rtambon`, `rampur`, `rchangwat`
+					, `graduated`, `faculty`
+					, `phone`, `email`
+					, `created`, `userid`
+				) VALUES (
+						:psnId
+					, :uid, :cid, :preName, :firstName, :lastName, :sex
+					, :birth, :religion
+					, :areacode, :hrareacode
+					, :house, :village, :tambon, :ampur, :changwat, :zip
+					, :rhouse, :rvillage, :rtambon, :rampur, :rchangwat
+					, :graduated, :faculty
+					, :phone, :email
+					, :created, :userid
+				) ON DUPLICATE KEY UPDATE
+				'.implode(', ' , $updateFields),
+				'var' => $data
+			])->insertId();
+		} catch (\Exception $exception) {
+			throw new \Exception($exception->getMessage(), _HTTP_ERROR_NOT_ACCEPTABLE);
 		}
 
-		if (empty($data->psnId)) $data->psnId = mydb()->insert_id;
+		$result->_query[] = R('query');
+
+		if (empty($data->psnId)) $data->psnId = $insertId;
 
 		$result->psnId = $data->psnId;
 
