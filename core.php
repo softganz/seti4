@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-05-01
- * @version :: 42
+ * @modify  :: 2026-05-13
+ * @version :: 43
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && b
 
 /**
  * Generate file not found from include file
- * 
+ *
  * @param String $message
  * @return String
  */
@@ -114,7 +114,7 @@ function fileNotFound($message = NULL) {
 
 /**
  * Load module JS file
- * 
+ *
  * @param String $requestFile
  * @param String $ext
  * @return String file content
@@ -163,7 +163,7 @@ function loadJS($requestFile, $ext) {
 
 	// $logFile = '/tmp/js_load.log';
 	// $logMessage = date('Y-m-d H:i:s') . " | Loaded: $fileName | Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
-	
+
 	// error_log($logMessage, 3, $logFile);
 
 	return;
@@ -220,7 +220,7 @@ function requestString() {
 
 /**
  * Load all config file
- * 
+ *
  * @param String $configFolder
  */
 function initConfig($configFolder) {
@@ -232,7 +232,7 @@ function initConfig($configFolder) {
 
 /**
  * Set auto loader file
- * 
+ *
  * @param String $class
  */
 function sg_autoloader($class) {
@@ -364,7 +364,7 @@ function debugMsg($message = NULL, $varname = NULL) {
 
 /**
  * Show Error Message
- * 
+ *
  * @param String $message
  * @return String
  */
@@ -393,13 +393,13 @@ function showError($message = []) {
 		function ($m) use ($var) {
 			return isset($var[$m[1]]) ? $var[$m[1]] : $m[0];
 		}, $content);
-		
+
 	return $content;
 }
 
 /**
  * Custom error handler
- * 
+ *
  * @param integer $code
  * @param string $description
  * @param string $file
@@ -471,7 +471,7 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 
 		// Remove "Uncaught Exception: +" prefix if present
 		$cleanDescription = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
-		
+
 		// Extract short description (everything before " in ")
 		$cleanDescription = preg_match('/(.*)( in )/', $cleanDescription, $out) ? $out[1] : '';
 
@@ -493,12 +493,12 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 					. $fullDescription : '',
 			])
 		);
-	}	
+	}
 }
 
 /**
  * Function to convert error codes to string names
- * 
+ *
  * @param Int $code
  * @return String
  */
@@ -514,14 +514,14 @@ function getErrorTypeName($code) {
 
 /**
  * Function to send error to service site
- * 
+ *
  * @param Array $data
  */
 function sgSendLog($data = []) {
 	$forceSend = $_GET['forceSendLog'];
 	$sendLogToUrl = $forceSend ? $forceSend : cfg('error')->sendLog->toUrl;
 	$domainNotSendLog = (Array) cfg('error')->sendLog->domainNotSend;
-	
+
 	if (empty($sendLogToUrl)) return;
 
 	$data = array_replace_recursive(
@@ -545,9 +545,9 @@ function sgSendLog($data = []) {
 	);
 
 	unset(
-		$data->data->post['register']['password'],
-		$data->data->post['register']['repassword'],
-		$data->data->post['register']['verify']
+		$data['data']->post['register']['password'],
+		$data['data']->post['register']['repassword'],
+		$data['data']->post['register']['verify']
 	);
 
 	if (isset($data['forceSend'])) {
@@ -583,7 +583,7 @@ function sgSendLog($data = []) {
 
 /**
  * Function check error to is fatal error
- * 
+ *
  * @param Int @code
  * @return Boolean
  */
