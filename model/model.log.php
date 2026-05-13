@@ -4,7 +4,7 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2024-06-26
  * Modify  :: 2026-01-13
- * Version :: 4
+ * Version :: 5
  *
  * @param Array $args
  * @return Object
@@ -14,14 +14,14 @@
  * @usage LogModel::function($conditions)
  */
 
-use Softganz\DB;
+use Softganz\DB, Softganz\JsonDataModel;
 
 class LogModel {
 	function __construct($args = []) {
 	}
 
 	public static function save($args = []) {
-		// $module = NULL, $keyword = NULL, $message = NULL, $uid = NULL, $keyid = NULL, $fldname = NULL) {
+		// $module = null, $keyword = null, $message = null, $uid = null, $keyid = null, $fldname = null) {
 		$args = (Object) $args;
 
 		if (!DB::tableExists('watchdog')) return false;
@@ -54,6 +54,38 @@ class LogModel {
 		}
 
 		return $dbResult->insertId();
+	}
+
+	public static function history(array $data = []): void {
+		$data = (Object) array_replace_recursive(
+			[
+				'module' => null,
+				'orgId' => null,
+				'userId' => i()->uid,
+				'nodeId' => null,
+				'refId' => null,
+				'tagName' => null,
+				'createDate' => date('Y-m-d H:i:s'),
+				'info' => [],
+			],
+			(Array) $data
+		);
+
+		$data->json = new JsonDataModel($data->info);
+
+		try {
+			DB::query([
+				'INSERT INTO %history%
+				(`uid`, `orgId`, `tpid`, `refId`, `tagName`, `createDate`, `json`)
+				VALUES
+				(
+				:userId, :orgId, :nodeId, :refId, :tagName, :createDate
+				, :json
+				)',
+				'var' => $data,
+			]);
+		} catch (Exception $exception) {
+		}
 	}
 }
 ?>
