@@ -14,8 +14,8 @@
 * ============================================
 
 * Created :: 2007-07-09
-* Modify  :: 2026-01-04
-* Version :: 13
+* Modify  :: 2026-05-13
+* Version :: 14
 */
 
 use Softganz\DB;
@@ -33,7 +33,7 @@ class sgClass {
 		$this->_PROPERTY->empty = true;
 	}
 
-	function count($num = NULL) {
+	function count($num = null) {
 		if (!is_null($num)) {
 			$this->_PROPERTY->count = $num;
 			$this->_PROPERTY->empty = empty($num);
@@ -77,7 +77,7 @@ class sgClass {
 class Cfg {
 	var $cfg = array();
 
-	function __construct($cfg_file=NULL) {
+	function __construct($cfg_file=null) {
 		if ( $cfg_file ) foreach ( explode(";",$cfg_file) as $cfile ) $this->load($cfile);
 	}
 
@@ -85,7 +85,7 @@ class Cfg {
 	Property :: value
 	purpose : get configuration value
 	*/
-	function value($key=NULL,$cfg_value=NULL) {
+	function value($key=null,$cfg_value=null) {
 	global $cfg;
 		$cfg_name=isset($this) && get_class($this)=='cfg' ? 'this':'cfg';
 		if (isset($cfg_value)) $$cfg_name->cfg[$key]=$cfg_value;
@@ -100,7 +100,7 @@ class Cfg {
 	Method :: load
 	purpose : process configuration line and store in property cfg
 	*/
-	function load($config_file_list=NULL,$folders=NULL) {
+	function load($config_file_list=null,$folders=null) {
 		//echo 'load config from <b>'.$config_file_list.'</b> in folder '.$folders.'<br>';
 		if (is_array($config_file_list)) {
 			$this->cfg=array_merge($this->cfg,$config_file_list);
@@ -152,19 +152,19 @@ class Cfg {
 class Timer {
 	var $time;
 
-	function start($key=NULL) { $this->time[$key]["start"] = microtime(); } //start
+	function start($key=null) { $this->time[$key]["start"] = microtime(); } //start
 
-	function stop($key=NULL) { $this->time[$key]["stop"] = microtime(); } //stop
+	function stop($key=null) { $this->time[$key]["stop"] = microtime(); } //stop
 
-	function get($key=NULL,$digit=NULL) {
+	function get($key=null,$digit=null) {
 		$result = $this->elapsed($this->time[$key]["start"], $this->time[$key]["stop"])*1000;
 		if (isset($digit)) $result = number_format($result,$digit);
 		return $result;
 	} //getTime
 
-	function build($key=NULL) { return ' <span style="padding:3px;color:red;">timer of '.$key.' is '.$this->get($key).' ms.</span>'; }
+	function build($key=null) { return ' <span style="padding:3px;color:red;">timer of '.$key.' is '.$this->get($key).' ms.</span>'; }
 
-	function debug($debug=NULL,$key=NULL) { if (cfg($debug) || debug('timer')) return $this->build($key); }
+	function debug($debug=null,$key=null) { if (cfg($debug) || debug('timer')) return $this->build($key); }
 
 	function elapsed($a, $b) {
 		list($a_micro, $a_int) = explode(' ',$a);
@@ -231,12 +231,12 @@ class Session implements SessionHandlerInterface {
 	}
 
 	#[\ReturnTypeWillChange]
-	public function write($sess_id = NULL, $data = NULL) {
+	public function write($sess_id = null, $data = null) {
 		$debug = false;
 		$userInfo = (Object) [
-			'ok' => NULL,
-			'username' => NULL,
-			'remember' => NULL,
+			'ok' => null,
+			'username' => null,
+			'remember' => null,
 		];
 
 		// NOTES : If user mydb::query , cannot use :sess_id, :data
@@ -365,7 +365,7 @@ class Arrays {
 		return $ret;
 	}
 
-	static function convert($arr=array(),$flags=NULL) {
+	static function convert($arr=array(),$flags=null) {
 		$result = array();
 		if ( ! is_array($arr) or count($arr) == 0 ) return $result;
 		foreach ( $arr as $key=>$value ) {
@@ -404,7 +404,7 @@ class Arrays {
 	 * 
 	 * return needle string if found in array
 	*/
-	static function search($needle=NULL,$haystack=array()) {
+	static function search($needle=null,$haystack=array()) {
 		$result=false;
 
 		foreach ( $haystack as $k=>$v ) {
@@ -488,9 +488,9 @@ Class  :: classFile
 **********************************/
 class classFile {
 	var $format=array();
-	var $upload=NULL;
-	var $folder=NULL;
-	var $destination=NULL;
+	var $upload=null;
+	var $folder=null;
+	var $destination=null;
 	var $replace=false;
 	var $check_valid_name=true;
 
@@ -510,7 +510,7 @@ class classFile {
 		$this->filename=sg_valid_filename($upload->name);
 	}
 
-	function set_folder($folder=NULL) {
+	function set_folder($folder=null) {
 		$this->folder=$folder?$folder:cfg('upload.folder').i()->username.'/';
 		return $this->upload_folder;
 	}
@@ -764,7 +764,7 @@ class Url {
 	 * @param String $frement
 	 * @return String
 	 */
-	static function link($url = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
+	static function link($url = null, $get = null, $frement = null, $subdomain = null) {
 		$ret = '';
 		if (isset($get) && is_array($get)) {
 			foreach ($get as $k => $v) if (!is_null($v)) $get_a .= $k.'='.$v.'&';
@@ -790,7 +790,7 @@ class Url {
 		return $ret;
 	}
 
-	static function file($url, $get = NULL) {
+	static function file($url, $get = null) {
 		if (isset($get)) $get = preg_replace('/^\?/', '', $get);
 		$ret = '';
 		$ret .= $url;
@@ -800,7 +800,7 @@ class Url {
 		return $ret;
 	}
 
-	static function js($url, $get = NULL) {
+	static function js($url, $get = null) {
 		if (isset($get)) $get = preg_replace('/^\?/', '', $get);
 		$ret = '';
 		if (cfg('clean_url')) {
@@ -818,69 +818,114 @@ class Url {
 	}
 }
 
+/**
+ * Class  :: Request
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2026-04-16
+ * Modify  :: 2026-05-06
+ * Version :: 2
+ */
 class Request {
 	/**
-	 * Get post value from $_POST
+	 * Get value by key from $_POST
 	 * @param String $key
+	 * @param String $regx
 	 * @param Integer $flag
 	 *
-	 * @return Array
+	 * @return Mixed
 	 */
-	public static function post($key = NULL, $flag = _TRIM) {
+	public static function post($key = null, $regx = null, $flag = _TRIM) {
 		static $count = 0;
 		$post = $_POST;
 		$count++;
 
-		return self::getValue($post, $key, $flag);
+		return self::getValue($post, $key, $regx, $flag);
 	}
 
 	/**
-	 * Get value from $_GET
+	 * Get value by key from $_GET
 	 * @param String $key
+	 * @param String $regx
 	 * @param Integer $flag
 	 *
-	 * @return Array
+	 * @return Mixed
 	 */
-	public static function get($key = NULL, $flag = _TRIM) {
+	public static function get($key = null, $regx = null, $flag = _TRIM) {
 		static $count = 0;
 		$get = (Array) array_replace_recursive([], $_GET); // Clone array to avoid reference issues
-		array_shift($get); // remove first element which is controller command
+		$get = array_slice($get, 1, null, true); // remove first element which is controller command, preserve keys
 		$count++;
 
-		return self::getValue($get, $key, $flag);
+		return self::getValue($get, $key, $regx, $flag);
 	}
 
 	/**
-	 * Get value from $_REQUEST
+	 * Get value by key from $_REQUEST
 	 * @param String $key
+	 * @param String $regx
 	 * @param Integer $flag
 	 *
-	 * @return Array
+	 * @return Mixed
 	 */
-	public static function all($key = NULL, $flag = _TRIM) {
+	public static function all($key = null, $regx = null, $flag = _TRIM) {
 		static $count = 0;
+		// $request = $_REQUEST; // Clone array to avoid reference issues
 		$request = (Array) array_replace_recursive([], $_REQUEST); // Clone array to avoid reference issues
-		array_shift($request); // remove first element which is controller command
+		$request = array_slice($request, 1, null, true); // remove first element which is controller command, preserve keys
 		$count++;
 
-		return self::getValue($request, $key, $flag);
+		return self::getValue($request, $key, $regx, $flag);
 	}
 
-	static private function getValue($values, $key, $flag = _TRIM) {
-		if ( is_long($key) ) {
-			$flag = $key;
-			unset($key);
-		}
-
-		if (!user_access('input format type script')) $flag = $flag + _STRIPTAG;
+	/**
+	 * Get value by key from $values
+	 * @param Array $values
+	 * @param String $key
+	 * @param String $regx
+	 * @param Integer $flag
+	 *
+	 * @return Mixed
+	 */
+	static private function getValue($values, $key, $regx, $flag = _TRIM) {
+		if (!user_access('input format type script')) $flag = $flag | _STRIPTAG;
 
 		if ($flag) $values = Arrays::convert($values, $flag);
 
-		if ( isset($key) ) {
-			return isset($values[$key]) ? $values[$key] : NULL;
-		} else {
-			return (Object) $values;
+		if (!isset($key)) return (Object) $values;
+
+		// Multiple request key
+		if (is_array($key)) {
+			$value = null;
+			foreach ($key as $getKey) {
+				$value = $values[$getKey] ?? null;
+				// Value not set or is set but empty string
+				if (is_null($value) || $value === '') continue;
+
+				// Check valid with regular expression
+				if ($regx && !(is_array($value) || is_object($value) || is_null($value))) {
+					$value = \SG\valid($value, $regx);
+				}
+
+				if (is_null($value)) continue;
+
+				// If found then break
+				break;
+			}
+			return $value;
 		}
+
+		// Single request key
+		$value = $values[$key] ?? null;
+		// Check valid with regular expression
+		if ($regx && !(is_array($value) || is_object($value) || is_null($value))) {
+			$value = \SG\valid($value, $regx);
+			if ($value != $values[$key]) $value = '';
+			if ($regx === 'int' && $value != '' && !is_null($value)) {
+				$value = intval($value);
+			}
+			// debugMsg('key = ' . $key . ', regx = ' . $regx . ', src = ' . '(' . gettype($values[$key]) . ') ' . $values[$key] . ', value = (' . (gettype($value)) . ') ' . (gettype($value) === 'boolean' ? ($value ? 'true' : 'false') : $value));
+		}
+		return $value;
 	}
 }
 ?>
