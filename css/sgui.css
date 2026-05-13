@@ -746,12 +746,15 @@
 	.col.-amt {text-align: center; white-space: nowrap;}
 	.col.-date {text-align: center; white-space: nowrap;}
 	.col.-nowrap {white-space: nowrap;}
-	.col.-icons {text-align: left; width: 24px;}
-	.col.-icons.-c2 {width: 52px;}
-	.col.-icons.-c3 {width: 72px;}
-	.col.-icons.-c4 {width: 110px;}
-	.col.-icons.-c5 {width: 140px;}
-	.col.-icons.-center {text-align: center;}
+	.col.-icons {
+		text-align: left; width: 24px;
+		&.-hover-parent {width: 0;}
+		&.-c2 {width: 52px;}
+		&.-c3 {width: 72px;}
+		&.-c4 {width: 110px;}
+		&.-c5 {width: 140px;}
+		&.-center {text-align: center;}
+	}
 	>tbody .order {background-color: #eee;}
 
 	.-datainput>td {padding: 8px;}
@@ -827,6 +830,7 @@
 		&.-primary {font-weight: bold; background-color: #f5f5f5; border: 1px #999 solid;}
 		&.-center {
 			text-align: center;
+			.form-text {text-align: center;}
 		}
 		&.-datepicker {
 			.-for-input, .-for-view {text-align: center;}
@@ -880,6 +884,7 @@
 	&.-textarea {display: block;}
 	&.-disabled {opacity: 0.5;}
 	&.-fill {display: block;}
+	&.-inline {display: inline-flex;}
 	&.-single-line {
 		display: block; line-height: 2.5rem; height: 3.6rem; overflow: hidden; white-space: nowrap;
 		>.inline-edit-field {width: 100%;}

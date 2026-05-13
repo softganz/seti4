@@ -52,8 +52,8 @@
 	}
 }
 
-html {height: 100vh; font-size: 62.5%;}
-body {height: 100vh; font: var(--font-size)/var(--line-height) sans-serif; color: var(--font-color); background-color: var(--bg-color);}
+html {min-height: 100vh; font-size: 62.5%;}
+body {min-height: 100vh; font: var(--font-size)/var(--line-height) sans-serif; color: var(--font-color); background-color: var(--bg-color);}
 p {margin-bottom: 8px;}
 ul , ol {margin-bottom: 8px; padding-left: 30px;}
 img {border: none;}
@@ -1417,7 +1417,9 @@ $SCREENS
 
 	#colorbox.-transparent {
 		background-color: transparent;
-		.box-page {background-color: transparent; padding-left: 0; padding-right: 0;}
+		.box-page {
+			background-color: transparent; padding-left: 0; padding-right: 0;
+		}
 		.widget-appbar {border-radius: 8px; overflow: clip;}
 		.widget-card {border-radius: 8px;}
 		.widget-table:last-child {border-radius: 8px;}
