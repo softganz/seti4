@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
  * @modify  :: 2026-05-13
- * @version :: 43
+ * @version :: 44
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        40);
+cfg('core.version.code',        44);
 cfg('core.version',             '4.4.01');
-cfg('core.release',             '2026-04-20');
+cfg('core.release',             '2026-05-13');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
@@ -545,9 +545,9 @@ function sgSendLog($data = []) {
 	);
 
 	unset(
-		$data['data']->post['register']['password'],
-		$data['data']->post['register']['repassword'],
-		$data['data']->post['register']['verify']
+		$data['data']->post->register['password'],
+		$data['data']->post->register['repassword'],
+		$data['data']->post->register['verify']
 	);
 
 	if (isset($data['forceSend'])) {
