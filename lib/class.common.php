@@ -15,7 +15,7 @@
 
 * Created :: 2007-07-09
 * Modify  :: 2026-05-13
-* Version :: 14
+* Version :: 15
 */
 
 use Softganz\DB;
@@ -918,8 +918,11 @@ class Request {
 		$value = $values[$key] ?? null;
 		// Check valid with regular expression
 		if ($regx && !(is_array($value) || is_object($value) || is_null($value))) {
+			if ($value === '') return $value; // Return on empty string
+
 			$value = \SG\valid($value, $regx);
 			if ($value != $values[$key]) $value = '';
+
 			if ($regx === 'int' && $value != '' && !is_null($value)) {
 				$value = intval($value);
 			}
