@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2026-03-21
- * Version :: 15
+ * Modify  :: 2026-05-13
+ * Version :: 16
  */
 
 namespace SG;
@@ -113,11 +113,30 @@ function getFirstInt() {
 	return NULL;
 }
 
+// function valid($value, $regx, $debug = false) {
+// 	if ($debug) debugMsg('Debug of function SG\valid of <b>'.$value.'</b> with regx <b>'.$regx.'</b>');
+// 	$valid = preg_match($regx, $value, $out);
+// 	if ($debug) debugMsg($out, '$out');
+// 	return $valid ? $value : NULL;
+// }
+
 function valid($value, $regx, $debug = false) {
-	if ($debug) debugMsg('Debug of function SG\valid of <b>'.$value.'</b> with regx <b>'.$regx.'</b>');
+	if ($debug) debugMsg('Debug of function SG\valid of <b>' . $value . '</b> with regx <b>' . $regx . '</b>');
+
+	switch ($regx) {
+		case 'int': $regx = '/^[0-9]+$/'; break;
+		case 'number':
+		case 'numeric': $regx = '/^\d+$/'; break;
+		case 'money': $regx = '/^[\d\.\,]+$/'; break;
+		case 'en': $regx = '/^[a-z]+$/i'; break;
+		case 'date': $regx = '/^[\d\-\/]+$/'; break;
+		case 'year': $regx = '/^(\d{4}|\*)$/'; break;
+	}
+
 	$valid = preg_match($regx, $value, $out);
 	if ($debug) debugMsg($out, '$out');
-	return $valid ? $value : NULL;
+
+	return $valid ? $value : null;
 }
 
 /**
