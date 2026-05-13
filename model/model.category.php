@@ -1,15 +1,14 @@
 <?php
 /**
-* Model :: Category
-* Created 2022-08-10
-* Modify 	2022-08-10
-*
-* @param Array $args
-* @return Object
-*
-* @usage new CategoryModel([])
-* @usage CategoryModel::function($conditions, $options)
-*/
+ * Model   :: Category
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2022-08-10
+ * Modify  :: 2026-05-13
+ * Version :: 2
+ *
+ * @usage new CategoryModel([])
+ * @usage CategoryModel::function($conditions, $options)
+ */
 
 class CategoryModel {
 	function __construct($args = []) {
@@ -54,6 +53,7 @@ class CategoryModel {
 
 		$stmt = 'SELECT
 			  tg.`$KEY$` `catkey`
+			, `tg`.`catId`
 			, IFNULL(tg.`catparent`, p.`tid`) `parent`
 			, tg.*
 			, p.`name` `parentName`
