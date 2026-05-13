@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-05-05
- * Version :: 74
+ * Modify  :: 2026-05-13
+ * Version :: 75
  *
  * @param Array $args
  * @return Widget
@@ -26,6 +26,10 @@ class WidgetBase {
 		// debugMsg('get_class = '.get_class($this));
 		// debugMsg(get_class_methods($this), '$methid');
 		// \EXTENSION\PPI\ProjectJoinList::test2();
+	}
+
+	protected function valid($value, $regx, $debug = false) {
+		return \SG\valid($value, $regx, $debug);
 	}
 } // End of class WidgetBase
 
@@ -1269,13 +1273,6 @@ class PageBase extends WidgetBase {
 			debugMsg($this->_args, '$args');
 			debugMsg($this, '$this');
 		}
-	}
-
-	protected function valid($value, $regx, $debug = false) {
-		if ($debug) debugMsg('Debug of function SG\valid of <b>' . $value . '</b> with regx <b>' . $regx . '</b>');
-		$valid = preg_match($regx, $value, $out);
-		if ($debug) debugMsg($out, '$out');
-		return $valid ? $value : NULL;
 	}
 
 	// Test function return Array in PageApi or text in other
