@@ -3,8 +3,8 @@
  * Counter :: Counter Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-11-26
- * Modify  :: 2026-03-16
- * Version :: 18
+ * Modify  :: 2026-05-14
+ * Version :: 19
  *
  * @usage new CounterModel([])
  * @usage CounterModel::function($conditions, $options)
@@ -151,25 +151,25 @@ class CounterModel {
 		}
 
     // Next get the name of the useragent yes seperately and for good reason
-		if(preg_match('/MSIE/i', $userAgent) && !preg_match('/Opera/i', $userAgent)) { 
+		if(preg_match('/MSIE/i', $userAgent) && !preg_match('/Opera/i', $userAgent)) {
 			$bname = 'Internet Explorer';
 			$ub = 'MSIE';
-		} elseif(preg_match('/Firefox/i',$userAgent)) { 
+		} elseif(preg_match('/Firefox/i',$userAgent)) {
 			$bname = 'Mozilla Firefox';
 			$ub = 'Firefox';
-		} elseif(preg_match('/Chrome/i',$userAgent)) { 
+		} elseif(preg_match('/Chrome/i',$userAgent)) {
 			$bname = 'Google Chrome';
 			$ub = 'Chrome';
-		} elseif(preg_match('/Safari/i',$userAgent)) { 
+		} elseif(preg_match('/Safari/i',$userAgent)) {
 			$bname = 'Apple Safari';
 			$ub = 'Safari';
-		} elseif(preg_match('/Opera/i',$userAgent)) { 
+		} elseif(preg_match('/Opera/i',$userAgent)) {
 			$bname = 'Opera';
 			$ub = 'Opera';
-		} elseif(preg_match('/Netscape/i',$userAgent)) { 
+		} elseif(preg_match('/Netscape/i',$userAgent)) {
 			$bname = 'Netscape';
 			$ub = 'Netscape';
-		} 
+		}
 
 		// finally get the correct version number
 		$known = ['Version', $ub, 'other'];
@@ -177,7 +177,7 @@ class CounterModel {
 		if (!preg_match_all($pattern, $userAgent, $matches)) {
 			// we have no matching number just continue
 		}
-    
+
 		// see how many we have
 		$i = count($matches['browser']);
 		if ($i != 1) {
@@ -210,7 +210,7 @@ class CounterModel {
 		elseif (strpos($agent, 'firefox')) $browser = 'Firefox' ;
 		elseif (strpos($agent, 'msie') || strpos($agent, 'trident/7')) $browser = 'Internet Explorer';
 
-		// Search Engines 
+		// Search Engines
 		elseif (strpos($agent, 'google')) $browser = '[Bot] Googlebot' ;
 		elseif (strpos($agent, 'bing')) $browser = '[Bot] Bingbot' ;
 		elseif (strpos($agent, 'slurp')) $browser = '[Bot] Yahoo! Slurp';
@@ -227,15 +227,15 @@ class CounterModel {
 		elseif (strpos($agent, 'semrush')) $browser = '[Bot] SEMRush' ;
 		elseif (strpos($agent, 'rogerbot') || strpos($agent, 'dotbot')) $browser = '[Bot] Moz or OpenSiteExplorer';
 		elseif (strpos($agent, 'frog') || strpos($agent, 'screaming')) $browser = '[Bot] Screaming Frog';
-		
-		// Miscellaneous 
+
+		// Miscellaneous
 		elseif (strpos($agent, 'facebook')) $browser = '[Bot] Facebook' ;
 		elseif (strpos($agent, 'pinterest')) $browser = '[Bot] Pinterest' ;
-		
-		// Check for strings commonly used in bot user agents 
+
+		// Check for strings commonly used in bot user agents
 		elseif (strpos($agent, 'crawler') || strpos($agent, 'api') ||
 			strpos($agent, 'spider') || strpos($agent, 'http') ||
-			strpos($agent, 'bot')|| strpos($agent, 'archive')|| 
+			strpos($agent, 'bot')|| strpos($agent, 'archive')||
 			strpos($agent, 'info') || strpos($agent, 'data')) $browser = '[Bot] Other' ;
 
 		return $browser.' '.$version.' ('. $platform.' '.$engine.')';
@@ -280,8 +280,8 @@ class CounterModel {
 
 	// Update user hit count
 	public static function updateUserHit() {
-		if (!i()->ok) return; 
-	
+		if (!i()->ok) return;
+
 		// Check logApiHit configuration
 		if (!cfg('system')->logApiHit && isApiRequest()) {
 			try {
@@ -325,7 +325,7 @@ class CounterModel {
 
 		// Not insert log on counter_log is table lock
 		$isCounterTableLock = mydb::table_is_lock('%counter_log%');
-		
+
 		if ($isCounterTableLock && is_admin()) {
 			cfg('web.message', '<p class="notify" style="position: absolute; top: 0; right: 0; z-index: 999999; opacity: 0.6; pointer-events: none;">Table <strong>counter_log</strong> was locked!!!.</p>');
 			return false;
@@ -430,10 +430,12 @@ class CounterModel {
 		// }
 
 		// Write current log into table
-		DB::query([
-			$stmt,
-			'var' => $log
-		]);
+		try {
+			DB::query([
+				$stmt,
+				'var' => $log
+			]);
+		} catch (Exception $exception) {}
 		if ($debug) debugMsg('Write current log => '.R('query'));
 	}
 
