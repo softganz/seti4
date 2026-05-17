@@ -36,7 +36,7 @@ class ModuleDocsWidget extends WidgetBase {
 				(Array) $args
 			)
 		);
-		
+
 		if ($this->widgetName === 'Widget') $this->widgetName = get_class($this);
 	}
 
@@ -76,7 +76,7 @@ class ModuleDocsWidget extends WidgetBase {
 	}
 
 	protected function load($file) {
-		$file = $this->folder.'/page/'.$file.'.html';
+		$file = $this->folder.'/page/'.$file.'.md';
 
 		$ret = file_get_contents($file);
 
@@ -90,7 +90,7 @@ class ModuleDocsWidget extends WidgetBase {
 			},
 			$ret
 		);
-		
+
 		$parser = new Parsedown();
 		$ret = $parser->text($ret);
 

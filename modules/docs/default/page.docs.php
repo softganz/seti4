@@ -76,12 +76,12 @@ class Docs extends PageController {
 	}
 
 	private function load($file) {
-		$file = dirname(__FILE__).'/../page/'.$file.'.html';
+		$file = dirname(__FILE__).'/../page/'.$file.'.md';
 
 		$ret = file_get_contents($file);
 		$ret = preg_replace_callback('/\{([a-z0-9_\-\/\.]+)\}/i', 'Docs::url_replace' ,$ret);
 		$ret = preg_replace_callback("#\<code(.*?)\>(.*?)\</code\>#si", '__sg_encode_code_callback', $ret); // [code]...[/code]
-		
+
 		$parser = new Parsedown();
 		$ret = $parser->text($ret);
 
