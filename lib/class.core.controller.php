@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2006-12-16
- * Modify  :: 2026-02-27
- * Version :: 51
+ * Modify  :: 2026-05-20
+ * Version :: 52
  */
 
 /*************************************************************
@@ -615,7 +615,7 @@ class SgCore {
 				$paths[] = 'core/'.$packageFolder;
 				break;
 
-				case 'asset':
+			case 'asset':
 				$paths[] = 'modules/'.$packageFolder.'/assets';
 				$paths[] = 'core/'.$packageFolder.'/assets';
 				break;
@@ -1151,7 +1151,7 @@ class SgCore {
 
 				// debugMsg($pageClassWidget, '$pageClassWidget');
 				// debugMsg($pageBuildWidget, '$pageBuildWidget');
-				
+
 				if (isset($pageBuildWidget->exeClass)) {
 					$pageClass = $pageBuildWidget->exeClass;
 					$pageClass->module = $module;
@@ -1439,7 +1439,7 @@ class SgCore {
 		// Get from begin to 2nd -
 		$subModule = implode('-', array_slice($subModule, 0, 2));
 		page_class('module-'.$subModule);
-	
+
 		if (isset($q[1])) {
 			if (is_numeric($q[1])) {
 				page_class('-'.preg_replace('/[\.]{1,}/','-',$q[0]).'-'.preg_replace('/[\.]{1,}/','-',$q[1]));
