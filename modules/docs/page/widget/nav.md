@@ -11,8 +11,11 @@
 <h4>Class constructor</h4>
 <code>
 new Nav([
+	String type,
+	String direction,
 	String id,
 	String class,
+	String childClass,
 	Array children,
 	Widget child,
 ]);

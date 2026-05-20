@@ -3,8 +3,8 @@
  * Widget  :: Basic Widget Collector
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-05-13
- * Version :: 75
+ * Modify  :: 2026-05-20
+ * Version :: 76
  *
  * @param Array $args
  * @return Widget
@@ -422,7 +422,7 @@ class Header extends Widget {
 			. ($this->leading ? '<div class="-leading">' . $this->_renderEachChildWidget($this->leading) . '</div>' . _NL : '')
 			. '<div class="-title">'
 			. ($this->title ? '<' . $this->titleTag . ' class="-title-text">' . $this->_renderEachChildWidget($this->title) . '</' . $this->titleTag . '>' : '')
-			. ($this->subtitle ? '<span class="-subtitle-text">' . $this->_renderEachChildWidget($this->subtitle) . '</span>' : '')
+			. ($this->subTitle ?? $this->subtitle ? '<span class="-subtitle-text">' . $this->_renderEachChildWidget($this->subTitle ?? $this->subtitle) . '</span>' : '')
 			. '</div>' . _NL
 			. ($this->trailing ? '<div class="-trailing">' . $this->_renderEachChildWidget($this->trailing) . '</div>' . _NL : '')
 			. $this->_renderChildren($this->children())
@@ -567,7 +567,7 @@ class Nav extends Widget {
 	protected function _renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
 		return parent::_renderEachChildWidget($widget, $key, [
 			'array' => function($key, $widget) {
-				$result = '<ul>' . _NL;
+				$result = '<ul class="nav-list">' . _NL;
 				foreach ($widget as $eachKey => $eachWidget) {
 					$result .= '<li class="-item">' . trim($this->_renderEachChildWidget($eachWidget, $eachKey)) . '</li>'._NL;
 				}
@@ -593,7 +593,7 @@ class Nav extends Widget {
 			}
 		}
 		if (!$this->multipleLevel) {
-			$this->childrenContainer = ['tagName' => 'ul'];
+			$this->childrenContainer = ['tagName' => 'ul', 'class' => '-nav-list' . ($this->childClass ? ' ' . $this->childClass : '')];
 			$this->childContainer = ['tagName' => 'li', 'class' => '-item'];
 		}
 		return parent::_renderChildren($childrens, $args);
@@ -770,6 +770,7 @@ class Button extends Widget {
 					'widget-'.strtolower($this->widgetName)
 					. ($this->type === 'default' ? '' : ' btn')
 					. ($this->type ? ' -' . $this->type : '')
+					. ($this->iconPosition == 'right' ? ' -icon-right' : '')
 					. ($this->class ? ' ' . $this->class : '')
 				),
 				'title' => $this->title,
