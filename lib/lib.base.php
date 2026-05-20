@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2026-05-13
- * Version :: 17
+ * Modify  :: 2026-05-20
+ * Version :: 18
  */
 
 namespace SG;
@@ -126,10 +126,10 @@ function valid($value, $regx, $debug = false) {
 	switch ($regx) {
 		case 'int': $regx = '/^[0-9]+$/'; break;
 		case 'number':
-		case 'numeric': $regx = '/^\d+$/'; break;
-		case 'money': $regx = '/^[\d\.\,]+$/'; break;
-		case 'en': $regx = '/^[a-z0-9\_\-\.]+$/i'; break;
-		case 'date': $regx = '/^[\d\-\/]+$/'; break;
+		case 'numeric': $regx = '/^[0-9]+$/'; break;
+		case 'money': $regx = '/^[0-9\.\,]+$/'; break;
+		case 'en': $regx = '/^[a-z0-9\_\-\. ]+$/i'; break;
+		case 'date': $regx = '/^[0-9\-\/]+$/'; break;
 		case 'year': $regx = '/^(\d{4}|\*)$/'; break;
 	}
 
@@ -723,7 +723,7 @@ function explodeName(String $name = '', String $sep = ' ') {
 
 	// preg_match('/(*)'.$sep.'(*)/', $name, $out);
 	// debugMsg($out, '$out');
-	
+
 	list($firstName) = explode($sep, $name);
 	$preName = '';
 	$firstName = trim($firstName);
