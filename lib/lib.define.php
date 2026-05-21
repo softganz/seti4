@@ -3,8 +3,8 @@
  * Library :: Define Constants
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2000-xx-xx
- * Modify  :: 2026-05-13
- * Version :: 3
+ * Modify  :: 2026-05-21
+ * Version :: 4
  */
 
 define('_STRIPSLASHES', 1);
@@ -129,6 +129,8 @@ define('_HTTP_ERROR_NOT_ALLOWED', 405); // Method Not Allowed : Page found but r
 define('_HTTP_ERROR_NOT_ACCEPTABLE', 406); // Not Acceptable : Page found but data incomplete
 define('_HTTP_ERROR_TIMEOUT', 408); // Request Time-out
 define('_HTTP_ERROR_UNSUPPORT', 415); // Unsupported Media Type : Wrong media type on upload
+define('_HTTP_ERROR_UNPROCESSABLE_ENTRY', 422); // Unprocessable Entry
+define('_HTTP_ERROR_TOO_MANY_REQUESTS', 442922); // Too Many Requests
 define('_HTTP_ERROR_NOT_IMPLEMENTED', 501); // Unsupported Media Type : Wrong media type on upload
 
 define('_ERROR_MSG_QUERY_ERROR', 'เกิดความผิดพลาดในการบันทึกข้อมูล');
