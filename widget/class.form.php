@@ -3,8 +3,8 @@
  * Widget  :: Form Widget
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2020-10-01
- * Modify  :: 2026-05-05
- * Version :: 43
+ * Modify  :: 2026-05-21
+ * Version :: 44
  *
  * @param Array $args
  * @return Widget
@@ -105,7 +105,7 @@ class Form extends Widget {
 		$ret .= _NL . '<!-- sg-form -->' . _NL;
 
 		unset($this->config->data['rel']);
-		
+
 		$formStr = '<form'
 			. ' id="' . $this->id . '"'
 			. ' class="widget-form form '
@@ -134,7 +134,7 @@ class Form extends Widget {
 
 		// Render form title
 		$ret .= $this->_renderEachChildWidget($this->title, NULL, NULL, ['prefix' => '<div class="-title">', 'subfix' => '</div>']);
-		
+
 
 		// Render form description
 		$ret .= $this->_renderEachChildWidget($this->description, NULL, NULL, ['prefix' => '<div class="-description">', 'subfix' => '</div>']);
@@ -556,23 +556,36 @@ class Form extends Widget {
 					. '</option>' . _NL;
 			} else if (is_array($optionValue)) {
 				// Option is array, then make option group
-				$ret .= '	<optgroup label="' . $optionKey . '">' . _NL;
-				$ret .= $this->_renderSelectOption($optionValue, $inputValue);
-				$ret .= '	</optgroup>' . _NL;
+				$ret .= '	<optgroup label="' . $optionKey . '">' . _NL
+					. $this->_renderSelectOption($optionValue, $inputValue)
+					. '	</optgroup>' . _NL;
 			} else if (preg_match('/^LABEL\:/', $optionValue)) {
-				// do nothing
+				// Show as label
+				$ret .= '<option class="-choice-label" disabled="disabled">' . preg_replace('/^LABEL\:/', '', $optionValue) . '</option>' . _NL;
 			} else if (preg_match('/^SEPARATOR$/', $optionValue)) {
 				// Option is seperatpr
-				$ret .= '<option class="-sep" disabled="disabled" style="height: 1px; display: block;">---</option>';
+				$ret .= '<option class="-choice-sep -sep" disabled="disabled" style="height: 1px; display: block;">---</option>' . _NL;
 			} else if (preg_match('/^DISABLED\:/', $optionValue)) {
 				// Option is disabled
-				$ret .= '<option disabled="disabled">' . preg_replace('/^DISABLED\:/', '', $optionValue) . '</option>';
+				$ret .= '<option class="-choice-disabled" disabled="disabled">' . preg_replace('/^DISABLED\:/', '', $optionValue) . '</option>' . _NL;
 			} else if (preg_match('/^HIDE\:/', $optionValue)) {
 				// Option is hide
-				$ret .= '<option class="-hidden">' . preg_replace('/^HIDE\:/', '', $optionValue) . '</option>';
+				$ret .= '<option class="-choice-hide -hidden">' . preg_replace('/^HIDE\:/', '', $optionValue) . '</option>' . _NL;
+			} else if (preg_match('/^</', $optionValue)) {
+				$ret .= $optionValue . _NL;
+			} else if (preg_match('/^([0-9\-]+)\.\.([0-9\-]+)$/', $optionValue, $out)) {
+				// Option format 1..10
+				for ($i = $out[1]; $i <= $out[2]; $i++) {
+					$ret .= '<option value="' . $i . '"' . (in_array($i, $inputValue) ? ' selected="selected"' : '') . '>' . $i . '</option>' . _NL;
+				}
+			} else if (preg_match('/\,/', $optionValue)) {
+				// Option format 1,5,10
+				foreach (explode(',', $optionValue) as $value) {
+					$ret .= '<option value="' . $value . '"' . (in_array($value, $inputValue) ? ' selected="selected"' : '') . '>' . $value . '</option>' . _NL;
+				}
 			} else {
 				// Option is string
-				$ret .= '	<option value="' . $optionKey . '"' . (in_array($optionKey, $inputValue) ? ' selected="selected"' : '') . '>' . $optionValue . '</option>' . _NL;
+				$ret .= '<option value="' . $optionKey . '"' . (in_array($optionKey, $inputValue) ? ' selected="selected"' : '') . '>' . $optionValue . '</option>' . _NL;
 			}
 		}
 		return $ret;
