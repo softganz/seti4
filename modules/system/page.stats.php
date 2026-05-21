@@ -3,12 +3,12 @@
  * Stats   :: Main Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-02-13
- * Modify  :: 2025-12-23
- * Version :: 4
+ * Modify  :: 2026-05-21
+ * Version :: 5
  *
  * @return Widget
  *
- * @usage stats
+ * @example stats
  */
 
 class Stats extends Page {
@@ -22,10 +22,18 @@ class Stats extends Page {
 		]);
 	}
 
-	function build() {
+	/**
+	 * Build page
+	 *
+	 * @return object
+	 */
+	#[\Override]
+	function build(): object {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Current online <b>'.number_format(CounterModel::onlineCount()).'</b> users @'.sg_date(cfg('dateformat')),
+				'title' => 'Current online '
+					. '<b>' . number_format(count((Array) CounterModel::onlineUsers(['type' => 'member']))) . '/' . number_format(CounterModel::onlineCount()) . '</b> '
+					. 'users @' . sg_date(cfg('dateformat')),
 				'leading' => '<i class="icon -material">pie_chart</i>',
 				'trailing' => new Row([
 					'children' => [
@@ -37,26 +45,59 @@ class Stats extends Page {
 									'text' => 'Hits in 10 min.',
 									'icon' => new Icon('insights'),
 									'rel' => '#main'
-								]) : NULL,
+								]) : null,
 							], // children
 						]), // Dropbox
 					], // children
 				]), // Row
 				'navigator' => [
-					'<a href="'.url('stats').'"><i class="icon -material">pie_chart</i><span>STAT</span></a>',
-					'<a class="sg-action" href="'.url('stats/online').'" data-rel="#main"><i class="icon -material">people</i><span>ALL</span></a>',
-					'<a class="sg-action" href="'.url('stats/online', ['show' => 'user']).'" data-rel="#main"><i class="icon -material">person</i><span>USER</span></a>',
-					'<a class="sg-action" href="'.url('stats/online', ['show' => 'member']).'" data-rel="#main"><i class="icon -material">account_circle</i><span>MEMBER</a>',
-					'<a class="sg-action" href="'.url('stats/online', ['show' => 'bot']).'" data-rel="#main"><i class="icon -material">block</i><span>BOT</span></a>',
-					'<a class="sg-action" href="'.url('stats/list').'" data-rel="#main"><i class="icon -material">view_list</i><span>List</span></a>',
+					new Button([
+						'href' => Url::link('stats'),
+						'icon' => new Icon('pie_chart'),
+						'text' => 'STAT',
+					]),
+					new Button([
+						'class' => 'sg-action',
+						'href' => Url::link('stats/online'),
+						'icon' => new Icon('people'),
+						'text' => 'ALL',
+						'rel' => '#main'
+					]),
+					new Button([
+						'class' => 'sg-action',
+						'href' => Url::link('stats/online', ['show' => 'user']),
+						'icon' => new Icon('person'),
+						'text' => 'USER',
+						'rel' => '#main'
+					]),
+					new Button([
+						'class' => 'sg-action',
+						'href' => Url::link('stats/online', ['show' => 'member']),
+						'icon' => new Icon('account_circle'),
+						'text' => 'MEMBER',
+						'rel' => '#main'
+					]),
+					new Button([
+						'class' => 'sg-action',
+						'href' => Url::link('stats/online', ['show' => 'bot']),
+						'icon' => new Icon('block'),
+						'text' => 'BOT',
+						'rel' => '#main'
+					]),
+					new Button([
+						'class' => 'sg-action',
+						'href' => Url::link('stats/list'),
+						'icon' => new Icon('view_list'),
+						'text' => 'LOG',
+						'rel' => '#main'
+					]),
 				], // Navigator
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
-					'<div class="sg-load" data-url="'.url('stats/online', ['show' => 'member']).'"></div>',
-					'<div class="sg-load" data-url="'.url('stats/hits/per/day').'"></div>',
-					'<div class="sg-load" data-url="'.url('stats/hits/per/month').'"></div>',
-					// R::View('stats.hits.per.month'),
+					'<div class="sg-load" data-url="' . Url::link('stats/online', ['show' => 'member']) . '"></div>',
+					'<div class="sg-load" data-url="' . Url::link('stats/hits/per/day') . '"></div>',
+					'<div class="sg-load" data-url="' . Url::link('stats/hits/per/month') . '"></div>',
 				], // children
 			]), // Widget
 		]);
