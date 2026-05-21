@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-05-14
- * @version :: 45
+ * @modify  :: 2026-05-20
+ * @version :: 46
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        45);
+cfg('core.version.code',        46);
 cfg('core.version',             '4.4.01');
-cfg('core.release',             '2026-05-14');
+cfg('core.release',             '2026-05-20');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
@@ -436,7 +436,9 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 	// On fatal error
 	if (sgIsFatalError($code)) {
 		$errorType = 'Fatal Error';
-		$description = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
+		$isDbError = preg_match('/DbException|Update data to database was error/', $description);
+		$description = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/i', '', $description);
+
 		if (preg_match('/^(\[(\w.*)\])/', $description, $out)) {
 			$errorType = $out[2];
 			$description = str_replace($out[1], '', $description);
@@ -460,6 +462,13 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 			}
 		}
 
+		if ($isDbError) {
+			$dbErrorMessage = '<pre style="white-space: pre-wrap; font-size: 80%;">' . R('query') . '</pre>';
+			$errorDescription[] = $dbErrorMessage;
+
+			if ($isDbError && user_access('access debugging program')) $fullDescription .= $dbErrorMessage;
+		}
+
 		sgSendLog([
 			'file' => $file,
 			'line' => $line,
@@ -469,20 +478,24 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 			'description' => $errorDescription
 		]);
 
-		// Remove "Uncaught Exception: +" prefix if present
-		$cleanDescription = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
-
-		// Extract short description (everything before " in ")
-		$cleanDescription = preg_match('/(.*)( in )/', $cleanDescription, $out) ? $out[1] : '';
-
-		// If first charactoe is + then force show that error message
-		if (substr($cleanDescription, 0, 1) === '+') {
-			$cleanDescription = substr($cleanDescription, 1);
+		if ($isDbError) {
+			$cleanDescription = 'เกิดความผิดพลาดในการดำเนินการกับฐานข้อมูล';
 		} else {
-			$cleanDescription = 'Oops! An Error Occurred';
+			// Remove "Uncaught Exception: +" prefix if present
+			$cleanDescription = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
+
+			// Extract short description (everything before " in ")
+			$cleanDescription = preg_match('/(.*)( in )/', $cleanDescription, $out) ? $out[1] : '';
+
+			// If first charactoe is + then force show that error message
+			if (substr($cleanDescription, 0, 1) === '+') {
+				$cleanDescription = substr($cleanDescription, 1);
+			} else {
+				$cleanDescription = 'Oops! An Error Occurred';
+			}
+			$cleanDescription = $cleanDescription.' [code = '.$code.']';
 		}
 
-		$cleanDescription = $cleanDescription.' [code = '.$code.']';
 
 		die(
 			showError([
