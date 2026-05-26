@@ -3,8 +3,8 @@
  * System  :: Issue Home Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-10-14
- * Modify  :: 2026-03-31
- * Version :: 22
+ * Modify  :: 2026-05-26
+ * Version :: 23
  *
  * @return Widget
  *
@@ -57,7 +57,18 @@ class SystemIssueHome extends Page {
 								// Convert description
 								if (preg_match('/^[\[\{]/', $item->description)) {
 									$descriptionList = json_decode($item->description);
-									$description = '<details class="-description"><summary>Description: ' . array_values((Array) $descriptionList)[0] . '</summary>Message: <ul><li>'. implode('</li><li>',  array_values((Array) $descriptionList)) . '</li></ul></details>';
+									$description = '<details class="-description"><summary>Description: '
+										. array_values((Array) $descriptionList)[0]
+										. '</summary>Message: <ul>'
+										// . '<li>' . implode('</li><li>',  array_values((Array) $descriptionList)) . '</li>'
+										. implode('', array_map(
+											function($desc, $key) {
+												return '<li>' . $key . ': ' . $desc . '</li>';
+											},
+											array_values((Array) $descriptionList), array_keys((Array) $descriptionList)
+										))
+										. '</ul>'
+										. '</details>';
 								} else if ($item->description) {
 									$description = '<details class="-description"><summary>Description: ' . preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : ' . $item->description . '</details>';
 								} else {
