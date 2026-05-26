@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-05-20
- * @version :: 46
+ * @modify  :: 2026-05-26
+ * @version :: 47
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        46);
-cfg('core.version',             '4.4.01');
-cfg('core.release',             '2026-05-20');
+cfg('core.version.code',        47);
+cfg('core.version',             '4.4.02');
+cfg('core.release',             '2026-05-26');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
@@ -548,13 +548,14 @@ function sgSendLog($data = []) {
 			'type' => NULL,
 			'file' => NULL,
 			'line' => NULL,
+			'sendRequest' => true,
 			'description' => NULL,
 			'data' => (Object) [
 				'get' => (Object) Request::get(),
 				'post' => (Object) Request::post(),
-			]
+			],
 		],
-		(Array) $data
+		(Array) $data,
 	);
 
 	if (isset($data['data']->post->register)) {
@@ -576,10 +577,15 @@ function sgSendLog($data = []) {
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
 		);
 	}
-	$data['data'] = json_encode(
-		$data['data'],
-		JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
-	);
+
+	if ($data['sendRequest']) {
+		$data['data'] = json_encode(
+			$data['data'],
+			JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+		);
+	} else {
+		unset($data['data']);
+	}
 
 	if ($forceSend || !in_array(_DOMAIN_SHORT, $domainNotSendLog)) {
 		ApiModel::send(
