@@ -1296,25 +1296,6 @@
 	}
 }
 
-.box-page {
-	> .widget-appbar {
-		position: absolute;
-		top: -48px;
-		left: 0;
-		right: 0;
-		z-index: 1;
-	}
-	> .widget-appbar > .-trailing .btn {
-		box-shadow: none;
-	}
-	> .widget-appbar > .-leading > .nav.-back {
-		display: block;
-	}
-	> .widget-appbar > .-nav {
-		display: none;
-	}
-}
-
 /* widget-scrollview */
 .widget-scrollview {
 	width: 100%;
