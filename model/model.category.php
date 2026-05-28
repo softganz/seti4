@@ -3,8 +3,8 @@
  * Model   :: Category
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-08-10
- * Modify  :: 2026-05-14
- * Version :: 3
+ * Modify  :: 2026-05-28
+ * Version :: 4
  *
  * @usage new CategoryModel([])
  * @usage CategoryModel::function($conditions, $options)
@@ -14,7 +14,7 @@ use Softganz\DB;
 
 class CategoryModel {
 	public static function get($conditions, $options = '{}'): array {
-		$defaults = '{debug: false, result: "default", fullValue : false, order: "tg.`weight` ASC, tg.`$KEY$` ASC", selectText: ""}';
+		$defaults = '{debug: false, result: "default", key: "catId", fullValue : false, order: "tg.`weight` ASC, tg.`$KEY$` ASC", selectText: "", condition: null}';
 		$options = SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
