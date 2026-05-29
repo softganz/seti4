@@ -645,7 +645,7 @@
 	.form-password.-fill,
 	.form-textarea.-fill,
 	.form-select.-fill {
-		width: 100%;
+		width: stretch;
 	}
 
 	.form-text.-hidden,
