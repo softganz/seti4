@@ -1,13 +1,16 @@
 <?php
-/********************************************
-* Class :: Toolbar
-* Toolbar class for create toolbar
-*
-* Created 2020-10-01
-* Modify  2020-10-01
-*
-* @usage new Toolbar()
-********************************************/
+/**
+ * Widget  :: Toolbar Widget
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2020-10-01
+ * Modify  :: 2026-05-29
+ * Version :: 2
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @example new Toolbar(...)
+ */
 
 class Toolbar extends Widget {
 	var $widgetName = 'Toolbar';
@@ -19,6 +22,7 @@ class Toolbar extends Widget {
 
 	function __construct($self, $title = NULL, $nav = NULL, $info = NULL, $class = NULL, $options = '{}') {
 		parent::__construct();
+
 		$this->self = $self;
 		$this->title = $title;
 		$this->class = 'sg-toolbar '.($class ? $class : '-main');
@@ -31,8 +35,10 @@ class Toolbar extends Widget {
 		}
 		$this->options = \SG\json_decode($options);
 
-		$this->self->theme->title = $title;
-		$self->theme->toolbar = $this;
+		if (isset($this->self->theme)) {
+			$this->self->theme->title = $title;
+		}
+		// $self->theme->toolbar = $this;
 	}
 
 	function addNav($key, $nav) {
@@ -81,10 +87,13 @@ class Toolbar extends Widget {
 	}
 
 	function build() {
-		$this->self->theme->title = $this->title;
-		$this->self->theme->toolbar = $this;
+		if (isset($this->self->theme)) {
+			$this->self->theme->title = $this->title;
+			$this->self->theme->toolbar = $this;
+		}
+
 		page_class('-module-has-toolbar');
-		//debugMsg($this, '$thisToolbar');
+
 		return $this->toString();
 	}
 } // End of class Toolbar
