@@ -1,15 +1,17 @@
 <?php
 /**
-* Forum :: Main Page
-* Created 2020-04-03
-* Modify  2020-04-03
-*
-* @param Object $self
-* @param Int $tpid
-* @param String $action
-* @param Int $tranId
-* @return String
-*/
+ * Forum    :: Page Controller
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-04-03
+ * Modified :: 2026-06-01
+ * Version  :: 2
+ *
+ * @param Object $self
+ * @param Int $tpid
+ * @param String $action
+ * @param Int $tranId
+ * @return String
+ */
 
 $debug = true;
 
@@ -25,7 +27,7 @@ function forum($self, $forumId = NULL, $action = NULL, $tranId = NULL) {
 			if (empty($topicInfo)) $topicInfo = $tpid;
 			$argIndex = 3; // Start argument
 
-			//debugMsg('PAGE PAPER Topic = '.$tpid.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.func_get_arg($argIndex));
+			//debugMsg('PAGE PAPER Topic = '.$tpid.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.$args[$argIndex]);
 			//$ret .= print_o(func_get_args(), '$args');
 
 			$ret = R::Page(

@@ -1,16 +1,16 @@
 <?php
 /**
-* Module  :: Page Controller
-* Created :: 2019-08-03
-* Modify  :: 2025-07-22
-* Version :: 3
-*
-* @param Int $resvId
-* @param String $action
-* @return Widget
-*
-* @usage calendar/room/[/{resvId}/{action}/{tranId}]
-*/
+ * Calendar :: Page Controller
+ * Created  :: 2019-08-03
+ * Modified :: 2026-06-01
+ * Version  :: 4
+ *
+ * @param Int $resvId
+ * @param String $action
+ * @return Widget
+ *
+ * @uses calendar/room/[/{resvId}/{action}/{tranId}]
+ */
 
 class CalendarRoom extends PageController {
 	var $resvId;
@@ -130,20 +130,21 @@ function calendar_room($self, $resvId = NULL, $action = NULL, $tranId = NULL) {
 			//$ret = R::Page('project.join.'.$action, $self, $projectInfo, $calendarInfo, $action, $tranId);
 
 			$argIndex = 4; // Start argument
+			$args = func_get_args();
 
-			//debugMsg('PAGE PROJECT Topic = '.$tpid.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.func_get_arg($argIndex));
+			//debugMsg('PAGE PROJECT Topic = '.$tpid.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.$args[$argIndex]);
 			//$ret .= print_o(func_get_args(), '$args');
 
 			$ret = R::Page(
-								'calendar.room.'.$action,
-								$self,
-								$resvInfo,
-								func_get_arg($argIndex),
-								func_get_arg($argIndex+1),
-								func_get_arg($argIndex+2),
-								func_get_arg($argIndex+3),
-								func_get_arg($argIndex+4)
-							);
+				'calendar.room.'.$action,
+				$self,
+				$resvInfo,
+				$args[$argIndex],
+				$args[$argIndex+1],
+				$args[$argIndex+2],
+				$args[$argIndex+3],
+				$args[$argIndex+4]
+			);
 
 			//debugMsg('TYPE = '.gettype($ret));
 			if (is_null($ret)) $ret = 'ERROR : PAGE NOT FOUND';
