@@ -229,10 +229,10 @@ function object_merge_recursive() {
 				if (!isset($result->{$key})) $result->{$key} = (Object) [];
 				$result->{$key} = object_merge_recursive($result->{$key}, $value);
 			} else if (is_array($value)) {
-				//debugMsg('ARRAY KEY = '.$key);
-				//debugMsg($value,'$value');
-				//debugMsg($result->{$key},'$result');
-				//debugMsg('gettype(reset($value) = '.gettype(reset($value)));
+				// debugMsg('ARRAY KEY = '.$key);
+				// debugMsg($value,'$value');
+				// debugMsg($result->{$key},'$result');
+				// debugMsg('gettype(reset($value) = '.gettype(reset($value)));
 				if (!isset($result->{$key})) $result->{$key} = Array();
 				if (gettype(reset($value)) == 'object') {
 					//debugMsg($value,'$valueObject');
