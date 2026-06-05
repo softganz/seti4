@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-05-26
- * @version :: 47
+ * @modify  :: 2026-06-05
+ * @version :: 48
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,9 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        47);
-cfg('core.version',             '4.4.02');
-cfg('core.release',             '2026-05-26');
+cfg('core.version.code',        48);
+cfg('core.version',             '4.4.03');
+cfg('core.release',             '2026-06-05');
 cfg('core.location',            ini_get('include_path'));
 cfg('core.folder',              _CORE_FOLDER);
 cfg('core.config',              _CONFIG_FILE);
@@ -369,6 +369,7 @@ function debugMsg($message = NULL, $varname = NULL) {
  * @return String
  */
 function showError($message = []) {
+	ini_set('display_errors', 'off');
 	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 	$debugMsg = debugMsg();
 
@@ -408,19 +409,9 @@ function showError($message = []) {
  * @return boolean
  */
 function sgErrorHandler($code, $description, $file = null, $line = null) {
-	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
-	$displayErrors = strtolower(ini_get("display_errors"));
-
 	static $count = 0;
 
-	if ($isDebug) {
-		$reportFileName = $file;
-	} else {
-		$reportFileName = basename($file);
-		$reportFileName = preg_replace('/^class\.|func\./', '', $reportFileName);
-		$reportFileName = preg_replace('/\.php$/', '', $reportFileName);
-	}
-
+	$displayErrors = strtolower(ini_get("display_errors"));
 
 	if ($displayErrors === 'off') {
 		return false;
@@ -435,6 +426,15 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 
 	// On fatal error
 	if (sgIsFatalError($code)) {
+		$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
+
+		$reportFileName = $file;
+		if (!$isDebug) {
+			$reportFileName = basename($file);
+			$reportFileName = preg_replace('/^class\.|func\./', '', $reportFileName);
+			$reportFileName = preg_replace('/\.php$/', '', $reportFileName);
+		}
+
 		$errorType = 'Fatal Error';
 		$isDbError = preg_match('/DbException|Update data to database was error/', $description);
 		$description = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/i', '', $description);
@@ -466,7 +466,7 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 			$dbErrorMessage = '<pre style="white-space: pre-wrap; font-size: 80%;">' . R('query') . '</pre>';
 			$errorDescription[] = $dbErrorMessage;
 
-			if ($isDbError && user_access('access debugging program')) $fullDescription .= $dbErrorMessage;
+			if ($isDbError && $isDebug) $fullDescription .= $dbErrorMessage;
 		}
 
 		sgSendLog([
