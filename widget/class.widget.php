@@ -1,10 +1,10 @@
 <?php
 /**
- * Widget  :: Basic Widget Collector
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2020-10-01
- * Modify  :: 2026-05-20
- * Version :: 76
+ * Widget   :: Basic Widget Collector
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-06-05
+ * Version  :: 77
  *
  * @param Array $args
  * @return Widget
@@ -749,10 +749,14 @@ class Button extends Widget {
 	public $description;
 	public $boxType; // Set box class name
 	public $boxWidth; // Set box width value
+	public $boxHeight; // Set box height value
 
 	function __construct($args = [], $variable = NULL) {
 		parent::__construct($args);
 		$this->variable = $variable;
+		if (is_array($this->attribute)) {
+			unset($this->attribute['data-boxWidth'], $this->attribute['data-boxHeight']);
+		}
 	}
 
 	function toString() {
@@ -781,6 +785,7 @@ class Button extends Widget {
 				'style' => $this->style,
 				'data-class-name' => $this->boxType ? '-'.$this->boxType : NULL,
 				'data-width' => $this->boxWidth ? $this->boxWidth : NULL,
+				'data-height' => $this->boxHeight ? $this->boxHeight : NULL,
 			],
 			(Array) $this->attribute
 		);
