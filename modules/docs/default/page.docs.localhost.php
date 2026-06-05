@@ -13,7 +13,7 @@ function docs_localhost($self=NULL) {
 		$ui = new Ui();
 		foreach ($folderList as $url) {
 			if (in_array($url, ['.','..'])) continue;
-			$ui->add('<a href="/'.$item.'/'.$url.'" target="_blank">'.$url.'</a>');
+			$ui->add('<a href="/'.$item.'/'.$url.'/" target="_blank">'.$url.'</a>');
 		}
 		$ret .= $ui->build();
 	}
