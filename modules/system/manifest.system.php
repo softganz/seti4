@@ -46,12 +46,12 @@ cfg('watchdog.release', '17.7.29');
 
 menu('api', 'API', 'api', '__controller', 1, true, 'static');
 menu('comment', 'Comment management', 'comment', '__controller', 1, 'access comments', 'static');
-menu('contents', 'Contents', 'contents', '__controller', 1, true, 'static');
+menu('contents', 'Contents', 'contents', '__controller', 1, 'access papers', 'static');
 menu('cookies', 'Cookies', 'cookies', '__controller', 1, true, 'static');
 menu('my/account/delete', 'My Account Delete Request', 'my.account.delete', '__controller', 1, true, 'static');
 menu('my', 'My Account Management', 'my', '__controller', 1, i()->ok, 'static');
-menu('node', 'Node', 'node', '__controller', 1, true, 'static');
-menu('profile', 'System', 'profile', '__controller', 1, true, 'static');
+menu('node', 'Node', 'node', '__controller', 1, 'access papers', 'static');
+menu('profile', 'System', 'profile', '__controller', 1, 'access user profiles', 'static');
 menu('qrcode', 'QR Code', 'qrcode', '__controller', 1, true, 'static');
 menu('rss', 'RSS', 'rss', '__controller', 1, true, 'static');
 menu('signin', 'Sign In', 'signin', '__controller', 1, true, 'static');
@@ -59,24 +59,24 @@ menu('signout', 'Sign Out', 'signout', '__controller', 1, true, 'static');
 menu('stats/report', 'Web Statistic Report', 'stats', '__controller', 1, 'access statistic report', 'static');
 menu('stats', 'Web Statistic', 'stats', '__controller', 1, 'access statistic', 'static');
 menu('system', 'System', 'system', '__controller', 1, true, 'static');
-menu('tags', 'Tags', 'tags', '__controller', 1, true, 'static');
+menu('tags', 'Tags', 'tags', '__controller', 1, 'access papers', 'static');
 menu('underconstruction', 'Under Construction', 'underconstruction', '__controller', 1, true, 'static');
 menu('user/register', 'Member register', 'user', '__controller', 1, 'register new member' , 'static');
 menu('user', 'User Management', 'user', '__controller', 1, true, 'static');
-menu('watchdog', 'Watchdog', 'watchdog', '__controller', 1, true, 'static');
+menu('watchdog', 'Watchdog', 'watchdog', '__controller', 1, 'access watchdogs', 'static');
 
 menu('ampur', 'Ampur API', 'ampur', '__controller', 1, true, 'static');
-menu('address', 'API', 'address', '__controller', 1, true, 'static');
-menu('changwat', 'API', 'changwat', '__controller', 1, true, 'static');
-menu('commune', 'API', 'commune', '__controller', 1, true, 'static');
-menu('hospital', 'API', 'hospital', '__controller', 1, true, 'static');
-menu('image', 'API', 'image', '__controller', 1, true, 'static');
-menu('my', 'API', 'my', '__controller', 1, true, 'static');
-menu('node', 'API', 'node', '__controller', 1, true, 'static');
-menu('person', 'API', 'person', '__controller', 1, true, 'static');
-menu('tag', 'API', 'tag', '__controller', 1, true, 'static');
-menu('tambon', 'API', 'tambon', '__controller', 1, true, 'static');
-menu('village', 'API', 'village', '__controller', 1, true, 'static');
+menu('address', 'Address API', 'address', '__controller', 1, true, 'static');
+menu('changwat', 'Changwat API', 'changwat', '__controller', 1, true, 'static');
+menu('commune', 'Commune API', 'commune', '__controller', 1, true, 'static');
+menu('hospital', 'Hospital API', 'hospital', '__controller', 1, true, 'static');
+menu('image', 'Image API', 'image', '__controller', 1, true, 'static');
+menu('my', 'My API', 'my', '__controller', 1, true, 'static');
+menu('node', 'Node API', 'node', '__controller', 1, true, 'static');
+menu('person', 'Person API', 'person', '__controller', 1, true, 'static');
+menu('tag', 'Tag API', 'tag', '__controller', 1, true, 'static');
+menu('tambon', 'Tambon API', 'tambon', '__controller', 1, true, 'static');
+menu('village', 'Village API', 'village', '__controller', 1, true, 'static');
 
 
 cfg('comment.permission','access comments,administer comments,hide comments,post comments,post comments without approval,edit own comment');
@@ -85,5 +85,5 @@ cfg('system.permission','access debugging program,access administrator pages,adm
 
 cfg('user.permission','access user profiles,administer users,change own username,change own profile,register new member');
 
-cfg('watchdog.permission','access statistic,access statistic report,access logs,administer watchdogs');
+cfg('watchdog.permission','access watchdogs,access statistic,access statistic report,access logs,administer watchdogs');
 ?>

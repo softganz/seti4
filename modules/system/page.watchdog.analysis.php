@@ -35,12 +35,15 @@ class WatchdogAnalysis extends Page {
 			'days' => SG\getFirst(post('d'), $this->days),
 			'items' => SG\getFirstInt(post('items'), $this->items),
 			'right' => (Object)[
+				'access' => user_access('access logs'),
 				'admin' => user_access('administer watchdogs')
 			]
 		]);
 	}
 
 	function rightToBuild() {
+		if (!$this->right->access) return error(_HTTP_ERROR_FORBIDDEN, _ERROR_MSG_ACCESS_DENIED);
+
 		return true;
 	}
 

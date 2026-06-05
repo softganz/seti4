@@ -2,6 +2,8 @@
 function watchdog($self, $watchId = NULL, $action = NULL) {
 	$isAdmin = user_access('administer watchdogs');
 
+	if (!$isAdmin) return 'Access denied';
+
 	$ret = '';
 
 	if ($action) {
