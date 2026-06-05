@@ -1,10 +1,10 @@
 <?php
 /**
- * Admin   :: Main Page
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2016-11-08
- * Modify  :: 2026-03-01
- * Version :: 6
+ * Admin    :: Admin Main Page
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2016-11-08
+ * Modified :: 2026-06-05
+ * Version  :: 8
  *
  * @return Widget
  *
@@ -39,6 +39,7 @@ class Admin extends Page {
 					'<div class="help">Welcome to the administration section. Here you may control how your site functions.</div>',
 
 					'<p>Core folder <b>'.cfg('core.version').'@'.cfg('core.folder').'</b></p>',
+					'<p>nginx version <b>'.$_SERVER['SERVER_SOFTWARE'].'</b></p>',
 					'<p>PHP version <b>'.phpversion().'</b></p>',
 					'<p>MariaDB version <b>'.R('DB')->version.'@'.$databaseName.'</b></p>',
 					'<p><em>Today is <strong>'.date('Y-m-d H:i:s').'</strong> and server timezone offset is <strong>'.cfg('server.timezone.offset').' hours</strong> so datetime to use by program is <strong>????-??-??</strong></em></p>',
