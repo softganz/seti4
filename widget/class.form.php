@@ -1,15 +1,15 @@
 <?php
 /**
- * Widget  :: Form Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2020-10-01
- * Modify  :: 2026-05-21
- * Version :: 44
+ * Widget   :: Form Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-06-05
+ * Version  :: 44
  *
  * @param Array $args
  * @return Widget
  *
- * @usage new Form([key => value,...])
+ * @uses new Form([key => value,...])
  */
 
 /*
@@ -133,17 +133,17 @@ class Form extends Widget {
 		$ret .= $this->debug ? $this->_renderEachChildWidget(new DebugMsg($this, '$form')) : '';
 
 		// Render form title
-		$ret .= $this->_renderEachChildWidget($this->title, NULL, NULL, ['prefix' => '<div class="-title">', 'subfix' => '</div>']);
+		$ret .= $this->title ? $this->_renderEachChildWidget($this->title, NULL, NULL, ['prefix' => '<div class="-title">', 'subfix' => '</div>']) : '';
 
 
 		// Render form description
-		$ret .= $this->_renderEachChildWidget($this->description, NULL, NULL, ['prefix' => '<div class="-description">', 'subfix' => '</div>']);
+		$ret .= $this->description ? $this->_renderEachChildWidget($this->description, NULL, NULL, ['prefix' => '<div class="-description">', 'subfix' => '</div>']) : '';
 
 		// Render form children
 		$ret .= $this->_renderFormChild($this->children);
 
 		// Render form footer
-		$ret .= $this->_renderEachChildWidget($this->footer, NULL, NULL, ['prefix' => '<div class="-footer">', 'subfix' => '</div>']);
+		$ret .= $this->footer ? $this->_renderEachChildWidget($this->footer, NULL, NULL, ['prefix' => '<div class="-footer">', 'subfix' => '</div>']) : '';
 
 		$ret .= '</form>' . _NL;
 
