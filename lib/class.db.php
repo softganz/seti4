@@ -1,15 +1,15 @@
 <?php
 /**
- * DB      :: Database Management
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2023-07-28
- * Modify  :: 2026-04-29
- * Version :: 45
+ * DB       :: Database Management
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-07-28
+ * Modified :: 2026-06-05
+ * Version  :: 46
  *
  * @param Array $args
  * @return Object
  *
- * @usage new Softganz\DB([])
+ * @uses new Softganz\DB([])
  */
 
 namespace Softganz;
@@ -51,6 +51,10 @@ class DbSelect {
 		if ($args) {
 			foreach ($args as $key => $value) $this->{$key} = $value;
 		}
+	}
+
+	public function count() {
+		return $this->count;
 	}
 
 	public function valueOf($field) {
