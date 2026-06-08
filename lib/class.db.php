@@ -43,6 +43,16 @@ class JsonArrayDataModel extends DataModel {
 	}
 }
 
+/**
+ * For limit = 1
+ * @return array of fields
+ * 
+ * For limit != 1
+ * @return count
+ * @return foundRows: select with SQL_CALC_FOUND_ROWS
+ * @return items
+ * @return DB
+ */
 #[AllowDynamicProperties]
 class DbSelect {
 	private $DB;
