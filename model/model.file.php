@@ -1,15 +1,16 @@
 <?php
 /**
-* Model   :: File Model
-* Created :: 2021-12-21
-* Modify  :: 2025-07-12
-* Version :: 10
-*
-* @return Object
-*
-* @usage new FileModel()
-* @usage FileModel::method()
-*/
+ * Model    :: File Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-12-21
+ * Modified :: 2026-06-08
+ * Version  :: 11
+ *
+ * @return Object
+ *
+ * @uses new FileModel()
+ * @uses FileModel::method()
+ */
 
 use Softganz\DB;
 
@@ -28,31 +29,31 @@ class FileModel {
 
 		$rs = DB::select([
 			'SELECT
-			f.`fid` `id`
-			, f.`fkey` `key`
-			, f.`tpid` `nodeId`
-			, f.`cid` `commentId`
-			, f.`uid`
-			, f.`orgId`
-			, f.`refId`
-			, f.`type`
-			, f.`tagName`
-			, f.`folder`
-			, f.`cover`
-			, f.`gallery`
-			, f.`file` `fileName`
-			, f.`title`
-			, f.`description`
-			, f.`comment` `commentCount`
-			, f.`votes` `voteCount`
-			, f.`view` `viewCount`
-			, f.`last_view` `lastViewDate`
-			, f.`reply` `replyCount`
-			, f.`download` `downloadCount`
-			, f.`last_download` `lastDownloadDate`
-			, f.`timeStamp`
-			, f.`ip`
-			FROM %topic_files% f
+			`file`.`fid` `id`
+			, `file`.`fkey` `key`
+			, `file`.`tpid` `nodeId`
+			, `file`.`cid` `commentId`
+			, `file`.`uid`
+			, `file`.`orgId`
+			, `file`.`refId`
+			, `file`.`type`
+			, `file`.`tagName`
+			, `file`.`folder`
+			, `file`.`cover`
+			, `file`.`gallery`
+			, `file`.`file` `fileName`
+			, `file`.`title`
+			, `file`.`description`
+			, `file`.`comment` `commentCount`
+			, `file`.`votes` `voteCount`
+			, `file`.`view` `viewCount`
+			, `file`.`last_view` `lastViewDate`
+			, `file`.`reply` `replyCount`
+			, `file`.`download` `downloadCount`
+			, `file`.`last_download` `lastDownloadDate`
+			, `file`.`timeStamp`
+			, `file`.`ip`
+			FROM %topic_files% AS `file`
 			%WHERE%
 			LIMIT 1',
 			'where' => [
@@ -77,75 +78,80 @@ class FileModel {
 		return $result;
 	}
 
-	public static function items($attributes = []) {
-		$defaults = [
-			'nodeId' => NULL,
-			'type' => NULL,
-			'refId' => NULL,
-			'orgId' => NULL,
-			'tagName' => NULL,
-			'tagNameLike' => NULL,
-			'orderBy' => NULL,
-			'resultGroup' => NULL,
-		];
+	public static function items($conditions = []) {
+		$conditions = (Object) array_replace(
+			[
+				'nodeId' => NULL,
+				'type' => NULL,
+				'refId' => NULL,
+				'orgId' => NULL,
+				'tagName' => NULL,
+				'tagNameLike' => NULL,
+				'orderBy' => 'id',
+				'orderDir' => 'ASC',
+				'resultGroup' => NULL,
+			],
+			(Array) $conditions
+		);
 
 		$result = (Object) [
 			'count' => 0,
 			'items' => [],
 		];
 
-		$attributes = (Object) array_replace_recursive($defaults, $attributes);
+		$orderList = [
+			'id' => '`file`.`fid`',
+			'type_and_id' => 'CASE WHEN `type` = "photo" THEN 0 ELSE 1 END ASC, `fid`'
+		];
 
-		if ($attributes->nodeId) mydb::where('f.`tpid` = :nodeId', ':nodeId', $attributes->nodeId);
-		if ($attributes->type) mydb::where('f.`type` = :type', ':type', $attributes->type);
-		if ($attributes->refId) mydb::where('f.`refId` = :refId', ':refId', $attributes->refId);
-		if ($attributes->orgId) mydb::where('f.`orgId` = :orgId', ':orgId', $attributes->orgId);
-		if ($attributes->tagName) mydb::where('f.`tagName` = :tagName', ':tagName', $attributes->tagName);
-		if ($attributes->tagNameLike) mydb::where('f.`tagName` LIKE :tagNameLike', ':tagNameLike', $attributes->tagNameLike);
-
-		mydb::value('$ORDER$', '');
-		if ($attributes->orderBy) mydb::value('$ORDER$', 'ORDER BY '.$attributes->orderBy, false);
-
-		$queryOption = [];
-		if ($attributes->resultGroup) $queryOption['group'] = $attributes->resultGroup;
-
-		$dbs = mydb::select(
+		$conditions->orderBy = $orderList[$conditions->orderBy] ?? $orderList['id'];
+		
+		return DB::select([
 			'SELECT
-			f.`fid` `id`
-			, f.`fkey` `key`
-			, f.`tpid` `nodeId`
-			, f.`cid` `commentId`
-			, f.`uid`
-			, f.`orgId`
-			, f.`refId`
-			, f.`type`
-			, f.`tagName`
-			, f.`cover`
-			, f.`gallery`
-			, f.`folder`
-			, f.`file` `fileName`
-			, f.`title`
-			, f.`description`
-			, f.`comment` `commentCount`
-			, f.`votes` `voteCount`
-			, f.`view` `viewCount`
-			, f.`last_view` `lastViewDate`
-			, f.`reply` `replyCount`
-			, f.`download` `downloadCount`
-			, f.`last_download` `lastDownloadDate`
-			, f.`timeStamp`
-			, f.`ip`
-			FROM %topic_files% f
+			`file`.`fid` AS `id`
+			, `file`.`fkey` AS `key`
+			, `file`.`tpid` AS `nodeId`
+			, `file`.`cid` AS `commentId`
+			, `file`.`uid`
+			, `file`.`orgId`
+			, `file`.`refId`
+			, `file`.`type`
+			, `file`.`tagName`
+			, `file`.`cover`
+			, `file`.`gallery`
+			, `file`.`folder`
+			, `file`.`file` AS `fileName`
+			, `file`.`title`
+			, `file`.`description`
+			, `user`.`name` AS `ownerName`
+			, `file`.`comment` AS `commentCount`
+			, `file`.`votes` AS `voteCount`
+			, `file`.`view` AS `viewCount`
+			, `file`.`last_view` AS `lastViewDate`
+			, `file`.`reply` AS `replyCount`
+			, `file`.`download` AS `downloadCount`
+			, `file`.`last_download` AS `lastDownloadDate`
+			, `file`.`timeStamp`
+			, `file`.`ip`
+			FROM %topic_files% AS `file`
+				LEFT JOIN %users% AS `user` ON `file`.`uid` = `user`.`uid`
 			%WHERE%
-			$ORDER$;
-			'.($queryOption ? '-- '.json_encode($queryOption) : '')
-			// Must json_encode for json single line
-		);
-
-		$result->count = count($dbs->items);
-		$result->items = $dbs->items;
-
-		return $result;
+			$ORDER$',
+			'%WHERE%' => [
+				$conditions->nodeId ? ['`file`.`tpid` = :nodeId', ':nodeId' => $conditions->nodeId] : null,
+				$conditions->type ? ['`file`.`type` = :type', ':type' => $conditions->type] : null,
+				$conditions->refId ? ['`file`.`refId` = :refId', ':refId' => $conditions->refId] : null,
+				$conditions->orgId ? ['`file`.`orgId` = :orgId', ':orgId' => $conditions->orgId] : null,
+				$conditions->tagName ? ['`file`.`tagName` = :tagName', ':tagName' => $conditions->tagName] : null,
+				$conditions->tagNameLike ? ['`file`.`tagName` LIKE :tagNameLike', ':tagNameLike' => $conditions->tagNameLike] : null,
+			],
+			'var' => [
+				'$ORDER$' => 'ORDER BY '.$conditions->orderBy . ' ' . $conditions->orderDir,
+			],
+			'options' => [
+				'group' => $conditions->resultGroup
+			]
+		]);
 	}
 
 	public static function upload($photoFiles, $data = NULL, $options = '{}') {
