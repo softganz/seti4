@@ -94,7 +94,7 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 		$picsData->cid = empty($data->cid) ? NULL : $data->cid;
 		$picsData->type = $ext == 'pdf' ? 'doc' : 'photo';
 		$picsData->title = \SG\getFirst($data->title, $postFile['name']);
-		$picsData->tagname = empty($data->tagname) ? NULL : $data->tagname;
+		$picsData->tagName = SG\getFirst($data->tagName, $data->tagname);
 
 		$picsData->orgid = \SG\getFirst($data->orgId, $data->orgid);
 		$picsData->uid = \SG\getFirst($data->uid,i()->uid);
@@ -117,7 +117,7 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 				, `orgid`
 				, `uid`
 				, `refid`
-				, `tagname`
+				, `tagName`
 				, `file`
 				, `title`
 				, `description`
@@ -131,7 +131,7 @@ function r_photo_upload($photoFiles, $data = NULL, $options = '{}') {
 				, :orgid
 				, :uid
 				, :refid
-				, :tagname
+				, :tagName
 				, :file
 				, :title
 				, :description
