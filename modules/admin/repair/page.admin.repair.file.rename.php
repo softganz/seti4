@@ -1,14 +1,15 @@
 <?php
 /**
-* Admin   :: Repair File Rename
-* Created :: 2024-07-10
-* Modify  :: 2024-08-19
-* Version :: 2
-*
-* @return Widget
-*
-* @usage admin/repair/file/rename
-*/
+ * Admin    :: Repair File Rename
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-07-10
+ * Modified :: 2026-06-08
+ * Version  :: 3
+ *
+ * @return Widget
+ *
+ * @uses admin/repair/file/rename
+ */
 
 use Softganz\DB;
 
@@ -49,8 +50,9 @@ class AdminRepairFileRename extends Page {
 			ORDER BY `file`.`fid` ASC
 			LIMIT 100',
 		]);
-debugMsg(mydb()->_query);
-debugMsg($data, '$data');
+
+		debugMsg(mydb()->_query);
+		debugMsg($data, '$data');
 
 		return new Table([
 			'thead' => ['File Id', 'Node Id', 'Node Type', 'File Type', 'File Tag Name', 'File Name'],
@@ -61,7 +63,7 @@ debugMsg($data, '$data');
 	function start() {
 		DB::select([
 			'SELECT *
-			FROM %topic_file% `file`
+			FROM %topic_files% `file`
 				RIGHT JOIN %topic% `topic` ON `file`.`tpid` = `topic`.`tpid`
 				RIGHT JOIN %project% `project` ON `topic`.`tpid` = `project`.`tpid`
 			LIMIT 100',
