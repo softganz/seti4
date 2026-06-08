@@ -3,8 +3,8 @@
  * System  :: Issue Home Page
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2022-10-14
- * Modify  :: 2026-05-26
- * Version :: 23
+ * Modify  :: 2026-06-08
+ * Version :: 24
  *
  * @return Widget
  *
@@ -50,7 +50,7 @@ class SystemIssueHome extends Page {
 			'body' => new Container([
 				'class' => 'system-issue-list',
 				'children' => [
-					empty($this->host) ? $this->domainCount() : NULL,
+					empty($this->host) ? $this->domainCount() : null,
 					new Widget([
 						'children' => array_map(
 							function($item) {
@@ -86,9 +86,9 @@ class SystemIssueHome extends Page {
 											'subtitle' => '@' . $item->reportDate,
 											'trailing' => new Nav([
 												'children' => [
-													$item->status == _COMPLETE ? NULL : new Button([
+													$item->status == _COMPLETE ? null : new Button([
 														'type' => 'link',
-														'href' => url('api/system/issue/close/'.$item->issueId),
+														'href' => Url::link('api/system/issue/close/'.$item->issueId),
 														'icon' => new Icon('done'),
 														'class' => 'sg-action',
 														'rel' => 'none',
@@ -97,7 +97,7 @@ class SystemIssueHome extends Page {
 													]), // Button
 													new Button([
 														'type' => 'link',
-														'href' => url('system/issue/'.$item->issueId),
+														'href' => Url::link('system/issue/'.$item->issueId),
 														'icon' => new Icon('find_in_page'),
 														'class' => 'sg-action',
 														'rel' => 'box',
@@ -112,7 +112,7 @@ class SystemIssueHome extends Page {
 													new Button([
 														'type' => 'link',
 														'class' => 'sg-action',
-														'href' => url('api/system/issue/delete/'.$item->issueId),
+														'href' => Url::link('api/system/issue/delete/'.$item->issueId),
 														'icon' => new Icon('delete'),
 														'rel' => 'none',
 														'done' => 'remove:parent .widget-card',
@@ -127,7 +127,7 @@ class SystemIssueHome extends Page {
 												'children' => [
 													'<b>Host: ' . '<a href="' . $item->host . '" target="_blank">' . $item->host . '</a></b>',
 													'<b>Link : </b><a href="' . $link . '" target="_blank">' . $link . '</a>',
-													$item->reportBy ? 'By : ' . $item->reportBy : NULL,
+													$item->reportBy ? 'By : ' . $item->reportBy : null,
 													'Referer : <a href="' . $item->referer . '" target="_blank">' . $item->referer . '</a>',
 													'Agent : ' . $item->agent,
 													$description,
@@ -153,7 +153,7 @@ class SystemIssueHome extends Page {
 				function($domain) {
 					return [
 						new Button([
-							'href' => url('system/issue', ['type' => $this->issueType, 'host' => $domain->host]),
+							'href' => Url::link('system/issue', ['type' => $this->issueType, 'host' => $domain->host]),
 							'text' => $domain->host,
 						]),
 						number_format($domain->amt)
@@ -167,7 +167,7 @@ class SystemIssueHome extends Page {
 					'where' => [
 						'%WHERE%' => [
 							['`issue`.`status` != :status', ':status' => _COMPLETE],
-							$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
+							$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : null,
 						]
 					]
 				])->items
@@ -184,9 +184,9 @@ class SystemIssueHome extends Page {
 			LIMIT $ITEMS$',
 			'where' => [
 				'%WHERE%' => [
-					$this->status === 'all' ? NULL : ['`issue`.`status` != :complete', ':complete' => _COMPLETE],
-					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : NULL,
-					$this->host ? ['`issue`.`host` = :host', ':host' => $this->host] : NULL,
+					$this->status === 'all' ? null : ['`issue`.`status` != :complete', ':complete' => _COMPLETE],
+					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : null,
+					$this->host ? ['`issue`.`host` = :host', ':host' => $this->host] : null,
 				]
 			],
 			'var' => [
@@ -201,7 +201,7 @@ class SystemIssueHome extends Page {
 			'children' => [
 				new Form([
 					'class' => 'form-report',
-					'action' => url('system/issue'),
+					'action' => Url::link('system/issue'),
 					'method' => 'GET',
 					'children' => [
 						'status' => [
@@ -226,13 +226,13 @@ class SystemIssueHome extends Page {
 								])->items
 							),
 						],
-						'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : NULL,
+						'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : null,
 					], // children
 				]),
 				new Button([
 					'type' => 'secondary',
 					'class' => 'sg-action',
-					'href' => url('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
+					'href' => Url::link('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
 					'rel' => 'notify',
 					'done' => 'reload',
 					'icon' => new Icon('done_all'),
@@ -244,7 +244,7 @@ class SystemIssueHome extends Page {
 				new Button([
 					'type' => 'secondary',
 					// 'class' => 'sg-action',
-					'href' => url('system/issue', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
+					'href' => Url::link('system/issue', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
 					// 'rel' => '#main',
 					'icon'=> new Icon('refresh'),
 				]),  // Button
@@ -272,8 +272,14 @@ class SystemIssueHome extends Page {
 		$url = '';
 		switch ($item->issueType) {
 			case 'Create user':
+			case 'Create user - waiting':
 				$userInfo = json_decode($item->description);
 				$url = $item->host.'/profile/'.$userInfo->id;
+				break;
+
+			case 'Add students':
+				$projectInfo = json_decode($item->description);
+				$url = $item->host.'/project/' . $projectInfo->projectId . '/info.student/' . $projectInfo->serieNo;
 				break;
 
 			default:
