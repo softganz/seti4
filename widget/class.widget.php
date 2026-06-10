@@ -3,13 +3,13 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-06-05
- * Version  :: 77
+ * Modified :: 2026-06-10
+ * Version  :: 78
  *
  * @param Array $args
  * @return Widget
  *
- * @usage new Widget([key => value,...])
+ * @uses new Widget([key => value,...])
  */
 
 // Class :: WidgetBase class for base of all widget
@@ -930,11 +930,11 @@ class ExpandButton extends Widget {
 	public $icon = 'chevron_right';
 	function toString() {
 		return '<a'
-			. ' class="sg-expand btn -link -no-print' . ($this->class ? ' ' . $this->class : '') . '"'
+			. ' class="widget-button -link sg-expand btn -link -no-print' . ($this->class ? ' ' . $this->class : '') . '"'
 			. ' href="javascript:void(0)"'
 			. sg_implode_attr($this->attribute)
 			. '>'
-			. '<i class="icon -material">' . $this->icon . '</i>'
+			. '<i class="icon -material">' . $this->_renderChildren([$this->icon]) . '</i>'
 			. '</a>';
 	}
 } // End of class ExpandButton
