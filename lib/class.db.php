@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-06-05
- * Version  :: 46
+ * Modified :: 2026-06-14
+ * Version  :: 47
  *
  * @param Array $args
  * @return Object
@@ -274,6 +274,35 @@ class DB {
 		])->count;
 	}
 
+	/**
+	* Get Column Name of Table
+	*
+	* @param String $table
+	* @param String $colName
+	* @return Array
+	*/
+	public static function columns($table, $colName = '', $dbname = '') {
+		static $tables = null;
+		if (!isset($tables[$table])) {
+			$tables = [];
+			if (substr($table, 0, 1) === '`') {
+				$tablename = $table;
+			} else if (substr($table, 0, 1) === '%') {
+				$tablename = $table;
+			} else {
+				$tablename = '%'.$table.'%';
+			}
+			
+			foreach (DB::select([
+				'SHOW COLUMNS FROM ' . ($dbname ? '`' . $dbname . '`.' : '') . $tablename
+			])->items as $rs) {
+				foreach ( $rs as $key => $value ) if ( is_long($key) ) unset($rs[$key]);
+				$tables[$table][$rs->Field] = $rs;
+			}
+			// debugMsg($tables[$table], '$tables[' .$table .']');
+		}
+		return $colName ? (array_key_exists($colName, $tables[$table]) ? $tables[$table][$colName] : false) : $tables[$table];
+	}
 
 
 	// Public method
