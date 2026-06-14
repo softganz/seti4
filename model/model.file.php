@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-06-08
- * Version  :: 11
+ * Modified :: 2026-06-14
+ * Version  :: 12
  *
  * @return Object
  *
@@ -360,9 +360,11 @@ class FileModel {
 				$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
 			} else {
 				$uploadUrl = cfg('paper.upload.document.url').$upload->filename;
-				$linkInfo .= '<a href="'.$uploadUrl.'" target="_blank">'
-					. '<img class="photoitem -doc" src="//img.softganz.com/icon/icon-file.png" width="63" />'
-					. '<span class="title">'.$picsData->title.'</span>'
+				$linkInfo .= '<a class="widget-button -default pdflink" href="'.$uploadUrl.'" target="_blank">'
+					. '<span class="-label">'
+					. '<img class="photoitem -photo" src="//img.softganz.com/icon/icon-file.png" width="63" />'
+					. '</span>'
+					// . '<span class="title">'.$picsData->title.'</span>'
 					. '</a>';
 				$ui = new Ui('span');
 				if ($deleteUrl) {
@@ -379,7 +381,7 @@ class FileModel {
 
 
 		if ($result->link) {
-			$result->link = rtrim($result->link,'</li><li id="photo-'.$fileId.'" class="ui-item -hover-parent">');
+			$result->link = rtrim($result->link,'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">');
 		}
 
 		$result->uploadfile = $uploadPhotoFiles;
