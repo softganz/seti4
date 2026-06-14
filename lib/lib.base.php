@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2026-05-20
- * Version :: 18
+ * Modify  :: 2026-06-14
+ * Version :: 19
  */
 
 namespace SG;
@@ -127,7 +127,7 @@ function valid($value, $regx, $debug = false) {
 		case 'int': $regx = '/^[0-9]+$/'; break;
 		case 'number':
 		case 'numeric': $regx = '/^[0-9]+$/'; break;
-		case 'money': $regx = '/^[0-9\.\,]+$/'; break;
+		case 'money': $regx = '/^[0-9\.\,\+\-]+$/'; break;
 		case 'en': $regx = '/^[a-z0-9\_\-\. ]+$/i'; break;
 		case 'date': $regx = '/^[0-9\-\/]+$/'; break;
 		case 'year': $regx = '/^(\d{4}|\*)$/'; break;
