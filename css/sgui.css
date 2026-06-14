@@ -237,6 +237,7 @@
 
 	--link-text-color: #666;
 	--link-bg-color: transparent;
+	--link-bg-color-hover: #f5f5f5;
 
 	--cancel-text-color: #999;
 	--cancel-bg-color: transparent;
@@ -247,8 +248,13 @@
 	--disabled-text-color: #a0a0a0;
 	--disabled-bg-color: #d0d0d0;
 
+	--done-text-color: #e9ffe9;
+	--done-bg-color: #008000;
+	--done-bg-color-hover: #00a400;
+
 	.theme-dark & {
 		--link-text-color: var(--font-color);
+		--link-bg-color-hover: #565656;
 	}
 
 	display: inline-flex;
@@ -377,7 +383,18 @@
 			color: var(--link-text-color);
 		}
 		&:hover {
-			background-color: #f5f5f5;
+			background-color: var(--link-bg-color-hover);
+		}
+	}
+
+	&.-done {
+		color: var(--done-text-color);
+		background-color: var(--done-bg-color);
+		> .icon {
+			color: var(--done-text-color);
+		}
+		&:hover {
+			background-color: var(--done-bg-color-hover);
 		}
 	}
 
@@ -1196,7 +1213,7 @@
 				color: var(--trailing-btn-text-color);
 				background-color: var(--trailing-btn-bg-color);
 			}
-			> * > a:hover {
+			> * > a:not(.-danger):not(.-primary):hover {
 				background-color: var(--trailing-btn-bg-color-hover);
 			}
 			> * > a > .icon {
