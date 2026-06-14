@@ -1,22 +1,39 @@
-<!--
-Inlineedit Widget
-Created :: 2025-07-04
-Modify  :: 2025-10-17
-Version :: 2
--->
-<h3>Class Inlineedit Widget</h3>
+# Class InlineEdit Widget
 
-<ul class="docs-page-nav-list">
-<li>Contents</li>
-<li>Before you begin</li>
-<li><a href="{widget/widget}">Extends from Widget</a></li>
-<li><a href="#Property">Property</a></li>
-<li><a href="#Method">Method</a></li>
-</ul>
+## Overview
+**File:** `sgui.js`  
+**Author:** Little Bear `<softganz@gmail.com>`  
+**Version:** 67  
+**Last Modified:** 2026-06-11 
+**Created:** 2021-12-24
 
-<h4>Class constructor</h4>
-<code>
-new Inlineedit([
+The `sgui` is a JavaScript library.
+
+---
+
+<a id="table-of-contents"></a>
+## Table of Contents
+- Before you begin
+- [Extends from Widget]({widget/widget})
+- [Property](#Property)
+- [Method](#Method)
+
+### Methods Overview
+1. [**isOpen($projectId)**](#method-is-open) - Check project status is open
+
+### Additional Sections
+- [Database Tables Referenced](#database-tables-referenced)
+
+---
+
+## Methods
+
+<a id="method-1-info"></a>
+
+## Class constructor
+
+```php
+new InlineEdit([
 	String id,
 	String class,
 	Boolean editMode,
@@ -25,11 +42,13 @@ new Inlineedit([
 	Array child,
 	Array of Array children,
 ]);
-</code>
+```
 
 <a name="Property"></a>
-<h4>Property :</h4>
-<code>
+
+## Property
+
+```php
 Child and children element
 
 All input type property
@@ -45,22 +64,23 @@ All input type property
 	'variable2' : Mixed
 	'options' : Array
 		key:
-			debug : Boolean default false
+			debug: Boolean default false
 			placeholder: String
-			done : String
+			done: String callback,load,close,back
 ]
 
 Additionall for type radio,checkbox,select:
 [
 	'choices' => ['value' => Text, ...],
 ]
-</code>
-<code>
-editMode ↔ Boolean
-action ↔ String
-</code>
+```
 
-<code>
+```
+	editMode ↔ Boolean
+	action ↔ String
+```
+
+```
 type ↔ method
 new InlineEdit([
 	'child' => [
@@ -70,10 +90,11 @@ new InlineEdit([
 	]
 ])
 action ↔ String
-</code>
+```
 
 <a name="Method"></a>
-<h4>Method :</h4>
-<code>
+
+## Method
+```
 Inlineedit::build() → String
-</code>
+```
