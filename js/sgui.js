@@ -2,8 +2,8 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-05-11
- * Version :: 68
+ * Modify  :: 2026-06-11
+ * Version :: 67
  */
 
 'use strict'
@@ -660,7 +660,7 @@ function showError(response, time = 5000) {
 *
 * <a class="sg-action" data-rel="target" data-done="action[->targetAction]:target:url | ..."></a>
 */
-(function($) {
+(function($) { // sg-action
 	let version = '1.02';
 	let sgActionType = 'click';
 	let actionResult;
@@ -3006,46 +3006,42 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 
 	if (isAndroidWebViewReady) Android.showToast('กำลังอัพโหลดไฟล์')
 
-	console.log('sg-upload :: Inline upload file start and show result in '+target)
+	// console.log('sg-upload :: Inline upload file start and show result in '+target)
 	if ($form.data('before')) {
 		let tagName = $form.data('before')
-		let insertElement = '<'+tagName+targetClass+'><div class="loader -rotate -center"></div></'+tagName+'>'
+		let insertElement = '<' + tagName + targetClass + '><div class="loader -rotate -center"></div></' + tagName + '>'
 		let $targetElement = $this.closest(tagName).before(insertElement)
-		// console.log($targetElement)
 	} else {
 		notify('<div class="loader -rotate"></div> กำลังอัพโหลดไฟล์ กรุณารอสักครู่')
 	}
 	$form.ajaxForm({
 		success: function(data) {
-			// console.log('Inline upload file complete.', data);
+			console.log('Inline upload file complete.', data);
+			let resultElement = '';
+			if (typeof data === 'object' && "text" in data) {
+				resultElement = data.text
+			} else if (typeof data === "string") {
+				resultElement = data
+			}
 			if (isAndroidWebViewReady) Android.showToast('อัพโหลดไฟล์เรียบร้อบ')
 			if (target) {
 				if ($form.data('append')) {
-					let insertElement = '<'+$form.data('append')+targetClass+'>'+data+'</'+$form.data('append')+'>';
+					let insertElement = '<' + $form.data('append') + targetClass + '>' + resultElement + '</' + $form.data('append') + '>';
 					$(target).append(insertElement);
 				} else if ($form.data('prepend')) {
-					let insertElement = '<'+$form.data('prepend')+targetClass+'>'+data+'</'+$form.data('prepend')+'>';
+					let insertElement = '<' + $form.data('prepend') + targetClass + '>' + resultElement + '</' + $form.data('prepend') + '>';
 					$(target).prepend(insertElement);
-					//console.log(insertElement)
 				} else if ($form.data('before')) {
-					//let tagName = $form.data('before')
-					//let insertElement = '<'+tagName+targetClass+'>'+data+'</'+tagName+'>';
-					//console.log('Before ',$form.data('before'));
-					//console.log('Value ',insertElement)
-					//$this.closest($form.data('before')).before(insertElement);
-					$targetElement.prev().html(data)
+					$targetElement.prev().html(resultElement)
 				} else if ($form.data('after')) {
-					let insertElement = '<'+$form.data('after')+targetClass+'>'+data+'</'+$form.data('after')+'>';
-					//console.log($form.data('after'));
-					//console.log(insertElement)
+					let insertElement = '<' + $form.data('after') + targetClass + '>' + resultElement + '</' + $form.data('after') + '>';
 					$this.closest($form.data('after')).after(insertElement);
 				} else {
-					sgUpdateData(data, target, $this)
-					//$(target).html(data);
+					sgUpdateData(resultElement, target, $this)
 				}
 			}
 
-			notify("ดำเนินการเสร็จแล้ว.",5000)
+			notify("ดำเนินการเสร็จแล้ว.", 5000)
 			$this.val("")
 			$this.replaceWith($this.clone(true))
 			sgActionDone($form.data('done'), $form, data);
