@@ -4,7 +4,7 @@ Created :: 2025-08-26
 Modify  :: 2025-08-26
 Version :: 1
 -->
-<h3>Class Dropbox Widget</h3>
+# Class Dropbox Widget
 
 <ul class="docs-page-nav-list">
 <li>Contents</li>
@@ -14,8 +14,8 @@ Version :: 1
 <li><a href="#Method">Method</a></li>
 </ul>
 
-<h4>Class constructor</h4>
-<code>
+## Class constructor
+```
 new Dropbox([
 	String id,
 	String class = 'widget-dropbox sg-dropbox click leftside -no-print',
@@ -29,23 +29,25 @@ new Dropbox([
 	String url,
 	String link,
 	String $position = 'left', // left, right, center
-	Bool $print = false,
+	Bool hideOnNoChild Default false
+	Bool print = false,
 	Array $childrenContainer = ['tagName' => 'ul'];
 	Array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 ]);
-</code>
+```
 
 <a name="Property"></a>
-<h4>Property :</h4>
+
+## Property
 <code>
-</code>
-<code>
+```
 editMode ↔ Boolean
 action ↔ String
-</code>
+```
 
 <a name="Method"></a>
-<h4>Method :</h4>
-<code>
+
+## Method :
+```
 Report::build() → String
-</code>
+```
