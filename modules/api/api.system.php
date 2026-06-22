@@ -2,8 +2,8 @@
 /**
 * System  :: System API
 * Created :: 2022-10-14
-* Modify  :: 2025-03-14
-* Version :: 4
+* Modify  :: 2026-06-22
+* Version :: 5
 *
 * @param Int $mainId
 * @param String $action
@@ -36,14 +36,16 @@ class SystemApi extends PageApi {
 
 	function info() {
 		header('Access-Control-Allow-Origin: *');
+
 		return apiSuccess([
+			'domain' => _DOMAIN,
 			'coreName' => 'Seti',
 			'coreVersion' => cfg('core.version'),
 			'databaseVersion' => cfg('version.install'),
 			'date' => date('Y-m-d'),
 			'time' => date('H:i:s'),
-			'online' => CounterModel::onlineMemberCount(),
-			'member' => CounterModel::onlineCount(),
+			'members' => CounterModel::onlineMemberCount(),
+			'onlines' => CounterModel::onlineCount(),
 			'ip' => $_SERVER['REMOTE_ADDR'],
 		]);
 	}
