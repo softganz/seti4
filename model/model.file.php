@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-06-14
- * Version  :: 12
+ * Modified :: 2026-06-22
+ * Version  :: 13
  *
  * @return Object
  *
@@ -90,6 +90,7 @@ class FileModel {
 				'orderBy' => 'id',
 				'orderDir' => 'ASC',
 				'resultGroup' => NULL,
+				'cover' => false,
 			],
 			(Array) $conditions
 		);
@@ -144,6 +145,7 @@ class FileModel {
 				$conditions->orgId ? ['`file`.`orgId` = :orgId', ':orgId' => $conditions->orgId] : null,
 				$conditions->tagName ? ['`file`.`tagName` = :tagName', ':tagName' => $conditions->tagName] : null,
 				$conditions->tagNameLike ? ['`file`.`tagName` LIKE :tagNameLike', ':tagNameLike' => $conditions->tagNameLike] : null,
+				$conditions->cover ? ['`file`.`cover` = "Yes"'] : null,
 			],
 			'var' => [
 				'$ORDER$' => 'ORDER BY '.$conditions->orderBy . ' ' . $conditions->orderDir,
@@ -205,7 +207,7 @@ class FileModel {
 		// debugMsg('Upload photo of orgId '.$data->orgId.' tagName='.$data->tagName.' photoPrename '.$photoPrename);
 
 
-		// Convert upload file to array of each file
+		// Convert multiple upload files to array of each file
 		if (is_array($photoFiles['name'])) {
 			$isUploadSingleFile = false;
 			foreach ($photoFiles['name'] as $key => $value) {
@@ -375,6 +377,8 @@ class FileModel {
 
 			$picsData->link = $linkInfo;
 			$picsData->_FILES = $postFile;
+
+			$result->fileId[] = $fileId;
 			$result->items[] = $picsData;
 			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">';
 		}
