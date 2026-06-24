@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
  * Modified :: 2026-06-24
- * Version  :: 14
+ * Version  :: 15
  *
  * @return Object
  *
@@ -156,6 +156,14 @@ class FileModel {
 		]);
 	}
 
+	/**
+	 * Upload file
+	 *
+	 * @param array $photoFiles
+	 * @param array $data
+	 * @param array $options
+	 * @return object
+	 */
 	public static function upload($photoFiles, $data = NULL, $options = '{}') {
 		$defaults = '{debug: false, showDetail: true, useSourceFilename: false, fileNameLength: 30, showDetail: false}';
 		$options = sg_json_decode($options, $defaults);
@@ -243,6 +251,13 @@ class FileModel {
 			return $result;
 		}
 
+		// Create folder if not exists
+		if ($data->folder && !(file_exists($data->folder) && !is_file($data->folder))) {
+			if (!mkdir($data->folder, 0777, true)) {
+				throw new \Exception('ไม่สามารถสร้างโฟลเดอร์เพื่อเก็บไฟล์ได้', _HTTP_ERROR_NOT_ACCEPTABLE);
+			};
+		}
+
 		foreach ($uploadPhotoFiles as $postFile) {
 			//debugMsg($postFile,'$postFile');
 			if (!is_uploaded_file($postFile['tmp_name'])) {
@@ -255,11 +270,6 @@ class FileModel {
 			if (!in_array($ext, $docExtension) && !in_array($ext, $photoExtension)) {
 				$result->error[] = 'Upload error : Invalid File Type ('.$postFile['name'].')<br />';
 				continue;
-			}
-
-			// Create folder if not exists
-			if ($data->folder && !(file_exists($data->folder) && !is_file($data->folder))) {
-				mkdir($data->folder);
 			}
 
 			if (in_array($ext, $docExtension)) {
@@ -381,12 +391,12 @@ class FileModel {
 			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">';
 		}
 
-
 		if ($result->link) {
 			$result->link = rtrim($result->link,'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">');
 		}
 
 		$result->uploadfile = $uploadPhotoFiles;
+		
 		return $result;
 	}
 
@@ -605,6 +615,31 @@ class FileModel {
 		}
 
 		return $property;
+	}
+
+	/**
+	 * Get upload folder
+	 *
+	 * @param string $mainFolder
+	 * @param string $periodFolder
+	 * @return string
+	 */
+	public static function getUploadFolder(string $mainFolder, string|null $periodFolder): string {
+		$mainFolder = rtrim($mainFolder, '/');
+		$periodFolder = rtrim($periodFolder, '/');
+		if ($periodFolder === '') return $mainFolder;
+
+		$periodFolder = str_replace(
+			['%Y', '%m', '%d'],
+			[date('Y'), date('m'), date('d')],
+			$periodFolder
+		);
+
+		$folder = $mainFolder . '/' . $periodFolder;
+
+		$folder = rtrim($folder, '/');
+
+		return $folder;
 	}
 }
 ?>
