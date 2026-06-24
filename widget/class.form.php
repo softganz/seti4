@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-06-05
- * Version  :: 44
+ * Modified :: 2026-06-24
+ * Version  :: 45
  *
  * @param Array $args
  * @return Widget
@@ -251,18 +251,21 @@ class Form extends Widget {
 
 		unset($formElement->container['class'], $formElement->container['tagName']);
 
-		$ret .= '<' . $containerTagName . ' id="form-item-' . $tag_id . '" '
+		// Add open container tag when type is not hidden
+		if ($formElement->type != 'hidden') {
+			$ret .= '<' . $containerTagName . ' id="form-item-' . $tag_id . '" '
 				. 'class="form-' . (in_array($formElement->type, ['','']) ? $formElement->type : 'item -' . $tag_id) . ($containerClass ? ' ' . $containerClass : '')
 				. ($formElement->type === 'hidden' ? ' -hidden' : '')
 				. '"'
 				. ' ' . sg_implode_attr($formElement->container)
 				. '>' . _NL;
-		if ($formElement->label) {
-			$ret .= '	<label for="' . $tag_id . '" class="' . ($formElement->config->label === 'hide' ? '-hidden' : '') . '">'
-				. $formElement->label . (in_array($formElement->type, ['select', 'radio', 'checkbox']) && !preg_match('/\:$/', $formElement->label) ? ':' : '')
-				. ($formElement->require ? ' <span class="form-required" title="This field is required.">*</span>' : '')
-				. '</label>'
-				. _NL;
+			if ($formElement->label) {
+				$ret .= '	<label for="' . $tag_id . '" class="' . ($formElement->config->label === 'hide' ? '-hidden' : '') . '">'
+					. $formElement->label . (in_array($formElement->type, ['select', 'radio', 'checkbox']) && !preg_match('/\:$/', $formElement->label) ? ':' : '')
+					. ($formElement->require ? ' <span class="form-required" title="This field is required.">*</span>' : '')
+					. '</label>'
+					. _NL;
+			}
 		}
 
 		if ($isFormGroup) $ret .= '<span class="form-group">' . _NL;
@@ -306,7 +309,11 @@ class Form extends Widget {
 
 		if ($isFormGroup) $ret .= '</span><!-- form-group -->' . _NL;
 		if ($formElement->description) $ret .= _NL . '<div class="description">' . $formElement->description . '</div>';
-		$ret .= _NL . '</' . $containerTagName .'>';
+
+		// Add class container tag when type is not hidden
+		if ($formElement->type != 'hidden') {
+			$ret .= _NL . '</' . $containerTagName .'>';
+		}
 
 		$ret .= _NL . _NL;
 		return [$tag_id, $ret];
