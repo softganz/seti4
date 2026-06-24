@@ -2,8 +2,8 @@
  * sgui    :: Javascript Library For SoftGanz
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-24
- * Modify  :: 2026-06-11
- * Version :: 67
+ * Modify  :: 2026-06-24
+ * Version :: 68
  */
 
 'use strict'
@@ -3004,19 +3004,17 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 	let target = $form.data('rel')
 	let targetClass = ' class="' + ($form.data('class') != undefined ? $form.data('class') : 'ui-item -item -hover-parent') + '"'
 
-	if (isAndroidWebViewReady) Android.showToast('กำลังอัพโหลดไฟล์')
-
 	// console.log('sg-upload :: Inline upload file start and show result in '+target)
-	if ($form.data('before')) {
-		let tagName = $form.data('before')
-		let insertElement = '<' + tagName + targetClass + '><div class="loader -rotate -center"></div></' + tagName + '>'
-		let $targetElement = $this.closest(tagName).before(insertElement)
+
+	if (isAndroidWebViewReady) {
+		Android.showToast('กำลังอัพโหลดไฟล์');
 	} else {
 		notify('<div class="loader -rotate"></div> กำลังอัพโหลดไฟล์ กรุณารอสักครู่')
 	}
+
 	$form.ajaxForm({
 		success: function(data) {
-			console.log('Inline upload file complete.', data);
+			// console.log('Inline upload file complete.', data);
 			let resultElement = '';
 			if (typeof data === 'object' && "text" in data) {
 				resultElement = data.text
@@ -3032,6 +3030,10 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 					let insertElement = '<' + $form.data('prepend') + targetClass + '>' + resultElement + '</' + $form.data('prepend') + '>';
 					$(target).prepend(insertElement);
 				} else if ($form.data('before')) {
+					let tagName = $form.data('before')
+					let insertElement = '<' + tagName + targetClass + '><div class="loader -rotate -center"></div></' + tagName + '>'
+					let $targetElement = $this.closest(tagName).before(insertElement)
+
 					$targetElement.prev().html(resultElement)
 				} else if ($form.data('after')) {
 					let insertElement = '<' + $form.data('after') + targetClass + '>' + resultElement + '</' + $form.data('after') + '>';
