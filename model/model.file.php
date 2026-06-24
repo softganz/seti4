@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-06-22
- * Version  :: 13
+ * Modified :: 2026-06-24
+ * Version  :: 14
  *
  * @return Object
  *
@@ -339,40 +339,38 @@ class FileModel {
 
 			$result->query[] = R('query');
 
-
 			if ($picsData->type == 'photo') {
-				$picsData->photo = $photo = FileModel::photoProperty($upload->filename, $data->folder);
+				$picsData->photo = $photoProperty = FileModel::photoProperty($upload->filename, $data->folder);
 
-				if ($data->link == 'href') {
-					$uploadUrl = url('project/'.$data->nodeId.'/info.photo/'.$fileId);
-					$linkInfo .= '<a class="sg-action" data-rel="box" href="'.$uploadUrl.'" data-width="840" data-height="80%">';
+				if ($data->link === 'href') {
+					$uploadUrl = Url::link('project/' . $data->nodeId . '/info.photo/' . $fileId);
+					$linkInfo .= '<a class="sg-action" data-rel="box" href="' . $uploadUrl . '" data-width="840" data-height="80%">';
 				} else {
-					$uploadUrl = $photo->url;
-					$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="'.$photo->url.'" title="">';
+					$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="' . $photoProperty->url . '" title="">';
 				}
 
-				$linkInfo .= '<img class="photoitem -photo" src="'.$photo->url.'" alt="" width="100%" />';
+				$linkInfo .= '<img class="photoitem -photo" src="' . $photoProperty->url . '" alt="" width="100%" />';
 				$linkInfo .= '</a>';
 				if ($options->showDetail) $linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
 
 				$ui = new Ui('span');
 				if ($deleteUrl) {
-					$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+					$ui->add('<a class="sg-action -no-print" href="' .Url::link($deleteUrl . $fileId) . '" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
 				}
-				$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
+				$linkInfo .= '<nav class="nav -icons -hover">' . $ui->build() . '</nav>' . _NL;
 			} else {
-				$uploadUrl = cfg('paper.upload.document.url').$upload->filename;
-				$linkInfo .= '<a class="widget-button -default pdflink" href="'.$uploadUrl.'" target="_blank">'
+				$docProperty = FileModel::docProperty($upload->filename, $data->folder);
+				$linkInfo .= '<a class="widget-button -default pdflink" href="' . $docProperty->src . '" target="_blank">'
 					. '<span class="-label">'
 					. '<img class="photoitem -photo" src="//img.softganz.com/icon/icon-file.png" width="63" />'
 					. '</span>'
-					// . '<span class="title">'.$picsData->title.'</span>'
 					. '</a>';
+
 				$ui = new Ui('span');
 				if ($deleteUrl) {
-					$ui->add('<a class="sg-action -no-print" href="'.url($deleteUrl.$fileId).'" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+					$ui->add('<a class="sg-action -no-print" href="' . Url::link($deleteUrl . $fileId) . '" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
 				}
-				$linkInfo .= '<nav class="nav -icons -hover">'.$ui->build().'</nav>'._NL;
+				$linkInfo .= '<nav class="nav -icons -hover">' . $ui->build() . '</nav>' . _NL;
 			}
 
 			$picsData->link = $linkInfo;
