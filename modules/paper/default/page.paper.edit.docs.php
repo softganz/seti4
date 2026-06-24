@@ -1,15 +1,16 @@
 <?php
 /**
-* Paper   :: Document Management
-* Created :: 2019-06-02
-* Modify  :: 2025-09-25
-* Version :: 6
-*
-* @param String $nodeInfo
-* @return Widget
-*
-* @usage paper/{nodeId}/edit.docs
-*/
+ * Paper    :: Document Management
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-06-02
+ * Modified :: 2026-06-24
+ * Version  :: 7
+ *
+ * @param String $nodeInfo
+ * @return Widget
+ *
+ * @uses paper/{nodeId}/edit.docs
+ */
 
 use Softganz\DB;
 
@@ -81,7 +82,7 @@ class PaperEditDocs extends Page {
 						$fileProperty = FileModel::docProperty($doc->file, $doc->folder);
 
 						return [
-							'<a href="'.(cfg('files.log')?url('files/'.$doc->fid):cfg('url').'upload/forum/'.sg_urlencode($doc->file)).'" target="_blank">'.($doc->title?$doc->title.' ('.$doc->file.')':$doc->file).'</a>',
+							'<a href="'.(cfg('files.log')?url('files/'.$doc->fid) : $fileProperty->src).'" target="_blank">'.($doc->title?$doc->title.' ('.$doc->file.')':$doc->file).'</a>',
 							number_format($fileProperty->size)
 							. $menu,
 						];

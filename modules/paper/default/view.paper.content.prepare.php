@@ -1,16 +1,17 @@
 <?php
 /**
-* Paper   :: Render Paper Content
-* Created :: 2023-07-24
-* Modify  :: 2025-06-25
-* Version :: 2
-*
-* @param Object $$topicInfo
-* @param Object $options
-* @return String
-*
-* @usage R::View('paper.content.prepare')
-*/
+ * Paper    :: Render Paper Content
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-07-24
+ * Modified :: 2026-06-24
+ * Version  :: 3
+ *
+ * @param Object $$topicInfo
+ * @param Object $options
+ * @return String
+ *
+ * @uses R::View('paper.content.prepare')
+ */
 
 import('widget:comment.render.php');
 
@@ -177,10 +178,12 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 			$body->detail .= '<div class="docs"><strong>ไฟล์ประกอบเอกสาร</strong>'
 				. '<ol>';
 			foreach ($docs->items as $doc) {
+				$fileProperty = FileModel::docProperty($doc->file, $doc->folder);
+
 				if (cfg('files.log')) {
 					$body->detail .= '<li><a href="'.url('files/'.$doc->fid).'">'.\SG\getFirst($doc->title,$doc->file).' - '.tr('Download').'</a></li>';
 				} else {
-					$body->detail .= '<li><a href="'.cfg('url').'upload/forum/'.sg_urlencode($doc->file).'" target=_blank>'.\SG\getFirst($doc->title,$doc->file).' - '.tr('Download').'</a></li>';
+					$body->detail .= '<li><a href="' . $fileProperty->src . '" target=_blank>'.\SG\getFirst($doc->title,$doc->file).' - '.tr('Download').'</a></li>';
 				}
 			}
 			$body->detail .= '</ol></div>';

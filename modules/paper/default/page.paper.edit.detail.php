@@ -1,15 +1,16 @@
 <?php
 /**
-* Paper  :: Edit Detail
-* Created :: 2019-06-01
-* Modify  :: 2024-08-22
-* Version :: 7
-*
-* @param String $nodeInfo
-* @return Widget
-*
-* @usage paper/{nodeId}/edit.detail
-*/
+ * Paper    :: Edit Detail
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-06-01
+ * Modified :: 2026-06-24
+ * Version  :: 8
+ *
+ * @param String $nodeInfo
+ * @return Widget
+ *
+ * @uses paper/{nodeId}/edit.detail
+ */
 
 class PaperEditDetail extends Page {
 	var $nodeId;
@@ -141,8 +142,10 @@ class PaperEditDetail extends Page {
 					if ($docs->_num_rows) {
 						$doc_list .= _NL.'<div id="edit-topic-body-control-docs" class="editor" title="edit-detail-body">';
 						foreach ($docs->items as $doc) {
+							$fileProperty = FileModel::docProperty($doc->file, $doc->folder);
+
 							$docDesc = preg_replace('/[\"\']/','','"'.\SG\getFirst($doc->title,$doc->file).'"');
-							$docUrl = cfg('files.log') ? url('files/'.$doc->fid) : cfg('url').'upload/forum/'.sg_urlencode($doc->file);
+							$docUrl = cfg('files.log') ? url('files/'.$doc->fid) : $fileProperty->src;
 							if ($this->nodeInfo->property->input_format == 'markdown') {
 								$onclick = 'editor.insert("['.$docDesc.']('.$docUrl.')");return false';
 							} else {
