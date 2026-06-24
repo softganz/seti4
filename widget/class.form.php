@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-06-24
- * Version  :: 45
+ * Version  :: 46
  *
  * @param Array $args
  * @return Widget
@@ -299,7 +299,7 @@ class Form extends Widget {
 			case 'file' : $ret .= $this->_renderFile($tag_id, $name, $formElement); break;
 			case 'button' : $ret .= $this->_renderButton($tag_id, $name, $formElement); break;
 			case 'submit' : $ret .= $this->_renderSubmit($tag_id, $name, $formElement); break;
-			case 'date' : $ret .= $this->_renderDate($tag_id, $name, $formElement); break;
+			case 'day' : $ret .= $this->_renderDate($tag_id, $name, $formElement); break;
 			case 'time' : $ret .= $this->_renderTime($tag_id, $name, $formElement); break;
 			case 'hour' : $ret .= $this->_renderHour($tag_id, $name, $formElement); break;
 			case 'colorpicker' : $ret .= $this->_renderColorPicker($tag_id, $name, $formElement); break;
