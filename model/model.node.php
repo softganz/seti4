@@ -1,10 +1,10 @@
 <?php
 /**
- * Model   :: Node Model
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2021-09-30
- * Modify  :: 2026-04-30
- * Version :: 28
+ * Model    :: Node Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-09-30
+ * Modified :: 2026-06-24
+ * Version  :: 29
  *
  * @param Array $args
  * @return Object
@@ -78,6 +78,8 @@ class NodeModel {
 		$debug = $options->debug;
 		unset($conditions->options);
 
+		if (!is_numeric($options->page)) return null;
+
 		if (empty($options->page)) $options->page = 1;
 
 		$conditions = (Object) array_merge(
@@ -131,6 +133,8 @@ class NodeModel {
 		$sortBy = strtoupper($options->sort) === 'DESC' ? 'DESC' : 'ASC';
 		$page = intval($options->page);
 		$items = intval($options->items);
+
+		if ($page <= 0) $page = 1;
 
 		if ($items) {
 			$limit = 'LIMIT '.(($page - 1) * $items).','.$items;
