@@ -1,16 +1,16 @@
 <?php
 /**
- * Model   :: User Information
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2021-07-22
- * Modify  :: 2026-05-01
- * Version :: 27
+ * Model    :: User Information
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-07-22
+ * Modified :: 2026-06-24
+ * Version  :: 28
  *
  * @param Int $userId
  * @return Object
  *
- * @usage new UserModel($userId)
- * @usage UserModel::function($conditions, $options)
+ * @uses new UserModel($userId)
+ * @uses UserModel::function($conditions, $options)
  */
 
 use Softganz\DB;
@@ -829,6 +829,8 @@ class UserModel {
 	}
 
 	public static function countGroupByUserId($userId) {
+		if (!DB::tableExists('org_officer')) return 0;
+
 		try {
 			return DB::select([
 				'SELECT COUNT(*) `amt` FROM %org_officer% WHERE `uid` = :userId LIMIT 1',
