@@ -1,9 +1,9 @@
 /**
- * sgui    :: Javascript Library For SoftGanz
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2021-12-24
- * Modify  :: 2026-06-24
- * Version :: 68
+ * sgui     :: Javascript Library For SoftGanz
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-12-24
+ * Modified :: 2026-06-25
+ * Version  :: 69
  */
 
 'use strict'
@@ -645,21 +645,21 @@ function showError(response, time = 5000) {
 
 
 
-/*
-* jQuery Extension :: sg-action
-* Created : 2019-09-17
-*	written by Panumas Nontapan
-*
-*	Copyright (c) 2009 Softganz Group (https://softganz.com)
-*	Dual licensed under the MIT (MIT-LICENSE.txt)
-*	and GPL (GPL-LICENSE.txt) licenses.
-*
-*	Built for jQuery library (http://jquery.com)
-*
-*	markup example for $("#action").sgAction(event,{options}).chain();
-*
-* <a class="sg-action" data-rel="target" data-done="action[->targetAction]:target:url | ..."></a>
-*/
+/**
+ * jQuery Extension :: sg-action
+ * Created : 2019-09-17
+ *	written by Panumas Nontapan
+ *
+ *	Copyright (c) 2009 Softganz Group (https://softganz.com)
+ *	Dual licensed under the MIT (MIT-LICENSE.txt)
+ *	and GPL (GPL-LICENSE.txt) licenses.
+ *
+ *	Built for jQuery library (http://jquery.com)
+ *
+ *	markup example for $("#action").sgAction(event,{options}).chain();
+ *
+ * <a class="sg-action" data-rel="target" data-done="action[->targetAction]:target:url | ..."></a>
+ */
 (function($) { // sg-action
 	let version = '1.02';
 	let sgActionType = 'click';
@@ -986,11 +986,11 @@ $(document).on('submit','form[data-confirm]',function(ele) { // confirm box
 })
 
 /*
-* jQuery Extension :: sg-form :: Softganz form
-* written by Panumas Nontapan
-* https://softganz.com
-* Using <form class="sg-form"></form>
-*/
+ * jQuery Extension :: sg-form :: Softganz form
+ * written by Panumas Nontapan
+ * https://softganz.com
+ * Using <form class="sg-form"></form>
+ */
 $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 	let element = this;
 	let $this = $(this)
@@ -1072,10 +1072,13 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 	if (debugSG) console.log('Result to ' + relTarget);
 
 	if ($this.hasClass('-upload')) {
-		if (debugSG) console.log('SOFTGANZ UPLAOD FILE')
+		debugSG = $this.find('#edit-debug').val() === 'upload';
+
+		if (debugSG) console.log('SOFTGANZ UPLAOD FILE');
+
 		$this.ajaxSubmit({
 			success: function(html) {
-				if (debugSG) console.log('SG-FORM.-UPLOAD ajaxSubmit upload file complete.');
+				if (debugSG) console.log('SG-FORM.-UPLOAD ajaxSubmit upload file complete.', html);
 				if (onComplete == 'remove') {
 					$this.remove()
 				} else if (onComplete == 'close' || onComplete == 'closebox') {
@@ -1109,10 +1112,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			error: function(response) {
 				showError(response);
 
-				if (debugSG) {
-					console.log(response);
-					sgUpdateData(data.responseText, relTarget,$this);
-				}
+				if (debugSG) console.log(response);
 			}
 		});
 	} else {
@@ -2993,18 +2993,20 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 
 
 /*
-* Softganz inline upload file
-* written by Panumas Nontapan
-* https://softganz.com
-* Using <form class="sg-upload"><input class="inline-uplaod" type="file" /></form>
-*/
-$(document).on('change', "form.sg-upload .inline-upload", function() {
+ * Softganz inline upload file
+ * written by Panumas Nontapan
+ * https://softganz.com
+ * Using <form class="sg-upload"><input class="inline-uplaod" type="file" /></form>
+ */
+$(document).on('change', "form.sg-upload .inline-upload", function() { // sg-upload
 	let $this = $(this)
 	let $form = $this.closest("form")
 	let target = $form.data('rel')
 	let targetClass = ' class="' + ($form.data('class') != undefined ? $form.data('class') : 'ui-item -item -hover-parent') + '"'
 
-	// console.log('sg-upload :: Inline upload file start and show result in '+target)
+		debugSG = $form.find('#edit-debug').val() === 'upload';
+
+		if (debugSG) console.log('sg-upload :: Inline upload file start and show result in '+target)
 
 	if (isAndroidWebViewReady) {
 		Android.showToast('กำลังอัพโหลดไฟล์');
@@ -3014,7 +3016,7 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 
 	$form.ajaxForm({
 		success: function(data) {
-			// console.log('Inline upload file complete.', data);
+			if (debugSG) console.log('Inline upload file complete.', data);
 			let resultElement = '';
 			if (typeof data === 'object' && "text" in data) {
 				resultElement = data.text
@@ -3052,8 +3054,13 @@ $(document).on('change', "form.sg-upload .inline-upload", function() {
 			// 	sgBoxBack({close: true})
 			// }
 		},
-		error: function(xhr, textStatus, errorThrown){
-			notify(errorThrown, 5000)
+		error: function(response, textStatus, errorThrown){
+			if (debugSG) {
+				console.log('response: ', response);
+				console.log('textStatus: ' + textStatus);
+				console.log('errorThrown: ' + errorThrown)
+			}
+			showError(response);
 		}
 	}).submit()
 });
