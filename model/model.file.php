@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-06-24
- * Version  :: 15
+ * Modified :: 2026-06-25
+ * Version  :: 16
  *
  * @return Object
  *
@@ -303,14 +303,14 @@ class FileModel {
 				'tpid' => $data->nodeId,
 				'cid' => SG\getFirst($data->cid),
 				'type' => in_array($ext, $docExtension) ? 'doc' : 'photo',
-				'title' => SG\getFirst($data->title, $postFile['name']),
 				'tagName' => SG\getFirst($data->tagName, $data->tagname),
 				'folder' => SG\getFirst($data->folder),
 				'orgId' => SG\getFirst($data->orgId, $data->orgid),
 				'userId' => SG\getFirst($data->userId, $data->uid,i()->uid),
-				'file' => $photo_upload,
+				'fileName' => $photo_upload,
 				'refId' => SG\getFirst($data->refId, $data->refid),
-				'description' => SG\getFirst($data->description),
+				'title' => SG\getFirst($data->title, $postFile['name']),
+				'description' => is_array($data->description) ? $postFile['name'] : $data->description,
 				'timestamp' => 'func.NOW()',
 				'ip' => ip2long(GetEnv('REMOTE_ADDR')),
 				'link' => NULL,
@@ -325,7 +325,7 @@ class FileModel {
 
 			//$ret.='<p>Upload file '.$postFile['name'].' save complete.</p>';
 
-			mydb::query(
+			$insertId = DB::query([
 				'INSERT INTO %topic_files%
 				(
 					`fid`, `tpid`, `cid`, `type`, `orgId`, `uid`, `refId`
@@ -336,16 +336,16 @@ class FileModel {
 				) VALUES (
 				  :fileId, :nodeId, :cid, :type, :orgId, :userId, :refId
 				, :tagName
-				, :folder, :file
+				, :folder, :fileName
 				, :title, :description
 				, :timestamp, :ip
 				) ON DUPLICATE KEY UPDATE
-				`file` = :file
+				`file` = :fileName
 				, `title` = :title',
-				$picsData
-			);
+				'var' => $picsData
+			])->insertId();
 
-			if (empty($picsData->fileId)) $fileId = $picsData->fileId = mydb()->insert_id;
+			if (empty($picsData->fileId)) $fileId = $picsData->fileId = $insertId;
 
 			$result->query[] = R('query');
 
@@ -618,28 +618,26 @@ class FileModel {
 	}
 
 	/**
-	 * Get upload folder
+	 * Get upload folder name with format and not empty
 	 *
-	 * @param string $mainFolder
-	 * @param string $periodFolder
+	 * @param array $folders
 	 * @return string
 	 */
-	public static function getUploadFolder(string $mainFolder, string|null $periodFolder): string {
-		$mainFolder = rtrim($mainFolder, '/');
-		$periodFolder = rtrim($periodFolder, '/');
-		if ($periodFolder === '') return $mainFolder;
+	public static function getUploadFolder(array $folders = []): string {
+		// Remove empty value except 0
+		$folders = array_filter($folders, fn($value) => $value !== '' && $value !== null && $value !== false);
 
-		$periodFolder = str_replace(
-			['%Y', '%m', '%d'],
-			[date('Y'), date('m'), date('d')],
-			$periodFolder
-		);
+		foreach ($folders as &$value) {
+			$value = rtrim($value, '/');
+			// Replace format with value
+			$value = str_replace(
+				['%Y', '%m', '%d'],
+				[date('Y'), date('m'), date('d')],
+				$value
+			);
+		}
 
-		$folder = $mainFolder . '/' . $periodFolder;
-
-		$folder = rtrim($folder, '/');
-
-		return $folder;
+		return implode('/', $folders);
 	}
 }
 ?>
