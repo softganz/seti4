@@ -1,15 +1,16 @@
 <?php
 /**
-* Paper   :: Edit Photo
-* Created :: 2019-06-01
-* Modify  :: 2025-07-14
-* Version :: 4
-*
-* @param String $nodeInfo
-* @return Widget
-*
-* @usage paper/{nodeId}/edit.photo
-*/
+ * Paper    :: Edit Photo
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-06-01
+ * Modified :: 2026-06-27
+ * Version  :: 5
+ *
+ * @param String $nodeInfo
+ * @return Widget
+ *
+ * @uses paper/{nodeId}/edit.photo
+ */
 
 class PaperEditPhoto extends Page {
 	var $nodeId;
@@ -85,7 +86,6 @@ class PaperEditPhoto extends Page {
 									'rel' => 'box',
 									'attribute' => ['data-width' => 'full'],
 								]),
-								// 'navigator' => $this->right->edit ? '<a class="sg-action -hover" href="'.url('api/project/fund/info/'.$this->orgId.'/file.delete', ['fileId' => $photo->id]).'" data-rel="none" data-done="remove:parent .-hover-parent" data-title="ลบไฟล์" data-confirm="ต้องการไฟล์ กรุณายืนยัน?"><i class="icon -material -gray">cancel</i></a>' : NULL,
 							];
 						},
 						(Array) $this->nodeInfo->photos
