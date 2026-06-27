@@ -1,13 +1,14 @@
 <?php
 /**
- * Admin   :: Install Basic Database Table
- * Created :: 2016-11-08
- * Modify  :: 2025-08-20
- * Version :: 10
+ * Admin    :: Install Basic Database Table
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2016-11-08
+ * Modified :: 2026-07-27
+ * Version  :: 11
  *
  * @return Widget
  *
- * @usage admin/install
+ * @uses admin/install
  */
 
 use Softganz\DB;
@@ -94,7 +95,7 @@ class AdminInstall extends Page {
 							return new Card([
 								'children' => [
 									new ListTile(['title' => 'Create table', 'leading' => new Icon('cloud_circle')]),
-									new Container(['class' => '-sg-paddingnorm', 'child' => $query]),
+									new Container(['class' => '-sg-paddingnorm', 'child' => '<pre>' . $query . '</pre>']),
 								], // children
 							]);
 						},
@@ -395,10 +396,10 @@ class AdminInstall extends Page {
 		);';
 
 
-		// Create partition from now to 20 year
+		// Create partition from now to 60 Mrecords
 		$partition = '';
-		for ($year = date('Y'); $year <= date('Y')+20; $year++) {
-			$partition .= 'PARTITION p_'.$year.' VALUES LESS THAN ('.($year+1).'),'._NL."\t\t";
+		for ($counterId = 1; $counterId <= 30; $counterId++) {
+			$partition .= 'PARTITION p_' . str_pad(($counterId - 1) * 2, 2, '0', STR_PAD_LEFT) . ' VALUES LESS THAN (' . ($counterId * 2000000) . '),' . _NL . "\t\t";
 		}
 		$partition .= 'PARTITION p_future VALUES LESS THAN (MAXVALUE)';
 
@@ -415,15 +416,15 @@ class AdminInstall extends Page {
 			`version` varchar(4) default NULL,
 			`platform` varchar(10) default NULL,
 			`browsername` varchar(30) default NULL,
-			PRIMARY KEY  (`id`, `log_date`),
-			KEY `user` (`user`,`id`),
-			KEY `ip` (`ip`,`id`),
+			PRIMARY KEY  (`id`),
+			KEY `user` (`user`),
+			KEY `ip` (`ip`),
 			KEY `log_date` (`log_date`),
 			KEY `url` (`url`)
 		)
-		PARTITION BY RANGE (YEAR(`log_date`))
+		PARTITION BY RANGE (`id`)
 		(
-			'.$partition.'
+			' . $partition . '
 		);';
 
 		$query->counter_bot = 'CREATE TABLE %counter_bot% LIKE %counter_log%';
