@@ -128,7 +128,7 @@ $cfg['debug.timer.request'] = false;
 $cfg['debug.query.all'] = false;
 
 // Topic options
-$cfg['topic.doc.file_ext'] = ['pdf','doc','docx','xls','xlsx','ppt','pptx','mmap','mm']; // For topic upload file extension check
+$cfg['topic.doc.file_ext'] = ['pdf','doc','docx','xls','xlsx','ppt','pptx']; // For topic upload file extension check
 $cfg['topic.allowedtags.normal'] = '<font><h3><h4><h5><h6><p><b><i><u><strong><em><a><ul><ol><li><pre><span><hr><blockquote><summary><!-->';
 $cfg['topic.allowedtags.photo'] = '<img>';
 $cfg['topic.allowedtags.video'] = '<object><embed><param><iframe>';
