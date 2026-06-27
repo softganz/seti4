@@ -1,14 +1,15 @@
 <?php
 /**
-* Stats   :: List Counter Log
-* Created :: 2018-12-15
-* Modify  :: 2025-07-23
-* Version :: 7
-*
-* @return Widget
-*
-* @usage stats/list
-*/
+ * Stats    :: List Counter Log
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2018-12-15
+ * Modified :: 2026-06-27
+ * Version  :: 8
+ *
+ * @return Widget
+ *
+ * @uses stats/list
+ */
 
 use Softganz\DB;
 
@@ -64,22 +65,22 @@ class StatsList extends Page {
 		$tables = new Table([
 			'thead' => ['no' => 'no', 'Id', 'Log Date', 'User','IP']
 		]);
-		foreach ($counters->items as $rs) {
+		foreach ($counters->items as $counter) {
 			$tables->rows[] = [
 				++$no,
-				'<font color=brown>'.$rs->id.'</font>',
-				'<em><font color=brown>'.$rs->log_date.'</font></em>'.($rs->new_user ? ' <i class="icon -material">new_releases</i>' : ''),
-				($this->right->admin ? '<font color=brown><a href="'.url('stats/list', ['user' => $rs->user]).'" title="Statistics of user '.$rs->user_name.'">'.$rs->user_name.'</a></font>' : '<font color=brown>'.$rs->user_name.'</font>'),
-				($this->right->admin ? '<a href="'.url('stats/list', ['ip' => long2ip($rs->ip)]).'" title="Statistics of ip '.long2ip($rs->ip).'"  data-width="full">'.long2ip($rs->ip).'</a>' : sg_sub_ip(long2ip($rs->ip))),
+				'<font color=brown>'.$counter->id.'</font>',
+				'<em><font color=brown>'.$counter->log_date.'</font></em>'.($counter->new_user ? ' <i class="icon -material">new_releases</i>' : ''),
+				($this->right->admin ? '<font color=brown><a href="'.url('stats/list', ['user' => $counter->user]).'" title="Statistics of user '.$counter->user_name.'">'.$counter->user_name.'</a></font>' : '<font color=brown>'.$counter->user_name.'</font>'),
+				($this->right->admin ? '<a href="'.url('stats/list', ['ip' => long2ip($counter->ip)]).'" title="Statistics of ip '.long2ip($counter->ip).'"  data-width="full">'.long2ip($counter->ip).'</a>' : sg_sub_ip(long2ip($counter->ip))),
 			];
 
 			$tables->rows[] = [
 				'<td></td>',
 				'',
 				'<td colspan="3">'
-				. ($this->right->admin ? '<font color="#A7A7A7">url:</font><a href="'.$rs->url.'" target="_blank">'.urldecode($rs->url).'</a> <a href="'.url('stats/list', ['url' => $rs->url]).'"><i class="icon -material">view_list</i></a><br />':'')
-				. (user_access(true) ? '<font color="#A7A7A7">referer:</font><a href="'.$rs->referer.'" target=_blank><font color=#A7A7A7>'.urldecode($rs->referer).'</font></a><br />':'')
-				. '<font color=#A7A7A7>browser:'.$rs->browser.'</font></td>',
+				. ($this->right->admin ? '<font color="#A7A7A7">url:</font><a href="'.$counter->url.'" target="_blank">'.urldecode($counter->url).'</a> <a href="'.url('stats/list', ['url' => $counter->url]).'"><i class="icon -material">view_list</i></a><br />':'')
+				. (user_access(true) ? '<font color="#A7A7A7">referer:</font><a href="'.$counter->referer.'" target=_blank><font color=#A7A7A7>'.urldecode($counter->referer).'</font></a><br />':'')
+				. '<font color=#A7A7A7>browser:'.$counter->browser.'</font></td>',
 			];
 		}
 
@@ -118,7 +119,7 @@ class StatsList extends Page {
 			'SELECT log.*, u.`name` `user_name`
 			FROM
 			(
-				SELECT *
+				SELECT `id`, `log_date`, `user`, `ip`, `url`, `referer`, `browser`
 				FROM %counter_log% l
 				%WHERE%
 				ORDER BY l.`id` $SUBORDER$
@@ -140,7 +141,6 @@ class StatsList extends Page {
 				'$LIMIT$' => 'LIMIT '.($hasPara ? ($this->page-1)*$this->items.','.$this->items : $this->items),
 				'$SUBORDER$' => $hasPara ? 'DESC' : 'ASC',
 			],
-			'options' => ['key' => 'id']
 		]);
 
 
