@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-06-25
- * Version  :: 16
+ * Modified :: 2026-06-27
+ * Version  :: 17
  *
  * @return Object
  *
@@ -328,13 +328,15 @@ class FileModel {
 			$insertId = DB::query([
 				'INSERT INTO %topic_files%
 				(
-					`fid`, `tpid`, `cid`, `type`, `orgId`, `uid`, `refId`
+				  `fid`, `tpid`, `cid`, `type`
+				, `orgId`, `uid`, `refId`
 				, `tagName`
 				, `folder`, `file`
 				, `title`, `description`
 				, `timestamp`, `ip`
 				) VALUES (
-				  :fileId, :nodeId, :cid, :type, :orgId, :userId, :refId
+				  :fileId, :nodeId, :cid, :type
+				, :orgId, :userId, :refId
 				, :tagName
 				, :folder, :fileName
 				, :title, :description
@@ -386,7 +388,7 @@ class FileModel {
 			$picsData->link = $linkInfo;
 			$picsData->_FILES = $postFile;
 
-			$result->fileId[] = $fileId;
+			$result->fileId[] = $picsData->fileId;
 			$result->items[] = $picsData;
 			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">';
 		}
