@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-06-25
- * Version  :: 69
+ * Modified :: 2026-06-28
+ * Version  :: 70
  */
 
 'use strict'
@@ -1070,6 +1070,15 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 	if (debugSG) console.log('Send form to ' + $this.attr('action'));
 	if (debugSG) console.log('Result to ' + relTarget);
+
+	// Disable submit button on submit
+	if ($this.data('disableOnSubmit')) {
+		$this.find('button')
+			.attr('disabled', 'disabled')
+			.addClass('-disabled')
+			.find('span')
+			.html($this.data('disableOnSubmit'));
+	}
 
 	if ($this.hasClass('-upload')) {
 		debugSG = $this.find('#edit-debug').val() === 'upload';

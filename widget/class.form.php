@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-06-24
- * Version  :: 46
+ * Modified :: 2026-06-28
+ * Version  :: 47
  *
  * @param Array $args
  * @return Widget
@@ -35,6 +35,7 @@ class Form extends Widget {
 	var $title;
 	var $description;
 	var $footer;
+	var $disableOnSubmit = false;
 	var $onSubmit;
 	var $onFormSubmit;
 	var $config; // @deprecated
@@ -118,6 +119,7 @@ class Form extends Widget {
 			. ($this->enctype ? ' enctype="multipart/form-data"' : '')
 			. ($this->action ? ' action="' . $this->action . '"' : '')
 			. (isset($this->checkValid) && $this->checkValid ? ' data-checkvalid="true"' : '')
+			. ($this->disableOnSubmit ? ' data-disable-on-submit="' . htmlspecialchars($this->disableOnSubmit) . '"' : '')
 			. (isset($this->attribute) ? ' ' . (is_array($this->attribute) ? sg_implode_attr($this->attribute) : $this->attribute) : '')
 			. (isset($this->config->attr) ? ' ' . (is_array($this->config->attr) ? sg_implode_attr($this->config->attr) : $this->config->attr) : '')
 			. (isset($this->config->data) ? ' ' . (is_array($this->config->data) ? sg_implode_attr($this->config->data) : $this->config->data) : '')
@@ -549,6 +551,8 @@ class Form extends Widget {
 
 	private function _renderSelectOption($choice, $inputValue) {
 		$ret = '';
+		// debugMsg($choice, '$choice');
+		// debugMsg('<pre>'.print_r($choice,1).'</pre>');
 		foreach ($choice as $optionKey => $optionValue) {
 			if (is_object($optionValue)) $optionValue = (Array) $optionValue;
 
@@ -585,7 +589,9 @@ class Form extends Widget {
 				for ($i = $out[1]; $i <= $out[2]; $i++) {
 					$ret .= '<option value="' . $i . '"' . (in_array($i, $inputValue) ? ' selected="selected"' : '') . '>' . $i . '</option>' . _NL;
 				}
-			} else if (preg_match('/\,/', $optionValue)) {
+			} else if (is_int($optionKey) && preg_match('/\,/', $optionValue)) {
+				// debugMsg($optionKey . ' IS ' . gettype($optionKey));
+				// debugMsg(ctype_digit((string)$key));
 				// Option format 1,5,10
 				foreach (explode(',', $optionValue) as $value) {
 					$ret .= '<option value="' . $value . '"' . (in_array($value, $inputValue) ? ' selected="selected"' : '') . '>' . $value . '</option>' . _NL;
