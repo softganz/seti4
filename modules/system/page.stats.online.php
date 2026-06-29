@@ -1,10 +1,10 @@
 <?php
 /**
- * Stats   :: Current User Online
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2018-09-01
- * Modify  :: 2026-05-21
- * Version :: 6
+ * Stats    :: Current User Online
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2018-09-01
+ * Modified :: 2026-06-29
+ * Version  :: 7
  *
  * @return Widget
  *
@@ -19,7 +19,7 @@ class StatsOnline extends Page {
 
 	function __construct() {
 		parent::__construct([
-			'onlineType' => Request::get('show'),
+			'onlineType' => Request::get('show', 'en'),
 			$this->right = (Object) [
 				'fullView' => user_access('administer contents,administer watchdogs'),
 			]
@@ -32,25 +32,13 @@ class StatsOnline extends Page {
 	 * @return object
 	 */
 	function build(): object {
-		$today = today();
-
-		$yesterday = date('Y-m-d', mktime(0, 0, 0, $today->mon, $today->mday - 1, $today->year));
-
-		$dayHits = DB::select([
-			'SELECT `log_date`, `hits`, `users`
-			FROM %counter_day%
-			%WHERE%
-			ORDER BY log_date DESC LIMIT 2',
-			'where' => [
-				'%WHERE%' => [
-					['log_date >= :yesterday', ':yesterday' => $yesterday]
-				],
-			],
-		]);
+		$today = date('Y-m-d');
+		$yesterday = date('Y-m-d', strtotime("-1 day"));
+		$dayHits = $this->getDayHits($yesterday);
 
 		foreach ($dayHits->items as $hit) {
-			if ($hit->log_date == $today->date) $today_hits = $hit;
-			else if ($hit->log_date == $yesterday) $yesterday_hits = $item;
+			if ($hit->log_date === $today) $todayHits = $hit;
+			else if ($hit->log_date === $yesterday) $yesterdayHits = $hit;
 		}
 
 		return new Scaffold([
@@ -106,8 +94,8 @@ class StatsOnline extends Page {
 					new Container([
 						'class' => '-sg-paddingnorm',
 						'children' => [
-							'Today <strong>' . number_format($today_hits->hits) . '</strong> hits from <strong>' . number_format($today_hits->users) . '</strong> users. ',
-							'Yesterday <strong>' . number_format($yesterday_hits->hits) . '</strong> hits from <strong>' . number_format($yesterday_hits->users) . '</strong> users.'
+							'Today <strong>' . number_format($todayHits->hits) . '</strong> hits from <strong>' . number_format($todayHits->users) . '</strong> users. ',
+							'Yesterday <strong>' . number_format($yesterdayHits->hits) . '</strong> hits from <strong>' . number_format($yesterdayHits->users) . '</strong> users.'
 						],
 					]),
 					new Table([
@@ -129,15 +117,23 @@ class StatsOnline extends Page {
 								$full_ip = $rs->ip;
 								$show_ip = $this->right->fullView ? $full_ip : sg_sub_ip($full_ip);
 								$current_date = date('Y-m-d');
-
 								return [
 									++$no,
 									$this->right->fullView ? new Button([
 										'href' => Url::link('stats/list', ['ip' => $full_ip]),
 										'text' => $show_ip,
 									]) : $show_ip,
-
-									$rs->username ? '<img class="profile-photo -sg-32" src="'.BasicModel::user_photo($rs->username) . '" />' : '',
+									$rs->username && user_access('access user profiles') ? (
+										$rs->uid === 1 ? new ProfilePhoto($rs->username) : new Button([
+											'class' => 'sg-action',
+											'href' => $rs->uid === 1 ? null : Url::link('profile/' . $rs->uid),
+											'rel' => 'box',
+											'boxWidth' => 640,
+											'boxType' => 'transparent',
+											'text' => new ProfilePhoto($rs->username),
+											'title' => 'User profile'
+										])
+									 ) : '',
 									$this->right->fullView && $rs->name ? '<a href="' . Url::link('stats/list',array('user'=>$rs->uid)) . '">'.$rs->name.'</a>' : $rs->name,
 									date(($current_date != date('Y-m-d',$rs->coming) ? 'Y-m-d ' : '') . 'H:i:s',$rs->coming),
 									date(($current_date != date('Y-m-d',$rs->access) ? 'Y-m-d ' : '') . 'H:i:s',$rs->access),
@@ -158,6 +154,18 @@ class StatsOnline extends Page {
 					]), // Table
 				], // children
 			]), // Widget
+		]);
+	}
+
+	private function getDayHits($date) {
+		return DB::select([
+			'SELECT `log_date`, `hits`, `users`
+			FROM %counter_day%
+			%WHERE%
+			ORDER BY `log_date` DESC LIMIT 2',
+			'%WHERE%' => [
+				['`log_date` >= :yesterday', ':yesterday' => $date]
+			],
 		]);
 	}
 }
