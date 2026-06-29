@@ -1,14 +1,15 @@
 <?php
 /**
-* Admin   :: Load Test Count
-* Created :: 2024-10-03
-* Modify  :: 2024-10-03
-* Version :: 1
-*
-* @return Widget
-*
-* @usage admin/log/counter/count
-*/
+ * Admin    :: Load Test Count
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-10-03
+ * Modified :: 2026-06-29
+ * Version  :: 2
+ *
+ * @return Widget
+ *
+ * @uses admin/log/counter/count
+ */
 
 use Softganz\DB;
 
@@ -30,13 +31,11 @@ class AdminLogCounterCount extends Page {
 	function build() {
 		$data = $this->data();
 
-		// debugMsg(mydb()->_query);
-
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => 'Log Counter Count',
 				'child' => new Form([
-					'class' => 'sg-form form-report',
+					'class' => 'sg-form form-report -full-width',
 					'method' => 'GET',
 					'action' => url(q()),
 					'rel' => '#main',
@@ -89,7 +88,7 @@ class AdminLogCounterCount extends Page {
 							], // children
 						]);
 					},
-					$data->items
+					(Array) $data->items
 				),
 				$this->script()
 			]), // Widget
@@ -105,6 +104,10 @@ class AdminLogCounterCount extends Page {
 	}
 
 	private function data() {
+		$table = $this->counter === 'loadtest' ? '%ztest_counter_log%' : '%counter_log%';
+		
+		if (!DB::tableExists($table)) return null;
+
 		return DB::select([
 			'SELECT DATE_FORMAT(`log_date`,"%Y-%m-%d %H:%i") `label`,COUNT(*) `amt`
 			FROM $TABLE$
@@ -118,7 +121,7 @@ class AdminLogCounterCount extends Page {
 				]
 			],
 			'var' => [
-				'$TABLE$' => $this->counter === 'loadtest' ? '%ztest_counter_log%' : '%counter_log%',
+				'$TABLE$' => $table,
 				'$MORETHAN$' => $this->moreThan ? 'HAVING `amt` > :moreThan' : '',
 				':moreThan' => $this->moreThan,
 			]
