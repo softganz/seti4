@@ -1,10 +1,10 @@
 <?php
 /**
- * Library :: Define Constants
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2000-xx-xx
- * Modify  :: 2026-05-21
- * Version :: 4
+ * Library  :: Define Constants
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2000-xx-xx
+ * Modified :: 2026-06-30
+ * Version  :: 5
  */
 
 define('_STRIPSLASHES', 1);
@@ -119,20 +119,24 @@ define('_JSON_PATTERN', trim('
 
 define('_HEADER_BACK', '<a class="sg-action" data-rel="back"><i class="icon -material">arrow_back</i></a>');
 
-define('_HTTP_OK', 200);
-define('_HTTP_OK_NO_CONTENT', 204);	// NO CONTENT SEND TO BROWSER!!!
-define('_HTTP_ERROR_BAD_REQUEST', 400); // Bad Request
-define('_HTTP_ERROR_UNAUTHORIZED', 401); // Unauthorized : Not sign in
-define('_HTTP_ERROR_FORBIDDEN', 403); // Forbidden : Sign in ready but no right
-define('_HTTP_ERROR_NOT_FOUND', 404); // Page Not Found
-define('_HTTP_ERROR_NOT_ALLOWED', 405); // Method Not Allowed : Page found but request not allow
-define('_HTTP_ERROR_NOT_ACCEPTABLE', 406); // Not Acceptable : Page found but data incomplete
-define('_HTTP_ERROR_TIMEOUT', 408); // Request Time-out
-define('_HTTP_ERROR_UNSUPPORT', 415); // Unsupported Media Type : Wrong media type on upload
-define('_HTTP_ERROR_UNPROCESSABLE_ENTRY', 422); // Unprocessable Entry
-define('_HTTP_ERROR_TOO_MANY_REQUESTS', 442922); // Too Many Requests
-define('_HTTP_ERROR_NOT_IMPLEMENTED', 501); // Unsupported Media Type : Wrong media type on upload
-
+define('_HTTP_OK', 200); // OK: Everything worked successfull.
+define('_HTTP_OK', 201); // Created: A new resource was successfully created.
+define('_HTTP_OK_NO_CONTENT', 204);	// No Content: No content send to browser.
+define('_HTTP_ERROR_BAD_REQUEST', 400); // Bad Request: The request sent to the server is incorrect or invalid.
+define('_HTTP_ERROR_UNAUTHORIZED', 401); // Unauthorized: You need to log in or provide valid authentication.
+define('_HTTP_ERROR_FORBIDDEN', 403); // Forbidden: You don't hav permission to access this resource.
+define('_HTTP_ERROR_NOT_FOUND', 404); // Not Found: The page or resource you're looking for doesn't exists.
+define('_HTTP_ERROR_NOT_ALLOWED', 405); // Method Not Allowed : Page found but request not allow.
+define('_HTTP_ERROR_NOT_ACCEPTABLE', 406); // Not Acceptable : Page found but data incomplete.
+define('_HTTP_ERROR_TIMEOUT', 408); // Timeout: Request time out.
+define('_HTTP_ERROR_UNSUPPORT', 415); // Unsupported Media Type : Wrong media type on upload.
+define('_HTTP_ERROR_UNPROCESSABLE_ENTRY', 422); // Unprocessable Entry: Unprocessable entry.
+define('_HTTP_ERROR_TOO_MANY_REQUESTS', 429); // Too Many Requests: Too Many Requests.
+define('_HTTP_ERROR_SERVER_ERROR', 500); // Internal Server Error: Something went wrong on the server side.
+define('_HTTP_ERROR_NOT_IMPLEMENTED', 501); // Not Implemented: Not implemented.
+define('_HTTP_ERROR_BAD_GATEWAY', 502); // Bad Gateway: One server recieved and invalid response from another server.
+define('_HTTP_ERROR_SERVICE_UNAVAILABLE', 503); // Service Unavailable: The server temporarily unavailable or overload.
+define('_HTTP_ERROR_GATEWAY_TIMEOUT', 504); // Gateway Timeout: A server too long to response.
 define('_ERROR_MSG_QUERY_ERROR', 'เกิดความผิดพลาดในการบันทึกข้อมูล');
 define('_ERROR_MSG_ACCESS_DENIED', 'Access denied');
 
