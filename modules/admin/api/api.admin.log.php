@@ -3,8 +3,8 @@
  * Admin    :: Log API
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-06-28
- * Modified :: 2026-06-28
- * Version  :: 1
+ * Modified :: 2026-06-29
+ * Version  :: 2
  *
  *  @usage api/admin/log..[action]
  */
@@ -53,7 +53,7 @@ class AdminLogApi extends PageApi {
 
 		for ($i = 1; $i <= $post->numberOfPartition; $i++) {
 			$startRecordId += $post->numberOfRecord;
-			$stmt .= 'PARTITION p_' . ($startRecordId / 1000000)  . ' VALUES LESS THAN ( ' . $startRecordId . ' ),' . _NL;
+			$stmt .= 'PARTITION p_' . ($startRecordId / 1000000)  . ' VALUES LESS THAN ( ' . $startRecordId + 1 . ' ),' . _NL;
 		}
 		$stmt .= 'PARTITION p_future VALUES LESS THAN MAXVALUE
 		)';
