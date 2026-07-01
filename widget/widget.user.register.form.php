@@ -1,10 +1,10 @@
 <?php
 /**
- * User    :: Register Form Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2019-05-06
- * Modify  :: 2026-03-20
- * Version :: 13
+ * User     :: Register Form Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-05-06
+ * Modified :: 2026-07-01
+ * Version  :: 14
  *
  * @param Object $register
  * @return Widget
@@ -172,13 +172,14 @@ class UserRegisterFormWidget extends Widget {
 					'attribute' => ['onChange' => 'checkComplete.checkAccept(this)']
 				],
 				'verify' => [
-					'type' => 'hidden',
+					'type' => 'text',
 					'label' => 'Verify your account',
 					'require' => true,
 					'pretext' => '<em id="spamword" class="spamword"></em> ',
 					'placeholder' => 'พิมพ์อักขระที่ปรากฎด้านหน้าของช่อง',
 					'description' => 'ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
-					'attribute' => ['onKeyUp' => 'checkComplete.checkAllComplete(this)']
+					'attribute' => ['onKeyUp' => 'checkComplete.checkAllComplete(this)'],
+					'container' => ['class' => '-hidden'],
 				],
 				'submit' => [
 					'type' => 'button',
