@@ -13,9 +13,9 @@
 * the Free Software Foundation; either version 2 of the License.
 * ============================================
 
-* Created :: 2007-07-09
-* Modify  :: 2026-05-13
-* Version :: 15
+* Created  :: 2007-07-09
+* Modified :: 2026-07-07
+* Version  :: 16
 */
 
 use Softganz\DB;
@@ -627,9 +627,8 @@ class Firebase {
 		return $ret;
 	}
 
-	function set($key,$data) {
+	function patch($key,$data) {
 		$url = 'https://'.$this->url.'.firebaseio.com/'.$this->table.'/'.$key.'.json';
-		//$putData->{$key}=$data;
 		$data_string = json_encode($data);
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
@@ -648,10 +647,28 @@ class Firebase {
 		$ret = curl_exec($ch);
 		ob_end_clean();
 
-		//debugMsg($url);
-		//debugMsg($data,'$data');
-		//debugMsg($data_string);
-		//debugMsg($ret);
+		return $ret;
+	}
+
+	function set($key,$data) {
+		$url = 'https://'.$this->url.'.firebaseio.com/'.$this->table.'/'.$key.'.json';
+		$data_string = json_encode($data);
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json',
+			'Content-Length: ' . strlen($data_string))
+			);
+
+		ob_start();
+		$ret = curl_exec($ch);
+		ob_end_clean();
 
 		return $ret;
 	}
