@@ -1,19 +1,25 @@
 <?php
 /**
- * Counter :: Counter Model
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2021-11-26
- * Modify  :: 2026-05-14
- * Version :: 19
+ * Counter  :: Counter Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-11-26
+ * Modified :: 2026-07-12
+ * Version  :: 20
  *
- * @usage new CounterModel([])
- * @usage CounterModel::function($conditions, $options)
+ * @uses new CounterModel([])
+ * @uses CounterModel::function($conditions, $options)
  */
 
 use Softganz\DB;
 
 class CounterModel {
 	public static function hit() {
+		$noLogCounterUrl = cfg('system')->noLogCounterUrl;
+		$resuestUrl = R('request');
+
+		// หาก request ตรงกับค่าใน array ของ noLogCounterUrl ให้ return false (ไม่บันทึก counter)
+		if (in_array($resuestUrl, (array) $noLogCounterUrl)) return false;
+
 		$today = today();
 
 		Cache::clear_expire();
