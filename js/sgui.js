@@ -22,7 +22,7 @@ let isFlutterInAppWebViewReady = false
 // Import old library that will deprecated
 import('./deprecated/sgui.inlineedit.v1.js')
 
-console.log('SG-UI Version ' + sgUiVersion + ' loaded')
+console.log('SG-UI Version ' + sgUiVersion + ' loaded. 5')
 
 window.addEventListener(
 	"flutterInAppWebViewPlatformReady",
@@ -152,7 +152,6 @@ function sgShowBox(html, $this, options, e) {
 
 	// Clear all box content
 	if (options.clearBoxContent) {
-		sgBoxPageCount = 0
 		$boxElement.empty()
 	}
 
@@ -162,6 +161,7 @@ function sgShowBox(html, $this, options, e) {
 		window.onscroll=function(){}
 		console.log('ON BOX CLOSE');
 
+		sgBoxPageCount = 0
 		sgBoxBack({close: true});
 	}
 
@@ -197,56 +197,69 @@ function sgShowBox(html, $this, options, e) {
 	}
 
 	history.pushState(null, document.title, '#box-'+sgBoxPageCount);
-	// console.log(history.state, sgBoxPageCount)
+	console.log(history.state, `sgBoxPageCount = ${sgBoxPageCount}`)
 	// console.log("pushState from sgShowBox()")
 	// history.pushState(null, document.title, location.href);
 }
 
+async function sgBoxClose(options = {}) {
+	options = $.extend({close: null, historyBack: true}, options)
+
+}
+
 async function sgBoxBack(options = {}) {
 	// console.log(options)
-	options = $.extend({close: null, historyBack: true}, options)
-	let $boxElement = $('#cboxLoadedContent')
-	let $boxPage = $('.box-page')
+	options = $.extend({close: null, historyBack: true}, options);
+	let $boxElement = $('#cboxLoadedContent');
+	let $boxPage = $('.box-page');
 
-	console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options)
+	console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options);
 
 	if (options.close) {
-		console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length)
-		if (sgBoxPageCount) {
-			console.log("HAVE BOX LENGTH")
-			if (options.historyBack) {
-				for (let historyCount = 0; historyCount < sgBoxPageCount; historyCount++) {
-					console.log('historyCount = ', historyCount)
-					history.back()
-				}
-			}
-			$.colorbox.close()
-		} else if (isFlutterInAppWebViewReady) {
-			window.flutter_inappwebview.callHandler("closeWebView");
-		} else if (isAndroidWebViewReady) {
-			Android.reloadWebView('Yes')
+		console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length);
+		// $.colorbox.close()
+		if ($boxPage.length) {
+			console.log("sgBoxBack => HAVE BOX LENGTH");
+		// 	if (options.historyBack) {
+		// 		for (let historyCount = 0; historyCount < sgBoxPageCount; historyCount++) {
+		// 			console.log('historyCount = ', historyCount)
+		// 			history.back()
+		// 		}
+		// 	}
+			$.colorbox.close();
+			$boxPage.remove();
+		// } else if (isFlutterInAppWebViewReady) {
+		// 	// window.flutter_inappwebview.callHandler("closeWebView");
+		// } else if (isAndroidWebViewReady) {
+		// 	Android.reloadWebView('Yes')
+		// } else if (isFlutterInAppWebViewReady) {
+		// 	console.log("sgBoxBack => FlutterInAppWebView")
+		// 	window.flutter_inappwebview.callHandler("closeWebView");
+		// } else if (isAndroidWebViewReady) {
+		// 	console.log("sgBoxBack => AndroidWebView")
+		// 	Android.reloadWebView('Yes');
 		}
-		sgBoxPageCount = 0
+		sgBoxPageCount = 0;
 	} else if (sgBoxPageCount === 1) {
-		// console.log('sgBoxBack => CLOSE FOR LAST BOX')
-		// history.back()
-		$.colorbox.close()
-		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
-		sgBoxPageCount = 0
-		history.back()
+		console.log('sgBoxBack => CLOSE FOR LAST BOX');
+		// history.back();
+		$.colorbox.close();
+		if (isAndroidWebViewReady) Android.reloadWebView('Yes');
+		sgBoxPageCount = 0;
+		history.back();
 	} else if (sgBoxPageCount > 1) {
-		// console.log('sgBoxBack => BACK')
+		console.log(`sgBoxBack => BACK from ${sgBoxPageCount}`);
 		// Remove last box page
-		$boxElement.children('.box-page').last().remove()
+		$boxElement.children('.box-page').last().remove();
 		// Show last box after remove
-		$boxElement.children('.box-page').last().show()
+		$boxElement.children('.box-page').last().show();
 		$.colorbox.resize();
 		if (options.historyBack) {
-			popStateCallback = false
-			await history.back()
-			popStateCallback = true
+			popStateCallback = false;
+			await history.back();
+			popStateCallback = true;
 		}
-		sgBoxPageCount--
+		sgBoxPageCount--;
 	}
 }
 
@@ -817,48 +830,95 @@ function showError(response, time = 5000) {
 
 			if (settings.fragment) history.pushState({}, document.title, '#'+href);
 
-			$.post(href, para, function(html) {
-				doneResult = html;
-				notify();
-				if (!settings.silent) {
-					console.log("Load completed.");
-				}
+			$.ajax({
+				method: 'POST',
+				url: href,
+				data: para,
+				success: function(response, status, xhr) {
+					doneResult = response;
+					// console.log('RESPONSE', response)
+					notify();
+					if (!settings.silent) {
+						console.log("Load completed.");
+					}
 
-				if (retUrl) {
-					if (debugSG) console.log("Return URL "+retUrl);
-					$.post(retUrl, function(html) {
-						sgUpdateData(html, relTarget, $this);
-						notify();
-					})
-				} else {
-					sgUpdateData(html, relTarget, $this);
-				}
+					if (retUrl) {
+						if (debugSG) console.log("Return URL "+retUrl);
+						$.post(retUrl, function(html) {
+							sgUpdateData(html, relTarget, $this);
+							notify();
+						})
+					} else {
+						sgUpdateData(response, relTarget, $this);
+					}
 
-				// @deprecated => use data-done="remove:parent element"
-				// REMOVE element after done
-				if (linkData.removeparent) {
-					let removeTag = linkData.removeparent;
-					let $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag);
-					$removeElement.remove();
-				}
+					// @deprecated => use data-done="remove:parent element"
+					// REMOVE element after done
+					if (linkData.removeparent) {
+						let removeTag = linkData.removeparent;
+						let $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag);
+						$removeElement.remove();
+					}
 
-				// Process CALLBACK function
-				if (settings.callback) settings.callback($this,html);
+					// Process CALLBACK function
+					if (settings.callback) settings.callback($this,response);
 
-				if (callback && typeof window[callback] === 'function') {
-					window[callback]($this,html);
-				} else if (callback) {
-					window.location = callback;
+					if (callback && typeof window[callback] === 'function') {
+						window[callback]($this,response);
+					} else if (callback) {
+						window.location = callback;
+					}
+					if (relTarget === 'box') $.colorbox.resize();
+					if (response.responseCode && response.text) notify(response.text, 3000);
+					sgActionDone(linkData.done, $this, doneResult);
+				},
+				error: function(response, status, error) {
+					return showError(response);
 				}
-				if (relTarget === 'box') $.colorbox.resize();
-			})
-			.done(function(response) {
-				if (response.responseCode && response.text) notify(response.text, 3000);
-				sgActionDone(linkData.done, $this, doneResult);
-			})
-			.fail(function(response) {
-				return showError(response);
 			});
+
+			// $.post(href, para, function(html) {
+			// 	doneResult = html;
+			// 	notify();
+			// 	if (!settings.silent) {
+			// 		console.log("Load completed.");
+			// 	}
+
+			// 	if (retUrl) {
+			// 		if (debugSG) console.log("Return URL "+retUrl);
+			// 		$.post(retUrl, function(html) {
+			// 			sgUpdateData(html, relTarget, $this);
+			// 			notify();
+			// 		})
+			// 	} else {
+			// 		sgUpdateData(html, relTarget, $this);
+			// 	}
+
+			// 	// @deprecated => use data-done="remove:parent element"
+			// 	// REMOVE element after done
+			// 	if (linkData.removeparent) {
+			// 		let removeTag = linkData.removeparent;
+			// 		let $removeElement = removeTag.charAt(0).match(/\.|\#/i) ? $(removeTag) : $this.closest(removeTag);
+			// 		$removeElement.remove();
+			// 	}
+
+			// 	// Process CALLBACK function
+			// 	if (settings.callback) settings.callback($this,html);
+
+			// 	if (callback && typeof window[callback] === 'function') {
+			// 		window[callback]($this,html);
+			// 	} else if (callback) {
+			// 		window.location = callback;
+			// 	}
+			// 	if (relTarget === 'box') $.colorbox.resize();
+			// })
+			// .done(function(response) {
+			// 	if (response.responseCode && response.text) notify(response.text, 3000);
+			// 	sgActionDone(linkData.done, $this, doneResult);
+			// })
+			// .fail(function(response) {
+			// 	return showError(response);
+			// });
 
 			return;
 		}
