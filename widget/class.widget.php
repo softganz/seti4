@@ -409,7 +409,7 @@ class Header extends Widget {
 	public $titleTag = 'span';
 	public $leading;
 	public $title;
-	public $subtitle;
+	public $subTitle;
 	public $trailing;
 
 	function __construct($args = []) {
@@ -500,7 +500,7 @@ class ListTile extends Widget {
 	public $titleTag = 'span';
 	public $leading;
 	public $title;
-	public $subtitle;
+	public $subTitle;
 	public $trailing;
 
 	function __construct($args = []) {
@@ -513,7 +513,7 @@ class ListTile extends Widget {
 			. ($this->leading ? '<div class="-leading">' . $this->_renderEachChildWidget($this->leading) . '</div>' . _NL : '')
 			. '<div class="-title">'
 			. ($this->title ? '<' . $this->titleTag . ' class="-title-text">' . $this->_renderEachChildWidget($this->title) . '</'.$this->titleTag . '>' : '')
-			. ($this->subtitle ? '<span class="-subtitle-text">' . $this->_renderEachChildWidget($this->subtitle) . '</span>' : '')
+			. ($this->subTitle ?? $this->subtitle ? '<span class="-subtitle-text">' . $this->_renderEachChildWidget($this->subTitle ?? $this->subtitle) . '</span>' : '')
 			. '</div>' . _NL
 			. ($this->trailing ? '<div class="-trailing">' . $this->_renderEachChildWidget($this->trailing) . '</div>' . _NL : '')
 			. $this->_renderChildren($this->children())
@@ -1166,7 +1166,7 @@ class AppBar extends Widget {
 	public $widgetName = 'AppBar';
 	public $tagName = 'div';
 	public $title;
-	public $subtitle;
+	public $subTitle;
 	public $leading;
 	public $trailing;
 	public $navigator;
