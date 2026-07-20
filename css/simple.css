@@ -2669,7 +2669,7 @@ $SCREENS
 		position: relative;
 		overflow: hidden;
 		margin: 0;
-		display: inline-block;
+		display: inline-flex;
 		position: relative;
 		input {
 			width: 100%;

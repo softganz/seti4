@@ -442,6 +442,8 @@
 	&.-floating .icon.-material {color: #ffc8c3;}
 	*/
 
+	&.-text-left {justify-content: start !important;}
+	&.-text-right {justify-content: end !important;}
 	&.-no-wrap {
 		flex-wrap: nowrap;
 	}
