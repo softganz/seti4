@@ -3,13 +3,15 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-06-14
- * Version  :: 47
+ * Modified :: 2026-07-21
+ * Version  :: 48
  *
  * @param Array $args
  * @return Object
  *
  * @uses new Softganz\DB([])
+ * @uses DB::select([stmt, where, var, options])
+ * @uses DB::query([stmt, where, var, options])
  */
 
 namespace Softganz;
@@ -55,6 +57,7 @@ class JsonArrayDataModel extends DataModel {
  */
 #[AllowDynamicProperties]
 class DbSelect {
+	private $result;
 	private $DB;
 
 	function __construct($args = []) {
@@ -63,13 +66,8 @@ class DbSelect {
 		}
 	}
 
-	public function count() {
-		return $this->count;
-	}
-
-	public function valueOf($field) {
-		return isset($this->{$field}) ? $this->{$field} : NULL;
-	}
+	public function count() {return $this->count;}
+	public function valueOf($field) {return isset($this->{$field}) ? $this->{$field} : NULL;}
 
 	public function values($fields = []) {
 		$values = (Object) [];
@@ -80,31 +78,31 @@ class DbSelect {
 		return $values;
 	}
 
-	public function DB($db = NULL) {
-		if (isset($db)) $this->DB = $db;
-		return $this->DB;
-	}
+	public function DB() {return $this->DB;}
+	public function result() {return $this->result;}
+	public function rowCount() {return $this->result ? $this->result->rowCount() : null;}
+
+	public function setDB($db) {$this->DB = $db;}
+	public function setResult($result) {$this->result = $result;}
 }
 
-#[AllowDynamicProperties]
 class DbQuery {
 	var $query;
+	private $result;
 	private $DB;
 
 	function __construct($args = []) {
-		foreach ($args as $key => $value) {
-			$this->{$key} = $value;
-		}
+		$this->query = $args['stmt'] ?? null;
+		$this->result = $args['result'] ?? null;
+		$this->DB = $args['DB'] ?? null;
 	}
 
-	public function DB($db = NULL) {
-		if (isset($db)) $this->DB = $db;
-		return $this->DB;
-	}
-
-	public function insertId() {return $this->DB->insertId();}
-	public function error() {return $this->DB->errors();}
-	public function errorMsg() {return $this->DB->errorMsg();}
+	public function DB() {return $this->DB;}
+	public function result() {return $this->result;}
+	public function insertId() {return $this->DB ? $this->DB->insertId() : null;}
+	public function rowCount() {return $this->result ? $this->result->rowCount() : null;}
+	public function error() {return $this->DB ? $this->DB->errors() : null;}
+	public function errorMsg() {return $this->DB ? $this->DB->errorMsg() : null;}
 }
 
 // Add custom exception class
@@ -112,12 +110,13 @@ class DbException extends \Exception {
 	var $error = false;
 	private $state;
 	private $query;
+	private $stmt;
 	
-	public function __construct($message = NULL, $code = NULL, $error = NULL, $state = NULL) {
+	public function __construct($message = NULL, $code = NULL, $error = NULL, $query = NULL) {
 		parent::__construct($message, (Int) $code);
-		$this->error = true;
-		$this->query = $error;
-		$this->state = $state;
+		$this->error = $error;
+		$this->query = $query;
+		$this->stmt = $stmt;
 	}
 	
 	public function getQuery() {return $this->query;}
@@ -184,10 +183,10 @@ class DB {
 		$selectResult = new DB($args);
 		$selectResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $selectResult->multipleQuery);
 		$selectResult->callerFrom = get_caller(__FUNCTION__)['from'];
-		$result = $selectResult->selectResult();
+		$queryResult = $selectResult->selectResult();
 
 		// Query error, return exception
-		if ($result->error) {
+		if ($queryResult->error) {
 			$errorMessage = $selectResult->stmt
 				. '; <span style="color:red;">-- ERROR :: '
 				. ($selectResult->errorMsg ?? 'Select data from database was error.')
@@ -195,7 +194,7 @@ class DB {
 			$selectResult->setDebugMessage('PREPARE', $errorMessage);
 			// debugMsg('errorMessage='.$errorMessage);
 			// debugMsg($selectResult, '$selectResult');
-			// debugMsg($result, '$result');
+			// debugMsg($queryResult, '$queryResult');
 			throw new DbException(
 				'Select data from database was error.',
 				503,
@@ -206,13 +205,11 @@ class DB {
 
 		if (preg_match('/(LIMIT[\s].*1|LIMIT[\s].*1;)$/i', $selectResult->stmt)) {
 			$result = new DbSelect(reset($selectResult->items));
-			$result->DB($selectResult);
 		} else {
 			$result = new DbSelect([
 				'count' => $selectResult->count,
 				'foundRows' => NULL,
 				'items' => $selectResult->items,
-				'DB' => $selectResult
 			]);
 
 			if (preg_match('/SQL_CALC_FOUND_ROWS/', $selectResult->stmt)) {
@@ -224,6 +221,9 @@ class DB {
 				unset($result->foundRows);
 			}
 		}
+
+		$result->setDB($selectResult);
+		$result->setResult($queryResult);
 
 		if (isset($args['onComplete']) && is_callable($args['onComplete'])) $args['onComplete']($result);
 
@@ -261,7 +261,8 @@ class DB {
 
 		return new DbQuery([
 			'query' => $queryResult->stmt,
-			'DB' => $queryResult
+			'result' => $result,
+			'DB' => $queryResult,
 		]);
 	}
 
@@ -334,6 +335,7 @@ class DB {
 		try {
 			$start = microtime(true);
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
+
 			// Select complete
 			$end = microtime(true);
 			$this->updateLastQueryStmt(
@@ -380,6 +382,8 @@ class DB {
 		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) {
 			debugMsg($this->debugMsg());
 		}
+
+		return $query;
 	}
 
 	function queryResult() {
@@ -400,8 +404,8 @@ class DB {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 		} catch (\PDOException $exception) {
 			$queryError = $this->PDO->errorInfo();
-			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
 			$errorMsg = $exception->getMessage();
+			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
 			$queryStmt = $this->stmt([
 				'errorCode' => $queryError[1] ? $queryError[1] : $exception->getCode(),
 				'errorMessage' => $exception->getMessage(),
@@ -423,10 +427,8 @@ class DB {
 			return new DbException(
 				$errorMsg,
 				$errorCode,
-				(Object) [
-					'state' => $queryError[0],
-					'query' => $queryStmt
-				]
+				$queryError[0],
+				$queryStmt
 			);
 		}
 
@@ -439,6 +441,8 @@ class DB {
 
 		if (isset($this->args['onComplete']) && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
 		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
+
+		return $query;
 	}
 
 	function fetchRow($items) {
