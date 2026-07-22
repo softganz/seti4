@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-03-31
- * Version :: 28
+ * Modify  :: 2026-03-32
+ * Version :: 29
  */
 
 global $R;
@@ -52,8 +52,6 @@ $R = new R();
 $R->request = $request;
 $R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
 $R->configFolder = isset($_GET['setting:conf']) ? $_GET['setting:conf'] : 'conf.d';
-$R->colorScheme = isset($_COOKIE['color-scheme']) ? $_COOKIE['color-scheme'] : NULL;
-if ($R->colorScheme === 'dark') page_class('theme-dark');
 
 $includeFileList = [
 	'lib/lib.define.php',
@@ -138,6 +136,13 @@ if (isset($_GET['setting:'])) {
 	if ($R->appAgent) print_o($R->appAgent, '$R->appAgent',1);
 	die;
 }
+
+if ($R->appAgent->theme) {
+	$R->colorScheme = $R->appAgent->theme;
+} else {
+	$R->colorScheme = isset($_COOKIE['color-scheme']) ? $_COOKIE['color-scheme'] : NULL;
+}
+if ($R->colorScheme === 'dark') page_class('theme-dark');
 
 /*
 die;
