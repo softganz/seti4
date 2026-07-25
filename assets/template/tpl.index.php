@@ -181,7 +181,7 @@ if (cfg('web.footer')) {
 		$firebaseCfg = (object) [
 			'databaseURL' => 'https://' . $firebase->host(),
 			'projectId' => $firebase->projectId(),
-			'table' => null,
+			'table' => trim(cfg('firebase')->table, '/'),
 		];
 
 		echo '<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>'._NL;
