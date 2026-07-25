@@ -10,11 +10,11 @@
 
 /* Start of new UI style widget */
 :root {
-	--card-bg-color: unset;
+	--card-bg-color: #f3f3f3;
 	--side-nav-hover-bg-color: unset;
 
 	--sidebar-bg-color: #f6f6f6;
-	--border-color: #dcdedf;
+	--border-color: #ebebeb;
 
 	--button-height: 36px;
 	--button-padding: 0 16px 0 8px;
@@ -28,21 +28,28 @@
 	--color-3-border: #999070;
 	--color-4: #fcede8;
 	--color-4-border: #8c6a67;
+
 	.widget-inlineedit {
 		--font-color: inherit;
+	}
+	.widget-table {
+		--caption-text-color: #333;
+		--caption-bg-color: #f1f1f1;
+		--header-bg-color: #f7f7f7;
+		--footer-bg-color: #f7f7f7;
+		--tr-bg-hover-color: #fafafa;
 	}
 }
 
 .theme-dark {
+	--card-bg-color: #202020;
 	--sidebar-bg-color: #f6f6f6;
-	--border-color: #888888;
+	--border-color: #3a3a3a;
 
 	.widget-inlineedit {
 		--font-color: #979797;
 	}
 	.widget-table {
-		--bg-color: #333;
-		--border-color: #333;
 		--caption-text-color: #f1f1f1;
 		--caption-bg-color: #333;
 		--header-bg-color: #404040;
@@ -515,16 +522,12 @@
 .form {
 	--input-height: 3.6rem;
 	--bg-color: #fff;
-	--border-color: #ccc;
 	--hover-bg-color: #ffffcc;
 	--hover-border-color: #86b7fe;
 	--focus-bg-color: #ffffcc;
 	--require-border-color: #ffd8be;
 	--require-hover-border-color: #86b7fe;
 	--line-focus-border-color: #4285f4;
-	.theme-dark & {
-		--border-color: transparent;
-	}
 
 	optgroup[label] {
 		font-weight: bold;
@@ -1657,21 +1660,13 @@
 
 /* widget-table */
 .widget-table {
-	--bg-color: #fff;
-	--border-color: #f5f5f5;
-	--caption-text-color: #333;
-	--caption-bg-color: #f1f1f1;
-	--header-bg-color: #f7f7f7;
-	--footer-bg-color: #f7f7f7;
-	--tr-bg-hover-color: #fafafa;
-
 	width: 100%;
 	margin: 0;
 	padding: 0;
 	border-collapse: collapse;
 	border-spacing: 0;
 	border: none;
-	background-color: var(--bg-color);
+	background-color: var(--card-bg-color);
 	display: table;
 	&.-table {
 		width: auto;
@@ -2320,12 +2315,11 @@
 
 /* widget-signform */
 .widget-signform {
-	--bg-color: #fff;
 	--form-max-width: 300px;
 	padding: 16px;
 	margin: 64px auto;
 	max-width: 600px;
-	background-color: var(--bg-color);
+	background-color: var(--card-bg-color);
 	border-radius: 8px;
 	h3 {
 		margin-bottom: 16px;
