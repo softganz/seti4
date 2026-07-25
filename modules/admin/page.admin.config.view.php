@@ -1,35 +1,66 @@
 <?php
-function admin_config_view($self, $key = NULL) {
-	$self->theme->title = 'View configuration';
-	if ($key) {
-		$cfg = cfg($key);
-	} else {
-		$cfg = cfg();
-	}
-	ksort($cfg);
-	
-	$not_show = array('db','encrypt_key','counter','online');
+/**
+ * Admin    :: Page
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 20xx-xx-xx
+ * Modified :: 2026-07-24
+ * Version  :: 2
+ *
+ * @return Widget
+ *
+ * @uses admin/config/view
+ */
 
-	$tables = new Table();
-	$tables->caption = 'Configuration value'.($para->view?' of <em>'.$para->view.'</em>':'');
-	$tables->header=array('variable','value');
-	foreach ($cfg as $key => $value) {
-		if (in_array($key,$not_show)) continue;
-		if (is_array($value) || is_object($value)) {
-			$valueShow = print_o($value);
-		} else if (is_bool($value)) {
-			$valueShow = $value ? 'True' : 'False';
+class AdminConfigView extends Page {
+	function __construct() {
+		parent::__construct();
+	}
+
+	/**
+	 * Build page
+	 *
+	 * return object
+	 */
+	#[\Override]
+	function build(): object {
+		if ($key) {
+			$cfg = cfg($key);
 		} else {
-			$valueShow = str_replace('&nbsp;', ' ', highlight_string($value,1));
+			$cfg = cfg();
 		}
+		ksort($cfg);
+		
+		$not_show = ['db', 'encrypt_key', 'counter', 'online', 'firebase'];
 
-		$tables->rows[] = array(
-											'<a class="sg-action" href="'.url('admin/config/edit',array('name'=>$key)).'" data-rel="box" data-width="480">'.$key.'</a> <font color=gray>['.GetType($value).']</font>',
-											$valueShow,
-											'config' => array('attr'=>'valign="baseline"')
-										);
+		return new Scaffold([
+			'appBar' => new AppBar([
+				'title' => 'View configuration',
+			]), // AppBar
+			'body' => new Table([
+				'caption' => 'Configuration value' . ($para->view ? ' of <em>' . $para->view . '</em>' : ''),
+				'header' => ['variable', 'value'],
+				'children' => array_map(
+					function($key, $value) use($not_show) {
+						if (in_array($key, $not_show)) return null;
+
+						if (is_array($value) || is_object($value)) {
+							$valueShow = print_o($value);
+						} else if (is_bool($value)) {
+							$valueShow = $value ? 'True' : 'False';
+						} else {
+							$valueShow = str_replace('&nbsp;', ' ', $value);
+						}
+
+						return [
+							'<a class="sg-action" href="' . Url::link('admin/config/edit', ['name' => $key]) . '" data-rel="box" data-width="480">' . $key . '</a> <font color=gray>[' . gettype($value) . ']</font>',
+							$valueShow,
+							'config' => ['attr' => 'valign="baseline"']
+						];
+					},
+					array_keys((array) $cfg), (array) $cfg
+				)
+			]),
+		]);
 	}
-	$ret .= $tables->build();
-	return $ret;
 }
 ?>
