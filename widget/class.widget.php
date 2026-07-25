@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-06-10
- * Version  :: 78
+ * Modified :: 2026-07-25
+ * Version  :: 79
  *
  * @param Array $args
  * @return Widget
@@ -637,13 +637,15 @@ class DebugMsg extends Widget {
 	function build() {
 		if (!user_access('access debugging program')) return;
 
+		$isObject = is_object($this->msg) || is_array($this->msg);
+
 		$callString = '<details><summary>Call from : ' . $this->callFrom[0]['file'] . ' @line ' . $this->callFrom[0]['line'] . '</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">';
 		foreach ($this->callFrom as $key => $value) {
 			$callString .= $value['file'] . ' @line ' . $value['line'] . '<br>';
 		}
 		$callString .= '</pre></div></details>';
 
-		if (is_object($this->msg) || is_array($this->msg)) {
+		if ($isObject) {
 			$this->msg = '<div>' . self::printObject($this->msg, $this->varName) . '</div>';
 		} else if (isset($this->msg) && preg_match('/^(SELECT|UPDATE|INSERT|DELETE)/i', trim($this->msg))) {
 			$this->msg = '<pre>' . $this->msg . '</pre>';
@@ -652,6 +654,7 @@ class DebugMsg extends Widget {
 		}
 
 		return _NL . '<div class="debug-msg">'
+			. ($this->varName && !$isObject ? $this->varName . ' = ' : '')
 			. '<span class="widget-button sg-expand" data-rel="next"><i class="icon -material">expand_more</i></span>'
 			. $this->msg
 			. ($this->callFrom ? '<div class="-call-from">' . $callString . '</div>' : '')
