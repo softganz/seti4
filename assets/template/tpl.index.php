@@ -164,57 +164,58 @@ if (cfg('web.footer')) {
 
 </div><!--page-wrapper-->
 <?php
-// if (!isset($_COOKIE['cookie_policy'])) {
-// 	echo 'COOKIE POLICY';
-// } else {
+	if (debug('query')) {
+		echo '<strong>DB ' . count((Array) R('query_items')) . ' queries in ' . $GLOBALS['R']->myDb->_query_times . ' ms.</strong><br />';
+		echo '<b>$DB</b><ol>';
+		foreach ((Array) R('query_items') as $query) echo '<li>' . $query . '</li>';
+		echo '</ul>';
+		echo '<b>$mydb</b><ol>';
+		foreach (mydb()->_query_items as $query) echo '<li>' . $query . '</li>';
+		echo '</ul>';
+	}
+	echo eval_php(cfg('web.complete'), _NL, _NL);
 
-// }
+	if ($firebaseCfg = cfg('firebase')) {
+		// Public attribute only
+		$firebase = new Firebase($firebaseCfg);
+		$firebaseCfg = (object) [
+			'databaseURL' => 'https://' . $firebase->host(),
+			'projectId' => $firebase->projectId(),
+			'table' => null,
+		];
+
+		echo '<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>'._NL;
+		echo '<script>
+		// Initialize Firebase
+		firebaseConfig = ' . json_encode($firebaseCfg) . ';
+		firebase.initializeApp(firebaseConfig);
+		</script>' . _NL;
+	}
+
+	if (!(R()->appAgent || i()->ok)) echo '
+	<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+	<script>
+	window.cookieconsent.initialise({
+		"palette": {
+			"popup": {
+				"background": "#f2f2f2"
+			},
+			"button": {
+				"background": "#4285f4"
+			}
+		},
+		"theme": "edgeless",
+		"position": "bottom-right",
+		"content": {
+			"message": "เราใช้คุกกี้เพื่อเพิ่มประสบการณ์และความพึงพอใจในการใช้งานเว็บไซต์ หากคุณกด \"ยอมรับ\" หรือใช้งานเว็บไซต์ของเราต่อ ถือว่าคุณยินยอมให้มีการใช้งานคุกกี้",
+			"dismiss": "ยอมรับ",
+			"link": "อ่านต่อ",
+			"href": "<?php echo url(\'cookies/policy\');?>"
+		}
+	});
+	</script>';
+
+	echo cfg('mainScript') . _NL;
 ?>
-<?php
-if (debug('query')) {
-	echo '<strong>DB '.count((Array) R('query_items')).' queries in '.$GLOBALS['R']->myDb->_query_times.' ms.</strong><br />';
-	echo '<b>$DB</b><ol>';
-	foreach ((Array) R('query_items') as $query) echo '<li>'.$query.'</li>';
-	echo '</ul>';
-	echo '<b>$mydb</b><ol>';
-	foreach (mydb()->_query_items as $query) echo '<li>'.$query.'</li>';
-	echo '</ul>';
-}
-echo eval_php(cfg('web.complete'),_NL,_NL);
-?>
-<?php
-if (cfg('firebase')) {
-	echo '<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>'._NL;
-	echo '<script>
-  // Initialize Firebase
-  firebaseConfig = '.json_encode(cfg('firebase')).';
-  firebase.initializeApp(firebaseConfig);
-	</script>'._NL;
-}
-?>
-<?php if (!(R()->appAgent || i()->ok)) echo '
-<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
-<script>
-window.cookieconsent.initialise({
-  "palette": {
-    "popup": {
-      "background": "#f2f2f2"
-    },
-    "button": {
-      "background": "#4285f4"
-    }
-  },
-  "theme": "edgeless",
-  "position": "bottom-right",
-  "content": {
-    "message": "เราใช้คุกกี้เพื่อเพิ่มประสบการณ์และความพึงพอใจในการใช้งานเว็บไซต์ หากคุณกด \"ยอมรับ\" หรือใช้งานเว็บไซต์ของเราต่อ ถือว่าคุณยินยอมให้มีการใช้งานคุกกี้",
-    "dismiss": "ยอมรับ",
-    "link": "อ่านต่อ",
-    "href": "<?php echo url(\'cookies/policy\');?>"
-  }
-});
-</script>';
-?>
-<?php echo cfg('mainScript') . _NL;?>
 </body>
 </html>

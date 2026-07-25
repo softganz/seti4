@@ -14,8 +14,8 @@
 * ============================================
 
 * Created  :: 2007-07-09
-* Modified :: 2026-07-07
-* Version  :: 16
+* Modified :: 2026-07-25
+* Version  :: 17
 */
 
 use Softganz\DB;
@@ -560,148 +560,274 @@ class classFile {
 
 /********************************************
 * Class :: Firebase
-* Firebase is a Google Realtime database
+* Firebase Realtime Database client (Admin SDK pattern)
+* - ใช้ Service Account (ส่งผ่าน $sa) สร้าง OAuth2 access token
+* - เรียก Realtime Database REST API ด้วย curl (ไม่พึ่งพา library ภายนอก)
 ********************************************/
 class Firebase {
-	function __construct($url,$table) {
-		$this->url = $url;
-		$this->table = $table;
+	private string $projectId; // project id หรือ host เช่น sg-cityclimate / https://sg-cityclimate.firebaseio.com
+	private string $table;   // เช่น cityclimate
+	private $sa;             // service account (object/array) + config อื่น ๆ
+	private ?string $accessToken = null;
+	private ?int $tokenExp = null;
+	private array $debug = [];
+
+	public function __construct(?object $sa, string $table = '') {
+		// $sa = is_object($sa) ? $sa : (object) ($sa ?? []);
+		$this->sa = $sa;
+		$this->projectId = trim((string) ($this->sa->project_id ?? ''));
+		$this->table = trim($table, '/');
+		$this->debug = [
+			'projectId' => $this->projectId,
+			'table' => $table,
+			'sa' => $this->sa,
+		];
+		if ($this->sa === null) $this->debug['error'] = 'No service accounts: Firebase Admin SDK';
 	}
 
+	/**
+	 * Debuging info
+	 *
+	 * @return array
+	 */
+	function debug(): array {return $this->debug;}
+
+	function projectId(): string {return $this->projectId;}
+
+	/**
+	 * base URL ของ database
+	 */
+	private function baseUrl(): string {return 'https://' . $this->host();}
+
+	private static function base64url(string $s): string {return rtrim(strtr(base64_encode($s), '+/', '-_'), '=');}
+
+	/**
+	 * คืน host ของ Realtime Database เสมอ (ตัด scheme / เติม .firebaseio.com ถ้าจำเป็น)
+	 */
+	function host(): string {return $host = $this->projectId . '.firebaseio.com';}
+
+	/**
+	 * Base64 url decode
+	 *
+	 * @param string $s
+	 * @return string
+	 */
+	private static function base64urlDecode(string $s): string {
+		$s = strtr($s, '-_', '+/');
+		$pad = strlen($s) % 4;
+		if ($pad) $s .= str_repeat('=', 4 - $pad);
+		return (string) base64_decode($s);
+	}
+
+	/**
+	 * สร้าง JWT จาก service account (RS256) — วิธีเดียวกับ Firebase Admin SDK
+	 */
+	private function makeJwt(int $now): string {
+		$sa = is_object($this->sa) ? $this->sa : (object) $this->sa;
+
+		// private key จาก service account JSON อาจถูกเก็บเป็น literal "\n"
+		// (backslash-n) แทน newline จริง ทำให้ openssl_sign ล้มเหลวเงียบ → ค่าว่าง → Invalid JWT Signature
+		$privateKey = (string) ($sa->private_key ?? '');
+		if (strpos($privateKey, '\n') !== false) {
+			$privateKey = str_replace('\n', "\n", $privateKey);
+		}
+		$privateKey = trim($privateKey);
+
+		$header = self::base64url(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+		$claim = self::base64url(json_encode([
+			'iss' => $sa->client_email ?? '',
+			'scope' => 'https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/userinfo.email',
+			'aud' => 'https://oauth2.googleapis.com/token',
+			'iat' => $now,
+			'exp' => $now + 3600,
+		]));
+		$sig = '';
+		$ok = openssl_sign("$header.$claim", $sig, $privateKey, OPENSSL_ALGO_SHA256);
+		if ($ok === false) {
+			// debugMsg(openssl_error_string(), 'openssl_error');
+			throw new \RuntimeException('Cannot sign JWT: invalid service account private key');
+		}
+		return "$header.$claim." . self::base64url($sig);
+	}
+
+	/**
+	 * คืน OAuth2 access token (cache จนหมดอายุ) — ถ้าไม่มี $sa คืนค่าว่าง
+	 */
+	private function accessToken(): string {
+		if ($this->sa === null) return '';
+		$now = time();
+		if ($this->accessToken !== '' && $this->accessToken !== null && $this->tokenExp > $now + 60) {
+			return $this->accessToken;
+		}
+		$jwt = $this->makeJwt($now);
+		$ch = curl_init('https://oauth2.googleapis.com/token');
+		curl_setopt_array($ch, [
+			CURLOPT_POST => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_HTTPHEADER => ['Content-Type: application/x-www-form-urlencoded'],
+			CURLOPT_POSTFIELDS => http_build_query([
+				'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				'assertion' => $jwt,
+			]),
+		]);
+		$raw = curl_exec($ch);
+		curl_close($ch);
+		$resp = json_decode($raw, true);
+		$this->accessToken = $resp['access_token'] ?? '';
+		$this->tokenExp = $now + (int) ($resp['expires_in'] ?? 3600);
+		return $this->accessToken;
+	}
+
+	/**
+	 * คืน HTTP header สำหรับแนบ access token (Bearer) — ถ้าไม่มี token คืน array ว่าง
+	 */
+	private function authHeaders(): array {
+		$token = $this->accessToken();
+		return $token !== '' ? ['Authorization: Bearer ' . $token] : [];
+	}
+
+	/**
+	 * POST → สร้าง node ใหม่ใต้ /$table (คืนค่า JSON {"name":<key>})
+	 */
 	function post($data) {
-		$url = 'https://'.$this->url.'.firebaseio.com/'.$this->table.'.json';
-		$data_string = json_encode($data);
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
-			'Content-Length: ' . strlen($data_string))
-		);
+		if ($this->sa === null) return null;
 
-		ob_start();
-		$ret = curl_exec($ch);
-		ob_end_clean();
-		return $ret;
+		$url = $this->baseUrl() . '/' . $this->table . '.json';
+		$body = json_encode($data);
+		$ch = curl_init($url);
+		curl_setopt_array($ch, [
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_POSTFIELDS => $body,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_SSL_VERIFYHOST => 2,
+			CURLOPT_SSL_VERIFYPEER => true,
+			CURLOPT_TIMEOUT => 3,
+			CURLOPT_HTTPHEADER => $header = array_merge(
+				[
+					'Content-Type: application/json',
+					'Content-Length: ' . strlen($body)
+				],
+				$heaauthHeadersder = $this->authHeaders()
+			),
+		]);
+
+		$result = curl_exec($ch);
+		curl_close($ch);
+
+		$this->debug['posthUrl'] = $url;
+		$this->debug['body'] = $body;
+		$this->debug['header'] = $header;
+		$this->debug['result'] = $result;
+
+		return $result;
 	}
 
-	function put($key,$data) {
-		$url = 'https://'.$this->url.'.firebaseio.com/'.$this->table.'/'.$key.'.json';
-		//$putData->{$key}=$data;
-		$data_string = json_encode($data);
+	/**
+	 * PUT → เขียนทับ /$table/$key
+	 */
+	function put($key, $data) {
+		if ($this->sa === null) return null;
+
+		$url = $this->baseUrl() . '/' . $this->table . '/' . $key . '.json';
+		$body = json_encode($data);
 		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+		curl_setopt_array($ch, [
+			CURLOPT_CUSTOMREQUEST => 'PUT',
+			CURLOPT_POSTFIELDS => $body,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_SSL_VERIFYHOST => 2,
+			CURLOPT_SSL_VERIFYPEER => true,
+			CURLOPT_TIMEOUT => 3,
+			CURLOPT_HTTPHEADER => $header = array_merge(
+				[
+					'Content-Type: application/json',
+					'Content-Length: ' . strlen($body)
+				],
+				$heaauthHeadersder = $this->authHeaders()
+			),
+		]);
 
-		/*
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch,  CURLOPT_RETURNTRANSFER, false);
-		curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
-		curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 10);
+		$result = curl_exec($ch);
+		curl_close($ch);
 
-		curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
-		*/
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
-			'Content-Length: ' . strlen($data_string))
-			);
+		$this->debug['puthUrl'] = $url;
+		$this->debug['body'] = $body;
+		$this->debug['header'] = $header;
+		$this->debug['result'] = $result;
 
-		ob_start();
-		$ret = curl_exec($ch);
-		ob_end_clean();
-
-		//debugMsg($url);
-		//debugMsg($data,'$data');
-		//debugMsg($data_string);
-		//debugMsg($ret);
-
-		return $ret;
+		return $result;
 	}
 
-	function patch($key,$data) {
-		$url = 'https://'.$this->url.'.firebaseio.com/'.$this->table.'/'.$key.'.json';
-		$data_string = json_encode($data);
+	/**
+	 * PATCH → อัปเดตบางฟิลด์ใน /$table/$key
+	 */
+	function patch($key, $data) {
+		if ($this->sa === null) return null;
+
+		$url = $this->baseUrl() . '/' . $this->table . '/' . $key . '.json';
+		$body = json_encode($data);
 		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+		curl_setopt_array($ch, [
+			CURLOPT_CUSTOMREQUEST => 'PATCH',
+			CURLOPT_POSTFIELDS => $body,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_SSL_VERIFYHOST => 2,
+			CURLOPT_SSL_VERIFYPEER => true,
+			CURLOPT_TIMEOUT => 3,
+			CURLOPT_HTTPHEADER => $header = array_merge(
+				[
+					'Content-Type: application/json',
+					'Content-Length: ' . strlen($body)
+				],
+				$heaauthHeadersder = $this->authHeaders()
+			),
+		]);
 
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
-			'Content-Length: ' . strlen($data_string))
-			);
+		$result = curl_exec($ch);
+		curl_close($ch);
 
-		ob_start();
-		$ret = curl_exec($ch);
-		ob_end_clean();
+		$this->debug['patchUrl'] = $url;
+		$this->debug['body'] = $body;
+		$this->debug['header'] = $header;
+		$this->debug['result'] = $result;
 
-		return $ret;
+		return $result;
 	}
 
-	function set($key,$data) {
-		$url = 'https://'.$this->url.'.firebaseio.com/'.$this->table.'/'.$key.'.json';
-		$data_string = json_encode($data);
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json',
-			'Content-Length: ' . strlen($data_string))
-			);
-
-		ob_start();
-		$ret = curl_exec($ch);
-		ob_end_clean();
-
-		return $ret;
-	}
-
+	/**
+	 * เรียก Cloud Function (HTTP trigger) — config รับจาก $sa
+	 */
 	function functions($funcName, $data, $options = '{}') {
-		$firebaseCfg = cfg('firebase');
-		$url = 'https://'.$firebaseCfg['functions'].'-'.$this->url.'.cloudfunctions.net/'.$funcName;
+		if ($this->sa === null) return null;
+		$sa = is_object($this->sa) ? $this->sa : (object) ($this->sa ?? []);
+		$functionsHost = $sa->functions ?? null;
+		$url = 'https://' . $functionsHost . '-' . $this->host() . '.cloudfunctions.net/' . $funcName;
 
-		$tokenList = cfg('imed.token');
-		$data['token'] = $tokenList->firebase;
+		$token = null;
+		if (isset($sa->imed) && is_object($sa->imed)) {
+			$token = $sa->imed->token->firebase ?? ($sa->imed->firebase ?? null);
+		}
+		if ($token === null) {
+			$token = $sa->token ?? null;
+		}
+		$data['token'] = $token;
 
 		$data_string = json_encode($data);
 
 		$ch = curl_init($url);
-		curl_setopt_array($ch, array(
+		curl_setopt_array($ch, [
 			CURLOPT_CUSTOMREQUEST => 'POST',
 			CURLOPT_URL => $url,
 			CURLOPT_POST => true,
 			CURLOPT_POSTFIELDS => $data_string,
 			CURLOPT_TIMEOUT => 1,
-			//CURLOPT_TIMEOUT_MS => 100,
 			CURLOPT_CONNECTTIMEOUT => 1,
 			CURLOPT_RETURNTRANSFER => false,
-		));
+		]);
 
 		ob_start();
 		$ret = curl_exec($ch);
 		ob_end_clean();
-
-		//debugMsg('URL = '.$url);
-		//debugMsg($data_string);
-		//debugMsg($data,'$data');
-		//debugMsg($ret);
 
 		return $ret;
 	}
