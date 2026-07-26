@@ -15,7 +15,7 @@
 
 * Created  :: 2007-07-09
 * Modified :: 2026-07-25
-* Version  :: 17
+* Version  :: 18
 */
 
 use Softganz\DB;
@@ -594,6 +594,8 @@ class Firebase {
 
 	function projectId(): string {return $this->projectId;}
 
+	public function getAccessToken(): string { return $this->accessToken(); }
+	
 	/**
 	 * base URL ของ database
 	 */
