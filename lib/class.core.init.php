@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-03-32
- * Version :: 29
+ * Modify  :: 2026-07-28
+ * Version :: 30
  */
 
 global $R;
@@ -50,7 +50,7 @@ if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
 
 $R = new R();
 $R->request = $request;
-$R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
+// $R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
 $R->configFolder = isset($_GET['setting:conf']) ? $_GET['setting:conf'] : 'conf.d';
 
 $includeFileList = [
@@ -74,7 +74,8 @@ $includeFileList = [
 
 foreach ($includeFileList as $file) load_lib($file);
 
-
+// Load core config
+$R->core = json_decode(FileModel::getJsonFile(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
 
 SgCore::processSetting($R);
 

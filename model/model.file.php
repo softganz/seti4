@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-06-27
- * Version  :: 17
+ * Modified :: 2026-07-28
+ * Version  :: 18
  *
  * @return Object
  *
@@ -640,6 +640,18 @@ class FileModel {
 		}
 
 		return implode('/', $folders);
+	}
+
+	public static function getJsonFile(string $filename, bool $use_include_path = false, $context = null, int $offset = 0, ?int $length = null): string|false {
+		$content = file_get_contents($filename);
+		// $content = file_get_contents($filename, $use_include_path, $context, $offset, $length);
+
+		// Remove comments from JSON content (// and /* */)
+		// Remove // line comments (both full-line and trailing)
+		$content = preg_replace('#(?<!:)//.*$#m', '', $content);
+		$content = preg_replace('#/\*.*?\*/#s', '', $content);
+
+		return $content;
 	}
 }
 ?>

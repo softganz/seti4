@@ -1,10 +1,10 @@
 <?php
 /**
  * Core Function :: Controller Process Web Configuration and Request
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2006-12-16
- * Modify  :: 2026-05-20
- * Version :: 52
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2006-12-16
+ * Modified :: 2026-07-28
+ * Version  :: 53
  */
 
 /*************************************************************
@@ -279,7 +279,7 @@ class SgCore {
 					}
 					break;
 				} else if ($configExt === 'json') {
-					$jsonString = file_get_contents($each_config_file);
+					$jsonString = FileModel::getJsonFile($each_config_file);
 
 					// debugMsg($configFile.' => '.$each_config_file);
 
