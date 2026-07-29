@@ -10,6 +10,9 @@
 
 /* Start of new UI style widget */
 :root {
+	--font-color: #333;
+	--bg-color: #fefaf3;
+
 	--card-bg-color: #f3f3f3;
 	--side-nav-hover-bg-color: unset;
 
@@ -42,6 +45,8 @@
 }
 
 .theme-dark {
+	--font-color: #949494;
+	--bg-color: #111;
 	--card-bg-color: #202020;
 	--sidebar-bg-color: #f6f6f6;
 	--border-color: #3a3a3a;

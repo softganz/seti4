@@ -611,15 +611,24 @@ div.photo-multiple img.photo-tall {
 	background-color: transparent;
 }
 
-.module-flood-docs {
-	code {
-		background-color: var(--card-bg-color);
+.module-docs {
+	--code-font-color: #2873ff;
+	.theme-dark & {
+		--code-font-color: #f60;
 	}
+	h1, h2, h3, h4, h5 {color: var(--font-color);}
+	blockquote, pre {
+		padding: 8px;
+		background-color: var(--card-bg-color);
+		border: none;
+		border-radius: 8px;
+	}
+	code {color: var(--code-font-color);}
 	table {
+		display: block;
 		background-color: var(--card-bg-color);
-		td {padding: 8px; border-bottom: 1px #2a2a2a solid;}
+		td {padding: 8px; border-bottom: 1px var(--border-color) solid;}
 	}
-	blockquote {background-color: var(--card-bg-color);}
 }
 @media (min-width: 30em) {
 	/* 480/16 = 30 */
@@ -1598,17 +1607,6 @@ $SCREENS
 	.user-menu li li:hover ul,
 	.user-menu li li.sfhover ul {
 		left: auto;
-	}
-	/* @end */
-
-	/* @group code */
-	.code {
-		padding: 5px;
-		border: none;
-		background: #222 none;
-		color: #fff;
-		overflow: auto;
-		border-radius: 0;
 	}
 	/* @end */
 
