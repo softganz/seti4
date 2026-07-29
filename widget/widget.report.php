@@ -1,16 +1,14 @@
 <?php
 /**
- * Widget  :: Report Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2020-10-01
- * Modify  :: 2026-04-26
- * Version :: 13
+ * Widget   :: Report Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-07-29
+ * Version  :: 14
  *
  * @param Array $args
- * @return Widget
  *
- * @usage import('widget:report.php')
- * @usage new Report([])
+ * @uses new Report([])
  */
 
 class Report extends Widget {
@@ -96,14 +94,14 @@ class Report extends Widget {
 			if (is_null($filterValue)) continue;
 
 			if (is_object($filterValue)) {
-				$groupUi->add($this->_renderEachChildWidget($filterValue));
+				$groupUi->add($this->renderEachChildWidget($filterValue));
 			} else if (is_array($filterValue)) {
 				$groupUiStr = $filterValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#' . $filterKey . '"><span>' . $filterValue['group'] . '</span></a></span>' : '';
 				$groupUiStr .= (new Dropbox([
 					'text' => $filterValue['text'],
 					'position' => 'right',
 					'childrenContainer' => ['tagName' => 'ul', 'class' => '-checkbox'],
-					'children' => $this->_render_checkbox($filterValue['choice'],$filterValue),
+					'children' => $this->render_checkbox($filterValue['choice'],$filterValue),
 					'footer' => new Widget([
 						'children' => [
 							'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()"><i class="icon -material">done</i><span>Apply</span></a></nav>',
@@ -121,7 +119,7 @@ class Report extends Widget {
 		}
 
 		// Render widget container
-		$ret = $this->_renderWidgetContainerStart(function() {
+		$ret = $this->renderWidgetContainerStart(function() {
 			$attributes = [
 				'data-query' => $this->queryUrl,
 				'data-callback' => $this->callback,
@@ -158,14 +156,14 @@ class Report extends Widget {
 
 				'<div class="-toolbar">',
 				// Metric
-				'<div class="-metric">' . $this->_renderChildren($this->metric) . '</div><!-- -metric -->',
+				'<div class="-metric">' . $this->renderChildren($this->metric) . '</div><!-- -metric -->',
 				// filter bar & submit button
 				'<div class="-filter">'
 					. '<span class="-title -text">'
-					. (is_array($this->filterBar) ? $this->_renderEachChildWidget(\SG\getFirst($this->filterBar['title'], '{tr:Filter by}')) : \SG\getFirst($this->filterBar, '{tr:Filter by}'))
+					. (is_array($this->filterBar) ? $this->renderEachChildWidget(\SG\getFirst($this->filterBar['title'], '{tr:Filter by}')) : \SG\getFirst($this->filterBar, '{tr:Filter by}'))
 					. '</span>'
 					. '<span id="toolbar-report-filter" class="-select">'
-					. ($this->filterPretext ? $this->_renderEachChildWidget($this->filterPretext) : '')
+					. ($this->filterPretext ? $this->renderEachChildWidget($this->filterPretext) : '')
 					. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item"></span>'
 					. '</span><!-- toolbar-report-filter -->'
 					. '<span class="">'
@@ -208,8 +206,8 @@ class Report extends Widget {
 			),
 		]);
 
-		$ret .= $this->_renderChildren($this->children());
-		$ret .= $this->_renderWidgetContainerEnd();
+		$ret .= $this->renderChildren($this->children());
+		$ret .= $this->renderWidgetContainerEnd();
 
 		return $ret;
 	}

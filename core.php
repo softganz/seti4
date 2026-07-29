@@ -235,7 +235,12 @@ function initConfig($configFolder) {
  *
  * @param String $class
  */
-function sg_autoloader($class) {
+function sg_autoloader(string $class) {
+	// debugMsg('AUTOLOAD START => '.$class);
+	if (empty($class)) return false;
+	$class = trim($class, '\\');
+	// debugMsg('AUTOLOAD BEGIN => '.$class);
+
 	$debug = debug('autoload');
 	$registerFileList = (Array) R()->core->autoLoader->items;
 
@@ -244,6 +249,7 @@ function sg_autoloader($class) {
 		$class = end($classList);
 	}
 
+	// Load class from autoload config
 	$lowerClass = strtolower($class);
 	if (in_array($lowerClass, array_keys($registerFileList))) {
 		load_lib($registerFileList[$lowerClass]);
@@ -253,25 +259,27 @@ function sg_autoloader($class) {
 		return;
 	}
 
+	// Load class from import
 	$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
 	$endName = strToLower(end($pieces));
-
-	$import = '';
 
 	switch ($endName) {
 		case 'model':
 			array_pop($pieces);
-			$import = 'model:'.implode('.', $pieces).'.php';
+			$importFile = 'model:' . implode('.', $pieces) . '.php';
 			break;
 		case 'widget':
 			array_pop($pieces);
-			$import = 'widget:'.implode('.', $pieces).'.php';
+			$importFile = 'widget:' . implode('.', $pieces) . '.php';
 			break;
+		default:
+			$importFile = implode('.', $pieces) . '.php';
 	}
-	$import = strToLower($import);
+	// $importFile = $importFile ? strtolower($importFile) : null;
+	$import = $importFile ? strtolower($importFile) : null;
 
 	if ($debug) {
-		debugMsg('AUTOLOAD '.$class.' '.($import ? 'from <b style="color: green">import("'.$import.'")</b>' : 'not load.'));
+		debugMsg('AUTOLOAD ' . $class . ' ' . ($importFile ? 'from <b style="color: green">import("' . strtolower($importFile) . '")</b>' : 'not load.'));
 	}
 
 	if ($import) import($import);

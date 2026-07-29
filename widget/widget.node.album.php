@@ -1,14 +1,14 @@
 <?php
 /**
- * Node    :: Page
- * Created :: 2025-07-11
- * Modify  :: 2025-07-16
- * Version :: 13
+ * Node     :: Page
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-07-11
+ * Modified :: 2026-07-29
+ * Version  :: 14
  *
  * @param Array $args
- * @return Widget
  *
- * @usage extends NodeAlbumWidget
+ * @uses extends NodeAlbumWidget
  */
 
 class NodeAlbumWidget extends Page {

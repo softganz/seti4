@@ -1,15 +1,14 @@
 <?php
 /**
- * Widget  :: Page Render Widget
- * Created :: 2023-01-01
- * Modify  :: 2025-12-10
- * Version :: 12
+ * Widget   :: Page Render Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-01-01
+ * Modified :: 2026-07-29
+ * Version  :: 13
  *
  * @param String $requestResult
- * @param Object $pageClass
- * @return String
  *
- * @usage new PageRenderWidget($requestResult, $pageClass)
+ * @uses new PageRenderWidget($requestResult, $pageClass)
  */
 
 class renderPageWidget extends Widget {
@@ -37,7 +36,7 @@ class renderPageWidget extends Widget {
 		return $this->renderOldPage();
 	}
 
-	private function buildObject() {
+	protected function buildObject() {
 		$ret = $this->renderAppBar()
 			. $this->renderToolbar()
 			. $this->renderRibbon()
@@ -54,7 +53,7 @@ class renderPageWidget extends Widget {
 		return $ret;
 	}
 
-	private function buildWidget($widget) {
+	protected function buildWidget($widget) {
 		$ret = '';
 		if ($this->count > 4) return $ret;
 		if (method_exists($widget, 'build')) {
@@ -66,7 +65,8 @@ class renderPageWidget extends Widget {
 		}
 		return $ret;
 	}
-	private function renderAppBar() {
+
+	protected function renderAppBar() {
 		if (!isset($this->pageClass->appBarText)) return;
 		
 		page_class('-module-has-toolbar');
@@ -74,7 +74,7 @@ class renderPageWidget extends Widget {
 		return $this->pageClass->appBarText;
 	}
 
-	private function renderSideBar() {
+	protected function renderSideBar() {
 		// Get Scaffold SideBar from property sideBar
 		$sideBar = SG\getFirst(
 			$this->requestResult->sideBar,
@@ -110,7 +110,7 @@ class renderPageWidget extends Widget {
 		return $ret;
 	}
 
-	private function renderFloatingActionButton() {
+	protected function renderFloatingActionButton() {
 		$ret = '';
 		
 		if (is_object($this->requestResult->floatingActionButton) && method_exists($this->requestResult->floatingActionButton, 'build')) {
@@ -120,7 +120,7 @@ class renderPageWidget extends Widget {
 		return $ret;
 	}
 
-	private function renderToolbar() {
+	protected function renderToolbar() {
 		if (!(!R::option('notoolbar') && $this->pageClass->theme->option->title && isset($this->pageClass->theme->title))) {
 			return;
 		}
@@ -169,7 +169,7 @@ class renderPageWidget extends Widget {
 		]))->build();
 	}
 
-	private function renderRibbon() {
+	protected function renderRibbon() {
 		if ($this->pageClass->theme->option->ribbon && isset($this->pageClass->theme->navigator)) {
 			$ret .= '<div id="ribbon" class="ribbon navigator'.(isset($this->pageClass->theme->ribbon->class)?' '.$this->pageClass->theme->ribbon->class:'').'">'.$this->pageClass->theme->navigator.'</div>'._NL;
 			if ($this->pageClass->theme->option->toolbar) $ret .= '<div id="ribbon-toolbar"></div>'._NL;
@@ -178,7 +178,7 @@ class renderPageWidget extends Widget {
 		return $ret;
 	}
 
-	private function renderNavBar() {
+	protected function renderNavBar() {
 		if (empty($this->pageClass->theme->navbar)) return;
 
 		return '<div class="navbar -main">'._NL
@@ -186,13 +186,13 @@ class renderPageWidget extends Widget {
 			. '</div><!--navbar-->'._NL;
 	}
 
-	private function renderJson($json) {
+	protected function renderJson($json) {
 		// Set the Content-Type header to application/json
 		header('Content-Type: application/json; charset=utf-8');
 		return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 	}
 
-	private function renderOldPage() {
+	protected function renderOldPage() {
 		if ($GLOBALS['gadget']) {
 			return $this->pageClass->theme->requestResult.$this->requestResult;
 		} else if (cfg('Content-Type') == 'text/xml') {

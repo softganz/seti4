@@ -1,15 +1,14 @@
 <?php
 /**
- * Widget  :: Menu Group Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-09-07
- * Modify  :: 2026-05-05
- * Version :: 7
+ * Widget   :: Menu Group Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-09-07
+ * Modified :: 2026-07-29
+ * Version  :: 8
  *
  * @param Array $args
- * @return Widget
  *
- * @usage new MenuGroupWidget([])
+ * @uses new MenuGroupWidget([])
  */
 
 class MenuGroupWidget extends Widget {
@@ -87,7 +86,7 @@ class MenuGroupWidget extends Widget {
 		]);
 	}
 
-	private function renderButton($navKey, $menuItem) {
+	protected function renderButton($navKey, $menuItem) {
 		if (empty($menuItem)) return NULL;
 
 		$this->setVariable($menuItem);

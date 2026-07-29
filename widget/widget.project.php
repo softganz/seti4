@@ -1,20 +1,10 @@
 <?php
 /**
- * Widget widget_project
- *
- * @package core
- * @version 0.01
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2013-05-17
- * @modify 2013-05-17
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- *
- * Draw content list in any format
+ * Widget   :: Inline Project Action Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2013-06-17
+ * Modified :: 2026-07-29
+ * Version  :: 2
  *
  * @param Argument list in many format
  *
@@ -26,9 +16,10 @@
  * @param Integer data-show-photo-height			Default = 80
  *
  * @return String $ret
- *	@usage widget::content(['para1=value1'[,[para2=value2][para3,value3]...)
+ * @uses widget::content(['para1=value1'[,[para2=value2][para3,value3]...)
  * @example <div class="widget project" data-limit="20" data-header="Project Activities" data-footer="By SoftGanz"></div>
  */
+
 function widget_project() {
 	$para = para(func_get_args(),'data-limit=5','data-show-style=ul','data-show-photo-width=100','data-show-photo-height=80');
 	$dateformat = \SG\getFirst($para->{'data-show-dateformat'},cfg('dateformat'));

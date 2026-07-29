@@ -1,15 +1,15 @@
 <?php
 /**
-* Widget  :: Node Share
-* Created :: 2021-12-17
-* Modify 	:: 2026-02-22
-* Version :: 4
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new NodeShareWidget([])
-*/
+ * Widget   :: Node Share
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-12-17
+ * Modified :: 2026-07-29
+ * Version  :: 5
+ *
+ * @param Array $args
+ *
+ * @uses new NodeShareWidget([])
+ */
 
 class NodeShareWidget extends Widget {
 	var $copyLink;

@@ -1,21 +1,11 @@
 <?php
 /**
- * Widget widget_feed
+ * Widget   :: Inline feed Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2011-11-04
+ * Modified :: 2026-07-29
+ * Version  :: 2
  *
- * @package core
- * @version 0.01
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2011-11-04
- * @modify 2011-11-04
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- *
- * Widget feed
- * 
  * @param String $para
  * 	header=Header
  * 	limit=Limit (default all)

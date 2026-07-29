@@ -1,15 +1,15 @@
 <?php
 /**
- * Calendar:: Calcendr Widget
- * Created :: 2025-07-20
- * Modify  :: 2025-11-24
- * Version :: 5
+ * Calendar :: Calcendr Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-07-20
+ * Modified :: 2026-07-29
+ * Version  :: 9
  *
  * @param Array $args
- * @return Object
  *
- * @usage import('widget:calendar.widget.php')
- * @usage new CalendarWidgetl([])
+ * @uses import('widget:calendar.widget.php')
+ * @uses new CalendarWidgetl([])
  */
 
 class CalendarWidget extends Widget {
@@ -247,7 +247,7 @@ class CalendarWidget extends Widget {
 		]);
 	}
 
-	private function renderCalendarItem($calendar, $even_title_field) {
+	protected function renderCalendarItem($calendar, $even_title_field) {
 		$calendarOptions = $calendar['options'];
 
 		$title = $calendar[$even_title_field] ? $calendar[$even_title_field].($even_title_field != 'title' ? ':'.$calendar['title'] : '') : $calendar['title'];

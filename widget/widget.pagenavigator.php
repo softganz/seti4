@@ -1,19 +1,17 @@
 <?php
-/********************************************
- * Class :: PageNavigator
- * PageNavigator class for create page navigator
+/**
+ * Widget   :: Page Navigator Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-07-29
+ * Version  :: 3
  *
- * Created :: 2020-10-01
- * Modify  :: 2025-11-11
- * Version :: 2
+ * @param Array $args
  *
- * Property
- * config {nav: "nav -icons"}
- *
- * @usage new PageNavigator($class)
- ********************************************/
+ * @uses new PageNavigator([])
+ */
 
-class PageNavigator {
+class PageNavigator extends Widget {
 	var $items_per_page = 10;
 	var $total_items = 0;
 	var $current_page = 1;

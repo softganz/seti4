@@ -1,15 +1,14 @@
 <?php
 /**
- * Widget  :: Toolbar Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2020-10-01
- * Modify  :: 2026-05-29
- * Version :: 2
+ * Widget   :: Toolbar Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-07-29
+ * Version  :: 3
  *
  * @param Array $args
- * @return Widget
  *
- * @example new Toolbar(...)
+ * @uses new Toolbar(...)
  */
 
 class Toolbar extends Widget {

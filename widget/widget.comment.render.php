@@ -1,15 +1,15 @@
 <?php
 /**
-* Widget  :: Render Comment
-* Created :: 2023-04-06
-* Modify  :: 2025-06-23
-* Version :: 3
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new CommentRenderWidget([])
-*/
+ * Widget   :: Render Comment
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-04-06
+ * Modified :: 2026-07-29
+ * Version  :: 4
+ *
+ * @param Array $args
+ *
+ * @uses new CommentRenderWidget([])
+ */
 
 class CommentRenderWidget extends Widget {
 	var $node;

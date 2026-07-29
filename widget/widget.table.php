@@ -1,15 +1,15 @@
 <?php
 /**
-* Widget  :: Table Widget
-* Created :: 2020-10-01
-* Modify  :: 2026-05-05
-* Version :: 7
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new Table([key => value,...])
-*/
+ * Widget   :: Table Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-07-29
+ * Version  :: 8
+ *
+ * @param Array $args
+ *
+ * @uses new Table([key => value,...])
+ */
 
 class Table extends Widget {
 	var $config = [];
@@ -93,14 +93,14 @@ class Table extends Widget {
 	}
 
 	// Render table caption
-	private function renderCaption() {
+	protected function renderCaption() {
 		$captionStr = \SG\getFirst($this->caption, $this->config->caption);
 
 		return $captionStr ? '<caption>'.$captionStr.'</caption>'._NL : '';
 	}
 
 	// Render table column group
-	private function renderColGroup() {
+	protected function renderColGroup() {
 		$ret = '';
 
 		if (isset($this->colgroup) && is_array($this->colgroup)) {
@@ -121,7 +121,7 @@ class Table extends Widget {
 	}
 
 	// Set property headerTag
-	private function renderHeader() {
+	protected function renderHeader() {
 		$this->headerTag = '';
 
 		if (isset($this->thead) && is_string($this->thead)) {
@@ -163,7 +163,7 @@ class Table extends Widget {
 	}
 
 	// Render table row
-	private function renderRow($row, $rowKey) {
+	protected function renderRow($row, $rowKey) {
 		if (!isset($row)) return;
 
 		if (is_string($row) && $row === '<header>') {
@@ -265,7 +265,7 @@ class Table extends Widget {
 	}
 
 	// Render table body
-	private function renderBody() {
+	protected function renderBody() {
 		if (!isset($this->children)) return;
 
 		$ret = '<tbody>' . _NL;
@@ -284,7 +284,7 @@ class Table extends Widget {
 	}
 
 	// Render table footer
-	private function renderFooter() {
+	protected function renderFooter() {
 		$ret = '';
 
 		if (isset($this->tfoot)) {

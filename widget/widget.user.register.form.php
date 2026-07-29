@@ -3,14 +3,12 @@
  * User     :: Register Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-05-06
- * Modified :: 2026-07-01
- * Version  :: 14
+ * Modified :: 2026-07-29
+ * Version  :: 15
  *
  * @param Object $register
- * @return Widget
  *
- * @usage import('widget:user.register.form.php')
- * @usage new UserRegisterFormWidget([])
+ * @uses new UserRegisterFormWidget([])
  */
 
 class UserRegisterFormWidget extends Widget {

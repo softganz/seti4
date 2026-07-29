@@ -3,21 +3,17 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-06-28
- * Version  :: 47
+ * Modified :: 2026-06-29
+ * Version  :: 48
  *
  * @param Array $args
- * @return Widget
  *
  * @uses new Form([key => value,...])
- */
-
-/*
-	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, rel, done, children, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
-	Form Children: Array of
-		- Text
-		- new Widget([])
-		- (Object) [tagName => String, children = Array]
+ *	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, rel, done, children, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
+ *	Form Children: Array of
+ *		- Text
+ *		- new Widget([])
+ *		- (Object) [tagName => String, children = Array]
 */
 
 class Form extends Widget {
@@ -132,27 +128,27 @@ class Form extends Widget {
 
 		$this->formArray['form'] = $formStr;
 
-		$ret .= $this->debug ? $this->_renderEachChildWidget(new DebugMsg($this, '$form')) : '';
+		$ret .= $this->debug ? $this->renderEachChildWidget(new DebugMsg($this, '$form')) : '';
 
 		// Render form title
-		$ret .= $this->title ? $this->_renderEachChildWidget($this->title, NULL, NULL, ['prefix' => '<div class="-title">', 'subfix' => '</div>']) : '';
+		$ret .= $this->title ? $this->renderEachChildWidget($this->title, NULL, NULL, ['prefix' => '<div class="-title">', 'subfix' => '</div>']) : '';
 
 
 		// Render form description
-		$ret .= $this->description ? $this->_renderEachChildWidget($this->description, NULL, NULL, ['prefix' => '<div class="-description">', 'subfix' => '</div>']) : '';
+		$ret .= $this->description ? $this->renderEachChildWidget($this->description, NULL, NULL, ['prefix' => '<div class="-description">', 'subfix' => '</div>']) : '';
 
 		// Render form children
-		$ret .= $this->_renderFormChild($this->children);
+		$ret .= $this->renderFormChild($this->children);
 
 		// Render form footer
-		$ret .= $this->footer ? $this->_renderEachChildWidget($this->footer, NULL, NULL, ['prefix' => '<div class="-footer">', 'subfix' => '</div>']) : '';
+		$ret .= $this->footer ? $this->renderEachChildWidget($this->footer, NULL, NULL, ['prefix' => '<div class="-footer">', 'subfix' => '</div>']) : '';
 
 		$ret .= '</form>' . _NL;
 
 		return $ret;
 	}
 
-	function _renderFormChild($childrens) {
+	protected function renderFormChild($childrens) {
 		foreach ($childrens as $fieldKey => $formElement) {
 			if (is_object($formElement) && method_exists($formElement, 'build')) {
 				// Form element is widget
@@ -164,7 +160,7 @@ class Form extends Widget {
 					$ret .= '<' . $formElement->tagName . ' id="' . $formElement->id . '" class="form-container -type-' . $formElement->tagName . ($formElement->class ? ' ' . $formElement->class : '') . '">'
 						. ($formElement->label ? '<label>' . $formElement->label . '</label>' : '');
 				}
-				$ret .= $this->_renderFormChild($formElement->children);
+				$ret .= $this->renderFormChild($formElement->children);
 				if ($formElement->tagName) {
 					$ret .= '</' . $formElement->tagName . '>';
 				}
@@ -177,7 +173,7 @@ class Form extends Widget {
 						$ret .= $groupItem->build();
 					} else {
 						// Item is array or string
-						list($tag_id, $renderChildrenResult) = $this->_renderChild($groupKey, $groupItem);
+						list($tag_id, $renderChildrenResult) = $this->renderChild($groupKey, $groupItem);
 						$this->formArray[$tag_id] = $renderChildrenResult;
 						$ret .= $renderChildrenResult;
 					}
@@ -191,13 +187,13 @@ class Form extends Widget {
 						$ret .= $groupItem->build();
 					} else {
 						// Item is array or string
-						list($tag_id, $renderChildrenResult) = $this->_renderChild($groupKey, $groupItem);
+						list($tag_id, $renderChildrenResult) = $this->renderChild($groupKey, $groupItem);
 						$this->formArray[$tag_id] = $renderChildrenResult;
 						$ret .= $renderChildrenResult;
 					}
 				}
 			} else {
-				list($tag_id, $renderChildrenResult) = $this->_renderChild($fieldKey, $formElement);
+				list($tag_id, $renderChildrenResult) = $this->renderChild($fieldKey, $formElement);
 				$this->formArray[$tag_id] = $renderChildrenResult;
 				$ret .= $renderChildrenResult;
 			}
@@ -205,7 +201,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderChild($fieldKey, $formElement) {
+	protected function renderChild($fieldKey, $formElement) {
 		if (is_string($formElement)) {
 			if ($formElement === '<spacer>') $formElement = '<div class="form-item -spacer"></div>';
 			return [NULL, $formElement . _NL . _NL];
@@ -272,7 +268,7 @@ class Form extends Widget {
 
 		if ($isFormGroup) $ret .= '<span class="form-group">' . _NL;
 
-		$ret .= $this->_renderAttribute(SG\getFirst($formElement->preText, $formElement->pretext));
+		$ret .= $this->renderAttribute(SG\getFirst($formElement->preText, $formElement->pretext));
 
 		// Item attribute from key attribute, if not define use key attr
 		// Implode attribute to string
@@ -282,8 +278,8 @@ class Form extends Widget {
 		}
 
 		switch ($formElement->type) {
-			case 'textfield' : $ret .= $this->_renderTextField($tag_id, $name, $formElement); break;
-			case 'hidden': $ret .= $this->_renderHidden($tag_id, $name, $formElement); break;
+			case 'textfield' : $ret .= $this->renderTextField($tag_id, $name, $formElement); break;
+			case 'hidden': $ret .= $this->renderHidden($tag_id, $name, $formElement); break;
 			case 'text' :
 			case 'number':
 			case 'date':
@@ -293,21 +289,21 @@ class Form extends Widget {
 			case 'tel':
 			case 'datetime-local':
 			case 'color':
-			case 'password' : $ret .= $this->_renderTextPassword($tag_id, $name, $formElement); break;
-			case 'textarea' : $ret .= $this->_renderTextArea($tag_id, $name, $formElement); break;
+			case 'password' : $ret .= $this->renderTextPassword($tag_id, $name, $formElement); break;
+			case 'textarea' : $ret .= $this->renderTextArea($tag_id, $name, $formElement); break;
 			case 'radio' :
-			case 'checkbox' : $ret .= $this->_renderRadioCheckbox($tag_id, $name, $formElement); break;
-			case 'select' : $ret .= $this->_renderSelect($tag_id, $name, $formElement); break;
-			case 'file' : $ret .= $this->_renderFile($tag_id, $name, $formElement); break;
-			case 'button' : $ret .= $this->_renderButton($tag_id, $name, $formElement); break;
-			case 'submit' : $ret .= $this->_renderSubmit($tag_id, $name, $formElement); break;
-			case 'day' : $ret .= $this->_renderDate($tag_id, $name, $formElement); break;
-			case 'time' : $ret .= $this->_renderTime($tag_id, $name, $formElement); break;
-			case 'hour' : $ret .= $this->_renderHour($tag_id, $name, $formElement); break;
-			case 'colorpicker' : $ret .= $this->_renderColorPicker($tag_id, $name, $formElement); break;
+			case 'checkbox' : $ret .= $this->renderRadioCheckbox($tag_id, $name, $formElement); break;
+			case 'select' : $ret .= $this->renderSelect($tag_id, $name, $formElement); break;
+			case 'file' : $ret .= $this->renderFile($tag_id, $name, $formElement); break;
+			case 'button' : $ret .= $this->renderButton($tag_id, $name, $formElement); break;
+			case 'submit' : $ret .= $this->renderSubmit($tag_id, $name, $formElement); break;
+			case 'day' : $ret .= $this->renderDate($tag_id, $name, $formElement); break;
+			case 'time' : $ret .= $this->renderTime($tag_id, $name, $formElement); break;
+			case 'hour' : $ret .= $this->renderHour($tag_id, $name, $formElement); break;
+			case 'colorpicker' : $ret .= $this->renderColorPicker($tag_id, $name, $formElement); break;
 		}
 
-		$ret .= $this->_renderAttribute(SG\getFirst($formElement->postText, $formElement->posttext));
+		$ret .= $this->renderAttribute(SG\getFirst($formElement->postText, $formElement->posttext));
 
 		if ($isFormGroup) $ret .= '</span><!-- form-group -->' . _NL;
 		if ($formElement->description) $ret .= _NL . '<div class="description">' . $formElement->description . '</div>';
@@ -321,7 +317,7 @@ class Form extends Widget {
 		return [$tag_id, $ret];
 	}
 
-	private function _renderAttribute($attribute) {
+	protected function renderAttribute($attribute) {
 		if (is_object($attribute) && method_exists($attribute, 'build')) {
 			// Item is widget
 			$ret = $attribute->build();
@@ -332,7 +328,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	private function onElementEvent($event, $onChangeValue) {
+	protected function onElementEvent($event, $onChangeValue) {
 		if (empty($onChangeValue)) return '';
 		switch ($onChangeValue) {
 			case 'submit':
@@ -348,11 +344,11 @@ class Form extends Widget {
 
 	// Render Field
 
-	function _renderTextField($tag_id, $name, $formElement) {
+	protected function renderTextField($tag_id, $name, $formElement) {
 		return '<div id="' . $tag_id . '">' . $formElement->value . '</div>';
 	}
 
-	function _renderHidden($tag_id, $name, $formElement) {
+	protected function renderHidden($tag_id, $name, $formElement) {
 		return '<input type="hidden" name="' . $name
 			. '" id="' . $tag_id . '"'
 			. ' class="' . ($formElement->require ? '-require' : '') . '"'
@@ -362,7 +358,7 @@ class Form extends Widget {
 			. ' >' . _NL . _NL;
 	}
 
-	function _renderTextPassword($tag_id, $name, $formElement) {
+	protected function renderTextPassword($tag_id, $name, $formElement) {
 		$ret = '<input'
 			. ($this->readonly || $formElement->readonly ? ' readonly="readonly"' : '')
 			. ($formElement->autocomplete ? ' autocomplete="' . $formElement->autocomplete . '"' : '')
@@ -385,7 +381,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderTextArea($tag_id, $name, $formElement) {
+	protected function renderTextArea($tag_id, $name, $formElement) {
 		$ret .= '	<div class="resizable-textarea">'
 			. '<textarea'
 			. ($this->readonly || $formElement->readonly ? ' readonly="readonly"' : '')
@@ -415,7 +411,7 @@ class Form extends Widget {
 	*			groupObject: [[key1 => value1], [key2 => value2], ...]
 	* Option value format: LABEL:, SEPARATOR, &nbsp;, space, tab
 	*/
-	function _renderRadioCheckbox($tag_id, $name, $formElement) {
+	protected function renderRadioCheckbox($tag_id, $name, $formElement) {
 		static $itemIndex = 0;
 		$choices = isset($formElement->choices) ? $formElement->choices : $formElement->choice;
 
@@ -442,7 +438,7 @@ class Form extends Widget {
 					// Option format is [['key' => 'xxx', value'=>'xxx'],...]
 					$itemFormElement = clone $formElement;
 					$itemFormElement->choice = [$optionValue['key'] => $optionValue['value']];
-					$ret .= $this->_renderRadioCheckbox(
+					$ret .= $this->renderRadioCheckbox(
 						$tag_id,
 						$name,
 						$itemFormElement
@@ -452,7 +448,7 @@ class Form extends Widget {
 					$ret .= '<span class="options-group"><span class="options-group-label">' . $optionKey . ':</span>'._NL;
 					$itemFormElement = clone $formElement;
 					$itemFormElement->choice = $optionValue;
-					$ret .= $this->_renderRadioCheckbox(
+					$ret .= $this->renderRadioCheckbox(
 						$tag_id,
 						$name,
 						$itemFormElement
@@ -507,7 +503,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderSelect($tag_id, $name, $formElement) {
+	protected function renderSelect($tag_id, $name, $formElement) {
 		$choices = isset($formElement->choices) ? $formElement->choices : $formElement->choice;
 
 		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
@@ -544,12 +540,12 @@ class Form extends Widget {
 			}
 			$choices = $selectOptions;
 		}
-		if ($choices) $ret .= $this->_renderSelectOption($choices, $formElement->value);
+		if ($choices) $ret .= $this->renderSelectOption($choices, $formElement->value);
 		$ret .= '	</select>';
 		return $ret;
 	}
 
-	private function _renderSelectOption($choice, $inputValue) {
+	protected function renderSelectOption($choice, $inputValue) {
 		$ret = '';
 		// debugMsg($choice, '$choice');
 		// debugMsg('<pre>'.print_r($choice,1).'</pre>');
@@ -568,7 +564,7 @@ class Form extends Widget {
 			} else if (is_array($optionValue)) {
 				// Option is array, then make option group
 				$ret .= '	<optgroup label="' . $optionKey . '">' . _NL
-					. $this->_renderSelectOption($optionValue, $inputValue)
+					. $this->renderSelectOption($optionValue, $inputValue)
 					. '	</optgroup>' . _NL;
 			} else if (preg_match('/^LABEL\:/', $optionValue)) {
 				// Show as label
@@ -604,7 +600,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderFile($tag_id, $name, $formElement) {
+	protected function renderFile($tag_id, $name, $formElement) {
 		if ($formElement->count) {
 			for ($i = 1; $i <= $formElement->count; $i++) {
 				$ret .= '<input '
@@ -635,7 +631,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderButton($tag_id, $name, $formElement) {
+	protected function renderButton($tag_id, $name, $formElement) {
 		$text = isset($formElement->text) ? $formElement->text : $formElement->value;
 
 		if (empty($formElement->items) && !empty($text)) {
@@ -649,7 +645,7 @@ class Form extends Widget {
 				. '>'
 				// Have parameter icon, show icon and text
 				. ($formElement->icon ? (function($icon, $text) {
-					return ($icon ? $this->_renderEachChildWidget($icon) : '')
+					return ($icon ? $this->renderEachChildWidget($icon) : '')
 						. ($text ? '<span>' . $text . '</span>' : '');
 				})($formElement->icon, $text) : $text)
 				. '</button>';
@@ -688,7 +684,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderSubmit($tag_id, $name, $formElement) {
+	protected function renderSubmit($tag_id, $name, $formElement) {
 		$ret = '';
 		foreach ($formElement->items as $key=>$value) {
 			if (substr($key,0,4) === 'text') $ret .= $value;
@@ -702,7 +698,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderDate($tag_id, $name, $formElement) {
+	protected function renderDate($tag_id, $name, $formElement) {
 		$months['BC'] = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 		$months['DC'] = ['Jan', 'Feb', 'Apr', 'March', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -752,7 +748,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderTime($tag_id, $name, $formElement) {
+	protected function renderTime($tag_id, $name, $formElement) {
 		$times = [];
 		$start_time = SG\getFirst($formElement->start, 0);
 		$end_time = SG\getFirst($formElement->end ,24);
@@ -773,7 +769,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderHour($tag_id, $name, $formElement) {
+	protected function renderHour($tag_id, $name, $formElement) {
 		$start_time = SG\getFirst($formElement->start, 0);
 		$end_time = SG\getFirst($formElement->end, 24);
 		$step_time = SG\getFirst($formElement->step, 15);
@@ -792,7 +788,7 @@ class Form extends Widget {
 		return $ret;
 	}
 
-	function _renderColorPicker($tag_id, $name, $formElement) {
+	protected function renderColorPicker($tag_id, $name, $formElement) {
 		$ret = '';
 		if (empty($formElement->color)) $formElement->color='#ffffff, #cccccc, #c0c0c0, #999999, #666666, #333333, #000000, #ffcccc, #ff6666, #ff0000, #cc0000, #990000, #660000, #330000, #ffcc99, #ff9966, #ff9900, #ff6600, #cc6600, #993300, #663300, #ffff99, #ffff66, #ffcc66, #ffcc33, #cc9933, #996633, #663333, #ffffcc, #ffff33, #ffff00, #ffcc00, #999900, #666600, #333300, #99ff99, #66ff99, #33ff33, #33cc00, #009900, #006600, #003300, #99ffff, #33ffff, #66cccc, #00cccc, #339999, #336666, #003333, #ccffff, #66ffff, #33ccff, #3366ff, #3333ff, #000099, #000066, #ccccff, #9999ff, #6666cc, #6633ff, #6600cc, #333399, #330099, #ffccff, #ff99ff, #cc66cc, #cc33cc, #993399, #663366, #330033';
 		foreach (explode(',', $formElement->color) as $color) {

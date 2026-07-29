@@ -4,10 +4,9 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-07-29
- * Version  :: 80
+ * Version  :: 81
  *
  * @param Array $args
- * @return Widget
  *
  * @uses new Widget([key => value,...])
  */
@@ -163,7 +162,7 @@ class Widget extends WidgetBase {
 
 	// Container of widget
 	// @override
-	function _renderWidgetContainerStart($callbackFunction = NULL) {
+	protected function renderWidgetContainerStart($callbackFunction = NULL) {
 		return $this->tagName ?
 			($this->widgetName != 'Widget' ? '<!-- Start of ' . $this->widgetName . ' -->' . _NL : '')
 			. '<' . $this->tagName . _NL
@@ -190,13 +189,13 @@ class Widget extends WidgetBase {
 	}
 
 	// @override
-	function _renderWidgetContainerEnd() {
+	protected function renderWidgetContainerEnd() {
 		return $this->tagName ? _NL . '</' . $this->tagName . '><!-- End of ' . $this->widgetName . ' -->' . _NL : '';
 	}
 
 	// Container cover all children
 	// @override
-	function _renderChildrenContainerStart() {
+	protected function renderChildrenContainerStart() {
 		if (empty($this->childrenContainer)) return;
 		return '<'.$this->childrenContainer['tagName']
 			. ($this->childrenContainer['class'] ? ' class="' . $this->childrenContainer['class'] . '"' : '')
@@ -204,13 +203,13 @@ class Widget extends WidgetBase {
 	}
 
 	// @override
-	function _renderChildrenContainerEnd() {
+	protected function renderChildrenContainerEnd() {
 		return $this->childrenContainer ? '</' . $this->childrenContainer['tagName'] . '>' . _NL : '';
 	}
 
 	// Container for each child of children
 	// @override
-	function _renderChildContainerStart($childKey, $attributes = [], $child = []) {
+	protected function renderChildContainerStart($childKey, $attributes = [], $child = []) {
 		foreach ($attributes as $key => $value) if (is_null($value)) unset($attributes[$key]);
 
 		$container = (Array) $this->container;
@@ -244,14 +243,14 @@ class Widget extends WidgetBase {
 	}
 
 	// @override
-	function _renderChildContainerEnd($child = [], $childKey = NULL) {
+	protected function renderChildContainerEnd($child = [], $childKey = NULL) {
 		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
 		return $childTagName ? '</' . $childTagName . '>' . _NL : '';
 	}
 
 	// Can override
 	// Render single widget
-	protected function _renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
+	protected function renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
 		$options = (Array) array_replace(
 			[
 				'prefix' => NULL,
@@ -296,14 +295,14 @@ class Widget extends WidgetBase {
 
 	// @override
 	// Render all item of childrens
-	function _renderChildren($childrens = [], $args = []) {
+	protected function renderChildren($childrens = [], $args = []) {
 		$childrens = (Array) $childrens;
 		$prefix = $args['prefix'];
 		$subfix = $args['subfix'];
 		unset($args['prefix'], $args['subfix']);
 
 		$ret = isset($prefix) ? $prefix : '';
-		$ret .= $this->_renderChildrenContainerStart();
+		$ret .= $this->renderChildrenContainerStart();
 
 		foreach ($childrens as $childKey => $child) {
 			$extraArgs = [];
@@ -319,9 +318,9 @@ class Widget extends WidgetBase {
 				if ($child->tagName) $ret .= '<' . $child->tagName . ' id="' . $child->id . '" class="-children-widget ' . $child->class . '">';
 				foreach ($child->children as $subKey => $subChild) {
 					if (is_string($subKey)) $subChild['inputName'] = $subKey;
-					$ret .= $this->_renderChildContainerStart($subKey, [], $subChild);
-					$ret .= $this->_renderEachChildWidget($subChild, $subKey);
-					$ret .= $this->_renderChildContainerEnd($subChild, $subKey) . _NL;
+					$ret .= $this->renderChildContainerStart($subKey, [], $subChild);
+					$ret .= $this->renderEachChildWidget($subChild, $subKey);
+					$ret .= $this->renderChildContainerEnd($subChild, $subKey) . _NL;
 				}
 				if ($child->tagName) $ret .= '</' . $child->tagName . '>';
 				continue;
@@ -329,12 +328,12 @@ class Widget extends WidgetBase {
 				if (is_string($key)) $child['inputName'] = $key;
 			}
 
-			$ret .= $this->_renderChildContainerStart($childKey, $args + $extraArgs, $child);
-			$ret .= $this->_renderEachChildWidget($child, $childKey);
-			$ret .= $this->_renderChildContainerEnd($child, $childKey);
+			$ret .= $this->renderChildContainerStart($childKey, $args + $extraArgs, $child);
+			$ret .= $this->renderEachChildWidget($child, $childKey);
+			$ret .= $this->renderChildContainerEnd($child, $childKey);
 		}
 
-		$ret .= $this->_renderChildrenContainerEnd();
+		$ret .= $this->renderChildrenContainerEnd();
 		$ret .= isset($subfix) ? $subfix : '';
 
 		return $ret;
@@ -342,7 +341,7 @@ class Widget extends WidgetBase {
 
 	// @override
 	function toString() {
-		$ret = $this->_renderWidgetContainerStart();
+		$ret = $this->renderWidgetContainerStart();
 		if ($this->header) {
 			if (is_object($this->header) && method_exists($this->header, 'build')) {
 				$ret .= $this->header->build();
@@ -351,9 +350,9 @@ class Widget extends WidgetBase {
 			}
 		}
 		if ($this->children()) {
-			$ret .= $this->_renderChildren($this->children());
+			$ret .= $this->renderChildren($this->children());
 		}
-		$ret .= $this->_renderWidgetContainerEnd();
+		$ret .= $this->renderWidgetContainerEnd();
 		return $ret;
 	}
 
@@ -401,11 +400,11 @@ class DOM extends Widget {
 	// @override
 	function toString() {
 		$unpairedTags = ['img', 'br'];
-		$ret = $this->_renderWidgetContainerStart();
+		$ret = $this->renderWidgetContainerStart();
 		if ($this->children()) {
-			$ret .= $this->_renderChildren($this->children());
+			$ret .= $this->renderChildren($this->children());
 		}
-		if (!in_array($this->tagName, $unpairedTags)) $ret .= $this->_renderWidgetContainerEnd();
+		if (!in_array($this->tagName, $unpairedTags)) $ret .= $this->renderWidgetContainerEnd();
 		return $ret;
 	}
 }
@@ -430,15 +429,15 @@ class Header extends Widget {
 
 	// @override
 	function toString() {
-		return $this->_renderWidgetContainerStart()
-			. ($this->leading ? '<div class="-leading">' . $this->_renderEachChildWidget($this->leading) . '</div>' . _NL : '')
+		return $this->renderWidgetContainerStart()
+			. ($this->leading ? '<div class="-leading">' . $this->renderEachChildWidget($this->leading) . '</div>' . _NL : '')
 			. '<div class="-title">'
-			. ($this->title ? '<' . $this->titleTag . ' class="-title-text">' . $this->_renderEachChildWidget($this->title) . '</' . $this->titleTag . '>' : '')
-			. ($this->subTitle ?? $this->subtitle ? '<span class="-subtitle-text">' . $this->_renderEachChildWidget($this->subTitle ?? $this->subtitle) . '</span>' : '')
+			. ($this->title ? '<' . $this->titleTag . ' class="-title-text">' . $this->renderEachChildWidget($this->title) . '</' . $this->titleTag . '>' : '')
+			. ($this->subTitle ?? $this->subtitle ? '<span class="-subtitle-text">' . $this->renderEachChildWidget($this->subTitle ?? $this->subtitle) . '</span>' : '')
 			. '</div>' . _NL
-			. ($this->trailing ? '<div class="-trailing">' . $this->_renderEachChildWidget($this->trailing) . '</div>' . _NL : '')
-			. $this->_renderChildren($this->children())
-			. $this->_renderWidgetContainerEnd();
+			. ($this->trailing ? '<div class="-trailing">' . $this->renderEachChildWidget($this->trailing) . '</div>' . _NL : '')
+			. $this->renderChildren($this->children())
+			. $this->renderWidgetContainerEnd();
 	}
 } // End of class Header
 
@@ -453,11 +452,11 @@ class Container extends Widget {
 
 	// @override
 	function toString() {
-		$ret = $this->_renderWidgetContainerStart();
+		$ret = $this->renderWidgetContainerStart();
 		if ($this->children()) {
-			$ret .= $this->_renderChildren($this->children());
+			$ret .= $this->renderChildren($this->children());
 		}
-		$ret .= $this->_renderWidgetContainerEnd();
+		$ret .= $this->renderWidgetContainerEnd();
 		return $ret;
 	}
 } // End of class Container
@@ -521,15 +520,15 @@ class ListTile extends Widget {
 
 	// @override
 	function toString() {
-		return $this->_renderWidgetContainerStart()
-			. ($this->leading ? '<div class="-leading">' . $this->_renderEachChildWidget($this->leading) . '</div>' . _NL : '')
+		return $this->renderWidgetContainerStart()
+			. ($this->leading ? '<div class="-leading">' . $this->renderEachChildWidget($this->leading) . '</div>' . _NL : '')
 			. '<div class="-title">'
-			. ($this->title ? '<' . $this->titleTag . ' class="-title-text">' . $this->_renderEachChildWidget($this->title) . '</'.$this->titleTag . '>' : '')
-			. ($this->subTitle ?? $this->subtitle ? '<span class="-subtitle-text">' . $this->_renderEachChildWidget($this->subTitle ?? $this->subtitle) . '</span>' : '')
+			. ($this->title ? '<' . $this->titleTag . ' class="-title-text">' . $this->renderEachChildWidget($this->title) . '</'.$this->titleTag . '>' : '')
+			. ($this->subTitle ?? $this->subtitle ? '<span class="-subtitle-text">' . $this->renderEachChildWidget($this->subTitle ?? $this->subtitle) . '</span>' : '')
 			. '</div>' . _NL
-			. ($this->trailing ? '<div class="-trailing">' . $this->_renderEachChildWidget($this->trailing) . '</div>' . _NL : '')
-			. $this->_renderChildren($this->children())
-			. $this->_renderWidgetContainerEnd();
+			. ($this->trailing ? '<div class="-trailing">' . $this->renderEachChildWidget($this->trailing) . '</div>' . _NL : '')
+			. $this->renderChildren($this->children())
+			. $this->renderWidgetContainerEnd();
 	}
 } // End of class ListTile
 
@@ -544,21 +543,21 @@ class Card extends Widget {
 
 	// @override
 	function toString() {
-		return $this->_renderWidgetContainerStart()
+		return $this->renderWidgetContainerStart()
 			. (
 				$this->header ?
 					'<header class="-header">'
-					. ($this->header['leading'] ? '<div class="-leading">' . $this->_renderEachChildWidget($this->header['leading']) . '</div>' . _NL : '')
+					. ($this->header['leading'] ? '<div class="-leading">' . $this->renderEachChildWidget($this->header['leading']) . '</div>' . _NL : '')
 					. '<div class="-title">'
-					. ($this->header['title'] ? '<' . \SG\getFirst($this->header['titleTag'], $this->titleTag) . ' class="-title-text">' . $this->_renderEachChildWidget($this->header['title']) . '</' . \SG\getFirst($this->header['titleTag'], $this->titleTag) . '>' : '')
-					. ($this->header['subtitle'] ? '<span class="-subtitle-text">' . $this->_renderEachChildWidget($this->header['subtitle']) . '</span>' : '')
+					. ($this->header['title'] ? '<' . \SG\getFirst($this->header['titleTag'], $this->titleTag) . ' class="-title-text">' . $this->renderEachChildWidget($this->header['title']) . '</' . \SG\getFirst($this->header['titleTag'], $this->titleTag) . '>' : '')
+					. ($this->header['subtitle'] ? '<span class="-subtitle-text">' . $this->renderEachChildWidget($this->header['subtitle']) . '</span>' : '')
 					. '</div>'._NL
-					. ($this->header['trailing'] ? '<div class="-trailing">' . $this->_renderEachChildWidget($this->header['trailing']) . '</div>' . _NL : '')
+					. ($this->header['trailing'] ? '<div class="-trailing">' . $this->renderEachChildWidget($this->header['trailing']) . '</div>' . _NL : '')
 					. '</header><!-- header -->'
 			 : '' // header
 			)
-			. $this->_renderChildren($this->children())
-			. $this->_renderWidgetContainerEnd();
+			. $this->renderChildren($this->children())
+			. $this->renderWidgetContainerEnd();
 	}
 } // End of class Card
 
@@ -576,12 +575,12 @@ class Nav extends Widget {
 	}
 
 	#[\Override]
-	protected function _renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
-		return parent::_renderEachChildWidget($widget, $key, [
+	protected function renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
+		return parent::renderEachChildWidget($widget, $key, [
 			'array' => function($key, $widget) {
 				$result = '<ul class="nav-list">' . _NL;
 				foreach ($widget as $eachKey => $eachWidget) {
-					$result .= '<li class="-item">' . trim($this->_renderEachChildWidget($eachWidget, $eachKey)) . '</li>'._NL;
+					$result .= '<li class="-item">' . trim($this->renderEachChildWidget($eachWidget, $eachKey)) . '</li>'._NL;
 				}
 				$result .= '</ul>' . _NL;
 				return $result;
@@ -597,7 +596,7 @@ class Nav extends Widget {
 	}
 
 	// @override
-	function _renderChildren($childrens = [], $args = []) {
+	protected function renderChildren($childrens = [], $args = []) {
 		foreach ($childrens as $key => $value) {
 			if (is_array($value)) {
 				$this->multipleLevel = true;
@@ -608,7 +607,7 @@ class Nav extends Widget {
 			$this->childrenContainer = ['tagName' => 'ul', 'class' => '-nav-list' . ($this->childClass ? ' ' . $this->childClass : '')];
 			$this->childContainer = ['tagName' => 'li', 'class' => '-item'];
 		}
-		return parent::_renderChildren($childrens, $args);
+		return parent::renderChildren($childrens, $args);
 	}
 } // End of class Nav
 
@@ -815,10 +814,10 @@ class Button extends Widget {
 			. sg_implode_attr($attribute)
 			. ($this->onClick ? ' onClick=\'' . $this->onClick . '\'' : '')
 			. '>'
-			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
-			. ($this->text ? '<span class="-label">' . $this->_renderChildren([$this->text]) . '</span>' : '')
-			. ($this->description ? '<span class="-description">' . $this->_renderChildren([$this->description]) . '</span>' : '')
-			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
+			. ($this->icon && $this->iconPosition == 'left' ? $this->renderChildren([$this->icon]) : '')
+			. ($this->text ? '<span class="-label">' . $this->renderChildren([$this->text]) . '</span>' : '')
+			. ($this->description ? '<span class="-description">' . $this->renderChildren([$this->description]) . '</span>' : '')
+			. ($this->icon && $this->iconPosition == 'right' ? $this->renderChildren([$this->icon]) : '')
 			. '</a>';
 		return $button;
 	}
@@ -875,10 +874,10 @@ class BackButton extends Widget {
 			. sg_implode_attr($attribute)
 			. ($this->onClick ? ' onClick=\'' . $this->onClick . '\'' : '')
 			. '>'
-			. ($this->icon && $this->iconPosition == 'left' ? $this->_renderChildren([$this->icon]) : '')
-			. ($this->text ? '<span class="-label">' . $this->_renderChildren([$this->text]) . '</span>' : '')
-			. ($this->description ? '<span class="-description">' . $this->_renderChildren([$this->description]) . '</span>' : '')
-			. ($this->icon && $this->iconPosition == 'right' ? $this->_renderChildren([$this->icon]) : '')
+			. ($this->icon && $this->iconPosition == 'left' ? $this->renderChildren([$this->icon]) : '')
+			. ($this->text ? '<span class="-label">' . $this->renderChildren([$this->text]) . '</span>' : '')
+			. ($this->description ? '<span class="-description">' . $this->renderChildren([$this->description]) . '</span>' : '')
+			. ($this->icon && $this->iconPosition == 'right' ? $this->renderChildren([$this->icon]) : '')
 			. '</' . $this->tagName . '>';
 		return $button;
 	}
@@ -949,7 +948,7 @@ class ExpandButton extends Widget {
 			. ' href="javascript:void(0)"'
 			. sg_implode_attr($this->attribute)
 			. '>'
-			. '<i class="icon -material">' . $this->_renderChildren([$this->icon]) . '</i>'
+			. '<i class="icon -material">' . $this->renderChildren([$this->icon]) . '</i>'
 			. '</a>';
 	}
 } // End of class ExpandButton
@@ -967,7 +966,7 @@ class StepMenu extends Widget {
 		parent::__construct($args);
 	}
 
-	function _renderChildContainerStart($stepIndex, $args = [], $child = []) {
+	protected function renderChildContainerStart($stepIndex, $args = [], $child = []) {
 		$stepIndex++;
 		return '<' . $this->childContainer['tagName'] . ' '
 			. 'class="ui-item -step-' . $stepIndex . ($this->childContainer['class'] ? $this->childContainer['class'] : '' )
@@ -987,7 +986,7 @@ class ListItem extends Widget {
 	public $wrapperType = array('ul' => 'li','span' => 'span','div' => 'div', 'div a'=>'a', 'ol'=>'li');
 	public $type = 'action';
 
-	function _renderChildren($childrens = [], $args = []) {
+	protected function renderChildren($childrens = [], $args = []) {
 		$ret = '';
 		foreach ($childrens as $key => $value) {
 			if (is_array($value)) {
@@ -1058,7 +1057,7 @@ class ListItem extends Widget {
 				. '</header>';
 			if ($headerClass) $this->header->attr->class = $headerClass;
 		}
-		$ret .= $this->_renderChildren($this->children());
+		$ret .= $this->renderChildren($this->children());
 		$ret .= '</' . $joinTag . '>' . _NL;
 
 		if ($this->config->nav) {
@@ -1085,7 +1084,7 @@ class TabBar extends Widget {
 	public $tagName = 'div';
 	public $class = 'widget-tabbar sg-tabs';
 
-	function _renderChildren($childrens = [], $args = []) {
+	protected function renderChildren($childrens = [], $args = []) {
 		$tabItems = '<ul class="tabs">';
 		$tabContent = '';
 		foreach ($childrens as $key => $child) {
@@ -1094,13 +1093,13 @@ class TabBar extends Widget {
 			$tabItems .= '<li'
 				. ' class="' . $child->class . ($child->active ? ' -active' : '') . '"'
 				. '>';
-			$tabItems .= $this->_renderEachChildWidget($child->action);
+			$tabItems .= $this->renderEachChildWidget($child->action);
 			$tabItems .= '</li>';
 
 			$tabContent .= '<div'
 				. ' id="' . $child->id . '"'
 				. ' class="' . ($child->active ? '' : '-hidden') . '">'
-				. $this->_renderEachChildWidget($child->content, $key)
+				. $this->renderEachChildWidget($child->content, $key)
 				. '</div>';
 		}
 		$tabItems .= '</ul>';
@@ -1147,9 +1146,9 @@ class Notify extends Widget {
 
 	// @override
 	function toString() {
-		return $this->_renderWidgetContainerStart()
-			. $this->_renderChildren($this->children())
-			. $this->_renderWidgetContainerEnd();
+		return $this->renderWidgetContainerStart()
+			. $this->renderChildren($this->children())
+			. $this->renderWidgetContainerEnd();
 	}
 } // End of class Card
 
@@ -1202,7 +1201,7 @@ class AppBar extends Widget {
 	 * #3: [[1,2],[3,4],widget,dropbbox] : Array of Array
 	 * #4: [widget,dropbbox] : Array of widget
 	 */
-	function _renderNavigator($navigators = NULL) {
+	protected function renderNavigator($navigators = NULL) {
 		// $navigators = $navigators ? $navigators : NULL;
 		$navigatorText = '';
 
@@ -1211,7 +1210,7 @@ class AppBar extends Widget {
 			foreach ($navigators as $key => $value) {
 				if (is_array($value)) {
 					$widget = new Nav(['children' => $value]);
-					$navigatorText .= $this->_renderEachChildWidget($widget, $key);
+					$navigatorText .= $this->renderEachChildWidget($widget, $key);
 				} else if (is_object($value) && method_exists($value, 'build')) {
 					$navigatorText .= $value->build();
 				} else {
@@ -1219,7 +1218,7 @@ class AppBar extends Widget {
 				}
 			}
 		} else if (is_object($navigators)) {
-			$navigatorText .= $this->_renderEachChildWidget($navigators);
+			$navigatorText .= $this->renderEachChildWidget($navigators);
 		} else {
 			$navigatorText .= $navigators;
 		}
@@ -1253,21 +1252,21 @@ class AppBar extends Widget {
 		if ($this->dropbox) $this->class .= ' -has-dropbox';
 
 		// On single level navigator, add tag ul
-		$navigatorResult = $this->_renderNavigator($this->navigator);
+		$navigatorResult = $this->renderNavigator($this->navigator);
 		if (!$this->navigatorMultipleLevel && $navigatorResult) $navigatorResult = '<ul>' . _NL . $navigatorResult . _NL . '</ul>';
 
-		return $this->_renderWidgetContainerStart()
-			. '<div class="-leading">' . $this->_renderEachChildWidget($this->leading) . '</div>' . _NL
+		return $this->renderWidgetContainerStart()
+			. '<div class="-leading">' . $this->renderEachChildWidget($this->leading) . '</div>' . _NL
 			. '<div class="-title"><h2 class="-text">'
-			. ($this->title ? $this->_renderEachChildWidget($this->title) : '')
+			. ($this->title ? $this->renderEachChildWidget($this->title) : '')
 			. '</h2>'
-			. ($this->subTitle ? '<div class="-sub">' . $this->_renderEachChildWidget($this->subTitle) . '</div>' : '')
+			. ($this->subTitle ? '<div class="-sub">' . $this->renderEachChildWidget($this->subTitle) . '</div>' : '')
 			. '</div>' . _NL
-			. '<div class="-trailing -no-print">' . $this->_renderEachChildWidget($this->trailing) . '</div>' . _NL
+			. '<div class="-trailing -no-print">' . $this->renderEachChildWidget($this->trailing) . '</div>' . _NL
 			. ($this->navigator && $navigatorResult ? '<nav class="-nav -no-print">' . _NL . $navigatorResult . _NL . '</nav>' . _NL : '')
 			. ($this->dropbox ? '<div class="-dropbox">'.$this->dropbox->build() . '</div><!-- end of -dropboox -->' . _NL : '')
-			. ($this->children() ? '<div class="-children">' . $this->_renderChildren($this->children()) . '</div>' : '')
-			. $this->_renderWidgetContainerEnd();
+			. ($this->children() ? '<div class="-children">' . $this->renderChildren($this->children()) . '</div>' : '')
+			. $this->renderWidgetContainerEnd();
 	}
 } // End of class AppBar
 
@@ -1282,6 +1281,7 @@ class AppBar extends Widget {
 class PageBase extends WidgetBase {
 	public $widgetName = 'PageBase';
 	public $module = NULL;
+	protected $args = [];
 
 	function __construct($args = []) {
 		$this->widgetName = get_class($this);
@@ -1290,8 +1290,8 @@ class PageBase extends WidgetBase {
 		$this->version = cfg($this->module . '.version');
 		parent::__construct($args);
 		if (debug('page')) {
-			debugMsg('PAGE CONTROLLER Id = ' . $this->qtRef . ' , Action = ' . $this->action . ' , Arg[' . $this->argIndex . '] = ' . $this->_args[$this->argIndex]);
-			debugMsg($this->_args, '$args');
+			debugMsg('PAGE CONTROLLER Id = ' . $this->qtRef . ' , Action = ' . $this->action . ' , Arg[' . $this->argIndex . '] = ' . $this->args[$this->argIndex]);
+			debugMsg($this->args, '$args');
 			debugMsg($this, '$this');
 		}
 	}

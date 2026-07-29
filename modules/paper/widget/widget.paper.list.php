@@ -1,16 +1,16 @@
 <?php
 /**
-* Widget  :: Paper List Widget
-* Created :: 2023-07-25
-* Modify  :: 2026-02-17
-* Version :: 2
-*
-* @param Array $args
-* @return Widget
-*
-* @usage import('widget:paper.list.php')
-* @usage new PaperListWidget([])
-*/
+ * Widget   :: Paper List Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-07-25
+ * Modified :: 2026-07-29
+ * Version  :: 3
+ *
+ * @param Array $args
+ *
+ * @uses import('widget:paper.list.php')
+ * @uses new PaperListWidget([])
+ */
 
 namespace Paper\Widget;
 
@@ -22,7 +22,7 @@ class PaperListWidget extends \Widget {
 	var $listStyle = 'div';
 	var $url;
 
-	function _renderChildren($childrens = [], $args = []) {
+	protected function renderChildren($childrens = [], $args = []) {
 		switch ($this->listStyle) {
 			case 'table': return $this->listStyleTable(); break;
 			case 'dl': return $this->listStyleDl(); break;

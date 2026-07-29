@@ -1,15 +1,14 @@
 <?php
 /**
- * Widget  :: Dropbox widget for create Dropbox
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2020-10-01
- * Modify  :: 2026-05-13
- * Version :: 6
+ * Widget   :: Dropbox widget for create Dropbox
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-07-29
+ * Version  :: 7
  *
  * @param Array $args
- * @return Widget
  *
- * @usage new Dropbox([
+ * @uses new Dropbox([
  * 	'id' => String,
  * 	'class' => String,
  *  'position' => 'left' | 'right' | 'center',
@@ -66,8 +65,8 @@ class Dropbox extends Widget {
 		$dropLink = SG\getFirst(
 			$this->link,
 			'<a href="javascript:void(0)" title="' . $this->title . '">'
-				. ($this->text != '' ? '<span>' . $this->_renderEachChildWidget($this->text) . '</span>' : '')
-				. ($this->icon ? $this->_renderEachChildWidget($this->icon) : '<i class="icon -' . ($this->icon ? $this->icon : 'material') . '">' . $this->iconText . '</i>')
+				. ($this->text != '' ? '<span>' . $this->renderEachChildWidget($this->text) . '</span>' : '')
+				. ($this->icon ? $this->renderEachChildWidget($this->icon) : '<i class="icon -' . ($this->icon ? $this->icon : 'material') . '">' . $this->iconText . '</i>')
 				. '</a>'
 		);
 
@@ -77,8 +76,8 @@ class Dropbox extends Widget {
 			. '<div class="-wrapper -hidden">' . _NL
 			. '<div class="-arrow"></div>' . _NL
 			. '<div class="-content">' . _NL
-			. $this->_renderChildren($this->children())
-			. '<div class="-footer">' . ($this->footer ? $this->_renderEachChildWidget($this->footer) : '') . '</div>' . _NL
+			. $this->renderChildren($this->children())
+			. '<div class="-footer">' . ($this->footer ? $this->renderEachChildWidget($this->footer) : '') . '</div>' . _NL
 			. '</div>' . _NL
 			. '</div>' . _NL
 			. '</span><!-- End of widget-dropbox -->' . _NL;

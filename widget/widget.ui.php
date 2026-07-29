@@ -1,16 +1,15 @@
 <?php
-/********************************************
-* Class :: Ui
-* Ui class for create ui
-*
-* Created 2020-08-01
-* Modify  2020-08-01
-*
-* Property
-* config {nav: "nav -icons"}
-*
-* @usage module/{$Id}/method
-********************************************/
+/**
+ * Widget  :: Ui Widget
+ * Author  :: Little Bear<softganz@gmail.com>
+ * Created :: 2020-28-01
+ * Modify  :: 2026-07-29
+ * Version :: 2
+ *
+ * @param Array $args
+ *
+ * @uses new Ui([])
+ */
 
 class Ui extends Widget {
 	var $widgetName = 'Ui';
@@ -68,7 +67,7 @@ class Ui extends Widget {
 
 	function Count() {return count((Array) $this->children);}
 
-	function _renderChildren($childrens = [], $args = []) {
+	protected function renderChildren($childrens = [], $args = []) {
 		$ret = '';
 		foreach ($childrens as $key => $value) {
 			if (is_array($value)) {
@@ -140,7 +139,7 @@ class Ui extends Widget {
 				. '</header>';
 			if ($headerClass) $this->header->attr->class = $headerClass;
 		}
-		$ret .= $this->_renderChildren($this->children());
+		$ret .= $this->renderChildren($this->children());
 		$ret .= '</'.$joinTag.'>'._NL;
 
 		if ($this->config->nav) {

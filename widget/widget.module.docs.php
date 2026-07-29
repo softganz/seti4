@@ -1,15 +1,14 @@
 <?php
 /**
- * Docs    :: Module Docs Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2026-04-24
- * Modify  :: 2026-04-26
- * Version :: 3
+ * Docs     :: Module Docs Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2026-04-24
+ * Modified :: 2026-07-29
+ * Version  :: 4
  *
  * @param Array $args
- * @return Widget
  *
- * @usage Class ModuleDocs extends ModuleDocsWidget
+ * @uses Class ModuleDocs extends ModuleDocsWidget
  */
 
 import('package:external/parsedown/Parsedown.php'); // https://github.com/parsedown/parsedown

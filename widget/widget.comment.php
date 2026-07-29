@@ -1,21 +1,12 @@
 <?php
 /**
- * Widget widget_comment
+ * Widget   :: Inline comment Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2012-09-03
+ * Modified :: 2026-07-29
+ * Version  :: 2
  *
- * @package core
- * @version 0.01
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2012-09-03
- * @modify 2012-09-03
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- *
- * Draw last comment list in any format
- * 
+ * @param Array $args
  * @param Argument list in many format
  * 
  * @param String id
@@ -39,6 +30,7 @@
  *	@usage widget::content(['para1=value1'[,[para2=value2][para3,value3]...)
  * @example <div class="widget Content" id="id1" data-limit="20" show-style-type="div" data-footer="By SoftGanz" data-sort="ASC"></div>
  */
+
 function widget_comment() {
 	$comments=mydb::select('SELECT tpid,title,last_reply,UNIX_TIMESTAMP(last_reply) AS replytime FROM `sgz_topic` t WHERE t.status='._PUBLISH.' ORDER BY last_reply DESC LIMIT 10');
 	$ret.=view::content_list($comments,'list-style=shortview','list-style-value=" <span class=\"timestamp\">".sg_remain2day('.date('H:i:s').'-$replytime)."</span>"','url=paper/$tpid/page/last');

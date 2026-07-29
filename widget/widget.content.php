@@ -1,22 +1,12 @@
 <?php
 /**
- * Widget widget_content
- *
- * @package core
- * @version 0.01
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created :: 2011-11-04
- * @modify  :: 2025-11-21
+ * Widget   :: Inline content Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2011-11-04
+ * Modified :: 2026-07-29
  * Version  :: 2
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
  *
- * Draw content list in any format
- *
+ * @param Array $args
  * @param Argument list in many format
  * @param String id
  * @param String data-show                   Example data-show="style=div;photo=image;"
@@ -38,7 +28,7 @@
  * @param String option-debug	Value = eval
  *
  * @return String $ret
- *	@usage widget::content(['para1=value1'[,[para2=value2][para3,value3]...)
+ * @uses widget::content(['para1=value1'[,[para2=value2][para3,value3]...)
  * @example <div class="widget Content" id="id1" data-limit="20" show-style-type="div" data-footer="By SoftGanz" data-sort="ASC"></div>
  */
 
@@ -47,16 +37,17 @@ import('model:paper.php');
 use Paper\Model\PaperModel;
 
 function widget_content() {
-/*
-special parameter
-	- show : can be string or object that contain evaluate sting
-		example
-			$show->view='$view." view(s)"';
-			$show->created='sg_date($created,cfg("dateformat"))';
-			view::content_short_list('show',$show);
-*/
-static $content_list_count=0;
-global $today;
+	/*
+	special parameter
+		- show : can be string or object that contain evaluate sting
+			example
+				$show->view='$view." view(s)"';
+				$show->created='sg_date($created,cfg("dateformat"))';
+				view::content_short_list('show',$show);
+	*/
+	static $content_list_count=0;
+	global $today;
+
 	$para=para(func_get_args(),'data-model=items','show-url=paper/$nodeId','data-limit=5','show-style=div');
 
 	$ret = '';

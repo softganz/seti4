@@ -1,26 +1,17 @@
 <?php
 /**
- * Widget widget_vdo
- *
- * @package core
- * @version 0.01
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2014-05-25
- * @modify 2014-05-25
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- *
- * Widget get web statistics
+ * Widget   :: Inline Video content Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2014-05-25
+ * Modified :: 2026-07-29
+ * Version  :: 2
  *
  * @param String $para
  * 	data-header=Header
  * @return String
  * Exp. <div class="widget vdo" data-src="http://softganz.com/vdo.mp3" data-img="http://softganz.com/upload/pics/photo.jpg" data-size="240p"></div>
  */
+
 function widget_vdo() {
 	$para=para(func_get_args(),'data-header=Video','data-width=640','data-height=360','option-header=0');
 	switch ($para->{'data-size'}) {

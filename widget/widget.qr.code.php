@@ -1,25 +1,24 @@
 <?php
 /**
- * Widget  :: Qr Code Generator
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2024-07-28
- * Modify  :: 2026-04-26
- * Version :: 3
+ * Widget   :: Qr Code Generator
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-07-28
+ * Modified :: 2026-06-29
+ * Version  :: 4
  *
  * @param Array $args
- * @return Widget
  *
- * @usage import('widget:qr.code.php')
- * @usage new QrCodeWidget([
-		'id' => 'my-qrcode-id',
-		'class' => 'my-qrcode-class -sg-text-center',
-		'url' => url('project/'.$this->projectId.'/info.expense/'.$this->actionId),
-		'imgWidth' => 200,
-		'imgHeight' => 200,
-		'showUrl' => true,
-		'text' => new Container(['id' => 'text', 'child' => 'อัพโหลดใบเสร็จรับเงินโดยการถ่ายภาพจากสมาร์ทโฟนโดยใช้สมาร์ทโฟนสแกนคิวอาร์โค๊ดนี้ แล้วกด "ส่งภาพใบเสร็จรับเงิน" เลือกกล้องถ่ายรูป']),
-		'attribute' => ['style' => 'display: block; margin:0 auto;']
-	])
+ * @uses import('widget:qr.code.php')
+ * @uses new QrCodeWidget([
+ *		'id' => 'my-qrcode-id',
+ *		'class' => 'my-qrcode-class -sg-text-center',
+ *		'url' => url('project/'.$this->projectId.'/info.expense/'.$this->actionId),
+ *		'imgWidth' => 200,
+ *		'imgHeight' => 200,
+ *		'showUrl' => true,
+ *		'text' => new Container(['id' => 'text', 'child' => 'อัพโหลดใบเสร็จรับเงินโดยการถ่ายภาพจากสมาร์ทโฟนโดยใช้สมาร์ทโฟนสแกนคิวอาร์โค๊ดนี้ แล้วกด "ส่งภาพใบเสร็จรับเงิน" เลือกกล้องถ่ายรูป']),
+ *		'attribute' => ['style' => 'display: block; margin:0 auto;']
+ *	])
 */
 
 class QrCodeWidget extends Widget {
@@ -51,7 +50,7 @@ class QrCodeWidget extends Widget {
 			. '/>';
 
 		if ($this->showUrl) $this->children[] = '<div class="-url">' . $this->domain . $this->url . '</div>';
-		if (isset($this->text)) $this->children[] = $this->_renderEachChildWidget($this->text, 'text');
+		if (isset($this->text)) $this->children[] = $this->renderEachChildWidget($this->text, 'text');
 
 		return parent::toString();
 	}

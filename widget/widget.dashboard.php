@@ -1,16 +1,14 @@
 <?php
 /**
  * Dashboard :: Dashboard Widget
- * Author  :: Little Bear<softganz@gmail.com>
+ * Author    :: Little Bear<softganz@gmail.com>
  * Created   :: 2023-12-16
- * Modify    :: 2026-04-26
- * Version   :: 2
+ * Modified  :: 2026-07-29
+ * Version   :: 3
  *
  * @param Array $args
- * @return Widget
  *
- * @usage import('widget:dashboard.php')
- * @usage new DashboardWidget([])
+ * @uses new DashboardWidget([])
  */
 
 class DashboardWidget extends Widget {
@@ -22,13 +20,13 @@ class DashboardWidget extends Widget {
 	}
 
 	#[\Override]
-	protected function _renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
-		return parent::_renderEachChildWidget(
+	protected function renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
+		return parent::renderEachChildWidget(
 			$widget,
 			$key,
 			[
 				'array' => function($key, $widget) {
-					return $this->_renderChildType($key, (Object) $widget);
+					return $this->renderChildType($key, (Object) $widget);
 				},
 				'text' => function($key, $text) {
 					return $text._NL;
@@ -37,7 +35,7 @@ class DashboardWidget extends Widget {
 		);
 	}
 
-	private function _renderChildType($key, $widget = '{}') {
+	protected function renderChildType($key, $widget = '{}') {
 		$widget = (Object) array_replace(
 			[
 				'class' => NULL, // String
@@ -54,22 +52,22 @@ class DashboardWidget extends Widget {
 			'class' => $widget->class,
 			'children' => [
 				$widget->title ? '<span class="-title">'
-					. ($widget->leading ? parent::_renderEachChildWidget($widget->leading) : '')
-					. '<span>' . parent::_renderEachChildWidget($widget->title) . '</span>'
-					. ($widget->trailing ? parent::_renderEachChildWidget($widget->trailing) : '')
+					. ($widget->leading ? parent::renderEachChildWidget($widget->leading) : '')
+					. '<span>' . parent::renderEachChildWidget($widget->title) . '</span>'
+					. ($widget->trailing ? parent::renderEachChildWidget($widget->trailing) : '')
 					. '</span>' : NULL,
-				isset($widget->value) ? '<span class="-value">' . parent::_renderEachChildWidget($widget->value) . '</span>' : NULL,
-				$widget->unit ? '<span class="-unit">' . parent::_renderEachChildWidget($widget->unit) . '</span>' : NULL,
+				isset($widget->value) ? '<span class="-value">' . parent::renderEachChildWidget($widget->value) . '</span>' : NULL,
+				$widget->unit ? '<span class="-unit">' . parent::renderEachChildWidget($widget->unit) . '</span>' : NULL,
 				$widget->chart ? $this->drawChart($widget) : NULL,
 			], // children
 		]))->build();
 
 		switch ($widget->type) {
-			// case 'textfield': $ret .= $this->_renderTypeTextField($text); break;
+			// case 'textfield': $ret .= $this->renderTypeTextField($text); break;
 			// case 'radio':
-			// case 'checkbox': $ret .= $this->_renderTypeRadio($widget); break;
-			// case 'select': $ret .= $this->_renderTypeSelect($text); break;
-			default: $ret .= $this->_renderTypeText($text, $widget); break;
+			// case 'checkbox': $ret .= $this->renderTypeRadio($widget); break;
+			// case 'select': $ret .= $this->renderTypeSelect($text); break;
+			default: $ret .= $this->renderTypeText($text, $widget); break;
 		}
 
 		return $ret;

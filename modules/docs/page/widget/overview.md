@@ -882,9 +882,9 @@ class MyWidget extends Widget {
 
     // override render method ถ้าต้องการ
     function toString() {
-        return $this->_renderWidgetContainerStart()
-            . '<div class="-custom">' . $this->_renderChildren($this->children()) . '</div>'
-            . $this->_renderWidgetContainerEnd();
+        return $this->renderWidgetContainerStart()
+            . '<div class="-custom">' . $this->renderChildren($this->children()) . '</div>'
+            . $this->renderWidgetContainerEnd();
     }
 }
 ```

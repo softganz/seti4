@@ -1,16 +1,14 @@
 <?php
 /**
- * Widget  :: Render AJAX Call Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2025-10-31
- * Modify  :: 2026-04-06
- * Version :: 4
+ * Widget   :: Render AJAX Call Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-10-31
+ * Modified :: 2026-07-29
+ * Version  :: 5
  *
  * @param Array $args
- * @return Object
  *
- * @usage import('widget:render.ajax.php')
- * @usage new renderAjaxWidgetl([])
+ * @uses new renderAjaxWidgetl([])
  */
 
 class renderAjaxWidget extends Widget {
@@ -61,7 +59,7 @@ class renderAjaxWidget extends Widget {
 		die(debugMsg().process_widget($this->requestResult));
 	}
 
-	private function renderWidget() {
+	protected function renderWidget() {
 		$ret = '';
 		if ($this->requestResult->appBar->boxHeader) {
 			// Show header from text of boxHeader
@@ -80,7 +78,7 @@ class renderAjaxWidget extends Widget {
 	}
 
 	// Build widget
-	private static function buildRequest($widget) {
+	protected static function buildRequest($widget) {
 		if (is_object($widget) && method_exists($widget, 'build')) {
 			$buildResult = $widget->build();
 			return is_object($buildResult) && method_exists($buildResult, 'build') ? self::buildRequest($buildResult) : $buildResult;

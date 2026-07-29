@@ -1,20 +1,20 @@
 <?php
 /**
-* Survey  :: Survey widget for create survey form
-* Created :: 2020-10-01
-* Modify  :: 2024-05-21
-* Version :: 3
-*
-* @param Object $patientInfo
-* @param Object $visitInfo
-* @return String
-*
-* Property
-* config {nav: "nav -icons"}
-*
-* @usage new Survey([schema, values => [], children => [form]])
-* Optional [Boolean debug]
-*/
+ * Widget   :: Survey widget for create survey form
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-10-01
+ * Modified :: 2026-07-29
+ * Version  :: 4
+ *
+ * @param Object $patientInfo
+ * @param Object $visitInfo
+ *
+ * Property
+ * config {nav: "nav -icons"}
+ *
+ * @uses new Survey([schema, values => [], children => [form]])
+ * Optional [Boolean debug]
+ */
 
 class Survey extends Widget {
 	var $widgetName = 'Survey';
@@ -42,13 +42,13 @@ class Survey extends Widget {
 		$this->values[$key] = $value;
 	}
 
-	function _showField($inputField) {
+	protected function renderField($inputField) {
 		if (is_array($inputField)) {
 			if ($this->schema->options->groupContainer) {
 				$this->children['form']->addText('<div class="'.$this->schema->options->groupContainer->class.'">');
 			}
 			foreach ($inputField as $key => $value) {
-				$this->_showField($value);
+				$this->renderField($value);
 			}
 			if ($this->schema->options->groupContainer) {
 				$this->children['form']->addText('</div>');
@@ -133,7 +133,7 @@ class Survey extends Widget {
 		}
 		$ret = '<div class="sg-survey '.$this->config->class.'">';
 		foreach ($this->schema->body as $key => $inputField) {
-			$this->_showField($inputField);
+			$this->renderField($inputField);
 		}
 
 		if ($this->schema->submitButton) {
@@ -147,7 +147,7 @@ class Survey extends Widget {
 			);
 		}
 
-		$ret .= $this->_renderChildren($this->children());
+		$ret .= $this->renderChildren($this->children());
 
 		if ($this->schema->remark) {
 			$ret .= '<div class="-remark">'.$this->schema->remark.'</div>';

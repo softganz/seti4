@@ -1,14 +1,15 @@
 <?php
 /**
-* Project Widget :: Project Navigator Widget
-* Created 2021-12-13
-* Modify 	2021-12-13
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new AppBarNavWidget([])
-*/
+ * Widget  :: App Bar Navigator Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-12-13
+ * Modified :: 2026-07-29
+ * Version  :: 2
+ *
+ * @param Array $args
+ *
+ * @uses new AppBarNavWidget([])
+ */
 
 class AppBarNavWidget extends Widget {
 	var $configName;

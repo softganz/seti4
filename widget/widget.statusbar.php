@@ -1,24 +1,19 @@
 <?php
 /**
- * Status  :: Widget
- * Created :: 2025-06-16
- * Modify  :: 2025-06-16
- * Version :: 1
+ * Status   :: Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-06-16
+ * Modified :: 2026-07-29
+ * Version  :: 2
  *
  * @param Array $args
- * @return Object
  *
- * @usage import('widget:module.widgetlname.php')
- * @usage new StatusBarWidgetl([])
+ * @uses new StatusBarWidgetl([])
  */
 
 class StatusbarWidget extends Widget {
 	var $tagName = 'ul';
 	var $childContainer = ['tagName' => 'li', 'class' => '-item'];
 	var $class = 'widget-statusbar';
-
-	// function __construct($args = []) {
-	// 	parent::__construct($args);
-	// }
 }
 ?>

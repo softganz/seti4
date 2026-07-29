@@ -1,29 +1,21 @@
 <?php
 /**
- * Widget widget_ads
+ * Widget   :: Inline Ad Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2011-11-04
+ * Modified :: 2026-07-29
+ * Version  :: 2
  *
- * @package core
- * @version 0.01
- * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
- * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2011-11-04
- * @modify 2011-11-04
- * ============================================
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- *
- * Widget get ads
- * 
+ * @param Array $args
  * @param String $para
  * 	data-loc=Ad location
  * 	data-items=Limit (default 1)
  * 	data-order=Order Field
  * 	data-sort=ASC|DESC
  * @return String
- * @example <div class="widget Ads" id="ad-baner" data-loc="banner" data-items="1" data-order="aid" data-sort="ASC"></div>
+ * @uses <div class="widget Ads" id="ad-baner" data-loc="banner" data-items="1" data-order="aid" data-sort="ASC"></div>
  */
+
 function widget_ads() {
 	$para=$para=para(func_get_args(),'data-header=Ad','data-items=1','data-order=weight ASC, aid','data-sort=DESC','option-header=0');
 	$location=$para->{'data-loc'};
