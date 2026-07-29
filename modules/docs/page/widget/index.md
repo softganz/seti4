@@ -1,6 +1,7 @@
 <h3>Widgets</h3>
 
 <ul>
+	<li><a href="{widget/overview}">Widget Overview</a></li>
 	<li><a href="{widget/widget}">Base Widget</a></li>
 	<li><a href="{widget/appbar}">AppBar Widget</a></li>
 	<li><a href="{widget/button}">Button Widget</a></li>
