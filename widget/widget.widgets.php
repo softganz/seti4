@@ -4,14 +4,20 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-07-29
- * Version  :: 81
+ * Version  :: 82
  *
  * @param Array $args
  *
  * @uses new Widget([key => value,...])
  */
 
-// Class :: WidgetBase class for base of all widget
+/**
+ * Widget Widget
+ * Class :: WidgetBase class for base of all widget
+ *
+ * @param array $args
+ * @uses extends WidgetBase
+ */
 class WidgetBase {
 	public $widgetName = 'Widget';
 	public $version;
@@ -32,7 +38,13 @@ class WidgetBase {
 	}
 } // End of class WidgetBase
 
-// Widget for children group
+/**
+ * Widget :: Children Widget
+ * Widget for children group
+ *
+ * @param array $args
+ * @uses new Children([key => value,...])
+ */
 class Children extends WidgetBase {
 	public $widgetName = 'Children';
 	public $version = '0.00.01';
@@ -40,6 +52,12 @@ class Children extends WidgetBase {
 	public $children = [];
 }
 
+/**
+ * Widget :: Widget
+ *
+ * @param array $args
+ * @uses new Widget([key => value,...])
+ */
 class Widget extends WidgetBase {
 	public $widgetName = 'Widget'; // String
 	public $version; // String
@@ -371,10 +389,15 @@ class Widget extends WidgetBase {
 
 
 /**
-* Basic Widget
+* Basic Widget Group
 */
 
-// new DOM(['tag' => 'img', 'class' => 'class-name', 'onClick' => 'script', 'child/children'])
+/**
+ * Widget :: DOM Widget
+ *
+ * @param array $args
+ * @uses new DOM(['tag' => 'img', 'class' => 'class-name', 'onClick' => 'script', 'child/children'])
+ */
 class DOM extends Widget {
 	public $widgetName;
 	public $version = '0.00.01';
@@ -409,11 +432,23 @@ class DOM extends Widget {
 	}
 }
 
+/**
+ * Widget :: HtmlTemplate Widget
+ *
+ * @param array $args
+ * @uses new HtmlTemplate([key => value,...])
+ */
 class HtmlTemplate extends Widget {
 	public $widgetName = 'Template';
 	public $tagName = 'template';
 }
 
+/**
+ * Widget :: Header Widget
+ *
+ * @param array $args
+ * @uses new Header([key => value,...])
+ */
 class Header extends Widget {
 	public $widgetName = 'Header';
 	public $tagName = 'header';
@@ -441,6 +476,12 @@ class Header extends Widget {
 	}
 } // End of class Header
 
+/**
+ * Widget :: Container Widget
+ *
+ * @param array $args
+ * @uses new Container([key => value,...])
+ */
 class Container extends Widget {
 	public $widgetName = 'Container';
 	public $tagName = 'div';
@@ -461,6 +502,12 @@ class Container extends Widget {
 	}
 } // End of class Container
 
+/**
+ * Widget :: Center Widget
+ *
+ * @param array $args
+ * @uses new Center([key => value,...])
+ */
 class Center extends Widget {
 	public $widgetName = 'Center';
 	public $tagName = 'div';
@@ -471,6 +518,12 @@ class Center extends Widget {
 	}
 } // End of class Center
 
+/**
+ * Widget :: List Order Widget
+ *
+ * @param array $args
+ * @uses new ListOrder([key => value,...])
+ */
 class ListOrder extends Widget {
 	public $widgetName = 'ListOrder';
 	public $tagName = 'ul';
@@ -482,6 +535,12 @@ class ListOrder extends Widget {
 	}
 } // End of class ListOrder
 
+/**
+ * Widget :: Column Widget
+ *
+ * @param array $args
+ * @uses new Column([key => value,...])
+ */
 class Column extends Widget {
 	public $widgetName = 'Column';
 	public $tagName = 'div';
@@ -492,6 +551,12 @@ class Column extends Widget {
 	}
 } // End of class Column
 
+/**
+ * Widget :: Row Widget
+ *
+ * @param array $args
+ * @uses new Row([key => value,...])
+ */
 class Row extends Widget {
 	public $widgetName = 'Row';
 	public $version = '0.0.10';
@@ -499,12 +564,24 @@ class Row extends Widget {
 	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class Row
 
+/**
+ * Widget :: Floating Action Button Widget
+ *
+ * @param array $args
+ * @uses new FloatingActionButton([key => value,...])
+ */
 class FloatingActionButton extends Widget {
 	public $widgetName = 'FloatingActionButton';
 	public $tagName = 'div';
 	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class FloatingActionButton
 
+/**
+ * Widget :: List Tile Widget
+ *
+ * @param array $args
+ * @uses new ListTile([key => value,...])
+ */
 class ListTile extends Widget {
 	public $widgetName = 'ListTile';
 	public $tagName = 'div';
@@ -532,6 +609,12 @@ class ListTile extends Widget {
 	}
 } // End of class ListTile
 
+/**
+ * Widget :: Card Widget
+ *
+ * @param array $args
+ * @uses new Card([key => value,...])
+ */
 class Card extends Widget {
 	public $widgetName = 'Card';
 	public $tagName = 'div';
@@ -561,6 +644,12 @@ class Card extends Widget {
 	}
 } // End of class Card
 
+/**
+ * Widget :: Nav Widget
+ *
+ * @param array $args
+ * @uses new Nav([key => value,...])
+ */
 class Nav extends Widget {
 	public $widgetName = 'Nav';
 	public $tagName = 'nav';
@@ -611,6 +700,12 @@ class Nav extends Widget {
 	}
 } // End of class Nav
 
+/**
+ * Widget :: Side Bar Widget
+ *
+ * @param array $args
+ * @uses new SideBar([key => value,...])
+ */
 class SideBar extends Widget {
 	public $widgetName = 'SideBar';
 	public $tagName = 'aside';
@@ -622,6 +717,12 @@ class SideBar extends Widget {
 	}
 } // End of class Nav
 
+/**
+ * Widget :: Scroll View Widget
+ *
+ * @param array $args
+ * @uses new ScrollView([key => value,...])
+ */
 class ScrollView extends Widget {
 	public $widgetName = 'ScrollView';
 	public $tagName = 'div';
@@ -632,6 +733,12 @@ class ScrollView extends Widget {
 	}
 } // End of class ScrollView
 
+/**
+ * Widget :: Debug Message Widget
+ *
+ * @param array $args
+ * @uses new DebugMsg([key => value,...])
+ */
 class DebugMsg extends Widget {
 	public $msg;
 	public $varName;
@@ -711,6 +818,12 @@ class DebugMsg extends Widget {
 	}
 } // End of class DebugMsg
 
+/**
+ * Widget :: Message Widget
+ *
+ * @param array $args
+ * @uses new Message([key => value,...])
+ */
 class Message extends WidgetBase {
 	public $widgetName = 'Message';
 	public $responseCode;
@@ -740,14 +853,20 @@ class Message extends WidgetBase {
 	}
 } // End of class Message
 
+/**
+ * Widget :: Error Message Widget
+ *
+ * @param array $args
+ * @uses new ErrorMessage([key => value,...])
+ */
 class ErrorMessage extends Message {
 	public $widgetName = 'ErrorMessage';
 } // End of class ErrorMessage
 
 /**
- * Button widget
+ * Widget :: Button widget
+ * 
  * @param Array $args
- * @return Object
  * @usage new Button([key => value,...])
  */
 class Button extends Widget {
@@ -824,9 +943,9 @@ class Button extends Widget {
 } // End of class Button
 
 /**
- * BackButton widget
+ * Widget :: Back Button widget
+ * 
  * @param Array $args
- * @return Object
  * @usage new BackButton([key => value,...])
  */
 class BackButton extends Widget {
@@ -883,8 +1002,13 @@ class BackButton extends Widget {
 	}
 } // End of class BackButton
 
-// Usage: new Icon(iconName, property=[])
-// Usage: new Icon('iconName1,iconName2', property=[])
+/**
+ * Widget :: Icon Widget
+ *
+ * @param array $args
+ * @uses new Icon(iconName, property=[])
+ * @uses new Icon('iconName1, iconName2', property=[])
+ */
 class Icon extends Widget {
 	public $widgetName = 'Icon';
 	public $version = '0.03';
@@ -940,6 +1064,12 @@ class Icon extends Widget {
 	}
 } // End of class Icon
 
+/**
+ * Widget :: Expand Button Widget
+ *
+ * @param array $args
+ * @uses new ExpandButton([key => value,...])
+ */
 class ExpandButton extends Widget {
 	public $icon = 'chevron_right';
 	function toString() {
@@ -953,6 +1083,12 @@ class ExpandButton extends Widget {
 	}
 } // End of class ExpandButton
 
+/**
+ * Widget :: Step Menu Widget
+ *
+ * @param array $args
+ * @uses new StepMenu([key => value,...])
+ */
 class StepMenu extends Widget {
 	public $widgetName = 'StepMenu';
 	public $tagName = 'nav';
@@ -977,6 +1113,12 @@ class StepMenu extends Widget {
 	}
 } // End of class StepMenu
 
+/**
+ * Widget :: List Item Widget
+ *
+ * @param array $args
+ * @uses new ListItem([key => value,...])
+ */
 class ListItem extends Widget {
 	public $widgetName = 'ListItem';
 	public $forceBuild = false;
@@ -1079,6 +1221,12 @@ class ListItem extends Widget {
 	}
 } // End of class ListItem
 
+/**
+ * Widget :: Tab Bar Widget
+ *
+ * @param array $args
+ * @uses new TabBar([key => value,...])
+ */
 class TabBar extends Widget {
 	public $widgetName = 'TabBar';
 	public $tagName = 'div';
@@ -1107,6 +1255,12 @@ class TabBar extends Widget {
 	}
 } // End of class TabWidget
 
+/**
+ * Widget :: Profile Photo Widget
+ *
+ * @param array $args
+ * @uses new ProfilePhoto([key => value,...])
+ */
 class ProfilePhoto extends Widget {
 	public $widgetName = 'ProfilePhoto';
 	public $version = '0.01';
@@ -1134,6 +1288,12 @@ class ProfilePhoto extends Widget {
 	}
 } // End of class ProfilePhoto
 
+/**
+ * Widget :: Notify Widget
+ *
+ * @param array $args
+ * @uses new Notify([key => value,...])
+ */
 class Notify extends Widget {
 	public $widgetName = 'Notify';
 	public $tagName = 'div';
@@ -1152,17 +1312,41 @@ class Notify extends Widget {
 	}
 } // End of class Card
 
+/**
+ * Widget :: Stack Widget
+ *
+ * @param array $args
+ * @uses new XXStackX([key => value,...])
+ */
 class Stack extends Widget {
 }
 
+/**
+ * Widget :: Grid View Widget
+ *
+ * @param array $args
+ * @uses new XXGridViewX([key => value,...])
+ */
 class GridView extends Widget {
 }
 
+/**
+ * Widget :: Drawer Widget
+ *
+ * @param array $args
+ * @uses new Drawer([key => value,...])
+ */
 class Drawer extends Widget {
 }
 
-// Complex Widget
+// Complex Widget Group
 
+/**
+ * Widget :: Scaffold Widget
+ *
+ * @param array $args
+ * @uses new Scaffold([key => value,...])
+ */
 class Scaffold extends Widget {
 	public $widgetName = 'Scaffold';
 	public $appBar = NULL;
@@ -1176,6 +1360,12 @@ class Scaffold extends Widget {
 	}
 } // End of class Scaffold
 
+/**
+ * Widget :: App Bar Widget
+ *
+ * @param array $args
+ * @uses new AppBar([key => value,...])
+ */
 class AppBar extends Widget {
 	public $widgetName = 'AppBar';
 	public $tagName = 'div';
@@ -1272,9 +1462,12 @@ class AppBar extends Widget {
 
 
 
+/**
+ * Web Page Widget Group
+ */
 
 /**
-* Page Widget Group
+* Widget :: Page Base Widget
 *
 * For URL page interface
 */
@@ -1303,6 +1496,12 @@ class PageBase extends WidgetBase {
 	function fooText() {return 'Foo' . (post('msg') ? ' with ' . post('msg') : '');}
 } // End of class PageBase
 
+/**
+ * Widget :: Web Page Widget
+ *
+ * @param array $args
+ * @uses new Page([key => value,...])
+ */
 class Page extends PageBase {
 	public $widgetName = 'Page';
 
@@ -1318,6 +1517,12 @@ class Page extends PageBase {
 	}
 } // End of class Page
 
+/**
+ * Widget :: Web Api Widget
+ *
+ * @param array $args
+ * @uses new PageApi([key => value,...])
+ */
 class PageApi extends PageBase {
 	public $widgetName = 'PageApi';
 	private $runInternalMethod = true;
@@ -1377,6 +1582,12 @@ class PageApi extends PageBase {
 	}
 } // End of class PageApi
 
+/**
+ * Widget :: Web Page Controller Widget
+ *
+ * @param array $args
+ * @uses new PageController([key => value,...])
+ */
 class PageController extends PageBase {
 	public $widgetName = 'PageController';
 	public $action;
