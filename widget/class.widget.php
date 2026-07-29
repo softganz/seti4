@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-25
- * Version  :: 79
+ * Modified :: 2026-07-29
+ * Version  :: 80
  *
  * @param Array $args
  * @return Widget
@@ -68,7 +68,8 @@ class Widget extends WidgetBase {
 
 	// @deprecated
 	public $attributeText;
-	public $config = NULL; // Object
+	// @deprecated
+	public $config = NULL;
 
 	function __construct($args = []) {
 		$this->initConfig();
@@ -111,10 +112,13 @@ class Widget extends WidgetBase {
 		];
 	}
 
+	// @deprecated
 	function addClass($class) {$this->config->class .= ' ' . $class;}
 
+	// @deprecated
 	function addId($id) {$this->id = $id;}
 
+	// @deprecated
 	function addConfig($key,$value) {
 		$this->config->{$key} = $value;
 
@@ -122,19 +126,25 @@ class Widget extends WidgetBase {
 		if (in_array($key, ['id'])) $this->{$key} = $value;
 	}
 
+	// @deprecated
 	function addAttr($key, $value) {$this->config->attr[$key] = $value;}
 
+	// @deprecated
 	function addData($key, $value) {$this->config->data['data-' . $key] = $value;}
 
+	// @deprecated
 	function config($key, $value) {$this->config->{$key} = $value; return $key ? $this->config->{$key} : $this->config;}
 
+	// @deprecated
 	function attr($key, $value) {$this->config->attr[$key] = $value; return $key ? $this->config->attr[$key] : $this->config->attr;}
 
+	// @deprecated
 	function data($key = NULL, $value = NULL) {
 		if (isset($key) && isset($value)) $this->config->data['data-'.$key] = $value;
 		return $key ? $this->config->data['data-'.$key] : $this->config->data;
 	}
 
+	// @deprecated
 	function header($str, $attr = '{}', $options = '{}') {
 		$this->header = (Object) array('text' => $str, 'attr' => \SG\json_decode($attr), 'options' => \SG\json_decode($options));
 	}
@@ -148,6 +158,8 @@ class Widget extends WidgetBase {
 
 		return $childrens;
 	}
+
+
 
 	// Container of widget
 	// @override
