@@ -67,7 +67,7 @@ $includeFileList = [
 	'model/model.basic.php',
 	'model/model.user.php',
 	'model/model.counter.php',
-	'widget/widget.widgets.php',
+	'widget/widget.systems.php',
 	// Extend Library
 	// 'lib/lib.corefunction.v'.cfg('core.version.major').'.php',
 ];
