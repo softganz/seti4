@@ -175,9 +175,9 @@ if (cfg('web.footer')) {
 	}
 	echo eval_php(cfg('web.complete'), _NL, _NL);
 
-	if ($firebaseCfg = cfg('firebase')) {
+	if (cfg('firebase')) {
 		// Public attribute only
-		$firebase = new Firebase($firebaseCfg);
+		$firebase = new Firebase(cfg('firebase'));
 		$firebaseCfg = (object) [
 			'databaseURL' => 'https://' . $firebase->host(),
 			'projectId' => $firebase->projectId(),
