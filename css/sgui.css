@@ -2714,12 +2714,16 @@
 		--group-bg-color: #333;
 		--group-border-color: #555555;
 	}
+	display: flex;
+	flex-wrap: wrap;
+	>* {flex: 1 0 100%;}
 	.report-output {
 		min-height: 300px;
 
 		> * {
 			overflow: auto;
 			scrollbar-width: none; /* Firefox */
+			background-color: var(--card-bg-color);
 		}
 		> *::-webkit-scrollbar {
 			display: none;
@@ -2735,7 +2739,6 @@
 			overflow: scroll;
 		}
 	}
-
 	.-toolbar > .-metric {
 		display: flex;
 		margin-bottom: 8px;
@@ -2757,10 +2760,11 @@
 			font-size: 120%;
 		}
 	}
-
 	.-toolbar > .-filter {
 		display: flex;
 		margin-bottom: 8px;
+		padding: 8px;
+		background-color: var(--card-bg-color);
 
 		> * {
 			display: block;
@@ -2809,7 +2813,6 @@
 			flex: 1;
 		}
 	}
-
 	.-toolbar > .-group {
 		position: relative;
 		height: 40px;
@@ -2980,11 +2983,9 @@
 			justify-content: end;
 		}
 	}
-
 	.-toolbar > .-options {
 		display: flex;
 		align-items: center;
-		border-radius: 4px;
 		gap: 8px;
 		margin: 0 0 8px 0;
 
@@ -2992,7 +2993,6 @@
 			height: 22px;
 		}
 		> .-item {
-			border-right: 1px #ccc solid;
 			padding: 0;
 		}
 		> .-item:last-child {
@@ -3005,8 +3005,14 @@
 			gap: 8px;
 			padding: 8px;
 		}
+		label {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			border-radius: 8px;
+			padding: 4px 8px;
+		}
 	}
-
 	.report-output-debug {
 		display: none;
 	}
@@ -3023,6 +3029,42 @@
 		height: 0 !important;
 		background-color: transparent;
 	} /* Hide scrollbar for Chrome, Safari and Opera */
+
+	&.-group-left-side {
+		--group-width: 200px;
+		@media (min-width: 40em) {
+			.-toolbar > .-group {
+				position: absolute;
+				margin-top: 4.0rem;
+				width: calc(var(--group-width) - 8px);
+				> ul {
+					display: flex;
+					> li {border: none; flex: 1 0 100% !important;}
+				}
+				.widget-row {
+					flex: 1 0 100%;
+					justify-content: space-between;
+					> *:first-child {
+						flex: 1;
+					}
+				}
+				.widget-dropbox {
+					.-arrow {display: none;}
+					> .-wrapper {
+						display: block !important;
+						margin-left: 8px;
+						width: calc(var(--group-width) - 8px);
+						min-width: 0;
+					}
+				}
+			}
+			.report-output {
+				margin-left: var(--group-width);
+				flex: 1;
+			}
+		}
+	}
+
 }
 /* @end */
 
