@@ -45,12 +45,14 @@ class SystemDatabase extends Page {
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
-					// new DebugMsg(R(), 'R()'),
 					new Widget([
 						'children' => array_map(
 							function($table) {
-								$columns = (Array) $this->getColouns($table->name)->items;
-								$hasRecord = isset($columns[$this->fieldName]);
+								$columns = (Array) $this->getColumns($table->name)->items;
+								$hasField = isset($columns[$this->fieldName]);
+
+								if (!$hasField) return null;
+
 								return new Card([
 									'children' => [
 										new Header([
@@ -60,20 +62,17 @@ class SystemDatabase extends Page {
 											'trailing' => new Row([
 												'style' => 'gap: 16px;',
 												'children' => [
-													$hasRecord ? new ExpandButton() : NULL,
-													// new ExpandButton()
+													$hasField ? new ExpandButton() : NULL,
 												], // children
 											]), // Row
 										]), // Header
-										$hasRecord ? $this->showDatas($table->name) : NULL,
-										// $hasRecord ? new DebugMsg($columns, '$columns') : NULL,
+										$hasField ? $this->showDatas($table->name) : NULL,
 									], // children
 								]);
 							},
 							$allTables->items
 						)
 					]),
-					// new DebugMsg($allTables, '$allTables'),
 					$this->topic(),
 				], // children
 			]), // Widget
@@ -96,7 +95,7 @@ class SystemDatabase extends Page {
 		]);
 	}
 
-	private function getColouns($tableName) {
+	private function getColumns($tableName) {
 		try {
 			$columns = DB::select([
 				'SHOW COLUMNS FROM $tableName$;',
