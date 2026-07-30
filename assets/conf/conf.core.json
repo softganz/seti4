@@ -10,7 +10,7 @@
 			"album": "widget/widget.album.php",
 			"ui": "widget/widget.ui.php",
 			"dropbox": "widget/widget.dropbox.php",
-			"toolbar": "widget/clwidgetass.toolbar.php",
+			"toolbar": "widget/widget.toolbar.php",
 			"form": "widget/widget.form.php",
 			"table": "widget/widget.table.php",
 			"pagenavigator": "widget/widget.pagenavigator.php",
