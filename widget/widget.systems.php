@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-29
- * Version  :: 82
+ * Modified :: 2026-07-31
+ * Version  :: 83
  *
  * @param Array $args
  *
@@ -885,7 +885,7 @@ class ErrorMessage extends Message {
  */
 class Button extends Widget {
 	public $widgetName = 'Button';
-	public $version = '0.0.01';
+	public $version = '0.0.02';
 	public $tagName = 'a';
 	public $href;
 	public $type = 'default'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
@@ -951,6 +951,7 @@ class Button extends Widget {
 			. ($this->text ? '<span class="-label">' . $this->renderChildren([$this->text]) . '</span>' : '')
 			. ($this->description ? '<span class="-description">' . $this->renderChildren([$this->description]) . '</span>' : '')
 			. ($this->icon && $this->iconPosition == 'right' ? $this->renderChildren([$this->icon]) : '')
+			. ($this->children ? $this->renderChildren($this->children) : '')
 			. '</a>';
 		return $button;
 	}
