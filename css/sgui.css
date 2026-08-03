@@ -310,6 +310,8 @@
     background-color: rgba(255 0 0 / 0.5);
     color: white;
     display: block;
+		padding: 0;
+		margin: 0;
     width: 1.8rem;
     height: 1.8rem;
     line-height: 2rem;
