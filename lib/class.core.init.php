@@ -3,8 +3,8 @@
  * Core    :: Init Web
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-07-28
- * Version :: 30
+ * Modify  :: 2026-08-02
+ * Version :: 31
  */
 
 global $R;
@@ -38,6 +38,17 @@ define('_ON_LOCAL',            cfg('domain.short') == 'localhost');
 define('_ON_HOST',             cfg('domain.short') != 'localhost');
 define('_URL',                 cfg('url'));
 define('_url',                 cfg('url'));
+
+$protocol = 'http';
+
+if (
+	(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
+	(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+	(!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+) {
+	$protocol = 'https';
+}
+define('_PROTOCOL', $protocol);
 
 // Extract template from request url using url format (template)/module/path
 if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
