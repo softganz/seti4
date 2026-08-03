@@ -1,18 +1,20 @@
 <?php
 /**
-* Tags    :: List Of Tags
-* Created :: 2008-07-19
-* Modify  :: 2023-07-26
-* Version :: 2
-*
-* @param String $tagIdList
-* @return Widget
-*
-* @usage tags/{tagIdList}
-*/
+ * Tags     :: List Of Tags
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2008-07-19
+ * Modified :: 2026-08-03
+ * Version  :: 3
+ *
+ * @param String $tagIdList
+ * @return Widget
+ *
+ * @uses tags/{tagIdList}
+ */
 
 use Paper\Model\PaperModel;
 use Paper\Widget\PaperListWidget;
+use Softganz\DB;
 
 class Tags extends Page {
 	var $tagIdList;
@@ -48,19 +50,20 @@ class Tags extends Page {
 	// Show tags cloud
 	function listTags() {
 		$ret = '';
-		$stmt = 'SELECT
+
+		$tagDbs = DB::select([
+			'SELECT
 				t.`tid`, t.`name`, t.`process`
 			, (SELECT COUNT(`tid`) AS `max` FROM %tag_topic% GROUP BY `tid` ORDER BY `max` DESC LIMIT 1) AS `max`
 			, (SELECT COUNT(*) FROM %tag_topic% tp WHERE tp.`tid` = t.`tid`) AS `topics`
 			FROM %tag% t
 			WHERE `vid` IS NOT NULL
-			ORDER BY t.`name` ASC';
-
-		$tagDbs = mydb::select($stmt);
+			ORDER BY t.`name` ASC'
+		]);
 
 		foreach ($tagDbs->items as $tag) {
 			if ($tag->process == -1) continue;
-			$level = round($tag->topics/$tag->max*4)+1;
+			$level = $tag->max ? round($tag->topics * 4 / $tag->max) + 1 : 1;
 			$ret .= '<a href="'.url('tags/'.$tag->tid).'" class="btn -tagadelic -level'.$level.'">'.$tag->name.'</a> '._NL;
 		}
 
