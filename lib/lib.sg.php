@@ -1,15 +1,16 @@
 <?php
 /**
-* Function:: Common Function
-* Created :: 2007-07-09
-* Modify  :: 2025-08-26
-* Version :: 7
-*
-* @param Array $args
-* @return Widget
-*
-* @usage new Widget([key => value,...])
-*/
+ * Function :: Common Function
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2007-07-09
+ * Modified :: 2026-08-03
+ * Version  :: 8
+ *
+ * @param Array $args
+ * @return Widget
+ *
+ * @uses new Widget([key => value,...])
+ */
 
 function sg_budget_year($date) {
 	return sg_date($date,'Y')+(sg_date($date,'m')>=10?1:0);
@@ -686,6 +687,7 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 		return false;
 	}
 
+	if ($quality <= 10 || $quality >= 100) $quality = 50;
 	$srcWidth = $srcTypes[0];
 	$srcHeight = $srcTypes[1];
 	$srcType = $srcTypes['mime'];
