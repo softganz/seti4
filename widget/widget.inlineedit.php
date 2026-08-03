@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-07-29
- * Version  :: 30
+ * Modified :: 2026-08-02
+ * Version  :: 31
  *
  * @param Array $args
  *
@@ -228,7 +228,7 @@ class InlineEdit extends Widget {
 			. ($widget->options->numbering ? '<span class="-numbering">' . (++$this->numbering) . '.</span>' : '')
 			. ($widget->options->labelPrefix ? '<span class="-label-prefix">' . $widget->options->labelPrefix . '</span>' : '')
 			. '<span class="-label-text">' . $widget->label . '</span>'
-			. ($widget->options->labelSubfix ? '<span class="-label-subfix">' . $widget->options->labelSubfix . '</span>' : '')
+			. ($widget->options->labelSuffix || $widget->options->labelSuffix ? '<span class="-label-subfix">' . ($widget->options->labelSuffix ?? $widget->options->labelSubfix) . '</span>' : '')
 			. ($widget->unit ? '<span class="-unit"> (' . $widget->unit . ')</span>' : '')
 			. '<span class="-postfix">' . $postfix . '</span>'
 			. '</label>' . _NL;
