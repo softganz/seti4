@@ -2019,7 +2019,7 @@
 				text-align: center;
 			}
 		}
-		&.-datepicker {
+		&.-type-datepicker {
 			.-for-input,
 			.-for-view {
 				text-align: center;
@@ -2036,7 +2036,7 @@
 				}
 			}
 		}
-		&.-textarea {
+		&.-type-textarea {
 			display: block;
 			p {
 				margin: 0 0 10px 0;
@@ -2048,16 +2048,18 @@
 				padding: 0 0 0 32px;
 			}
 		}
-		&.-money {
+		&.-type-money {
 			text-align: center;
 			.form-text {
 				margin: 0;
 				text-align: center;
 			}
 		}
-		&.-numeric,
-		&.-number {
-			text-align: center;
+		&.-type-numeric,
+		&.-type-number {
+			.-for-input {
+				text-align: center;
+			}
 			.form-text,
 			.form-number {
 				text-align: center;
@@ -2069,7 +2071,7 @@
 		&.-incomplete {
 			color: #999;
 		}
-		&.-text input:hover {
+		&.-type-text input:hover {
 			border: none;
 		}
 		&.-invalid > span.-for-input {
@@ -2110,7 +2112,7 @@
 		&.-fill:not(.-hidden) {
 			display: block;
 		}
-		&.-text {
+		&.-type-text {
 			display: inline-block;
 			padding: 0px 8px;
 		}
@@ -2122,7 +2124,7 @@
 		}
 	}
 
-	&.-textarea {
+	&.-type-textarea {
 		display: block;
 	}
 	&.-disabled {

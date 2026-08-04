@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-08-03
- * Version  :: 33
+ * Modified :: 2026-08-04
+ * Version  :: 34
  *
  * @param Array $args
  *
@@ -58,11 +58,11 @@ class InlineEdit extends Widget {
 
 		if (isset($child['widget'])) $child['type'] = 'widget';
 		else if (isset($child['method'])) $child['type'] = 'method';
-		if (in_array($child['type'], ['widget', 'method'])) {
+		if (in_array($child['type'], ['widget', 'method', 'listitem'])) {
 			$parts = ['<span '];
 			if ($child['id']) $parts[] = 'id="' . $child['class'] . '" ';
 			$parts[] = 'class="' . ($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName);
-			$parts[] = ' -' . $child['type'];
+			$parts[] = ' -type-' . $child['type'] . ' -' . $child['type'];
 			if ($child['class']) $parts[] = ' ' . $child['class'];
 			$parts[] = '">' . _NL;
 			return implode('', $parts);
@@ -71,7 +71,7 @@ class InlineEdit extends Widget {
 		$attributes['id'] = $child['id'];
 
 		$cls = $this->editMode ? $this->editFieldClassName : $this->viewFieldClassName;
-		$cls .= ' -' . $child['type'];
+		$cls .= ' -type-' . $child['type'] . ' -' . $child['type'];
 		if ($child['inputName']) $cls .= ' -name-' . self::camelToDash($child['inputName']);
 		if ($child['class']) $cls .= ' ' . $child['class'];
 		if ($child['inputClass']) $cls .= ' -input-' . $child['inputClass'];
@@ -132,7 +132,7 @@ class InlineEdit extends Widget {
 	protected function renderChildContainerEnd($child = [], $key = NULL) {
 		if (!is_array($child)) return;
 
-		if (isset($child['widget']) || isset($child['method']) || in_array($child['type'], ['widget', 'method'])) {
+		if (isset($child['widget']) || isset($child['method']) || in_array($child['type'], ['widget', 'method', 'listitem'])) {
 			return '</span>';
 		}
 
@@ -181,6 +181,7 @@ class InlineEdit extends Widget {
 				break;
 			case 'select': $ret .= $this->renderTypeSelect($widget); break;
 			case 'label': $ret .= $this->renderTypeLabel($widget); break;
+			case 'listitem': $ret .= $this->renderTypeListItem($widget); break;
 			case 'widget': $ret .= $this->renderTypeWidget($widget); break;
 			case 'method': $ret .= $this->renderTypeMethod($widget); break;
 			default: $ret .= $this->renderTypeText($widget, $text); break;
@@ -198,32 +199,6 @@ class InlineEdit extends Widget {
 		}
 
 		return $ret;
-	}
-
-	private function formatTextByDataType($widget, $text) {
-		if ((is_null($text) || $text === '') && $this->editMode) {
-			return '<span class="placeholder -no-print">'
-				. \SG\getFirst($widget->options->placeholder, $widget->placeholder)
-				. '</span>';
-		}
-
-		return match ($widget->dataType) {
-			'nl2br' => trim(nl2br($text)),
-			'html' => trim(sg_text2html($text)),
-			'text' => trim(str_replace("\n", '<br />', $text)),
-			'money' => $text !== '' ? number_format(sg_strip_money($text), 2) : $text,
-			default => (preg_match('/^date/i', $widget->dataType) && $text)
-				? $this->formatDateText($widget, $text)
-				: $text,
-		};
-	}
-
-	private function formatDateText($widget, $text) {
-		$retFormat = 'ว ดดด ปปปป';
-		if (str_contains($widget->dataType, ':')) {
-			[, $retFormat] = explode(':', $widget->dataType, 2);
-		}
-		return sg_date($widget->value, $retFormat);
 	}
 
 	protected function renderLabel($widget, $postfix = '') {
@@ -365,6 +340,41 @@ class InlineEdit extends Widget {
 				? $items . _NL
 				: '<span class="-for-view">' . $items . '</span>' . _NL);
 	}
+	
+	/**
+	 * Render type multiple items
+	 *
+	 * @param object $widget
+	 * @return string
+	 */
+	protected function renderTypeListItem(object $widget): string {
+		$childEditMode = $this->editMode || $widget->editMode;
+		// $result = $this->renderRadioItem($widget);
+		$result = '';
+		foreach ($widget->items as $key => $child) {
+			$result .= ''
+				. $this->renderChildContainerStart(null, null, (array) $child)
+				// . $this->renderEachChildWidget($child)
+				. $this->renderChildType(null, $child)
+				. $this->renderChildContainerEnd((array) $child)
+				. '<hr>';
+		}
+
+		return $this->renderLabel($widget, ':')
+			. '<ol>'
+			. '<li>'
+			. $result
+			. '</li>'
+			// . $this->renderChildren($widget->items)
+			// . $this->renderEachChildWidget($widget->items[1])
+			// . $this->renderEachChildWidget($widget->items[2])
+			// . '</li>'
+			// . ($childEditMode
+			// 	? $result . _NL
+			// 	: '<span class="-for-view">' . $result . '</span>' . _NL)
+			. '</ol>'
+			. (new DebugMsg($widget, '$widget'))->build();
+	}
 
 	protected function renderTypeWidget($widget) {
 		$ret = $this->renderLabel($widget);
@@ -396,5 +406,32 @@ class InlineEdit extends Widget {
 		$ret .= '</span>';
 		return $ret;
 	}
+
+	private function formatTextByDataType($widget, $text) {
+		if ((is_null($text) || $text === '') && $this->editMode) {
+			return '<span class="placeholder -no-print">'
+				. \SG\getFirst($widget->options->placeholder, $widget->placeholder)
+				. '</span>';
+		}
+
+		return match ($widget->dataType) {
+			'nl2br' => trim(nl2br($text)),
+			'html' => trim(sg_text2html($text)),
+			'text' => trim(str_replace("\n", '<br />', $text)),
+			'money' => $text !== '' ? number_format(sg_strip_money($text), 2) : $text,
+			default => (preg_match('/^date/i', $widget->dataType) && $text)
+				? $this->formatDateText($widget, $text)
+				: $text,
+		};
+	}
+
+	private function formatDateText($widget, $text) {
+		$retFormat = 'ว ดดด ปปปป';
+		if (str_contains($widget->dataType, ':')) {
+			[, $retFormat] = explode(':', $widget->dataType, 2);
+		}
+		return sg_date($widget->value, $retFormat);
+	}
+
 } // End of class InlineEdit
 ?>
