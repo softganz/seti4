@@ -14,8 +14,8 @@
 * ============================================
 
 * Created  :: 2007-07-09
-* Modified :: 2026-07-25
-* Version  :: 18
+* Modified :: 2026-08-04
+* Version  :: 19
 */
 
 use Softganz\DB;
@@ -384,7 +384,7 @@ class Arrays {
 						if ( $flags & _HTMLSPECIALCHARS ) $value = htmlSpecialChars($value,ENT_QUOTES);
 						if ( $flags & _NEWLINE_TO_BR ) $value = nl2br($value);
 						if ( $flags & _URLENCODE ) $value = urlEncode($value);
-						if ( $flags & _STRIPTAG ) $value = sg_strip_tags($value);
+						if ( $flags & _STRIPTAG ) $value = \sg_strip_tags($value);
 					}
 					if (is_numeric($flags) && $flags & _KEYTOLOWER ) $key = strToLower($key);
 					if (is_numeric($flags) && $flags & _KEYTOUPPER ) $key = strToUpper($key);
