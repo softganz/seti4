@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-08-04
- * Version  :: 34
+ * Modified :: 2026-08-07
+ * Version  :: 35
  *
  * @param Array $args
  *
@@ -31,11 +31,6 @@ class InlineEdit extends Widget {
 	private $editFieldClassName = 'inlineedit-field';
 	private $viewFieldClassName = 'inlineedit-view';
 
-	private static string $camelToDashRegex = '/([A-Z]+)/';
-	private static function camelToDash(string $str): string {
-		return preg_replace_callback(self::$camelToDashRegex, fn($m) => '-' . strtolower($m[1]), $str);
-	}
-
 	function __construct($args = []) {
 		parent::__construct($args);
 
@@ -58,11 +53,12 @@ class InlineEdit extends Widget {
 
 		if (isset($child['widget'])) $child['type'] = 'widget';
 		else if (isset($child['method'])) $child['type'] = 'method';
-		if (in_array($child['type'], ['widget', 'method', 'listitem'])) {
+
+		if (in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])) {
 			$parts = ['<span '];
 			if ($child['id']) $parts[] = 'id="' . $child['class'] . '" ';
 			$parts[] = 'class="' . ($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName);
-			$parts[] = ' -type-' . $child['type'] . ' -' . $child['type'];
+			$parts[] = ' -type-' . self::camelToDash($child['type']);
 			if ($child['class']) $parts[] = ' ' . $child['class'];
 			$parts[] = '">' . _NL;
 			return implode('', $parts);
@@ -71,7 +67,7 @@ class InlineEdit extends Widget {
 		$attributes['id'] = $child['id'];
 
 		$cls = $this->editMode ? $this->editFieldClassName : $this->viewFieldClassName;
-		$cls .= ' -type-' . $child['type'] . ' -' . $child['type'];
+		$cls .= ' -type-' . self::camelToDash($child['type']);
 		if ($child['inputName']) $cls .= ' -name-' . self::camelToDash($child['inputName']);
 		if ($child['class']) $cls .= ' ' . $child['class'];
 		if ($child['inputClass']) $cls .= ' -input-' . $child['inputClass'];
@@ -125,6 +121,7 @@ class InlineEdit extends Widget {
 			debugMsg($attributes, '$attributes');
 			debugMsg($child, '$child');
 		}
+
 		return parent::renderChildContainerStart($key, $attributes, $child) . _NL;
 	}
 
@@ -132,7 +129,7 @@ class InlineEdit extends Widget {
 	protected function renderChildContainerEnd($child = [], $key = NULL) {
 		if (!is_array($child)) return;
 
-		if (isset($child['widget']) || isset($child['method']) || in_array($child['type'], ['widget', 'method', 'listitem'])) {
+		if (isset($child['widget']) || isset($child['method']) || in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])) {
 			return '</span>';
 		}
 
@@ -172,16 +169,14 @@ class InlineEdit extends Widget {
 		$text = $this->formatTextByDataType($widget, $text);
 
 		$ret = '';
-		switch ($widget->type) {
+		switch (strtolower($widget->type)) {
 			case 'comment': break;
 			case 'textfield': $ret .= $this->renderTypeTextField($widget); break;
 			case 'radio':
-			case 'checkbox':
-				$ret .= $this->renderTypeRadio($widget);
-				break;
+			case 'checkbox': $ret .= $this->renderTypeRadio($widget); break;
 			case 'select': $ret .= $this->renderTypeSelect($widget); break;
 			case 'label': $ret .= $this->renderTypeLabel($widget); break;
-			case 'listitem': $ret .= $this->renderTypeListItem($widget); break;
+			case 'listorder': $ret .= $this->renderTypeListOrder($widget); break;
 			case 'widget': $ret .= $this->renderTypeWidget($widget); break;
 			case 'method': $ret .= $this->renderTypeMethod($widget); break;
 			default: $ret .= $this->renderTypeText($widget, $text); break;
@@ -209,14 +204,14 @@ class InlineEdit extends Widget {
 		if ($widget->labelClass) $parts[] = ' ' . $widget->labelClass;
 		$parts[] = '"';
 		if ($widget->labelStyle) $parts[] = ' style="' . $widget->labelStyle . '"';
-		$parts[] = ' for=""' . '>';
+		$parts[] = ' for="input-name-' . $widget->inputName . '"' . '>';
 
 		if ($opts->numbering) $parts[] = '<span class="-numbering">' . (++$this->numbering) . '.</span>';
 		if ($opts->labelPrefix) $parts[] = '<span class="-label-prefix">' . $opts->labelPrefix . '</span>';
 
 		$parts[] = '<span class="-label-text">' . $widget->label . '</span>';
 
-		if ($opts->labelSuffix) $parts[] = '<span class="-label-subfix">' . $opts->labelSuffix . '</span>';
+		if ($opts->labelSuffix) $parts[] = '<span class="-label-suffix">' . $opts->labelSuffix . '</span>';
 		if ($widget->unit) $parts[] = '<span class="-unit"> (' . $widget->unit . ')</span>';
 
 		$parts[] = '<span class="-postfix">' . $postfix . '</span>';
@@ -347,24 +342,46 @@ class InlineEdit extends Widget {
 	 * @param object $widget
 	 * @return string
 	 */
-	protected function renderTypeListItem(object $widget): string {
+	protected function renderTypeListOrder(object $widget): string {
 		$childEditMode = $this->editMode || $widget->editMode;
+		$inputName = $widget->inputName;
 		// $result = $this->renderRadioItem($widget);
+
 		$result = '';
+		foreach ($widget->value as $childKey => $value) {
+			$result .= '<li>';
+			foreach ($widget->items as $child) {
+				$child = clone $child;
+				$child->value = $value->{$child->inputName}; // Must init value before set net input name
+				$child->inputName = $inputName . '.' . $childKey . '.' . $child->inputName;
+				$result .= ''
+					. $this->renderChildContainerStart(null, null, (array) $child)
+					// . $this->renderEachChildWidget($child)
+					// . $this->renderChildren($child)
+					. $this->renderChildType(null, $child)
+					. $this->renderChildContainerEnd((array) $child)
+					// . (new DebugMsg($child, '$child'))->build()
+					// . (new DebugMsg($value, '$value'))->build()
+					;
+			}
+			$result .= '</li>';
+		}
+
+		$result .= '<li>';
 		foreach ($widget->items as $key => $child) {
+			$child->inputName = $inputName . '.' . '_' . date('U') . '.' . $child->inputName;
 			$result .= ''
 				. $this->renderChildContainerStart(null, null, (array) $child)
 				// . $this->renderEachChildWidget($child)
+				// . $this->renderChildren($child)
 				. $this->renderChildType(null, $child)
-				. $this->renderChildContainerEnd((array) $child)
-				. '<hr>';
+				. $this->renderChildContainerEnd((array) $child);
 		}
+		$result .= '</li>';
 
 		return $this->renderLabel($widget, ':')
 			. '<ol>'
-			. '<li>'
 			. $result
-			. '</li>'
 			// . $this->renderChildren($widget->items)
 			// . $this->renderEachChildWidget($widget->items[1])
 			// . $this->renderEachChildWidget($widget->items[2])
@@ -373,7 +390,9 @@ class InlineEdit extends Widget {
 			// 	? $result . _NL
 			// 	: '<span class="-for-view">' . $result . '</span>' . _NL)
 			. '</ol>'
-			. (new DebugMsg($widget, '$widget'))->build();
+			// . (new DebugMsg($this, '$this'))->build()
+			// . (new DebugMsg($widget, '$widget'))->build()
+			;
 	}
 
 	protected function renderTypeWidget($widget) {
