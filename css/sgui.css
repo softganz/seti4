@@ -1970,6 +1970,9 @@
 
 		> label {
 			font-weight: bold;
+			display: flex;
+			gap: 8px;
+			padding: 2px 8px;
 		}
 		&:hover {
 			.-for-input {
@@ -2018,6 +2021,10 @@
 			.form-text {
 				text-align: center;
 			}
+		}
+
+		&.-type-text input:hover {
+			border: none;
 		}
 		&.-type-datepicker {
 			.-for-input,
@@ -2068,11 +2075,16 @@
 				width: 100%;
 			}
 		}
+		&.-type-list-order {
+			> * > li {
+				border: 1px #ccc solid;
+				border-radius: 8px;
+				margin-bottom: 16px;
+			}
+		}
+
 		&.-incomplete {
 			color: #999;
-		}
-		&.-type-text input:hover {
-			border: none;
 		}
 		&.-invalid > span.-for-input {
 			background-color: #ffafaf !important;
