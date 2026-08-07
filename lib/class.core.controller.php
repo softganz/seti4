@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-07-28
- * Version  :: 53
+ * Modified :: 2026-08-07
+ * Version  :: 54
  */
 
 /*************************************************************
@@ -1184,12 +1184,12 @@ class SgCore {
 		$buildMethod = 'build'; // Default build method
 		$templateVar = [];
 
-		if ($isDebugProcess) $process_debug = 'process debug of <b>'.$request.'</b> request<br />'._NL;
+		if ($isDebugProcess) $process_debug = 'process debug of <b>' . $request . '</b> request<br />' . _NL;
 
 		self::setPageClass(q(0, 'all'));
 
 		if (isset($GLOBALS['message'])) $requestResult .= $GLOBALS['message'];
-		if (cfg('web.readonly')) $requestResult .= message('status',cfg('web.readonly_message'));
+		if (cfg('web.readonly')) $requestResult .= message('status', cfg('web.readonly_message'));
 
 		R()->timer->start($request);
 
@@ -1200,7 +1200,7 @@ class SgCore {
 			// Check for splash page
 		 	// Show splash if not visite site in time
 			if (cfg('web.splash.time') > 0 && $splashPage = url_alias('splash') && empty($_COOKIE['splash'])) {
-				cfg('page_id','splash');
+				cfg('page_id', 'splash');
 				location('splash');
 			}
 
@@ -1240,10 +1240,10 @@ class SgCore {
 
 			if ($url_alias = url_alias($request)) {
 				// Check url alias
-				$process_debug .= '<p><strong>'.$request.'</strong> is url alias of <strong>'.$url_alias->system.'</strong></p>';
+				$process_debug .= '<p><strong>' . $request . '</strong> is url alias of <strong>' . $url_alias->system . '</strong></p>';
 				$request = $url_alias->system;
 				q($request);
-				$process_debug .= print_o(q(0,'all'),'$q');
+				$process_debug .= print_o(q(0, 'all'), '$q');
 				$manifest = R::Manifest(q(0));
 				$menu = menu($request);
 			} else if ($menu = menu($request)) {
@@ -1257,11 +1257,11 @@ class SgCore {
 			}
 		}
 
-		if ($isDebugProcess  && $manifest) $process_debug .= 'Manifest module file : '.print_o($manifest,'$manifest').'<br />';
+		if ($isDebugProcess  && $manifest) $process_debug .= 'Manifest module file : ' . print_o($manifest, '$manifest') . '<br />';
 
 		// Load Page On Request
 		if ($manifest[1] && $menu) { // This is a core version 4
-			if ($isDebugProcess) $process_debug .= 'Load core version 4 <b>'.$request.'</b><br />';
+			if ($isDebugProcess) $process_debug .= 'Load core version 4 <b>' . $request . '</b><br />';
 		} else { // Page no manifest
 			if ($isDebugProcess) $process_debug .= 'Load core version 4 on no manifest and no class<br />';
 		}
@@ -1342,12 +1342,12 @@ class SgCore {
 		// Start Render Page, result is string
 
 		if (is_object($pageBuildWidget) && isset($pageBuildWidget->var)) {
-			$templateVar = array_merge($templateVar, (Array) $pageBuildWidget->var);
+			$templateVar = array_replace_recursive($templateVar, (array) $pageBuildWidget->var);
 		}
 
 		// Set title variabe for page render
-		$templateVar['Title'] .= ' | '.cfg('web.title');
-		$templateVar['Title'] = self::processTemplate(strip_tags($templateVar['Title']), $templateVar);
+		$templateVar['Title'] .= ' | ' . cfg('web.title');
+		$templateVar['Title'] = self::processTemplateVariable(strip_tags($templateVar['Title']), $templateVar);
 		$templateVar['Title'] = trim(trim($templateVar['Title']), '|');
 
 		$requestTextResult = (new renderPageWidget($requestResult, $pageClass))->build();
@@ -1356,22 +1356,22 @@ class SgCore {
 		$requestTextResult = process_widget($requestTextResult);
 
 		R()->timer->stop($request);
-		$request_time[$request] = R()->timer->get($request,5);
-		$request_process_time = $GLOBALS['request_process_time']+R()->timer->get($request);
+		$request_time[$request] = R()->timer->get($request, 5);
+		$request_process_time = $GLOBALS['request_process_time'] + R()->timer->get($request);
 
 
-		if ($isDebugProcess) $process_debug .= print_o($menu,'$menu');
-		if ($isDebugProcess) $process_debug .= print_o(q(0,'all'),'$q');
+		if ($isDebugProcess) $process_debug .= print_o($menu, '$menu');
+		if ($isDebugProcess) $process_debug .= print_o(q(0, 'all'), '$q');
 
-		if (debug('menu')) debugMsg(menu(),'$menu');
-		if ($isDebugProcess) debugMsg($process_debug.(isset($GLOBALS['process_debug'])?print_o($GLOBALS['process_debug']):''));
-		if (debug('timer')) debugMsg('Request process time : '.$request_process_time.' ms.'.print_o($request_time));
-		if (debug('html')) debugMsg(htmlview($requestTextResult,'html tag'));
+		if (debug('menu')) debugMsg(menu(), '$menu');
+		if ($isDebugProcess) debugMsg($process_debug . (isset($GLOBALS['process_debug']) ? print_o($GLOBALS['process_debug']) : ''));
+		if (debug('timer')) debugMsg('Request process time : ' . $request_process_time . ' ms.' . print_o($request_time));
+		if (debug('html')) debugMsg(htmlview($requestTextResult, 'html tag'));
 
 		if (debug('config')) {
 			$cfg = cfg();
 			array_walk_recursive($cfg, '__htmlspecialchars');
-			debugMsg($cfg,'cfg');
+			debugMsg($cfg, 'cfg');
 		}
 
 		// Start load template with result
@@ -1380,7 +1380,7 @@ class SgCore {
 
 		if ($loadTemplate) {
 			$webResult = self::processIndex($page, $requestTextResult);
-			$webResult = self::processTemplate($webResult, $templateVar);
+			$webResult = self::processTemplateVariable($webResult, $templateVar);
 			echo $webResult;
 		}
 
@@ -1394,13 +1394,14 @@ class SgCore {
 	* @param Array $var
 	* @return String
 	*/
-	static function processTemplate($html, $var = []) {
+	static function processTemplateVariable($html, $var = []) {
 		// Replace .Name in {{ }} with value of key in variable
 		$html = preg_replace_callback(
 			'/\{\{\s*\.([\w]*)\s*\}\}/s',
 			function ($m) use ($var) {
 				return isset($var[$m[1]]) ? $var[$m[1]] : $m[0];
 			}, $html);
+
 		return $html;
 	}
 

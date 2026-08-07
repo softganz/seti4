@@ -72,7 +72,7 @@ class renderAjaxWidget extends Widget {
 
 		$ret .= self::buildRequest($this->requestResult);
 
-		if ($this->requestResult->var) $ret = SgCore::processTemplate($ret, $this->requestResult->var);
+		if ($this->requestResult->var) $ret = SgCore::processTemplateVariable($ret, $this->requestResult->var);
 
 		return $ret;
 	}
