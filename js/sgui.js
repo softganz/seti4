@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-06-28
- * Version  :: 70
+ * Modified :: 2026-08-07
+ * Version  :: 71
  */
 
 'use strict'
@@ -80,8 +80,13 @@ async function requestCameraPermission() {
 }
 
 class SG {
-	static url(link) {
-		return ENV.rootUrl + link;
+	static url(link, para = {}) {
+		let urlLink = ENV.rootUrl + link;
+		let query = $.param(para || {});
+		if (query) {
+			urlLink += (urlLink.indexOf("?") === -1 ? "?" : "&") + query;
+		}
+		return urlLink
 	}
 }
 
@@ -3714,7 +3719,7 @@ $(document).on('change','.sg-area-fund',function() {
 		$form.find(altField).val($this.val())
 	}
 
-	$.get(SG.url('api/changwat'),{"areaFund" : $this.val()}, function(data) {
+	$.get(SG.url('api/code/changwat'), {"areaFund" : $this.val()}, function(data) {
 		if (data.length) $changwat.show(); else $changwat.hide()
 		for (let i = 0; i < data.length; i++) {
 			$changwat.append(
@@ -3754,7 +3759,7 @@ $(document).on('change','.sg-changwat',function() {
 		$form.find(altField).val($this.val())
 	}
 
-	$.get(SG.url('api/ampur'),{q:$this.val()}, function(data) {
+	$.get(SG.url('api/code/ampur'),{q: $this.val()}, function(data) {
 		if (data.length) $ampur.show(); else $ampur.hide()
 		for (let i = 0; i < data.length; i++) {
 			$ampur.append(
@@ -3793,7 +3798,7 @@ $(document).on('change','.sg-ampur', function() {
 		$form.find(altField).val($changwat.val()+$this.val())
 	}
 
-	$.get(SG.url('api/tambon'),{q:$changwat.val()+$ampur.val()}, function(data) {
+	$.get(SG.url('api/code/tambon'),{q:$changwat.val()+$ampur.val()}, function(data) {
 		if (data.length) $tambon.show(); else $tambon.hide()
 		for (let i = 0; i < data.length; i++) {
 			$tambon.append(
@@ -3829,7 +3834,7 @@ $(document).on('change','.sg-tambon', function() {
 		$village.val("").show()
 	}
 	if ($village.length) $village[0].options.length = 1;
-	$.get(SG.url('api/village'),{q:$changwat.val()+$ampur.val()+$tambon.val()}, function(data) {
+	$.get(SG.url('api/code/village'),{q:$changwat.val()+$ampur.val()+$tambon.val()}, function(data) {
 		for (let i = 0; i < data.length; i++) {
 			$village.append(
 				$("<option></option>")

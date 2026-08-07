@@ -1,14 +1,15 @@
 <?php
 /**
-* API     :: Photo Slide API
-* Created :: 2022-11-19
-* Modify  :: 2022-11-19
-* Version :: 2
-*
-* @return Array
-*
-* @usage api/ampur?changwat=changwatId
-*/
+ * API      :: Photo Slide API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-11-19
+ * Modified :: 2026-08-07
+ * Version  :: 3
+ *
+ * @return Array
+ *
+ * @uses api/photoslide/{nodeId}/{format}
+ */
 
 class PhotoslideApi extends PageApi {
 	var $tpid;
