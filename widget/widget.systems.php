@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-31
- * Version  :: 83
+ * Modified :: 2026-08-07
+ * Version  :: 84
  *
  * @param Array $args
  *
@@ -21,10 +21,22 @@
 class WidgetBase {
 	public $widgetName = 'Widget';
 	public $version;
+	private static string $camelToDashRegex = '/([A-Z]+)/';
+	protected $args = [];
+
 	function __construct($args = []) {
+		$this->args = $args;
 		foreach ($args as $argKey => $argValue) {
 			$this->{$argKey} = $argValue;
 		}
+		if (debug('widget')) {
+			debugMsg($args, '$WidgetBaseArgs');
+			debugMsg((array) $this, '$WidgetBaseThis');
+		}
+	}
+
+	protected static function camelToDash(string $str): string {
+		return preg_replace_callback(self::$camelToDashRegex, fn($m) => '-' . strtolower($m[1]), $str);
 	}
 
 	function extension() {
@@ -234,9 +246,10 @@ class Widget extends WidgetBase {
 		$childTagName = \SG\getFirst($this->childTagName, $this->childContainer['tagName']);
 		$attributes['class'] = ($this->childContainer['class'] ? $this->childContainer['class'] : '')
 			. ($this->itemClass ? ' ' . $this->itemClass : '')
-			. (!is_numeric($childKey) ? ' -' . $childKey : '')
 			. ($attributes['class'] ? ' ' . $attributes['class'] : '')
 			. ($container['class'] ? ' ' . $container['class'] : '');
+			// . (!is_numeric($childKey) ? ' -child-' . $childKey : '');
+		$attributes['class'] = trim($attributes['class']);
 
 		$childAttribute = isset($container['children'][$childKey]) ? (Array) $container['children'][$childKey] : [];
 
@@ -1507,10 +1520,11 @@ class PageBase extends WidgetBase {
 		$this->module = strToLower(preg_split('/(?=[A-Z])/', $this->widgetName, -1, PREG_SPLIT_NO_EMPTY)[0]);
 		$this->version = cfg($this->module . '.version');
 		parent::__construct($args);
-		if (debug('page')) {
-			debugMsg('PAGE CONTROLLER Id = ' . $this->qtRef . ' , Action = ' . $this->action . ' , Arg[' . $this->argIndex . '] = ' . $this->args[$this->argIndex]);
-			debugMsg($this->args, '$args');
-			debugMsg($this, '$this');
+
+		if (debug('widget')) {
+			debugMsg('PAGE BASE Action = ' . $this->action . ' , Arg[' . $this->argIndex . '] = ' . $args[$this->argIndex]);
+			debugMsg($args, '$PageBaseArgs');
+			debugMsg($this, '$PageBaseThis');
 		}
 	}
 
@@ -1548,6 +1562,9 @@ class Page extends PageBase {
  *
  * @param array $args
  * @uses new PageApi([key => value,...])
+ * @uses api/name
+ * @uses api/name.method
+ * @uses api/name..method
  */
 class PageApi extends PageBase {
 	public $widgetName = 'PageApi';
@@ -1559,6 +1576,7 @@ class PageApi extends PageBase {
 	protected $args = [];
 
 	function __construct($args = []) {
+		$this->args = $args;
 		parent::__construct($args);
 
 		if (empty($this->action)) $this->action = $this->actionDefault;
