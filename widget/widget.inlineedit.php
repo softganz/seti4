@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-08-07
- * Version  :: 35
+ * Modified :: 2026-08-09
+ * Version  :: 36
  *
  * @param Array $args
  *
@@ -349,7 +349,8 @@ class InlineEdit extends Widget {
 
 		$result = '';
 		foreach ($widget->value as $childKey => $value) {
-			$result .= '<li>';
+			$result .= '<li>'
+				. '<a class="widget-button -link -list-item-delete sg-action" data-input-name="' . $inputName . '.' . $childKey . '" data-remove-on-empty="yes" data-rel=""none" data-done="remove:parent li" data-title="ลบรายการ" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -material">cancel</i></a>';
 			foreach ($widget->items as $child) {
 				$child = clone $child;
 				$child->value = $value->{$child->inputName}; // Must init value before set net input name
@@ -367,7 +368,8 @@ class InlineEdit extends Widget {
 			$result .= '</li>';
 		}
 
-		$result .= '<li>';
+		$result .= '<li>'
+			. '<a class="widget-button -link -list-item-delete sg-action" data-input-name="' . $inputName . '._' . date('U') . '" data-remove-on-empty="yes" data-rel=""none" data-done="remove:parent li" data-title="ลบรายการ" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -material">cancel</i></a>';
 		foreach ($widget->items as $key => $child) {
 			$child->inputName = $inputName . '.' . '_' . date('U') . '.' . $child->inputName;
 			$result .= ''
