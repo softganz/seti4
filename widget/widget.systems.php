@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-08-07
- * Version  :: 84
+ * Modified :: 2026-08-09
+ * Version  :: 85
  *
  * @param Array $args
  *
@@ -22,15 +22,12 @@ class WidgetBase {
 	public $widgetName = 'Widget';
 	public $version;
 	private static string $camelToDashRegex = '/([A-Z]+)/';
-	protected $args = [];
 
 	function __construct($args = []) {
-		$this->args = $args;
 		foreach ($args as $argKey => $argValue) {
 			$this->{$argKey} = $argValue;
 		}
 		if (debug('widget')) {
-			debugMsg($args, '$WidgetBaseArgs');
 			debugMsg((array) $this, '$WidgetBaseThis');
 		}
 	}
