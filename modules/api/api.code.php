@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-08-07
  * Modified :: 2026-08-07
- * Version  :: 1
+ * Version  :: 2
  */
 
 use Softganz\DB, Softganz\SetDataModel;
@@ -117,9 +117,9 @@ class CodeApi extends PageApi {
 			$value = [
 				'value' => $rs->ampurCode,
 				'ampur' => substr($rs->ampurCode, -2),
-				'label' => htmlspecialchars($label),
+				'label' => htmlspecialchars($ampurName),
 				'ampurCode' => $rs->ampurCode,
-				'ampurName' => $label,
+				'ampurName' => $ampurName,
 				'changwatCode' => $rs->changwatCode,
 				'changwatName' => $rs->changwatName,
 			];
