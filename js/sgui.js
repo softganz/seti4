@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-07
- * Version  :: 71
+ * Modified :: 2026-08-09
+ * Version  :: 72
  */
 
 'use strict'
@@ -2219,7 +2219,18 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 
 
+function showWaitScreen() {
+	const waiting = document.createElement('div');
+	waiting.id = 'draw-report-waiting';
+	waiting.classList.add('draw-report-waiting');
+	waiting.innerHTML = '<div><div class="loader -rotate"></div><br><br>กรุณารอสักครู่ กำลังประมวลผลข้อมูล</div>';
 
+	document.body.appendChild(waiting);
+}
+
+function hideWaitScreen() {
+	document.getElementById('draw-report-waiting')?.remove();
+}
 
 /*
 * jQuery Extension :: sg-drawreport
@@ -2530,22 +2541,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 			if (debug) startDebug(para)
 
-			const waiting = document.createElement('div');
-			waiting.id = 'draw-report-waiting';
-			waiting.innerHTML = '<span class="draw-report-waiting" style="text-align: center;"><div class="loader -rotate" style="width: 64px; height: 64px;"></div><br><br>กรุณารอสักครู่ กำลังประมวลผลข้อมูล</span>';
-			waiting.style.display = 'flex';
-			waiting.style.position = 'absolute';
-			waiting.style.top = 0;
-			waiting.style.bottom = 0;
-			waiting.style.left = 0;
-			waiting.style.right = 0;
-			waiting.style.alignItems = 'center';
-			waiting.style.justifyContent = 'center';
-			waiting.style.backgroundColor = '#808080';
-			waiting.style.opacity = 0.9;
-			waiting.style.zIndex = 1000;
-
-			document.body.appendChild(waiting);
+			showWaitScreen();
 
 			// notify('กำลังประมวลผลข้อมูล');
 			$.post(
@@ -2558,18 +2554,12 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 				},
 				settings.dataType
 			).fail(function(data) {
-				// console.log(data);
-				// notify('Error on getting report data. Please Contact Admin.');
 				showError(data);
-				// $(".report-output").css("opacity", outputOpacity)
-				waiting.remove();
-				// console.log('DONE WITH data = ',data)
+				hideWaitScreen();
 			}).done(function(data) {
 				notify();
-				// $(".report-output").css("opacity", outputOpacity)
-				waiting.remove();
+				hideWaitScreen();
 				if (debug && data.debug) console.log('DONE WITH data = ',data)
-				// if (debug) console.log('DONE WITH data = ',data)
 				// Process callback function
 				//console.log("CALLBACK = ", callback)
 				if (callback && typeof window[callback] === 'function') {

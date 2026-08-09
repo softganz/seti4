@@ -23,6 +23,8 @@
 	--button-padding: 0 16px 0 8px;
 	--button-padding-icon-right: 0 8px 0 16px;
 
+	--dropbox-bg-color: var(--card-bg-color);
+
 	--color-1: #e9f7ef;
 	--color-1-border: #84aa8a;
 	--color-2: #e7effb;
@@ -1967,6 +1969,7 @@
 		min-width: 100px;
 		width: auto;
 		vertical-align: middle;
+		position: relative;
 
 		> label {
 			font-weight: bold;
@@ -2080,6 +2083,13 @@
 				border: 1px #ccc solid;
 				border-radius: 8px;
 				margin-bottom: 16px;
+				position: relative;
+			}
+			.-list-item-delete {
+				position: absolute;
+				right: 8px;
+				top: 8px;
+				z-index: 1;
 			}
 		}
 
@@ -3212,6 +3222,29 @@
 			padding: 16px;
 			text-align: right;
 		}
+	}
+}
+
+.draw-report-waiting {
+	display: flex;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	align-items: center;
+	justify-content: center;
+	background-color: rgb(0 0 0 / 0);
+	z-index: 1000;
+	text-align: center;
+	>div {
+		background-color: var(--card-bg-color);
+		box-shadow: 3px 6px 26px 12px rgba(163,163,163,0.7);
+		padding: 32px;
+    border-radius: 32px;
+	}
+	.loader.-rotate {
+		width: 64px; height: 64px;
 	}
 }
 
