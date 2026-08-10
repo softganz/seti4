@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-08-09
- * Version  :: 49
+ * Modified :: 2026-08-10
+ * Version  :: 50
  *
  * @param Array $args
  * @return Object
@@ -769,8 +769,8 @@ class DB {
 		$this->jsonVersionConvert();
 	}
 
+	// Convert ->> to JSON_UNQUOTE(JSON_EXTRACT()) in mariadb to mySQL 5.7
 	private function jsonVersionConvert() {
-		// Convert ->> to JSON_UNQUOTE(JSON_EXTRACT()) in mariadb to mySQL 5.7
 		if (preg_match('/\-\>\>/', $this->stmt, $out)) {
 			// debugMsg('SRC STMT');
 			// debugMsg($this->stmt);
