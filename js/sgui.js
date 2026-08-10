@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-09
- * Version  :: 72
+ * Modified :: 2026-08-10
+ * Version  :: 73
  */
 
 'use strict'
@@ -1978,13 +1978,23 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		$.editable.addInputType('autocomplete', {
 			element : $.editable.types.text.element,
 			plugin : function(settings, original) {
+				// console.log("AUTOCOMPLETE");
+				// console.log("SETTINGS", settings);
+				// console.log("ORIGINAL", original);
+				// console.log("element",$.editable.types.text.element)
 				$(original).attr( 'autocomplete','off' );
+
+				let $inlineField = $(original).closest(".inlineedit-field ");
+				// console.log("$inlineField.data.autocomplete", $inlineField.data("autocomplete"))
+				// $(original).addClass('sg-autocomplete');
+				// $(original).attr('data-query', SG.url('api/code/ampur'));
 				let defaults = {
 					target: '',
 					source: function(request, response) {
-						let queryUrl = settings.autocomplete.query
+						let queryUrl = SG.url(settings.autocomplete.query)
 						let para = {}
 						para.q = request.term
+						// console.log("QUERY", queryUrl, para)
 						$.get(queryUrl,para, function(data){
 							response($.map(data, function(item){
 								// RETURN all of data field
@@ -1998,11 +2008,11 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 					// On move up/down by keyboard or mouse over
 					focus: function(event,ui) {
 						event.preventDefault();
-						//console.log('FOCUS '+ui.item.label)
+						// console.log('FOCUS '+ui.item.label)
 						//settings.container.find('input').val(ui.item.label);
 					},
 					select: function(event, ui) {
-						//console.log('ui.item',ui.item)
+						// console.log('ui.item',ui.item)
 						this.value = ui.item.label;
 						//settings.container.data('value',ui.item.value)
 						let targetValue = settings.autocomplete.target
@@ -2061,9 +2071,9 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 					}
 				}
 
-				settings.autocomplete = $.extend({}, defaults,settings.autocomplete)
+				settings.autocomplete = $.extend({}, defaults, settings.autocomplete, $inlineField.data("autocomplete"));
 
-				//console.log('SG-INLINE-EDIT:AUTOCOMPLETE settings:',settings)
+				// console.log('SG-INLINE-EDIT:AUTOCOMPLETE settings:',settings.autocomplete)
 
 
 				$('input', this).autocomplete(
