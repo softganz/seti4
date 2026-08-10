@@ -2079,17 +2079,50 @@
 			}
 		}
 		&.-type-list-order {
+			> ol,
+			> ul {
+				list-style-position: inside;
+				padding-left: 0;
+			}
+
+			.-list-item-menu {
+				position: absolute;
+				right: 8px;
+				top: 8px;
+				z-index: 1;
+			}
 			> * > li {
 				border: 1px #ccc solid;
 				border-radius: 8px;
 				margin-bottom: 16px;
 				position: relative;
-			}
-			.-list-item-delete {
-				position: absolute;
-				right: 8px;
-				top: 8px;
-				z-index: 1;
+				padding: 12px 44px 12px 12px;
+				box-sizing: border-box;
+
+				> .inlineedit-field:first-of-type {
+					margin-left: 0.8em;
+					margin-top: -3rem;
+					line-height: 1.2;
+					vertical-align: middle;
+				}
+
+				.-delete-button {
+					display: none;
+				}
+
+				.-add-button {
+					display: flex;
+				}
+
+				&:not(:last-child) {
+					.-delete-button {
+						display: flex;
+					}
+
+					.-add-button {
+						display: none;
+					}
+				}
 			}
 		}
 
