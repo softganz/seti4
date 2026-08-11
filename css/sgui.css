@@ -1368,7 +1368,7 @@
 	> .-item {
 		position: relative;
 	}
-	> .-item.-row-expand {
+	> .-item.-child-row-expand {
 		flex: 1;
 	}
 	> .-sep {
@@ -1931,15 +1931,6 @@
 		vertical-align: top;
 	}
 
-	.inlineedit-field-disable {
-		color: blue;
-		display: inline-block;
-		min-width: 100px;
-		min-height: 1.4em;
-		border-bottom: 1px dotted #ccc;
-		vertical-align: top;
-	}
-
 	form {
 		display: block;
 		margin: 0;
@@ -2001,10 +1992,16 @@
 			width: calc(100%);
 		}
 		&.-inline {
+			display: inline-flex;
+			align-items: center;
+			margin: 0;
 			padding: 0;
+			min-height: 0;
+			min-width: 0;
 			.-for-input {
-				display: inline-block;
+				display: inline-flex;
 			}
+			>.-label {padding: 0;}
 		}
 		&.-active {
 			border-bottom: 1px dotted #f60;
@@ -4338,10 +4335,6 @@
 }
 
 @media print {
-	.inline-edit-view.-text.-fill {
-		display: block;
-	}
-
 	.widget-table {
 		display: table;
 		width: 100%;
@@ -4425,6 +4418,17 @@
 			> tfoot > tr > td {
 				border: 1px var(--border-color) solid;
 			}
+		}
+	}
+	.widget-inlineedit {
+		.inline-edit-view.-text.-fill {
+			display: block;
+		}
+		.-for-input {
+			line-height: 1;
+			min-height: 0;
+			padding: 0;
+			border: none;
 		}
 	}
 }
