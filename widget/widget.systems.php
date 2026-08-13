@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-08-11
- * Version  :: 87
+ * Modified :: 2026-08-13
+ * Version  :: 88
  *
  * @param Array $args
  *
@@ -245,7 +245,8 @@ class Widget extends WidgetBase {
 			. ($this->itemClass ? ' ' . $this->itemClass : '')
 			. ($attributes['class'] ? ' ' . $attributes['class'] : '')
 			. ($container['class'] ? ' ' . $container['class'] : '')
-			. (!is_numeric($childKey) ? ' -child-' . $childKey . ' -' . $childKey : ''); // @deprecated class ' -' . $childKey
+			. (!is_numeric($childKey) ? ' -child-' . $childKey : '')
+			. (!is_numeric($childKey) ? ' -' . $childKey : ''); // @deprecated class ' -' . $childKey
 		$attributes['class'] = trim($attributes['class']);
 
 		$childAttribute = isset($container['children'][$childKey]) ? (Array) $container['children'][$childKey] : [];
