@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-10
- * Version  :: 73
+ * Modified :: 2026-08-13
+ * Version  :: 74
  */
 
 'use strict'
@@ -1916,7 +1916,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			else processShow(value, {"hide": showOn.element});
 		} else if (showOn.values) {
 			// Show/hide multiple values
-			let checkedBoxes = document.querySelectorAll('input[name='+$inlineField.data("inputName")+']:checked');
+			let checkedBoxes = document.querySelectorAll('input[name="'+$inlineField.data("inputName")+'"]:checked');
 
 			// console.log("Show On Multiple Values");
 			// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn, "showOn.values = ", showOn.values);
@@ -1962,7 +1962,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 			if ('showOn' in options) {
 				let inputName = $this.data('inputName');
-				let inputValue = $this.find('input[name=' + inputName + ']:checked').val();
+				let inputValue = $this.find('input[name="' + inputName + '"]:checked').val();
 
 				showHideElement(inputValue, options, $this);
 			}
