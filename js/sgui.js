@@ -11,8 +11,6 @@
 let sgUiVersion = '4.00.22'
 let debugSG = false
 let defaultRelTarget = "#main"
-let sgBoxPageCount = 0
-let popStateCallback = true
 let cameraPermission = false
 
 // For Mobile Web App Communication
@@ -37,11 +35,6 @@ window.addEventListener(
 			});
 	}
 );
-
-window.addEventListener('popstate', function (event) {
-	console.log("pop state event");
-	sgBoxPopState(event, true);
-});
 
 // Add click event to input type="file"
 // for Flutter inapp_webview to check camera permission
@@ -118,7 +111,15 @@ function sgFindTargetElement(target, $this) {
 * @param jQuery Object $this
 * @param Object options
 */
-function sgShowBox(html, $this, options, e) {
+(function () {
+	let sgBoxPageCount = 0
+	let popStateCallback = true
+
+	function sgBoxResetState() {
+		sgBoxPageCount = 0
+	}
+
+	function sgShowBox(html, $this, options, e) {
 	let $boxElement = $('#cboxLoadedContent')
 	let linkUrl
 	let thisIsJ = false
@@ -296,7 +297,22 @@ function sgBoxPopState(event) {
 	}
 	popStateCallback = true;
 	console.log('------');
-}
+	}
+
+	// Browser back/forward button -> handle box state
+	window.addEventListener('popstate', function (event) {
+		console.log("pop state event");
+		sgBoxPopState(event, true);
+	});
+
+	// Expose box public API (global, same signatures as before)
+	window.sgShowBox      = sgShowBox
+	window.sgBoxClose     = sgBoxClose
+	window.sgBoxBack      = sgBoxBack
+	window.sgBoxPopState  = sgBoxPopState
+	// Reset page count (used by sg-action "box->clear")
+	window.sgBoxReset     = sgBoxResetState
+})()
 
 /*
 * sgUpdateData :: SoftGanz Update data to DOM
@@ -715,7 +731,7 @@ function showError(response, time = 5000) {
 			}
 
 			if (relTarget == 'box' && relAction == 'clear') {
-				sgBoxPageCount = 0;
+				sgBoxReset();
 				$boxElement.empty();
 			}
 
