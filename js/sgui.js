@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-13
- * Version  :: 74
+ * Modified :: 2026-08-16
+ * Version  :: 75
  */
 
 'use strict'
@@ -39,7 +39,8 @@ window.addEventListener(
 );
 
 window.addEventListener('popstate', function (event) {
-	sgPopState(event)
+	console.log("pop state event");
+	sgBoxPopState(event, true);
 });
 
 // Add click event to input type="file"
@@ -118,6 +119,11 @@ function sgFindTargetElement(target, $this) {
 * @param Object options
 */
 function sgShowBox(html, $this, options, e) {
+	let $boxElement = $('#cboxLoadedContent')
+	let linkUrl
+	let thisIsJ = false
+	let currentX = window.scrollX
+	let currentY = window.scrollY
 	let defaults = {
 		fixed: true,
 		opacity: 0.5,
@@ -136,16 +142,18 @@ function sgShowBox(html, $this, options, e) {
 		},
 		onComplete: function() {
 			$.colorbox.resize();
+		},
+		onClosed: function() {
+			console.log('onClosed: ON BOX CLOSE');
+
+			if (sgBoxPageCount <= 0) return;
+			sgBoxClose();
+			window.onscroll = function() {}
 		}
 	}
 
-	let $boxElement = $('#cboxLoadedContent')
-	let linkUrl
-	let thisIsJ = false
-	let currentX = window.scrollX
-	let currentY = window.scrollY
+	options = $.extend(defaults, options);
 
-	options = $.extend(defaults, options)
 	if ($this instanceof jQuery) {
 		thisIsJ = true
 		linkUrl = $this.attr('href') ? $this.attr('href') : $this.attr('action')
@@ -160,16 +168,6 @@ function sgShowBox(html, $this, options, e) {
 		$boxElement.empty()
 	}
 
-	// options.
-
-	options.onClosed = function() {
-		window.onscroll=function(){}
-		console.log('ON BOX CLOSE');
-
-		sgBoxPageCount = 0
-		sgBoxBack({close: true});
-	}
-
 	// lock scroll position, but retain settings for later
 	window.onscroll = function(){window.scrollTo(currentX, currentY);};
 
@@ -179,7 +177,7 @@ function sgShowBox(html, $this, options, e) {
 		sgBoxPageCount = 0
 		let group = $this.data("group")
 		options.open = true
-		options.className = options.className+' -photo -full'
+		options.className = options.className + ' -photo -full'
 
 		$('.sg-action[data-group="'+group+'"]').each(function(i){
 			let $elem = $(this)
@@ -202,7 +200,7 @@ function sgShowBox(html, $this, options, e) {
 	}
 
 	history.pushState(null, document.title, '#box-'+sgBoxPageCount);
-	console.log(history.state, `sgBoxPageCount = ${sgBoxPageCount}`)
+	console.log(`sgBoxPageCount = ${sgBoxPageCount} state = ${history.state}`)
 	// console.log("pushState from sgShowBox()")
 	// history.pushState(null, document.title, location.href);
 }
@@ -210,87 +208,95 @@ function sgShowBox(html, $this, options, e) {
 async function sgBoxClose(options = {}) {
 	options = $.extend({close: null, historyBack: true}, options)
 
+	if (sgBoxPageCount === 0) return;
+
+	const boxCount = sgBoxPageCount; // 
+
+	$.colorbox.close();
+	sgBoxPageCount = 0; // force box pop state to not action
+
+	console.log('-----');
+	console.log(`sgBoxClose: CLOSE BOX sgBoxPageCount = ${boxCount}`);
+
+	popStateCallback = false;
+	if (options.historyBack) {
+		history.go(-boxCount);
+	}
+	// if ($boxPage.length) {
+		// console.log("sgBoxBack => HAVE BOX LENGTH");
+		// if (options.historyBack) {
+			// for (let historyCount = boxCount; historyCount > 0; historyCount--) {
+			// 	console.log(`sgBoxClose: historyCount = ${historyCount}`);
+			// 	history.back();
+			// }
+		// }
+	// } else if (isFlutterInAppWebViewReady) {
+	// 	// window.flutter_inappwebview.callHandler("closeWebView");
+	// } else if (isAndroidWebViewReady) {
+	// 	Android.reloadWebView('Yes')
+	// } else if (isFlutterInAppWebViewReady) {
+	// 	console.log("sgBoxBack => FlutterInAppWebView")
+	// 	window.flutter_inappwebview.callHandler("closeWebView");
+	// } else if (isAndroidWebViewReady) {
+	// 	console.log("sgBoxBack => AndroidWebView")
+	// 	Android.reloadWebView('Yes');
+	// }
+
+	console.log('-----');
 }
 
 async function sgBoxBack(options = {}) {
 	// console.log(options)
-	options = $.extend({close: null, historyBack: true}, options);
+	options = $.extend({historyBack: true}, options);
 	let $boxElement = $('#cboxLoadedContent');
 	let $boxPage = $('.box-page');
 
-	console.log('sgBoxBack sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options);
+	console.log('sgBoxBack: sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options);
 
-	if (options.close) {
-		console.log('sgBoxBack => CLOSE BUTTON CLICK', $boxPage.length);
-		// $.colorbox.close()
-		if ($boxPage.length) {
-			console.log("sgBoxBack => HAVE BOX LENGTH");
-		// 	if (options.historyBack) {
-		// 		for (let historyCount = 0; historyCount < sgBoxPageCount; historyCount++) {
-		// 			console.log('historyCount = ', historyCount)
-		// 			history.back()
-		// 		}
-		// 	}
-			$.colorbox.close();
-			$boxPage.remove();
-		// } else if (isFlutterInAppWebViewReady) {
-		// 	// window.flutter_inappwebview.callHandler("closeWebView");
-		// } else if (isAndroidWebViewReady) {
-		// 	Android.reloadWebView('Yes')
-		// } else if (isFlutterInAppWebViewReady) {
-		// 	console.log("sgBoxBack => FlutterInAppWebView")
-		// 	window.flutter_inappwebview.callHandler("closeWebView");
-		// } else if (isAndroidWebViewReady) {
-		// 	console.log("sgBoxBack => AndroidWebView")
-		// 	Android.reloadWebView('Yes');
-		}
-		sgBoxPageCount = 0;
-	} else if (sgBoxPageCount === 1) {
-		console.log('sgBoxBack => CLOSE FOR LAST BOX');
-		// history.back();
-		$.colorbox.close();
-		if (isAndroidWebViewReady) Android.reloadWebView('Yes');
-		sgBoxPageCount = 0;
-		history.back();
-	} else if (sgBoxPageCount > 1) {
-		console.log(`sgBoxBack => BACK from ${sgBoxPageCount}`);
-		// Remove last box page
-		$boxElement.children('.box-page').last().remove();
-		// Show last box after remove
-		$boxElement.children('.box-page').last().show();
-		$.colorbox.resize();
-		if (options.historyBack) {
-			popStateCallback = false;
-			await history.back();
-			popStateCallback = true;
-		}
-		sgBoxPageCount--;
+	if (sgBoxPageCount <= 0) return;
+
+	if (sgBoxPageCount === 1) {
+		console.log('sgBoxBack: CLOSE FOR LAST BOX');
+		sgBoxClose();
+		return;
 	}
+
+	// sgBoxPageCount > 1
+	console.log(`sgBoxBack: BOX BACK from ${sgBoxPageCount}`);
+	// Remove last box page
+	$boxElement.children('.box-page').last().remove();
+	// Show last box after remove
+	$boxElement.children('.box-page').last().show();
+	$.colorbox.resize();
+	if (options.historyBack) {
+		popStateCallback = false;
+		history.back();
+	}
+	sgBoxPageCount--;
 }
 
-function sgPopState(event) {
-	// console.log('POP STATE CALLBACK = ',popStateCallback)
-	// if (!popStateCallback) return
-	// console.log("popState", $(".box-page").length, event)
-	// console.log(window.location.href, window.location.hash)
+function sgBoxPopState(event) {
+	console.log('------');
+	console.log(`sgBoxPopState: POP STATE popStateCallback = ${popStateCallback} sgBoxPageCount = ${sgBoxPageCount}`);
+	if (sgBoxPageCount === 0) return;
+
+	console.log(`sgBoxPopState: call box back`);
+
+	if (!popStateCallback) {
+		popStateCallback = true;
+		return;
+	}
+
+	console.log(`sgBoxPopState: process box count`);
+
 	if (sgBoxPageCount === 1) {
-		// console.log("POP STATE => CLOSE")
-		// history.back()
-		// $.colorbox.close()
-		sgBoxBack({close: true, historyBack: false})
+		sgBoxClose({historyBack: false});
 	} else if (sgBoxPageCount > 1) {
-		// console.log("POP STATE => BACK")
-		// console.log("pushState from EventListener()")
-		// history.pushState(null, document.title, location.href);
-		// history.back()
 		sgBoxBack({historyBack: false})
 	}
-	// history.pushState(null, document.title, location.href);
+	popStateCallback = true;
+	console.log('------');
 }
-
-//action->replace:dom:url
-//->replace:dom [tag|id|class]
-// Using data-done="[action[->doneAction]:target"
 
 /*
 * sgUpdateData :: SoftGanz Update data to DOM
@@ -325,7 +331,7 @@ function sgUpdateData(html, relTarget, $this, options = {}) {
 		sgShowBox(html, $this, {clearBoxContent: relTarget == 'clear'})
 		if (isAndroidWebViewReady) Android.reloadWebView('No')
 	} else if (relType == 'close') {
-		sgBoxBack({close: true})
+		sgBoxClose();
 	} else if (relType == 'reload') {
 		window.location=document.URL;
 	} else if (relType == 'this') {
@@ -420,35 +426,12 @@ async function sgActionDone(doneData, $this, data, options = {}) {
 				break;
 
 			case 'back':
-				// sgPopState()
-				sgBoxBack()
-				// let $boxElement = $('#cboxLoadedContent')
-				// if ($boxElement.length) {
-				// 	let $boxPage = $('.box-page')
-				// 	if ($boxPage.length <= 1) {
-				// 		$.colorbox.close()
-				// 		if (isAndroidWebViewReady) Android.reloadWebView('Yes')
-				// 	} else {
-				// 		// Remove last box page
-				// 		$boxElement.children('.box-page').last().remove()
-				// 		// Show last box after remove
-				// 		$boxElement.children('.box-page').last().show()
-				// 	}
-				// }
+				// sgBoxPopState();
+				sgBoxBack({from: "sgActionDone"});
 				break;
 
 			case 'close':
-				sgBoxBack({close: true})
-				// let $boxElement = $('#cboxLoadedContent')
-				// if ($boxElement.length) {
-				// 	$.colorbox.close()
-				// } else if (isFlutterInAppWebViewReady) {
-				// 	window.flutter_inappwebview.callHandler("closeWebView");
-				// 	return
-				// } else if (isAndroidWebViewReady) {
-				// 	Android.closeWebView()
-				// 	return false
-				// }
+				sgBoxClose();
 				break
 
 			case 'moveto':
@@ -749,7 +732,7 @@ function showError(response, time = 5000) {
 					$('.sg-dropbox.box.active').removeClass('active');
 					return;
 				} else if ($('#cboxLoadedContent').length) {
-					sgBoxBack({close: true});
+					sgBoxClose();
 					return;
 				} else if (isFlutterInAppWebViewReady) {
 					window.flutter_inappwebview.callHandler("closeWebView");
@@ -763,21 +746,7 @@ function showError(response, time = 5000) {
 				}
 			} else if (relTarget == 'back' && $boxElement.length) {
 				// console.log('BACK BUTTON CLICK')
-				// sgBoxBack()
 				history.back();
-				// let $boxPage = $('.box-page')
-				// if ($boxPage.length <= 1) {
-				// 	$.colorbox.close()
-				// 	//if (isAndroidWebViewReady) Android.reloadWebView('Yes')
-				// 	if (isAndroidWebViewReady) {
-				// 		console.log("ANDROID Back");
-				// 	}
-				// } else {
-				// 	// Remove last box page
-				// 	$boxElement.children('.box-page').last().remove()
-				// 	// Show last box after remove
-				// 	$boxElement.children('.box-page').last().show()
-				// }
 				return;
 			} else if (relTarget == 'img') {
 				sgShowBox(null, $this, null, event);
@@ -1161,7 +1130,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 						$('.sg-dropbox.box.active').removeClass('active')
 						//alert($(event.rel).closest('.sg-dropbox.box').attr('class'))
 					} else {
-						sgBoxBack()
+						sgBoxBack({from: "sg-form"})
 					}
 				}
 
@@ -1218,7 +1187,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 						$('.sg-dropbox.box.active').removeClass('active')
 						//alert($(event.rel).closest('.sg-dropbox.box').attr('class'))
 					} else {
-						sgBoxBack({close: true})
+						sgBoxClose()
 					}
 				}
 
@@ -3123,10 +3092,6 @@ $(document).on('change', "form.sg-upload .inline-upload", function() { // sg-upl
 			$this.val("")
 			$this.replaceWith($this.clone(true))
 			sgActionDone($form.data('done'), $form, data);
-
-			// if ($form.data('done') == 'close') {
-			// 	sgBoxBack({close: true})
-			// }
 		},
 		error: function(response, textStatus, errorThrown){
 			if (debugSG) {
