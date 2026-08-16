@@ -119,6 +119,30 @@ function sgFindTargetElement(target, $this) {
 		sgBoxPageCount = 0
 	}
 
+	// ระบุว่าเมื่อ box ปิดต้อง history.go กลับหรือไม่
+	// (sgBoxClose ตั้งค่า; popstate (ปุ่มย้อน) จะตั้ง false ไม่ให้ย้อนซ้ำ)
+	let historyPending = true
+
+	// Finalizer ตัวเดียวที่จัดการ "ปิด box จริง":
+	// reset state + จัดการ history + ปลดปล่อย scroll lock เสมอ
+	function handleBoxClosed() {
+		console.log('handleBoxClosed: FINALIZE BOX CLOSE');
+		const boxCount = sgBoxPageCount;
+		const doHistoryBack = boxCount > 0 && historyPending;
+
+		sgBoxPageCount = 0;
+		popStateCallback = false;
+		historyPending = true; // reset ค่า default
+
+		// ปลดปล่อย scroll lock (ไม่ freeze หน้าไว้อีก)
+		// เดิมถูก guard ข้ามเมื่อปิดด้วย code → หน้ายัง scroll ค้าง
+		window.onscroll = function() {};
+
+		if (doHistoryBack) {
+			history.go(-boxCount);
+		}
+	}
+
 	function sgShowBox(html, $this, options, e) {
 	let $boxElement = $('#cboxLoadedContent')
 	let linkUrl
@@ -145,11 +169,7 @@ function sgFindTargetElement(target, $this) {
 			$.colorbox.resize();
 		},
 		onClosed: function() {
-			console.log('onClosed: ON BOX CLOSE');
-
-			if (sgBoxPageCount <= 0) return;
-			sgBoxClose();
-			window.onscroll = function() {}
+			handleBoxClosed();
 		}
 	}
 
@@ -211,18 +231,48 @@ async function sgBoxClose(options = {}) {
 
 	if (sgBoxPageCount === 0) return;
 
-	const boxCount = sgBoxPageCount; // 
-
-	$.colorbox.close();
-	sgBoxPageCount = 0; // force box pop state to not action
-
 	console.log('-----');
-	console.log(`sgBoxClose: CLOSE BOX sgBoxPageCount = ${boxCount}`);
+	console.log(`sgBoxClose: CLOSE BOX sgBoxPageCount = ${sgBoxPageCount}`, options);
 
-	popStateCallback = false;
-	if (options.historyBack) {
-		history.go(-boxCount);
+	// บอก finalizer ว่าต้อง history.go กลับหรือไม่ (popstate จะส่ง false)
+	historyPending = options.historyBack;
+
+	// ปิด colorbox → ตัว colorbox จะ fire onClosed → handleBoxClosed() เป็นผู้ finalize
+	$.colorbox.close();
+	// เผื่อกรณี onClosed ไม่ fire (บางสถานะ) finalize เลยทันทีกันพลาด
+	handleBoxClosed();
+}
+
+async function sgBoxBack(options = {}) {
+	// console.log(options)
+	options = $.extend({historyBack: true}, options);
+	let $boxElement = $('#cboxLoadedContent');
+	let $boxPage = $('.box-page');
+
+	console.log('sgBoxBack: sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options);
+
+	if (sgBoxPageCount <= 0) return;
+
+	if (sgBoxPageCount === 1) {
+		console.log('sgBoxBack: CLOSE FOR LAST BOX');
+		sgBoxClose({historyBack: options.historyBack});
+		return;
 	}
+
+	// sgBoxPageCount > 1
+	console.log(`sgBoxBack: BOX BACK from ${sgBoxPageCount}`);
+	// Remove last box page
+	$boxElement.children('.box-page').last().remove();
+	// Show last box after remove
+	$boxElement.children('.box-page').last().show();
+	$.colorbox.resize();
+	if (options.historyBack) {
+		popStateCallback = false;
+		history.back();
+	}
+	sgBoxPageCount--;
+
+	// TODO: For Android web app, do not remove
 	// if ($boxPage.length) {
 		// console.log("sgBoxBack => HAVE BOX LENGTH");
 		// if (options.historyBack) {
@@ -242,38 +292,6 @@ async function sgBoxClose(options = {}) {
 	// 	console.log("sgBoxBack => AndroidWebView")
 	// 	Android.reloadWebView('Yes');
 	// }
-
-	console.log('-----');
-}
-
-async function sgBoxBack(options = {}) {
-	// console.log(options)
-	options = $.extend({historyBack: true}, options);
-	let $boxElement = $('#cboxLoadedContent');
-	let $boxPage = $('.box-page');
-
-	console.log('sgBoxBack: sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options);
-
-	if (sgBoxPageCount <= 0) return;
-
-	if (sgBoxPageCount === 1) {
-		console.log('sgBoxBack: CLOSE FOR LAST BOX');
-		sgBoxClose();
-		return;
-	}
-
-	// sgBoxPageCount > 1
-	console.log(`sgBoxBack: BOX BACK from ${sgBoxPageCount}`);
-	// Remove last box page
-	$boxElement.children('.box-page').last().remove();
-	// Show last box after remove
-	$boxElement.children('.box-page').last().show();
-	$.colorbox.resize();
-	if (options.historyBack) {
-		popStateCallback = false;
-		history.back();
-	}
-	sgBoxPageCount--;
 }
 
 function sgBoxPopState(event) {
