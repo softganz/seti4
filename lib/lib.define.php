@@ -3,8 +3,8 @@
  * Library  :: Define Constants
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2000-xx-xx
- * Modified :: 2026-06-30
- * Version  :: 5
+ * Modified :: 2026-08-17
+ * Version  :: 6
  */
 
 define('_STRIPSLASHES', 1);
@@ -117,7 +117,7 @@ define('_JSON_PATTERN', trim('
 	')
 );
 
-define('_HEADER_BACK', '<a class="sg-action" data-rel="back"><i class="icon -material">arrow_back</i></a>');
+define('_HEADER_BACK', '<a class="sg-action" data-rel="none" data-done="back"><i class="icon -material">arrow_back</i></a>');
 
 define('_HTTP_OK', 200); // OK: Everything worked successfull.
 define('_HTTP_OK', 201); // Created: A new resource was successfully created.
