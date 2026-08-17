@@ -1,15 +1,15 @@
 <?php
 /**
- * Paper   :: Post Form Widget
- * Created :: 2019-06-10
- * Modify  :: 2025-07-15
- * Version :: 5
+ * Paper    :: Post Form Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-06-10
+ * Modified :: 2026-08-17
+ * Version  :: 6
  *
  * @param Array $topic
  * @return Object
  *
- * @usage import('widget:paper.post.form.php')
- * @usage new PaperPostFormWidgetl([])
+ * @uses new PaperPostFormWidgetl([])
  */
 
 class PaperPostFormWidget extends Widget {
@@ -186,7 +186,7 @@ class PaperPostFormWidget extends Widget {
 							'class' => '-fill',
 							'value' => $this->topic->post->document_description,
 							'placeholder' => 'คำอธิบายเอกสารประกอบ',
-							'description' => '<strong>ข้อกำหนดในการส่งไฟล์เอกสารประกอบ</strong><ul><li>ไฟล์เอกสารจะต้องเป็นไฟล์ประเภท <strong>.'.implode(' , .',cfg('topic.doc.file_ext')).'</strong> เท่านั้น </li><li>ขนาดไฟล์ต้องไม่เกิน <strong>'.ini_get('upload_max_filesize').'B</strong></li><li>หากไฟล์เอกสารเป็นในรูปแบบอื่น ท่านควรแปลงให้เป็น Acrobat reader (pdf) ให้เรียบร้อยก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มไฟล์เอกสารประกอบ , แก้ไข หรือ ลบทิ้ง สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดเอกสารประกอบในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์เอกสารประกอบทั้งหมดที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
+							'description' => '<strong>ข้อกำหนดในการส่งไฟล์เอกสารประกอบ</strong><ul><li>ไฟล์เอกสารจะต้องเป็นไฟล์ประเภท <strong>.'.implode(' , .', cfg('topic.doc.file_ext') ?? []).'</strong> เท่านั้น </li><li>ขนาดไฟล์ต้องไม่เกิน <strong>'.ini_get('upload_max_filesize').'B</strong></li><li>หากไฟล์เอกสารเป็นในรูปแบบอื่น ท่านควรแปลงให้เป็น Acrobat reader (pdf) ให้เรียบร้อยก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มไฟล์เอกสารประกอบ , แก้ไข หรือ ลบทิ้ง สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดเอกสารประกอบในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์เอกสารประกอบทั้งหมดที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul>',
 						] : NULL,
 						'tabs_3_div_e' => user_access('upload document') ? '</div>' : NULL,
 
