@@ -3,7 +3,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
  * Modified :: 2026-08-16
- * Version  :: 75
+ * Version  :: 76
  */
 
 'use strict'
@@ -113,223 +113,262 @@ function sgFindTargetElement(target, $this) {
 */
 (function () {
 	let sgBoxPageCount = 0
-	let popStateCallback = true
+	const getBoxContent = () => $('#cboxLoadedContent')
 
-	function sgBoxResetState() {
+	function resetBoxState() {
 		sgBoxPageCount = 0
 	}
 
-	// ระบุว่าเมื่อ box ปิดต้อง history.go กลับหรือไม่
-	// (sgBoxClose ตั้งค่า; popstate (ปุ่มย้อน) จะตั้ง false ไม่ให้ย้อนซ้ำ)
-	let historyPending = true
+	// Dev note:
+	// Browser history = source of truth (single flag below).
+	// เมื่อเปิด box: เราทำ history.pushState (box +1) → ปิด box ต้อง history.back() เพื่อ window
+	// สมัคร: popstate ถูก fire 1 ครั้ง/1 navigation (จาก user OR code)
+	//
+	// suppressNextPopstate:
+	//  true  = navigation ครั้งต่อไปมาจาก code เรา (history.back() จาก sgBoxClose) → popstate นี้เป็นตัว finalize DOM
+	//  false = navigation มาจากผู้ใช้ (กดปุ่มย้อน) → popstate นี้เป็น trigger ให้ปิดจริงๆ
+	// ตัวนี้ดีกว่า flag เดิม เพราะตั้งก่อน navigate ทุกครั้ง + popstate ครั้งนั้นเองเป็นคนกลืน/reset ให้
 
-	// Finalizer ตัวเดียวที่จัดการ "ปิด box จริง":
-	// reset state + จัดการ history + ปลดปล่อย scroll lock เสมอ
+	let suppressNextPopstate = false
+
+	// ปิดกล่องทั้งหมดที่ค้าง (reset count + ปลดปล่อย scroll + ลบ .box-page ออกจาก DOM)
 	function handleBoxClosed() {
 		console.log('handleBoxClosed: FINALIZE BOX CLOSE');
-		const boxCount = sgBoxPageCount;
-		const doHistoryBack = boxCount > 0 && historyPending;
 
 		sgBoxPageCount = 0;
-		popStateCallback = false;
-		historyPending = true; // reset ค่า default
+
+		// ลบ .box-page ทั้งหมดออกจาก DOM (กันค้างเมื่อปิดด้วย sgBoxClose/sgBoxBack)
+		getBoxContent().find('.box-page').remove();
 
 		// ปลดปล่อย scroll lock (ไม่ freeze หน้าไว้อีก)
-		// เดิมถูก guard ข้ามเมื่อปิดด้วย code → หน้ายัง scroll ค้าง
 		window.onscroll = function() {};
-
-		if (doHistoryBack) {
-			history.go(-boxCount);
-		}
 	}
 
-	function sgShowBox(html, $this, options, e) {
-	let $boxElement = $('#cboxLoadedContent')
-	let linkUrl
-	let thisIsJ = false
-	let currentX = window.scrollX
-	let currentY = window.scrollY
-	let defaults = {
-		fixed: true,
-		opacity: 0.5,
-		width: "95%",
-		maxHeight: "95%",
-		maxWidth: "95%",
-		className: 'colorbox' + ($this && ['full', 'appbar'].includes($this.data('width')) ? ' -'+$this.data('width') : ''),
-		//iframe: false,
-		onCleanup: async function() {
-			let $firstBoxPage = $(".box-page[data-page=1]");
-			let done = $firstBoxPage.data('done');
+	function showBox(html, $this, options, e) {
+		let $boxElement = getBoxContent()
+		let linkUrl
+		let thisIsJ = false
+		let currentX = window.scrollX
+		let currentY = window.scrollY
+		let defaults = {
+			fixed: true,
+			opacity: 0.5,
+			width: "95%",
+			maxHeight: "95%",
+			maxWidth: "95%",
+			className: 'colorbox' + ($this && ['full', 'appbar'].includes($this.data('width')) ? ' -'+$this.data('width') : ''),
+			//iframe: false,
+			onCleanup: async function() {
+				let $firstBoxPage = $(".box-page[data-page=1]");
+				let done = $firstBoxPage.data('done');
 
-			if (done) {
-				await sgActionDone(done, $firstBoxPage);
+				if (done) {
+					await sgActionDone(done, $firstBoxPage);
+				}
+			},
+			onComplete: function() {
+				$.colorbox.resize();
+			},
+			onClosed: function() {
+				// colorbox ถูกปิดแล้วจริงๆ (X / ESC / โดยตรง)
+				// จัดการปิด (reset state + scroll) + ย้อน history URL ทันที
+				//
+				// หลักการ: เรา pushState ตอนเปิด (box+1) → ทุกการปิดต้อง history.back() 1 ครั้ง
+				// ให้ popstate ที่ตามมา (จาก back นี้) ไป finalize state ต่อ — แต่เพราะ box โดน
+				// ปิด DOM ไปแล้ว เราจึง finalize ที่นี่โดยตรง แล้วคืน suppress ให้กลืน popstate ที่มา
+				const hadOpenBox = sgBoxPageCount > 0;
+
+				handleBoxClosed();          // reset count + scroll
+
+				if (hadOpenBox) {
+					suppressNextPopstate = true; // กลืน popstate ที่ history.back() จะสร้าง
+					history.back();             // ย้อน URL (#box-N → ก่อน)
+				}
 			}
-		},
-		onComplete: function() {
-			$.colorbox.resize();
-		},
-		onClosed: function() {
+		}
+
+		options = $.extend(defaults, options);
+
+		if ($this instanceof jQuery) {
+			thisIsJ = true
+			linkUrl = $this.attr('href') ? $this.attr('href') : $this.attr('action')
+			if ($this.data('className')) $this.data('className', options.className+' '+$this.data('className'))
+			options = $.extend(options, $this.data(), $this.data('box'));
+		}
+		if ("boxwidth" in options) options.width = options.boxwidth
+		if ("boxheight" in options) options.height = options.boxheight
+
+		// Clear all box content
+		if (options.clearBoxContent) {
+			$boxElement.empty()
+		}
+
+		// lock scroll position, but retain settings for later
+		window.onscroll = function(){window.scrollTo(currentX, currentY);};
+
+		let done = $this.data('boxClose') ? ' data-done="' + $this.data('boxClose')+'"' : '';
+
+		if (thisIsJ && $this.data('rel') === 'img') {
+			sgBoxPageCount = 0
+			let group = $this.data("group")
+			options.open = true
+			options.className = options.className + ' -photo -full'
+
+			$('.sg-action[data-group="'+group+'"]').each(function(i){
+				let $elem = $(this)
+				$elem.colorbox(options)
+			})
+			$this.colorbox(options)
+			e.stopPropagation()
+		} else if ($boxElement.length) {
+			if (debugSG) console.log('Show Link In Current Box')
+			if (debugSG) console.log('Link Url =',linkUrl)
+			$boxElement.find('.box-page').hide()
+			sgBoxPageCount++
+			let pageHtml = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'"' + done + '>'+html+'</div>'
+			$boxElement.append(pageHtml)
+		}	else {
+			sgBoxPageCount++
+			options.html = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'"' + done + '>'+html+'</div>'
+
+			$.colorbox(options)
+		}
+
+		history.pushState(null, document.title, '#box-'+sgBoxPageCount);
+		console.log(`sgBoxPageCount = ${sgBoxPageCount} state = ${history.state}`)
+		// console.log("pushState from sgShowBox()")
+		// history.pushState(null, document.title, location.href);
+	}
+
+	async function closeBox(options = {}) {
+		options = $.extend({close: null, historyBack: true}, options)
+
+		if (sgBoxPageCount === 0) return;
+
+		console.log('-----');
+		console.log(`sgBoxClose: CLOSE BOX sgBoxPageCount = ${sgBoxPageCount}`, options);
+
+		if (options.historyBack) {
+			// ปิดจาก UI/code → ปิด colorbox → onClosed() จะเป็นผู้จัดการ (reset + history.back())
+			// เราต้องไม่ history.back() ซ้ำ เพราะ onClosed จะทำเองเมื่อ colorbox จ่าย closed
+			$.colorbox.close();
+			// safety: หาก onClosed ไม่ fire (บางกรณี) ให้ finalize + ย้อน URL เอง
+			if (sgBoxPageCount > 0) {
+				suppressNextPopstate = true;
+				handleBoxClosed();
+				history.back();
+			}
+		} else {
+			// ปิดจาก popstate (ผู้ใช้กด back) → browser อยู่ระหว่าง navigate อยู่แล้ว
+			// .box-page ถูกจัดการใน sgBoxBack ไปแล้ว; ปิด colorbox + reset
+			$.colorbox.close();
 			handleBoxClosed();
 		}
 	}
 
-	options = $.extend(defaults, options);
+	async function backBox(options = {}) {
+		options = $.extend({historyBack: true}, options);
+		let $boxElement = getBoxContent();
+		let $boxPage = $('.box-page');
 
-	if ($this instanceof jQuery) {
-		thisIsJ = true
-		linkUrl = $this.attr('href') ? $this.attr('href') : $this.attr('action')
-		if ($this.data('className')) $this.data('className', options.className+' '+$this.data('className'))
-		options = $.extend(options, $this.data(), $this.data('box'));
-	}
-	if ("boxwidth" in options) options.width = options.boxwidth
-	if ("boxheight" in options) options.height = options.boxheight
+		console.log('sgBoxBack: sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options);
 
-	// Clear all box content
-	if (options.clearBoxContent) {
-		$boxElement.empty()
-	}
+		if (sgBoxPageCount <= 0) return;
 
-	// lock scroll position, but retain settings for later
-	window.onscroll = function(){window.scrollTo(currentX, currentY);};
+		if (sgBoxPageCount === 1) {
+			console.log('sgBoxBack: CLOSE FOR LAST BOX');
+			closeBox({historyBack: options.historyBack});
+			return;
+		}
 
-	let done = $this.data('boxClose') ? ' data-done="' + $this.data('boxClose')+'"' : '';
+		// sgBoxPageCount > 1 — ถอย 1 ชั้น
+		console.log(`sgBoxBack: BOX BACK from ${sgBoxPageCount}`);
+		if (options.historyBack) {
+			// มาจาก UI/code → navigate กลับด้วย code → popstate เป็นผู้นำ .box-page ออก (suppressed)
+			suppressNextPopstate = true;
+			history.back(); // popstate ที่ตามมาจะถูก handle ใน sgBoxPopState (suppressed branch)
+		} else {
+			// มาจาก user back จริงๆ (popstate) → เอาบรรทัดบนออกโดยตรง
+			$boxElement.children('.box-page').last().remove();
+			$boxElement.children('.box-page').last().show();
+			$.colorbox.resize();
+			sgBoxPageCount--;
+		}
 
-	if (thisIsJ && $this.data('rel') === 'img') {
-		sgBoxPageCount = 0
-		let group = $this.data("group")
-		options.open = true
-		options.className = options.className + ' -photo -full'
-
-		$('.sg-action[data-group="'+group+'"]').each(function(i){
-			let $elem = $(this)
-			$elem.colorbox(options)
-		})
-		$this.colorbox(options)
-		e.stopPropagation()
-	} else if ($boxElement.length) {
-		if (debugSG) console.log('Show Link In Current Box')
-		if (debugSG) console.log('Link Url =',linkUrl)
-		$boxElement.find('.box-page').hide()
-		sgBoxPageCount++
-		let pageHtml = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'"' + done + '>'+html+'</div>'
-		$boxElement.append(pageHtml)
-	}	else {
-		sgBoxPageCount++
-		options.html = '<div class="box-page" data-page="'+sgBoxPageCount+'" data-url="'+linkUrl+'"' + done + '>'+html+'</div>'
-
-		$.colorbox(options)
-	}
-
-	history.pushState(null, document.title, '#box-'+sgBoxPageCount);
-	console.log(`sgBoxPageCount = ${sgBoxPageCount} state = ${history.state}`)
-	// console.log("pushState from sgShowBox()")
-	// history.pushState(null, document.title, location.href);
-}
-
-async function sgBoxClose(options = {}) {
-	options = $.extend({close: null, historyBack: true}, options)
-
-	if (sgBoxPageCount === 0) return;
-
-	console.log('-----');
-	console.log(`sgBoxClose: CLOSE BOX sgBoxPageCount = ${sgBoxPageCount}`, options);
-
-	// บอก finalizer ว่าต้อง history.go กลับหรือไม่ (popstate จะส่ง false)
-	historyPending = options.historyBack;
-
-	// ปิด colorbox → ตัว colorbox จะ fire onClosed → handleBoxClosed() เป็นผู้ finalize
-	$.colorbox.close();
-	// เผื่อกรณี onClosed ไม่ fire (บางสถานะ) finalize เลยทันทีกันพลาด
-	handleBoxClosed();
-}
-
-async function sgBoxBack(options = {}) {
-	// console.log(options)
-	options = $.extend({historyBack: true}, options);
-	let $boxElement = $('#cboxLoadedContent');
-	let $boxPage = $('.box-page');
-
-	console.log('sgBoxBack: sgBoxPageCount = ', sgBoxPageCount, ' $boxPage.length = ', $boxPage.length, '$boxElement.length = ', $boxElement.length, 'options = ', options);
-
-	if (sgBoxPageCount <= 0) return;
-
-	if (sgBoxPageCount === 1) {
-		console.log('sgBoxBack: CLOSE FOR LAST BOX');
-		sgBoxClose({historyBack: options.historyBack});
-		return;
-	}
-
-	// sgBoxPageCount > 1
-	console.log(`sgBoxBack: BOX BACK from ${sgBoxPageCount}`);
-	// Remove last box page
-	$boxElement.children('.box-page').last().remove();
-	// Show last box after remove
-	$boxElement.children('.box-page').last().show();
-	$.colorbox.resize();
-	if (options.historyBack) {
-		popStateCallback = false;
-		history.back();
-	}
-	sgBoxPageCount--;
-
-	// TODO: For Android web app, do not remove
-	// if ($boxPage.length) {
-		// console.log("sgBoxBack => HAVE BOX LENGTH");
-		// if (options.historyBack) {
-			// for (let historyCount = boxCount; historyCount > 0; historyCount--) {
-			// 	console.log(`sgBoxClose: historyCount = ${historyCount}`);
-			// 	history.back();
+		// TODO: For Android web app, do not remove
+		// if ($boxPage.length) {
+			// console.log("sgBoxBack => HAVE BOX LENGTH");
+			// if (options.historyBack) {
+				// for (let historyCount = boxCount; historyCount > 0; historyCount--) {
+				// 	console.log(`sgBoxClose: historyCount = ${historyCount}`);
+				// 	history.back();
+				// }
 			// }
+		// } else if (isFlutterInAppWebViewReady) {
+		// 	// window.flutter_inappwebview.callHandler("closeWebView");
+		// } else if (isAndroidWebViewReady) {
+		// 	Android.reloadWebView('Yes')
+		// } else if (isFlutterInAppWebViewReady) {
+		//  console.log("sgBoxBack => FlutterInAppWebView")
+		// 	window.flutter_inappwebview.callHandler("closeWebView");
+		// } else if (isAndroidWebViewReady) {
+		// 	console.log("sgBoxBack => AndroidWebView")
+		// 	Android.reloadWebView('Yes');
 		// }
-	// } else if (isFlutterInAppWebViewReady) {
-	// 	// window.flutter_inappwebview.callHandler("closeWebView");
-	// } else if (isAndroidWebViewReady) {
-	// 	Android.reloadWebView('Yes')
-	// } else if (isFlutterInAppWebViewReady) {
-	// 	console.log("sgBoxBack => FlutterInAppWebView")
-	// 	window.flutter_inappwebview.callHandler("closeWebView");
-	// } else if (isAndroidWebViewReady) {
-	// 	console.log("sgBoxBack => AndroidWebView")
-	// 	Android.reloadWebView('Yes');
-	// }
-}
-
-function sgBoxPopState(event) {
-	console.log('------');
-	console.log(`sgBoxPopState: POP STATE popStateCallback = ${popStateCallback} sgBoxPageCount = ${sgBoxPageCount}`);
-	if (sgBoxPageCount === 0) return;
-
-	console.log(`sgBoxPopState: call box back`);
-
-	if (!popStateCallback) {
-		popStateCallback = true;
-		return;
 	}
 
-	console.log(`sgBoxPopState: process box count`);
+	function handlePopState(event) {
+		console.log('------');
+		console.log(`sgBoxPopState: POP STATE suppressNextPopstate = ${suppressNextPopstate} sgBoxPageCount = ${sgBoxPageCount}`);
 
-	if (sgBoxPageCount === 1) {
-		sgBoxClose({historyBack: false});
-	} else if (sgBoxPageCount > 1) {
-		sgBoxBack({historyBack: false})
-	}
-	popStateCallback = true;
-	console.log('------');
+		// กรณี popstate มาจาก navigation ของ code เราเอง → กลืน + จัดการ (ครั้งเดียว)
+		if (suppressNextPopstate) {
+			suppressNextPopstate = false;
+
+			// ลด count เฉพาะเมื่อยังเหลือ (>0) กันลบเกินจาก X/ESC ที่ count reset ไปแล้ว
+			if (sgBoxPageCount > 0) sgBoxPageCount--;
+
+			if (sgBoxPageCount <= 0) {
+				// ปิดกล่องสุดท้าย → finalize (เผื่อ onClosed ไม่ได้ reset ครบ)
+				handleBoxClosed();
+			} else {
+				// ถอย 1 ชั้น (sgBoxBack history.back()) → นำ .box-page บนสุดออก
+				let $boxElement = getBoxContent();
+				$boxElement.children('.box-page').last().remove();
+				$boxElement.children('.box-page').last().show();
+				$.colorbox.resize();
+			}
+			console.log('sgBoxPopState: Suppressed (from our own navigation)');
+			console.log('------');
+			return;
+		}
+
+		// ต่อไป = ผู้ใช้กดจริง (หรือ popstate ที่ไม่เกี่ยวกับ box)
+		if (sgBoxPageCount === 0) return;
+
+		console.log(`sgBoxPopState: USER BACK, process box count`, sgBoxPageCount);
+
+		if (sgBoxPageCount === 1) {
+			closeBox({historyBack: false});
+		} else if (sgBoxPageCount > 1) {
+			backBox({historyBack: false})
+		}
+		console.log('------');
 	}
 
 	// Browser back/forward button -> handle box state
 	window.addEventListener('popstate', function (event) {
 		console.log("pop state event");
-		sgBoxPopState(event, true);
+		handlePopState(event, true);
 	});
 
 	// Expose box public API (global, same signatures as before)
-	window.sgShowBox      = sgShowBox
-	window.sgBoxClose     = sgBoxClose
-	window.sgBoxBack      = sgBoxBack
-	window.sgBoxPopState  = sgBoxPopState
+	window.sgShowBox      = showBox
+	window.sgBoxClose     = closeBox
+	window.sgBoxBack      = backBox
+	window.sgBoxPopState  = handlePopState
 	// Reset page count (used by sg-action "box->clear")
-	window.sgBoxReset     = sgBoxResetState
+	window.sgBoxReset     = resetBoxState
 })()
 
 /*
