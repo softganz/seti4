@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2026-06-14
- * Version :: 19
+ * Modify  :: 2026-08-20
+ * Version :: 20
  */
 
 namespace SG;
@@ -205,7 +205,49 @@ function api($args = []) {
 	}
 }
 
-
+/**
+ * Merge array recursive with object
+ *
+ * @param array ...$arrays
+ * @return array
+ */
+function array_merge_recursive(array ...$arrays): array {
+	if (count($arrays) === 0) return [];	
+	if (count($arrays) === 1) return $arrays[0];
+	
+	$result = $arrays[0];
+	
+	for ($i = 1; $i < count($arrays); $i++) {
+		$array2 = $arrays[$i];
+		foreach ($array2 as $key => $value) {
+			if (isset($result[$key])) {
+				// Handle if both elements are objects
+				if (is_object($result[$key]) && is_object($value)) {
+					$result[$key] = (object) array_merge_recursive(
+						(array) $result[$key], 
+						(array) $value
+					);
+				} 
+				// Handle if both elements are arrays
+				elseif (is_array($result[$key]) && is_array($value)) {
+					$result[$key] = array_merge_recursive($result[$key], $value);
+				} 
+				// Handle string keys vs numeric keys overwrite behavior
+				else {
+					if (is_string($key)) {
+					$result[$key] = $value; // Overwrite string key
+				} else {
+						$result[] = $value; // Append numeric key
+					}
+				}
+			} else {
+				$result[$key] = $value;
+			}
+		}
+	}
+	
+	return $result;
+}
 
 /**
 * @param Object $args
