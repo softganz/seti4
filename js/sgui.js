@@ -206,7 +206,7 @@ function sgFindTargetElement(target, $this) {
 		// lock scroll position, but retain settings for later
 		window.onscroll = function(){window.scrollTo(currentX, currentY);};
 
-		let done = $this.data('boxClose') ? ' data-done="' + $this.data('boxClose')+'"' : '';
+		let done = $this && $this.data('boxClose') ? ' data-done="' + $this.data('boxClose')+'"' : '';
 
 		if (thisIsJ && $this.data('rel') === 'img') {
 			sgBoxPageCount = 0
@@ -830,7 +830,7 @@ function showError(response, time = 5000) {
 				// No attribute data-rel and data-ret
 				// Redirect to href
 				let hasPara = JSON.stringify(para) != '{}'
-				let hrefUrl = $this.attr('href');
+				let hrefUrl = $href;
 				hrefUrl = hrefUrl + (hasPara ? (hrefUrl.indexOf('?') == -1 ? '?' : '&') + $.param(para) : '');
 				window.location = hrefUrl;
 				return true
@@ -856,8 +856,8 @@ function showError(response, time = 5000) {
 			}
 
 
-			// console.log('URL = '+href)
-			let hrefMatch = href.match(/^(function|javascript)\:(.*)/);
+			console.log('URL = '+href)
+			let hrefMatch = href != undefined ? href.match(/^(function|javascript)\:(.*)/) : false;
 
 			if (hrefMatch) {
 				let urlFunction = hrefMatch[2];
