@@ -1,20 +1,16 @@
 <?php
 /**
-* mydb class for database management extension
-*
-* @package core
-* @version 4.00
-* @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
-* @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
-* Created :: 2009-07-06
-* Modify  :: 2026-03-24
-* Version :: 10
-* ============================================
-* This program is free software. You can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License.
-* ============================================
-*/
+ * MyDb     :: Database Management
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2009-07-06
+ * Modified :: 2026-08-22
+ * Version  :: 11
+ *
+ * @uses mydb::select(stmt, where, var)
+ * @uses mydb::query(stmt, where, var)
+ */
+
+// @deprecated
 
 /**
 * shotcut to 	call $GLOBALS['mydb']
@@ -109,28 +105,10 @@ class MyDb {
 			$mysqli->query('SET @@SESSION.sql_mode = ""');
 			// $mysqli->query('SET GLOBAL slow_query_log=1;');
 
-			if (cfg('db.character_set_client')) {
-				$characterSetClientSql = 'SET character_set_client="'.cfg('db.character_set_client').'" ';
-				$mysqli->query($characterSetClientSql);
-				// $this->_query_items[] = $characterSetClientSql;
-
-				$characterSetResultsSql = 'SET character_set_results="'.cfg('db.character_set_client').'" ';
-				$mysqli->query($characterSetResultsSql);
-				// $this->_query_items[] = $characterSetResultsSql;
+			if (cfg('db.character_set_name')) {
+				$mysqli->set_charset(cfg('db.character_set_name')); 
 			}
 
-			if (cfg('db.character_set_connection')) {
-				$characterSetConnectionSql = 'SET character_set_connection="'.cfg('db.character_set_connection').'" ';
-				$mysqli->query($characterSetConnectionSql);
-				// $this->_query_items[] = $characterSetConnectionSql;
-			}
-
-			if (cfg('db.collation_connection')) {
-				$collationConnectionSql = 'SET collation_connection="'.cfg('db.collation_connection').'" ';
-				$mysqli->query($collationConnectionSql);
-				// $this->_query_items[] = $collationConnectionSql;
-			}
-			if (cfg('db.character_set_client')) $mysqli->set_charset(cfg('db.character_set_client'));
 			$mysqli->select_db($this->db);
 		}
 		$this->mysqli = $mysqli;

@@ -1,10 +1,10 @@
 <?php
 /**
- * Core    :: Init Web
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2023-08-01
- * Modify  :: 2026-08-02
- * Version :: 31
+ * Core     :: Init Web
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-08-01
+ * Modified :: 2026-08-22
+ * Version  :: 32
  */
 
 global $R;
@@ -211,9 +211,7 @@ try {
 	$R->DB = new DB([
 		'connection' => [
 			'uri' => cfg('db'),
-			'characterSetClient' => cfg('db.character_set_client'),
-			'characterSetConnection' => cfg('db.character_set_connection'),
-			'collationConnection' => cfg('db.collation_connection'),
+			'characterSetName' => cfg('db.character_set_name'),
 		]
 	]);
 } catch (Exception $exception) {

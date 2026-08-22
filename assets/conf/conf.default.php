@@ -1,4 +1,12 @@
 <?php
+/**
+ * Core     :: Default configuration
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 20xx-xx-xx
+ * Modified :: 2026-08-22
+ * Version  :: 2
+ */
+
 $cfg['version.autoupgrade'] = false;
 
 
@@ -60,15 +68,7 @@ $cfg['db'] = 'mysql://username:password@localhost/database';
 
 // Set mysql charactor set
 // Use utf8 charactor set
-$cfg['db.character_set_client'] = 'utf8';
-$cfg['db.character_set_connection'] = 'utf8';
-$cfg['db.collation_connection'] = 'utf8_unicode_ci';
-
-// Use thai charactor set
-
-// $cfg['db.character_set_client'] = 'tis620';
-// $cfg['db.character_set_connection'] = 'tis620';
-// $cfg['db.collation_connection'] = 'tis620_thai_ci';
+$cfg['db.character_set_name'] = 'utf8';
 
 // Folder
 $cfg['library'] = '/library/';

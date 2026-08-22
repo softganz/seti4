@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-08-10
- * Version  :: 50
+ * Modified :: 2026-08-22
+ * Version  :: 51
  *
  * @param Array $args
  * @return Object
@@ -135,6 +135,7 @@ class DbException extends \Exception {
 
 #[AllowDynamicProperties]
 class DB {
+	private $connection;
 	private $status = false;
 	private $srcStmt;
 	private $stmt;
@@ -558,6 +559,9 @@ class DB {
 		return $ret;
 	}
 
+	function connection() {
+		return $this->connection;
+	}
 
 
 	// Private method
@@ -577,7 +581,8 @@ class DB {
 			$connection['database'] = $connection['uri']['database'];
 		}
 
-		$dsn = $connection['type'].':dbname='.$connection['database'].';host='.$connection['host'];
+		$this->connection = (object) $connection;
+		$dsn = $connection['type'] . ':host=' . $connection['host'] . ';dbname=' . $connection['database'] . ';charset=' . $connection['characterSetName'];
 
 		$start_time = microtime(true);
 
@@ -604,22 +609,6 @@ class DB {
 		// Disabled Strict mode
 		$this->PDO->query('SET @@SESSION.sql_mode = ""');
 		// $this->PDO->query('SET GLOBAL slow_query_log=1;');
-
-		if ($connection['characterSetClient']) {
-			$characterSetClientSql = 'SET character_set_client="'.$connection['characterSetClient'].'"';
-			$this->PDO->query($characterSetClientSql);
-			$this->queryItems($characterSetClientSql);
-
-			$characterSetResultsSql = 'SET character_set_results="'.$connection['characterSetClient'].'"';
-			$this->PDO->query($characterSetResultsSql);
-			$this->queryItems($characterSetResultsSql);
-		}
-
-		if ($connection['characterSetConnection']) {
-			$characterSetConnectionSql = 'SET character_set_connection="'.$connection['characterSetConnection'].'"';
-			$this->PDO->query($characterSetConnectionSql);
-			$this->queryItems($characterSetConnectionSql);
-		}
 	}
 
 	private function setOptions(Array $options) {
