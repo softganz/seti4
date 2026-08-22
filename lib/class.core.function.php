@@ -3,14 +3,13 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-03-24
- * Version :: 35
+ * Modify  :: 2026-04-22
+ * Version :: 36
  */
 
 /* Core Function */
 
 use Softganz\DB;
-
 /**
  * function R :: Access core resource
  */
@@ -337,8 +336,11 @@ function cfg_db($name = NULL, $value = NULL) {
  */
 function cfg_db_delete($name) {
 	if (isset($name)) {
-		mydb::query('DELETE FROM %variable% WHERE name=:name LIMIT 1',':name',$name);
-		cfg($name,NULL,'delete');
+		DB::query([
+			'DELETE FROM %variable% WHERE name = :name LIMIT 1',
+			'var' => [':name' => $name]
+		]);
+		cfg($name, NULL, 'delete');
 	}
 }
 
@@ -819,7 +821,6 @@ function callFromApp() {
  */
 function core_version_check() {
 	if (!user_access('access administrator pages')) return;
-	if (!mydb()->status) return 'MySql maybe down.';
 	if (!DB::tableExists('%variable%')) return;
 
 	$version_current = cfg('core.version.install');
@@ -1396,13 +1397,6 @@ function event_tricker($event = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = NUL
 function __trim(&$value) {$value = is_string($value) ? trim($value):$value;}
 
 function __htmlspecialchars(&$value) {$value = is_string($value) ? htmlspecialchars($value):$value;}
-
-/**
- * Replace %tablename% with prefix and tablename
- * @param Array $m
- * @return String
- */
-function __mydb_db_replace($m) {return ' '.db($m[1]);}
 
 function __is_serialized($val) {
 	if (!is_string($val)){ return false; }
