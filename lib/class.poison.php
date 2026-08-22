@@ -1,25 +1,26 @@
 <?php
 /**
-* SOFTGANZ :: class.poison
-*
-* Copyright (c) 2000-2002 The SoftGanz Group By Panumas Nontapun
-* Authors: Panumas Nontapun <webmaster@softganz.com>
-* http://www.softganz.com
-* ============================================
-* This program is free software. You can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License.
-* ============================================
-*
---- class poison for block spam messege
-
---- Created :: 2007-01-06
---- Modify  :: 2023-10-04
---- Version :: 2
-*/
+ * SOFTGANZ :: class.poison
+ *
+ * Copyright (c) 2000-2002 The SoftGanz Group By Panumas Nontapun
+ * Authors: Panumas Nontapun <webmaster@softganz.com>
+ * http://www.softganz.com
+ * ============================================
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ *
+ * class poison for block spam messege
+ * Created :: 2007-01-06
+ * Modify  :: 2023-10-04
+ * Version :: 2
+ */
 
 define('_SGZ_BLOCK_TIME'		, 1000); // 10 second
 define('_SGZ_BLOCK_KEYLIFE'	, 60000); // 600 second
+
+use Softganz\DB;
 
 /************************
 Class  :: Poison
@@ -41,30 +42,28 @@ class Poison {
 	public static function existDayKey($index, $key){
 		$index = intval($index);
 		if (preg_match('/ /', $key)) return false;
-		$dayKey = mydb::select(
+		$dayKey = DB::select([
 			'SELECT `id` FROM %block_daykey% WHERE `key:index` = :key LIMIT 1',
-			[':index' => $index, ':key' => $key]
-		);
+			'var' => [':index' => $index, ':key' => $key]
+		]);
 		$exist = $dayKey->id ? true : false;
 		return $exist;
 	}
 
-
-
 	// Self call method
 	public static function generateDayKey(){
-		$remainKey = mydb::select(
+		$remainKey = DB::select([
 			'SELECT `id` FROM %block_daykey% WHERE `generate_on` > :expire',
-		  [':expire' => Poison::expireTime()]
-		);
+		  'var' => [':expire' => Poison::expireTime()]
+		]);
 
-		if ($remainKey->_empty) {
-			mydb::query(
+		if (!$remainKey->id) {
+			DB::query([
 				'INSERT INTO %block_daykey%
 				(`key1`, `key2`, `key3`, `key4`, `key5`, `generate_on`)
 				VALUES
 				(:key1, :key2, :key3, :key4, :key5, :expire)',
-				[
+				'var' => [
 					':key1' => Poison::generateKey(5),
 					':key2' => Poison::generateKey(5),
 					':key3' => Poison::generateKey(5),
@@ -72,33 +71,33 @@ class Poison {
 					':key5' => Poison::generateKey(4,true),
 					':expire' => date('Y-m-d-H-i-s')
 				]
-			);
+			]);
 			Poison::deleteExpire();
 		}
 	}
 
 	public static function deleteExpire() {
-		mydb::query(
+		DB::query([
 			'DELETE FROM %block_daykey% WHERE `generate_on` < :expire',
-		  [':expire' => Poison::expireTime()]
-		);
+		  'var' => [':expire' => Poison::expireTime()]
+		]);
 	}
 
 	public static function getKeyByIndex($index) {
 		$index = intval($index);
 
-		return mydb::select(
+		return DB::select([
 			'SELECT
 			`key:index` `dayKey`
 			FROM %block_daykey%
 			WHERE `generate_on` > :expire
 			ORDER BY `id` DESC
 			LIMIT 1',
-			[
+			'var' => [
 				':index' => $index,
 				':expire' => Poison::expireTime(),
 			]
-		)->dayKey;
+		])->dayKey;
 	}
 
 	public static function generateKey($length, $numeric = false){
