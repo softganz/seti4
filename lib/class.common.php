@@ -1,22 +1,22 @@
 <?php
 /**
-* SOFTGANZ :: common class
-*
-* Copyright (c) 2000-2020 The SoftGanz Group By Panumas Nontapan
-* Authors : Panumas Nontapan <webmaster@softganz.com>
-*         : http://www.softganz.com/
-* ============================================
-* This module is core of web application
-*
-* This program is free software. You can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License.
-* ============================================
-
-* Created  :: 2007-07-09
-* Modified :: 2026-08-04
-* Version  :: 19
-*/
+ * SOFTGANZ :: common class
+ *
+ * Copyright (c) 2000-2020 The SoftGanz Group By Panumas Nontapan
+ * Authors : Panumas Nontapan <webmaster@softganz.com>
+ *         : http://www.softganz.com/
+ * ============================================
+ * This module is core of web application
+ *
+ * This program is free software. You can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ * ============================================
+ * 
+ * Created  :: 2007-07-09
+ * Modified :: 2026-08-22
+ * Version  :: 20
+ */
 
 use Softganz\DB;
 
@@ -267,6 +267,59 @@ class Session implements SessionHandlerInterface {
 			'
 		);
 
+		// try {
+		// 	DB::query([
+		// 		'INSERT INTO %session%
+		// 		(`sess_id`, `user`, `sess_start`, `sess_last_acc`, `sess_data`)
+		// 		VALUES
+		// 		(
+		// 			"'.$mydb->escape($sess_id).'"
+		// 			, "'.($mydb->escape($userInfo->username)).'"
+		// 			, NOW()
+		// 			, NOW()
+		// 			, "'.$mydb->escape($data).'"
+		// 		)
+		// 		ON DUPLICATE KEY UPDATE
+		// 			`sess_last_acc` = NOW()
+		// 			, `user` = "'.$mydb->escape($userInfo->username).'"
+		// 			, `sess_data` = "'.$mydb->escape($data).'"
+		// 		',
+		// 		// 'var' => [
+		// 		// 	':sess_id' => $sess_id,
+		// 		// 	':username' => $userInfo->username,
+		// 		// 	':data' => $data
+		// 		// ]
+		// 	]);
+
+		// 	DB::query([
+		// 		'INSERT INTO %session%
+		// 		(`sess_id`, `user`, `sess_start`, `sess_last_acc`, `sess_data`)
+		// 		VALUES
+		// 		(
+		// 			"'.$sess_id.'"
+		// 			, "'.($userInfo->username).'"
+		// 			, NOW()
+		// 			, NOW()
+		// 			, "'.$data.'"
+		// 		)
+		// 		ON DUPLICATE KEY UPDATE
+		// 			`sess_last_acc` = NOW()
+		// 			, `user` = "'.$userInfo->username.'"
+		// 			, `sess_data` = "'.$data.'"
+		// 		',
+		// 		// 'var' => [
+		// 		// 	':sess_id' => $sess_id,
+		// 		// 	':username' => $userInfo->username,
+		// 		// 	':data' => $data
+		// 		// ]
+		// 		'options' => ['debug' => true]
+		// 	]);
+		// } catch (\Exception $exception) {
+		// 	echo $exception->getMessage();
+		// 	echo R('query');
+		// }
+		// echo R('query');
+
 		if ($debug) echo '$sess_id = '.$sess_id.'<br />';
 		if ($debug) echo 'query = '.$mydb->_query.'<br />';
 
@@ -286,18 +339,18 @@ class Session implements SessionHandlerInterface {
 
 	#[\ReturnTypeWillChange]
 	public function destroy($sess_id) {
-		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
-		mydb::query('DELETE FROM %session% WHERE sess_id = :id LIMIT 1',':id',$sess_id);
+		DB::query([
+			'DELETE FROM %session% WHERE sess_id = :id LIMIT 1',
+			'var' => [':id' => $sess_id]
+		]);
 		return true;
 	}
 
 	#[\ReturnTypeWillChange]
 	public function gc($maxLifetime = 86400) {
-		$GLOBALS['R']->myDb = new MyDb(cfg('db'));
-		$end = date('Y-m-d H:i:s',time() - $maxLifetime);
 		DB::query([
 			'DELETE FROM %session% WHERE sess_last_acc < :end',
-			'var' => [':end' => $end]
+			'var' => [':end' => date('Y-m-d H:i:s',time() - $maxLifetime)]
 		]);
 
 		LogModel::save([
@@ -431,22 +484,21 @@ class Arrays {
 class Cache {
 	public static function add($cid, $data, $expire, $headers) {
 		$data = \SG\json_encode($data);
-		mydb::query(
+		DB::query([
 			'INSERT INTO %cache%
 			(`cid`, `data`, `expire`, `created`, `headers`)
 			VALUES
 			(:cid, :data, :expire, :created, :headers)
 			ON DUPLICATE KEY UPDATE
 			`cid` = :cid',
-			[
+			'var' => [
 				':cid' => $cid,
 				':data' => $data,
 				':expire' => $expire,
 				':created' => time(),
 				':headers' => $headers,
 			]
-		);
-		// echo mydb()->_query;
+		]);
 	}
 
 	public static function get($cid) {
@@ -475,8 +527,6 @@ class Cache {
 			'DELETE FROM %cache% WHERE expire > 0 AND expire - :ctime < 0',
 			'var' => [':ctime' => $ctime]
 		]);
-		// *** Cause sign in error
-		//mydb::query('OPTIMIZE TABLE %cache%');
 	}
 } //--- End of class Cache
 
