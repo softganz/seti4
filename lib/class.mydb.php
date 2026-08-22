@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2009-07-06
  * Modified :: 2026-08-22
- * Version  :: 11
+ * Version  :: 12
  *
  * @uses mydb::select(stmt, where, var)
  * @uses mydb::query(stmt, where, var)
@@ -271,12 +271,19 @@ class MyDb {
 		$stmt = preg_replace($vark, $vars, $stmt);
 
 		// Replace %tablename% with db(%tablename%)
-		$stmt = strpos($stmt,'%')===false ? $stmt : preg_replace_callback('/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i', '__mydb_db_replace' ,$stmt); // return ' '.db($m[1])
+		$stmt = strpos($stmt,'%')===false ? $stmt : preg_replace_callback('/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i', 'self::mydb_db_replace' ,$stmt); // return ' '.db($m[1])
 
 		$stmt = mydb::jsonVersionConvert($stmt);
 
 		return $stmt;
 	}
+
+	/**
+	 * Replace %tablename% with prefix and tablename
+	 * @param Array $m
+	 * @return String
+	 */
+	private static function mydb_db_replace($m) {return ' '.db($m[1]);}
 
 	public static function valueOfSet($value) {
 		$value = is_array($value) || is_object($value) ? (Array) $value : explode(',', $value);
