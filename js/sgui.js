@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-16
- * Version  :: 76
+ * Modified :: 2026-08-22
+ * Version  :: 77
  */
 
 'use strict'
@@ -830,7 +830,7 @@ function showError(response, time = 5000) {
 				// No attribute data-rel and data-ret
 				// Redirect to href
 				let hasPara = JSON.stringify(para) != '{}'
-				let hrefUrl = $href;
+				let hrefUrl = href;
 				hrefUrl = hrefUrl + (hasPara ? (hrefUrl.indexOf('?') == -1 ? '?' : '&') + $.param(para) : '');
 				window.location = hrefUrl;
 				return true
