@@ -1,10 +1,13 @@
 <?php
+use Softganz\DB;
+
 function module_calendar_install() {
 	$ret = '<h3>Project installation</h3>';
 
 	if (!cfg('calendar.title')) cfg_db('calendar.title','Calendar');
 
-	$stmt = 'CREATE TABLE IF NOT EXISTS %calendar% (
+	DB::query([
+		'CREATE TABLE IF NOT EXISTS %calendar% (
 		`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 		`tpid` int(10) unsigned DEFAULT NULL,
 		`orgid` INT UNSIGNED DEFAULT NULL,
@@ -35,13 +38,13 @@ function module_calendar_install() {
 		KEY `tpid` (`tpid`),
 		KEY `changwat` (`changwat`,`ampur`,`tambon`),
 		KEY `orgid` (`orgid`)
-	)';
-
-	mydb::query($stmt);
+		)'
+	]);
 
 	$queryResult[] = R('query');
 
-	$stmt = 'CREATE TABLE IF NOT EXISTS %calendar_room% (
+	DB::query([
+		'CREATE TABLE IF NOT EXISTS %calendar_room% (
 		`resvid` int(10) unsigned NOT NULL AUTO_INCREMENT,
 		`calid` int(10) unsigned DEFAULT NULL,
 		`roomid` int(10) unsigned NOT NULL,
@@ -65,13 +68,10 @@ function module_calendar_install() {
 		KEY `roomid` (`roomid`),
 		KEY `created` (`created`),
 		KEY `approve` (`approve`)
-		)';
-
-	mydb::query($stmt);
+		)'
+	]);
 
 	$queryResult[] = R('query');
-
-
 
 	$ret .= '<p><strong>Installation completed.</strong></p>';
 	$ret .= '<ul><li>'.implode('</li><li>',$queryResult).'</li></ul>';
