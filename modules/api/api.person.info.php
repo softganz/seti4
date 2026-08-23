@@ -1,18 +1,19 @@
 <?php
 /**
-* API  :: Person Info Api
-* Created :: 2022-09-28
-* Modify  :: 2022-11-19
-* Version :: 2
-*
-* @param Int $psnId
-* @param String $action
-* @return Object
-*
-* @usage api/person/info/{psnId}/{action}
-*/
+ * Person   :: Person Info Api
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-09-28
+ * Modified :: 2026-08-23
+ * Version  :: 3
+ *
+ * @param Int $psnId
+ * @param String $action
+ * @return Object
+ *
+ * @uses api/person/info/{psnId}/{action}
+ */
 
-import('model:person.php');
+use Softganz\DB;
 
 class PersonInfoApi extends PageApi {
 	var $psnId;
@@ -57,13 +58,10 @@ class PersonInfoApi extends PageApi {
 			'uid' => i()->uid,
 		];
 		if (empty($data->psnId) || empty($data->orgId)) {
-			return new ErrorMessage([
-				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
-				'text' => 'ข้อมูลไม่ครบถ้วน',
-			]);
+			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
 		}
 
-		mydb::query(
+		DB::query([
 			'INSERT INTO %org_morg%
 			(`psnId`, `orgId`, `uid`, `department`, `position`)
 			VALUES
@@ -71,24 +69,27 @@ class PersonInfoApi extends PageApi {
 			ON DUPLICATE KEY UPDATE
 			`department` = :department
 			, `position` = :position',
-			$data
-		);
+			'var' => $data
+		]);
 
-		return true;
+		return apiSuccess('บันทึกเรียบร้อย');
 	}
 
 	function removeOrgMember() {
-		if ($orgId = post('orgId')) {
-			mydb::query(
-				'DELETE FROM %org_morg%
-				WHERE `orgId` = :orgId AND `psnId` = :psnId
-				LIMIT 1',
-				[
-					'orgId' => $orgId,
-					':psnId' => $this->psnId,
-				]
-			);
-		}
+		$orgId = post('orgId');
+		if (empty($orgId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุองค์กร');
+
+		DB::query([
+			'DELETE FROM %org_morg%
+			WHERE `orgId` = :orgId AND `psnId` = :psnId
+			LIMIT 1',
+			'var' => [
+				':orgId' => $orgId,
+				':psnId' => $this->psnId,
+			]
+		]);
+
+		return apiSuccess('ลบชื่อจากองค์กรเรียบร้อย');
 	}
 }
 ?>
