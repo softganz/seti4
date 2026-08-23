@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-07-28
- * Version  :: 18
+ * Modified :: 2026-08-23
+ * Version  :: 19
  *
  * @return Object
  *
@@ -427,7 +427,10 @@ class FileModel {
 		if ($fileInfo->info->type == 'photo') {
 			// Delete file record
 			if ($options->deleteRecord) {
-				mydb::query('DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1', [':fid' => $fileId]);
+				DB::query([
+					'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1',
+					'var' => [':fid' => $fileId]
+				]);
 				$result->_query[] = R('query');
 			}
 
@@ -446,10 +449,10 @@ class FileModel {
 		} else if ($fileInfo->info->type == 'doc') {
 			// Delete doc record
 			if ($options->deleteRecord) {
-				mydb::query(
+				DB::query([
 					'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1',
-					[':fid' => $fileId]
-				);
+					'var' => [':fid' => $fileId]
+				]);
 				$result->_query[] = R('query');
 			}
 
@@ -474,20 +477,17 @@ class FileModel {
 	}
 
 	public static function getFileInUse($fileId = NULL, $fileName, $folder) {
-		\mydb::where('`file` = :fileName', ':fileName', $fileName);
-		if ($folder) {
-			\mydb::where('`folder` = :folder', ':folder', $folder);
-		} else {
-			\mydb::where('`folder` IS NULL');
-		}
-		if ($fileId) \mydb::where('`fid` != :fileId', ':fileId', $fileId);
-		return \mydb::select(
+		return DB::select([
 			'SELECT `fid`, `tpid` `nodeId`, `folder`, `file`
 			FROM %topic_files%
-			%WHERE%;
-			-- {key: "fid"}
-			'
-		)->items;
+			%WHERE%',
+			'%WHERE%' => [
+				['`file` = :fileName', ':fileName' => $fileName],
+				$folder ? ['`folder` = :folder', ':folder' => $folder] : ['`folder` IS NULL'],
+				$fileId ? ['`fid` != :fileId', ':fileId' => $fileId] : null
+			],
+			'options' => ['key' => 'fid']
+		])->items;
 	}
 
 	public static function photoProperty($file, $folder = NULL) {
