@@ -1,17 +1,18 @@
 <?php
 /**
-* User    :: Check User Valid
-* Created :: 2024-02-27
-* Modify  :: 2024-07-21
-* Version :: 2
-*
-* @param Array $args
-* @return Object
-*
-* @usage import('model:user.valid.php')
-* @usage new UserValidModel([])
-* @usage UserValidModel::function($conditions)
-*/
+ * User     :: Check User Valid
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-02-27
+ * Modified :: 2026-08-23
+ * Version  :: 3
+ *
+ * @param Array $args
+ * @return Object
+ *
+ * @uses UserValidModel::function($conditions)
+ */
+
+use Softganz\DB;
 
 class UserValidModel {
 	public static function checkPasswordValid($password, &$errors) {
@@ -61,11 +62,10 @@ class UserValidModel {
 		} else if (!preg_match($pattern, $username)) {
 			//-- check valid char
 			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$username.'</em></strong> มีอักษรหรือความยาวไม่ตรงตามเงื่อนไข';
-		} else if (mydb::select(
-				'SELECT `username` FROM %users% WHERE `username` = :username LIMIT 1;
-				-- {reset: false}',
-				[':username' => $username]
-			)->username) {
+		} else if (DB::select([
+				'SELECT `username` FROM %users% WHERE `username` = :username LIMIT 1',
+				'var' => [':username' => $username]
+			])->username) {
 			//-- duplicate username
 			$result = 'ชื่อสมาชิก (Username) <strong><em>'.$username.'</em></strong> มีผู้อื่นใช้ไปแล้ว กรุณาใช้ชื่อใหม่';
 		}
