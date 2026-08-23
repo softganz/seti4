@@ -1,13 +1,17 @@
 <?php
 /**
-* My :: View List
-* Created 2021-12-27
-* Modify  2021-12-27
-*
-* @return Widget
-*
-* @usage my/view
-*/
+ * My       :: View List
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-12-27
+ * Modified :: 2026-08-23
+ * Version  :: 2
+ *
+ * @return Widget
+ *
+ * @uses my/view
+ */
+
+use Softganz\DB;
 
 class MyView extends Page {
 	function build() {
@@ -32,7 +36,7 @@ class MyView extends Page {
 							sg_date($rs->dateact, 'd/m/Y'),
 						];
 					},
-					mydb::select(
+					DB::select([
 						'SELECT a.*, t.`tpid`, t.`title`, t.`type`
 						FROM
 						(SELECT r.`refid`, MAX(r.`dateact`) `dateact`
@@ -42,8 +46,8 @@ class MyView extends Page {
 						) a
 							LEFT JOIN %topic% t ON t.`tpid` = a.`refid`
 						ORDER BY a.`dateact` DESC',
-						[':uid' => i()->uid]
-					)->items
+						'var' => [':uid' => i()->uid]
+					])->items
 				), // children
 			]), // Table
 		]);
