@@ -1,13 +1,17 @@
 <?php
 /**
-* My :: Like List
-* Created 2021-11-27
-* Modify  2021-11-27
-*
-* @return Widget
-*
-* @usage my/like
-*/
+ * My       :: Like List
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-11-27
+ * Modified :: 2026-08-23
+ * Version  :: 2
+ *
+ * @return Widget
+ *
+ * @uses my/like
+ */
+
+use Softganz\DB;
 
 class MyLike extends Page {
 	function build() {
@@ -32,13 +36,13 @@ class MyLike extends Page {
 							sg_date($rs->dateact, 'd/m/Y'),
 						];
 					},
-					mydb::select(
+					DB::select([
 						'SELECT r.*, t.`tpid`, t.`title`, t.`type`
 						FROM %reaction% r
 							LEFT JOIN %topic% t ON r.`refid` = t.`tpid`
 						WHERE r.`uid` = :uid AND `action` IN ("PROJ.LIKE", "PDEV.LIKE", "TOPIC.LIKE")',
-						[':uid' => i()->uid]
-					)->items
+						'var' => [':uid' => i()->uid]
+					])->items
 				), // children
 			]), // Table
 		]);
