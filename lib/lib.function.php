@@ -1,11 +1,12 @@
 <?php
 /**
- * Core    :: Function Library
- * Created :: 2021-10-24
- * Modify  :: 2025-10-23
- * Version :: 5
+ * Core     :: Function Library
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-10-24
+ * Modified :: 2026-08-23
+ * Version  :: 6
  *
- * @usage functionName(parameter)
+ * @uses functionName(parameter)
  */
 
 /**
@@ -55,20 +56,36 @@ function property($name = NULL, $value = NULL) {
 	} else if (is_array($name)) {
 		list($module, $name, $propid, $item) = [$name];
 	}
-	if ($module=='') $module=NULL;
-	if ($name=='') $name=NULL;
-	if ($propid=='') $propid=NULL;
-	if ($item=='') $item=NULL;
-	if ($propid) $propid=intval($propid);
+	if ($module == '') $module = NULL;
+	if ($name == '') $name = NULL;
+	if ($propid == '') $propid = NULL;
+	if ($item == '') $item = NULL;
+	if ($propid) $propid = intval($propid);
 	//debugMsg('module='.(is_null($module)?'NULL':$module).' name='.(is_null($name)?'NULL':$name).' propid='.(is_null($propid)?'NULL':$propid).' item='.(is_null($item)?'NULL':$item).' value='.$value);
 	if ($module && $name && isset($value)) {
 		$property[$module][$propid][$name] = $ret = $value;
-		$stmt='INSERT INTO %property% (`module`, `propid`, `name`, `item`, `value`) VALUES (:module, :propid, :name, :item, :value)
-						ON DUPLICATE KEY UPDATE `value`=:value; -- {reset: false}';
-		mydb::query($stmt,':module',$module, ':propid',is_null($propid)?0:$propid, ':name',$name, ':item', $item?$item:'', ':value',$value);
+		DB::query([
+			'INSERT INTO %property%
+			(`module`, `propid`, `name`, `item`, `value`) VALUES (:module, :propid, :name, :item, :value)
+			ON DUPLICATE KEY UPDATE `value` = :value',
+			'var' => [
+				':module' => $module,
+				':propid' => is_null($propid) ? 0 : $propid,
+				':name' => $name,
+				':item' => $item ? $item : '',
+				':value' => $value
+			]
+		]);
 	} else if ($module && $name && isset($propid) && isset($item)) {
-		$stmt='SELECT `value` FROM %property% WHERE `module`=:module AND `propid`=:propid AND `name`=:name AND `item`=:item LIMIT 1; -- {reset: false}';
-		$property[$module][$propid][$name] = $ret = mydb::select($stmt,':module',$module, ':propid',$propid, ':name',$name, ':item',$item)->value;
+		$property[$module][$propid][$name] = $ret = DB::select([
+			'SELECT `value` FROM %property% WHERE `module`=:module AND `propid`=:propid AND `name`=:name AND `item`=:item LIMIT 1',
+			'var' => [
+				':module' => $module,
+				':propid' => $propid,
+				':name' => $name,
+				':item' => $item
+			]
+		])->value;
 	} else if ($module && $name && isset($propid)) {
 		$property[$module][$propid][$name] = $ret = DB::select([
 			'SELECT `value` FROM %property% WHERE `module` = :module AND `propid` = :propid AND `name` = :name LIMIT 1',
@@ -77,26 +94,57 @@ function property($name = NULL, $value = NULL) {
 				':propid' => $propid,
 				':name' => $name
 			]
-		])->valueOf('value');
+		])->value;
 	} else if ($module && isset($propid)) {
-		$stmt='SELECT `name`, `value` FROM %property% WHERE `module`=:module AND `propid`=:propid; -- {reset: false}';
-		foreach ($dbs=mydb::select($stmt,':module',$module, ':propid',$propid)->items as $rs) {
+		foreach ($dbs = DB::select([
+			'SELECT `name`, `value` FROM %property% WHERE `module` = :module AND `propid` = :propid',
+			'var' => [
+				':module' => $module,
+				':propid' => $propid
+			]
+		])->items as $rs) {
 			$property[$module][$propid][$rs->name] = $rs->value;
 		}
-		$ret=$property[$module][$propid];
+		$ret = $property[$module][$propid];
 	} else if ($module && $name && isset($item)) {
-		$stmt='SELECT `name`, `value` FROM %property% WHERE `module`=:module AND `name`=:name AND `propid`=0 AND `item`=:item LIMIT 1; -- {reset: false}';
-		$rs=mydb::select($stmt,':module',$module,':name',$name, ':item',$item);
-		$ret=$rs->value;
+		$ret = DB::select([
+			'SELECT `name`, `value` FROM %property% WHERE `module` = :module AND `name` = :name AND `propid` = 0 AND `item` = :item LIMIT 1',
+			'var' => [
+				':module' => $module,
+				':name' => $name,
+				':item' => $item
+			]
+		])->value;
 	} else if ($module && $name) {
-		$stmt='SELECT `name`, `item`, `value` FROM %property% WHERE `module`=:module AND `name`=:name AND `propid`=0; -- {reset: false}';
-		$dbs=mydb::select($stmt,':module',$module,':name',$name);
-		foreach ($dbs->items as $rs) if ($rs->item) $ret[$rs->name][$rs->item]=$rs->value; else $ret[$rs->name]=$rs->value;
+		$dbs = DB::select([
+			'SELECT `name`, `item`, `value` FROM %property% WHERE `module` = :module AND `name` = :name AND `propid` = 0',
+			'var' => [
+				':module' => $module,
+				':name' => $name
+			]
+		]);
+		foreach ($dbs->items as $rs) {
+			if ($rs->item) {
+				$ret[$rs->name][$rs->item] = $rs->value;
+			 } else {
+				$ret[$rs->name] = $rs->value;
+			 }
+		}
 	} else if ($module) {
-		$stmt='SELECT `name`, `item`, `value` FROM %property% WHERE `module`=:module AND `propid`=0; -- {reset: false}';
-		$dbs=mydb::select($stmt,':module',$module);
-		foreach ($dbs->items as $rs) if ($rs->item) $ret[$rs->name][$rs->item]=$rs->value; else $ret[$rs->name]=$rs->value;
+		$dbs = DB::select([
+			'SELECT `name`, `item`, `value` FROM %property% WHERE `module` = :module AND `propid` = 0','var' => [
+				':module' => $module
+			]
+		]);
+		foreach ($dbs->items as $rs) {
+			if ($rs->item) {
+				$ret[$rs->name][$rs->item]=$rs->value;
+			 } else {
+				$ret[$rs->name]=$rs->value;
+			 }
+		}
 	}
+
 	return $ret;
 }
 
