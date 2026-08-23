@@ -1,30 +1,34 @@
 <?php
 /**
-* Ampur Code
-* Created 2019-05-15
-* Modify  2019-05-15
-*
-* @param Object $self
-* @param Int $changwatId
-* @return String
-*/
+ * Code     :: Ampur Code
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-05-15
+ * Modified :: 2026-08-23
+ * Version  :: 2
+ *
+ * @param Object $self
+ * @param Int $changwatId
+ * @return String
+ */
 
-$debug = true;
+use Softganz\DB;
 
 function code_ampur($self, $changwatId = NULL) {
 	$ret = '<header class="header">'._HEADER_BACK.'<h3>รหัสอำเภอ</h3></header>';
 
-	if ($changwatId) mydb::where('LEFT(`distid`,2) = :changwatId', ':changwatId', $changwatId);
-
-	$stmt = 'SELECT
-		d.*
+	$dbs = DB::select([
+		'SELECT
+		d.`distid`
+		, d.`distname`
 		, (SELECT COUNT(*) FROM %co_subdistrict% WHERE LEFT(`subdistid`,4) = `distid`) `totalTambon`
 		, (SELECT COUNT(*) FROM %co_village% WHERE LEFT(`villid`,4) = `distid`) `totalVillage`
 		FROM %co_district% d
 		%WHERE%
-		ORDER BY `distid` ASC';
-
-	$dbs = mydb::select($stmt);
+		ORDER BY `distid` ASC',
+		'%WHERE%' => [
+			$changwatId ? ['LEFT(`distid`,2) = :changwatId', ':changwatId' => $changwatId] : null
+		]
+	]);
 
 	$tables = new Table();
 	$tables->thead = array(
