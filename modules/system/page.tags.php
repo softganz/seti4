@@ -192,7 +192,7 @@ function tags($self, $tagIdList = NULL) {
 
 		$tagDbs = mydb::select('SELECT DISTINCT * FROM %tag% WHERE tid in (:tid) ORDER BY tid ASC', ':tid', 'SET-STRING:'.$tagIdList);
 
-		//$ret .= $tagIdList.mydb()->_query;
+		//$ret .= $tagIdList.R('query');
 		//$ret .= print_o($para,'$para');
 
 		foreach ($tagDbs->items as $tag) {

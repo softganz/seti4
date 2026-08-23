@@ -51,7 +51,7 @@ class AdminRepairFileRename extends Page {
 			LIMIT 100',
 		]);
 
-		debugMsg(mydb()->_query);
+		debugMsg(R('query'));
 		debugMsg($data, '$data');
 
 		return new Table([
@@ -68,7 +68,7 @@ class AdminRepairFileRename extends Page {
 				RIGHT JOIN %project% `project` ON `topic`.`tpid` = `project`.`tpid`
 			LIMIT 100',
 		]);
-		return mydb()->_query;
+		return R('query');
 	}
 }
 ?>

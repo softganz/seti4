@@ -118,14 +118,14 @@ class ReactionModel {
 					'SELECT `actid` FROM %reaction% WHERE `refid` = :refid AND `uid` = :uid AND `action` = :action LIMIT 1',
 					'var' => $data
 				])->actid;
-				//debugMsg($hasReaction. mydb()->_query);
+				//debugMsg($hasReaction. R('query'));
 				if ($hasReaction) {
 					DB::query([
 						'DELETE FROM %reaction% WHERE `actid` = :actid LIMIT 1',
 						'var' => [':actid' => $hasReaction]
 					]);
 					$result = false;
-					//debugMsg(mydb()->_query);
+					//debugMsg(R('query'));
 					unset($stmt);
 				} else {
 					$result = true;
@@ -165,7 +165,7 @@ class ReactionModel {
 					'UPDATE %topic% SET `liketimes` = IF(`liketimes` >= 0, `liketimes` '.($hasReaction ? '-':'+').' 1, 0) WHERE `tpid` = :tpid LIMIT 1',
 					'var' => [':tpid' => $refid]
 				]);
-				//debugMsg(mydb()->_query);
+				//debugMsg(R('query'));
 			} else if ($options->count == 'msg:liketimes') {
 				DB::query([
 					$stmt = 'UPDATE %msg% SET `liketimes` = IF(`liketimes` >= 0, `liketimes` '.($hasReaction ? '-':'+').' 1, 0) WHERE `msgid` = :msgid LIMIT 1',

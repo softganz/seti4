@@ -13,12 +13,12 @@ function admin_content_taxonomy_edit($seld,$tid) {
 		} else {
 			// update tag detail
 			mydb::query(mydb::create_update_cmd('%tag%',$tag,'tid='.$tid));
-			//$ret.=mydb()->_query.'<br />';
+			//$ret.=R('query').'<br />';
 
 			if ($vocab->hierarchy==1 && $tag->parent[0] != $db_tag->parent[0]) {
 				// update parent on single hierarchy
 				mydb::query('UPDATE %tag_hierarchy% SET `parent`=:parent WHERE `tid`=:tid LIMIT 1',':tid',$tid, ':parent',$tag->parent[0]);
-					//$ret.=mydb()->_query.'<br />';
+					//$ret.=R('query').'<br />';
 			} else if ($vocab->hierarchy==2) {
 				// update parent on multiple hierarchy
 				if (empty($tag->parent)) $tag->parent[]=0;
@@ -32,7 +32,7 @@ function admin_content_taxonomy_edit($seld,$tid) {
 				//$ret.=print_o($parent_remove,'$parent_remove');
 				if ($parent_remove) {
 					mydb::query('DELETE FROM %tag_hierarchy% WHERE tid='.$tid.' and parent in ('.implode(',',$parent_remove).')');
-					//$ret.=mydb()->_query.'<br />';
+					//$ret.=R('query').'<br />';
 				}
 
 				// add new parent
@@ -42,7 +42,7 @@ function admin_content_taxonomy_edit($seld,$tid) {
 					foreach ($parent_add as $item) {
 						$stmt='INSERT INTO %tag_hierarchy% (tid,parent) VALUES (:tid,:parent) ON DUPLICATE KEY UPDATE `parent`=:parent';
 						mydb::query($stmt,':tid',$tid, ':parent',$item);
-						//$ret.=mydb()->_query.'<br />';
+						//$ret.=R('query').'<br />';
 					}
 			}
 

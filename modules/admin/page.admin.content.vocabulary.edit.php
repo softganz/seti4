@@ -37,7 +37,7 @@ function admin_content_vocabulary_edit($self,$vid) {
 							, `required`=:required, `relations`=:relations
 							WHERE `vid`=:vid LIMIT 1';
 			mydb::query($stmt,$vocab);
-			//$ret.=mydb()->_query.'<br />';
+			//$ret.=R('query').'<br />';
 
 			if (empty($vocab->topics)) $vocab->topics=array();
 			if (empty($db_vocab->topics)) $db_vocab->topics=array();
@@ -48,7 +48,7 @@ function admin_content_vocabulary_edit($self,$vid) {
 			// remove vocabulary_types
 			if ($topic_remove) {
 				mydb::query('DELETE FROM %vocabulary_types% WHERE `vid`=:vid and `type` in ("'.implode('","',$topic_remove).'")',':vid',$vid);
-				//$ret.=mydb()->_query.'<br />';
+				//$ret.=R('query').'<br />';
 			}
 
 			// add vocabulary_types
@@ -58,7 +58,7 @@ function admin_content_vocabulary_edit($self,$vid) {
 			if ($topic_add) {
 				foreach ($topic_add as $item) {
 					mydb::query('INSERT INTO %vocabulary_types% (`vid`,`type`) VALUES (:vid, :type)',':vid',$vid, ':type', $item);
-					//$ret.=mydb()->_query.'<br />';
+					//$ret.=R('query').'<br />';
 				}
 			}
 			location('admin/content/taxonomy');

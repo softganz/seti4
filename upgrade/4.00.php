@@ -16,14 +16,14 @@ if (!mydb::columns('topic_files','folder')) {
 	mydb::query(
 		'ALTER TABLE %topic_files% ADD `folder` VARCHAR(50) NULL DEFAULT NULL AFTER `tagname`'
 	);
-	$result[$version][] = ['Add field folder to topic_files.', mydb()->_query, mydb()->_error, mydb()->_error_no];
+	$result[$version][] = ['Add field folder to topic_files.', R('query'), mydb()->_error, mydb()->_error_no];
 }
 
 if (!mydb::columns('bigdata','data')) {
 	mydb::query(
 		'ALTER TABLE %bigdata% ADD `data` JSON NOT NULL DEFAULT "{}" AFTER `fldref`'
 	);
-	$result[$version][] = ['Add field data to bigdata.', mydb()->_query, mydb()->_error, mydb()->_error_no];
+	$result[$version][] = ['Add field data to bigdata.', R('query'), mydb()->_error, mydb()->_error_no];
 }
 
 if (!mydb::columns('topic_revisions','css')) {
@@ -34,13 +34,13 @@ if (!mydb::columns('topic_revisions','css')) {
 		ADD `script` TEXT NULL DEFAULT NULL AFTER `phpBackend`,
 		ADD `data` JSON NOT NULL DEFAULT "{}" AFTER `script`'
 	);
-	$result[$version][] = ['Add field css,phpBackend,script,data to topic_revisions.', mydb()->_query, mydb()->_error, mydb()->_error_no];
+	$result[$version][] = ['Add field css,phpBackend,script,data to topic_revisions.', R('query'), mydb()->_error, mydb()->_error_no];
 }
 
 // if (!mydb::columns('watchdog','logDate')) {
 // 	mydb::query(
 // 		'ALTER TABLE %watchdog% ADD `logDate` DATE NULL DEFAULT NULL AFTER `date`, ADD INDEX (`logDate`)'
 // 	);
-// 	$result[$version][] = ['Add field logDate to watchdog.', mydb()->_query, mydb()->_error, mydb()->_error_no];
+// 	$result[$version][] = ['Add field logDate to watchdog.', R('query'), mydb()->_error, mydb()->_error_no];
 // }
 ?>

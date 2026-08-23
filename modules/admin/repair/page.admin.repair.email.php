@@ -109,7 +109,7 @@ class AdminRepairEmail extends Page {
 			'UPDATE `sgz_users` SET `email` = NULL WHERE `email` = ""',
 		]);
 
-		return mydb()->_query;
+		return R('query');
 	}
 
 	// SELECT *,LEFT(`email`,1) `first` FROM `sgz_users` WHERE `email` IS NOT NULL HAVING `first` NOT BETWEEN "0" AND "z" ORDER BY `first` ASC;

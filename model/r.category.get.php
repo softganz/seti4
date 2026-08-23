@@ -63,7 +63,7 @@ function r_category_get($conditions, $key = 'tid', $options = '{}') {
 
 	if ($options->debug) {
 		debugMsg($options, '$options');
-		debugMsg(mydb()->_query).debugMsg($dbs,'$dbs');
+		debugMsg(R('query')).debugMsg($dbs,'$dbs');
 	}
 
 	$result = [];

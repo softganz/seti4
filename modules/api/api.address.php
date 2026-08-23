@@ -124,7 +124,7 @@ class AddressApi extends PageApi {
 
 		$dbs = mydb::select($stmt,':q','%'.$searchText.'%');
 
-		// debugMsg('<pre>'.mydb()->_query.'</pre>');
+		// debugMsg('<pre>'.R('query').'</pre>');
 		// debugMsg($address,'$address');
 		// debugMsg($dbs,'$dbs');
 		foreach ($dbs->items as $rs) {

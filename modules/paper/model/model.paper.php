@@ -63,7 +63,7 @@ class PaperModel extends \NodeModel {
 			';
 
 		$rs = \mydb::select($stmt);
-		//debugMsg(mydb()->_query);
+		//debugMsg(R('query'));
 
 		if ($rs->_num_rows) {
 			$archived = false;
@@ -279,12 +279,12 @@ class PaperModel extends \NodeModel {
 			'DELETE FROM %topic% WHERE `tpid` = :tpid LIMIT 1',
 			[':tpid' => $tpid]
 		);
-		$result->process[] = mydb()->_query;
+		$result->process[] = R('query');
 
 		//$max_auto_id = db_query_one_cell('SELECT MAX(tpid) as max_auto_id FROM %topic%');
-		//$result->process[]=mydb()->_query;
+		//$result->process[]=R('query');
 		//\mydb::query('ALTER TABLE %topic% AUTO_INCREMENT='.$max_auto_id,$simulate);
-		//$result->process[]=mydb()->_query;
+		//$result->process[]=R('query');
 
 		// Delete paper revision
 		$result->process[] = 'Delete paper revision';
@@ -292,7 +292,7 @@ class PaperModel extends \NodeModel {
 			'DELETE FROM %topic_revisions% WHERE `tpid` = :tpid LIMIT 1',
 			[':tpid' => $tpid]
 		);
-		$result->process[] = mydb()->_query;
+		$result->process[] = R('query');
 
 		// Delete topic user
 		$result->process[] = 'Delete Topic User';
@@ -300,7 +300,7 @@ class PaperModel extends \NodeModel {
 			'DELETE FROM %topic_user% WHERE `tpid` = :tpid',
 			[':tpid' => $tpid]
 		);
-		$result->process[]=mydb()->_query;
+		$result->process[]=R('query');
 
 		// Delete tag topic
 		$result->process[] = 'Delete Tag Topic';
@@ -308,7 +308,7 @@ class PaperModel extends \NodeModel {
 			'DELETE FROM %tag_topic% WHERE `tpid` = :tpid',
 			[':tpid' => $tpid]
 		);
-		$result->process[] = mydb()->_query;
+		$result->process[] = R('query');
 
 		// Delete all child/parent of topic
 		$result->process[] = 'Delete Topic Parent';
@@ -316,7 +316,7 @@ class PaperModel extends \NodeModel {
 			'DELETE FROM %topic_parent% WHERE `tpid` = :tpid OR `parent` = :tpid',
 			[':tpid' => $tpid]
 		);
-		$result->process[] = mydb()->_query;
+		$result->process[] = R('query');
 
 		// Delete topic property
 		$result->process[]='Delete topic property';
@@ -324,7 +324,7 @@ class PaperModel extends \NodeModel {
 			'DELETE FROM %property% WHERE `module` = "paper" AND `propId` = :tpid',
 			[':tpid' => $tpid]
 		);
-		$result->process[] = mydb()->_query;
+		$result->process[] = R('query');
 
 		// Delete comment post
 		$result->process[] = 'Delete comment';
@@ -333,7 +333,7 @@ class PaperModel extends \NodeModel {
 			'DELETE FROM %topic_comments% WHERE tpid = :tpid',
 			[':tpid' => $tpid]
 		);
-		$result->process[] = mydb()->_query;
+		$result->process[] = R('query');
 
 		// Delete all files
 		$topicFiles = \mydb::select(
@@ -347,7 +347,7 @@ class PaperModel extends \NodeModel {
 				'DELETE FROM %topic_files% WHERE tpid = :tpid',
 				[':tpid' => $tpid]
 			);
-			$result->process[] = mydb()->_query;
+			$result->process[] = R('query');
 
 			foreach ($topicFiles->items as $file) {
 				switch ($file->type) {
@@ -361,7 +361,7 @@ class PaperModel extends \NodeModel {
 									':fid' => $file->fid
 								]
 							)->fid;
-							$result->process[] = mydb()->_query;
+							$result->process[] = R('query');
 
 							if ($is_photo_inused) {
 								$result->process[] = 'File <em>'.$file->_file.'</em> was used by other item';
@@ -448,17 +448,17 @@ class PaperModel extends \NodeModel {
 
 			if ($topic_options->revision) {
 				\mydb::query('INSERT INTO %topic_revisions% SELECT '.$cols.' FROM %topic_revisions% WHERE revid='.$topicInfo->info->revid.' LIMIT 1',$simulate);
-				$result->query[] = \mydb()->_query;
+				$result->query[] = \R('query');
 
 				$data->topic->revid = \mydb()->insert_id;
 				\mydb::query(\mydb::create_update_cmd('%topic_revisions%',$data->detail,'revid='.$data->topic->revid),$data->detail);
-				$result->query[] = \mydb()->_query;
+				$result->query[] = \R('query');
 
 			} else {
 				$stmt = \mydb::create_update_cmd('%topic_revisions%',$data->detail,'tpid='.$topicInfo->tpid.' and revid='.$topicInfo->info->revid.' LIMIT 1');
 				//$stmt='UPDATE %topic_revisions% SET `body`=:body, `property`=:property, `timestamp`=:timestamp, `uid`=:uid WHERE `tpid`=:tpid AND `revid`=:revid';
 				\mydb::query($stmt,':tpid',$topicInfo->tpid,':revid',$topicInfo->info->revid,$data->detail);
-				$result->query[] = \mydb()->_query;
+				$result->query[] = \R('query');
 			}
 		}
 
@@ -471,14 +471,14 @@ class PaperModel extends \NodeModel {
 				$result->process[] = 'Clear sticky of '.$sticky[$data->topic->sticky];
 				$stmt = 'UPDATE %topic% SET sticky = 0 WHERE sticky = :sticky';
 				\mydb::query($stmt, ':sticky', $data->topic['sticky']);
-				$result->query[] = \mydb()->_query;
+				$result->query[] = \R('query');
 			}
 
 			//unset($data->topic->uid);
 			$data->topic['changed'] = date('Y-m-d H:i:d');
 			$stmt = \mydb::create_update_cmd('%topic%', $data->topic, 'tpid = '.$topicInfo->tpid.' LIMIT 1');
 			\mydb::query($stmt,$simulate);
-			$result->query[] = \mydb()->_query;
+			$result->query[] = \R('query');
 		}
 
 		// Update photo
@@ -486,7 +486,7 @@ class PaperModel extends \NodeModel {
 			$result->process[] = 'Update photo information';
 			$stmt = \mydb::create_update_cmd('%topic_files%', $data->photoinfo, 'fid = :fid LIMIT 1');
 			\mydb::query($stmt, $data->photoinfo);
-			$result->query[] = \mydb()->_query;
+			$result->query[] = \R('query');
 		}
 
 		$result->data = $data;

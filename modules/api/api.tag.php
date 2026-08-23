@@ -110,7 +110,7 @@ class TagApi extends PageApi {
 		$result->count = count($dbs->items);
 		$result->items = $dbs->items;
 
-		// $result->query = mydb()->_query;
+		// $result->query = R('query');
 
 		if ($childOf) {
 			$result->childOf = DB::select([

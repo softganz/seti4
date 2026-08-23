@@ -73,7 +73,7 @@ function widget_project() {
 	);
 	// if (i()->username == 'softganz') {
 		// debugMsg($para, '$para');
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 		// debugMsg($dbs, '$dbs');
 	// }
 

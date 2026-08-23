@@ -176,7 +176,7 @@ class AdminConfigEdit extends Page {
 			$post->value = strtoupper($post->value) === 'TRUE' || is_numeric($post->value) && $post->value > 0 ? true : false;
 			debugMsg('Save boolean '.($post->value?true:false));
 			cfg_db($this->configName, $post->value);
-			debugMsg(mydb()->_query);
+			debugMsg(R('query'));
 			$newValue = $post->value ? 'True' : 'False';
 		} else if (is_int($this->configValue)) {
 			cfg_db($this->configName, intval($post->value));

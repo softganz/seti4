@@ -200,7 +200,7 @@ class CalendarModel {
 		// debugMsg($dbs,'$dbs');
 		//return;
 
-		//debugMsg('<pre>'.str_replace("\t", ' ', mydb()->_query).'</pre>');
+		//debugMsg('<pre>'.str_replace("\t", ' ', R('query')).'</pre>');
 
 		foreach ($dbs->items as $key => $rs) {
 			$dbs->items[$key]->options = json_decode($rs->options);
@@ -371,7 +371,7 @@ class CalendarModel {
 
 		mydb::query($stmt,$data);
 
-		$result->_query[] = mydb()->_query;
+		$result->_query[] = R('query');
 
 		if (empty($data->id)) $data->id=mydb()->insert_id;
 

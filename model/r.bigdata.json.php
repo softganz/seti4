@@ -32,7 +32,7 @@ function r_bigdata_json($action, $keyName, $keyId, $fldName, $dataGroup = NULL, 
 
 
 	$currentData = mydb::select('SELECT `bigid`, `flddata` FROM %bigdata% WHERE `keyname` =  :keyname AND `keyid` = :keyid AND `fldname` = :fldname LIMIT 1', $data);
-	$result->_query[] = mydb()->_query;
+	$result->_query[] = R('query');
 
 	if ($action == 'get') {
 		return \SG\json_decode($currentData->flddata);
@@ -69,7 +69,7 @@ function r_bigdata_json($action, $keyName, $keyId, $fldName, $dataGroup = NULL, 
 
 	mydb::query($stmt, $data);
 
-	$result->_query[] = mydb()->_query;
+	$result->_query[] = R('query');
 
 	return $result;
 }

@@ -61,7 +61,7 @@ class MyApi extends Page {
 				$stmt = mydb::create_update_cmd('%users%', $profile, '`uid` = :changeuid');
 				mydb::query($stmt, $profile);
 				$ret .= 'บันทึกข้อมูลเรียบร้อย';
-				//$ret .= mydb()->_query;
+				//$ret .= R('query');
 				break;
 
 

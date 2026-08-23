@@ -47,7 +47,7 @@ function r_code_ampur_get($conditions, $options = '{}') {
 		$result->tambon->list = $dbs->items;
 	}
 
-	//debugMsg(mydb()->_query);
+	//debugMsg(R('query'));
 	return $result;
 }
 ?>

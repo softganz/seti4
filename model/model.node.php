@@ -30,7 +30,7 @@ class NodeModel {
 			'var' => [':nodeId' => $id]
 		]);
 
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 
 		if (empty($result->info->nodeId)) return NULL;
 
@@ -141,7 +141,7 @@ class NodeModel {
 		} else {
 			$limit = 'LIMIT 10';
 			// $total_items=mydb::select('SELECT COUNT(*) `total` FROM '.$table_cmd.($where_cmd?' WHERE '.$where_cmd:'').' LIMIT 1')->total;
-			// $count_query=mydb()->_query;
+			// $count_query=R('query');
 			// $pagenv = new PageNavigator($items,$para->page,$total_items,q());
 			// $sql_cmd .= '  LIMIT '.($pagenv->FirstItem()<0 ? 0 : $pagenv->FirstItem()).','.$items;
 		}
@@ -198,10 +198,10 @@ class NodeModel {
 
 		$dbs = \mydb::select($sql_cmd);
 		// debugMsg($conditions, '$conditions');
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 		// debugMsg($dbs, '$dbs');
 
-		$result->debug['ITEMS'] = mydb()->_query;
+		$result->debug['ITEMS'] = R('query');
 
 		$result->items = $dbs->items;
 		$result->count = count((Array) $result->items);
@@ -249,7 +249,7 @@ class NodeModel {
 				[':nodeList' => 'SET:'.implode(',',$nodeList)]
 			)->items;
 
-			$result->debug['PHOTOS'] = mydb()->_query;
+			$result->debug['PHOTOS'] = R('query');
 
 			foreach ($photoList as $photo) {
 				$result->items[$photo->nodeId]->photo = FileModel::photoProperty($photo->file, $photo->folder);
@@ -266,7 +266,7 @@ class NodeModel {
 				'var' => [':nodeList' => new SetDataModel($nodeList)]
 			])->items;
 
-			$result->debug['DOCS'] = mydb()->_query;
+			$result->debug['DOCS'] = R('query');
 
 			foreach ($docList as $doc) {
 				$prop = FileModel::docProperty($doc->file, $doc->folder);
@@ -532,7 +532,7 @@ class NodeModel {
 			$result->process[]='Clear sticky of '.$sticky[$topic->post->sticky];
 			$sql_cmd='UPDATE %topic% SET sticky=0 WHERE sticky='.$topic->post->sticky;
 			mydb::query($sql_cmd,$simulate);
-			$result->process[]=mydb()->_query;
+			$result->process[]=R('query');
 		}
 
 		// save title into topic
@@ -541,9 +541,9 @@ class NodeModel {
 
 
 
-		//debugMsg(mydb()->_query);
+		//debugMsg(R('query'));
 
-		$result->process[]=mydb()->_query;
+		$result->process[]=R('query');
 
 		if (mydb()->_error) $error['topic']='Error on create topic query command'.(user_access('access debugging program')?'<br />'.mydb()->_error:'');
 		$nodeId = $topic->tpid = $topic->post->tpid = mydb()->insert_id;
@@ -559,14 +559,14 @@ class NodeModel {
 		if (!isset($error['topic'])) {
 			mydb::query($sql_detail,$topic->post);
 			if (mydb()->_error) $error['detail']='Error on create detail query command'.(user_access('access debugging program')?'<br />'.mydb()->_error:'');
-			$result->process[]=mydb()->_query;
+			$result->process[]=R('query');
 
 			$revid=mydb()->insert_id;
 
 			// update revision id into reference topic
 			$sql_cmd = 'UPDATE %topic% SET revid='.$revid.' WHERE tpid='.$nodeId.' LIMIT 1';
 			mydb::query($sql_cmd);
-			$result->process[]=mydb()->_query;
+			$result->process[]=R('query');
 		}
 
 		// add taxonomy into topic_tag table
@@ -590,7 +590,7 @@ class NodeModel {
 				foreach (explode(',',$tag_desc) as $tag_name) {
 					$tag_name=trim($tag_name);
 					$tag_db = mydb::select('SELECT tid FROM %tag% WHERE `vid` = :vid AND `name` = :name LIMIT 1', ':vid', $vid, ':name', $tag_name)->tid;
-					$result->process[] = mydb()->_query;
+					$result->process[] = R('query');
 					$tid =  $tag_db ? $tag_db : BasicModel::add_taxonomy($vid,$tag_name);
 					$topic_tag[$tid] = $nodeId .' , '.$vid.' , '. $tid;
 				}
@@ -599,11 +599,11 @@ class NodeModel {
 			$result->process[] = print_o($topic_tag, '$topic_tag');
 			if ($topic_tag) {
 				mydb::query('INSERT INTO %tag_topic% ( `tpid` , `vid` , `tid` ) VALUES ( ' . implode(' ) , ( ',$topic_tag) .' ) ',$simulate);
-				$result->process[]=mydb()->_query;
+				$result->process[]=R('query');
 
 				$stmt = 'SELECT tid,name FROM %tag% WHERE tid IN ('.implode(',',array_keys($topic_tag)).')';
 				$topic->tags = mydb::select($stmt)->items;
-				$result->process[]=mydb()->_query;
+				$result->process[]=R('query');
 			}
 
 		}
@@ -641,7 +641,7 @@ class NodeModel {
 					$desc->file=$photo_result->save->_file;
 					$sql_cmd = mydb::create_insert_cmd('%topic_files%',$desc);
 					mydb::query($sql_cmd,$desc);
-					$result->process[]=mydb()->_query;
+					$result->process[]=R('query');
 				}
 			}
 		}
@@ -662,7 +662,7 @@ class NodeModel {
 				$sql_doc = mydb::create_insert_cmd('%topic_files%',$document);
 				$result->process[]='Saving upload document to '.$document->dest;
 				mydb::query($sql_doc,$document);
-				$result->process[]=mydb()->_query;
+				$result->process[]=R('query');
 				$result->document=$document;
 			}
 		}
@@ -683,7 +683,7 @@ class NodeModel {
 				$sql_doc = mydb::create_insert_cmd('%topic_files%',$video);
 				$result->process[]='Saving upload document to '.$video->_property->location;
 				mydb::query($sql_doc,$video);
-				$result->process[]=mydb()->_query;
+				$result->process[]=R('query');
 				$result->video=$video;
 			}
 		}

@@ -50,7 +50,7 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 					, `process` = :process, `weight` = :weight
 					';
 				mydb::query($stmt, $data);
-				$ret .= mydb()->_query;
+				$ret .= R('query');
 			}
 			$ret .= print_o(post(),'post()');
 			break;
@@ -137,7 +137,7 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 					, `process` = :process, `weight` = :weight
 					';
 				mydb::query($stmt, $data);
-				$ret .= mydb()->_query;
+				$ret .= R('query');
 				$ret .= __admin_category_list($taggroup);
 			} else {
 				$ret .= __admin_category_form($taggroup);

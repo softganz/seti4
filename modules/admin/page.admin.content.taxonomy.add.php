@@ -29,7 +29,7 @@ function admin_content_taxonomy_add($self,$vid) {
 			mydb::query($stmt,$tag);
 			$tid=mydb()->insert_id;
 
-			//$ret.=mydb()->_query.'<br />';
+			//$ret.=R('query').'<br />';
 			//$ret.=print_o($tag,'$tag');
 
 			if (empty($tag->parent)) $tag->parent[]=0;

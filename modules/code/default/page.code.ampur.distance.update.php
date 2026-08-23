@@ -33,7 +33,7 @@ function code_ampur_distance_update($self, $ampurId = NULL) {
 	mydb::query($stmt, $post);
 
 	$ret['value'] = is_null($post->value) ? '' : $post->value;
-	//$ret['msg'] .= mydb()->_query;
+	//$ret['msg'] .= R('query');
 	return $ret;
 }
 ?>

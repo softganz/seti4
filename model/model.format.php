@@ -58,7 +58,7 @@ class FormatModel {
 				'reset' => 0,
 			];
 			FormatModel::update($docInfo);
-			if ($debug) debugMsg('Create new docformat : '.mydb()->_query);
+			if ($debug) debugMsg('Create new docformat : '.R('query'));
 			return FormatModel::nextNo($orgId, $docName);
 		}
 

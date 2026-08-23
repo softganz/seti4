@@ -8,7 +8,7 @@ function module_paper_install() {
 						)';
 
 	mydb::query($stmt);
-	$queryResult[]=mydb()->_query;
+	$queryResult[]=R('query');
 
 
 	// create podcast content type
@@ -28,7 +28,7 @@ function module_paper_install() {
 			"story","Story",NULL,1,"Topic",1,"Body",1,1,0
 		)'
 	);
-	$queryResult[] = mydb()->_query;
+	$queryResult[] = R('query');
 
 	if (cfg('topic_options_story') == NULL) {
 		$topic_options = (Object) [

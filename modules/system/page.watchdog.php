@@ -13,7 +13,7 @@ function watchdog($self, $watchId = NULL, $action = NULL) {
 				if ($isAdmin && $watchId && \SG\confirm()) {
 					$stmt = 'DELETE FROM %watchdog% WHERE `wid` = :wid LIMIT 1';
 					mydb::query($stmt, ':wid', $watchId);
-					//$ret .= mydb()->_query;
+					//$ret .= R('query');
 				}
 				break;
 

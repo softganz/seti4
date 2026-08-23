@@ -77,7 +77,7 @@ class AdminUserList extends Page {
 			';
 
 		$dbs = mydb::select($stmt);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 		// debugMsg($dbs,'$dbs');
 
 		$totals = $dbs->_found_rows;

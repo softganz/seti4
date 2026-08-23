@@ -84,7 +84,7 @@ class CalendarRoomCreateApi extends PageApi {
 		// debugMsg(mydb(),'mydb()');
 
 		if (empty($post->resvId)) $post->resvId = mydb()->insert_id;
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 		// debugMsg($post, '$post');
 		// debugMsg(post(), 'post()');
 

@@ -35,11 +35,11 @@ class PaperAdminRepairRevision extends Page {
 	function _startRepair() {
 		mydb::query('UPDATE %topic% t SET t.`revid` = t.`tpid` ORDER BY t.`tpid` ASC');
 
-		debugMsg(mydb()->_query);
+		debugMsg(R('query'));
 
 		mydb::query('UPDATE %topic_revisions% SET `revid` = `tpid` ORDER BY `tpid` ASC');
 
-		debugMsg(mydb()->_query);
+		debugMsg(R('query'));
 
 		// mydb::query('UPDATE %topic_revisions%')
 	}

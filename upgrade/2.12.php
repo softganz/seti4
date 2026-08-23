@@ -12,6 +12,6 @@ if (!mydb::table_exists('property')) {
 						PRIMARY KEY (`propid`,`module`,`name`),
 						KEY `name` (`name`)
 						)');
-	$result[$version][]=array('Create table property.', mydb()->_query, mydb()->_error, mydb()->_error_no);
+	$result[$version][]=array('Create table property.', R('query'), mydb()->_error, mydb()->_error_no);
 }
 ?>

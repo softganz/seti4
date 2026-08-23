@@ -89,7 +89,7 @@ function paper_comment_post($self, $topicInfo = NULL) {
 	} else {
 		mydb::query($stmt,$comment);
 
-		//debugMsg(mydb()->_query);
+		//debugMsg(R('query'));
 
 		$post_id = mydb()->insert_id;
 		LogModel::save([
@@ -108,7 +108,7 @@ function paper_comment_post($self, $topicInfo = NULL) {
 		$ret .= '<p><strong>increse reply sql :</strong> '.$stmt.'</p>';
 	} else {
 		mydb::query($stmt, ':tpid', $tpid, ':now',date('Y-m-d H:i:s'));
-		//debugMsg(mydb()->_query);
+		//debugMsg(R('query'));
 	}
 
 	if (isset($photo_upload) && is_object($upload)) {

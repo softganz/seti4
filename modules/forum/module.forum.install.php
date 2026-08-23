@@ -24,7 +24,7 @@ function module_project_install() {
 			"forum","Forum","forum",1,"Topic",1,"Body",1,1,1
 		)';
 	mydb::query($stmt);
-	$queryResult[]=mydb()->_query;
+	$queryResult[]=R('query');
 
 	if (cfg('topic_options_forum') == NULL) {
 		$topic_options->publish = 'publish';

@@ -28,12 +28,12 @@ function admin_content_vocabulary_add($self) {
 				)';
 			mydb::query($stmt,$vocab);
 			$vid=mydb()->insert_id;
-			//$ret.=mydb()->_query.'<br />';
+			//$ret.=R('query').'<br />';
 
 			foreach ($vocab->topics as $type) {
 				$stmt='INSERT INTO %vocabulary_types% (vid,type) VALUES (:vid, :type)';
 				mydb::query($stmt,':vid',$vid, ':type',$type);
-				//$ret.=mydb()->_query.'<br />';
+				//$ret.=R('query').'<br />';
 			}
 
 			location('admin/content/taxonomy');

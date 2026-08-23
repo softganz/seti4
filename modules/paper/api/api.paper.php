@@ -410,7 +410,7 @@ class PaperApi extends PageApi {
 		$newNodeId = $result->insertId();
 
 		// debugMsg('$newNodeId = '.$newNodeId);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 
 		// Create new revision record
 		$oldRev->tpid = $newNodeId;
@@ -426,7 +426,7 @@ class PaperApi extends PageApi {
 		$newRevId = $result->insertId();
 
 		// debugMsg('$newRevId = '.$newRevId);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 
 		// Update topic revid
 		DB::query([
@@ -436,7 +436,7 @@ class PaperApi extends PageApi {
 				':newRevId' => $newRevId,
 			]
 		]);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 
 		// Create topic user
 		$nodeUser = DB::select([
@@ -453,7 +453,7 @@ class PaperApi extends PageApi {
 				(:'.implode(', :', array_keys((Array) $user)).')',
 				'var' => $user
 			]);
-			// debugMsg(mydb()->_query);
+			// debugMsg(R('query'));
 		}
 		return ['code' => 200, 'text' => 'ดำเนินการเสร็จสิ้น', 'nodeId' => $newNodeId];
 	}
@@ -643,7 +643,7 @@ class PaperApi extends PageApi {
 			$stmt = 'INSERT INTO %poll% (`tpid`, `start_date`, `end_date`, `created`) VALUES (:tpid, :start_date, :end_date, :created)';
 
 			mydb::query($stmt,':tpid',$nodeId, ':start_date',date('Y-m-d H:i:s'), ':end_date', 'func.NULL', ':created',date('Y-m-d H:i:s'));
-			//$ret .= mydb()->_query.'<br />';
+			//$ret .= R('query').'<br />';
 		}
 
 		foreach ($data as $k=>$v) {
@@ -653,12 +653,12 @@ class PaperApi extends PageApi {
 				} else { // Update
 					mydb::query('UPDATE %poll_choice% SET `detail`=:detail WHERE  `tpid`=:tpid AND `choice`=:choice LIMIT 1', ':tpid',$nodeId, ':choice',$k,':detail',$v);
 				}
-				//$ret.='Update '.mydb()->_query.'<br />';
+				//$ret.='Update '.R('query').'<br />';
 			} else {
 				if ($v=='') {
 				} else {
 					mydb::query('INSERT INTO %poll_choice% (`tpid`, `choice`, `detail`) VALUES (:tpid, :choice, :detail)',':tpid',$nodeId, ':choice',$k, ':detail',$v);
-					//$ret.='Insert '.mydb()->_query.'<br />';
+					//$ret.='Insert '.R('query').'<br />';
 				}
 			}
 		}

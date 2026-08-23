@@ -88,7 +88,7 @@ class NodeInfoApi extends PageApi {
 				':ratetimes' => $rateTimes
 			]
 		);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 
 		$data = (Object) [
 			'cid' => post('cid') ? post('cid') : NULL,
@@ -113,7 +113,7 @@ class NodeInfoApi extends PageApi {
 			, `comment` = :comment',
 			$data
 		);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 		return success('บันทึกเรียบร้อย');
 	}
 }

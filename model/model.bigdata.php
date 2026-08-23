@@ -198,7 +198,7 @@ class BigDataModel {
 
 		$result->count = count($result->items);
 
-		if ($debug) debugMsg(mydb()->_query);
+		if ($debug) debugMsg(R('query'));
 
 		return $result;
 	}

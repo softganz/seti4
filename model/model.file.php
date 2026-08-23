@@ -428,7 +428,7 @@ class FileModel {
 			// Delete file record
 			if ($options->deleteRecord) {
 				mydb::query('DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1', [':fid' => $fileId]);
-				$result->_query[] = mydb()->_query;
+				$result->_query[] = R('query');
 			}
 
 			// Delete photo file
@@ -450,7 +450,7 @@ class FileModel {
 					'DELETE FROM %topic_files% WHERE fid = :fid LIMIT 1',
 					[':fid' => $fileId]
 				);
-				$result->_query[] = mydb()->_query;
+				$result->_query[] = R('query');
 			}
 
 			// Delete doc file

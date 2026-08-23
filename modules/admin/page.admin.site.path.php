@@ -12,7 +12,7 @@ function admin_site_path($self) {
 		$stmt='INSERT INTO %url_alias% (`alias`,`system`) VALUES (:alias,:system) ON DUPLICATE KEY UPDATE `system`=`system`';
 		mydb::query($stmt,':alias',$add_alias, ':system',$add_system);
 
-		$ret.=mydb()->_query;
+		$ret.=R('query');
 		$message.=mydb()->_affected_rows ?' completed.':' but the alias or system path "'.$add_alias.'" is already inused.';
 	}
 

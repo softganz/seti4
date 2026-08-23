@@ -115,7 +115,7 @@ function calendar_room($self, $resvId = NULL, $action = NULL, $tranId = NULL) {
 					mydb::query($stmt,$post);
 
 					//				$ret.=print_o($post,'$post');
-					//				$ret.=mydb()->_query;
+					//				$ret.=R('query');
 
 				}
 			}

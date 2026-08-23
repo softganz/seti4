@@ -194,7 +194,7 @@ class AdminUserCreate extends Page {
 			// 	$complete[] = implode(',', $data);
 			// 	unset($lines[$key]);
 			// } else {
-			// 	$ret .= '<p>'.mydb()->_query.'</p>';
+			// 	$ret .= '<p>'.R('query').'</p>';
 			// }
 		}
 		// $post->users = implode("\n",$lines);
@@ -246,7 +246,7 @@ function admin_user_create($self) {
 				$complete[] = implode(',', $data);
 				unset($lines[$key]);
 			} else {
-				$ret .= '<p>'.mydb()->_query.'</p>';
+				$ret .= '<p>'.R('query').'</p>';
 			}
 		}
 		$post->users = implode("\n",$lines);

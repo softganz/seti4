@@ -26,7 +26,7 @@ function admin_log_clear($self) {
 			$stmt='DELETE FROM %counter_log% WHERE `id` BETWEEN :clearid AND :clearid+'.($rowOnEach-1);
 			//$stmt='DELETE LOW_PRIORITY FROM %counter_log% LIMIT '.$rowOnEach;
 			mydb::query($stmt,':clearid',$startID);
-			$result['html'].='<p>@'.date('H:i:s').' :: Delete id '.$startID.'-'.($startID+($rowOnEach-1)).' :: '.mydb()->_query.'</p>';
+			$result['html'].='<p>@'.date('H:i:s').' :: Delete id '.$startID.'-'.($startID+($rowOnEach-1)).' :: '.R('query').'</p>';
 			$startID+=$rowOnEach;
 			sleep(5);
 		} while ($startID<$minId+$itemToClear);
@@ -141,7 +141,7 @@ function admin_log_clear($self) {
 		for ($i=1;$i<=$loop;$i++) {
 			$stmt='DELETE LOW_PRIORITY FROM %counter_log% WHERE `id`<:clearid LIMIT '.$itemPerLoop.';';
 			mydb::query($stmt,':clearid',$minId+$itemToClear);
-			if ($itemToClear) $ret.='<p>'.mydb()->_query.'</p>';
+			if ($itemToClear) $ret.='<p>'.R('query').'</p>';
 			flush();
 		}
 	}

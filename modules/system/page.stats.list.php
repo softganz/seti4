@@ -212,7 +212,7 @@ class StatsList extends Page {
 		// 			LEFT JOIN %users% AS u ON log.`user` = u.`uid`'
 		// 	);
 		// }
-		// // debugMsg(mydb()->_query);
+		// // debugMsg(R('query'));
 
 		// return $dbs;
 	}

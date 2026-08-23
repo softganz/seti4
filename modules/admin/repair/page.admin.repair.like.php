@@ -50,7 +50,7 @@ class AdminRepairLike extends Page {
 				)',
 		]);
 
-		return mydb()->_query;
+		return R('query');
 	}
 }
 ?>

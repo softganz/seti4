@@ -41,7 +41,7 @@ function admin_site_mysqldump($self,$table) {
 						LINES TERMINATED BY '),\n('
 						FROM $tableName";
 		$result = mydb::query($query);
-		//$ret.=mydb()->_query.'<br />';
+		//$ret.=R('query').'<br />';
 	}
 					
 

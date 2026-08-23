@@ -45,7 +45,7 @@ class UserModel {
 
 		$result = mydb::select('SELECT u.`uid` `userId`, u.* FROM %users% u %WHERE% LIMIT 1');
 
-		if ($debug) debugMsg(mydb()->_query);
+		if ($debug) debugMsg(R('query'));
 
 		if ($result->_empty) return NULL;
 

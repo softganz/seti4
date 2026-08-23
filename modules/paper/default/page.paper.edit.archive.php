@@ -48,13 +48,13 @@ function paper_edit_archive($self, $topicInfo) {
 	if ($topic->_archive) {
 		// Move archive to topic
 		mydb::query('INSERT INTO %topic% (SELECT * FROM %archive_topic% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %topic_revisions% (SELECT * FROM %archive_topic_revisions% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %tag_topic% (SELECT * FROM %archive_tag_topic% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %topic_comments% (SELECT * FROM %archive_topic_comments% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %topic_files% (SELECT * FROM %archive_topic_files% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
 		// Remove data from archive
 		if (!$error) {
@@ -68,15 +68,15 @@ function paper_edit_archive($self, $topicInfo) {
 	} else {
 		// Move topic to archive
 		mydb::query('INSERT INTO %archive_topic% (SELECT * FROM %topic% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %archive_topic_revisions% (SELECT * FROM %topic_revisions% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %archive_tag_topic% (SELECT * FROM %tag_topic% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %archive_topic_comments% (SELECT * FROM %topic_comments% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 		mydb::query('INSERT INTO %archive_topic_files% (SELECT * FROM %topic_files% WHERE `tpid`=:tpid)',':tpid',$topic->tpid);
-		if (mydb()->_error) $error[]=mydb()->_query;
+		if (mydb()->_error) $error[]=R('query');
 
 		// Remove data from topic
 		if (!$error) {

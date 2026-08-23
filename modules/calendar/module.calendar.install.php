@@ -39,7 +39,7 @@ function module_calendar_install() {
 
 	mydb::query($stmt);
 
-	$queryResult[] = mydb()->_query;
+	$queryResult[] = R('query');
 
 	$stmt = 'CREATE TABLE IF NOT EXISTS %calendar_room% (
 		`resvid` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -69,7 +69,7 @@ function module_calendar_install() {
 
 	mydb::query($stmt);
 
-	$queryResult[] = mydb()->_query;
+	$queryResult[] = R('query');
 
 
 

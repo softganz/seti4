@@ -147,7 +147,7 @@ class ApiModel {
 			(:userId, :apiKey, :apiModel, :status, :sendResult, :curlParam, :created)',
 			'var' => $data
 		]);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 	}
 
 	public static function sendComplete($args = []) {
@@ -208,7 +208,7 @@ class ApiModel {
 				'$LIMIT$' => 'LIMIT '.$conditions->options['start'].','.$conditions->options['items'],
 			]
 		]);
-		// debugMsg(mydb()->_query);
+		// debugMsg(R('query'));
 		return $result;
 	}
 

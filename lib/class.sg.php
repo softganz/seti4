@@ -402,22 +402,22 @@ class BigData {
 		);
 
 		//$this->_error=mydb()->_error;
-		//$this->_query=mydb()->_query;
+		//$this->_query=R('query');
 		$bigid = mydb()->_error ? NULL : mydb()->insert_id;
-		//echo mydb()->_query.'<br />';
+		//echo R('query').'<br />';
 		return $bigid;
 	}
 
 	public static function removeField($fldName,$keyName=NULL,$keyId=NULL) {
 		$stmt='DELETE FROM %bigdata% WHERE `keyname`=:keyname AND `keyid`=:keyid AND `fldname`=:fldname';
 		mydb::query($stmt,':keyname',$keyName, ':keyid',$keyId, ':fldname',$fldName);
-		//echo mydb()->_query;
+		//echo R('query');
 	}
 
 	public static function getField($fldName,$keyName=NULL,$keyId=NULL) {
 		$stmt='SELECT * FROM %bigdata% WHERE `keyname`=:keyname'.($keyId=='*' ? '' : ' AND `keyid`=:keyid').($fldName=='*' ? '':' AND `fldname`=:fldname').' ORDER BY `bigid` ASC';
 		$dbs=mydb::select($stmt,':keyname',$keyName, ':keyid',$keyId, ':fldname',$fldName);
-		//echo mydb()->_query;
+		//echo R('query');
 		return $dbs->items;
 	}
 
@@ -547,7 +547,7 @@ class BigData {
 			',
 			$data
 		);
-		if ($debug) debugMsg(mydb()->_query);
+		if ($debug) debugMsg(R('query'));
 
 		$result->data = $data;
 		return $result;

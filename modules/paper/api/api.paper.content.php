@@ -103,7 +103,7 @@ class PaperContentApi extends Page {
 				// 		LIMIT 1\',
 				// 		"var" => [":nodeId" => $nodeId]
 				// 	]);
-				// 	print_r(mydb()->_query);
+				// 	print_r(R('query'));
 				// 	echo "<pre>".print_r($dbs)."</pre>";
 				// 	return $dbs;
 				}
