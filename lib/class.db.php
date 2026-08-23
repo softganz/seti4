@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-08-22
- * Version  :: 51
+ * Modified :: 2026-08-23
+ * Version  :: 52
  *
  * @param Array $args
  * @return Object
@@ -110,13 +110,11 @@ class DbException extends \Exception {
 	var $error = false;
 	private $state;
 	private $query;
-	private $stmt;
 	
 	public function __construct($message = NULL, $code = NULL, $error = NULL, $query = NULL) {
 		parent::__construct($message, (Int) $code);
 		$this->error = $error;
 		$this->query = $query;
-		$this->stmt = $stmt;
 	}
 	
 	public function getQuery() {return $this->query;}
@@ -242,19 +240,19 @@ class DB {
 		$queryResult->callerFrom = get_caller(__FUNCTION__)['from'];
 		$result = $queryResult->queryResult();
 
-		// Query error, return exception
 		if ($result->error) {
-			$errorMessage = $selectResult->stmt
+			$errorMessage = $queryResult->stmt
 				. '; <span style="color:red;">-- ERROR :: '
-				. ($selectResult->errorMsg ?? 'Update data to database was error.')
+				. ($queryResult->errorMsg ?? 'Update data to database was error.')
 				. '</font>';
+
 			$queryResult->setDebugMessage('PREPARE', $errorMessage);
+
 			throw new DbException(
 				'Update data to database was error.',
 				503,
 				$errorMessage
 			);
-
 		}
 		
 		unset($queryResult->items, $queryResult->count);
