@@ -14,16 +14,16 @@
  * ============================================
  * 
  * Created  :: 2007-07-09
- * Modified :: 2026-08-22
- * Version  :: 20
+ * Modified :: 2026-08-23
+ * Version  :: 21
  */
 
 use Softganz\DB;
 
 /********************************************
-* Class :: sgClass
-* Base class of SoftGanz Framework
-********************************************/
+ * Class :: sgClass
+ * Base class of SoftGanz Framework
+ ********************************************/
 class sgClass {
 	private $_PROPERTY;
 
@@ -71,9 +71,9 @@ class sgClass {
 
 
 /********************************************
-* Class :: Cfg
-* Cfg class for keep core system configuration
-********************************************/
+ * Class :: Cfg
+ * Cfg class for keep core system configuration
+ ********************************************/
 class Cfg {
 	var $cfg = array();
 
@@ -146,9 +146,9 @@ class Cfg {
 
 
 /********************************************
-* Class :: Timer
-* Timer class for timer of execution
-********************************************/
+ * Class :: Timer
+ * Timer class for timer of execution
+ ********************************************/
 class Timer {
 	var $time;
 
@@ -199,146 +199,103 @@ class Timer {
 
 
 /********************************************
-* Class :: Session
-* Session class for php session management using database
-*
-* REMARK :: TO DEBUG SIGN IN SESSION, REMOVE CLASS form.signform in library-xx.xx.js
-********************************************/
+ * Class :: Session
+ * Session class for php session management using database
+ *
+ * REMARK :: TO DEBUG SIGN IN SESSION, REMOVE CLASS form.signform in library-xx.xx.js
+ ********************************************/
 class Session implements SessionHandlerInterface {
+
+	// Capture PDO connection reference while it is still alive (set in open()).
+	// We keep the PDO object itself (not just the DB wrapper) because
+	// sgShutdown() calls $R->DB->close() which sets DB::$PDO = NULL before
+	// session write() runs. The PDO object stays usable as long as we hold it.
+	private ?\PDO $PDO = null;
 
 	public function __construct() {}
 
 	public function __destruct() {
+		// echo 'SESSION DESTRUCT<br>';
 		return session_write_close();
-		return false;
 	}
 
 	#[\ReturnTypeWillChange]
-	public function open($path, $name) {return true;}
-
-	#[\ReturnTypeWillChange]
-	public function close() {return true;}
-
-	#[\ReturnTypeWillChange]
-	public function read($sess_id) {
-		$res = DB::select([
-			'SELECT `sess_data` FROM %session% WHERE `sess_id` = :id LIMIT 1',
-			'var' => [':id' => $sess_id]
-		]);
-		$sess_data = $res->sess_data ? $res->sess_data : '';
-		// echo 'Session read '.print_o($res,'$res');
-		return $sess_data;
-	}
-
-	#[\ReturnTypeWillChange]
-	public function write($sess_id = null, $data = null) {
-		$debug = false;
-		$userInfo = (Object) [
-			'ok' => null,
-			'username' => null,
-			'remember' => null,
-		];
-
-		// NOTES : If user mydb::query , cannot use :sess_id, :data
-		$mydb = new MyDb(cfg('db'));
-
-		if ($debug) echo 'Session write of '.$sess_id.'<br />data = '.$data.'<br />';
-
-		if(preg_match('/^(user\|)(.*)/', $data, $out)) {
-			$userInfo = unserialize($out[2]);
-		}
-		if ($debug) print_o($userInfo, '$userInfo', 1);
-
-		mydb::query(
-			'INSERT INTO %session%
-			(`sess_id`, `user`, `sess_start`, `sess_last_acc`, `sess_data`)
-			VALUES
-			(
-				"'.$mydb->escape($sess_id).'"
-				, "'.($mydb->escape($userInfo->username)).'"
-				, NOW()
-				, NOW()
-				, "'.$mydb->escape($data).'"
-			)
-			ON DUPLICATE KEY UPDATE
-				`sess_last_acc` = NOW()
-				, `user` = "'.$mydb->escape($userInfo->username).'"
-				, `sess_data` = "'.$mydb->escape($data).'"
-			'
-		);
-
-		// try {
-		// 	DB::query([
-		// 		'INSERT INTO %session%
-		// 		(`sess_id`, `user`, `sess_start`, `sess_last_acc`, `sess_data`)
-		// 		VALUES
-		// 		(
-		// 			"'.$mydb->escape($sess_id).'"
-		// 			, "'.($mydb->escape($userInfo->username)).'"
-		// 			, NOW()
-		// 			, NOW()
-		// 			, "'.$mydb->escape($data).'"
-		// 		)
-		// 		ON DUPLICATE KEY UPDATE
-		// 			`sess_last_acc` = NOW()
-		// 			, `user` = "'.$mydb->escape($userInfo->username).'"
-		// 			, `sess_data` = "'.$mydb->escape($data).'"
-		// 		',
-		// 		// 'var' => [
-		// 		// 	':sess_id' => $sess_id,
-		// 		// 	':username' => $userInfo->username,
-		// 		// 	':data' => $data
-		// 		// ]
-		// 	]);
-
-		// 	DB::query([
-		// 		'INSERT INTO %session%
-		// 		(`sess_id`, `user`, `sess_start`, `sess_last_acc`, `sess_data`)
-		// 		VALUES
-		// 		(
-		// 			"'.$sess_id.'"
-		// 			, "'.($userInfo->username).'"
-		// 			, NOW()
-		// 			, NOW()
-		// 			, "'.$data.'"
-		// 		)
-		// 		ON DUPLICATE KEY UPDATE
-		// 			`sess_last_acc` = NOW()
-		// 			, `user` = "'.$userInfo->username.'"
-		// 			, `sess_data` = "'.$data.'"
-		// 		',
-		// 		// 'var' => [
-		// 		// 	':sess_id' => $sess_id,
-		// 		// 	':username' => $userInfo->username,
-		// 		// 	':data' => $data
-		// 		// ]
-		// 		'options' => ['debug' => true]
-		// 	]);
-		// } catch (\Exception $exception) {
-		// 	echo $exception->getMessage();
-		// 	echo R('query');
-		// }
-		// echo R('query');
-
-		if ($debug) echo '$sess_id = '.$sess_id.'<br />';
-		if ($debug) echo 'query = '.$mydb->_query.'<br />';
-
-		if ($userInfo->ok && $userInfo->username) {
-			$mydb->query(
-				'UPDATE %session% SET
-				`user` = "'.$mydb->escape($userInfo->username).'"
-				, `expire` = "'.$mydb->escape($userInfo->remember).'"
-				WHERE `sess_id` = "'.$mydb->escape($sess_id).'"
-				LIMIT 1'
-			);
-
-			if ($debug) echo 'query = '.$mydb->_query.'<br />';
+	public function open($path, $name) {
+		// echo 'SESSION OPEN<br>';
+		// Capture PDO connection while it's still alive
+		if (function_exists('R')) {
+			$DB = R('DB');
+			if ($DB && $DB->PDO()) $this->PDO = $DB->PDO();
 		}
 		return true;
 	}
 
 	#[\ReturnTypeWillChange]
+	public function close() {
+		// echo 'SESSION CLOSE<br>';
+		return true;
+	}
+
+	#[\ReturnTypeWillChange]
+	public function read($sess_id) {
+		// echo 'SESSION READ<br>';
+		if (!$this->PDO) return '';
+		$row = DB::select([
+			'SELECT `sess_data` FROM %session% WHERE `sess_id` = :id LIMIT 1',
+			'var' => [':id' => $sess_id]
+		]);
+		return $row->sess_data ?? '';
+	}
+
+	#[\ReturnTypeWillChange]
+	public function write($sess_id = null, $data = null) {
+		// echo 'SESSION WRITE<br>';
+		$debug = false;
+		if ($debug) echo 'Session write of '.$sess_id.'<br />data = '.$data.'<br />';
+
+		$userInfo = isset($_SESSION['user']) ? (object) $_SESSION['user'] : (object) [];
+
+		if (!$this->PDO) return false;
+
+		if ($debug) print_o($this->PDO, 'write:PDO', 1);
+
+		if ($debug) print_o($userInfo, '$userInfo', 1);
+
+		// $username = $_SESSION['user']->username ?? null;
+		// echo 'WRITE SESSION<br>';
+		try {
+			$stmt = $this->PDO->prepare(
+				'INSERT INTO ' . db('%session%') . '
+				(`sess_id`, `user`, `expire`, `sess_start`, `sess_last_acc`, `sess_data`)
+				VALUES (:sess_id, :expire1, :user1, NOW(), NOW(), :data1)
+				ON DUPLICATE KEY UPDATE
+					`sess_last_acc` = NOW()
+					, `expire` = :expire2
+					, `user` = :user2
+					, `sess_data` = :data2'
+			);
+			$stmt->execute([
+				':sess_id' => $sess_id,
+				':expire1' => $userInfo->remember ?? 0,
+				':expire2' => $userInfo->remember ?? 0,
+				':user1' => $userInfo->username ?? '',
+				':user2' => $userInfo->username ?? '',
+				':data1' => $data,
+				':data2' => $data,
+			]);
+		} catch (\Throwable $exception) {
+			// echo 'SESSION UPDATE ERROR: ' . get_class($exception) . '<br />';
+			// echo 'SESSION UPDATE ERROR: ' . $exception->getMessage() . '<br>';
+			return false;
+		}
+		// echo 'SESSION WRITE DONE!!!<br>';
+		return true;
+	}
+
+	#[\ReturnTypeWillChange]
 	public function destroy($sess_id) {
+		// echo 'SESSION DESTROY<br>';
+		if (!$this->PDO) return true;
 		DB::query([
 			'DELETE FROM %session% WHERE sess_id = :id LIMIT 1',
 			'var' => [':id' => $sess_id]
@@ -348,16 +305,14 @@ class Session implements SessionHandlerInterface {
 
 	#[\ReturnTypeWillChange]
 	public function gc($maxLifetime = 86400) {
+		// echo 'SESSION GC<br>';
+		if (!$this->PDO) return true;
+
 		DB::query([
 			'DELETE FROM %session% WHERE sess_last_acc < :end',
-			'var' => [':end' => date('Y-m-d H:i:s',time() - $maxLifetime)]
+			'var' => [':end' => date('Y-m-d H:i:s', time() - $maxLifetime)]
 		]);
-
-		LogModel::save([
-			'module' => 'session',
-			'keyword' => 'gc',
-			'message' => 'gc was execute',
-		]);
+		return true;
 	}
 }
 
@@ -365,9 +320,9 @@ class Session implements SessionHandlerInterface {
 
 
 /********************************************
-* Class :: Arrays
-* Arrays class for array data
-********************************************/
+ * Class :: Arrays
+ * Arrays class for array data
+ ********************************************/
 class Arrays {
 	static function value($arr=array(),$name='', $options = array()) {
 		if ($name && is_object($arr)) {$prefix='->';$suffix='';}
@@ -478,9 +433,9 @@ class Arrays {
 
 
 /********************************************
-* Class :: Cache
-* Cache class for manage cache
-********************************************/
+ * Class :: Cache
+ * Cache class for manage cache
+ ********************************************/
 class Cache {
 	public static function add($cid, $data, $expire, $headers) {
 		$data = \SG\json_encode($data);
@@ -534,8 +489,8 @@ class Cache {
 
 
 /*********************************
-Class  :: classFile
-**********************************/
+ * Class  :: classFile
+ **********************************/
 class classFile {
 	var $format=array();
 	var $upload=null;
@@ -609,11 +564,11 @@ class classFile {
 
 
 /********************************************
-* Class :: Firebase
-* Firebase Realtime Database client (Admin SDK pattern)
-* - ใช้ Service Account (ส่งผ่าน $sa) สร้าง OAuth2 access token
-* - เรียก Realtime Database REST API ด้วย curl (ไม่พึ่งพา library ภายนอก)
-********************************************/
+ * Class :: Firebase
+ * Firebase Realtime Database client (Admin SDK pattern)
+ * - ใช้ Service Account (ส่งผ่าน $sa) สร้าง OAuth2 access token
+ * - เรียก Realtime Database REST API ด้วย curl (ไม่พึ่งพา library ภายนอก)
+ ********************************************/
 class Firebase {
 	private string $projectId; // project id หรือ host เช่น sg-cityclimate / https://sg-cityclimate.firebaseio.com
 	private string $table;   // เช่น cityclimate
@@ -887,9 +842,8 @@ class Firebase {
 
 
 /*********************************
-Class  :: Jwt
-**********************************/
-
+ * Class  :: Jwt
+ **********************************/
 class Jwt {
 	public static function generate($headers, $payload, $secret = 'secret') {
 		$headers_encoded = Jwt::base64url_encode(json_encode($headers));
