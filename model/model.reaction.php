@@ -1,13 +1,13 @@
 <?php
 /**
- * Reaction:: Reaction Model
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2021-09-29
- * Modify  :: 2026-03-16
- * Version :: 2
+ * Reaction :: Reaction Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-09-29
+ * Modified :: 2026-08-23
+ * Version  :: 3
  *
- * @usage new ReactionModel([])
- * @usage ReactionModel::function($conditions, $options)
+ * @uses new ReactionModel([])
+ * @uses ReactionModel::function($conditions, $options)
  */
 
 use Softganz\DB;
@@ -41,8 +41,6 @@ class ReactionModel {
 			LIMIT 1',
 			'var' => [':topicId' => $conditions->id]
 		]);
-
-		$result = mydb::clearProp($result);
 
 		if ($conditions->bookmark) {
 			$result->bookmarks = DB::select([
