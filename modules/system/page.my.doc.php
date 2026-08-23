@@ -1,14 +1,18 @@
 <?php
 /**
-* My :: My Document List
-* Created 2021-12-27
-* Modify  2021-12-27
-*
-* @param String $arg1
-* @return Widget
-*
-* @usage myd/doc
-*/
+ * My       :: My Document List
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-12-27
+ * Modified :: 2026-08-23
+ * Version  :: 2
+ *
+ * @param String $arg1
+ * @return Widget
+ *
+ * @uses myd/doc
+ */
+
+use Softganz\DB;
 
 class MyDoc extends Page {
 	function build() {
@@ -34,7 +38,7 @@ class MyDoc extends Page {
 							sg_date($rs->created, 'd/m/Y'),
 						];
 					},
-					mydb::select(
+					DB::select([
 						'SELECT
 						u.`membership`
 						, t.`tpid`, t.`title`, t.`type`, t.`uid` `topicUid`
@@ -43,8 +47,8 @@ class MyDoc extends Page {
 							LEFT JOIN %topic_user% u ON u.`tpid` = t.`tpid` AND u.`uid` = :uid
 						WHERE t.`uid` = :uid OR u.`uid` = :uid
 						ORDER BY t.`tpid` DESC',
-						[':uid' => i()->uid]
-					)->items
+						'var' => [':uid' => i()->uid]
+					])->items
 				), // children
 			]), // Table
 		]);
