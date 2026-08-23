@@ -1,14 +1,15 @@
 <?php
 /**
- * Calendar:: View
- * Created :: 2007-03-06
- * Modify  :: 2025-12-12
- * Version :: 6
+ * Calendar :: View
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2007-03-06
+ * Modified :: 2026-08-23
+ * Version  :: 7
  *
  * @param String $calendarInfo
  * @return Widget
  *
- * @usage calendar/{calendarId}
+ * @uses calendar/{calendarId}
  */
 
 use Softganz\DB;
@@ -57,13 +58,7 @@ class CalendarView extends Page {
 								'<a id="calendar-edit" class="sg-action btn -link" href="'.url('calendar/form', ['calendarId' => $this->calendarInfo->calId, 'module' => $this->module]).'" title="แก้ไขรายละเอียด" data-rel=".calendar-content" data-done="close"><i class="icon -material">edit</i></a>',
 
 								// ปิดปุ่มลบชั่วคราว จนกว่าจะหาวิธีที่ดีกว่านี้
-								$this->calendarInfo->nodeId ? NULL
-									// if (mydb::select('SELECT `calid` FROM %project_tr% WHERE `calid` = :id LIMIT 1',':id',$this->calendarId)->calid) {
-									// 	$ui->add('<a href="javascript:void(0)" class="-disabled" title="ลบรายการไม่ได้"><i class="icon -material">delete</i></a>');
-									// } else {
-									// 	$ui->add('<a id="calendar-delete" class="sg-action btn -link" href="'.url('calendar/'.$this->calendarInfo->id.'/delete',array('module'=>$this->module)).'" data-rel="box" title="ลบหัวข้อนี้" data-width="600"><i class="icon -material">delete</i></a>');
-									// }
-								: new Button([
+								$this->calendarInfo->nodeId ? NULL : new Button([
 									'type' => 'danger',
 									'id' => 'calendar-delete',
 									'class' => 'sg-action',
