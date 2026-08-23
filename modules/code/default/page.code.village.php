@@ -1,30 +1,33 @@
 <?php
 /**
-* Village Code
-* Created 2020-01-29
-* Modify  2020-01-29
-*
-* @param Object $self
-* @param Int $tambonId
-* @return String
-*/
+ * Code     :: Village Code
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-01-29
+ * Modified :: 2026-08-23
+ * Version  :: 2
+ *
+ * @param Object $self
+ * @param Int $tambonId
+ * @return String
+ */
 
-$debug = true;
+use Softganz\DB;
 
 function code_village($self, $tambonId = NULL) {
 	$ret = '<header class="header">'._HEADER_BACK.'<h3>รหัสหมู่บ้าน</h3></header>';
 
 	if (empty($tambonId)) return message('error','กรุณาระบุรหัสตำบล');
 
-	mydb::where('LEFT(`villid`,6) = :tambonId', ':tambonId', $tambonId);
-
-	$stmt = 'SELECT
+	$dbs = DB::select([
+	'SELECT
 		d.*
 		FROM %co_village% d
 		%WHERE%
-		ORDER BY `villid` ASC';
-
-	$dbs = mydb::select($stmt);
+		ORDER BY `villid` ASC',
+		'%WHERE%' => [
+			['LEFT(`villid`,6) = :tambonId', ':tambonId' => $tambonId]
+		]
+	]);
 
 	$tables = new Table();
 	$tables->thead = array('code -center -nowrap'=>'รหัสหมู่บ้าน', 'villageno -center -nowrap' => 'หมู่ที่', 'name -fill'=>'ชื่อหมู่บ้าน','');
