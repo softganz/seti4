@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-09-29
  * Modified :: 2026-08-23
- * Version  :: 3
+ * Version  :: 4
  *
  * @uses new ReactionModel([])
  * @uses ReactionModel::function($conditions, $options)
@@ -189,14 +189,14 @@ class ReactionModel {
 	public static function user($topicId, $userId = NULL) {
 		$userId = \SG\getFirst($userId, i()->uid);
 		if (empty($userId)) return NULL;
-		return mydb::select(
+		return DB::select([
 			'SELECT DISTINCT
 			  `refid`, `action`
 			FROM %reaction%
-			WHERE `refid` = :topicId AND `uid` = :userId;
-			-- {key: "refid", value: "action"}',
-			[':topicId' => $topicId, ':userId' => $userId]
-		)->items;
+			WHERE `refid` = :topicId AND `uid` = :userId',
+			'var' => [':topicId' => $topicId, ':userId' => $userId],
+			'options' => ['key' => 'refid', 'value' => 'action']
+		])->items;
 	}
 }
 ?>
