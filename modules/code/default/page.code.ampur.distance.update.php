@@ -1,15 +1,17 @@
 <?php
 /**
-* Module Method
-* Created 2019-05-15
-* Modify  2019-05-15
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Code     :: Update Ampur Distance
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-05-15
+ * Modified :: 2026-08-23
+ * Version  :: 2
+ *
+ * @param Object $self
+ * @param Int $var
+ * @return String
+ */
 
-$debug = true;
+use Softganz\DB;
 
 function code_ampur_distance_update($self, $ampurId = NULL) {
 	$post = (object)post();
@@ -20,17 +22,19 @@ function code_ampur_distance_update($self, $ampurId = NULL) {
 
 	if ($post->ret == 'numeric') $post->value = sg_strip_money($post->value);
 
-	mydb::value('$FIELD$', $post->fld);
 	if (empty($post->value)) $post->value = NULL;
 
-	$stmt = 'INSERT INTO %distance%
-					(`fromareacode`, `toareacode`, `$FIELD$`)
-					VALUES
-					(:from, :to, :value)
-					ON DUPLICATE KEY UPDATE
-					$FIELD$ = :value
-					';
-	mydb::query($stmt, $post);
+	DB::query([
+		'INSERT INTO %distance%
+		(`fromareacode`, `toareacode`, `$FIELD$`)
+		VALUES
+		(:from, :to, :value)
+		ON DUPLICATE KEY UPDATE
+		$FIELD$ = :value',
+		'var' => [
+			'$FIELD$' => $post->fld
+		]
+	]);
 
 	$ret['value'] = is_null($post->value) ? '' : $post->value;
 	//$ret['msg'] .= R('query');
