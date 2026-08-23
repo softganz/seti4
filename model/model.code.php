@@ -1,9 +1,10 @@
 <?php
 /**
- * Code    :: Code Collection Model
- * Created :: 2021-09-11
- * Modify  :: 2025-09-29
- * Version :: 4
+ * Code     :: Code Collection Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-09-11
+ * Modified :: 2026-08-23
+ * Version  :: 5
  *
  * @usage import('model:code')
  */
@@ -29,15 +30,17 @@ class ChangwatModel {
 		// debugMsg($options, '$options');
 
 		$result = [];
-		if ($conditions->idLike) mydb::where('`provId` LIKE :idLike', ':idLike', $conditions->idLike.'%');
 		if ($options->selectText) $result[-1] = $options->selectText;
 
-		$changwatList = mydb::select(
+		$changwatList = DB::select([
 			'SELECT `provid`, `provname`
 			FROM %co_province%
 			%WHERE%
-			ORDER BY CONVERT(`provname` USING tis620) ASC'
-		)->items;
+			ORDER BY CONVERT(`provname` USING tis620) ASC',
+			'%WHERE%' => [
+				$conditions->idLike ? ['`provId` LIKE :idLike', ':idLike' => $conditions->idLike.'%'] : null
+			]
+		])->items;
 
 		if ($options->zone === 'country') {
 			$result = $result + [
@@ -100,14 +103,13 @@ class AmpurModel {
 	public static function inChangwat($changwat) {
 		if (empty($changwat)) return [];
 
-		return mydb::select(
+		return DB::select([
 			'SELECT `distid`, `distname`
 			FROM  %co_district%
-			WHERE LEFT(`distid`,2) = :changwat AND NOT INSTR(`distname`, "*");
-			 -- {resultType: "array", key: "distid", value: "distname"}
-			',
-			[':changwat' => $changwat]
-		);
+			WHERE LEFT(`distid`, 2) = :changwat AND NOT INSTR(`distname`, "*")',
+			'var' => [':changwat' => $changwat],
+			'options' => ['key' => 'distid', 'value' => 'distname']
+		])->items;
 	}
 }
 ?>
