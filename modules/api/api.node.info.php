@@ -13,6 +13,8 @@
 * @usage api/node/info/{nodeId}/{action}[/{tranId}]
 */
 
+use Softganz\DB;
+
 class NodeInfoApi extends PageApi {
 	var $nodeId;
 	var $action;
@@ -62,10 +64,10 @@ class NodeInfoApi extends PageApi {
 		if (empty($getRating)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลการให้คะแนน');
 
 		if ($this->nodeInfo->info->ratetimes) {
-			$reviewInfo = \mydb::select(
+			$reviewInfo = DB::select([
 				'SELECT * FROM %topic_comments% WHERE `tpid` = :tpid AND `uid` = :uid AND `subject` = "REVIEW" LIMIT 1',
-				[':tpid' => $this->nodeId, ':uid' => i()->uid]
-			);
+				'var' => [':tpid' => $this->nodeId, ':uid' => i()->uid]
+			]);
 
 			$currentRating = $this->nodeInfo->info->rating*$this->nodeInfo->info->ratetimes;
 			$currentTimes = $this->nodeInfo->info->ratetimes;
@@ -80,14 +82,14 @@ class NodeInfoApi extends PageApi {
 			$rateTimes = 1;
 		}
 
-		mydb::query(
+		DB::query([
 			'UPDATE %topic% SET `rating` = :rating, `ratetimes` = :ratetimes WHERE `tpid` = :tpid LIMIT 1',
-			[
+			'var' => [
 				':tpid' => $this->nodeId,
 				':rating' => $newRating,
 				':ratetimes' => $rateTimes
 			]
-		);
+		]);
 		// debugMsg(R('query'));
 
 		$data = (Object) [
@@ -103,7 +105,7 @@ class NodeInfoApi extends PageApi {
 			'ip' => ip2long(getenv('REMOTE_ADDR')),
 		];
 
-		\mydb::query(
+		DB::query([
 			'INSERT INTO %topic_comments%
 			(`cid`, `tpid`, `uid`, `status`, `giverating`, `subject`, `comment`, `thread`, `name`, `ip`)
 			VALUES
@@ -111,8 +113,8 @@ class NodeInfoApi extends PageApi {
 			ON DUPLICATE KEY UPDATE
 			`giverating` = :giverating
 			, `comment` = :comment',
-			$data
-		);
+			'var' => $data
+		]);
 		// debugMsg(R('query'));
 		return success('บันทึกเรียบร้อย');
 	}
