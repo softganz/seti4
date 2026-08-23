@@ -1,26 +1,26 @@
 <?php
 /**
-* Format Model :: Format Model
-* Created 2021-11-07
-* Modify  2021-11-07
-*
-* @param Int $orgId
-* @param Int $docName
-* @param String $docShortName
-* @return String
-*/
+ * Format   :: Format Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-11-07
+ * Modified :: 2021-11-07
+ * Version  :: 2
+ *
+ * @param Int $orgId
+ * @param Int $docName
+ * @param String $docShortName
+ * @return String
+ */
 
 class FormatModel {
 	public static function get($orgId, $docName) {
-		return mydb::clearProp(
-			mydb::select(
-				'SELECT `orgId`, `docName` `name`, `docFormat` `format`, `lastNo`, `resetOnPeriod` `reset`
-				FROM %lastno%
-				WHERE `orgId` = :orgId AND `docName` = :docName
-				LIMIT 1',
-				[':orgId' => $orgId, ':docName' => $docName]
-			)
-		);
+		return mDB::select([
+			'SELECT `orgId`, `docName` `name`, `docFormat` `format`, `lastNo`, `resetOnPeriod` `reset`
+			FROM %lastno%
+			WHERE `orgId` = :orgId AND `docName` = :docName
+			LIMIT 1',
+			'var' => [':orgId' => $orgId, ':docName' => $docName]
+		]);
 	}
 
 	public static function nextNo($orgId, $docName, $docFormat = NULL) {
@@ -146,21 +146,21 @@ class FormatModel {
 
 	public static function update($value = []) {
 		if (is_array($value)) $value = (Object) $value;
-		mydb::query(
+		DB::query([
 			'INSERT INTO %lastno%
 			(`orgId`, `docName`, `docFormat`, `lastNo`, `resetOnPeriod`)
 			VALUES
 			(:orgId, :docName, :docFormat, :lastNo, :resetOnPeriod)
 			ON DUPLICATE KEY UPDATE
 			`lastNo` = :lastNo',
-			[
+			'var' => [
 				':orgId' => $value->orgId,
 				':docName' => $value->name,
 				':docFormat' => $value->format,
 				':lastNo' => $value->lastNo,
 				':resetOnPeriod' => \SG\getFirst($value->reset,0),
 			]
-		);
+		]);
 	}
 
 	public static function explodeNo($lastNo, $formatList) {
