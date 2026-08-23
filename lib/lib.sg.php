@@ -3,14 +3,16 @@
  * Function :: Common Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-08-03
- * Version  :: 8
+ * Modified :: 2026-08-23
+ * Version  :: 9
  *
  * @param Array $args
  * @return Widget
  *
  * @uses new Widget([key => value,...])
  */
+
+use Softganz\DB;
 
 function sg_budget_year($date) {
 	return sg_date($date,'Y')+(sg_date($date,'m')>=10?1:0);
@@ -170,7 +172,10 @@ function sg_is_email($mail=NULL) {
 
 function sg_invalid_poster_name($name=NULL) {
 	$name=trim($name);
-	$dbu=mydb::select('SELECT `uid`,`name` FROM %users% WHERE name=:name LIMIT 1',':name',$name);
+	$dbu = DB::select([
+		'SELECT `uid`,`name` FROM %users% WHERE name = :name LIMIT 1',
+		'var' => [':name' => $name]
+	]);
 	if (i()->ok) {
 		return $dbu->uid && i()->uid != $dbu->uid;
 	} else {
