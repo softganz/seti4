@@ -16,11 +16,13 @@
  * ============================================
  *
  * Created :: 2019-12-08
- * Modify  :: 2026-08-20
- * Version :: 20
+ * Modify  :: 2026-08-23
+ * Version :: 21
  */
 
 namespace SG;
+
+use SOftganz\DB;
 
 if (!defined('_NL')) define('_NL', "\r\n");
 
@@ -673,14 +675,19 @@ function explode_address($address = '',$areacode = NULL) {
 	$result['house'] = trim($house);
 
 	if (empty($areacode)) {
-		$stmt = 'SELECT cos.`subdistid` `areacode`, CONCAT(`subdistname`, " ", `distname`, " ", `provname`) `address`
+		$rs = DB::select([
+			'SELECT cos.`subdistid` `areacode`, CONCAT(`subdistname`, " ", `distname`, " ", `provname`) `address`
 			FROM %co_subdistrict% cos
 				LEFT JOIN %co_district% cod ON cod.`distid` = LEFT(cos.`subdistid`,4)
 				LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(cos.`subdistid`,2)
 			WHERE cos.`subdistname` = :tambonName AND cod.`distname` = :ampurName AND cop.`provname` = :changwatName
-			LIMIT 1
-			';
-		$rs = \mydb::select($stmt, ':tambonName', $result['tambonName'], ':ampurName', $result['ampurName'], ':changwatName', $result['changwatName']);
+			LIMIT 1',
+			'var' => [
+				':tambonName' => $result['tambonName'],
+				':ampurName' => $result['ampurName'],
+				':changwatName' => $result['changwatName']
+			]
+		]);
 		//debugMsg($rs,'$rs');
 		$areacode = $rs->areacode;
 	}
