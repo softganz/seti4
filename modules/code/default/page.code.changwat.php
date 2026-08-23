@@ -1,19 +1,22 @@
 <?php
 /**
-* Code :: Changwat
-* Created 2019-05-15
-* Modify  2021-10-30
-*
-* @return Widget
-*
-* @usage code/changwat
-*/
+ * Code     :: Changwat
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-05-15
+ * Modified :: 2026-08-23
+ * Version  :: 2
+ *
+ * @return Widget
+ *
+ * @uses code/changwat
+ */
 
-$debug = true;
+use Softganz\DB;
 
 class CodeChangwat extends Page {
 	function build() {
-		$stmt = 'SELECT
+		$dbs = DB::select([
+			'SELECT
 			a.*
 			, COUNT(DISTINCT v.`villid`) `totalVillage`
 			FROM (SELECT
@@ -26,10 +29,8 @@ class CodeChangwat extends Page {
 				GROUP BY p.`provid`
 				ORDER BY `provid` ASC) a
 					LEFT JOIN %co_village% v ON LEFT(v.`villid`, 2) = a.`provid` AND RIGHT(v.`villname`,1) != "*"
-				GROUP BY `provid`
-			';
-
-		$dbs = mydb::select($stmt);
+				GROUP BY `provid`'
+		]);
 
 
 		return new Scaffold([
