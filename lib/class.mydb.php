@@ -412,7 +412,7 @@ class MyDb {
 
 		//$myDb = $isExtDb ? $isExtDb : mydb();
 
-		mydb()->_query_count++;
+		mydb()->_query_items_count++;
 
 		if (mydb()->_watchlog && $debug) debugMsg('<p>===== QUERY START =====</p>');
 		//echo 'Query :: DB = '.$myDb->db.'<br />';
@@ -545,7 +545,7 @@ class MyDb {
 
 			$data->_query = $myDb->_query = $queryMsg;
 			$myDb->_query_items[] = $queryMsg;
-			mydb()->_query = $queryMsg;
+			mydb()->_query_items = $queryMsg;
 			R('query', $queryMsg);
 			R()->query_items[] = $queryMsg;
 
@@ -864,7 +864,6 @@ class MyDb {
 			-- {reset:false}
 			';
 		$dbs = mydb::select($stmt);
-		//echo '<br /><br /><br />'.mydb()->_query;
 		$totals = $dbs->items[0]->totals;
 		return $totals;
 	}
