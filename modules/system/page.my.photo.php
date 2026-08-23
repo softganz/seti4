@@ -1,16 +1,17 @@
 <?php
 /**
-* My      :: Photo List
-* Created :: 2021-11-27
-* Modify  :: 2023-07-25
-* Version :: 2
-*
-* @return Widget
-*
-* @usage my/photo
-*/
+ * My       :: Photo List
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-11-27
+ * Modified :: 2026-08-23
+ * Version  :: 3
+ *
+ * @return Widget
+ *
+ * @uses my/photo
+ */
 
-import('model:file.php');
+use Softganz\DB;
 
 class MyPhoto extends Page {
 	function build() {
@@ -31,10 +32,10 @@ class MyPhoto extends Page {
 						}
 						return $cardStr;
 					},
-					mydb::select(
+					DB::select([
 						'SELECT `file`, `folder` FROM %topic_files% WHERE `uid` = :uid AND `type` = "photo"',
-						[':uid' => i()->uid]
-					)->items
+						'var' => [':uid' => i()->uid]
+					])->items
 				),
 			]),
 		]);
