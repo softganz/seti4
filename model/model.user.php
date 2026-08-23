@@ -3,8 +3,8 @@
  * Model    :: User Information
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-07-22
- * Modified :: 2026-06-24
- * Version  :: 28
+ * Modified :: 2026-08-23
+ * Version  :: 29
  *
  * @param Int $userId
  * @return Object
@@ -38,18 +38,23 @@ class UserModel {
 			$conditions = (Object) ['id' => $id];
 		}
 
-		if ($id) mydb::where('`uid` = :userId', ':userId', $id);
-		else if ($conditions->username) mydb::where('`username` = :username', ':username', $conditions->username);
-		else if ($conditions->email) mydb::where('`email` = :email', ':email', $conditions->email);
-		else return NULL;
+		if (!$id && $conditions->username && $conditions->email) {
+			return NULL;
+		}
 
-		$result = mydb::select('SELECT u.`uid` `userId`, u.* FROM %users% u %WHERE% LIMIT 1');
+		$result = DB::select([
+			'SELECT u.`uid` `userId`, u.* FROM %users% u %WHERE% LIMIT 1',
+			'%WHERE%' => [
+				$id ? ['`uid` = :userId', ':userId' => $id] : null,
+				$conditions->username ? ['`username` = :username', ':username' => $conditions->username] : null,
+				$conditions->email ? ['`email` = :email', ':email' => $conditions->email] : null,
+			]
+		]);
 
 		if ($debug) debugMsg(R('query'));
 
-		if ($result->_empty) return NULL;
+		if (!$result->userId) return NULL;
 
-		mydb::clearProp($result);
 		$result->roles = empty($result->roles) ? array('member') : explode(',','member,'.$result->roles);
 
 		return $result;
