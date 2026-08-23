@@ -10,6 +10,8 @@
 * @usage api/address
 */
 
+use Softganz\DB;
+
 class AddressApi extends PageApi {
 	var $addressText;
 	var $page;
@@ -53,54 +55,12 @@ class AddressApi extends PageApi {
 		//			foreach ($address as $k=>$v) $result[]=array('value' => 'out['.$k.']','label'=>$k.'='.$v);
 		*/
 
-		mydb::value('$LIMIT$', 'LIMIT '.($this->page-1).','.$this->items);
-		$stmt = 'SELECT * FROM
-			(
-			SELECT
-				2 `is_tambon`
-				, `subdistid` `areacode`
-				, SUBSTRING(`subdistid`, 5, 2) `tambonId`
-				, `subdistname` `tambonName`
-				, SUBSTRING(`distid`, 3, 2) `ampurId`
-				, `distname` `ampurName`
-				, `provid` `changwatId`
-				, `provname` `changwatName`
-			FROM %co_subdistrict% co
-				LEFT JOIN %co_district% cod ON cod.`distid` = LEFT(co.`subdistid`,4)
-				LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(co.`subdistid`,2)
-			WHERE `subdistname` LIKE :q AND RIGHT(`subdistname`,1) != "*"
-			-- Select changwat
-			UNION
+		$dbs = DB::select([
+			'SELECT * FROM
+				(
 				SELECT
-					0 `is_changwat`
-					, `provid`
-					, NULL
-					, NULL
-					, NULL
-					, NULL
-					, `provid`
-					, `provname` `changwatName`
-				FROM %co_province%
-				WHERE `provname` LIKE :q
-				-- Select ampur
-			UNION
-				SELECT
-					1 `is_ampur`
-					, `distid`
-					, NULL
-					, NULL
-					, `distid`
-					, `distname` `ampurName`
-					, `provid`
-					, `provname` `changwatName`
-				FROM %co_district% co
-					LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(co.`distid`,2)
-				WHERE `distname` LIKE :q AND RIGHT(`distname`,1) != "*"
-			-- Select all tambon in ampur
-			UNION
-				SELECT
-					3 `is_tambon`
-					, `subdistid`
+					2 `is_tambon`
+					, `subdistid` `areacode`
 					, SUBSTRING(`subdistid`, 5, 2) `tambonId`
 					, `subdistname` `tambonName`
 					, SUBSTRING(`distid`, 3, 2) `ampurId`
@@ -110,19 +70,63 @@ class AddressApi extends PageApi {
 				FROM %co_subdistrict% co
 					LEFT JOIN %co_district% cod ON cod.`distid` = LEFT(co.`subdistid`,4)
 					LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(co.`subdistid`,2)
-				WHERE (`distname` LIKE :q  AND RIGHT(`distname`,1) != "*")
-			) a
-			GROUP BY `areacode`
-			ORDER BY
-				`is_tambon` ASC
-				, CONVERT(`changwatName` USING tis620) ASC
-				, CONVERT(`ampurName` USING tis620) ASC
-				, CONVERT(`tambonName` USING tis620) ASC
-			$LIMIT$;
-			-- {key: "areacode"}
-			';
-
-		$dbs = mydb::select($stmt,':q','%'.$searchText.'%');
+				WHERE `subdistname` LIKE :q AND RIGHT(`subdistname`,1) != "*"
+				-- Select changwat
+				UNION
+					SELECT
+						0 `is_changwat`
+						, `provid`
+						, NULL
+						, NULL
+						, NULL
+						, NULL
+						, `provid`
+						, `provname` `changwatName`
+					FROM %co_province%
+					WHERE `provname` LIKE :q
+					-- Select ampur
+				UNION
+					SELECT
+						1 `is_ampur`
+						, `distid`
+						, NULL
+						, NULL
+						, `distid`
+						, `distname` `ampurName`
+						, `provid`
+						, `provname` `changwatName`
+					FROM %co_district% co
+						LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(co.`distid`,2)
+					WHERE `distname` LIKE :q AND RIGHT(`distname`,1) != "*"
+				-- Select all tambon in ampur
+				UNION
+					SELECT
+						3 `is_tambon`
+						, `subdistid`
+						, SUBSTRING(`subdistid`, 5, 2) `tambonId`
+						, `subdistname` `tambonName`
+						, SUBSTRING(`distid`, 3, 2) `ampurId`
+						, `distname` `ampurName`
+						, `provid` `changwatId`
+						, `provname` `changwatName`
+					FROM %co_subdistrict% co
+						LEFT JOIN %co_district% cod ON cod.`distid` = LEFT(co.`subdistid`,4)
+						LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(co.`subdistid`,2)
+					WHERE (`distname` LIKE :q  AND RIGHT(`distname`,1) != "*")
+				) a
+				GROUP BY `areacode`
+				ORDER BY
+					`is_tambon` ASC
+					, CONVERT(`changwatName` USING tis620) ASC
+					, CONVERT(`ampurName` USING tis620) ASC
+					, CONVERT(`tambonName` USING tis620) ASC
+				$LIMIT$',
+			'var' => [
+				':q' => '%'.$searchText.'%',
+				'$LIMIT$' => 'LIMIT '.($this->page-1).','.$this->items
+			],
+			'options' => ['key' => 'areacode']
+		]);
 
 		// debugMsg('<pre>'.R('query').'</pre>');
 		// debugMsg($address,'$address');
