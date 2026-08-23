@@ -3,8 +3,8 @@
  * Widget   :: Inline comment Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2012-09-03
- * Modified :: 2026-07-29
- * Version  :: 2
+ * Modified :: 2026-08-23
+ * Version  :: 3
  *
  * @param Array $args
  * @param Argument list in many format
@@ -31,9 +31,19 @@
  * @example <div class="widget Content" id="id1" data-limit="20" show-style-type="div" data-footer="By SoftGanz" data-sort="ASC"></div>
  */
 
+ use Softganz\DB;
+
 function widget_comment() {
-	$comments=mydb::select('SELECT tpid,title,last_reply,UNIX_TIMESTAMP(last_reply) AS replytime FROM `sgz_topic` t WHERE t.status='._PUBLISH.' ORDER BY last_reply DESC LIMIT 10');
-	$ret.=view::content_list($comments,'list-style=shortview','list-style-value=" <span class=\"timestamp\">".sg_remain2day('.date('H:i:s').'-$replytime)."</span>"','url=paper/$tpid/page/last');
+	$comments = DB::select([
+		'SELECT `tpid`, `title`, `last_reply`, UNIX_TIMESTAMP(`last_reply`) AS `replytime`
+		FROM %topic% t
+		WHERE t.`status` = :status
+		ORDER BY last_reply DESC LIMIT 10',
+		'var' => [':status' => _PUBLISH]
+	]);
+
+	$ret .= view::content_list($comments,'list-style=shortview','list-style-value=" <span class=\"timestamp\">".sg_remain2day('.date('H:i:s').'-$replytime)."</span>"','url=paper/$tpid/page/last');
+
 	return array($ret,$para);
 }
 ?>
