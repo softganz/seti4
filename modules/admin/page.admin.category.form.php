@@ -1,15 +1,17 @@
 <?php
 /**
-* admin :: Category Form
-* Created 2020-12-22
-* Modify  2020-12-22
-*
-* @param Object $self
-* @param Int $tagId
-* @return String
-*
-* @usage admin/category/{id|*}/form
-*/
+ * admin    :: Category Form
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-12-22
+ * Modified :: 2020-12-22
+ * Version  :: 2
+ *
+ * @param Object $self
+ * @param Int $tagId
+ * @return String
+ *
+ * @uses admin/category/{id|*}/form
+ */
 
 $debug = true;
 
@@ -23,7 +25,10 @@ function admin_category_form($self, $tagInfo = NULL) {
 
 	$optionsParent = array(''=>'== Select Parent ==');
 	$stmt = 'SELECT * FROM %tag% WHERE `taggroup` = :taggroup AND `catparent` IS NULL AND `name` != ""';
-	foreach (mydb::select($stmt,':taggroup',$tagInfo->taggroup)->items as $v) {
+	foreach (DB::select([
+		'SELECT * FROM %tag% WHERE `taggroup` = :taggroup AND `catparent` IS NULL AND `name` != ""',
+		'var' => [':taggroup' => $tagInfo->taggroup]
+	])->items as $v) {
 		$optionsParent[$v->catid] = $v->name;
 	}
 	$optionsParent[$tagInfo->catparent] = '=== ไม่เปลี่ยนแปลง ===';
