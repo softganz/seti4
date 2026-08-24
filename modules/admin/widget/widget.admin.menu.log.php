@@ -1,14 +1,15 @@
 <?php
 /**
-* Admin   :: Log Menu
-* Created :: 2016-11-08
-* Modify  :: 2024-10-03
-* Version :: 3
-*
-* @return Widget
-*
-* @usage new AdminMenuLogWidget()
-*/
+ * Admin    :: Log Menu
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2016-11-08
+ * Modified :: 2026-08-24
+ * Version  :: 4
+ *
+ * @return Widget
+ *
+ * @uses new AdminMenuLogWidget()
+ */
 
 class AdminMenuLogWidget extends Widget {
 	function build() {
@@ -148,7 +149,7 @@ class AdminMenuLogWidget extends Widget {
 							'leading' => new Icon('format_list_bulleted'),
 							'trailing' => new Button([
 								'type' => 'secondary',
-								'href' => Url::link('watchdog'),
+								'href' => Url::link('watchdog/analysis..logs'),
 								'text' => 'Recent log entries',
 								'icon' => new Icon('arrow_circle_right'),
 								'iconPosition' => 'right'
@@ -166,7 +167,7 @@ class AdminMenuLogWidget extends Widget {
 							'leading' => new Icon('format_list_bulleted'),
 							'trailing' => new Button([
 								'type' => 'secondary',
-								'href' => Url::link('watchdog/list/keyword/access denied'),
+								'href' => Url::link('watchdog/analysis..logs', ['keyword' => 'access denied']),
 								'text' => 'View access denied',
 								'icon' => new Icon('arrow_circle_right'),
 								'iconPosition' => 'right'
@@ -184,7 +185,7 @@ class AdminMenuLogWidget extends Widget {
 							'leading' => new Icon('format_list_bulleted'),
 							'trailing' => new Button([
 								'type' => 'secondary',
-								'href' => Url::link('watchdog/list/keyword/page not found'),
+								'href' => Url::link('watchdog/analysis..logs', ['keyword' => 'page not found']),
 								'text' => 'Last "page not found" errors',
 								'icon' => new Icon('arrow_circle_right'),
 								'iconPosition' => 'right'
@@ -202,7 +203,7 @@ class AdminMenuLogWidget extends Widget {
 							'leading' => new Icon('format_list_bulleted'),
 							'trailing' => new Button([
 								'type' => 'secondary',
-								'href' => Url::link('watchdog/list/keyword/access denied'),
+								'href' => Url::link('watchdog/analysis..logs', ['keyword' => 'access denied']),
 								'text' => 'Top "access denied" errors',
 								'icon' => new Icon('arrow_circle_right'),
 								'iconPosition' => 'right'
@@ -220,7 +221,7 @@ class AdminMenuLogWidget extends Widget {
 							'leading' => new Icon('format_list_bulleted'),
 							'trailing' => new Button([
 								'type' => 'secondary',
-								'href' => Url::link('watchdog/list/keyword/page not found'),
+								'href' => Url::link('watchdog/analysis..logs', ['keyword' => 'page not found']),
 								'text' => 'Top "page not found" errors',
 								'icon' => new Icon('arrow_circle_right'),
 								'iconPosition' => 'right'

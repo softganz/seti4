@@ -15,8 +15,8 @@ function view_watchdog_listing($dbs) {
 				'<strong>'.$rs->keyword.'</strong>',
 				$rs->keyid,
 				$rs->fldname,
-				'<a href="'.url('watchdog/list/user/'.$rs->uid).'" title="Statistics of user '.$rs->username.'">'.$rs->username.'</a>',
-				'<a href="'.url('watchdog/list/ip/'.long2ip($rs->ip)).'" title="Statistics of ip '.long2ip($rs->ip).'">'.long2ip($rs->ip).'</a>'
+				'<a href="'.url('watchdog/analysis..logs', ['user' => $rs->uid]).'" title="Statistics of user '.$rs->username.'">'.$rs->username.'</a>',
+				'<a href="'.url('watchdog/analysis..logs', ['ip' => long2ip($rs->ip)]).'" title="Statistics of ip '.long2ip($rs->ip).'">'.long2ip($rs->ip).'</a>'
 				.$menu,
 				'config'=>array('class'=>'-detail -detail-'.$rs->wid)
 			);
