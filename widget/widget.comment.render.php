@@ -3,13 +3,15 @@
  * Widget   :: Render Comment
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-04-06
- * Modified :: 2026-07-29
- * Version  :: 4
+ * Modified :: 2026-08-24
+ * Version  :: 5
  *
  * @param Array $args
  *
  * @uses new CommentRenderWidget([])
  */
+
+use Softganz\DB;
 
 class CommentRenderWidget extends Widget {
 	var $node;
@@ -35,7 +37,10 @@ class CommentRenderWidget extends Widget {
 		} else {
 			$page = \SG\getFirst($options->commentPage,2);
 			$page_items = SG\getFirst(cfg('comment.items'),20);
-			$comment_count = mydb::select('SELECT COUNT(*) `amt` FROM %'.($archive?'archive_topic_comments':'topic_comments').'% WHERE `tpid`=:tpid LIMIT 1',':tpid',$tpid)->amt;
+			$comment_count = DB::select([
+				'SELECT COUNT(*) `amt` FROM %'.($archive?'archive_topic_comments':'topic_comments').'% WHERE `tpid` = :tpid LIMIT 1',
+				'var' => [':tpid' => $tpid]
+			])->amt;
 			$page_count=ceil($comment_count/$page_items);
 			if (!isset($options->commentPage) && cfg('comment.page')=='first') {
 				$page=1;
@@ -57,7 +62,7 @@ class CommentRenderWidget extends Widget {
 			}
 			$page_start_item=$page_items*($page-1);
 
-			$result = mydb::select(
+			$result = DB::select([
 				'SELECT
 				c.* , u.`name` as ownername , u.`username`
 				, GROUP_CONCAT(DISTINCT p.`file`) photos
@@ -66,14 +71,19 @@ class CommentRenderWidget extends Widget {
 					LEFT JOIN %users% as u ON c.uid=u.uid
 					LEFT JOIN %'.($archive?'archive_topic_files':'topic_files').'% p ON p.tpid=c.tpid AND p.cid=c.cid AND p.`type`="photo"
 					LEFT JOIN %'.($archive?'archive_topic_files':'topic_files').'% d ON d.tpid=c.tpid AND d.cid=c.cid AND d.`type`="doc"
-				WHERE c.tpid='.$tpid.($thread?' AND c.`thread`="'.addslashes($thread).'"':'').'
+				%WHERE%
 				GROUP BY cid
 				ORDER BY c.cid '.cfg('comment.order').'
-				LIMIT '.$page_start_item.','.$page_items
-			);
+				LIMIT '.$page_start_item.','.$page_items,
+				'%WHERE%' => [
+					['c.tpid = :tpid', ':tpid' => $tpid],
+					$thread ? ['c.`thread` = :thread', ':thread' => $thread] : null
+				]
+			]);
 		}
 
-		if ($result->_empty) return;
+		if (empty($result->count)) return;
+
 		$src_url = url('paper/'.$topic->tpid);
 
 		if ($header) $ret.=$header;
@@ -93,7 +103,7 @@ class CommentRenderWidget extends Widget {
 		}
 		if ($topic->property->option->ads && isset($GLOBALS['ad']->comment_before)) $ret.='<div id="ad-comment_before" class="ads">'.$GLOBALS['ad']->comment_before.'</div>';
 
-		$no=cfg('comment.order')=='ASC'?0:$result->_num_rows+1;
+		$no = cfg('comment.order') === 'ASC' ? 0 : $result->count + 1;
 
 		foreach ($result->items as $rs) {
 			if (cfg('comment.order')=='ASC') $no++; else $no--;
