@@ -3,8 +3,8 @@
  * Widget   :: Inline Ad Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2011-11-04
- * Modified :: 2026-07-29
- * Version  :: 2
+ * Modified :: 2026-08-24
+ * Version  :: 3
  *
  * @param Array $args
  * @param String $para
@@ -16,6 +16,9 @@
  * @uses <div class="widget Ads" id="ad-baner" data-loc="banner" data-items="1" data-order="aid" data-sort="ASC"></div>
  */
 
+use Softganz\DB;
+use Softganz\SetDataModel;
+
 function widget_ads() {
 	$para=$para=para(func_get_args(),'data-header=Ad','data-items=1','data-order=weight ASC, aid','data-sort=DESC','option-header=0');
 	$location=$para->{'data-loc'};
@@ -23,16 +26,27 @@ function widget_ads() {
 
 	$today = date('Y-m-d H:i:s');
 
-	$stmt = 'SELECT * FROM `sgz_ad`
-					WHERE `location` = :location AND `active` = "yes"
-						AND (`start` <= :start AND `stop` >= :stop)
-		ORDER BY '.$para->{'data-order'}.' '.$para->{'data-sort'};
+	$ad_id = [];
 
-	$result = mydb::select($stmt,':location',$location,':start',$today,':stop',$today)->items;
+	$result = DB::select([
+		'SELECT * FROM %ad%
+		WHERE `location` = :location AND `active` = "yes"
+			AND (`start` <= :start AND `stop` >= :stop)
+		ORDER BY $ORDER$ $SORT$',
+		'var' => [
+			':location' => $location,
+			':start' => $today,
+			':stop' => $today,
+			'$ORDER$' => $para->{'data-order'},
+			'$SORT$' => $para->{'data-sort'}
+		]
+	])->items;
 
 	if (!$result) {
-		$stmt = 'SELECT * FROM `sgz_ad` WHERE `location` = :location AND `default`="yes" ';
-		$result = mydb::select($stmt,':location',$location)->items;
+		$result = DB::select([
+			'SELECT * FROM %ad% WHERE `location` = :location AND `default` = "yes"',
+			'var' => [':location' => $location]
+		])->items;
 	}
 
 	srand((float) microtime() * 10000000);
@@ -59,8 +73,13 @@ function widget_ads() {
 			$ret .= '</li>'._NL;
 		}
 		$ret .= '</ul>'._NL;
-		mydb::query('UPDATE sgz_ad SET views=views+1 WHERE aid in ('.implode(',',$ad_id).')');
+
+		DB::query([
+			'UPDATE %ad% SET `views` = `views` + 1 WHERE `aid` IN ( :ads )',
+			'var' => [':ads' => new SetDataModel($ad_id)]
+		]);
 	}
-	return array($ret,$para);
+
+	return [$ret, $para];
 }
 ?>
