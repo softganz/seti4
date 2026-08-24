@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2011-11-04
  * Modified :: 2026-08-24
- * Version  :: 3
+ * Version  :: 4
  *
  * @param String $para
  * 	data-header=Header
@@ -20,13 +20,17 @@ function widget_stat($funcName = NULL, $para = NULL) {
 	$today = date('Y-m-d');
 	$yesterday = date('Y-m-d', strtotime( '-1 days' ) );
 
-	$dbs = DB::select([
-		'SELECT log_date,hits,users FROM %counter_day% WHERE log_date IN (:yesterday, :today)',
-		'var' => [
-			':yesterday' => $yesterday,
-			':today',$today
-		]
-	]);
+	try {
+		$dbs = DB::select([
+			'SELECT `log_date`, `hits`, `users` FROM %counter_day% WHERE `log_date` IN ( :yesterday, :today )',
+			'var' => [
+				':yesterday' => $yesterday,
+				':today' => $today
+			],
+		]);
+	} catch (\Exception $exception) {
+		return ['', $para];
+	}
 
 	$today_hits = $yesterday_hits = null;
 	foreach ($dbs->items as $rs) {
@@ -48,6 +52,6 @@ function widget_stat($funcName = NULL, $para = NULL) {
 		. 'Since '.sg_date($counter->created_date,'M,d Y')
 		. '.</span><!--stat-->';
 
-	return array($ret,$para);
+	return [$ret, $para];
 }
 ?>
