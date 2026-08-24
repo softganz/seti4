@@ -1,17 +1,18 @@
 <?php
 /**
-* Node    :: Review Form
-* Created :: 2021-09-30
-* Modify  :: 2023-07-26
-* Version :: 2
-*
-* @param Object $nodeInfo
-* @return Widget
-*
-* @usage node/{nodeId}/review
-*/
+ * Node     :: Review Form
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-09-30
+ * Modified :: 2026-08-24
+ * Version  :: 3
+ *
+ * @param Object $nodeInfo
+ * @return Widget
+ *
+ * @uses node/{nodeId}/review
+ */
 
-$debug = true;
+use Softganz\DB;
 
 class NodeReview extends Page {
 	var $nodeId;
@@ -22,12 +23,32 @@ class NodeReview extends Page {
 		$this->nodeInfo = $nodeInfo;
 	}
 
-	function build() {
+	/**
+	 * Right to build
+	 *
+	 * @return object|boolean
+	 */
+	function rightToBuild(): object|bool {
 		if (!i()->ok) return message('status', 'สำหรับสมาชิกเท่านั้น');
 
-		$stmt = 'SELECT * FROM %topic_comments% WHERE `tpid` = :tpid AND `uid` = :uid AND `subject` = "REVIEW" LIMIT 1';
-		$reviewInfo = mydb::select($stmt, ':tpid', $this->nodeId, ':uid', i()->uid);
-		// debugMsg($reviewInfo);
+		return true;
+	}
+
+	/**
+	 * Build page
+	 *
+	 * @return object
+	 */
+	#[\Override]
+	function build(): object {
+		$reviewInfo = DB::select([
+			'SELECT `cid`, `giverating`, `comment`
+			FROM %topic_comments% WHERE `tpid` = :tpid AND `uid` = :uid AND `subject` = "REVIEW" LIMIT 1',
+			'var' => [
+				':tpid' => $this->nodeId,
+				':uid' => i()->uid
+			]
+		]);
 
 		return new Scaffold([
 			'appBar' => new AppBar([
@@ -73,14 +94,13 @@ class NodeReview extends Page {
 							]
 						], // children
 					]), // Form
-					// new DebugMsg($nodeInfo, '$nodeInfo'),
-					$this->_script(),
+					$this->script(),
 				],
 			]),
 		]);
 	}
 
-	function _script() {
+	private function script() {
 		return '<style type="text/css">
 		.rating-star .icon.-material {width: 40px; height: 40px; color: #ccc; font-size: 40px; margin: 0;}
 		.rating-star:hover .icon.-material {color: red;}
