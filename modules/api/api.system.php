@@ -1,17 +1,18 @@
 <?php
 /**
-* System  :: System API
-* Created :: 2022-10-14
-* Modify  :: 2026-06-22
-* Version :: 5
-*
-* @param Int $mainId
-* @param String $action
-* @param Int $tranId
-* @return String
-*
-* @usage api/system/{action}[/{tranId}]
-*/
+ * System   :: System API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-10-14
+ * Modified :: 2026-08-24
+ * Version  :: 6
+ *
+ * @param Int $mainId
+ * @param String $action
+ * @param Int $tranId
+ * @return String
+ *
+ * @uses api/system/{action}[/{tranId}]
+ */
 
 use Softganz\DB;
 
@@ -52,6 +53,21 @@ class SystemApi extends PageApi {
 
 	function date() {
 		return date('Y-m-d H:i:s');
+	}
+
+	function watchdogDelete() {
+		$watchdogId = Request::all('id');
+
+		if (!$this->right->admin) return apiError(_HTTP_ERROR_NOT_ALLOWED, _ERROR_MSG_ACCESS_DENIED);
+		if (empty($watchdogId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุ ID');
+		if (!\SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ยืนยัน');
+
+		DB::query([
+			'DELETE FROM %watchdog% WHERE `wid` = :watchdogId LIMIT 1',
+			'var' => [':watchdogId' => $watchdogId]
+		]);
+
+		return apiSuccess('Watchdog deleted');
 	}
 }
 ?>
