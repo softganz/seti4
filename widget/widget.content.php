@@ -3,8 +3,8 @@
  * Widget   :: Inline content Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2011-11-04
- * Modified :: 2026-07-29
- * Version  :: 2
+ * Modified :: 2026-08-24
+ * Version  :: 3
  *
  * @param Array $args
  * @param Argument list in many format
@@ -125,15 +125,6 @@ function widget_content() {
 		];
 		$topics = PaperModel::$model($conditions);
 	}
-	// debugMsg('$model = '.$model);
-	// debugMsg($para, '$para');
-	// debugMsg($topics->_query);
-	// debugMsg($conditions, '$conditions');
-	// debugMsg($topics,'$topics');
-
-	// if ($topics->_type == 'record') $topics = mydb::convert_record_to_recordset($topics);
-	// if ($topics->_empty) return;
-	// debugMsg($topics,'$topics');
 
 	if (is_string($para->{'show-style'})) $pattern=$patterns->{$para->{'show-style'}};
 	else if (is_object($para->{'show-style'})) $pattern=$para->{'show-style'};
