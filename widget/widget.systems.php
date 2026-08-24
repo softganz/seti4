@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-08-13
- * Version  :: 88
+ * Modified :: 2026-08-24
+ * Version  :: 89
  *
  * @param Array $args
  *
@@ -730,6 +730,7 @@ class SideBar extends Widget {
 	public $widgetName = 'SideBar';
 	public $version = '0.0.01';
 	public $tagName = 'aside';
+	public $type; // null, wide
 
 	function __construct($args = []) {
 		parent::__construct($args);
