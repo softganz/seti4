@@ -1,16 +1,19 @@
 <?php
 /**
-* Module  :: Page Controller
-* Created :: 2022-10-20
-* Modify  :: 2022-10-20
-* Version :: 1
-*
-* @param Int $issueId
-* @param String $action
-* @return Widget
-*
-* @usage module[/{id}/{action}/{tranId}]
-*/
+ * System   :: Sysem Issue Page Controller
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-10-20
+ * Modified :: 2028-08-24
+ * Version  :: 2
+ *
+ * @param Int $issueId
+ * @param String $action
+ * @return Widget
+ *
+ * @uses module[/{id}/{action}/{tranId}]
+ */
+
+use Softganz\DB;
 
 class SystemIssue extends PageController {
 	var $issueId;
@@ -27,26 +30,14 @@ class SystemIssue extends PageController {
 		]);
 	}
 
-	function build() {
-		// debugMsg('Id '.$this->issueId.' Action = '.$this->action.' TranId = '.$this->tranId);
-
-		// $isAccess = $issueInfo->RIGHT & _IS_ACCESS;
-
-		// if (!$isAccess) {
-		// return new ErrorMessage(['responseCode' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'access denied']);
-		// }
-
-		return parent::build();
-	}
-
 	public function getIssue($issueId) {
-		return mydb::clearProp(mydb::select(
+		return DB::select([
 			'SELECT *
 			FROM %system_issue%
 			WHERE `issueId` = :issueId
 			LIMIT 1',
-			[':issueId' => $issueId]
-		));
+			'var' => [':issueId' => $issueId]
+		]);
 	}
 }
 ?>
