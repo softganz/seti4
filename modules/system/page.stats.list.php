@@ -3,8 +3,8 @@
  * Stats    :: List Counter Log
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2018-12-15
- * Modified :: 2026-06-27
- * Version  :: 8
+ * Modified :: 2026-08-24
+ * Version  :: 9
  *
  * @return Widget
  *
@@ -142,79 +142,6 @@ class StatsList extends Page {
 				'$SUBORDER$' => $hasPara ? 'DESC' : 'ASC',
 			],
 		]);
-
-
-
-		// Unused code
-		// $isEmptyPara = !$this->ip && !$this->user && !$this->date;
-
-		// if ($this->ip) mydb::where('l.`ip` = :ip',':ip',ip2long($this->ip));
-		// if ($this->user) mydb::where('l.`user` = :user',':user',$this->user);
-		// if ($this->date) mydb::where('DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date',':date',$this->date);
-		// if (!$this->includeBot) mydb::where('l.`referer` NOT LIKE "%bot%"');
-
-		// if ($isEmptyPara) {
-		// 	$rs = mydb::select('SELECT MIN(`id`) `minid`, MAX(`id`) `maxid` FROM %counter_log% LIMIT 1; -- {reset: false}');
-		// 	$minId = $rs->minid;
-		// 	$maxId = $rs->maxid;
-
-		// 	//if ($isEmptyPara) {
-		// 		$startId = $maxId - ($this->page * $this->items) + 1;
-		// 		mydb::where('l.`id` >= :id', ':id', $startId);
-		// 		mydb::value('$LIMIT$', 'LIMIT '.$this->items);
-		// 	//} else {
-		// 	//	$minId = \SG\getFirst($getEid,$rs->minid);
-		// 	//	$startId = $minId + (($this->page - 1) * $this->items);
-		// 	//	mydb::value('$LIMIT$', 'LIMIT '.$this->items);
-		// 	//}
-
-		// 	//$ret .= 'Min id = '.$minId.' Max id = '.$maxId.' Srart id = '.$startId.'<br />';
-
-		// 	// FAST Query but bug on condition, cannot get all found rows
-		// 	$dbs = mydb::select(
-		// 		'SELECT log.*, u.`name` `user_name`
-		// 		FROM
-		// 		(
-		// 			SELECT *
-		// 			FROM %counter_log% l
-		// 			%WHERE%
-		// 			ORDER BY l.`id` ASC
-		// 			$LIMIT$
-		// 		) AS log
-		// 		LEFT JOIN %users% AS u ON log.`user` = u.`uid`
-		// 		ORDER BY `id` DESC;
-		// 		-- {key: "id"}
-		// 		'
-		// 	);
-
-		// 	//if ($isEmptyPara) {
-		// 	//	$totalItems = $maxId - $minId;
-		// 	//} else {
-		// 		//$totalItems = $dbs->count() < $this->items ? $this->page*$this->items :  $maxId - $minId;
-		// 	//}
-		// 	$pagePara['eid'] = end($dbs->items)->id;
-		// } else {
-		// 	$start = ($this->page - 1) * $this->items;
-		// 	mydb::value('$LIMIT$', 'LIMIT '.$start.','.$this->items);
-
-		// 	$dbs = mydb::select(
-		// 		'SELECT
-		// 		log.*
-		// 		, u.`name` `user_name`
-		// 		FROM
-		// 		(SELECT
-		// 			l.*
-		// 			FROM %counter_log% AS l
-		// 			%WHERE%
-		// 			ORDER BY l.`id` DESC
-		// 			$LIMIT$
-		// 		) log
-		// 			LEFT JOIN %users% AS u ON log.`user` = u.`uid`'
-		// 	);
-		// }
-		// // debugMsg(R('query'));
-
-		// return $dbs;
 	}
 }
 ?>
