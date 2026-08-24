@@ -3,22 +3,25 @@
  * Widget   :: Inline Project Action Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2013-06-17
- * Modified :: 2026-07-29
- * Version  :: 2
+ * Modified :: 2026-08-24
+ * Version  :: 3
  *
  * @param Argument list in many format
  *
- * @param Integer data-limit					Default = 5
+ * @param Integer data-limit							Default = 5
  * @param String data-show-style					Value = ul					Default = ul
- * @param String sdata-how-readall					Format = text:url , 	Example show-readall=text:url
- * @param String data-show-dateformat		Value = d-m-Y H:i		Default = config date format
- * @param Integer data-show-photo-width			Default = 100
- * @param Integer data-show-photo-height			Default = 80
+ * @param String sdata-how-readall				Format = text:url , 	Example show-readall=text:url
+ * @param String data-show-dateformat			Value = d-m-Y H:i		Default = config date format
+ * @param Integer data-show-photo-width		Default = 100
+ * @param Integer data-show-photo-height	Default = 80
  *
  * @return String $ret
  * @uses widget::content(['para1=value1'[,[para2=value2][para3,value3]...)
  * @example <div class="widget project" data-limit="20" data-header="Project Activities" data-footer="By SoftGanz"></div>
  */
+
+use Softganz\DB;
+use Softganz\SetDataModel;
 
 function widget_project() {
 	$para = para(func_get_args(),'data-limit=5','data-show-style=ul','data-show-photo-width=100','data-show-photo-height=80');
@@ -27,59 +30,48 @@ function widget_project() {
 	$projectId = \SG\getFirst($para->{'data-projectId'}, $para->{'data-projectid'});
 	$projectSet = \SG\getFirst($para->{'data-set'});
 
-	mydb::where('tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")');
-	mydb::where('t.`status` IN ( :status )', ':status', [_PUBLISH, _LOCK]);
-	// mydb::where('(t.`status` = :publish OR t.`status` = :lock)', ':publish', _PUBLISH, ':lock', _LOCK);
-
-	if ($projectId) {
-		// mydb::where('p.`tpid` IN ( :projectId )', ':projectId', 'SET:'.$projectId);
-		mydb::where('tr.`tpid` IN ( :projectId )', ':projectId', 'SET:'.$projectId);
+	try {
+		$dbs = DB::select([
+			'SELECT
+			action.`trid`, action.`calid`, action.`tpid`
+			, p.`projectset`, t.`title`
+			, c.`title` `actionTitle`
+			, action.`gallery`
+			, action.`outputOutcome`, action.`actionDetail`
+			, action.`created`
+			, GROUP_CONCAT(DISTINCT f.`file`) photos
+			FROM (
+				SELECT tr.*
+					, tr.`text4` `outputOutcome`, tr.`text2` `actionDetail`
+				FROM %project_tr% tr
+					LEFT JOIN %topic% t ON t.`tpid` = tr.`tpid`
+				%WHERE%
+				ORDER BY tr.`trid` DESC
+				::LIMIT::
+			) `action`
+				LEFT JOIN %topic% t ON t.`tpid` = action.`tpid`
+				LEFT JOIN %project% p ON p.`tpid` = t.`tpid`
+				LEFT JOIN %calendar% c ON c.`tpid` = action.`tpid` AND c.`id` = action.`calid`
+				LEFT JOIN %topic_files% f ON f.`tpid` = action.`tpid`
+					AND f.`gallery` = action.`gallery` AND f.`type` = "photo"
+					AND (f.`tagname` IS NULL OR f.`tagname` LIKE "project,action")
+			GROUP BY `trid`
+			ORDER BY `trid` DESC',
+			'%WHERE%' => [
+				['tr.`formid` = "activity" AND tr.`part` IN ("owner","trainer")'],
+				['t.`status` IN ( :status )', ':status' => new SetDataModel([_PUBLISH, _LOCK])],
+				$projectId ? ['tr.`tpid` IN ( :projectId )', ':projectId' => new SetDataModel($projectId)] : null,
+				$projectSet ? ['t.`parent` IN ( :projectset )', ':projectset' => new SetDataModel($projectSet)] : null,
+			],
+			'var' => [
+				'::LIMIT::' => 'LIMIT '.$para->{"data-limit"}
+			]
+		]);
+	} catch (\Exception $exception) {
+		return ['', $para];
 	}
 
-	if ($projectSet) {
-		// mydb::where('(p.`projectset` IN ( :projectset ) OR t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$projectSet);
-		mydb::where('(t.`parent` IN ( :projectset ))', ':projectset', 'SET:'.$projectSet);
-	}
-
-	mydb::value('$LIMIT$', 'LIMIT '.$para->{"data-limit"});
-
-	$dbs = mydb::select(
-		'SELECT
-		action.`trid`, action.`calid`, action.`tpid`
-		, p.`projectset`, t.`title`
-		, c.`title` `actionTitle`
-		, action.`gallery`
-		, action.`outputOutcome`, action.`actionDetail`
-		, action.`created`
-		, GROUP_CONCAT(DISTINCT f.`file`) photos
-		FROM (
-			SELECT tr.*
-				, tr.`text4` `outputOutcome`, tr.`text2` `actionDetail`
-			FROM %project_tr% tr
-				LEFT JOIN %topic% t ON t.`tpid` = tr.`tpid`
-			%WHERE%
-			ORDER BY tr.`trid` DESC
-			$LIMIT$
-		) `action`
-			LEFT JOIN %topic% t ON t.`tpid` = action.`tpid`
-			LEFT JOIN %project% p ON p.`tpid` = t.`tpid`
-			LEFT JOIN %calendar% c ON c.`tpid` = action.`tpid` AND c.`id` = action.`calid`
-			LEFT JOIN %topic_files% f ON f.`tpid` = action.`tpid`
-				AND f.`gallery` = action.`gallery` AND f.`type` = "photo"
-				AND (f.`tagname` IS NULL OR f.`tagname` LIKE "project,action")
-		GROUP BY `trid`
-		ORDER BY `trid` DESC
-		'
-	);
-	// if (i()->username == 'softganz') {
-		// debugMsg($para, '$para');
-		// debugMsg(R('query'));
-		// debugMsg($dbs, '$dbs');
-	// }
-
-	// return [$para->{"data-limit"}, $para];
-
-	if ($dbs->_empty) return [$ret,$para];
+	if (empty($dbs->count)) return ['', $para];
 
 	$tagName = $para->{'data-show-style'};
 
