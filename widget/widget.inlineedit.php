@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-08-10
- * Version  :: 37
+ * Modified :: 2026-08-24
+ * Version  :: 38
  *
  * @param Array $args
  *
@@ -38,6 +38,11 @@ class InlineEdit extends Widget {
 		if ($this->editMode && $this->action) $this->attribute['data-action'] = $this->action;
 	}
 
+	/**
+	 * Init widget
+	 *
+	 * @return void
+	 */
 	#[\Override]
 	protected function initWidget() {
 		parent::initWidget();
@@ -47,16 +52,24 @@ class InlineEdit extends Widget {
 		unset($this->childContainer, $this->attributeText, $this->config);
 	}
 
-	// @override
-	protected function renderChildContainerStart($key, $attributes = [], $child = []) {
-		if (!is_array($child)) return;
+	/**
+	 * Render child container start
+	 *
+	 * @param [type] $key
+	 * @param array $attributes
+	 * @param array $child
+	 * @return string
+	 */
+	#[\Override]
+	protected function renderChildContainerStart($key, $attributes = [], $child = []): string {
+		if (!is_array($child)) return '';
 
 		if (isset($child['widget'])) $child['type'] = 'widget';
 		else if (isset($child['method'])) $child['type'] = 'method';
 
 		if (in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])) {
 			$parts = ['<span '];
-			if ($child['id']) $parts[] = 'id="' . $child['class'] . '" ';
+			if ($child['id']) $parts[] = 'id="' . $child['id'] . '" '; // or fallback to $child['class']
 			$parts[] = 'class="' . ($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName);
 			$parts[] = ' -type-' . self::camelToDash($child['type']);
 			if ($child['class']) $parts[] = ' ' . $child['class'];
@@ -99,7 +112,7 @@ class InlineEdit extends Widget {
 
 		$attributes['data-options'] = (Array) $options;
 
-		$childAttribute = $child['attribute'];
+		$childAttribute = $child['attribute'] ?? [];
 
 		unset(
 			$child['id'], $child['class'],
@@ -125,9 +138,16 @@ class InlineEdit extends Widget {
 		return parent::renderChildContainerStart($key, $attributes, $child) . _NL;
 	}
 
-	// @override
-	protected function renderChildContainerEnd($child = [], $key = NULL) {
-		if (!is_array($child)) return;
+	/**
+	 * Render child container end
+	 *
+	 * @param array $child
+	 * @param [type] $key
+	 * @return string
+	 */
+	#[\Override]
+	protected function renderChildContainerEnd($child = [], $key = NULL): string {
+		if (!is_array($child)) return '';
 
 		if (isset($child['widget']) || isset($child['method']) || in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])) {
 			return '</span>';
@@ -199,7 +219,7 @@ class InlineEdit extends Widget {
 	protected function renderLabel($widget, $postfix = '') {
 		if (empty($widget->label)) return;
 
-		$opts = $widget->options;
+		$opts = $widget->options ?? (object) [];
 		$parts = ['<label class="-label'];
 		if ($widget->labelClass) $parts[] = ' ' . $widget->labelClass;
 		$parts[] = '"';
@@ -307,9 +327,11 @@ class InlineEdit extends Widget {
 				$choiceText = $choiceText->text;
 			}
 
-			$isCheck = $valueIsArray
-				? in_array($key, $widgetValue)
-				: $key == substr($widgetValue, 0, $widget->options->valueLength ?? null);
+			$isCheck = $this->isChoiceChecked(
+				$key,
+				$widgetValue,
+				isset($widget->options->valueLength) ? (int) $widget->options->valueLength : null
+			);
 
 			$parts[] = '<abbr class="' . $type . ' -block">'
 				. '<label>'
@@ -326,7 +348,32 @@ class InlineEdit extends Widget {
 		return implode('', $parts);
 	}
 
-	protected function renderTypeRadio($widget) {
+	/**
+	 * Is Choice was checked
+	 *
+	 * @param [type] $choiceKey
+	 * @param [type] $widgetValue
+	 * @param integer|null $valueLength
+	 * @return boolean
+	 */
+	private function isChoiceChecked($choiceKey, $widgetValue, ?int $valueLength = null): bool {
+		if (is_array($widgetValue)) {
+			return in_array((string) $choiceKey, array_map('strval', $widgetValue), true);
+		}
+
+		$widgetValue = (string) ($widgetValue ?? '');
+		$compareLength = $valueLength ?? strlen($widgetValue);
+
+		return (string) $choiceKey === substr($widgetValue, 0, $compareLength);
+	}
+
+	/**
+	 * Render type radio
+	 *
+	 * @param object $widget
+	 * @return string
+	 */
+	protected function renderTypeRadio(object $widget): string {
 		$childEditMode = $this->editMode || $widget->editMode;
 		$items = $this->renderRadioItem($widget);
 
@@ -348,6 +395,7 @@ class InlineEdit extends Widget {
 		// $result = $this->renderRadioItem($widget);
 
 		$result = '';
+		// Render child with data
 		foreach ($widget->value as $childKey => $value) {
 			$result .= '<li>'
 				. '<div class="-list-item-menu"><a class="widget-button -link -delete-button sg-action" data-input-name="' . $inputName . '.' . $childKey . '" data-remove-on-empty="yes" data-rel="none" data-done="remove:parent li" data-title="ลบรายการ" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -material">cancel</i></a></div>';
@@ -368,6 +416,7 @@ class InlineEdit extends Widget {
 			$result .= '</li>';
 		}
 
+		// Render new input item with no data
 		$result .= '<li>'
 			. '<div class="widget-row -list-item-menu"><a class="widget-button -secondary -add-button"><i class="icon -material">add</i></a><a class="widget-button -link -delete-button sg-action" data-input-name="' . $inputName . '._' . date('U') . '" data-remove-on-empty="yes" data-rel="none" data-done="remove:parent li" data-title="ลบรายการ" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -material">cancel</i></a></div>';
 		foreach ($widget->items as $key => $child) {
@@ -397,20 +446,33 @@ class InlineEdit extends Widget {
 			;
 	}
 
-	protected function renderTypeWidget($widget) {
+	/**
+	 * Render type widget
+	 *
+	 * @param object $widget
+	 * @return string
+	 */
+	protected function renderTypeWidget(object $widget): string {
 		$ret = $this->renderLabel($widget);
 		$ret .= $this->renderEachChildWidget($widget->widget);
 
 		return $ret;
 	}
 
-	protected function renderTypeMethod($widget) {
+	/**
+	 * Render type method
+	 *
+	 * @param object $widget
+	 * @return string
+	 */
+	protected function renderTypeMethod($widget): string {
 		$ret = $this->renderLabel($widget);
 		$ret .= $this->renderEachChildWidget($widget->method);
 
 		return $ret;
 	}
 
+	// TODO: not used method, should delete
 	protected function renderNotField() {
 		$ret = '<span class="inline-edit-view -' . $this->type
 			. ($this->inputClass ? ' ' . $this->inputClass : '')
@@ -428,6 +490,13 @@ class InlineEdit extends Widget {
 		return $ret;
 	}
 
+	/**
+	 * Set text with format
+	 *
+	 * @param [type] $widget
+	 * @param [type] $text
+	 * @return void
+	 */
 	private function formatTextByDataType($widget, $text) {
 		if ((is_null($text) || $text === '') && $this->editMode) {
 			return '<span class="placeholder -no-print">'
@@ -446,7 +515,14 @@ class InlineEdit extends Widget {
 		};
 	}
 
-	private function formatDateText($widget, $text) {
+	/**
+	 * Set text with date format
+	 *
+	 * @param [type] $widget
+	 * @param [type] $text
+	 * @return string
+	 */
+	private function formatDateText($widget, $text): string {
 		$retFormat = 'ว ดดด ปปปป';
 		if (str_contains($widget->dataType, ':')) {
 			[, $retFormat] = explode(':', $widget->dataType, 2);
