@@ -1,18 +1,27 @@
 <?php
+use Softganz\DB;
+
 function module_paper_install() {
+	$queryResult = [];
 
-	$stmt = 'INSERT IGNORE INTO %topic_types%
-					(`type`,`name`,`module`,`has_title`,`title_label`,`has_body`,`body_label`,`custom`,`modified`,`locked`)
-						VALUES (
-							"page","Page",NULL,1,"Topic",1,"Body",1,1,0
-						)';
+	DB::query([
+		'INSERT IGNORE INTO %topic_types%
+		(
+			`type`, `name`, `module`, `has_title`, `title_label`, `has_body`, `body_label`, `custom`, `modified`, `locked`
+		)
+		VALUES
+		(
+			"page", "Page", NULL, 1, "Topic", 1, "Body", 1, 1, 0
+		)
+		ON DUPLICATE KEY UPDATE
+		`type` = "page"'
+	]);
 
-	mydb::query($stmt);
-	$queryResult[]=R('query');
+	$queryResult[] = R('query');
 
 
 	// create podcast content type
-	if (cfg('topic_options_page')==NULL) {
+	if (cfg('topic_options_page') === NULL) {
 		$topic_options = (Object) [
 			'publish' => 'publish',
 			'promote' => 0,
@@ -21,13 +30,14 @@ function module_paper_install() {
 		cfg_db('topic_options_page',$topic_options);
 	}
 
-	mydb::query(
+	DB::query([
 		'INSERT IGNORE INTO %topic_types%
 		(`type`,`name`,`module`,`has_title`,`title_label`,`has_body`,`body_label`,`custom`,`modified`,`locked`)
 		VALUES (
-			"story","Story",NULL,1,"Topic",1,"Body",1,1,0
+			"story", "Story", NULL, 1, "Topic", 1, "Body", 1, 1, 0
 		)'
-	);
+	]);
+
 	$queryResult[] = R('query');
 
 	if (cfg('topic_options_story') == NULL) {
