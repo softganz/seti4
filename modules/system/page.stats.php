@@ -1,14 +1,14 @@
 <?php
 /**
- * Stats   :: Main Page
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-02-13
- * Modify  :: 2026-05-21
- * Version :: 5
+ * Stats    :: Main Page
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-02-13
+ * Modified :: 2026-08-23
+ * Version  :: 6
  *
  * @return Widget
  *
- * @example stats
+ * @uses stats
  */
 
 class Stats extends Page {
@@ -100,7 +100,18 @@ class Stats extends Page {
 					'<div class="sg-load" data-url="' . Url::link('stats/hits/per/month') . '"></div>',
 				], // children
 			]), // Widget
+			'script' => $this->script()
 		]);
+	}
+
+	private function script() {
+		$ret .= '<style type="text/css">
+		.hits-item {margin: 0; padding: 0; height: 12px;}
+		.hits-item.-hit {background-color:#009900;}
+		.hits-item.-user {background-color:#99CC00;}
+		</style>';
+
+		return $ret;
 	}
 }
 ?>
