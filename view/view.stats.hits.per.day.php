@@ -1,4 +1,18 @@
 <?php
+/**
+ * Stats    :: Hits By Date Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 20xx-xx-xx
+ * Modified :: 2026-08-24
+ * Version  :: 2
+ *
+ * @param int $year
+ * @param int $month
+ * @return Object
+ *
+ * @uses new StatsSubWidgetl([])
+ */
+
 function view_stats_hits_per_day($year=null,$month=null) {
 	mydb::where('DATE_FORMAT(log_date,"%Y")=:year',':year',$year);
 	if ($month) mydb::where('DATE_FORMAT(log_date,"%m")=:month',':month',$month);
@@ -46,7 +60,14 @@ function view_stats_hits_per_day($year=null,$month=null) {
 					'<div class="hits-item -hit" style="width:'.$hit_width.'px;"></div><div class="hits-item -user" style="width:'.$user_width.'px;"></div>',
 					number_format($rs->hits),
 					number_format($rs->users),
-					'<a class="sg-action" href="'.url('stats/user/date/'.$rs->log_date).'" data-rel="box" data-width="480" data-height="480"><i class="icon -material">find_in_page</i></a>',
+					new Button([
+						'type' => 'link',
+						'class' => 'sg-action',
+						'href' => Url::link('stats/user/date/' . $rs->log_date),
+						'rel' => 'box',
+						'boxWidth' => 640,
+						'icon' => new Icon('groups')
+					])
 				];
 			},
 			$dbs->items
