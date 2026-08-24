@@ -3,13 +3,15 @@
  * Widget   :: Inline Statistic Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2011-11-04
- * Modified :: 2026-07-29
- * Version  :: 2
+ * Modified :: 2026-08-24
+ * Version  :: 3
  *
  * @param String $para
  * 	data-header=Header
  * @return String
  */
+
+use Softganz\DB;
 
 function widget_stat($funcName = NULL, $para = NULL) {
 	$isAccessStat = user_access('access statistic');
@@ -18,8 +20,13 @@ function widget_stat($funcName = NULL, $para = NULL) {
 	$today = date('Y-m-d');
 	$yesterday = date('Y-m-d', strtotime( '-1 days' ) );
 
-	$stmt  = 'SELECT log_date,hits,users FROM %counter_day% WHERE log_date IN (:yesterday, :today)';
-	$dbs = mydb::select($stmt,':yesterday',$yesterday,':today',$today);
+	$dbs = DB::select([
+		'SELECT log_date,hits,users FROM %counter_day% WHERE log_date IN (:yesterday, :today)',
+		'var' => [
+			':yesterday' => $yesterday,
+			':today',$today
+		]
+	]);
 
 	$today_hits = $yesterday_hits = null;
 	foreach ($dbs->items as $rs) {
