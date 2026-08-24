@@ -1,14 +1,14 @@
 <?php
 /**
- * Watchdog:: Analysis
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2020-01-01
- * Modify  :: 2025-12-21
- * Version :: 6
+ * Watchdog :: Analysis
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-01-01
+ * Modified :: 2026-08-24
+ * Version  :: 7
  *
  * @return Widget
  *
- * @usage watchdog/analysis
+ * @uses watchdog/analysis
  */
 
 use Softganz\DB;
@@ -18,6 +18,7 @@ class WatchdogAnalysis extends Page {
 	var $keyword;
 	var $userId;
 	var $keyId;
+	var $ip;
 	var $message;
 	var $delete;
 	var $days = 30;
@@ -30,6 +31,7 @@ class WatchdogAnalysis extends Page {
 			'keyword' => post('keyword'),
 			'userId' => post('user'),
 			'keyId' => Request::all('keyId'),
+			'ip' => Request::all('ip'),
 			'message' => post('message'),
 			'delete' => post('delete'),
 			'days' => SG\getFirst(post('d'), $this->days),
@@ -132,31 +134,22 @@ class WatchdogAnalysis extends Page {
 	function logs() {
 			$logs = DB::select([
 				'SELECT
-					`w`.`wid`, `w`.`date`, `w`.`module`, `w`.`keyword`, `w`.`message`
-					, `w`.`ip`, `w`.`keyid`, `w`.`fldname`, `w`.`url`, `w`.`referer`, `w`.`browser`
+					`watch`.`wid`, `watch`.`date`, `watch`.`module`, `watch`.`keyword`, `watch`.`message`
+					, `watch`.`ip`, `watch`.`keyid`, `watch`.`fldname`, `watch`.`url`, `watch`.`referer`, `watch`.`browser`
 					, `user`.`uid`, `user`.`username`
-				FROM %watchdog% `w`
-					-- FORCE INDEX (PRIMARY, module, keyword)
-					LEFT JOIN %users% `user` ON `w`.`uid` = `user`.`uid`
+				FROM %watchdog% AS `watch`
+					LEFT JOIN %users% AS `user` ON `watch`.`uid` = `user`.`uid`
 				%WHERE%
-				ORDER BY `w`.`wid` DESC
+				ORDER BY `watch`.`wid` DESC
 				LIMIT $ITEMS$',
-				'where' =>[
-					'%WHERE%' => [
-						// ['`w`.`wid` > (SELECT MAX(`wid`) - 10000 FROM %watchdog% %WHEREMAX%)'],
-						is_numeric($this->days) ? ['`w`.`date` >= :date', ':date' => date('Y-m-d 00:00:00', strtotime('today - '.$this->days.' days'))] : NULL,
-						$this->module ? ['`module` = :module', ':module' => $this->module] : NULL,
-						$this->keyword ? ['`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
-						$this->userId ? ['`uid` = :userId',':userId' => $this->userId] : NULL,
-						$this->keyId ? ['`keyId` = :keyId',':keyId' => $this->keyId] : NULL,
-						$this->message ? ['`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
-					],
-					// '%WHEREMAX%' => [
-					// 	$this->module ? ['`w`.`module` = :module', ':module' => $this->module] : NULL,
-					// 	$this->keyword ? ['`w`.`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
-					// 	$this->userId ? ['`w`.`uid` = :userId',':userId' => $this->userId] : NULL,
-					// 	$this->message ? ['`w`.`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
-					// ],
+				'%WHERE%' => [
+					is_numeric($this->days) ? ['`watch`.`date` >= :date', ':date' => date('Y-m-d 00:00:00', strtotime('today - '.$this->days.' days'))] : NULL,
+					$this->module ? ['`watch`.`module` = :module', ':module' => $this->module] : NULL,
+					$this->keyword ? ['`watch`.`keyword` = :keyword',':keyword' => $this->keyword] : NULL,
+					$this->userId ? ['`watch`.`uid` = :userId',':userId' => $this->userId] : NULL,
+					$this->keyId ? ['`watch`.`keyId` = :keyId',':keyId' => $this->keyId] : NULL,
+					$this->ip ? ['`watch`.`ip` = :ip',':ip' => ip2long($this->ip)] : NULL,
+					$this->message ? ['`watch`.`message` LIKE :message',':message' => '%'.$this->message.'%'] : NULL,
 				],
 				'var' => ['$ITEMS$' => $this->items]
 			]);
