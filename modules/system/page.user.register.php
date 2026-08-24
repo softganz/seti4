@@ -3,13 +3,15 @@
  * User    :: New User Register
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2024-02-14
- * Modify  :: 2026-05-01
- * Version :: 6
+ * Modify  :: 2026-08-24
+ * Version :: 7
  *
  * @return Widget
  *
  * @usage user/register
  */
+
+use Softganz\DB;
 
 class UserRegister extends Page {
 	var $confirm;
@@ -171,8 +173,12 @@ class UserRegister extends Page {
 
 			if (!preg_match($cfgUserRegister->usernameMatch,$this->register->username)) $errors['username'][] = 'ชื่อสมาชิก (Username) <strong><em>'.$this->register->username.'</em></strong> มีอักษรหรือความยาวไม่ตรงตามเงื่อนไข'; //-- check valid char
 
-			if (mydb::count_rows('%users%', '`username` = "'.mydb::escape($this->register->username).'"'))
+			if (DB::select([
+				'SELECT `uid` FROM %users% WHERE `username` = :username LIMIT 1',
+				'var' => [':username' => $this->register->username]
+			])->uid) {
 				$errors['username'][] = 'ชื่อสมาชิก (Username) <strong><em>'.$this->register->username.'</em></strong> มีผู้อื่นใช้ไปแล้ว'; //-- duplicate username
+			}
 		}
 
 		// Check password valid
@@ -187,16 +193,25 @@ class UserRegister extends Page {
 
 		if ($this->register->name == '') $errors['name'][] = 'กรุณาป้อน ชื่อสำหรับแสดง (Name)'; //-- fill name
 
-		if ( mydb::count_rows('%users%','name="'.mydb::escape($this->register->name).'"') ) $errors['name'][] = 'ชื่อ <strong><em>'.$this->register->name.'</em></strong> มีผู้อื่นใช้ไปแล้ว'; //-- duplicate name
+ 		// Check duplicate name
+		if (DB::SELECT([
+			'SELECT `uid` FROM %users% WHERE `name` = :name LIMIT 1',
+			'var' => [':name' => $this->register->name]
+		])->uid) {
+			$errors['name'][] = 'ชื่อ <strong><em>'.$this->register->name.'</em></strong> มีผู้อื่นใช้ไปแล้ว';
+		}
 
-		if ( $this->register->email == '') $errors['email'][] = 'กรุณาป้อน อีเมล์ (E-mail)'; //-- fill email
+		if ( $this->register->email === '') $errors['email'][] = 'กรุณาป้อน อีเมล์ (E-mail)'; //-- fill email
 
 		if ($this->register->email && !sg_is_email($this->register->email)) $errors['email'][] = 'อีเมล์ (E-mail) ไม่ถูกต้อง'; //-- invalid email
 
-		if ($this->register->email && mydb::count_rows('%users%','email="'.mydb::escape($this->register->email).'"') ) $errors['email'][] = 'อีเมล์ <strong><em>'.$this->register->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password').'">ท่านจำรหัสผ่านไม่ได้</a>'; //-- duplicate email
-
-		// preg_match('/rightbliss/i', 'hrightblissbeauty', $out);
-		// print_r($out);
+		// Check duplicate email
+		if ($this->register->email && DB::select([
+			'SELECT `uid` FROM %users% WHERE `email` = :email LIMIT 1',
+			'var' => [':email' => $this->register->email]
+		])->uid) {
+			$errors['email'][] = 'อีเมล์ <strong><em>'.$this->register->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password').'">ท่านจำรหัสผ่านไม่ได้</a>';
+		}
 
 		if (sg::is_spam_word([$this->register->email])) $errors['accept'][] = 'มีคำต้องห้ามอยู่ในข้อมูลที่ป้อนเข้ามา';
 
