@@ -351,6 +351,10 @@
 			flex: 1 0 100%;
 			text-align: left;
 		}
+		&.-no-wrap {
+			white-space: nowrap;
+			> .-label {white-space: nowrap;}
+		}
 	}
 
 	&.-normal {
@@ -461,22 +465,9 @@
 		height: 48px;
 	}
 
-	/*
-	button.btn.-circle32 {width: 32px; height: 32px; padding: 0;}
-	button.btn.-circle48 {width: 48px; height: 48px; padding: 0;}
-	&.-primary>.icon {opacity: 0.8;}
-	&.-primary>.icon.-material {color: #f5f5f5;}
-	&.-primary>span {opacity: 0.9;}
-	&.-floating.-right {right: 16px; position: absolute;}
-	&.-floating.-bottom {bottom: 16px; position: fixed;}
-	&.-floating .icon.-material {color: #ffc8c3;}
-	*/
-
 	&.-text-left {justify-content: start !important;}
 	&.-text-right {justify-content: end !important;}
-	&.-no-wrap {
-		flex-wrap: nowrap;
-	}
+	&.-no-wrap {flex-wrap: nowrap;}
 	&.-big {
 		padding-top: 16px;
 		padding-bottom: 16px;

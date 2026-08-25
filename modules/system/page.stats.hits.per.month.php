@@ -3,8 +3,8 @@
  * Stats    :: Hit Per Month
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-12-20
- * Modified :: 2026-08-24
- * Version  :: 2
+ * Modified :: 2026-08-25
+ * Version  :: 3
  *
  * @return Widget
  *
@@ -31,25 +31,21 @@ class StatsHitsPerMonth extends Page {
 	private static function showHitPerMonth() {
 		$dbs = DB::select([
 			'SELECT
-			date_format(`log_date`,"%Y-%m")  AS `log_month` 
+			date_format(`log_date`,"%Y-%m") AS `log_month`
 			, SUM(`hits`) as `hits`
-			, SUM(`users`) as `users` 
-			FROM %counter_day% 
-			GROUP BY `log_month` 
+			, SUM(`users`) as `users`
+			, SUM(SUM(`hits`)) OVER () AS `total_hits`
+			, SUM(SUM(`users`)) OVER () AS `total_users`
+			, MAX(SUM(`hits`)) OVER () AS `max_hits`
+			FROM %counter_day%
+			GROUP BY `log_month`
 			ORDER BY `log_month` DESC'
 		]);
 
-		$max_hits = 0;
-		$max_users = 0;
-		$hits_count = 0;
-		$users_count = 0;
-
-		foreach ( $dbs->items as $rs ) {
-			$max_hits = $rs->hits > $max_hits ? $rs->hits : $max_hits;
-			$max_users = $rs->users > $max_users ? $rs->users : $max_users;
-			$hits_count = $hits_count+$rs->hits;
-			$users_count = $users_count+$rs->users;
-		}
+		// Total และ max มีค่าเท่ากันทุกแถว — ดึงจากแถวแรก
+		$hits_count = $dbs->items[0]->total_hits ?? 0;
+		$users_count = $dbs->items[0]->total_users ?? 0;
+		$max_hits = $dbs->items[0]->max_hits ?? 0;
 
 		return new Table([
 			'class' => 'hits -sg-text-center',
@@ -66,7 +62,11 @@ class StatsHitsPerMonth extends Page {
 					if ( $max_hits > 0 ) $user_width = round($rs->users*200/$max_hits);
 
 					return [
-						'<a href="'.url('stats/hits/per/day/'.$rs->log_month).'">'.$rs->log_month.'</a>',
+						new Button([
+							'class' => '-no-wrap',
+							'href' => Url::link('stats/hits/per/day/'.$rs->log_month),
+							'text' => $rs->log_month
+						]),
 						'<div class="hits-item -hit" style="width:'.$hit_width.'px;"></div><div class="hits-item -user" style="width:'.$user_width.'px;"></div>',
 						number_format($rs->hits),
 						number_format($rs->users),
