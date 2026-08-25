@@ -3,8 +3,8 @@
  * MyDb     :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2009-07-06
- * Modified :: 2026-08-22
- * Version  :: 12
+ * Modified :: 2026-08-25
+ * Version  :: 13
  *
  * @uses mydb::select(stmt, where, var)
  * @uses mydb::query(stmt, where, var)
@@ -545,7 +545,7 @@ class MyDb {
 
 			$data->_query = $myDb->_query = $queryMsg;
 			$myDb->_query_items[] = $queryMsg;
-			mydb()->_query_items = $queryMsg;
+			mydb()->_query = $queryMsg;
 			R('query', $queryMsg);
 			R()->query_items[] = $queryMsg;
 
