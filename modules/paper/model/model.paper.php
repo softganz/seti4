@@ -20,6 +20,7 @@ class PaperModel extends \NodeModel {
 		$defaults = '{debug: false; data: "info,all"}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
+		$archived = false;
 
 		$result = (Object) [];
 		if (is_object($conditions)) ;
@@ -35,10 +36,8 @@ class PaperModel extends \NodeModel {
 
 		$tpid = $conditions->tpid;
 
-		\mydb::where('t.`tpid` = :tpid', ':tpid', $conditions->tpid);
-		\mydb::where(NULL, ':revid', \SG\getFirst($conditions->revid, 't.revid'));
-
-		$stmt = 'SELECT
+		$rs = DB::select([
+			$stmt = 'SELECT
 				  t.`tpid` `nodeId`
 				, t.*
 				, ty.`name` `type_name`
@@ -58,25 +57,34 @@ class PaperModel extends \NodeModel {
 				LEFT JOIN %users% u ON t.`uid` = u.`uid`
 			LEFT JOIN %topic_types% ty ON ty.`type` = t.`type`
 			%WHERE%
-			LIMIT 1;
-			-- {reset:false}
-			';
+			LIMIT 1',
+			'%WHERE%' => [
+				['t.`tpid` = :tpid', ':tpid' => $conditions->tpid],
+			],
+			'var' => [
+				':revid' => \SG\getFirst($conditions->revid, 't.revid')
+			]
+		]);
 
-		$rs = \mydb::select($stmt);
-		//debugMsg(R('query'));
-
-		if ($rs->_num_rows) {
-			$archived = false;
-			mydb()->reset();
-		} else if ($rs->_num_rows == 0 && DB::tableExists('%archive_topic%')) {
-			$stmt = preg_replace(array('#%topic%#s','#%topic_revisions%#s'),array('%archive_topic%','%archive_topic_revisions%'),$stmt);
-			$rs = \mydb::select($stmt);
-			if ($rs->_num_rows) $archived = true;
+		if (empty($rs->nodeId) && DB::tableExists('%archive_topic%')) {
+			$stmt = preg_replace(
+				['#%topic%#s', '#%topic_revisions%#s'],
+				['%archive_topic%', '%archive_topic_revisions%'],
+				$stmt
+			);
+			$rs = DB::select([
+				$stmt,
+				'%WHERE%' => [
+					['t.`tpid` = :tpid', ':tpid' => $conditions->tpid],
+				],
+				'var' => [
+					':revid' => \SG\getFirst($conditions->revid, 't.revid')
+				]
+			]);
+			if ($rs->nodeId) $archived = true;
 		}
 
-		if ($rs->_empty) return NULL;
-
-		\mydb::clearProp($rs);
+		if (empty($rs->nodeId)) return NULL;
 
 		if ($rs->orgid && $options->initTemplate) \R::Module('org.template', $rs->orgid);
 
@@ -115,7 +123,10 @@ class PaperModel extends \NodeModel {
 
 		if ($result->info->uid) $result->membership[$result->info->uid] = 'OWNER';
 
-		foreach (\mydb::select('SELECT `uid`, UPPER(`membership`) `membership` FROM %topic_user% WHERE `tpid` = :tpid',':tpid',$tpid)->items as $item) {
+		foreach (DB::select([
+			'SELECT `uid`, UPPER(`membership`) `membership` FROM %topic_user% WHERE `tpid` = :tpid',
+			'var' => [':tpid' => $tpid]
+		])->items as $item) {
 			$result->membership[$item->uid] = $item->membership;
 		}
 
@@ -159,8 +170,7 @@ class PaperModel extends \NodeModel {
 
 
 		// Get tags of topic
-		\mydb::value('$TAG_TOPIC$', '%'.($archived ? 'archive_':'').'tag_topic%');
-		$result->tags = \mydb::select(
+		$result->tags = DB::select([
 			'SELECT
 				tt.`tid`
 				, tt.`vid`
@@ -170,52 +180,59 @@ class PaperModel extends \NodeModel {
 			FROM $TAG_TOPIC$ tt
 				LEFT JOIN %tag% t ON t.`tid` = tt.`tid`
 				LEFT JOIN %vocabulary% v ON tt.`vid` = v.`vid`
-			WHERE tpid = :tpid;
-			-- {key: "tid"}
-			',
-			[':tpid' => $tpid]
-		)->items;
+			WHERE tpid = :tpid',
+			'var' => [
+				':tpid' => $tpid,
+				'$TAG_TOPIC$' => '%'.($archived ? 'archive_':'').'tag_topic%'
+			],
+			'options' => ['key' => 'tid']
+		])->items;
 
 
 		// Get photos
-		\mydb::value('$TOPIC_FILES$', '%'.($archived ? 'archive_':'').'topic_files%');
-		$result->photos = \mydb::select(
+		$result->photos = DB::select([
 			'SELECT *
 			FROM $TOPIC_FILES$
 			WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "photo"
-			ORDER BY fid;
-			-- {key: "fid"}
-			
-			',
-			[':tpid' => $tpid]
-		)->items;
+			ORDER BY fid',
+			'var' => [
+				':tpid' => $tpid,
+				'$TOPIC_FILES$' => '%'.($archived ? 'archive_':'').'topic_files%'
+			],
+			'options' => ['key' => 'fid']
+		])->items;
+
 		foreach ($result->photos as $key => $photo) {
 			$result->photos[$key] = object_merge($result->photos[$key],\FileModel::photoProperty($photo->file, $photo->folder));
 		}
 
 		// Get docs
-		\mydb::value('$TOPIC_FILES$', '%'.($archived ? 'archive_':'').'topic_files%');
-		$result->docs = \mydb::select(
+		$result->docs = DB::select([
 			'SELECT *
 			FROM $TOPIC_FILES$
 			WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc"
-			ORDER BY fid;
-			-- {key: "fid"}
-			',
-			[':tpid' => $tpid]
-		)->items;
+			ORDER BY fid',
+			'var' => [
+				':tpid' => $tpid,
+				'$TOPIC_FILES$' => '%'.($archived ? 'archive_':'').'topic_files%'
+			],
+			'options' => ['key' => 'fid']
+		])->items;
+
 		foreach ($result->docs as $key => $doc) {
 			$result->docs[$key] = object_merge($result->docs[$key],\FileModel::docProperty($doc->file, $doc->folder));
 		}
 
 		// Get Videos
 		if (cfg('topic.video.allow')) {
-			$stmt = 'SELECT f.*, u.`username`
-							FROM %topic_files% f
-								LEFT JOIN %users% u ON u.`uid` = f.`uid`
-							WHERE tpid = :tpid AND type = "movie"
-							LIMIT 1';
-			$result->video = \mydb::select($stmt,':tpid',$tpid);
+			$result->video = DB::select([
+				'SELECT f.*, u.`username`
+				FROM %topic_files% f
+					LEFT JOIN %users% u ON u.`uid` = f.`uid`
+				WHERE tpid = :tpid AND type = "movie"
+				LIMIT 1',
+				'var' => [':tpid' => $tpid]
+			]);
 			if ($result->video->file) {
 				if (preg_match('/^http\:\/\//',$result->video->file)) {
 					$result->video->_url = $result->video->file;
@@ -236,20 +253,29 @@ class PaperModel extends \NodeModel {
 
 		// Update old property to json
 		if (substr($result->info->property,0,1) == 'O') {
-			$stmt = 'UPDATE %topic_revisions% SET `property` = :property WHERE `tpid` = :tpid AND `revid` = :revid LIMIT 1';
-			\mydb::query($stmt, ':tpid', $tpid, ':revid', $result->info->revid, ':property', sg_json_encode(unserialize($result->info->property)));
+			DB::query([
+				'UPDATE %topic_revisions% SET `property` = :property WHERE `tpid` = :tpid AND `revid` = :revid LIMIT 1',
+				'var' => [
+					':tpid' => $tpid,
+					':revid' => $result->info->revid,
+					':property' => sg_json_encode(unserialize($result->info->property))
+				]
+			]);
 		}
-
-		//debugMsg($result->property,'$result->property');
-
 
 		if ( $result->info->profile_picture ) $result->info->profile_picture = cfg('url').'upload/member/'.$result->info->profile_picture;
 
 		if (module_install('poll')) {
-			$poll = \mydb::select('SELECT * FROM %poll% WHERE `tpid` = :tpid LIMIT 1',':tpid',$tpid);
+			$poll = DB::select([
+				'SELECT * FROM %poll% WHERE `tpid` = :tpid LIMIT 1',
+				'var' => [':tpid' => $tpid]
+			]);
 			if ($poll->_num_rows) {
 				$result->poll = $poll->items;
-				foreach (\mydb::select('SELECT * FROM %poll_choice% WHERE `tpid`=:tpid ORDER BY `choice` ASC',':tpid',$tpid)->items as $pollrs) {
+				foreach (DB::select([
+					'SELECT * FROM %poll_choice% WHERE `tpid`=:tpid ORDER BY `choice` ASC',
+					'var' => [':tpid' => $tpid]
+				])->items as $pollrs) {
 					$result->poll->{$pollrs->choice} = $pollrs;
 				}
 			}
@@ -258,6 +284,12 @@ class PaperModel extends \NodeModel {
 		return $result;
 	}
 
+	/**
+	 * Delete paper
+	 *
+	 * @param [type] $tpid
+	 * @return void
+	 */
 	public static function delete($tpid) {
 		$result = (Object) [
 			'complete' => false,
@@ -275,78 +307,73 @@ class PaperModel extends \NodeModel {
 
 		// Delete paper topic
 		$result->process[] = 'Delete paper topic';
-		\mydb::query(
+		DB::query([
 			'DELETE FROM %topic% WHERE `tpid` = :tpid LIMIT 1',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 		$result->process[] = R('query');
-
-		//$max_auto_id = db_query_one_cell('SELECT MAX(tpid) as max_auto_id FROM %topic%');
-		//$result->process[]=R('query');
-		//\mydb::query('ALTER TABLE %topic% AUTO_INCREMENT='.$max_auto_id,$simulate);
-		//$result->process[]=R('query');
 
 		// Delete paper revision
 		$result->process[] = 'Delete paper revision';
-		\mydb::query(
+		DB::query([
 			'DELETE FROM %topic_revisions% WHERE `tpid` = :tpid LIMIT 1',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 		$result->process[] = R('query');
 
 		// Delete topic user
 		$result->process[] = 'Delete Topic User';
-		\mydb::query(
+		DB::query([
 			'DELETE FROM %topic_user% WHERE `tpid` = :tpid',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 		$result->process[]=R('query');
 
 		// Delete tag topic
 		$result->process[] = 'Delete Tag Topic';
-		\mydb::query(
+		DB::query([
 			'DELETE FROM %tag_topic% WHERE `tpid` = :tpid',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 		$result->process[] = R('query');
 
 		// Delete all child/parent of topic
 		$result->process[] = 'Delete Topic Parent';
-		\mydb::query(
+		DB::query([
 			'DELETE FROM %topic_parent% WHERE `tpid` = :tpid OR `parent` = :tpid',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 		$result->process[] = R('query');
 
 		// Delete topic property
 		$result->process[]='Delete topic property';
-		\mydb::query(
+		DB::query([
 			'DELETE FROM %property% WHERE `module` = "paper" AND `propId` = :tpid',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 		$result->process[] = R('query');
 
 		// Delete comment post
 		$result->process[] = 'Delete comment';
 
-		\mydb::query(
+		DB::query([
 			'DELETE FROM %topic_comments% WHERE tpid = :tpid',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 		$result->process[] = R('query');
 
 		// Delete all files
-		$topicFiles = \mydb::select(
+		$topicFiles = DB::select([
 			'SELECT f.*, u.`username` FROM %topic_files% f LEFT JOIN %users% u ON u.`uid` = f.`uid` WHERE `tpid` = :tpid',
-			[':tpid' => $tpid]
-		);
+			'var' => [':tpid' => $tpid]
+		]);
 
 		if ($topicFiles->items) {
 			$result->process[] = 'Start delete all files';
-			\mydb::query(
+			DB::query([
 				'DELETE FROM %topic_files% WHERE tpid = :tpid',
-				[':tpid' => $tpid]
-			);
+				'var' => [':tpid' => $tpid]
+			]);
 			$result->process[] = R('query');
 
 			foreach ($topicFiles->items as $file) {
@@ -354,13 +381,13 @@ class PaperModel extends \NodeModel {
 					case 'photo':
 						$filename = cfg('folder.abs').cfg('upload_folder').'pics/'.$file->file;
 						if (file_exists($filename) and is_file($filename)) {
-							$is_photo_inused = \mydb::select(
+							$is_photo_inused = DB::select([
 								'SELECT `fid` FROM %topic_files% WHERE `file` = :file AND `fid` != :fid LIMIT 1',
-								[
+								'var' => [
 									':file' => $file->file,
 									':fid' => $file->fid
 								]
-							)->fid;
+							])->fid;
 							$result->process[] = R('query');
 
 							if ($is_photo_inused) {
@@ -407,6 +434,11 @@ class PaperModel extends \NodeModel {
 		return $result;
 	}
 
+	/**
+	 * Update Create archive
+	 *
+	 * @return void
+	 */
 	public static function createArchive() {
 		/*
 		SELECT tpid,created  FROM `sgz_topic` WHERE DATE_FORMAT(`created`,"%Y-%m-%d")<"2008-07-01" ORDER BY created DESC LIMIT 1
@@ -425,6 +457,13 @@ class PaperModel extends \NodeModel {
 		*/
 	}
 
+	/**
+	 * Update info
+	 *
+	 * @param [type] $topicInfo
+	 * @param [type] $data
+	 * @return void
+	 */
 	public static function updateInfo($topicInfo, $data) {
 		$simulate = debug('simulate');
 
@@ -469,8 +508,10 @@ class PaperModel extends \NodeModel {
 			if ($data->clear_sticky && $data->topic['sticky'] && user_access('administer contents')) {
 				$sticky = cfg('sticky');
 				$result->process[] = 'Clear sticky of '.$sticky[$data->topic->sticky];
-				$stmt = 'UPDATE %topic% SET sticky = 0 WHERE sticky = :sticky';
-				\mydb::query($stmt, ':sticky', $data->topic['sticky']);
+				DB::query([
+					$stmt = 'UPDATE %topic% SET sticky = 0 WHERE sticky = :sticky',
+					'var' => [':sticky' => $data->topic['sticky']]
+				]);
 				$result->query[] = \R('query');
 			}
 
