@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * @created 2007-07-09
- * @modify  2025-07-18
- * Version  3
+ * @modify  2026-08-25
+ * Version  4
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ class BasicModel extends Model {
 	public static function get_taxonomy($tid,$child=false) {
 		static $taxonomies = array();
 		if (!array_key_exists($tid, $taxonomies)) {
-			$taxonomy = mydb::select(
+			$taxonomy = DB::select([
 				'SELECT
 				t.*
 				, v.`name` as `vocabulary_name`
@@ -128,17 +128,23 @@ class BasicModel extends Model {
 					INNER JOIN %tag_hierarchy% AS h ON h.tid=t.tid
 					LEFT JOIN %tag% AS ht ON h.parent=ht.tid
 				WHERE t.tid=:tid ORDER BY t.weight, t.name LIMIT 1',
-				[':tid' => $tid]
-			);
+				'var' => [':tid' => $tid]
+			]);
+			if ($taxonomy->tid) {
+				$taxonomy->synonym = DB::select([
+					'SELECT COUNT(*) `total` FROM %tag_synonym% s WHERE s.tid = :tid LIMIT 1',
+					'var' => [':tid' => $tid]
+				])->total;
 
-			if ($taxonomy->_num_rows) {
-				$taxonomy->synonym=mydb::select('SELECT COUNT(*) `total` FROM %tag_synonym% s WHERE s.tid='.$tid.' LIMIT 1')->total;
-				$taxonomy->child=array();
+				$taxonomy->child = [];
 				if ($taxonomy->parent_name) {
 					$hierachys[$taxonomy->parent]=$taxonomy->parent_name;
 					$parents = (Object) ['parent' => $taxonomy->parent];
 					do {
-						$parents=mydb::select('SELECT h.tid,h.parent,t.name FROM %tag_hierarchy% h LEFT JOIN %tag% t ON t.tid=h.tid WHERE h.tid='.$parents->parent.' LIMIT 1');
+						$parents = DB::select([
+							'SELECT h.tid,h.parent,t.name FROM %tag_hierarchy% h LEFT JOIN %tag% t ON t.tid=h.tid WHERE h.tid = :parent LIMIT 1',
+							'var' => [':parent' => $parents->parent]
+						]);
 						if ($parents->_num_rows) {
 							$hierachy[]=$parents->tid;
 							$hierachys[$parents->tid]=$parents->name;
@@ -146,7 +152,10 @@ class BasicModel extends Model {
 					} while ($parents->parent);
 				}
 
-				$child=mydb::select('SELECT tid,name FROM %tag% t INNER JOIN %tag_hierarchy% AS h USING(tid) WHERE parent=:parent',':parent',$tid);
+				$child = DB::select([
+					'SELECT tid,name FROM %tag% t INNER JOIN %tag_hierarchy% AS h USING(tid) WHERE parent = :parent',
+					'var' => [':parent' => $tid]
+				]);
 				foreach ($child->items as $crs) $taxonomy->child[$crs->tid]=$crs->name;
 
 				unset($taxonomy->parent);
@@ -154,9 +163,14 @@ class BasicModel extends Model {
 				if ($hierachys) $taxonomy->parents=$hierachys;
 				if ($taxonomy->synonym>0) {
 					unset($taxonomy->synonym);
-					$synonyms=mydb::select('SELECT tsid,name FROM %tag_synonym% WHERE tid='.$tid.' ORDER BY tsid ASC');
-					foreach ($synonyms->items as $synonym) $taxonomy->synonym[$synonym->tsid]=$synonym->name;
-				} else $taxonomy->synonym=array();
+					$synonyms = DB::select([
+						'SELECT tsid,name FROM %tag_synonym% WHERE tid = :tid ORDER BY tsid ASC',
+						'var' => [':tid' => $tid]
+					]);
+					foreach ($synonyms->items as $synonym) {
+						$taxonomy->synonym[$synonym->tsid] = $synonym->name;
+					}
+				} else $taxonomy->synonym = [];
 				$taxonomies[$tid] = $taxonomy;
 			}
 		}
