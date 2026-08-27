@@ -1352,6 +1352,9 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
 		let debug = false;
 
+		// Local state for internal methods (previously leaked to window.self)
+		const self = {};
+
 		if (debug) console.log('$.sgInlineEdit version ' + version + ' start')
 
 		// default configuration properties
@@ -1772,7 +1775,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			$this.editable(
 				function(value, settings) {
 					if (debug) console.log('SAVE EDITABLE FUNCTION for "' + settings.container.data('inputName') + '"')
-					let errorMsg = validValue(value, settings)
+					let errorMsg = self.validValue(value, settings)
 					if (true != errorMsg) {
 						notify(errorMsg, 2000)
 						// $this.trigger('click')
@@ -1809,9 +1812,9 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		}
 
 		// Save value immediately when radio or checkbox click
-		if (inputType == 'radio') saveRadio();
-		else if (inputType == 'checkbox') saveCheckbox()
-		else saveEditable();
+		if (inputType == 'radio') self.saveRadio();
+		else if (inputType == 'checkbox') self.saveCheckbox()
+		else self.saveEditable();
 
 		// RETURN that can call from outside
 		return {
@@ -1927,7 +1930,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 		// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn)
 
-		self.processShow = (property, showValue) => {
+		const processShow = (property, showValue) => {
 			// console.log("SHOW/HIDE ", property, showValue)
 			// Hide element
 			if (showValue.hide) {
