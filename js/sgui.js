@@ -1343,11 +1343,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 	let database;
 	let ref;
 	let radioClickCount = 0;
-	let settings = {}
-	let count = 0 // @deprecated
-	let editActive = false // @deprecated
-
-	let inputType = ''
 
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
 		let debug = false;
@@ -1375,16 +1370,11 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			return;
 		}
 
-		editActive = true
-		count++
-		// console.log("COUNT = ",count)
-		// if (updatePending > 0) return
-
 		let $this = $(this)
 		let $inlineField = $this.closest('.inlineedit-field')
 		let $inlineWidget = $this.closest('.sg-inlineedit')
 
-		inputType = $inlineField.data('type')
+		let inputType = $inlineField.data('type')
 		let onSaveFunction = $inlineWidget.attr('onSave')
 		let onSaveFieldCallback = $inlineField.data('callback')
 		let fieldOptions = $inlineField.data('options') ? $inlineField.data('options') : {}
@@ -1517,7 +1507,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		}
 
 		// defaults,inputcssclass
-		settings = $.extend(
+		let settings = $.extend(
 			{},
 			$.fn.sgInlineEdit2.defaults,
 			defaults,
@@ -1720,7 +1710,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 					if (debug) console.log('PROCESSING DONE:', settings.done)
 					sgActionDone(settings.done, $inlineField, data);
 				}
-				editActive = false
 				console.log('$.sgInlineEdit DONE!!!')
 			});
 		}
