@@ -3,7 +3,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
  * Modified :: 2026-08-27
- * Version  :: 78
+ * Version  :: 79
  */
 
 'use strict'
@@ -1899,35 +1899,37 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 		// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn)
 
-		const processShow = (property, showValue) => {
-			// console.log("SHOW/HIDE ", property, showValue)
+		// Resolve "nextInput" to the actual next field element
+		const resolveTarget = (target) =>
+			target === "nextInput" ? $inlineField.next('.inlineedit-field') : target;
+
+		// Apply show/hide for a single config {show, hide}
+		const applyShowHide = (config) => {
+			// console.log("SHOW/HIDE ", config)
 			// Hide element
-			if (showValue.hide) {
-				// console.log("HIDE ", showValue.hide)
-				let hideElement = showValue.hide
-				if (hideElement === "nextInput") hideElement = $inlineField.next('.inlineedit-field');
-				$(hideElement).addClass('-hidden').hide()
+			if (config.hide) {
+				// console.log("HIDE ", config.hide)
+				$(resolveTarget(config.hide)).addClass('-hidden').hide()
 			}
 
 			// Sow element
-			if (showValue.show) {
-				// console.log("SHOW ", showValue.show)
-				let showElement = showValue.show
-				if (showElement === "nextInput") showElement = $inlineField.next('.inlineedit-field');
-				$(showElement).removeClass('-hidden').show()
+			if (config.show) {
+				// console.log("SHOW ", config.show)
+				$(resolveTarget(config.show)).removeClass('-hidden').show()
 			}
 		}
 
 		// Init process with show and hide
-		if ("hide" in showOn) processShow(value, {"hide": showOn.hide});
-		if ("show" in showOn) processShow(value, {"show": showOn.show});
+		if ("hide" in showOn) applyShowHide({hide: showOn.hide});
+		if ("show" in showOn) applyShowHide({show: showOn.show});
 
 		if (showOn.value) {
 			// Show/hide single value
 			// console.log("Show On Single Value")
 			// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn)
-			if (value == showOn.value) processShow(value, {"show": showOn.element});
-			else processShow(value, {"hide": showOn.element});
+			applyShowHide(value == showOn.value
+				? {show: showOn.element}
+				: {hide: showOn.element});
 		} else if (showOn.values) {
 			// Show/hide multiple values
 			let checkedBoxes = document.querySelectorAll('input[name="'+$inlineField.data("inputName")+'"]:checked');
@@ -1941,7 +1943,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 				// console.log(eachChecked.value)
 				if (showOn.values[eachChecked.value]) {
 					// console.log("FOUND ",eachChecked.value)
-					processShow(eachChecked.value, showOn.values[eachChecked.value]);
+					applyShowHide(showOn.values[eachChecked.value]);
 				}
 				// processShow(valueKey, showOn.values[valueKey]);
 			});
