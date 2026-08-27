@@ -3,7 +3,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
  * Modified :: 2026-08-27
- * Version  :: 80
+ * Version  :: 81
  */
 
 'use strict'
@@ -1727,21 +1727,10 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		}
 
 		self.saveRadio = () => {
-			// let $inputElement = $this.val()
 			let value = $this.attr('value')
-			// console.log('RADIO VALUE ',value)
 			self.saveToServer($inlineField, value, onSaveFieldCallback);
 
 			if ('showOn' in fieldOptions) showHideElement(value, fieldOptions, $inlineField);
-
-			// setTimeout(function(){
-			// 	let $inputElement = $this.find('input:checked')
-			// 	// value = $inputElement.is(':checked') ? $inputElement.attr('value') : ''
-			// 	let value = $inputElement.attr('value')
-			// 	console.log('RADIO VALUE ',value)
-			// 	// console.log('RADIO VALUE 1 ',$inputElement.attr('value'))
-			// 	self.saveToServer($inlineField, value, onSaveFieldCallback)
-			// }, 200)
 		}
 
 		self.saveCheckbox = () => {
@@ -1765,7 +1754,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			// console.log('CHECKBOX VALUE ',checkboxValue)
 		}
 
-		// checkValidity for 3 cse
+		// checkValidity for 3 case
 		// case ENTER => HTML.checkValidity
 		// case TAB => tab valid
 		// case Blur => click outside
@@ -1829,10 +1818,11 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			},
 
 			onKeyDown: function(settings, dom, self, event) {
-				// console.log("_event.keyCode=",_event.keyCode)
 				let _event = event || window.event;
 
+				// console.log("_event.keyCode=",_event.keyCode)
 				// console.log('ONKEYDOWN: settings:', settings, 'dom: ', dom, 'self: ', self, 'event: ', event)
+
 				// TAB Key
 				if(_event.keyCode == 9) {
 					let $this = $(self);
@@ -1946,6 +1936,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 		if (showOn.value) {
 			// Show/hide single value
+
 			// console.log("Show On Single Value")
 			// console.log("SHOW ON:", "value = ", value, "showOn = ", showOn)
 			applyShowHide(value == showOn.value
@@ -1966,14 +1957,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 					// console.log("FOUND ",eachChecked.value)
 					applyShowHide(showOn.values[eachChecked.value]);
 				}
-				// processShow(valueKey, showOn.values[valueKey]);
 			});
-
-			// Object.keys(showOn.values).map((valueKey) => {
-			// 	console.log(showOn.values[valueKey])
-
-			// });
-			// if (value in showOn.values) processShow(value, showOn.values[value]);
 		}
 	}
 
@@ -2072,38 +2056,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 							}
 						}
 
-						/*
-						if (target && target.substring(0,1) == '#') {
-							if ($form.find(target).length) {
-								$form.find(target).val(ui.item.value)
-							} else {
-								$(target).val(ui.item.value)
-							}
-
-						} else if (target) {
-						}
-						*/
-
-						/*
-						if ($this.data('select')!=undefined) {
-							let selectValue=$this.data('select');
-							if (typeof selectValue == 'object') {
-								console.log(selectValue)
-								let x;
-								for (x in selectValue) {
-									$('#'+x).val(ui.item[selectValue[x]]);
-									console.log(x+" "+selectValue[x])
-								}
-							} else if (typeof selectValue == 'string') {
-								$this.val(ui.item[selectValue]);
-							}
-						} else {
-							$this.val(ui.item.label);
-						}
-						*/
-						//if (settings.container.data('ret') == 'address') {
-						//	settings.container.data('areacode',ui.item.value)
-						//}
 						$(this).submit()
 					}
 				}
