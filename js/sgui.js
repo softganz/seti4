@@ -1422,6 +1422,15 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			$inlineField.data('type','text')
 		}
 
+		// Compute input css class once (string, not function)
+		let inputcssclass = ''
+		if (rawInputType == 'numeric') inputcssclass = 'form-text -numeric'
+		else if (rawInputType == 'money') inputcssclass = 'form-text -money'
+		else if (inputType == 'email') inputcssclass = 'form-text -email'
+		else if (inputType == 'url') inputcssclass = 'form-text -url'
+		else if (inputType == 'autocomplete') inputcssclass = 'form-text -autocomplete'
+		else inputcssclass = 'form-' + inputType
+
 		let defaults = {
 			type: inputType,
 			result: 'json',
@@ -1500,16 +1509,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			cancel: showSubmitButton ? '<button class="widget-button btn -link -cancel"><i class="icon -material -gray">cancel</i><span>ยกเลิก</span></button>':null,
 			submit: showSubmitButton ? '<button class="widget-button btn -primary"><i class="icon -material -white">done_all</i><span>บันทึก</span></button>':null,
 			placeholder: $inlineField.data('placeholder') ? $inlineField.data('placeholder') : '...',
-			inputcssclass: () => {
-				let inputcssclass = ''
-				if (rawInputType == 'numeric') inputcssclass = 'form-text -numeric'
-				else if (rawInputType == 'money') inputcssclass = 'form-text -money'
-				else if (inputType == 'email') inputcssclass = 'form-text -email'
-				else if (inputType == 'url') inputcssclass = 'form-text -url'
-				else if (inputType == 'autocomplete') inputcssclass = 'form-text -autocomplete'
-				else inputcssclass = 'form-' + inputType
-				return inputcssclass
-			}
+			inputcssclass: inputcssclass
 		}
 
 		// defaults,inputcssclass
