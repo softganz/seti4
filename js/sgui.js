@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-22
- * Version  :: 77
+ * Modified :: 2026-08-27
+ * Version  :: 78
  */
 
 'use strict'
@@ -1559,29 +1559,15 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			return true
 		}
 
-		self.saveToServer = ($inlineField, value, callback) => {
+		// Build POST parameters from widget + field data
+		function buildParams($inlineField, value, settings) {
 			let inputName = $inlineField.data('inputName');
 			let inputKey = "_" + Math.floor(Date.now() / 1000);
 
-			$inlineField.removeClass("-error");
+			let para = $.extend({}, $inlineWidget.data(), $inlineField.data());
 
-			if (postUrl === undefined) {
-				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด (ไม่ได้ระบุ)');
-				$inlineField.addClass("-error");
-				return
-			}
-
-			let para = $.extend({},$inlineWidget.data(), $inlineField.data())
-			let returnType = para.retType || para.ret // if has retType then use retType, if ret use ret, if both use retType
-
-			delete para['updateUrl']
-			delete para['options']
-			delete para['choices']
-			delete para['data']
-			delete para['event.editable']
-			delete para['uiAutocomplete']
-			delete para['rel']
-			delete para['done']
+			['updateUrl', 'options', 'choices', 'data', 'event.editable', 'uiAutocomplete', 'rel', 'done']
+				.forEach(function(key) { delete para[key]; })
 
 			para.action = 'save';
 			para.value = typeof value === 'string' ? value.replace(/\"/g, "\"") : value
@@ -1594,12 +1580,66 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 				para[inputName] = value;
 			}
 			if (settings.var) para[settings.var] = para.value
+			return para
+		}
+
+		// Apply saved result back to the DOM based on input type
+		function applySaveResult($inlineField, data, inputType, settings) {
+			if (inputType == 'autocomplete') {
+				$inlineField.attr('data-value', data.value)
+				$inlineField.find('.-for-input').html(data.value);
+			} else if (inputType == 'radio' || inputType == 'checkbox') {
+				// nothing to update
+			} else if (inputType == 'select') {
+				let selectValue = $inlineField.data('data')
+					? $inlineField.data('data')[data.value]
+					: data.value
+				$inlineField.find('.-for-input').html(selectValue)
+			} else {
+				$inlineField.find('.-for-input').html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
+			}
+		}
+
+		// Process callbacks after a successful save
+		function processSaveCallbacks(data, settings, $inlineField, $inlineWidget, onSaveFunction, callback) {
+			if (debug && onSaveFunction) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
+			if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
+				window[onSaveFunction](settings, $inlineField, data);
+			}
+
+			let callbackFunction = callback
+			if (debug && callbackFunction) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
+			if (callbackFunction) {
+				if (typeof window[callbackFunction] === 'function') {
+					window[callbackFunction]($inlineField, data, $inlineWidget);
+				} else if (settings.callbackType == 'silent') {
+					$.get(callbackFunction, function() {})
+				} else {
+					window.location = callbackFunction;
+				}
+			}
+
+			if (settings.done) {
+				if (debug) console.log('PROCESSING DONE:', settings.done)
+				sgActionDone(settings.done, $inlineField, data);
+			}
+		}
+
+		self.saveToServer = ($inlineField, value, callback) => {
+			$inlineField.removeClass("-error");
+
+			if (postUrl === undefined) {
+				notify('ข้อมูลปลายทางสำหรับบันทึกข้อมูลผิดพลาด (ไม่ได้ระบุ)');
+				$inlineField.addClass("-error");
+				return
+			}
+
+			let para = buildParams($inlineField, value, settings)
+			let returnType = para.retType || para.ret // if has retType then use retType, if ret use ret, if both use retType
+
 			$inlineField.attr('data-value', para.value); // would update the actual HTML data-value attribute in the DOM, cannot use jQuery.data()
 
 			if (debug) para.debug = 'inline';
-
-			//if (settings.blank === null && para.value === "") para.value = null
-			//console.log(settings.blank)
 
 			if (debug) console.log('SENDING TO ', postUrl)
 			if (debug) console.log('SENDING PARA:', para)
@@ -1611,9 +1651,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 			// Lock all inlineedit-field until post complete
 			if (disableInputOnSave) $inlineWidget.find('.inlineedit-field').addClass('-disabled')
-
-			//console.log('length='+$('[data-group="'+para.group+'"]').length)
-			//console.log(para)
 
 			$.post(postUrl, para, function(data) {
 				updatePending--
@@ -1628,21 +1665,8 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 				if (returnType == 'refresh') {
 					window.location = window.location
-				} else if (inputType == 'autocomplete') {
-					$inlineField.attr('data-value', data.value)
-					$inlineField.find('.-for-input').html(data.value);
-				} else if (inputType == 'radio') {
-				} else if (inputType == 'checkbox') {
-				} else if (inputType == 'select') {
-					let selectValue
-					if ($inlineField.data('data')) {
-						selectValue = $inlineField.data('data')[data.value]
-					} else {
-						selectValue = data.value
-					}
-					$inlineField.find('.-for-input').html(selectValue)
 				} else {
-					$inlineField.find('.-for-input').html(data.value == null ? '<span class="placeholder -no-print">'+settings.placeholder+'</span>' : data.value)
+					applySaveResult($inlineField, data, inputType, settings)
 				}
 			}, settings.result)
 			.fail(function(response) {
@@ -1655,18 +1679,12 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			.done(function(data) {
 				if (data?.debug) console.log('RETURN DATA', data)
 
-				// Process widget callback function
-				// let widgetCallbackFunction = settings.callback ? settings.callback : $inlineField.data('callback')
-
 				let replaceTrMsg = '';
-				//console.log('para.tr='+para.tr+' data.tr='+data.tr)
 				if (para.tr != data.tr) {
 					if (data.tr == 0)
 						data.tr = '';
-					//console.log(para.group+' : '+para.tr+' : '+data.tr)
 					$('[data-group="'+para.group+'"]').data('tr', data.tr)
 					replaceTrMsg = 'Replace tr of group '+para.group+' with '+data.tr
-					//console.log(replaceTrMsg);
 				}
 
 				let message = '';
@@ -1680,33 +1698,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 					debug ? 300000 : 5000
 				)
 
-				if (debug && onSaveFunction) console.log("CALLBACK ON SAVE COMPLETE -> " + onSaveFunction + (onSaveFunction ? '(settings, $inlineField, response)' : ''))
-				if (onSaveFunction && typeof window[onSaveFunction] === 'function') {
-					window[onSaveFunction](settings, $inlineField, data);
-					// window[onSaveFunction]($inlineField, response, $inlineWidget);
-				}
-
-				// Process callback function on each save field
-				let callbackFunction = callback
-
-				if (debug && callbackFunction) console.log("CALLBACK ON SAVE FIELD COMPLETE -> " + callbackFunction + (callbackFunction ? '()' : ''))
-				if (callbackFunction) {
-					if (typeof window[callbackFunction] === 'function') {
-						window[callbackFunction]($inlineField, data, $inlineWidget);
-					} else if (settings.callbackType == 'silent') {
-						$.get(callbackFunction, function() {})
-					} else {
-						window.location = callbackFunction;
-					}
-				}
-
-				// console.log('settings.done ', settings.done)
-
-				// Process action done
-				if (settings.done) {
-					if (debug) console.log('PROCESSING DONE:', settings.done)
-					sgActionDone(settings.done, $inlineField, data);
-				}
+				processSaveCallbacks(data, settings, $inlineField, $inlineWidget, onSaveFunction, callback)
 				console.log('$.sgInlineEdit DONE!!!')
 			});
 		}
