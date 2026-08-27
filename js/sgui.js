@@ -1344,6 +1344,12 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 	let ref;
 	let radioClickCount = 0;
 
+	// Merge multiple option sources into one settings object.
+	// Later sources override earlier ones (priority: lowest -> highest).
+	function mergeSettings(...sources) {
+		return $.extend({}, ...sources);
+	}
+
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
 		let debug = false;
 
@@ -1381,7 +1387,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		let fieldOptions = $inlineField.data('options') ? $inlineField.data('options') : {}
 		let showSubmitButton = (fieldOptions && 'button' in fieldOptions) || $inlineField.data('button') == 'yes'
 		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
-		let disableInputOnSave = false
 
 		// console.log('debug ', $inlineWidget.data('debug'));
 		if ($inlineWidget.data('debug') === 'inline') debug = true;
@@ -1508,17 +1513,21 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		}
 
 		// defaults,inputcssclass
-		let settings = $.extend(
-			{},
-			$.fn.sgInlineEdit2.defaults,
-			defaults,
-			options,
-			$inlineWidget.data('options'),
-			$inlineField.data('options'),
-			$this.data('options')
+		// Merge options from multiple levels. Priority (lowest -> highest):
+		//   plugin defaults < field defaults < call options < widget options < field options < element options
+		let settings = mergeSettings(
+			$.fn.sgInlineEdit2.defaults, // plugin defaults
+			defaults,                     // defaults built from the field
+			options,                      // options passed via argument
+			$inlineWidget.data('options'),// options from .sg-inlineedit (data-options)
+			$inlineField.data('options'), // options from .inlineedit-field (data-options)
+			$this.data('options')         // options from the clicked element (data-options)
 		)
 
 		if (debug) console.log('SG-INLINE-EDIT SETTING:',settings)
+
+		// disableInputOnSave comes from external settings (default false)
+		let disableInputOnSave = settings.disableInputOnSave === true
 
 		self.validValue = (value, settings) => {
 			let errorMsg = ''
