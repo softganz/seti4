@@ -3,7 +3,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
  * Modified :: 2026-08-27
- * Version  :: 79
+ * Version  :: 80
  */
 
 'use strict'
@@ -606,6 +606,29 @@ function showError(response, time = 5000) {
 		errorMsg += 'Unknown error occurred.';
 	}
 	notify(errorMsg, time);
+}
+
+// Shared autocomplete item renderer (global)
+// - labelKey: property to use as label (default 'label')
+// - customRenderer: optional function($this, ul, item) to override rendering
+function renderAutocompleteItem(ul, item, options = {}) {
+	let { labelKey = 'label', customRenderer = null, $this = null } = options;
+
+	if (customRenderer && typeof customRenderer === 'function') {
+		return customRenderer($this, ul, item);
+	}
+
+	if (item.value == '...') {
+		return $('<li class="ui-state-disabled -more"></li>')
+			.append(item.label)
+			.appendTo(ul);
+	}
+
+	let label = item[labelKey] != undefined ? item[labelKey] : item.label;
+	return $('<li></li>')
+		.append('<a><span>' + label + '</span>'
+			+ (item.desc != undefined ? '<p>' + item.desc + '</p>' : '') + '</a>')
+		.appendTo(ul);
 }
 
 
@@ -1509,9 +1532,8 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			inputcssclass: inputcssclass
 		}
 
-		// defaults,inputcssclass
 		// Merge options from multiple levels. Priority (lowest -> highest):
-		//   plugin defaults < field defaults < call options < widget options < field options < element options
+		// plugin defaults < field defaults < call options < widget options < field options < element options
 		let settings = mergeSettings(
 			$.fn.sgInlineEdit2.defaults, // plugin defaults
 			defaults,                     // defaults built from the field
@@ -1566,6 +1588,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 			let para = $.extend({}, $inlineWidget.data(), $inlineField.data());
 
+			// Remove unsend fields
 			['updateUrl', 'options', 'choices', 'data', 'event.editable', 'uiAutocomplete', 'rel', 'done']
 				.forEach(function(key) { delete para[key]; })
 
@@ -1704,8 +1727,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		}
 
 		self.saveRadio = () => {
-			// console.log('$inlineField', $inlineField)
-
 			// let $inputElement = $this.val()
 			let value = $this.attr('value')
 			// console.log('RADIO VALUE ',value)
@@ -2096,15 +2117,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 					settings.autocomplete,
 				)
 				.autocomplete( 'instance' )._renderItem = function( ul, item ) {
-					if (item.value=='...') {
-						return $('<li class="ui-state-disabled -more"></li>')
-						.append(item.label)
-						.appendTo( ul );
-					} else {
-						return $( '<li></li>' )
-						.append( '<a><span>'+item.label+'</span>'+(item.desc!=undefined ? '<p>'+item.desc+'</p>' : '')+'</a>' )
-						.appendTo( ul )
-					}
+					return renderAutocompleteItem(ul, item);
 				}
 			}
 		});
@@ -2935,15 +2948,7 @@ $(document).on('focus', '.sg-address', function(e) {
 		}
 	})
 	.autocomplete( "instance" )._renderItem = function( ul, item ) {
-		if (item.value=='...') {
-			return $('<li class="ui-state-disabled -more"></li>')
-			.append(item.label)
-			.appendTo( ul );
-		} else {
-			return $( "<li></li>" )
-			.append( "<a><span>"+item.label+"</span>"+(item.desc!=undefined ? "<p>"+item.desc+"</p>" : "")+"</a>" )
-			.appendTo( ul )
-		}
+		return renderAutocompleteItem(ul, item);
 	}
 });
 
@@ -3062,20 +3067,11 @@ $(document).on('focus', '.sg-autocomplete', function(e) {
 		},
 	})
 	.autocomplete('instance')._renderItem = function( ul, item ) {
-		let renderItem = $this.data('renderItem')
-		if (renderItem && typeof window[renderItem] === 'function') {
-			return window[renderItem]($this, ul, item);
-		} else {
-			if (item.value=='...') {
-				return $('<li class="ui-state-disabled -more"></li>')
-				.append(item.label)
-				.appendTo( ul );
-			} else {
-				return $( "<li></li>" )
-				.append( "<a><span>"+(item.altLabel != undefined ? item.altLabel : item.label)+"</span>"+(item.desc != undefined ? "<p>"+item.desc+"</p>" : "")+"</a>" )
-				.appendTo( ul )
-			}
-		}
+		return renderAutocompleteItem(ul, item, {
+			labelKey: 'altLabel',
+			customRenderer: $this.data('renderItem'),
+			$this: $this
+		});
 	}
 });
 
