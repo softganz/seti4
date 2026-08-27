@@ -1375,6 +1375,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		let $inlineWidget = $this.closest('.sg-inlineedit')
 
 		let inputType = $inlineField.data('type')
+		let rawInputType = inputType // keep original type before normalization (used by inputcssclass)
 		let onSaveFunction = $inlineWidget.attr('onSave')
 		let onSaveFieldCallback = $inlineField.data('callback')
 		let fieldOptions = $inlineField.data('options') ? $inlineField.data('options') : {}
@@ -1496,8 +1497,8 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			placeholder: $inlineField.data('placeholder') ? $inlineField.data('placeholder') : '...',
 			inputcssclass: () => {
 				let inputcssclass = ''
-				if (inputType == 'numeric') inputcssclass = 'form-text -numeric'
-				else if (inputType == 'money') inputcssclass = 'form-text -money'
+				if (rawInputType == 'numeric') inputcssclass = 'form-text -numeric'
+				else if (rawInputType == 'money') inputcssclass = 'form-text -money'
 				else if (inputType == 'email') inputcssclass = 'form-text -email'
 				else if (inputType == 'url') inputcssclass = 'form-text -url'
 				else if (inputType == 'autocomplete') inputcssclass = 'form-text -autocomplete'
