@@ -1776,10 +1776,10 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		function createPostUrlLink(postUrl, para, text) {
 			// Convert parameters object to URL parameters
 			const urlParams = new URLSearchParams(para).toString();
-			
-			// Create full URL by combining postUrl with parameters 
+
+			// Create full URL by combining postUrl with parameters
 			const fullUrl = postUrl + (postUrl.includes('?') ? '&' : '?') + urlParams;
-			
+
 			// Return HTML string
 			return '<a href="' + fullUrl + '" target="_blank">' + text + '</a>';
 		}
