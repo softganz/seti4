@@ -1766,7 +1766,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 						notify(errorMsg, 2000)
 						// $this.trigger('click')
 						setTimeout(function() {
-							settings.container.find('-for-input').trigger('click')
+							settings.container.find('.-for-input').trigger('click')
 							// $nextBoxInput.trigger('click')
 						}, 100);
 						return value
@@ -1838,7 +1838,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 					}
 
 					// Goto next field
-					let $allBox = $this.closest('.sg-inlineedit').find('.inlineedit-field:not(.-hidden');
+					let $allBox = $this.closest('.sg-inlineedit').find('.inlineedit-field:not(.-hidden)');
 					let $nextBox;
 					let currentBoxIndex = $allBox.index(self)
 					let $nextBoxInput
@@ -1968,7 +1968,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		if (checkCount.length >= fieldOptions.maxCheckbox) {
 			$inlineField.find('input[type=checkbox]:not(":checked")').attr('disabled', 'disabled');
 		} else {
-			$inlineField.find('input[type=checkbox]').attr('disabled', null)
+			$inlineField.find('input[type=checkbox]').removeAttr('disabled')
 		}
 	}
 
