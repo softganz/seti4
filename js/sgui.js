@@ -1340,9 +1340,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 	let sgInlineEditAction = 'click';
 	let updatePending = 0;
 	let updateQueue = 0;
-	let database;
-	let ref;
-	let radioClickCount = 0;
 
 	// Merge multiple option sources into one settings object.
 	// Later sources override earlier ones (priority: lowest -> highest).
@@ -1539,17 +1536,17 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 			// Valid min value
 			if (settings.minValue != undefined && value*1 < settings.minValue) {
-				errorMsg = 'ข้อมูลมีค่าน้อยกว่าช่วงที่กำหนด', 2000
+				errorMsg = 'ข้อมูลมีค่าน้อยกว่าช่วงที่กำหนด'
 			}
 
 			// valid max value
 			if (settings.maxValue != undefined && value*1 > settings.maxValue) {
-				errorMsg = 'ข้อมูลมีค่ามากกว่าช่วงที่กำหนด', 2000
+				errorMsg = 'ข้อมูลมีค่ามากกว่าช่วงที่กำหนด'
 			}
 
 			// valid pattern
 			if (settings.pattern && !settings.container.find(".form-text")[0].checkValidity()) {
-				errorMsg = 'ข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด', 2000
+				errorMsg = 'ข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด'
 			}
 
 			if (errorMsg) {
