@@ -1941,7 +1941,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 		// Init process with show and hide
 		if ("hide" in showOn) processShow(value, {"hide": showOn.hide});
-		if ("show" in showOn) processShow(show, {"hide": showOn.show});
+		if ("show" in showOn) processShow(value, {"show": showOn.show});
 
 		if (showOn.value) {
 			// Show/hide single value
