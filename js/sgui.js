@@ -1534,32 +1534,22 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 
 			if (debug) console.log('VALID VALUE:', value, settings)
 
+			// Clean numeric value once (used by both min/max checks)
+			value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')
+
 			// Valid min value
-			if (settings.minValue != undefined) {
-				// if (settings.container.data('ret') != 'numeric') return true
-				value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(value)
-				// console.log('minValue = ',settings.minValue,' value = ',value,' IS ',value < settings.minValue*1)
-				if (value*1 < settings.minValue) {
-					errorMsg = 'ข้อมูลมีค่าน้อยกว่าช่วงที่กำหนด', 2000
-				}
+			if (settings.minValue != undefined && value*1 < settings.minValue) {
+				errorMsg = 'ข้อมูลมีค่าน้อยกว่าช่วงที่กำหนด', 2000
 			}
 
 			// valid max value
-			if (settings.maxValue != undefined) {
-				// if (settings.container.data('ret') != 'numeric') return true
-				value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')// = parseFloat(value)
-				// console.log('maxValue = ',settings.maxValue,' value = ',value,' IS ',value > settings.maxValue*1)
-				if (value*1 > settings.maxValue) {
-					errorMsg = 'ข้อมูลมีค่ามากกว่าช่วงที่กำหนด', 2000
-				}
+			if (settings.maxValue != undefined && value*1 > settings.maxValue) {
+				errorMsg = 'ข้อมูลมีค่ามากกว่าช่วงที่กำหนด', 2000
 			}
 
 			// valid pattern
-			if (settings.pattern) {
-				let inputBox = settings.container.find(".form-text")[0]
-				if (!inputBox.checkValidity()) {
-					errorMsg = 'ข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด', 2000
-				}
+			if (settings.pattern && !settings.container.find(".form-text")[0].checkValidity()) {
+				errorMsg = 'ข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด', 2000
 			}
 
 			if (errorMsg) {
@@ -1794,11 +1784,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			).trigger('edit')
 		}
 
-
-		self.saveValue = ($inlineField, value, callback) => {
-			console.log($inlineField, value);
-		}
-
 		function createPostUrlLink(postUrl, para, text) {
 			// Convert parameters object to URL parameters
 			const urlParams = new URLSearchParams(para).toString();
@@ -1896,10 +1881,6 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			// SAVE DATA IN FORM TO TARGET
 			update: function($inlineField, value, callback) {
 				self.saveToServer($inlineField, value, callback)
-			},
-
-			saveValue: function($inlineField, value, callback) {
-				console.log("SAVE VALUE", $inlineField, value);
 			}
 		}
 	}
