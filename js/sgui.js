@@ -1465,7 +1465,7 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 				if (settings.type == "text" && original.revert.startsWith("<span") && value == "") {
 					original.reset(); // Revert to original if no change
 					return false; // Cancel submission
-				} else if (settings.type == "text" && origin.revert == "" && value == "") {
+				} else if (settings.type == "text" && original.revert == "" && value == "") {
 					original.reset(); // Revert to original if no change
 					return false; // Cancel submission
 				} else if (settings.type == "text" && original.revert == value) {
