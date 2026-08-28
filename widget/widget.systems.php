@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-08-24
- * Version  :: 89
+ * Modified :: 2026-08-28
+ * Version  :: 90
  *
  * @param Array $args
  *
@@ -304,7 +304,6 @@ class Widget extends WidgetBase {
 		} else if (is_object($widget)) {
 			// Build General Object
 			$result .= $callbackFunction['object'] && is_callable($callbackFunction['object']) ? $callbackFunction['object']($key, $widget) : \SG\json_encode($widget);
-			$result .= \SG\json_encode($widget);
 		} else if (is_array($widget)) {
 			// Build Array
 			$result .= $callbackFunction['array'] && is_callable($callbackFunction['array']) ? $callbackFunction['array']($key, $widget) : \SG\json_encode($widget);
