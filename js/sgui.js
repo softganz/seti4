@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-27
- * Version  :: 81
+ * Modified :: 2026-08-30
+ * Version  :: 82
  */
 
 'use strict'
@@ -1556,14 +1556,18 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 			// Clean numeric value once (used by both min/max checks)
 			value = value.replace(/[^0-9.\-]+|\.(?!\d)/g, '')
 
+			// Resolve min/max with fallback to legacy minValue/maxValue
+			let minValue = settings.min != undefined ? settings.min : settings.minValue
+			let maxValue = settings.max != undefined ? settings.max : settings.maxValue
+
 			// Valid min value
-			if (settings.minValue != undefined && value*1 < settings.minValue) {
-				errorMsg = 'ข้อมูลมีค่าน้อยกว่าช่วงที่กำหนด'
+			if (minValue != undefined && value*1 < minValue) {
+				errorMsg = `ข้อมูลต้องมีค่ามากกว่าหรือเท่ากับ ${minValue}`
 			}
 
 			// valid max value
-			if (settings.maxValue != undefined && value*1 > settings.maxValue) {
-				errorMsg = 'ข้อมูลมีค่ามากกว่าช่วงที่กำหนด'
+			if (maxValue != undefined && value*1 > maxValue) {
+				errorMsg = `ข้อมูลมีค่าน้อยกว่าหรือเท่ากับ ${maxValue}`
 			}
 
 			// valid pattern
