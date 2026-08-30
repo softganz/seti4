@@ -1,16 +1,16 @@
 <?php
 /**
- * Schema  :: Schema Model
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-09-23
- * Modify  :: 2026-02-18
- * Version :: 3
+ * Schema   :: Schema Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-09-23
+ * Modified :: 2026-08-30
+ * Version  :: 4
  *
  * @param Array $args
  * @return Object
  *
- * @usage new SchemaModel([])
- * @usage SchemaModel::function($conditions, $options)
+ * @uses new SchemaModel([])
+ * @uses SchemaModel::function($conditions, $options)
  */
 
 class SchemaModel {
@@ -29,11 +29,32 @@ class SchemaModel {
 		return json_decode(R::Asset($schemaName));
 	}
 
+	/**
+	 * Add value from data to each input name
+	 *
+	 * @param array $body
+	 * @param object $data
+	 * @return array
+	 */
+	public static function addValue(array &$body, ?object $data): array {
+		foreach ($body as $key => $element) {
+			if (!is_object($element)) continue;
+			if ($element->widget === 'Children') {
+				self::addValue($element->children, $data);
+				continue;
+			}
+			if ($element->inputName) {
+				$body[$key]->value = self::getNestedValue($data, $element->inputName);
+			}
+		}
+
+		return $body;
+	}
+
 	public static function indicator($schema, $section) {
 		foreach ($schema->body as $metrix) {
 			foreach ($metrix->items as $metrinItem) {
 				foreach ($metrinItem->indicator as $indicator) {
-					// debugMsg($indicator, '$indicator');
 					if ($indicator->section == $section) return $indicator;
 				}
 			}
@@ -53,77 +74,31 @@ class SchemaModel {
 				else if ($element->widget === 'Children') {
 					$result = array_merge($result, self::bodyOnly($element->children));
 				} else {
-					// debugMsg($element->inputName);
 					unset($element->options);
 					$result[] = $element;
 				}
-				// if ($element->widgetName) {
-				// 	$widgetName = $element->widget;
-				// 	unset($element->widget);
-				// 	if ($widgetName === "Children") {
-				// 		foreach ($element->children as $childrenKey => $childrenValue) {
-				// 			if (is_string($childrenValue) && preg_match('/^</', $childrenValue)) {
-				// 				$element->children[$childrenKey] = $childrenValue;
-				// 				continue;
-				// 			}
-				// 			$childrenValue = (Array) $childrenValue;
-				// 			if ($childrenValue['type'] === "widget") {
-				// 				$element->children[$childrenKey] = new $childrenValue['widget']((Array) $childrenValue);
-				// 			} else {
-				// 				$childrenValue['value'] = $this->data->{$childrenValue['inputName']};
-				// 				$element->children[$childrenKey] = (Array) $childrenValue;
-				// 			}
-				// 		}
-				// 	}
-				// 	$schema->body[$key] = new $widgetName((Array) $element);
-				// } else {
-				// 	unset($schema->body[$key]);
-				// }
 			} else if (is_string($element)) {
-				// unset($schema->body[$key]);
 			} else {
-			// } else if (is_array($element)) {
-			// 	// Get information from $qtCodes
-			// 	$elements = [];
-			// 	foreach ($element as $subKey => $elementId) {
-			// 		// Element start with html tag
-			// 		if (preg_match('/^</', $elementId)) {
-			// 			$elements[] = $elementId;
-			// 			continue;
-			// 		}
-
-			// 		$elementParam = SG\getFirst($qtCodes[$elementId]->detail, (Object) []);
-
-			// 		// Extract choice to array
-			// 		if ($elementParam->choices) {
-			// 			if (is_string($elementParam->choices)) {
-			// 				$choices = [];
-			// 				foreach (explode(',', $elementParam->choices) as $choiceText) {
-			// 					$choices[$choiceText] = $choiceText;
-			// 				}
-			// 			} else {
-			// 				$choices = $elementParam->choices;
-			// 			}
-			// 			$elementParam->options = (Array) $choices;
-			// 			unset($elementParam->choices);
-			// 		}
-			// 		// unset($elementParam->attribute);
-			// 		$elementParam->value = $this->data->{$elementId};
-
-			// 		$elements[$elementId] = (Array) $elementParam;
-			// 	}
-			// 	// debugMsg($elements, '$elements');
-			// 	$schema->body[$key] = new Children([
-			// 		'tagName' => 'div',
-			// 		'class' => 'widget-card personal-edit',
-			// 		'children' => $elements,
-			// 	]);
-			// } else {
 				$result[] = $element;
-				// debugMsg(htmlspecialchars($element));
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Get nested value from object by dot-separated path
+	 *
+	 * @param object $data
+	 * @param string $path e.g. "2.1" or "var.sub"
+	 * @return mixed
+	 */
+	private static function getNestedValue(?object $data, string $path) {
+		$value = $data;
+		foreach (explode('.', $path) as $segment) {
+			if (!is_object($value) || !isset($value->{$segment})) return null;
+			$value = $value->{$segment};
+		}
+		return $value;
 	}
 }
 ?>
