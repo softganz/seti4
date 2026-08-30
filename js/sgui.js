@@ -3,7 +3,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
  * Modified :: 2026-08-30
- * Version  :: 82
+ * Version  :: 83
  */
 
 'use strict'
@@ -1371,12 +1371,8 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 	}
 
 	$.fn.sgInlineEdit2 = function(target, options = {}) {
-		let debug = false;
-
 		// Local state for internal methods (previously leaked to window.self)
 		const self = {};
-
-		if (debug) console.log('$.sgInlineEdit version ' + version + ' start')
 
 		// default configuration properties
 		if (typeof $.fn.editable === 'undefined') {
@@ -1408,19 +1404,15 @@ $(document).on('submit', 'form.sg-form', function(event) { // sg-form
 		let showSubmitButton = (fieldOptions && 'button' in fieldOptions) || $inlineField.data('button') == 'yes'
 		let postUrl = $inlineField.data('action') ? $inlineField.data('action') : $inlineField.data('updateUrl')
 
-		// console.log('debug ', $inlineWidget.data('debug'));
-		if ($inlineWidget.data('debug') === 'inline') debug = true;
-		else if (fieldOptions && 'debug' in fieldOptions && fieldOptions.debug) {
-			debug = true;
-			console.log('DEBUG ENABLED from field options');
-		}
+		let debug = $inlineWidget.data('debug') === 'inline' || fieldOptions && 'debug' in fieldOptions && fieldOptions.debug;
 
+		if (debug) console.log(`=== $.sgInlineEdit version ${version} start ===`);
 
 		if (postUrl === undefined) {
 			postUrl = $inlineWidget.data('action') ? $inlineWidget.data('action') : $inlineWidget.data('updateUrl')
 		}
 
-		if (debug) console.log('=== SG-INLINE-EDIT DEBUG for inputType "(' + inputType + ') inputName ' + $inlineField.data("inputName") + '" ===>')
+		if (debug) console.log('inputType ' + inputType + ', inputName ' + $inlineField.data("inputName"))
 
 		// console.log('POST URL = ',postUrl)
 		// console.log($inlineWidget.data('updateUrl'))
