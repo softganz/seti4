@@ -2524,8 +2524,8 @@ function hideWaitScreen() {
 			// console.log("API Parameter :: " + $form.serialize());
 			// console.log('API Parameter :: ', para)
 			// console.log('url = ', queryUrl + '?' + new URLSearchParams(para))
-			// console.log($this.data())
-
+			// console.log("data", $this.data())
+			
 			if (debug) startDebug(para)
 
 			showWaitScreen();
