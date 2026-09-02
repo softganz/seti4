@@ -3,8 +3,8 @@
  * Widget   :: Report Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-31
- * Version  :: 15
+ * Modified :: 2026-09-02
+ * Version  :: 16
  *
  * @param Array $args
  *
@@ -52,6 +52,8 @@ class Report extends Widget {
 	}
 
 	function renderCheckbox($items, $filterValue) {
+		if (is_scalar($items)) return [$items];
+
 		$inputs = [];
 		foreach ($items as $selKey => $selVal) {
 			$inputType = \SG\getFirst($filterValue['type'], 'checkbox');
@@ -101,7 +103,7 @@ class Report extends Widget {
 					'text' => $filterValue['text'],
 					'position' => 'right',
 					'childrenContainer' => ['tagName' => 'ul', 'class' => '-checkbox'],
-					'children' => $this->renderCheckbox($filterValue['choice'],$filterValue),
+					'children' => $this->renderCheckbox($filterValue['choices'] ?? $filterValue['choice'], $filterValue),
 					'footer' => new Widget([
 						'children' => [
 							'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()"><i class="icon -material">done</i><span>Apply</span></a></nav>',
