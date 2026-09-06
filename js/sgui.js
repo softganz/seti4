@@ -2,8 +2,8 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-08-30
- * Version  :: 83
+ * Modified :: 2026-09-06
+ * Version  :: 84
  */
 
 'use strict'
@@ -2490,18 +2490,24 @@ function hideWaitScreen() {
 
 		self.startDebug = function(para) {
 			$debugOutput.empty().show()
+			// Use $.param() instead of URLSearchParams so array values
+			// (e.g. for_fund[]: ["521","592"]) serialize as repeated keys
+			// (for_fund[]=521&for_fund[]=592) instead of comma-joined strings.
+			let queryString = $.param(para)
+			// Use "?" if queryUrl has no query string yet, otherwise "&".
+			let separator = queryUrl.indexOf('?') === -1 ? '?' : '&'
+
 			$debugOutput.append(
 				$('<a>')
 				.text('Get data api url')
 				.attr({
-					'href': queryUrl + '&' + new URLSearchParams(para),
+					'href': queryUrl + separator + queryString,
 					'target': '_blank'
 				})
 			)
 			.append('<br>')
 			.append(JSON.stringify(para))
 			.append('<hr>')
-
 		}
 
 		// RETURN function that can call from outside
