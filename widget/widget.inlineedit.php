@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-08-30
- * Version  :: 39
+ * Modified :: 2026-09-06
+ * Version  :: 40
  *
  * @param Array $args
  *
@@ -67,11 +67,7 @@ class InlineEdit extends Widget {
 		if (isset($child['widget'])) $child['type'] = 'widget';
 		else if (isset($child['method'])) $child['type'] = 'method';
 
-		if (in_array(strtolower($child['type']), ['widget'])) {
-			return '';
-		}
-
-		if (in_array(strtolower($child['type']), ['method', 'listorder'])) {
+		if (in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])) {
 			$parts = ['<span '];
 			if ($child['id']) $parts[] = 'id="' . $child['id'] . '" '; // or fallback to $child['class']
 			$parts[] = 'class="' . ($this->editMode ? $this->editFieldClassName : $this->viewFieldClassName);
@@ -153,10 +149,7 @@ class InlineEdit extends Widget {
 	protected function renderChildContainerEnd($child = [], $key = NULL): string {
 		if (!is_array($child)) return '';
 
-		if (isset($child['widget']) || isset($child['method']) || in_array(strtolower($child['type']), ['method', 'listorder'])) {
-			if (isset($child['widget']) || strtolower($child['type']) === 'widget') {
-				return '';
-			}
+		if (isset($child['widget']) || isset($child['method']) || in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])) {
 			return '</span>';
 		}
 
@@ -165,26 +158,25 @@ class InlineEdit extends Widget {
 
 	#[\Override]
 	protected function renderEachChildWidget($widget, $key = NULL, $callbackFunction = [], $options = []) {
-		// debugMsg($widget,"RENDER EACH CHILD WIDGET");
-		// debugMsg($widget, '$widget');
-		// return 'RENDER EACH<br>';
+		// debugMsg($widget, '$widget-renderEachChildWidget');
 		return parent::renderEachChildWidget(
 			$widget,
 			$key,
 			[
 				'array' => function($key, $widget) {
+					// debugMsg($widget, '$widgetArray');
 					if (isset($widget['options'])) $widget['options'] = (Object) $widget['options'];
-					return $this->renderChildType($key, (Object) $widget);
+					if ($widget['widget']) {
+						return $this->renderTypeWidget((Object) $widget);
+					} else {
+						return $this->renderChildType($key, (Object) $widget);
+					}
 				},
 				'object' => function($key, $widget) {
 					while (is_object($widget) && method_exists($widget, 'build')) {
 						$widget = $widget->build();
 						if (!is_object($widget)) return $widget;
 					}
-					// debugMsg('RENDER EACH CHILD WIDGET => NOT WIDGET');
-					return $this->renderChildContainerStart($key, null, (array) $widget)
-						. $this->renderChildType($key, (object) $widget)
-						. $this->renderChildContainerEnd((array) $widget, $key);
 				},
 				'text' => function($key, $text) {
 					return $text._NL;
@@ -194,7 +186,6 @@ class InlineEdit extends Widget {
 	}
 
 	protected function renderChildType($key, $widget = '{}') {
-		// debugMsg($widget,"RENDER CHILD TYPE");
 		if (isset($widget->widget)) $widget->type = 'widget';
 		if (empty($widget->inputName) && is_string($key)) $widget->inputName = $key;
 		$text = \SG\getFirst($widget->value, $widget->text);
@@ -244,12 +235,10 @@ class InlineEdit extends Widget {
 		if ($opts->numbering) $parts[] = '<span class="-numbering">' . (++$this->numbering) . '.</span>';
 		if ($opts->labelPrefix) $parts[] = '<span class="-label-prefix">' . $opts->labelPrefix . '</span>';
 
-		$parts[] = '<span class="-label-text">';
-		$parts[] = '<span>' . $widget->label . '</span>';
+		$parts[] = '<span class="-label-text">' . $widget->label . '</span>';
 
-		if ($widget->unit) $parts[] = '<span class="-unit"> (' . $widget->unit . ')</span>';
 		if ($opts->labelSuffix) $parts[] = '<span class="-label-suffix">' . $opts->labelSuffix . '</span>';
-		$parts[] = '</span>';
+		if ($widget->unit) $parts[] = '<span class="-unit"> (' . $widget->unit . ')</span>';
 
 		$parts[] = '<span class="-postfix">' . $postfix . '</span>';
 		$parts[] = '</label>' . _NL;
@@ -482,22 +471,18 @@ class InlineEdit extends Widget {
 		}
 
 		// Build widget instance from class name
-		if (is_string($widgetName)) {
-			try {
-				$widgetInstance = new $widgetName($widget);
-			} catch (\Throwable $exception) {
-				return 'Not widget';
+		if (is_string($widgetName) && class_exists($widgetName)) {
+			$widgetInstance = new $widgetName($widgetArgs);
+			if (method_exists($widgetInstance, 'build')) {
+				$ret .= $widgetInstance->build();
+			} else {
+				$ret .= (string) $widgetInstance;
 			}
-			// Build until it is no longer an object
-			while (is_object($widgetInstance) && method_exists($widgetInstance, 'build')) {
-				$widgetInstance = $widgetInstance->build();
-			}
-			$ret .= $widgetInstance;
 		} else if (is_object($widgetName) && method_exists($widgetName, 'build')) {
 			// Widget is already an object instance
 			$ret .= $widgetName->build();
 		} else {
-			$ret .= 'Render widget error!!!';
+			$ret .= $this->renderEachChildWidget($widgetArgs);
 		}
 
 		return $ret;
