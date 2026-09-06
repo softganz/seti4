@@ -3,8 +3,8 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-04-22
- * Version :: 36
+ * Modify  :: 2026-09-06
+ * Version :: 37
  */
 
 /* Core Function */
@@ -769,7 +769,8 @@ function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 		// we need to first find what function called get_caller(), and substitute that as the
 		// default $function. Remember that invoking get_caller() recursively will add another
 		// instance of it to the function stack, so tell get_caller() to use the current stack.
-		$function = get_caller(__FUNCTION__, $stack,$key);
+
+		$function = get_caller(__FUNCTION__, $stack, $key);
 	}
 
 
@@ -777,17 +778,18 @@ function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 	if ( is_string($function) && $function != "" ) {
 		// If we are given a function name as a string, go through the function stack and find
 		// it's caller.
+		$stackList = '';
 		for ($i = 0; $i < count($stack); $i++) {
 			$curr_function = $stack[$i];
 			// Make sure that a caller exists, a function being called within the main script
 			// won't have a caller.
-			if ($key=='stack') {
-				if ($i==0) continue;
-				$stackList.=$curr_function['function'].'() line '.$curr_function['line'].' of file '.$curr_function['file'].'<br />';
+			if ($key === 'stack') {
+				if ($i === 0) continue;
+				$stackList .= ($curr_function['function'] ?? '?').'() line '.($curr_function['line'] ?? '?').' of file '.($curr_function['file'] ?? '?').'<br />';
 				//echo '$stackList='.$stackList.'<br />'._NL;
 			} else {
-				if ( $curr_function["function"] == $function && ($i + 1) < count($stack) ) {
-					$stack[$i + 1]['from']=(!empty($stack[$i + 1]['class'])?$stack[$i + 1]['class'].($stack[$i + 1]['type']?$stack[$i + 1]['type']:'.'):'').$stack[$i + 1]['function'].'() line '.$stack[$i]['line'].' of file '.$stack[$i]['file'];
+				if ( ($curr_function["function"] ?? NULL) == $function && ($i + 1) < count($stack) ) {
+					$stack[$i + 1]['from']=(!empty($stack[$i + 1]['class'])?$stack[$i + 1]['class'].($stack[$i + 1]['type']?$stack[$i + 1]['type']:'.'):'').($stack[$i + 1]['function'] ?? '?').'() line '.($stack[$i]['line'] ?? '?').' of file '.($stack[$i]['file'] ?? '?');
 					//print_o($stack[$i + $level],'$return['.($i + $level).']',1);
 					unset($stack[$i + 1]['args']);
 					return $key ? $stack[$i + 1][$key]: $stack[$i + 1];
