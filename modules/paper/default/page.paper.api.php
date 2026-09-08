@@ -1,16 +1,17 @@
 <?php
 /**
-* Paper   :: Call Paper API that save in api field of topic revision
-* Created :: 2024-08-10
-* Modify  :: 2024-08-10
-* Version :: 1
-*
-* @param String $nodeId
-* @param String $apiMethod
-* @return Widget
-*
-* @usage paer/{nodeId}/api/{apiMethod}
-*/
+ * Paper    :: Call Paper API that save in api field of topic revision
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-08-10
+ * Modified :: 2026-09-08
+ * Version  :: 2
+ *
+ * @param String $nodeId
+ * @param String $apiMethod
+ * @return Widget
+ *
+ * @uses paer/{nodeId}/api/{apiMethod}
+ */
 
 use Softganz\DB;
 
@@ -102,7 +103,7 @@ class PaperApi extends Page {
 				// 		LIMIT 1\',
 				// 		"var" => [":nodeId" => $nodeId]
 				// 	]);
-				// 	print_r(R('query'));
+				// 	print_r(R("query"));
 				// 	echo "<pre>".print_r($dbs)."</pre>";
 				// 	return $dbs;
 				}
