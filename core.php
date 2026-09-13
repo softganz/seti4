@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-09-06
- * @version :: 49
+ * @modify  :: 2026-09-13
+ * @version :: 50
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,6 +226,7 @@ function requestString() {
 function initConfig($configFolder) {
 	SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
 	SgCore::loadConfig('conf.core.json', $configFolder); // load core config file
+	// echo "_CONFIG_FILE="._CONFIG_FILE.' configFolder='.$configFolder;
 	SgCore::loadConfig(_CONFIG_FILE, $configFolder); // load web config file
 	SgCore::loadConfig(_CONFIG_FILE, 'conf.local'); // load local config file
 }
@@ -434,6 +435,30 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 
 	// On fatal error
 	if (sgIsFatalError($code)) {
+		// Memory safety guard: if we are already critically low on memory (e.g. the
+		// original error was a memory exhaustion), do NOT attempt the heavy reporting
+		// work (backtrace, log send, HTML render) because it will only fail again with
+		// another "Allowed memory size ... exhausted" error and mask the real cause.
+		$memoryLimit = intval(ini_get('memory_limit'));
+		if ($memoryLimit > 0) {
+			$memoryUsed = memory_get_usage(true);
+			if ($memoryUsed >= $memoryLimit * 0.9) {
+				$clean = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/i', '', $description);
+				$clean = preg_match('/(.*)( in )/', $clean, $out) ? $out[1] : $clean;
+				$clean = trim($clean);
+				if (empty($clean)) $clean = 'Fatal Error';
+				die(
+					showError([
+						'Title' => $clean.' [code = '.$code.']',
+						'Message' => 'Memory limit ('.round($memoryLimit / 1048576).'MB) was exhausted. '
+							. 'The error handler could not build a full report because the process '
+							. 'is critically low on memory.<br /><br />'
+							. 'Error at line <b>'.$line.'</b> of <b>'.$file.'</b>',
+					])
+				);
+			}
+		}
+
 		$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 
 		$reportFileName = $file;
