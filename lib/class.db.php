@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-08-23
- * Version  :: 52
+ * Modified :: 2026-09-13
+ * Version  :: 53
  *
  * @param Array $args
  * @return Object
@@ -181,7 +181,11 @@ class DB {
 
 		$selectResult = new DB($args);
 		$selectResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $selectResult->multipleQuery);
-		$selectResult->callerFrom = get_caller(__FUNCTION__)['from'];
+		// Only resolve caller when query history is enabled (callerFrom is used in stmt()
+		// which only runs when history is on). Avoids expensive debug_backtrace() on every query.
+		if ($selectResult->options->history !== false) {
+			$selectResult->callerFrom = get_caller(__FUNCTION__)['from'];
+		}
 		$queryResult = $selectResult->selectResult();
 
 		// Query error, return exception
@@ -237,7 +241,11 @@ class DB {
 
 	public static function query($args) {
 		$queryResult = new DB($args);
-		$queryResult->callerFrom = get_caller(__FUNCTION__)['from'];
+		// Only resolve caller when query history is enabled (callerFrom is used in stmt()
+		// which only runs when history is on). Avoids expensive debug_backtrace() on every query.
+		if ($queryResult->options->history !== false) {
+			$queryResult->callerFrom = get_caller(__FUNCTION__)['from'];
+		}
 		$result = $queryResult->queryResult();
 
 		if ($result->error) {
