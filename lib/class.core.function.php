@@ -3,8 +3,8 @@
  * Core    :: Core Function
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2023-08-01
- * Modify  :: 2026-09-06
- * Version :: 37
+ * Modify  :: 2026-09-13
+ * Version :: 38
  */
 
 /* Core Function */
@@ -753,6 +753,17 @@ function page_class($addClass = NULL) {
  * @return String
  **/
 function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
+	// Cache result per (function, key) so repeated calls (e.g. DB::select/DB::query on
+	// every query) don't rebuild the expensive debug_backtrace() each time. The caller of
+	// a given function does not change within a single request, so this is safe.
+	static $cache = [];
+
+	$cacheable = is_string($function) && $function != '' && !is_array($use_stack);
+	if ($cacheable) {
+		$cacheKey = $function.'|'.($key ?? '');
+		if (array_key_exists($cacheKey, $cache)) return $cache[$cacheKey];
+	}
+
 	if ( is_array($use_stack) ) {
 		// If a function stack has been provided, used that.
 		$stack = $use_stack;
@@ -792,7 +803,9 @@ function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 					$stack[$i + 1]['from']=(!empty($stack[$i + 1]['class'])?$stack[$i + 1]['class'].($stack[$i + 1]['type']?$stack[$i + 1]['type']:'.'):'').($stack[$i + 1]['function'] ?? '?').'() line '.($stack[$i]['line'] ?? '?').' of file '.($stack[$i]['file'] ?? '?');
 					//print_o($stack[$i + $level],'$return['.($i + $level).']',1);
 					unset($stack[$i + 1]['args']);
-					return $key ? $stack[$i + 1][$key]: $stack[$i + 1];
+					$result = $key ? $stack[$i + 1][$key]: $stack[$i + 1];
+					if ($cacheable) $cache[$cacheKey] = $result;
+					return $result;
 				}
 			}
 		}
