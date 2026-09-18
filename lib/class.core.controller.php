@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-08-07
- * Version  :: 54
+ * Modified :: 2026-09-18
+ * Version  :: 55
  */
 
 /*************************************************************
@@ -16,6 +16,7 @@
 //---------------------------------------
 // Class R :: Core resource
 //---------------------------------------
+#[AllowDynamicProperties]
 class R {
 	public $configFolder;
 	public $colorScheme;
@@ -883,7 +884,7 @@ class SgCore {
 			$header = '<h2>'.($para->{'data-header-url'}?'<a href="'.$para->{'data-header-url'}.'">':'').'<span>'.\SG\getFirst($para->{'data-header'},$para->id).'</span>'.($para->{'data-header-url'}?'</a>':'').'</h2>'._NL;
 		}
 
-		if (trim($para->{'data-option-replace'}) == 'yes') {
+		if (trim($para->{'data-option-replace'} ?? '') === 'yes') {
 			$result .= $widget_result;
 		} else {
 			$result .= _NL.'<!-- Start widget '.$name.' -->'._NL
