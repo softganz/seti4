@@ -3,8 +3,8 @@
  * Stats    :: Main Page
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-02-13
- * Modified :: 2026-08-23
- * Version  :: 6
+ * Modified :: 2026-09-18
+ * Version  :: 7
  *
  * @return Widget
  *
@@ -105,7 +105,7 @@ class Stats extends Page {
 	}
 
 	private function script() {
-		$ret .= '<style type="text/css">
+		$ret = '<style type="text/css">
 		.hits-item {margin: 0; padding: 0; height: 12px;}
 		.hits-item.-hit {background-color:#009900;}
 		.hits-item.-user {background-color:#99CC00;}
