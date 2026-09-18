@@ -3,8 +3,8 @@
  * Paper    :: Render Paper Content
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-24
- * Modified :: 2026-06-24
- * Version  :: 3
+ * Modified :: 2026-09-18
+ * Version  :: 4
  *
  * @param Object $$topicInfo
  * @param Object $options
@@ -200,7 +200,7 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 		//debugMsg('ADS '.cfg('ad.type').' || '.cfg('ad.tags'));
 		//debugMsg($topicInfo,'$topicInfo');
 
-		$adTagList = explode(',', cfg('ad.tags'));
+		$adTagList = explode(',', cfg('ad.tags') ?? '');
 		$topicTagList = array();
 		foreach ($topicInfo->tags as $value) $topicTagList[] = $value->tid;
 		$adInTag = array_intersect($adTagList, $topicTagList);
