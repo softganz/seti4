@@ -3,8 +3,8 @@
  * Library  :: Define Constants
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2000-xx-xx
- * Modified :: 2026-08-17
- * Version  :: 6
+ * Modified :: 2026-08-18
+ * Version  :: 7
  */
 
 define('_STRIPSLASHES', 1);
@@ -120,7 +120,7 @@ define('_JSON_PATTERN', trim('
 define('_HEADER_BACK', '<a class="sg-action" data-rel="none" data-done="back"><i class="icon -material">arrow_back</i></a>');
 
 define('_HTTP_OK', 200); // OK: Everything worked successfull.
-define('_HTTP_OK', 201); // Created: A new resource was successfully created.
+define('_HTTP_OK_CREATED', 201); // Created: A new resource was successfully created.
 define('_HTTP_OK_NO_CONTENT', 204);	// No Content: No content send to browser.
 define('_HTTP_ERROR_BAD_REQUEST', 400); // Bad Request: The request sent to the server is incorrect or invalid.
 define('_HTTP_ERROR_UNAUTHORIZED', 401); // Unauthorized: You need to log in or provide valid authentication.
