@@ -15,9 +15,9 @@
  * the Free Software Foundation; either version 2 of the License.
  * ============================================
  *
- * Created :: 2019-12-08
- * Modify  :: 2026-08-23
- * Version :: 21
+ * Created  :: 2019-12-08
+ * Modified :: 2026-09-18
+ * Version  :: 22
  */
 
 namespace SG;
@@ -726,7 +726,7 @@ function explode_address($address = '',$areacode = NULL) {
 function implode_address($rs, $type = 'long') {
 	if (is_array($rs)) $rs = (Object) $rs;
 	$areaCode = getFirst($rs->areaCode, $rs->areacode);
-	$isBangkok = substr($areaCode, 0, 2) === '10';
+	$isBangkok = substr($areaCode ?? '', 0, 2) === '10';
 
 	$words['short'] = [
 		'village' => 'ม.',
