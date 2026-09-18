@@ -15,7 +15,7 @@
  * 
  * Created  :: 2007-07-09
  * Modified :: 2026-09-18
- * Version  :: 22
+ * Version  :: 23
  */
 
 use Softganz\DB;
@@ -945,7 +945,7 @@ class Url {
 		$ret = '';
 		$ret .= $url;
 		if (isset($get)) $ret .= '?'.$get;
-		if ($frement) $ret .= '#'.$frement;
+		// if ($frement) $ret .= '#'.$frement;
 		$ret = cfg('url') . $ret;
 		return $ret;
 	}
@@ -960,7 +960,7 @@ class Url {
 			$ret .= '?'.$url;
 			if (isset($get)) $ret .= '&'.$get;
 		}
-		if ($frement) $ret .= '#'.$frement;
+		// if ($frement) $ret .= '#'.$frement;
 		//	echo 'url alias of '.$ret.' = '.url_alias($ret)->system.'<br >';
 		if ($url_alias = url_alias_of_system($ret)) $ret = $url_alias->system;
 		$ret = cfg('url') . $ret;
