@@ -1,15 +1,19 @@
 <?php
 function view_watchdog_listing($dbs) {
 	$isAdmin = user_access('administer watchdogs');
-	$tables = new Table();
-	$tables->addClass('watchdog-list');
-	$tables->thead=array('wid'=>'No','date'=>'Date','Module','Keyword','Key ID','Field','User', 'ip -hover-parent'=>'IP');
+	$no = 0;
+
+	$tables = new Table([
+		'class' => 'watchdog-list',
+		'thead' => ['wid'=>'No','date'=>'Date','Module','Keyword','Key ID','Field','User', 'ip -hover-parent'=>'IP']
+	]);
+
 	foreach ($dbs->items as $rs) {
 		$no++;
 		$ui = new Ui();
 		if ($isAdmin) $ui->add('<a class="sg-action" href="' . Url::link('api/system/watchdog.delete', ['id' => $rs->wid]) . '" data-rel="none" data-done="remove:.-detail-' . $rs->wid . '" data-title="ลบรายการ" data-confirm="ต้องการลบรายการนี้ กรุณายืนยัน?"><i class="icon -material -gray">cancel</i></a>');
 		$menu = '<nav class="nav -icons -hover">'.$ui->build().'</nav>';
-		$tables->rows[]=array($rs->wid,
+		$tables->children[]=array($rs->wid,
 				$rs->date,
 				'<strong>'.$rs->module.'</strong>',
 				'<strong>'.$rs->keyword.'</strong>',
@@ -26,9 +30,9 @@ function view_watchdog_listing($dbs) {
 		if ($rs->referer) $more .= '<dd>Referer : <a href="'.$rs->referer.'" target="_blank">'.$rs->referer.'</a></dd>';
 		$more .= '<dd>Browser : '.$rs->browser.'</dd>';
 
-		$tables->rows[]=array(array('colspan'=>8,$more),'config'=>array('class'=>'-detail -detail-'.$rs->wid));
+		$tables->children[]=array(array('colspan'=>8,$more),'config'=>array('class'=>'-detail -detail-'.$rs->wid));
 	}
-	$ret.=$tables->build();
-	return $ret;
+
+	return $tables;
 }
 ?>
