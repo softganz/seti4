@@ -17,7 +17,7 @@
  *
  * Created  :: 2019-12-08
  * Modified :: 2026-09-18
- * Version  :: 22
+ * Version  :: 23
  */
 
 namespace SG;
@@ -725,7 +725,7 @@ function explode_address($address = '',$areacode = NULL) {
 */
 function implode_address($rs, $type = 'long') {
 	if (is_array($rs)) $rs = (Object) $rs;
-	$areaCode = getFirst($rs->areaCode, $rs->areacode);
+	$areaCode = getFirst($rs->areaCode ?? null, $rs->areacode ?? null);
 	$isBangkok = substr($areaCode ?? '', 0, 2) === '10';
 
 	$words['short'] = [
@@ -743,19 +743,23 @@ function implode_address($rs, $type = 'long') {
 		'zip' => 'รหัสไปรษณีย์',
 	];
 
-	$ampurName = getFirst($rs->ampurName, $rs->distname);
-	$tambonName = getFirst($rs->tambonName, $rs->subdistname);
-	$changwatName = getFirst($rs->changwatName, $rs->provname);
-	$zipCode = getFirst($rs->zipCode, $rs->zip, $rs->zipcode);
+	$ampurName = getFirst($rs->ampurName ?? null, $rs->distname ?? null);
+	$tambonName = getFirst($rs->tambonName ?? null, $rs->subdistname ?? null);
+	$changwatName = getFirst($rs->changwatName ?? null, $rs->provname ?? null);
+	$zipCode = getFirst($rs->zipCode ?? null, $rs->zip ?? null, $rs->zipcode ?? null);
 
-	$result = trim($rs->house.($rs->soi?' ซอย'.$rs->soi:'')
-		.($rs->road?' ถนน'.$rs->road:'')
-		.($rs->village?' '.$words[$type]['village'].intval($rs->village):'')
-		.($rs->villname?' บ้าน'.$rs->villname:'')
-		.($tambonName?' '.$words[$type]['tambon'].$tambonName:'')
-		.($ampurName?' '.$words[$type]['ampur'].$ampurName:'')
-		.($changwatName?' '.$words[$type]['changwat'].$changwatName:'')
-		.($zipCode ? ' '.$zipCode : ''));
+	$result = trim(
+		$rs->house
+		. ($rs->soi ?? null ? ' ซอย' . $rs->soi : '')
+		. ($rs->road ?? null ? ' ถนน' . $rs->road : '')
+		. ($rs->village ?? null ? ' ' . $words[$type]['village'] . intval($rs->village) : '')
+		. ($rs->villname ?? null ? ' บ้าน' . $rs->villname : '')
+		. ($tambonName ?? null ? ' ' . $words[$type]['tambon'] . $tambonName : '')
+		. ($ampurName ?? null ? ' ' . $words[$type]['ampur'] . $ampurName : '')
+		. ($changwatName ?? null ? ' '.$words[$type]['changwat'] . $changwatName : '')
+		. ($zipCode ?? null ? ' ' . $zipCode : '')
+	);
+
 	return $result;
 }
 
