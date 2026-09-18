@@ -17,7 +17,7 @@ function admin_log_clear($self) {
 
 	$ret.='<div id="result"></div>'._NL;
 
-	if ($itemToClear && $_REQUEST['delete']) {
+	if ($itemToClear && !empty($_REQUEST['delete'])) {
 		$rowOnEach=$itemToClear<$deleteStep ? $itemToClear:$deleteStep;
 		$startID=$minId;
 		$result=array('info'=>$counterInfo,'html'=>'');
