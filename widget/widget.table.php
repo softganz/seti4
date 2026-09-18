@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-09-18
- * Version  :: 9
+ * Version  :: 10
  *
  * @param Array $args
  *
@@ -15,6 +15,8 @@ class Table extends Widget {
 	var $config = [];
 	var $showHeader = true;
 	var $repeatHeader = 0;
+	var $caption;
+	var $colgroup = [];
 	var $rows = []; // @deprecated
 
 	private $headerKey = [];
@@ -94,7 +96,7 @@ class Table extends Widget {
 
 	// Render table caption
 	protected function renderCaption() {
-		$captionStr = \SG\getFirst($this->caption, $this->config->caption);
+		$captionStr = \SG\getFirst($this->caption, $this->config->caption ?? null);
 
 		return $captionStr ? '<caption>'.$captionStr.'</caption>'._NL : '';
 	}
