@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-09-18
- * Version  :: 92
+ * Version  :: 93
  *
  * @param Array $args
  *
@@ -25,7 +25,7 @@ class WidgetBase {
 	private static string $camelToDashRegex = '/([A-Z]+)/';
 
 	function __construct($args = []) {
-		foreach ($args as $argKey => $argValue) {
+		foreach ((array) $args as $argKey => $argValue) {
 			$this->{$argKey} = $argValue;
 		}
 		if (debug('widget')) {
