@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-08-28
- * Version  :: 90
+ * Modified :: 2026-09-18
+ * Version  :: 91
  *
  * @param Array $args
  *
@@ -18,6 +18,7 @@
  * @param array $args
  * @uses extends WidgetBase
  */
+#[AllowDynamicProperties]
 class WidgetBase {
 	public $widgetName = 'Widget';
 	public $version;
@@ -951,7 +952,7 @@ class Button extends Widget {
 		if (is_null($attribute['href'])) {
 			unset($attribute['href']);
 		} else {
-			$attribute['href'] = preg_replace('/\{\{projectId\}\}/', $this->variable->projectId, $attribute['href']);
+			$attribute['href'] = preg_replace('/\{\{projectId\}\}/', $this->variable->projectId ?? '', $attribute['href'] ?? '');
 		}
 
 		$button = '<a '
@@ -1310,8 +1311,8 @@ class ProfilePhoto extends Widget {
 				'class' => trim('widget-' . strtolower($this->widgetName) . ' ' . $this->class)
 					. ($this->size ? ' -size-' . $this->size : ''),
 				'src' => UserModel::profilePhoto($this->username),
-				'alt' => htmlspecialchars($this->title),
-				'title' => htmlspecialchars($this->title),
+				'alt' => htmlspecialchars($this->title ?? ''),
+				'title' => htmlspecialchars($this->title ?? ''),
 			]
 		);
 		return '<img ' . sg_implode_attr($attribute) . ' />';
