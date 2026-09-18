@@ -1,15 +1,25 @@
 <?php
 /**
-* Admin : Configuration Menu
-* Created 2016-11-08
-* Modify  2022-03-31
-*
-* @return Widget
-*
-* @usage new AdminMenuConfigWidget()
-*/
+ * Admin    :: Configuration Menu
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2016-11-08
+ * Modified :: 2026-09-18
+ * Version  :: 2
+ *
+ * @return Widget
+ *
+ * @uses new AdminMenuConfigWidget()
+ */
 
 class AdminMenuConfigWidget extends Widget {
+	public $devMode = false;
+
+	function __construct() {
+		parent::__construct([
+			'devMode' => $_SESSION['devMode'] ?? false
+		]);
+	}
+
 	function build() {
 		return new Column([
 			'children' => [
@@ -66,11 +76,11 @@ class AdminMenuConfigWidget extends Widget {
 							'leading' => new Icon('javascript'),
 							'trailing' => new Row([
 								'children' => [
-									$_SESSION['devMode'] ? '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'clear']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -green">toggle_on</i><span>ON</span></a>' : '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'yes']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -gray">toggle_off</i><span>OFF</span></a>',
+									$this->devMode ? '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'clear']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -green">toggle_on</i><span>ON</span></a>' : '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'yes']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -gray">toggle_off</i><span>OFF</span></a>',
 									// '<a class="btn" href="'.url('admin/config',['devMode' => 'clear']).'"><i class="icon -material">cancel</i><span>CLEAR</span></a>',
 								]
 							]), // Row
-							'subtitle' => 'Developer JS Mode is '.($_SESSION['devMode'] ? 'ON' : 'OFF'),
+							'subtitle' => 'Developer JS Mode is '.($this->devMode ? 'ON' : 'OFF'),
 						]),
 					], // children
 				]),

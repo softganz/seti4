@@ -1,32 +1,36 @@
 <?php
 /**
-* Admin   :: Admin AppBar Widget
-* Created :: 2024-08-19
-* Modify  :: 2025-01-16
-* Version :: 3
-*
-* @param Array $_args
-* @return AppBar
-*
-* @usage new AdminAppBarWidget($shopInfo, $options)
-*/
+ * Admin    :: Admin AppBar Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-08-19
+ * Modified :: 2026-09-18
+ * Version  :: 4
+ *
+ * @param Array $_args
+ * @return AppBar
+ *
+ * @uses new AdminAppBarWidget($args)
+ */
 
 class AdminAppBarWidget extends AppBar {
 	var $title;
 	var $leading;
 	var $trailing;
 	var $navigator;
+	var $search;
 
-	function __construct($_args = []) {
-		parent::__construct($_args);
-
-		$this->shopInfo = $_args['info'];
-		$this->shopId = $this->shopInfo->id;
-		$this->title = \SG\getFirst($_args['title'], 'Web Site Administrator on '.cfg('core.version'));
-		$this->leading = SG\getFirst($_args['leading'], '<i class="icon -material">admin_panel_settings</i>');
-
-		$this->trailing = SG\getFirst($_args['trailing'], $this->searchUser());
-		$this->navigator = SG\getFirst($_args['navigator'], $this->navigator());
+	function __construct($args = []) {
+		$args = (object) array_merge(
+			[
+				'title' => 'Web Site Administrator on '.cfg('core.version'),
+				'leading' => '<i class="icon -material">admin_panel_settings</i>',
+				'trailing' => $this->searchUser(),
+				'navigator' => $this->navigator(),
+				'search' => $_GET['q'] ?? null,
+			],
+			(array) $args
+		);
+		parent::__construct($args);
 	}
 
 	private function searchUser() {
@@ -34,7 +38,7 @@ class AdminAppBarWidget extends AppBar {
 
 		return '<form id="search" class="search-box" method="get" action="'.url('admin/user/list').'" name="memberlist" role="search">'
 			. '<input type="hidden" name="sid" id="sid" />'
-			. '<input id="search-box" class="sg-autocomplete" type="text" name="q" size="20" value="'.$_GET['q'].'" data-query="'.url('admin/get/username').'" data-altfld="sid" data-callback="submit" placeholder="Username or Name or Email">'
+			. '<input id="search-box" class="sg-autocomplete" type="text" name="q" size="20" value="' . $this->search . '" data-query="'.url('admin/get/username').'" data-altfld="sid" data-callback="submit" placeholder="Username or Name or Email">'
 
 			. '<button><i class="icon -material">search</i></button>'
 			. '</form>';
