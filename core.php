@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-09-13
- * @version :: 50
+ * @modify  :: 2026-09-18
+ * @version :: 51
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        49);
+cfg('core.version.code',        51);
 cfg('core.version',             '4.5.00');
 cfg('core.release',             '2026-06-05');
 cfg('core.location',            ini_get('include_path'));
@@ -82,9 +82,10 @@ $ext = strtolower(substr($request,strrpos($request,'.')+1));
 
 if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && basename($request) != 'theme.css')) {
 	// echo "/* Load JS/CSS ".$request." */\r\n";
-	die(loadJS($request,$ext));
+	loadJS($request,$ext);
+	die;
 } else if (in_array($ext, ['ico', 'jpg', 'gif', 'png', 'htm', 'html', 'php', 'xml', 'pdf', 'doc', 'swf'])) {
-	die(fileNotFound());
+	die(fileNotFound() ?? '');
 } else if (file_exists(_CORE_CONTROLLER_FILE)) {
 	require(_CORE_CONTROLLER_FILE);
 	if (file_exists(_CORE_LIB_FILE)) require(_CORE_LIB_FILE);
@@ -166,7 +167,7 @@ function loadJS($requestFile, $ext) {
 
 	// error_log($logMessage, 3, $logFile);
 
-	return;
+	return '';
 }
 
 /**
