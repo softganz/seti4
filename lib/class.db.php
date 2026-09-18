@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
  * Modified :: 2026-09-18
- * Version  :: 54
+ * Version  :: 55
  *
  * @param Array $args
  * @return Object
@@ -176,7 +176,7 @@ class DB {
 		unset($args[0]);
 		$this->args = $args;
 
-		$this->setOptions((Array) $args['options']);
+		$this->setOptions((array) ($args['options'] ?? []));
 	}
 
 	// Call by static method
@@ -193,7 +193,7 @@ class DB {
 		$queryResult = $selectResult->selectResult();
 
 		// Query error, return exception
-		if ($queryResult->error) {
+		if ($queryResult instanceof DbException) {
 			$errorMessage = $selectResult->stmt
 				. '; <span style="color:red;">-- ERROR :: '
 				. ($selectResult->errorMsg ?? 'Select data from database was error.')
@@ -252,7 +252,7 @@ class DB {
 		}
 		$result = $queryResult->queryResult();
 
-		if ($result->error) {
+		if ($result instanceof DbException) {
 			$errorMessage = $queryResult->stmt
 				. '; <span style="color:red;">-- ERROR :: '
 				. ($queryResult->errorMsg ?? 'Update data to database was error.')
@@ -677,7 +677,7 @@ class DB {
 		foreach ($this->args['where'] as $whereKey => $whereGroup) {
 			$where = [];
 			foreach ($whereGroup as $whereItem) {
-				if ($whereItem[0]) $where[] = $whereItem[0];
+				if (isset($whereItem[0]) && $whereItem[0]) $where[] = $whereItem[0];
 				unset($whereItem[0]);
 				if ($whereItem) $this->setVariable($whereItem);
 			}
