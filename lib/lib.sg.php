@@ -3,8 +3,8 @@
  * Function :: Common Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-08-23
- * Version  :: 9
+ * Modified :: 2026-09-18
+ * Version  :: 10
  *
  * @param Array $args
  * @return Widget
@@ -24,7 +24,7 @@ function sg_clone($object) {
 }
 
 function sg_encrypt($txt,$key){
-	srand((double)microtime()*1000000);
+	srand((float)microtime()*1000000);
 	$encrypt_key = md5(rand(0,32000));
 	$ctr=0;
 	$tmp = "";
@@ -49,7 +49,7 @@ function sg_decrypt($txt,$key){
 
 function sg_rand_password($length = 8) {
 	$randomPassword = "";
-	srand((double)microtime()*1000000);
+	srand((float)microtime()*1000000);
 	for($i=0;$i<$length;$i++) {
 		$randnumber = rand(48,120);
 		while (($randnumber >= 58 && $randnumber <= 64) || ($randnumber >= 91 && $randnumber <= 96)) {
@@ -401,9 +401,9 @@ function sg_strip_attr($tagSource) {
 function sg_summary_text($str=NULL,$length=0) {
 	if (empty($length)) $length=cfg('topic.summary_length');
 	$result = '';
-	if (preg_match('"(.*?)<!--break-->"si',$str,$out)) {
+	if (preg_match('"(.*?)<!--break-->"si', $str ?? '', $out)) {
 		$result=sg_text2html($out[1].'<!--read more-->');
-	} else if (preg_match_all('"<summary>(.*?)</summary>"si',$str,$out) || preg_match_all('"<p id=\"summary\">(.*?)</p>"si',$str,$out)) {
+	} else if (preg_match_all('"<summary>(.*?)</summary>"si', $str ?? '', $out) || preg_match_all('"<p id=\"summary\">(.*?)</p>"si', $str ?? '', $out)) {
 		foreach ($out[1] as $key=>$value) $out[1][$key]=sg_text2html($value.($key==count($out[1])-1?'<!--read more-->':''));
 		$result=_NL.'<p>'.implode('</p><p>',$out[1]).'</p>'._NL;
 	} else {
@@ -700,7 +700,7 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 	if ( empty($dstFile) ) $dstFile = $srcFile;
 	if ( !$autoSave ) $dstFile = dirname($srcFile)."/auto_image_resize.jpg";
 
-	if ( $dstWidth and empty($dstHeight) ) $dstHeight = round((double)($srcHeight*$dstWidth / $srcWidth));
+	if ( $dstWidth and empty($dstHeight) ) $dstHeight = round((float)($srcHeight*$dstWidth / $srcWidth));
 	if ( $autoSave ) {
 		// debugMsg('SAVE @'.date('H:i:s').' to '.$dstFile);
 		$result = false;
