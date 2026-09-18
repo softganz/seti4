@@ -14,8 +14,8 @@
  * ============================================
  * 
  * Created  :: 2007-07-09
- * Modified :: 2026-08-23
- * Version  :: 21
+ * Modified :: 2026-09-18
+ * Version  :: 22
  */
 
 use Softganz\DB;
@@ -167,8 +167,8 @@ class Timer {
 	function debug($debug=null,$key=null) { if (cfg($debug) || debug('timer')) return $this->build($key); }
 
 	function elapsed($a, $b) {
-		list($a_micro, $a_int) = explode(' ',$a);
-		list($b_micro, $b_int) = explode(' ',$b);
+		list($a_micro, $a_int) = explode(' ', $a ?? '');
+		list($b_micro, $b_int) = explode(' ', $b ?? '');
 
 		$a_micro = floatval($a_micro);
 		$a_int = intval($a_int);
@@ -914,6 +914,7 @@ class Url {
 	 * @return String
 	 */
 	static function link($url = null, $get = null, $frement = null, $subdomain = null) {
+		$get_a = '';
 		$ret = '';
 		if (isset($get) && is_array($get)) {
 			foreach ($get as $k => $v) if (!is_null($v)) $get_a .= $k.'='.$v.'&';
