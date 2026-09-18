@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-09-13
- * Version  :: 53
+ * Modified :: 2026-09-18
+ * Version  :: 54
  *
  * @param Array $args
  * @return Object
@@ -18,6 +18,7 @@ namespace Softganz;
 
 use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class DataModel {
 	function __construct($args) {
 		foreach ($args as $key => $value) {
@@ -26,6 +27,7 @@ class DataModel {
 	}
 }
 
+#[AllowDynamicProperties]
 class SetDataModel extends DataModel {
 	function __construct($args) {
 		if (is_string($args)) $args = explode(',', $args);
@@ -33,12 +35,14 @@ class SetDataModel extends DataModel {
 	}
 }
 
+#[AllowDynamicProperties]
 class JsonDataModel extends DataModel {
 	function __construct($args) {
 		$this->args = $args;
 	}
 }
 
+#[AllowDynamicProperties]
 class JsonArrayDataModel extends DataModel {
 	function __construct($args) {
 		$this->args = $args;
@@ -597,7 +601,7 @@ class DB {
 				\PDO::ATTR_EMULATE_PREPARES   => $this->multipleQuery, // turn off emulation mode for "real" prepared statements
 				\PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION, //turn on errors in the form of exceptions
 				\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC, //make the default fetch be an associative array
-				\PDO::MYSQL_ATTR_FOUND_ROWS		=> true
+				\Pdo\Mysql::ATTR_FOUND_ROWS		=> true
 			];
 			$this->PDO = new \PDO($dsn, $connection['user'], $connection['password'], $pdoOptions);
 		} catch (\PDOException $e) {
