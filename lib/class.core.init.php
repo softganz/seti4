@@ -3,8 +3,8 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-08-22
- * Version  :: 32
+ * Modified :: 2026-09-18
+ * Version  :: 33
  */
 
 global $R;
@@ -149,7 +149,7 @@ if (isset($_GET['setting:'])) {
 	die;
 }
 
-if ($R->appAgent->theme) {
+if (isset($R->appAgent->theme) && $R->appAgent->theme) {
 	$R->colorScheme = $R->appAgent->theme;
 } else {
 	$R->colorScheme = isset($_COOKIE['color-scheme']) ? $_COOKIE['color-scheme'] : NULL;
