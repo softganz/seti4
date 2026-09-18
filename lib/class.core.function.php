@@ -1,10 +1,10 @@
 <?php
 /**
- * Core    :: Core Function
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2023-08-01
- * Modify  :: 2026-09-13
- * Version :: 38
+ * Core     :: Core Function
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-08-01
+ * Modified :: 2026-09-18
+ * Version  :: 39
  */
 
 /* Core Function */
@@ -648,9 +648,10 @@ function is_admin($module = NULL) {
 function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
 	$q = is_null($q) ? '' : $q;
 	$ret = '';
+	$get_a = '';
 
 	if (isset($get) && is_array($get)) {
-		foreach ($get as $k=>$v) if (!is_null($v)) $get_a.=$k.'='.$v.'&';
+		foreach ($get as $k=>$v) if (!is_null($v)) $get_a .= $k . '=' . $v . '&';
 		$get=rtrim($get_a,'&');
 		if (empty($get)) unset($get);
 	}
@@ -1003,7 +1004,7 @@ function debug($key = NULL) {
 	if (empty($items)) {
 		$debug = '';
 		if (isset($_REQUEST['debug'])) $debug = $_REQUEST['debug'];
-		if (preg_match('/debug\/([a-z,0-9_]*)/',q(),$out)) $debug.=($debug?',':'').$out[1] ;
+		if (preg_match('/debug\/([a-z,0-9_]*)/',q() ?? '',$out)) $debug.=($debug?',':'').$out[1] ;
 		$items['debug'] = $debug?$debug:'none';
 		foreach (explode(',',$items['debug']) as $ok) $items[$ok] = true;
 	}
