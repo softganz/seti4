@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
  * Modified :: 2026-09-18
- * Version  :: 14
+ * Version  :: 15
  *
  * @param String $requestResult
  *
@@ -195,7 +195,9 @@ class renderPageWidget extends Widget {
 	}
 
 	protected function renderOldPage() {
-		if ($GLOBALS['gadget']) {
+		$ret = '';
+
+		if (!empty($GLOBALS['gadget'])) {
 			return $this->pageClass->theme->requestResult.$this->requestResult;
 		} else if (cfg('Content-Type') == 'text/xml') {
 			return $this->pageClass->theme->requestResult.$this->requestResult;
@@ -342,7 +344,7 @@ class renderPageWidget extends Widget {
 
 		$container_id=is_string($option->container)?$option->container:'main';
 		//$this->pageClass->theme->container->{'data-refresh'}='aaaa';
-		$container_attr=sg_implode_attr($this->pageClass->theme->container);
+		$container_attr = sg_implode_attr($this->pageClass->theme->container ?? []);
 
 		$showContainer = $option->container && !R::option('fullpage');
 		if ($showContainer) $ret .= _NL.'<div id="'.$container_id.'" class="'.$class.'" '.$container_attr.'>';
@@ -356,7 +358,7 @@ class renderPageWidget extends Widget {
 		else if (isset($this->requestResult)) $ret .= _NL.$this->requestResult._NL;
 		if ($showContainer) $ret .= '</div><!--'.$container_id.'-->'._NL;
 
-		if (is_object($this->pageClass->floatingActionButton) && method_exists($this->pageClass->floatingActionButton, 'build')) {
+		if (is_object($this->pageClass->floatingActionButton ?? null) && method_exists($this->pageClass->floatingActionButton, 'build')) {
 			$ret .= $this->pageClass->floatingActionButton->build();
 			// debugMsg($this->pageClass->floatingActionButton, '$floatingActionButton');
 		}
