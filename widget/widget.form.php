@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-09-18
- * Version  :: 50
+ * Version  :: 51
  *
  * @param Array $args
  *
@@ -216,7 +216,7 @@ class Form extends Widget {
 			return [NULL, $formElement . _NL . _NL];
 		}
 
-		$formElement = (Object) array_merge(
+		$formElement = (Object) array_replace(
 			[
 				'type' => null,
 				'id' => null,
@@ -244,6 +244,8 @@ class Form extends Widget {
 				// Type textarea
 				'cols' => null,
 				'rows' => null,
+				// Type select
+				'multiple' => false,
 				// Type button
 				'icon' => null
 			],
@@ -599,6 +601,8 @@ class Form extends Widget {
 		// debugMsg($choice, '$choice');
 		// debugMsg('<pre>'.print_r($choice,1).'</pre>');
 		foreach ($choice as $optionKey => $optionValue) {
+			if ($optionValue === null) continue;
+
 			if (is_object($optionValue)) $optionValue = (Array) $optionValue;
 
 			if (is_array($optionValue) && array_key_exists('label', $optionValue)) {
@@ -715,9 +719,21 @@ class Form extends Widget {
 			foreach ($formElement->items as $key => $button) {
 				if (is_null($button)) {
 					continue;
-				} else if ($button['type'] == 'text') {
-					$ret .= $button['value'];
+				} else if ($button['type'] ?? null === 'text') {
+					$ret .= $button['value'] ?? '';
 				} else {
+					$button = array_replace(
+						[
+							'type' => null,
+							'name' => null,
+							'class' => null,
+							'value' => null,
+							'btnvalue' => null,
+							'attribute' => null,
+						],
+						(array) $button
+					);
+
 					$ret .= '<button'
 						. (isset($button['type']) ? ' type="' . $button['type'] . '"' : '')
 						. ' name="' . SG\getFirst($button['name'] , is_string($key) ? $key : $name) . '"'
