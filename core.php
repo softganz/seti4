@@ -7,7 +7,7 @@
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
  * @modify  :: 2026-09-18
- * @version :: 51
+ * @version :: 52
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        51);
+cfg('core.version.code',        52);
 cfg('core.version',             '4.5.00');
 cfg('core.release',             '2026-06-05');
 cfg('core.location',            ini_get('include_path'));
@@ -244,7 +244,7 @@ function sg_autoloader(string $class) {
 	// debugMsg('AUTOLOAD BEGIN => '.$class);
 
 	$debug = debug('autoload');
-	$registerFileList = (Array) R()->core->autoLoader->items;
+	$registerFileList = (array) R()->core?->autoLoader?->items ?? [];
 
 	if (preg_match('/\\\\/', $class)) {
 		$classList = explode('\\', $class);
@@ -422,20 +422,15 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 	static $count = 0;
 
 	$displayErrors = strtolower(ini_get("display_errors"));
+	$isDebug = (function_exists('i') && isset(i()->ok) && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 
 	if ($displayErrors === 'off') {
 		return false;
 	} else if (!(error_reporting() & $code)) {
 		// This error code is not included in error_reporting.
 		return false;
-	} else if (in_array($code, [E_DEPRECATED, E_USER_DEPRECATED])) {
-		// Do not throw an Exception for deprecation warnings as new or unexpected
-		// deprecations would break the application.
-		return false;
-	}
-
-	// On fatal error
-	if (sgIsFatalError($code)) {
+	} else if (sgIsFatalError($code)) {
+		// On fatal error
 		// Memory safety guard: if we are already critically low on memory (e.g. the
 		// original error was a memory exhaustion), do NOT attempt the heavy reporting
 		// work (backtrace, log send, HTML render) because it will only fail again with
@@ -460,7 +455,6 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 			}
 		}
 
-		$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
 
 		$reportFileName = $file;
 		if (!$isDebug) {
@@ -540,7 +534,17 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 					. $fullDescription : '',
 			])
 		);
+	} else if ($isDebug) {
+		// Do not throw an Exception for deprecation warnings as new or unexpected
+		// deprecations would break the application.
+		cfg(
+			'web.message',
+			cfg('web.message')
+			. '<div><b>' . getErrorTypeName($code) . ':</b> ' . $description . ' in ' . $file . ' on line <b>' .$line . '</b></div>');
+		return false;
 	}
+
+	return false;
 }
 
 /**
