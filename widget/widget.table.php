@@ -3,8 +3,8 @@
  * Widget   :: Table Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-29
- * Version  :: 8
+ * Modified :: 2026-09-18
+ * Version  :: 9
  *
  * @param Array $args
  *
@@ -242,10 +242,10 @@ class Table extends Widget {
 					$ret .= $this->headerKey[$colNo] ? ' class="col -' . $this->headerKey[$colNo] . ' col-' . $this->headerKey[$colNo] . '"' : '';
 				}
 				$ret .= '>' . $colValue . '</td>' . _NL;
-			} else if (strtolower(substr($colData, 0, 3)) === '<th') {
+			} else if (is_string($colData) && strtolower(substr($colData, 0, 3)) === '<th') {
 				// Column data is TH
 				$ret .= $colData._NL;
-			} else if (strtolower(substr($colData, 0, 3)) === '<td') {
+			} else if (is_string($colData) && strtolower(substr($colData, 0, 3)) === '<td') {
 				// Column data is TD
 				$ret .= $colData . _NL;
 			} else {
