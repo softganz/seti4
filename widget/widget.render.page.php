@@ -3,8 +3,8 @@
  * Widget   :: Page Render Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
- * Modified :: 2026-07-29
- * Version  :: 13
+ * Modified :: 2026-09-18
+ * Version  :: 14
  *
  * @param String $requestResult
  *
@@ -15,6 +15,7 @@ class renderPageWidget extends Widget {
 	var $debug = false;
 	var $pageClass;
 	var $requestResult;
+	var $count = 0;
 
 	function __construct($requestResult, $pageClass) {
 		parent::__construct([
@@ -77,9 +78,9 @@ class renderPageWidget extends Widget {
 	protected function renderSideBar() {
 		// Get Scaffold SideBar from property sideBar
 		$sideBar = SG\getFirst(
-			$this->requestResult->sideBar,
-			$this->pageClass->sideBar,
-			$this->pageClass->theme->sidebar
+			$this->requestResult->sideBar ?? null,
+			$this->pageClass->sideBar ?? null,
+			$this->pageClass->theme->sidebar ?? null
 		);
 
 		if (!isset($sideBar)) return;
@@ -170,6 +171,7 @@ class renderPageWidget extends Widget {
 	}
 
 	protected function renderRibbon() {
+		$ret = '';
 		if ($this->pageClass->theme->option->ribbon && isset($this->pageClass->theme->navigator)) {
 			$ret .= '<div id="ribbon" class="ribbon navigator'.(isset($this->pageClass->theme->ribbon->class)?' '.$this->pageClass->theme->ribbon->class:'').'">'.$this->pageClass->theme->navigator.'</div>'._NL;
 			if ($this->pageClass->theme->option->toolbar) $ret .= '<div id="ribbon-toolbar"></div>'._NL;
