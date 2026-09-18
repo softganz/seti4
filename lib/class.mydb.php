@@ -3,8 +3,8 @@
  * MyDb     :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2009-07-06
- * Modified :: 2026-08-25
- * Version  :: 13
+ * Modified :: 2026-09-18
+ * Version  :: 14
  *
  * @uses mydb::select(stmt, where, var)
  * @uses mydb::query(stmt, where, var)
@@ -36,6 +36,33 @@ class MyDbResult {
 		}
 		return $this->_PROPERTY->count ? $this->_PROPERTY->count : 0;
 	}
+}
+
+/**
+ * Wrapper for mysqli_stmt that allows extra metadata properties
+ * (_prepare, _errno, _error_msg, _query) without triggering the
+ * "Creation of dynamic property" deprecation on the native class.
+ */
+#[AllowDynamicProperties]
+class MyDbStmt {
+	public $stmt;
+	public $_prepare = false;
+	public $_errno = NULL;
+	public $_error_msg = NULL;
+	public $_query;
+
+	function __construct($stmt) {
+		$this->stmt = $stmt;
+	}
+
+	function prepare($query) {return $this->stmt->prepare($query);}
+	function execute() {return $this->stmt->execute();}
+	function get_result() {return $this->stmt->get_result();}
+	function close() {return $this->stmt->close();}
+	function result_metadata() {return $this->stmt->result_metadata();}
+
+	// Proxy native mysqli_stmt properties (e.g. affected_rows)
+	function __get($name) {return $this->stmt->{$name};}
 }
 
 #[AllowDynamicProperties]
@@ -271,7 +298,7 @@ class MyDb {
 		$stmt = preg_replace($vark, $vars, $stmt);
 
 		// Replace %tablename% with db(%tablename%)
-		$stmt = strpos($stmt,'%')===false ? $stmt : preg_replace_callback('/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i', 'self::mydb_db_replace' ,$stmt); // return ' '.db($m[1])
+		$stmt = strpos($stmt,'%')===false ? $stmt : preg_replace_callback('/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i', [self::class, 'mydb_db_replace'] ,$stmt); // return ' '.db($m[1])
 
 		$stmt = mydb::jsonVersionConvert($stmt);
 
@@ -373,7 +400,7 @@ class MyDb {
 
 		if (!$replaceStmt || !$myDb->status) return false;
 
-		$sqlStmt = $myDb->mysqli->stmt_init();
+		$sqlStmt = new MyDbStmt($myDb->mysqli->stmt_init());
 		$sqlStmt->_prepare = false;
 		$sqlStmt->_errno = NULL;
 		$sqlStmt->_error_msg = NULL;
