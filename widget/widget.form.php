@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-06-29
- * Version  :: 48
+ * Modified :: 2026-09-18
+ * Version  :: 49
  *
  * @param Array $args
  *
@@ -236,7 +236,7 @@ class Form extends Widget {
 			$formElement->container = (Array) SG\json_decode($formElement->container);
 		}
 
-		$isFormGroup = preg_match('/-group/', $formElement->container['class']);
+		$isFormGroup = preg_match('/-group/', $formElement->container['class'] ?? '');
 
 		$containerClass = $formElement->containerclass;
 		if ($formElement->container) {
@@ -352,7 +352,7 @@ class Form extends Widget {
 		return '<input type="hidden" name="' . $name
 			. '" id="' . $tag_id . '"'
 			. ' class="' . ($formElement->require ? '-require' : '') . '"'
-			. ' value="' . htmlspecialchars($formElement->value) . '"'
+			. ' value="' . htmlspecialchars($formElement->value ?? '') . '"'
 			. ' placeholder="' . $formElement->placeholder . '"'
 			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
 			. ' >' . _NL . _NL;
@@ -375,7 +375,7 @@ class Form extends Widget {
 			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
 			. ($formElement->style ? ' style="' . $formElement->style . '"' : '')
 			. ($formElement->{"autocomplete-url"} ? ' autocomplete-url="' . $formElement->{"autocomplete-url"} . '"' : '')
-			. ' value="' . htmlspecialchars($formElement->value) . '"'
+			. ' value="' . htmlspecialchars($formElement->value ?? '') . '"'
 			. (isset($formElement->placeholder) ? ' placeholder="' . $formElement->placeholder . '"' : '')
 			. '>';
 		return $ret;
