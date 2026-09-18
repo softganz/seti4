@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
  * Modified :: 2026-09-18
- * Version  :: 55
+ * Version  :: 56
  */
 
 /*************************************************************
@@ -975,8 +975,8 @@ class SgCore {
 		$html=preg_replace_callback(
 			'#{(tr\:)(.*?)}#',
 			function($match){
-				$para=preg_split('/,/', $match[2]);
-				return tr($para[0],$para[1]);
+				$para = preg_split('/,/', $match[2]);
+				return tr($para[0] ?? null, $para[1] ?? null);
 			},
 			$html
 		);
@@ -1183,7 +1183,9 @@ class SgCore {
 		$isDebugProcess = debug('process');
 		$process_debug = '';
 		$buildMethod = 'build'; // Default build method
-		$templateVar = [];
+		$templateVar = [
+			'Title' => ''
+		];
 
 		if ($isDebugProcess) $process_debug = 'process debug of <b>' . $request . '</b> request<br />' . _NL;
 
