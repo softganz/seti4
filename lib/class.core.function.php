@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
  * Modified :: 2026-09-18
- * Version  :: 39
+ * Version  :: 40
  */
 
 /* Core Function */
@@ -25,7 +25,10 @@ function R($resourceKey = NULL, $value = NULL) {
  */
 function import($packageName) {
 	$found = false;
-	list($funcName, $found, $fileName, $resourceType) = SgCore::loadResourceFile($packageName);
+	$loadResult = SgCore::loadResourceFile($packageName);
+	if (is_array($loadResult)) {
+		list($funcName, $found, $fileName, $resourceType) = $loadResult;
+	}
 	return $found;
 }
 
@@ -70,7 +73,11 @@ function load_resource($packageName) {
 	$debugLoadfile = debug('load');
 	$debugStr = '';
 
-	$loadResult = list($funcName, $found, $fileName, $resourceType) = SgCore::loadResourceFile($packageName);
+	$funcName = $found = $fileName = $resourceType = NULL;
+	$loadResult = SgCore::loadResourceFile($packageName);
+	if (is_array($loadResult)) {
+		list($funcName, $found, $fileName, $resourceType) = $loadResult;
+	}
 	// debugMsg('<b>'.($found ? 'FOUND' : 'NOT FOUND').' : '.$resourceType.'</b> FILE NAME = '.$fileName. ' FUNCTION NAME = '.$funcName);
 
 	array_shift($args);
