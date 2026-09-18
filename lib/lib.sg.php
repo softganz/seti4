@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
  * Modified :: 2026-09-18
- * Version  :: 10
+ * Version  :: 11
  *
  * @param Array $args
  * @return Widget
@@ -248,26 +248,45 @@ function sg_generate_nextfile($folder, $name, $ext, $digit = 20) {
 	return $result;
 }
 
-function sg_remain2day($time=0,$format='d Day h Hr m Min') {
-	if (is_string($time)) intval($time);
-	$time=intval($time);
+function sg_remain2day($time = 0,$format = 'd Day h Hr m Min') {
+	$time = intval($time);
 
-	$day=intval($time/(24*60*60));
-	$remain=$time % (24*60*60);
-	$hour=intval($remain/(60*60));
-	$remain=$remain % (60*60);
-	$min=intval($remain/60);
-	$second=$remain % 60;
+	$day = intval($time / (24*60*60));
+	$remain = $time % (24*60*60);
+	$hour = intval($remain / (60*60));
+	$remain = $remain % (60*60);
+	$min = intval($remain / 60);
+	$second = $remain % 60;
 
-	if (empty($day)) unset($day);
-	if (empty($hour)) unset($hour);
+	if ($day) {
+		$result = preg_replace(
+			['#d Day#s', '#h Hr#s', '#m Min#s', '#s Sec#s'],
+			[$day . ' Day', $hour . ' Hr', $min . ' Min', $second .' Sec'],
+			$format
+		);
+	} else if ($hour) {
+		$result = preg_replace(
+			['#d Day#s', '#h Hr#s', '#m Min#s', '#s Sec#s'],
+			['' , $hour . ' Hr', $min . ' Min', $second . ' Sec'],
+			$format
+		);
+	} else if ($min) {
+		$result = preg_replace(
+			['#d Day#s', '#h Hr#s', '#m Min#s', '#s Sec#s'],
+			['', '', $min . ' Min', $second . ' Sec'],
+			$format
+		);
+	} else {
+		$result = preg_replace(
+			['#d Day#s', '#h Hr#s', '#m Min#s', '#s Sec#s'],
+			['', '', '', $second . ' Sec'],
+			$format
+		);
+	}
 
-	if ($day) $result = preg_replace(array('#d Day#s','#h Hr#s','#m Min#s','#s Sec#s'),array($day.' Day',$hour.' Hr',$min.' Min',$second.' Sec'),$format);
-	else if ($hour) $result = preg_replace(array('#d Day#s','#h Hr#s','#m Min#s','#s Sec#s'),array('',$hour.' Hr',$min.' Min',$second.' Sec'),$format);
-	else if ($min) $result = preg_replace(array('#d Day#s','#h Hr#s','#m Min#s','#s Sec#s'),array('','',$min.' Min',$second.' Sec'),$format);
-	else $result = preg_replace(array('#d Day#s','#h Hr#s','#m Min#s','#s Sec#s'),array('','','',$second.' Sec'),$format);
-	$result=trim($result);
-	if (empty($result)) $result='0 Min';
+	$result = trim($result);
+	if (empty($result)) $result = '0 Min';
+
 	return $result;
 }
 
