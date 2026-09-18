@@ -1,10 +1,10 @@
 <?php
 /**
- * Widget  :: Ui Widget
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2020-28-01
- * Modify  :: 2026-07-29
- * Version :: 2
+ * Widget   :: Ui Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-28-01
+ * Modified :: 2026-09-18
+ * Version  :: 3
  *
  * @param Array $args
  *
@@ -19,6 +19,10 @@ class Ui extends Widget {
 	var $uiItemClass = 'ui-item -item';
 	var $wrapperType = array('ul' => 'li','span' => 'span','div' => 'div', 'div a'=>'a', 'ol'=>'li');
 	var $type = 'action';
+	var $columnPerRow;
+	var $header;
+	var $config;
+	var $container;
 
 	function __construct($join = NULL, $class = NULL) {
 		if (is_object($join) || is_array($join)) {
@@ -79,9 +83,14 @@ class Ui extends Widget {
 			}
 
 			// Convert options to object
-			$options = is_string($child->options) ? \SG\json_decode($child->options): (Object) $child->options;
+			$options = (object) array_replace(
+				[
+					'class' => null,
+				],
+				is_string($child->options) ? (array) \SG\json_decode($child->options): (array) $child->options
+			);
 
-			$uiItemClass = $this->uiItemClass.($options->class ? ' '.$options->class : '');
+			$uiItemClass = $this->uiItemClass.($options->class ?? false ? ' '.$options->class : '');
 			if (in_array($child->text, array('-','<sep>'))) {
 				$uiItemClass .= ' -sep';
 				$child->text = '<hr size="1" />';
@@ -108,7 +117,7 @@ class Ui extends Widget {
 		$join = $this->tagName;
 		$attrs = [];
 
-		if ($this->config->id) $attrs['id'] = $this->config->id;
+		if (!empty($this->config->id)) $attrs['id'] = $this->config->id;
 		else if ($this->id) $attrs['id'] = $this->id;
 
 		$attrs['class'] = 'widget-'.strtolower($this->widgetName);
@@ -129,7 +138,7 @@ class Ui extends Widget {
 		list($joinTag) = explode(' ', $join);
 		$ret .= '<'.$joinTag.' '.$attrText.'>'._NL;
 
-		if ($this->header->text) {
+		if ($this->header?->text) {
 			$headerClass = $this->header->attr->class;
 			unset($this->header->attr->class);
 			$ret .= '<header class="header'.($headerClass ? ' '.$headerClass : '').'" '.sg_implode_attr($this->header->attr).'>'
@@ -142,15 +151,15 @@ class Ui extends Widget {
 		$ret .= $this->renderChildren($this->children());
 		$ret .= '</'.$joinTag.'>'._NL;
 
-		if ($this->config->nav) {
+		if (!empty($this->config->nav)) {
 			$this->container = $this->config->nav;
-		} else if ($this->config->container) {
+		} else if (!empty($this->config->container)) {
 			$this->container = $this->config->container;
 		}
 
 		if ($this->container) {
 			$container = \SG\json_decode($this->container);
-			$containerTag = $this->config->nav ? 'nav' : $container->tag;
+			$containerTag = $this->config->nav ?? false ? 'nav' : $container->tag;
 			unset($container->tag);
 			$containerAttr = sg_implode_attr($container);
 
