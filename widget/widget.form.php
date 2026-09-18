@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-09-18
- * Version  :: 49
+ * Version  :: 50
  *
  * @param Array $args
  *
@@ -80,6 +80,8 @@ class Form extends Widget {
 
 	//TODO:: Move form item to array $this->formArray
 	function renderForm() {
+		$ret = '';
+
 		// Backward compattible
 		if (empty($this->children)) {
 			foreach ($this as $fieldKey => $value) {
@@ -91,13 +93,13 @@ class Form extends Widget {
 		}
 
 		$this->config = is_array($this->config) ? (Object) $this->config : $this->config;
-		$this->readonly = SG\getFirst($this->config->readonly, $this->readonly);
-		$this->variable = SG\getFirst($this->variable, $this->config->variable);
-		$this->enctype = SG\getFirst($this->enctype, $this->config->enctype);
-		$this->method = SG\getFirst($this->config->method, $this->method);
-		$this->action = SG\getFirst($this->action, $this->config->action);
-		$this->checkValid = SG\getFirst($this->checkValid, $this->data['data-checkValid'], $this->data['data-checkvalid']);
-		$this->title = SG\getFirst($this->title, $this->config->title);
+		$this->readonly = SG\getFirst($this->readonly, $this->config->readonly ?? null);
+		$this->variable = SG\getFirst($this->variable, $this->config->variable ?? null);
+		$this->enctype = SG\getFirst($this->enctype, $this->config->enctype ?? null);
+		$this->method = SG\getFirst($this->method, $this->config->method ?? null);
+		$this->action = SG\getFirst($this->action, $this->config->action ?? null);
+		$this->checkValid = SG\getFirst($this->checkValid, $this->data['data-checkValid'] ?? null, $this->data['data-checkvalid'] ?? null);
+		$this->title = SG\getFirst($this->title, $this->config->title ?? null);
 
 		$ret .= _NL . '<!-- sg-form -->' . _NL;
 
@@ -149,6 +151,8 @@ class Form extends Widget {
 	}
 
 	protected function renderFormChild($childrens) {
+		$ret = '';
+
 		foreach ($childrens as $fieldKey => $formElement) {
 			if (is_object($formElement) && method_exists($formElement, 'build')) {
 				// Form element is widget
@@ -193,21 +197,67 @@ class Form extends Widget {
 					}
 				}
 			} else {
-				list($tag_id, $renderChildrenResult) = $this->renderChild($fieldKey, $formElement);
-				$this->formArray[$tag_id] = $renderChildrenResult;
-				$ret .= $renderChildrenResult;
+				$renderChild = $this->renderChild($fieldKey, $formElement);
+				if ($renderChild) {
+					list($tag_id, $renderChildrenResult) = $renderChild;
+					if ($tag_id) $this->formArray[$tag_id] = $renderChildrenResult;
+					$ret .= $renderChildrenResult;
+				}
 			}
 		}
 		return $ret;
 	}
 
 	protected function renderChild($fieldKey, $formElement) {
+		$ret = '';
+
 		if (is_string($formElement)) {
 			if ($formElement === '<spacer>') $formElement = '<div class="form-item -spacer"></div>';
 			return [NULL, $formElement . _NL . _NL];
 		}
 
-		$formElement = (Object) $formElement;
+		$formElement = (Object) array_merge(
+			[
+				'type' => null,
+				'id' => null,
+				'class' => null,
+				'name' => null,
+				'label' => null,
+				'require' => null,
+				'preText' => null,
+				'postText' => null,
+				'description' => null,
+				'value' => null,
+				'readonly' => false,
+				'style' => null,
+				'autocomplete' => null,
+				'autocompleteUrl' => null,
+				'attribute' => null,
+				'config' => null,
+				'container' => [],
+				'containerclass' => null,
+				// Type text,password
+				'maxLength' => null,
+				'size' => null,
+				// Type text, password, textarea
+				'placeholder' => null,
+				// Type textarea
+				'cols' => null,
+				'rows' => null,
+				// Type button
+				'icon' => null
+			],
+			(array) $formElement
+		);
+
+		// Fallback attribute
+		$formElement->preText = SG\getFirst($formElement->preText, $formElement->pretext ?? null);
+		$formElement->attribute = SG\getFirst($formElement->attribute, $formElement->attr ?? null, []);
+		$formElement->postText = SG\getFirst($formElement->postText, $formElement->posttext ?? null);
+		$formElement->maxLength = SG\getFirst($formElement->maxLength, $formElement->maxlength ?? null);
+
+		// Remove fallback attribute
+		unset($formElement->pretext, $formElement->attr, $formElement->posttext, $formElement->maxlength);
 
 		$name = '';
 		$tag_id = '';
@@ -230,9 +280,9 @@ class Form extends Widget {
 			$name = $formElement->name ? $formElement->name : ($this->variable ? $this->variable . '[' . $fieldKey . ']' : $fieldKey);
 		}
 
-		if (isset($formElement->container) && is_object($formElement->container)) {
+		if (is_object($formElement->container)) {
 			$formElement->container = (Array) $formElement->container;
-		} else if (isset($formElement->container) && is_string($formElement->container) && substr($formElement->container, 0, 1) == '{') {
+		} else if (is_string($formElement->container) && substr($formElement->container, 0, 1) == '{') {
 			$formElement->container = (Array) SG\json_decode($formElement->container);
 		}
 
@@ -258,7 +308,7 @@ class Form extends Widget {
 				. ' ' . sg_implode_attr($formElement->container)
 				. '>' . _NL;
 			if ($formElement->label) {
-				$ret .= '	<label for="' . $tag_id . '" class="' . ($formElement->config->label === 'hide' ? '-hidden' : '') . '">'
+				$ret .= '	<label for="' . $tag_id . '" class="' . ($formElement->config?->label === 'hide' ? '-hidden' : '') . '">'
 					. $formElement->label . (in_array($formElement->type, ['select', 'radio', 'checkbox']) && !preg_match('/\:$/', $formElement->label) ? ':' : '')
 					. ($formElement->require ? ' <span class="form-required" title="This field is required.">*</span>' : '')
 					. '</label>'
@@ -268,12 +318,11 @@ class Form extends Widget {
 
 		if ($isFormGroup) $ret .= '<span class="form-group">' . _NL;
 
-		$ret .= $this->renderAttribute(SG\getFirst($formElement->preText, $formElement->pretext));
+		$ret .= $this->renderAttribute($formElement->preText);
 
 		// Item attribute from key attribute, if not define use key attr
 		// Implode attribute to string
-		$formElement->attribute = SG\getFirst($formElement->attribute, $formElement->attr, []);
-		if ($formElement->attribute && (is_array($formElement->attribute) || is_object($formElement->attribute))) {
+		if (!is_scalar($formElement->attribute)) {
 			$formElement->attribute = sg_implode_attr($formElement->attribute);
 		}
 
@@ -303,7 +352,7 @@ class Form extends Widget {
 			case 'colorpicker' : $ret .= $this->renderColorPicker($tag_id, $name, $formElement); break;
 		}
 
-		$ret .= $this->renderAttribute(SG\getFirst($formElement->postText, $formElement->posttext));
+		$ret .= $this->renderAttribute($formElement->postText);
 
 		if ($isFormGroup) $ret .= '</span><!-- form-group -->' . _NL;
 		if ($formElement->description) $ret .= _NL . '<div class="description">' . $formElement->description . '</div>';
@@ -362,7 +411,7 @@ class Form extends Widget {
 		$ret = '<input'
 			. ($this->readonly || $formElement->readonly ? ' readonly="readonly"' : '')
 			. ($formElement->autocomplete ? ' autocomplete="' . $formElement->autocomplete . '"' : '')
-			. ($formElement->maxlength ? ' maxlength="' . $formElement->maxlength . '"' : '')
+			. ($formElement->maxLength ? ' maxlength="' . $formElement->maxLength . '"' : '')
 			. ($formElement->size ? ' size="' . $formElement->size . '"' : '')
 			. ($name ? ' name="' . $name . '"' : ' ')
 			. ' id="' . $tag_id . '"'
@@ -374,7 +423,7 @@ class Form extends Widget {
 			. ' type="' . $formElement->type . '"'
 			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
 			. ($formElement->style ? ' style="' . $formElement->style . '"' : '')
-			. ($formElement->{"autocomplete-url"} ? ' autocomplete-url="' . $formElement->{"autocomplete-url"} . '"' : '')
+			. ($formElement->autocompleteUrl ? ' autocomplete-url="' . $formElement->autocompleteUrl . '"' : '')
 			. ' value="' . htmlspecialchars($formElement->value ?? '') . '"'
 			. (isset($formElement->placeholder) ? ' placeholder="' . $formElement->placeholder . '"' : '')
 			. '>';
@@ -382,7 +431,7 @@ class Form extends Widget {
 	}
 
 	protected function renderTextArea($tag_id, $name, $formElement) {
-		$ret .= '	<div class="resizable-textarea">'
+		$ret = '	<div class="resizable-textarea">'
 			. '<textarea'
 			. ($this->readonly || $formElement->readonly ? ' readonly="readonly"' : '')
 			. ' cols="' . ($formElement->cols ? $formElement->cols : '60').'"'
@@ -632,6 +681,7 @@ class Form extends Widget {
 	}
 
 	protected function renderButton($tag_id, $name, $formElement) {
+		$ret = '';
 		$text = isset($formElement->text) ? $formElement->text : $formElement->value;
 
 		if (empty($formElement->items) && !empty($text)) {
