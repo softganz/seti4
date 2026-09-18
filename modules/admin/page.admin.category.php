@@ -1,15 +1,16 @@
 <?php
 /**
-* Admin   :: Manage Category
-* Created :: 2018-11-19
-* Modify  :: 2024-08-19
-* Version :: 2
-*
-* @param Object $self
-* @return String
-*
-* @usage admin/category[/{id}/{action}]
-*/
+ * Admin    :: Manage Category
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2018-11-19
+ * Modified :: 2026-08-18
+ * Version  :: 3
+ *
+ * @param Object $self
+ * @return String
+ *
+ * @uses admin/category[/{id}/{action}]
+ */
 
 $debug = true;
 
@@ -66,11 +67,11 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 				'admin.category.'.$action,
 				$self,
 				$tagInfo,
-				$args[0],
-				$args[1],
-				$args[2],
-				$args[3],
-				$args[4]
+				$args[0] ?? null,
+				$args[1] ?? null,
+				$args[2] ?? null,
+				$args[3] ?? null,
+				$args[4] ?? null
 			);
 
 			//debugMsg('TYPE = '.gettype($ret));
