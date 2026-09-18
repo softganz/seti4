@@ -137,7 +137,7 @@ function view_form($formId=NULL,$form=NULL,$name=NULL,$returnType='text') {
 						.($item->readonly ? ' -readonly' : '').'" '
 					.'type="'.$item->type.'"'
 					.($item->attr ? ' '.$item->attr : '')
-					.($item->{"autocomplete-url"} ? ' autocomplete-url="'.$item->{"autocomplete-url"}.'"' : '')
+					.($item->autocompleteUrl ? ' autocomplete-url="'.$item->autocompleteUrl.'"' : '')
 					.' value="'.$item->value.'"'
 					.(isset($item->placeholder) ? ' placeholder="'.$item->placeholder.'"' : '')
 					.' />';
