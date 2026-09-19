@@ -1,13 +1,14 @@
 <?php
 /**
- * Paper   :: Paper Model
- * Created :: 2007-11-21
- * Modify  :: 2025-07-18
- * Version :: 11
+ * Paper    :: Paper Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2007-11-21
+ * Modified :: 2026-09-19
+ * Version  :: 12
  *
- * @usage import('model:paper.php');
- * @usage new PaperModel([])
- * @usage PaperModel::function()
+ * @uses import('model:paper.php');
+ * @uses new PaperModel([])
+ * @uses PaperModel::function()
  */
 
 namespace Paper\Model;
@@ -17,8 +18,8 @@ use Softganz\DB;
 class PaperModel extends \NodeModel {
 
 	public static function get($conditions) {
-		$defaults = '{debug: false; data: "info,all"}';
-		$options = sg_json_decode($options, $defaults);
+		$defaults = (object) ['debug' => false, 'data' => 'info,all', 'initTemplate' => false];
+		$options = sg_json_decode('', $defaults);
 		$debug = $options->debug;
 		$archived = false;
 
@@ -33,6 +34,14 @@ class PaperModel extends \NodeModel {
 			];
 			$conditions->tpid = $tpid;
 		}
+
+		$conditions = (object) array_merge(
+			[
+				'tpid' => null,
+				'revid' => null,
+			],
+			(array) $conditions
+		);
 
 		$tpid = $conditions->tpid;
 
@@ -106,7 +115,13 @@ class PaperModel extends \NodeModel {
 			'editBackend' => is_admin(),
 			'editCss' => is_admin(),
 			'editScript' => is_admin(),
-			'editData' => is_admin()
+			'editData' => is_admin(),
+			'isAdmin' => false,
+			'isOwner' => false,
+			'isTrainer' => false,
+			'isEdit' => false,
+			'isEditDetail' => false,
+			'isRight' => false,
 		];
 		$result->options = NULL;
 		$result->is = NULL;
@@ -262,8 +277,6 @@ class PaperModel extends \NodeModel {
 				]
 			]);
 		}
-
-		if ( $result->info->profile_picture ) $result->info->profile_picture = cfg('url').'upload/member/'.$result->info->profile_picture;
 
 		if (module_install('poll')) {
 			$poll = DB::select([
