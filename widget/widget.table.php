@@ -3,8 +3,8 @@
  * Widget   :: Table Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-18
- * Version  :: 10
+ * Modified :: 2026-09-19
+ * Version  :: 11
  *
  * @param Array $args
  *
@@ -299,9 +299,9 @@ class Table extends Widget {
 					if (is_string($tfoot)) {
 						$ret .= $tfoot._NL;
 					} else if (is_array($tfoot)) {
-						$tfootconfig = $tfoot['config'];
+						$tfootconfig = $tfoot['config'] ?? [];
 						unset($tfoot['config']);
-						$ret .= '<tr'.($tfootconfig['style'] ? ' style="'.$tfootconfig['style'].'"' : '').'>'._NL;
+						$ret .= '<tr'.($tfootconfig['style'] ?? '' ? ' style="'.$tfootconfig['style'].'"' : '').'>'._NL;
 
 						$colNo = 0;
 						foreach ($tfoot as $tfoot_text) {
