@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-09-18
- * @version :: 52
+ * @modify  :: 2026-09-19
+ * @version :: 53
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ function fileNotFound($message = NULL) {
  * @return String file content
  */
 function loadJS($requestFile, $ext) {
-	$cacheTime = $_COOKIE['devMode'] ? 0 : 1*60*60; // in minutes
+	// $cacheTime = defined(_DEV_MODE) && _DEV_MODE ? 0 : 1*60*60; // in minutes
 	$dir = explode('/', dirname($requestFile));
 	$module = end($dir);
 
@@ -146,14 +146,14 @@ function loadJS($requestFile, $ext) {
 
 	header('Content-Type: '.$headerType);
 
-	if ($cacheTime > 0) {
-		header("Cache-Control: public, max-age=" . $cacheTime); // HTTP/1.1
-		header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cacheTime) . " GMT");
-	} else {
+	// if ($cacheTime > 0) {
+	// 	header("Cache-Control: public, max-age=" . $cacheTime); // HTTP/1.1
+	// 	header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cacheTime) . " GMT");
+	// } else {
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 		header("Pragma: no-cache"); // HTTP/1.0
-	}
+	// }
 	header("Date: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
 
