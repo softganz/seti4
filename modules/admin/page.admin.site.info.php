@@ -1,22 +1,37 @@
 <?php
 /**
-* Admin   :: Site Information
-* Created :: 2007-04-22
-* Modify  :: 2024-08-19
-* Version :: 2
-*
-* @return Widget
-*
-* @usage admin/site/info
-*/
-
-$debug = true;
+ * Admin    :: Site Information
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2007-04-22
+ * Modified :: 2026-09-19
+ * Version  :: 3
+ *
+ * @return Widget
+ *
+ * @uses admin/site/info
+ */
 
 class AdminSiteInfo extends Page {
-	function build() {
-		$config = (Object) post('config');
-		if ($config->title) return $this->_save($config);
+	function __construct() {
+		parent::__construct();
+	}
 
+	/**
+	 * Right to build
+	 *
+	 * @return object|boolean
+	 */
+	function rightToBuild(): object|bool {
+		return true;
+	}
+
+	/**
+	 * Build page
+	 *
+	 * @return object
+	 */
+	#[\Override]
+	function build(): object {
 		return new Scaffold([
 			'appBar' => new AdminAppBarWidget([
 				'title' => 'Site information'
@@ -25,7 +40,7 @@ class AdminSiteInfo extends Page {
 				'children' => [
 					new Form([
 						'variable' => 'config',
-						'action' => url(q()),
+						'action' => Url::link('admin/site/info..save'),
 						'id' => 'site-info-form',
 						'class' => 'sg-form',
 						'rel' => 'notify',
@@ -148,15 +163,35 @@ class AdminSiteInfo extends Page {
 								],
 								'container' => '{class: "-sg-text-right"}',
 							],
-							$this->_script(),
 						], // children
 					]), // Form
 				],
 			]),
+			'script' => $this->script(),
 		]);
 	}
 
-	function _save($config) {
+	/**
+	 * Save config to database
+	 *
+	 * @return object
+	 */
+	function save(): object {
+		$config = (object) array_replace(
+			[
+				'title' => null,
+				'email' => null,
+				'slogan' => null,
+				'mission' => null,
+				'footer' => null,
+				'anonymous' => null,
+				'homepage' => null,
+				'navigator' => null,
+				'secondary' => null,
+			],
+			(array) Request::all('config')
+		);
+
 		cfg_db('web.title', $config->title);
 		cfg_db('web.email', $config->email);
 		cfg_db('web.slogan', $config->slogan);
@@ -172,10 +207,15 @@ class AdminSiteInfo extends Page {
 			cfg_db('web.secondary', $config->secondary);
 			cfg('web.secondary', $config->secondary);
 		}
-		return 'Website information has been save.';
+		return apiSuccess('Website information has been save.');
 	}
 
-	function _script() {
+	/**
+	 * Script
+	 *
+	 * @return string
+	 */
+	private function script(): string {
 		return '<script type="text/javascript">
 		$(".btn.-save-exit").click(function() {
 			console.log("EXIT")
