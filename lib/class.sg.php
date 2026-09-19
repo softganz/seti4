@@ -5,9 +5,9 @@
  * @package none
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * Created :: 2009-08-26
- * Modify  :: 2025-10-27
- * Version :: 2
+ * Created  :: 2009-08-26
+ * Modified :: 2026-09-19
+ * Version  :: 3
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,6 +92,17 @@ class SG {
 	 * @retuen null
 	 */
 	public static function add_opengraph($type) {
+		$type = (object) array_replace(
+			[
+				'type' => null,
+				'title' => null,
+				'url' => null,
+				'image' => null,
+				'description' => null,
+			],
+			(array) $type
+		);
+
 		head(
 			'<meta property="og:title" content="'.str_replace('"','',strip_tags($type->title)).'">'._NL
 			. '<meta property="og:type" content="'.$type->type.'">'._NL
