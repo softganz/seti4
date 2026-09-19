@@ -1,15 +1,15 @@
 <?php
 /**
- * Paper   :: View
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2018-06-04
- * Modify  :: 2026-04-30
- * Version :: 6
+ * Paper    :: View
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2018-06-04
+ * Modified :: 2026-09-19
+ * Version  :: 7
  *
  * @param String $nodeInfo
  * @return Widget
  *
- * @usage paper/{nodeId}/edit.docs
+ * @uses paper/{nodeId}/edit.docs
  */
 
 use Softganz\DB;
@@ -19,6 +19,8 @@ function paper_view($self, $tpid = NULL) {
 	$para = (Object) [
 		'commentPage' => post('page'),
 	];
+
+	$ret = '';
 
 	event_tricker('paper.view.init',$self,$topicInfo,$para);
 
@@ -61,7 +63,13 @@ function paper_view($self, $tpid = NULL) {
 
 
 	// echo 'TPID = '.$tpid.'<br />';
-	$isTopicUser = DB::tableExists('%topic_user%') && mydb::select('SELECT `uid` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid AND `membership` IN ("Owner","Trainer","Manager") LIMIT 1',':tpid',$tpid,':uid',i()->uid)->uid;
+	$isTopicUser = null;
+	if (DB::tableExists('%topic_user%')) {
+		$isTopicUser = DB::select([
+			'SELECT `uid` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid AND `membership` IN ("Owner","Trainer","Manager") LIMIT 1',
+			'var' => [':tpid' => $tpid, ':uid' => i()->uid]
+		])->valueOf('uid');
+	}
 
 	if (in_array($topicInfo->info->status, [_DRAFT, _WAITING])
 			&& !(
@@ -124,11 +132,11 @@ function paper_view($self, $tpid = NULL) {
 	if ($topicInfo->tags) {
 		foreach ($topicInfo->tags as $tag) $self->theme->class .= ' paper-tag-'.$tag->tid;
 	}
-	if ($topicInfo->info->category) $self->theme->class .= ' paper-category-'.$topicInfo->info->category;
+	if (!empty($topicInfo->info->category)) $self->theme->class .= ' paper-category-'.$topicInfo->info->category;
 
 	// debugMsg('AAA = '.\SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum));
 	// $self->theme->header->text = \SG\getFirst($topicInfo->tags[0]->name,$topicInfo->info->category,$topicInfo->info->forum,' ');
-	$description = \SG\getFirst($topicInfo->tags[0]->description,$topicInfo->info->type_description);
+	$description = \SG\getFirst($topicInfo->tags[0]->description ?? null,$topicInfo->info->type_description);
 	if ($description) {
 		ob_start();
 		eval ('?>'.$description);
@@ -222,7 +230,7 @@ function paper_view($self, $tpid = NULL) {
 			url('paper/'.$tpid.'/edit.nocomment')
 		);
 
-		if ($isAdminPaper && $topicInfo->_content_type_property->revision)
+		if ($isAdminPaper && !empty($topicInfo->_content_type_property->revision))
 			user_menu(
 				'edit',
 				'revision',
@@ -279,8 +287,8 @@ function paper_view($self, $tpid = NULL) {
 	$opengraph->title = $topicInfo->title;
 	$opengraph->type = 'website';
 	$opengraph->url = is_home() ? url() : url('paper/'.$tpid);
-	if ($topicInfo->photo->items[0]->_url) $opengraph->image = $_SERVER['REQUEST_SCHEME'].':'.$topicInfo->photo->items[0]->_url;
-	$opengraph->description = sg_summary_text($topicInfo->body);
+	if (!empty($topicInfo->photo->items[0]->_url)) $opengraph->image = $_SERVER['REQUEST_SCHEME'].':'.$topicInfo->photo->items[0]->_url;
+	$opengraph->description = sg_summary_text($topicInfo->body ?? '');
 	sg::add_opengraph($opengraph);
 
 	if ($topicInfo->uid && $topicInfo->info->owner_status != 'enable') $body->status .= message('error','This owner was block');
