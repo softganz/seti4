@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * @created 2007-07-09
- * @modify  2026-08-25
- * Version  4
+ * @modify  2026-09-19
+ * Version  5
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,7 +440,6 @@ sg_text2html($topic->post->body).'
 			}
 
 
-			if ( $rs->profile_picture ) $rs->profile_picture = cfg('url').'upload/member/'.$rs->profile_picture;
 			if (module_install('poll')) {
 				$poll=mydb::select('SELECT * FROM %poll% WHERE `tpid`=:tpid LIMIT 1',':tpid',$rs->tpid);
 				if ($poll->_num_rows) {
