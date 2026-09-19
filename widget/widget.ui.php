@@ -3,8 +3,8 @@
  * Widget   :: Ui Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-28-01
- * Modified :: 2026-09-18
- * Version  :: 3
+ * Modified :: 2026-09-19
+ * Version  :: 4
  *
  * @param Array $args
  *
@@ -139,12 +139,12 @@ class Ui extends Widget {
 		$ret .= '<'.$joinTag.' '.$attrText.'>'._NL;
 
 		if ($this->header?->text) {
-			$headerClass = $this->header->attr->class;
+			$headerClass = $this->header->attr->class ?? '';
 			unset($this->header->attr->class);
 			$ret .= '<header class="header'.($headerClass ? ' '.$headerClass : '').'" '.sg_implode_attr($this->header->attr).'>'
-				. ($this->header->options->preText ? $this->header->options->preText : '')
-				. $this->header->text
-				. ($this->header->options->postText ? $this->header->options->postText : '')
+				. ($this->header->options->preText ?? '' ? $this->header->options->preText : '')
+				. ($this->header->text ?? '')
+				. ($this->header->options->postText ?? '' ? $this->header->options->postText : '')
 				. '</header>';
 			if ($headerClass) $this->header->attr->class = $headerClass;
 		}
