@@ -3,8 +3,8 @@
  * Paper    :: Render Paper Content
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-24
- * Modified :: 2026-09-18
- * Version  :: 4
+ * Modified :: 2026-09-19
+ * Version  :: 5
  *
  * @param Object $$topicInfo
  * @param Object $options
@@ -20,7 +20,21 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 	$topicInfo->info->body=str_replace('<!--break-->','',$topicInfo->info->body);
 	$fb_url=cfg('domain').url('paper/'.$topicInfo->tpid);
 	$fb_url=preg_replace('/^http\:\/\/www./i','http://',$fb_url);
-	$body = (Object)[];
+	$body = (Object)[
+		'timestamp' => null,
+		'video' => null,
+		'message' => null,
+		'video' => null,
+		'redirect' => null,
+		'photo' => null,
+		'detail' => null,
+		'footer' => null,
+		'social' => null,
+		'relate' => null,
+		'ad_detail_footer' => null,
+		'comment' => null,
+	];
+	$page = '';
 
 	/*
 	preg_match_all('/<page>(.+?)/sm',$topicInfo->info->body,$out);
@@ -35,7 +49,7 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 	//		preg_match_all('/<!-- page\s(\d)(.*)/',$topicInfo->info->body,$out);
 
 	$pageCount=count($out);
-	$currentPage=intval($_GET['p']);
+	$currentPage=intval($_GET['p'] ?? null);
 	if ($currentPage==0) $currentPage=1;
 	if ($pageCount>1) {
 		$topicInfo->info->body=trim($out[$currentPage-1]);
@@ -84,7 +98,7 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 
 		//		if ($topicInfo->property->option->container) $body->container='<div class="body" id="paper-body">'._NL;
 
-	if ($topicInfo->video->file && $topicInfo->property->option->show_video) {
+	if (!empty($topicInfo->video->file) && $topicInfo->property->option->show_video) {
 		$autostart='false';
 		$flashvar='file='.$topicInfo->video->_url.'&autostart='.$autostart.'&stretching=exactfit'.($topicInfo->photo->items[0]->_src?'&amp;image='.$topicInfo->photo->items[0]->_src:'');
 		$player='<object type="application/x-shockwave-flash" width="100%" height="100%" data="https://softganz.com/library/mediaplayer.swf?'.$flashvar.'" >
@@ -166,7 +180,7 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 	$body->detail.=$topicInfo->info->body;
 	if ($topicInfo->property->option->container) $body->detail.='</div>'.($pageCount?$page:'').'<!-- detail-body -->'._NL;
 
-	if ($topicInfo->poll) {
+	if (!empty($topicInfo->poll)) {
 		$body->detail.='<div id="detail-poll" class="sg-load" data-url="poll/view/'.$topicInfo->tpid.($_POST['poll']['choice']?'?vote='.$_POST['poll']['choice']:'').'"></div><!-- detail-poll -->'._NL;
 	}
 
@@ -265,6 +279,7 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 
 
 	// show comment message and form
+	if (!isset($body->comment)) $body->comment= '';
 	if (!$topicInfo->property->option->fullpage) $body->comment.='<a name="comment"></a>'._NL;
 	if (user_access('access comments')) {
 		$body->comment = '<div class="paper -comment web-comment">';
