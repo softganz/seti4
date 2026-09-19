@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-09-18
- * Version  :: 56
+ * Modified :: 2026-09-19
+ * Version  :: 57
  */
 
 /*************************************************************
@@ -1295,7 +1295,7 @@ class SgCore {
 				}
 
 				// Create App Bar
-				if ($pageBuildWidget->appBar) {
+				if (isset($pageBuildWidget->appBar) && $pageBuildWidget->appBar) {
 					if (is_object($pageBuildWidget->appBar) && method_exists($pageBuildWidget->appBar, 'build')) {
 						if ($pageBuildWidget->appBar->removeOnApp && is_object(R()->appAgent)) {
 							// don't show appBar
