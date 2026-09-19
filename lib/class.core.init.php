@@ -3,8 +3,8 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-09-18
- * Version  :: 33
+ * Modified :: 2026-09-19
+ * Version  :: 34
  */
 
 global $R;
@@ -313,6 +313,7 @@ if (isset($_GET['devMode'])) {
 	}
 }
 
+define('_DEV_MODE', isset($_SESSION['devMode']) && $_SESSION['devMode'] === 'yes');
 
 /**
 * Process normal and AJAX request
