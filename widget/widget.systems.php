@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-18
- * Version  :: 93
+ * Modified :: 2026-09-19
+ * Version  :: 94
  *
  * @param Array $args
  *
@@ -325,12 +325,19 @@ class Widget extends WidgetBase {
 	// Render all item of childrens
 	protected function renderChildren($childrens = [], $args = []) {
 		$childrens = (Array) $childrens;
-		$args['class'] = $args['class'] ?? '';
-		$prefix = $args['prefix'] ?? '';
-		$subfix = $args['subfix'] ?? '';
+		$args = array_replace(
+			[
+				'class' => null,
+				'prefix' => null,
+				'subfix' => null,
+			],
+			(array) $args
+		);
+		$prefix = $args['prefix'];
+		$subfix = $args['subfix'];
 		unset($args['prefix'], $args['subfix']);
 
-		$ret = isset($prefix) ? $prefix : '';
+		$ret = $prefix;
 		$ret .= $this->renderChildrenContainerStart();
 
 		foreach ($childrens as $childKey => $child) {
@@ -340,7 +347,7 @@ class Widget extends WidgetBase {
 				$extraArgs['class'] = $args['class'] . ' -sep';
 			} else if (is_string($child) && $child === '<spacer>') {
 				// Children is spacer
-				$extraArgs['class'] = $args['class'] . ($args['class'] ? ' ' : '').'-spacer';
+				$extraArgs['class'] = $args['class'] . ($args['class'] ? ' ' : '') . '-spacer';
 				$child = '';
 			} else if (is_object($child) && get_class($child) === 'Children') {
 				// children is class of Children
@@ -354,7 +361,9 @@ class Widget extends WidgetBase {
 				if ($child->tagName) $ret .= '</' . $child->tagName . '>';
 				continue;
 			} else if (is_string($childKey)) {
-				$child->inputName = $childKey;
+				// echo '<br> childKey='.$childKey.' | '.gettype($child).'<br>';
+				// echo print_o($child, '$child');
+				// $child->inputName = $childKey; // Error when child is string
 			}
 
 			$ret .= $this->renderChildContainerStart($childKey, $args + $extraArgs, $child);
@@ -363,7 +372,7 @@ class Widget extends WidgetBase {
 		}
 
 		$ret .= $this->renderChildrenContainerEnd();
-		$ret .= isset($subfix) ? $subfix : '';
+		$ret .= $subfix;
 
 		return $ret;
 	}
