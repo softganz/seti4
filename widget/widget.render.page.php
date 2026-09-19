@@ -3,8 +3,8 @@
  * Widget   :: Page Render Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
- * Modified :: 2026-09-18
- * Version  :: 15
+ * Modified :: 2026-09-19
+ * Version  :: 16
  *
  * @param String $requestResult
  *
@@ -114,7 +114,7 @@ class renderPageWidget extends Widget {
 	protected function renderFloatingActionButton() {
 		$ret = '';
 		
-		if (is_object($this->requestResult->floatingActionButton) && method_exists($this->requestResult->floatingActionButton, 'build')) {
+		if (isset($this->requestResult->floatingActionButton) && is_object($this->requestResult->floatingActionButton) && method_exists($this->requestResult->floatingActionButton, 'build')) {
 			$ret = $this->requestResult->floatingActionButton->build();
 		}
 
