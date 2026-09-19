@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-18
- * Version  :: 51
+ * Modified :: 2026-09-19
+ * Version  :: 52
  *
  * @param Array $args
  *
@@ -100,10 +100,11 @@ class Form extends Widget {
 		$this->action = SG\getFirst($this->action, $this->config->action ?? null);
 		$this->checkValid = SG\getFirst($this->checkValid, $this->data['data-checkValid'] ?? null, $this->data['data-checkvalid'] ?? null);
 		$this->title = SG\getFirst($this->title, $this->config->title ?? null);
+		
+		unset($this->config->data['rel']);
 
 		$ret .= _NL . '<!-- sg-form -->' . _NL;
 
-		unset($this->config->data['rel']);
 
 		$formStr = '<form'
 			. ' id="' . $this->id . '"'
@@ -687,7 +688,6 @@ class Form extends Widget {
 	protected function renderButton($tag_id, $name, $formElement) {
 		$ret = '';
 		$text = isset($formElement->text) ? $formElement->text : $formElement->value;
-
 		if (empty($formElement->items) && !empty($text)) {
 			// Single button
 			$ret .= '<button type="submit" '
@@ -717,23 +717,23 @@ class Form extends Widget {
 		} else {
 			// Multiple button
 			foreach ($formElement->items as $key => $button) {
-				if (is_null($button)) {
-					continue;
-				} else if ($button['type'] ?? null === 'text') {
-					$ret .= $button['value'] ?? '';
-				} else {
-					$button = array_replace(
-						[
-							'type' => null,
-							'name' => null,
-							'class' => null,
-							'value' => null,
-							'btnvalue' => null,
-							'attribute' => null,
-						],
-						(array) $button
-					);
+				if (is_null($button)) continue;
 
+				$button = array_replace(
+					[
+						'type' => null,
+						'name' => null,
+						'class' => null,
+						'value' => null,
+						'btnvalue' => null,
+						'attribute' => null,
+					],
+					(array) $button
+				);
+
+				if ($button['type'] === 'text') {
+					$ret .= $button['value'];
+				} else {
 					$ret .= '<button'
 						. (isset($button['type']) ? ' type="' . $button['type'] . '"' : '')
 						. ' name="' . SG\getFirst($button['name'] , is_string($key) ? $key : $name) . '"'
