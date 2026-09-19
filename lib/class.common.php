@@ -14,8 +14,8 @@
  * ============================================
  * 
  * Created  :: 2007-07-09
- * Modified :: 2026-09-18
- * Version  :: 23
+ * Modified :: 2026-09-19
+ * Version  :: 24
  */
 
 use Softganz\DB;
@@ -150,15 +150,19 @@ class Cfg {
  * Timer class for timer of execution
  ********************************************/
 class Timer {
-	var $time;
+	var $time = [];
 
 	function start($key=null) { $this->time[$key]["start"] = microtime(); } //start
 
 	function stop($key=null) { $this->time[$key]["stop"] = microtime(); } //stop
 
 	function get($key=null,$digit=null) {
+		if (!isset($this->time[$key]["start"]) || !isset($this->time[$key]["stop"])) {
+			return false;
+		}
 		$result = $this->elapsed($this->time[$key]["start"], $this->time[$key]["stop"])*1000;
-		if (isset($digit)) $result = number_format($result,$digit);
+		if (isset($digit)) $result = number_format($result, $digit);
+
 		return $result;
 	} //getTime
 
