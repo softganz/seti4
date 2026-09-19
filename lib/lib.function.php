@@ -3,8 +3,8 @@
  * Core     :: Function Library
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-10-24
- * Modified :: 2026-08-23
- * Version  :: 6
+ * Modified :: 2026-09-19
+ * Version  :: 7
  *
  * @uses functionName(parameter)
  */
@@ -48,6 +48,7 @@ function property($name = NULL, $value = NULL) {
 	$module = '';
 	$propid = NULL;
 	$item = NULL;
+	$ret = null;
 
 	if (is_string($name)) {
 		list($module, $name, $propid, $item) = explode(':',$name.'::::'); // Remove warning
@@ -94,7 +95,7 @@ function property($name = NULL, $value = NULL) {
 				':propid' => $propid,
 				':name' => $name
 			]
-		])->value;
+		])->valueOf('value');
 	} else if ($module && isset($propid)) {
 		foreach ($dbs = DB::select([
 			'SELECT `name`, `value` FROM %property% WHERE `module` = :module AND `propid` = :propid',
@@ -162,7 +163,7 @@ function _user_menu($menuItems, $is_first = true) {
 		if (!isset($item->container)) $item->container = (Object)[];
 		if (!isset($item->attr)) $item->attr = (Object)[];
 		$item->container->class = ($item->_level == 'head' ? $item->_level.' ' : '')
-				.($item->container->class ? $item->container->class : '');
+				.($item->container->class ?? false ? $item->container->class : '');
 		$ret .= '<li id="user-menu-'.$menuKey.'" '
 				. sg_implode_attr($item->container) .'>';
 		if ($item->_url) {
@@ -179,7 +180,7 @@ function _user_menu($menuItems, $is_first = true) {
 
 		$submenus = (Object) [];
 		foreach ($item as $submenuKey => $submenu) {
-			if (is_object($submenu) && $submenu->_level) {
+			if (is_object($submenu) && isset($submenu->_level)) {
 				$submenus->$submenuKey = $submenu;
 			}
 		}
@@ -216,8 +217,19 @@ function user_menu() {
 		return;
 	}
 
-	list($level, $option) = explode(':', $args[0]);
+	$args = array_replace(
+		[
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		],
+		$args
+	);
 
+	list($level, $option) = array_pad(explode(':', $args[0]), 2, '');
 	if ($level && $option == 'remove') {
 		unset($items->{$level});
 	} else if (!isset($items->{$level}) || $option == 'replace') {
@@ -226,8 +238,8 @@ function user_menu() {
 		$items->{$level}->_level = 'head';
 		$items->{$level}->_text = $args[1];
 		$items->{$level}->_url = $args[2];
-		if (isset($args[3])) $items->{$level}->attr = sg_json_decode($args[3]);
-		if (isset($args[4])) $items->{$level}->container = sg_json_decode($args[4]);
+		if ($args[3]) $items->{$level}->attr = sg_json_decode($args[3]);
+		if ($args[4]) $items->{$level}->container = sg_json_decode($args[4]);
 		if ($option == 'first') property_reorder($items, $level, 'top');
 	} else {
 		// Set submenu
