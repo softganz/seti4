@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-09-18
- * Version  :: 40
+ * Modified :: 2026-09-19
+ * Version  :: 41
  */
 
 /* Core Function */
@@ -1391,7 +1391,9 @@ function rateLimit($limit = 60, $seconds = 60, $key = '') {
  */
 function event_tricker($event = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = NULL, &$arg4 = NULL, &$arg5 = NULL, &$arg6 = NULL, &$arg7 = NULL, &$arg8 = NULL, &$arg9 = NULL) {
 	//debugMsg($event);
-	static $extensions=null;
+	static $extensions = null;
+	$ret = '';
+
 	if (!isset($extensions)) $extensions = cfg('extensions') ? cfg('extensions') : [];
 	/* do extension_event_tricker */
 	if ($event && preg_match('/(.*)\.(.*)$/',$event,$out)) {
