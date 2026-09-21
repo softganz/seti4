@@ -1058,6 +1058,21 @@ class SgCore {
 	* @return String
 	*/
 	static function processMenu($menu, &$buildMethod = 'build', $prefix = 'page') {
+		$menu = array_replace(
+			[
+				'call' => [
+					'method' => null,
+					'arg' => []
+				],
+				'access' => '',
+				'path' => '',
+				'title' => '',
+				'type' => '',
+				'options' => (object) [],
+			],
+			(array) $menu
+		);
+
 		$pageClass = NULL;
 		$module = $menu['call']['module'];
 		$auth_code = $menu['access'];
