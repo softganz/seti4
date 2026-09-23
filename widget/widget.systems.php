@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-19
- * Version  :: 94
+ * Modified :: 2026-09-23
+ * Version  :: 95
  *
  * @param Array $args
  *
@@ -304,10 +304,10 @@ class Widget extends WidgetBase {
 			}
 		} else if (is_object($widget)) {
 			// Build General Object
-			$result .= $callbackFunction['object'] && is_callable($callbackFunction['object']) ? $callbackFunction['object']($key, $widget) : \SG\json_encode($widget);
+			$result .= isset($callbackFunction['object']) && is_callable($callbackFunction['object']) ? $callbackFunction['object']($key, $widget) : \SG\json_encode($widget);
 		} else if (is_array($widget)) {
 			// Build Array
-			$result .= $callbackFunction['array'] && is_callable($callbackFunction['array']) ? $callbackFunction['array']($key, $widget) : \SG\json_encode($widget);
+			$result .= !empty($callbackFunction['array']) && is_callable($callbackFunction['array']) ? $callbackFunction['array']($key, $widget) : \SG\json_encode($widget);
 		} else if (is_string($widget) && $widget === '<sep>') {
 			// Build Seperator
 			$result .= isset($callbackFunction['seperator']) && is_callable($callbackFunction['seperator']) ? $callbackFunction['seperator']($key, $widget) : '<hr class="separator" size="0" />';
@@ -745,7 +745,7 @@ class SideBar extends Widget {
 	function __construct($args = []) {
 		parent::__construct($args);
 
-		if ($args['type']) $this->class = '-type-' . $args['type'] . ($this->class ? ' ' . $this->class : '');
+		if (!empty($args['type'])) $this->class = '-type-' . $args['type'] . ($this->class ? ' ' . $this->class : '');
 	}
 } // End of class Nav
 
