@@ -3,8 +3,8 @@
  * Widget   :: Page Render Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
- * Modified :: 2026-09-19
- * Version  :: 16
+ * Modified :: 2026-09-23
+ * Version  :: 17
  *
  * @param String $requestResult
  *
@@ -76,6 +76,8 @@ class renderPageWidget extends Widget {
 	}
 
 	protected function renderSideBar() {
+		$ret = '';
+
 		// Get Scaffold SideBar from property sideBar
 		$sideBar = SG\getFirst(
 			$this->requestResult->sideBar ?? null,
