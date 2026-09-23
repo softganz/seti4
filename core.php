@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-09-19
- * @version :: 53
+ * @modify  :: 2026-09-23
+ * @version :: 54
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
 
 cfg('core.version.name',        'Seti');
 cfg('core.version.major',       4);
-cfg('core.version.code',        52);
+cfg('core.version.code',        54);
 cfg('core.version',             '4.5.00');
 cfg('core.release',             '2026-06-05');
 cfg('core.location',            ini_get('include_path'));
@@ -381,7 +381,7 @@ function debugMsg($message = NULL, $varname = NULL) {
 function showError($message = []) {
 	ini_set('display_errors', 'off');
 	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
-	$debugMsg = debugMsg();
+	$debugMsg = $isDebug ? debugMsg() : '';
 
 	$templateFile = isset($message['template']) ? $message['template'] : (_AJAX ? 'error' : 'fatal');
 	$content = file_get_contents(__DIR__.'/assets/template/'.$templateFile.'.html');
@@ -435,26 +435,25 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 		// original error was a memory exhaustion), do NOT attempt the heavy reporting
 		// work (backtrace, log send, HTML render) because it will only fail again with
 		// another "Allowed memory size ... exhausted" error and mask the real cause.
-		$memoryLimit = intval(ini_get('memory_limit'));
-		if ($memoryLimit > 0) {
-			$memoryUsed = memory_get_usage(true);
-			if ($memoryUsed >= $memoryLimit * 0.9) {
-				$clean = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/i', '', $description);
-				$clean = preg_match('/(.*)( in )/', $clean, $out) ? $out[1] : $clean;
-				$clean = trim($clean);
-				if (empty($clean)) $clean = 'Fatal Error';
-				die(
-					showError([
-						'Title' => $clean.' [code = '.$code.']',
-						'Message' => 'Memory limit ('.round($memoryLimit / 1048576).'MB) was exhausted. '
-							. 'The error handler could not build a full report because the process '
-							. 'is critically low on memory.<br /><br />'
-							. 'Error at line <b>'.$line.'</b> of <b>'.$file.'</b>',
-					])
-				);
-			}
-		}
-
+		// $memoryLimit = intval(ini_get('memory_limit'));
+		// if ($memoryLimit > 0) {
+		// 	$memoryUsed = memory_get_usage(true);
+		// 	if ($memoryUsed >= $memoryLimit * 0.9) {
+		// 		$clean = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/i', '', $description);
+		// 		$clean = preg_match('/(.*)( in )/', $clean, $out) ? $out[1] : $clean;
+		// 		$clean = trim($clean);
+		// 		if (empty($clean)) $clean = 'Fatal Error';
+		// 		die(
+		// 			showError([
+		// 				'Title' => $clean.' [code = '.$code.']',
+		// 				'Message' => 'Memory limit ('.$memoryLimit. ' | '.$memoryUsed . ' | '.round($memoryUsed / (1024 * 1024), 2).'MB) was exhausted. '
+		// 					. 'The error handler could not build a full report because the process '
+		// 					. 'is critically low on memory.<br /><br />'
+		// 					. 'Error at line <b>'.$line.'</b> of <b>'.$file.'</b>',
+		// 			])
+		// 		);
+		// 	}
+		// }
 
 		$reportFileName = $file;
 		if (!$isDebug) {
@@ -521,16 +520,18 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 			} else {
 				$cleanDescription = 'Oops! An Error Occurred';
 			}
-			$cleanDescription = $cleanDescription.' [code = '.$code.']';
+			$cleanDescription .= ' [code = '.$code.']';
 		}
 
+		$memoryLimit = intval(ini_get('memory_limit'));
+		$memoryUsed = memory_get_usage(true);
 
 		die(
 			showError([
 				'Title' => $cleanDescription,
 				'Message' => $isDebug ? 'There is error in <b>'.$reportFileName.'</b> '
-					. 'line <b>'.$line.'</b>. '
-					. '<br /><br />Error at line <b>'.$line.'</b><br />'
+					. ' at line <b>'.$line.'</b>.<br>'
+					. 'Memory used ' . round($memoryUsed / (1024 * 1024), 2) . '/' . $memoryLimit . 'MB.'
 					. $fullDescription : '',
 			])
 		);
