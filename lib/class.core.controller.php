@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-09-19
- * Version  :: 57
+ * Modified :: 2026-09-24
+ * Version  :: 58
  */
 
 /*************************************************************
@@ -21,7 +21,7 @@ class R {
 	public $configFolder;
 	public $colorScheme;
 	public $request;
-	public $appAgent = NULL;
+	public $appAgent = null;
 	public $message;
 	public $setting;
 	public $options;
@@ -40,17 +40,17 @@ class R {
 	public $query_items = [];
 
 	function __construct() {
-		$this->setting = (Object) [];
-		$this->options = (Object) [];
-		$this->message = (Object) [];
+		$this->setting = (object) [];
+		$this->options = (object) [];
+		$this->message = (object) [];
 	}
 
-	public static function Option($key = NULL, $value = NULL) {
+	public static function Option($key = null, $value = null) {
 		if (isset($key) && isset($value)) $GLOBALS['R']->options->{$key} = $key;
-		return isset($GLOBALS['R']->options->{$key}) ? $GLOBALS['R']->options->{$key} : NULL;
+		return isset($GLOBALS['R']->options->{$key}) ? $GLOBALS['R']->options->{$key} : null;
 	}
 
-	public static function Setting($key = NULL, $value = NULL) {
+	public static function Setting($key = null, $value = null) {
 		if (empty($key)) {
 			return $GLOBALS['R']->setting;
 		} else if (is_object($key)) {
@@ -58,11 +58,11 @@ class R {
 			return $GLOBALS['R']->setting;
 		} else if (isset($key) && isset($value)) {
 			$GLOBALS['R']->setting->{$key} = $key;
-			return isset($GLOBALS['R']->setting->{$key}) ? $GLOBALS['R']->setting->{$key} : NULL;
+			return isset($GLOBALS['R']->setting->{$key}) ? $GLOBALS['R']->setting->{$key} : null;
 		}
 	}
 
-	public static function Module($moduleName, $className = NULL) {
+	public static function Module($moduleName, $className = null) {
 		$paraArgs = func_get_args();
 		$rName = $paraArgs[0];
 		$rName = 'module.'.$rName;
@@ -164,7 +164,7 @@ class R {
 
 	public static function On($eventName) {
 		$paraArgs = func_get_args();
-		$ret = NULL;
+		$ret = null;
 		if (is_string($paraArgs[0])) {
 			$paraArgs[0] = 'on.'.$paraArgs[0];
 			$ret = call_user_func_array('load_resource', $paraArgs);
@@ -200,11 +200,11 @@ class R {
 class SgCore {
 	/**
 	* Find template location
-	* @param String $filename
-	* @param String ext_folder Each folder seperate by ;
-	* @return Mixed False on file not found and file location on found
+	* @param string $filename
+	* @param string ext_folder Each folder seperate by ;
+	* @return mixed False on file not found and file location on found
 	*/
-	static function getTemplate($filename = NULL, $ext_folder = NULL) {
+	static function getTemplate($filename = null, $ext_folder = null) {
 		if (empty($filename)) return false;
 		$theme_folder = [];
 		if ($ext_folder) {
@@ -236,10 +236,10 @@ class SgCore {
 
 	/**
 	* Load configuration from file and store into cfg
-	* @param Mixed $configFile
-	* @param Mixed $folder
+	* @param mixed $configFile
+	* @param mixed $folder
 	*/
-	static function loadConfig($configFile = NULL, $folders = ['./core/assets/conf']) {
+	static function loadConfig($configFile = null, $folders = ['./core/assets/conf']) {
 		$debugStr = '';
 		$configArray = [];
 
@@ -253,7 +253,7 @@ class SgCore {
 
 			if (is_string($folders)) $folders = explode(';',$folders);
 
-			$debugStr .= '<b>START LOAD CONFIG :: '.$configFile.' :: </b> from '.implode(';', (Array) $folders).'<br />';
+			$debugStr .= '<b>START LOAD CONFIG :: '.$configFile.' :: </b> from '.implode(';', (array) $folders).'<br />';
 
 			$module = $out[1];
 			$configExt = $out[2];
@@ -302,7 +302,7 @@ class SgCore {
 						$debugStr .= 'MERGE CORE CONFIG';
 						$jsonValue = SG\json_decode($jsonTest, cfg());
 						$debugStr .= ('<pre>'.htmlspecialchars(print_r($jsonValue,1)).'</pre>');
-						cfg((Array) $jsonValue);
+						cfg((array) $jsonValue);
 						// $cfg = cfg();
 						// array_walk_recursive($cfg, '__htmlspecialchars');
 						// debugMsg($cfg, 'coreCfg');
@@ -330,7 +330,7 @@ class SgCore {
 				}
 			}
 		} else {
-			// $debugStr .= '<b>START LOAD CONFIG :: '.$configFile.' :: </b> from '.implode(';', (Array) $folders).'<br />';
+			// $debugStr .= '<b>START LOAD CONFIG :: '.$configFile.' :: </b> from '.implode(';', (array) $folders).'<br />';
 		}
 
 		if (i() && i()->ok && debug('config')) debugMsg($debugStr);
@@ -347,7 +347,7 @@ class SgCore {
 					cfg($configKey, $jsonValue);
 				}
 			} else if (is_string($configValue) && preg_match('/^\[/', trim($configValue))) {
-				$jsonValue = (Array) SG\json_decode($configValue, cfg($configKey));
+				$jsonValue = (array) SG\json_decode($configValue, cfg($configKey));
 				//debugMsg($jsonValue, '$jsonValue['.$configKey.']');
 				if (isset($jsonValue) && is_array($jsonValue)) {
 					cfg($configKey, $jsonValue);
@@ -360,12 +360,12 @@ class SgCore {
 
 	/**
 	* Find and load template
-	* @param String $filename
-	* @param String ext_folder Each folder seperate by ;
-	* @param Boolean $show_result
-	* @return String Result from template file
+	* @param string $filename
+	* @param string ext_folder Each folder seperate by ;
+	* @param boolean $show_result
+	* @return string Result from template file
 	*/
-	static function loadTemplate($filename = NULL, $ext_folder = NULL, $show_result = true) {
+	static function loadTemplate($filename = null, $ext_folder = null, $show_result = true) {
 		$template_file = self::getTemplate($filename, $ext_folder);
 		if (!$template_file) return;
 		$ret = '';
@@ -382,9 +382,9 @@ class SgCore {
 
 	/**
 	* Load Resource File and return array
-	* @param String $packageName exp [form/]module[.submodule].method
-	* @param Boolean $debugResourceFile
-	* @return Mixed
+	* @param string $packageName exp [form/]module[.submodule].method
+	* @param boolean $debugResourceFile
+	* @return mixed
 	*/
 	static function loadResourceFile($packageName, $debugResourceFile = false) {
 		static $loadCount = 0;
@@ -396,13 +396,13 @@ class SgCore {
 		$resourceFileToLoad = '';
 		$found = false;
 		$resourceType = '';
-		$resultContent = NULL;
+		$resultContent = null;
 		$coreFolder = rtrim(_CORE_FOLDER,'/');
 		$mainFolder = '';
 		$paths = [];
 		$fileName = '';
 		$funcName = '';
-    $className = NULL;
+    $className = null;
 		$isDebugable = true;
 		$debugLoadfile = debug('load') || $debugResourceFile;
 		$fixFolders = ['widget' => 'widget', 'model' => 'model', 'api' => 'api'];
@@ -448,8 +448,8 @@ class SgCore {
 			return false;
 		}
 
-		$subModule = isset($request[1]) ? $request[1] : NULL;
-		$actionModule = isset($request[2]) && is_string($request[2]) ? $request[2] : NULL;
+		$subModule = isset($request[1]) ? $request[1] : null;
+		$actionModule = isset($request[2]) && is_string($request[2]) ? $request[2] : null;
 
 		// debugMsg($request, '$request');
 		// debugMsg('$subModule = '.$subModule.' $actionModule = '.$actionModule);
@@ -805,9 +805,9 @@ class SgCore {
 	/**
 	* Load widget request from tag <div class="widget" ></div>
 	*
-	* @param String $name , widget-request , widget-addons
-	* @param Object $para
-	* @return String
+	* @param string $name , widget-request , widget-addons
+	* @param object $para
+	* @return string
 	*/
 	static function loadWidget($name, $para) {
 		static $lists = [];
@@ -897,7 +897,7 @@ class SgCore {
 
 	/**
 	* Load extension file
-	* @param String $name
+	* @param string $name
 	*/
 	static function loadExtension($name) {
 		static $lists = [];
@@ -923,17 +923,17 @@ class SgCore {
 		}
 	}
 
-	static function processIndex($page = 'index', $text = NULL) {
+	static function processIndex($page = 'index', $text = null) {
 		global $request_result;
 		$request_result = $text;
-		$result = self::loadTemplate($page, NULL, false);
+		$result = self::loadTemplate($page, null, false);
 		return $result;
 	}
 
 	/**
 	* Process variable and replace with value
-	* @param String $html
-	* @return String
+	* @param string $html
+	* @return string
 	*/
 	static function processVariable($html) {
 		$vars = [
@@ -1027,7 +1027,7 @@ class SgCore {
 			}
 		}
 
-		$setting->theme = isset($_GET['setting:theme']) ? $_GET['setting:theme'] : NULL;
+		$setting->theme = isset($_GET['setting:theme']) ? $_GET['setting:theme'] : null;
 		if (empty($setting->theme)) unset($setting->theme);
 
 		$settingJson = trim(json_encode($setting));
@@ -1054,8 +1054,8 @@ class SgCore {
 
 	/**
 	* Do module method from request menu item
-	* @param Array $menu
-	* @return String
+	* @param array $menu
+	* @return string
 	*/
 	static function processMenu($menu, &$buildMethod = 'build', $prefix = 'page') {
 		$menu = array_replace(
@@ -1073,7 +1073,7 @@ class SgCore {
 			(array) $menu
 		);
 
-		$pageClass = NULL;
+		$pageClass = null;
 		$module = $menu['call']['module'];
 		$auth_code = $menu['access'];
 		$is_auth = user_access($auth_code);
@@ -1096,12 +1096,12 @@ class SgCore {
 
 		if ($verify === false) {
 			http_response_code(_HTTP_ERROR_FORBIDDEN);
-			return [$pageClass, true, message('error', 'Access denied', NULL)];
+			return [$pageClass, true, message('error', 'Access denied', null)];
 		} else if (is_string($verify)) {
 			return [$pageClass, true, $verify];
 		} else if ($is_auth === false) {
 			http_response_code(_HTTP_ERROR_FORBIDDEN);
-			return [$pageClass, true, message('error', 'Access denied', NULL, $options->signform)];
+			return [$pageClass, true, message('error', 'Access denied', null, $options->signform)];
 		}
 
 		$menuArgs = array_merge([$module], is_array($menu['call']['arg']) ? $menu['call']['arg'] : [] );
@@ -1177,10 +1177,10 @@ class SgCore {
 			}
 		} else if ($found && function_exists($retClass)) {
 			$pageBuildWidget = $retClass(...array_merge([$pageClass], $funcArg));
-			$pageClassWidget = NULL;
+			$pageClassWidget = null;
 		} else {
-			$pageBuildWidget = NULL;
-			$pageClassWidget = NULL;
+			$pageBuildWidget = null;
+			$pageClassWidget = null;
 		}
 
 		return [$pageClass, $found, $pageBuildWidget, $pageClassWidget];
@@ -1188,9 +1188,9 @@ class SgCore {
 
 	/**
 	* Do request process from url address and return result in string
-	* @return String
+	* @return string
 	*/
-	static function processController($loadTemplate = true, $pageTemplate = NULL) {
+	static function processController($loadTemplate = true, $pageTemplate = null) {
 		global $page,$request_time,$request_process_time;
 		$request = R()->request;
 		$requestResult = '';
@@ -1300,7 +1300,7 @@ class SgCore {
 
 			// Prepare result object
 			if (is_object($pageClassWidget) && method_exists($pageClassWidget, $buildMethod)) {
-				// Result is Widget Class then build widget to String
+				// Result is Widget Class then build widget to string
 				// Case widget, Call method build()
 
 				// Check right to build widget
@@ -1331,7 +1331,7 @@ class SgCore {
 				// Result is array or object
 				$requestResult = $pageBuildWidget;
 			} else {
-				// Result is String, join
+				// Result is string, join
 				$requestResult .= $pageBuildWidget;
 			}
 
@@ -1408,9 +1408,9 @@ class SgCore {
 	/**
 	* Process Template
 	* 	- Replace {{ .Name }} with value
-	* @param String $html
-	* @param Array $var
-	* @return String
+	* @param string $html
+	* @param array $var
+	* @return string
 	*/
 	static function processTemplateVariable($html, $var = []) {
 		// Replace .Name in {{ }} with value of key in variable
@@ -1425,15 +1425,15 @@ class SgCore {
 
 	/**
 	* Set current language
-	* @param String $lang
-	* @param String
+	* @param string $lang
+	* @param string
 	*/
-	static function setLang($lang = NULL) {
+	static function setLang($lang = null) {
 		if ($lang) {
 			// do nothing
 		} else if (($lang = Request::all('lang')) && is_string($lang)) {
 			if ($lang === 'clear') {
-				setcookie('lang', NULL, time()-100, cfg('cookie.path'), cfg('cookie.domain'));
+				setcookie('lang', null, time()-100, cfg('cookie.path'), cfg('cookie.domain'));
 			} else {
 				setcookie('lang', $lang, time()+10*365*24*60*60, cfg('cookie.path'), cfg('cookie.domain'));
 			}
