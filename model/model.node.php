@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-09-30
  * Modified :: 2026-09-24
- * Version  :: 30
+ * Version  :: 31
  *
  * @param array $args
  * @return object
@@ -86,6 +86,7 @@ class NodeModel {
 			[
 				'nodeId' => null,
 				'tags' => null,
+				'category' => null,
 				'type' => null,
 				'sticky' => null,
 				'format' => null,
@@ -93,16 +94,13 @@ class NodeModel {
 				'ip' => null,
 				'year' => null,
 				'searchText' => null,
+				'condition' => null,
 			],
 			(array) $conditions
 		);
 
 		if ($conditions->type === '*') unset($conditions->type);
 		else if (!$conditions->type) $conditions->type = 'story';
-		if ($conditions->tag) {
-			$conditions->tags = $conditions->tag;
-			unset($conditions->tag);
-		}
 
 		$result = (object) [
 			'count' => 0,
