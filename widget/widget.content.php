@@ -3,8 +3,8 @@
  * Widget   :: Inline content Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2011-11-04
- * Modified :: 2026-08-24
- * Version  :: 3
+ * Modified :: 2026-09-24
+ * Version  :: 4
  *
  * @param Array $args
  * @param Argument list in many format
@@ -48,7 +48,39 @@ function widget_content() {
 	static $content_list_count=0;
 	global $today;
 
-	$para=para(func_get_args(),'data-model=items','show-url=paper/$nodeId','data-limit=5','show-style=div');
+	$para = (object) array_replace(
+		[
+			'id' => null,
+			'data-model' => null,
+			'data-node' => null,
+			'data-tags' => null,
+			'data-sticky' => null,
+			'data-field' => null,
+			'data-limit' => null,
+			'data-show' => null,
+			'data-show-readall' => null,
+			'data-cfg-readall' => null,
+			'data-footer' => null,
+			'data-tpid' => null, // @deprecated
+			'data-tag' => null, // @deprecated
+			'show-title' => null,
+			'show-new' => null,
+			'show-start' => null,
+			'show-count' => null,
+			'show-photo' => null,
+			'show-url' => null,
+			'show-webview' => null,
+			'show-dateformat' => null,
+			'show-style' => null,
+			'show-style-value' => null,
+			'show-style-title' => null,
+			'show-photo-width' => null,
+			'show-photo-height' => null,
+			'show-readall' => null,
+			'option-debug' => null,
+		],
+		(array) para(func_get_args(),'data-model=items','show-url=paper/$nodeId','data-limit=5','show-style=div')
+	);
 
 	$ret = '';
 
@@ -62,51 +94,51 @@ function widget_content() {
 	$dateformat=($para->{'show-dateformat'}?'':'@').\SG\getFirst($para->{'show-dateformat'},cfg('dateformat'));
 
 	$patterns = (Object) [
-		'short' => (Object) [],
-		'slide' => (Object) [],
-		'reply' => (Object) [],
-		'shortview' => (Object) [],
-		'detail' => (Object) [],
-		'div' => (Object) [],
-		'ul' => (Object) [],
+		'short' => (Object) [
+			'show-style' => 'ul',
+			'value' => '" <span class=\"timestamp\"><span class=\"date\">".sg_date($created,\''.$dateformat.'\')."</span><span class=\"sep\"> | </span><span class=\"view\">".$view." views</span>".($reply?"<span class=\"sep\"> | </span><span class=\"reply\">".$reply." replies</span>":"")."</span>"'
+		],
+		'slide' => (Object) [
+			'show-style' => 'ul',
+			'header' => 'h3',
+			'value' => '"<div class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</div>
+				<div class=\"summary\"><a href=\"$_url\" title=\"".htmlspecialchars($title)."\">{$photo}</a>{$summary}</div>
+				<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"'
+		],
+		'reply' => (Object) [
+			'show-style' => 'ul',
+			'value' => '" <span class=\"timestamp\">".sg_date($last_reply,\''.$dateformat.'\')." | <span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." replies</span>":"")."</span>"'
+		],
+		'shortview' => (Object) [
+			'show-style' => 'ul',
+			'value' => '" <span class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')." (<span class=\"view\">".$view."</span>".($reply?"|<span class=\"reply\">".$reply."</span>":"").")</span>"',
+		],
+		'detail' => (Object) [
+			'show-style' => 'dl',
+			'header'=> 'dt',
+			'value' => '"<dd class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</dd>'
+				. '<dd class=\"summary\">{$photo}{$summary}</dd>'
+				. '<dd class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></dd>"'
+		],
+		'div' => (Object) [
+			'show-style' => 'div',
+			'header' => 'h3',
+			'value' => '"<div class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</div>'
+				. '<div class=\"photo\">'
+				. '<a '.($para->{'show-webview'} ? 'class=\"sg-action\"' : '').' href=\"$_url\" '.($para->{'show-webview'} ? 'data-webview=\"".htmlspecialchars($title)."\"' : '').' title=\"".htmlspecialchars($title)."\">{$photo}</a>'
+				. '</div>'
+				. '<div class=\"summary\">{$summary}</div>'
+				. '<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"'
+		],
+		'ul' => (Object) [
+			'show-style' => 'ul',
+			'header' => 'h3',
+			'value' => '"<div class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</div>'
+				. '<div class=\"photo\"><a href=\"$_url\" title=\"".htmlspecialchars($title)."\">{$photo}</a></div>'
+				. '<div class=\"summary\">{$summary}</div>'
+				. '<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"'
+		],
 	];
-
-	$patterns->short->{'show-style'}='ul';
-	$patterns->short->value='" <span class=\"timestamp\"><span class=\"date\">".sg_date($created,\''.$dateformat.'\')."</span><span class=\"sep\"> | </span><span class=\"view\">".$view." views</span>".($reply?"<span class=\"sep\"> | </span><span class=\"reply\">".$reply." replies</span>":"")."</span>"';
-
-	$patterns->slide->{'show-style'}='ul';
-	$patterns->slide->header='h3';
-	$patterns->slide->value='"<div class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</div>
-<div class=\"summary\"><a href=\"$_url\" title=\"".htmlspecialchars($title)."\">{$photo}</a>{$summary}</div>
-<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"';
-
-	$patterns->reply->{'show-style'}='ul';
-	$patterns->reply->value='" <span class=\"timestamp\">".sg_date($last_reply,\''.$dateformat.'\')." | <span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." replies</span>":"")."</span>"';
-
-	$patterns->shortview->{'show-style'}='ul';
-	$patterns->shortview->value='" <span class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')." (<span class=\"view\">".$view."</span>".($reply?"|<span class=\"reply\">".$reply."</span>":"").")</span>"';
-
-	$patterns->detail->{'show-style'}='dl';
-	$patterns->detail->header='dt';
-	$patterns->detail->value='"<dd class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</dd>
-<dd class=\"summary\">{$photo}{$summary}</dd>
-<dd class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></dd>"';
-
-	$patterns->div->{'show-style'}='div';
-	$patterns->div->header='h3';
-	$patterns->div->value = '"<div class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</div>'
-		. '<div class=\"photo\">'
-		. '<a '.($para->{'show-webview'} ? 'class=\"sg-action\"' : '').' href=\"$_url\" '.($para->{'show-webview'} ? 'data-webview=\"".htmlspecialchars($title)."\"' : '').' title=\"".htmlspecialchars($title)."\">{$photo}</a>'
-		. '</div>'
-		. '<div class=\"summary\">{$summary}</div>'
-		. '<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"';
-
-	$patterns->ul->{'show-style'}='ul';
-	$patterns->ul->header='h3';
-	$patterns->ul->value='"<div class=\"timestamp\">".sg_date($created,\''.$dateformat.'\')."</div>
-<div class=\"photo\"><a href=\"$_url\" title=\"".htmlspecialchars($title)."\">{$photo}</a></div>
-<div class=\"summary\">{$summary}</div>
-<div class=\"footer\"><span class=\"view\">".$view." views</span>".($reply?" | <span class=\"reply\">".$reply." comments</span>":"")." | <span class=\"readmore\"><a href=\"$_url\">read more &raquo;</a></span></div>"';
 
 	$topics = (Object) [];
 
@@ -125,6 +157,9 @@ function widget_content() {
 		];
 		$topics = PaperModel::$model($conditions);
 	}
+
+	$firstTopic = array_first((array) $topics->items);
+	list($last_date) = explode(' ', $firstTopic->created);
 
 	if (is_string($para->{'show-style'})) $pattern=$patterns->{$para->{'show-style'}};
 	else if (is_object($para->{'show-style'})) $pattern=$para->{'show-style'};
@@ -150,9 +185,6 @@ function widget_content() {
 			case 'minute' : $new->time=date('U') - intval($new->value)*60; break;
 			case 'day' : $new->time=date('U') - intval($new->value)*24*60*60; break;
 			case 'lastdate' :
-				$first_topic=array_slice($topics->items,0,1);
-				$first_topic=$first_topic[0];
-				list($last_date)=explode(' ',$first_topic->created);
 				$new->time=sg_date($last_date,'U') - intval($new->value)*24*60*60;
 				break;
 			case 'least' : $new->time= date('U',mktime(date('H')+0, date('s')+0, date('i')+0, date('m')+0  , date('d')+0 - intval($new->value), date('Y')+0));break;
@@ -163,13 +195,13 @@ function widget_content() {
 	$ret .= '<!-- start of widget::content #'.$content_list_count.'-->'._NL;
 	if ($pattern->{'show-style'}!='div') $ret .= '<'.$pattern->{'show-style'}.'>'._NL;
 
-	list($last_date)=explode(' ',$topics->items[0]->created);
+	// debugMsg($topics,'$topics');
 	$start = SG\getFirst($para->{'show-start'},1);
 	$count = SG\getFirst($para->{'show-count'},$topics->count);
 	$no=0;
 	$debug = SG\getFirst($para->{'option-debug'}=='eval',debug('eval'));
 	if (preg_match('/photo/', $para->{'data-field'}) && empty($para->{'show-photo'})) $para->{'show-photo'}='image';
-	if ($para->{'show-photo'}) list($para->{'show-photo'},$showPhotoOption)=explode(',',$para->{'show-photo'});
+	if ($para->{'show-photo'}) [$para->{'show-photo'}, $showPhotoOption] = explode(',', $para->{'show-photo'} . ',');
 
 	/* generate each item */
 	foreach ($topics->items as $topic) {
@@ -189,7 +221,7 @@ function widget_content() {
 		}
 		// $ret .= print_o($topic, '$topic');
 		if ($para->{'show-photo'}) {
-			if ($topic->photo) {
+			if (!empty($topic->photo)) {
 				switch ($para->{'show-photo'}) {
 					case 'image' :
 						// $photo=array_shift($topic->photo->items);
@@ -214,10 +246,10 @@ function widget_content() {
 		$ret .= '<a href="'.$topic->_url.'"'.($pattern->{'show-style'}=='div'?' title="'.htmlspecialchars($topic->title).'"':'').' data-webview="'.htmlspecialchars($topic->title).'">';
 
 		$ret .= $para->{'show-style'}=='short'&&$para->{'show-photo'}&&$topic->photo?$topic->photo:'';
-		if ($showTitle = SG\getFirst($para->{'show-title'},$pattern->{'show-title'})) {
+		if ($para->{'show-title'}) {
 			// generate each topic title
 			$old_error=error_reporting();
-			$show= preg_replace('/\$([a-zA-Z0-9_]*)/','$topic->\\1',$showTitle);
+			$show= preg_replace('/\$([a-zA-Z0-9_]*)/','$topic->\\1', $para->{'show-title'});
 			$eval='$show_value='.$show.';';
 			eval($eval);
 			error_reporting($old_error);
