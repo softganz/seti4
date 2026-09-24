@@ -4,9 +4,9 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
  * Modified :: 2026-09-24
- * Version  :: 20
+ * Version  :: 21
  *
- * @return Object
+ * @return object
  *
  * @uses new FileModel()
  * @uses FileModel::method()
@@ -16,8 +16,8 @@ use Softganz\DB;
 
 class FileModel {
 	/**
-	 * @param int/array $fileId
-	 * @return object/null
+	 * @param int|array $fileId
+	 * @return object|null
 	 */
 	public static function get($fileId) {
 		if (is_array($fileId)) {
@@ -66,7 +66,7 @@ class FileModel {
 
 		if (empty($rs->id)) return null;
 
-		$result = (Object) [
+		$result = (object) [
 			'fileId' => $rs->id,
 			'fileName' => $rs->fileName,
 			'folder' => $rs->folder,
@@ -79,7 +79,7 @@ class FileModel {
 	}
 
 	public static function items($conditions = []) {
-		$conditions = (Object) array_replace(
+		$conditions = (object) array_replace(
 			[
 				'nodeId' => null,
 				'type' => null,
@@ -92,10 +92,10 @@ class FileModel {
 				'resultGroup' => null,
 				'cover' => false,
 			],
-			(Array) $conditions
+			(array) $conditions
 		);
 
-		$result = (Object) [
+		$result = (object) [
 			'count' => 0,
 			'items' => [],
 		];
@@ -171,31 +171,31 @@ class FileModel {
 
 		$useSourceFilename = $options->useSourceFilename;
 
-		$data = (Object) array_replace_recursive(
+		$data = (object) array_replace_recursive(
 			[
-				'nodeId' => null, // Int
-				'fileId' => null, // Int,
-				'cid' => null, // Int
-				'title' => null, // String
-				'orgId' => null, // Int
-				'uid' => null, // Int
-				'refId' => null, // Int
-				'tagName' => null, // String
-				'folder' => null, // String
-				'preName' => null, // String
-				'deleteUrl' => null, // String,
-				'link' => null, // String
-				'description' => null, // String
+				'nodeId' => null, // int
+				'fileId' => null, // int,
+				'cid' => null, // int
+				'title' => null, // string
+				'orgId' => null, // int
+				'uid' => null, // int
+				'refId' => null, // int
+				'tagName' => null, // string
+				'folder' => null, // string
+				'preName' => null, // string
+				'deleteUrl' => null, // string,
+				'link' => null, // string
+				'description' => null, // string
 				'onComplete' => function($data) {}
 			],
-			(Array) $data
+			(array) $data
 		);
 
 		$data->nodeId = SG\getFirst($data->nodeId, $data->tpid);
 
 		if ($data->folder && !preg_match('/\//$', $data->folder)) $data->folder .= '/';
 
-		$result = (Object) [
+		$result = (object) [
 			'fileId' => null,
 			'link' => null,
 			'photofile' => null,
@@ -208,7 +208,7 @@ class FileModel {
 		$photoPrename = SG\getFirst($data->preName, $data->prename, 'paper_'.$data->nodeId.'_');
 		$photoFilenameLength = SG\getFirst($options->fileNameLength, 30);
 		$isUploadSingleFile = true;
-		$docExtension = (Array) cfg('topic.doc.file_ext');
+		$docExtension = (array) cfg('topic.doc.file_ext');
 		$photoExtension = ['jpg', 'jpeg', 'png'];
 
 		$deleteUrl = SG\getFirst($data->deleteUrl, $data->deleteurl);
@@ -297,7 +297,7 @@ class FileModel {
 
 			$photo_upload = $upload->filename;
 
-			$picsData = (Object) [
+			$picsData = (object) [
 				'fileId' => SG\getFirst($data->fileId, $data->fid),
 				'nodeId' => $data->nodeId,
 				'tpid' => $data->nodeId,
@@ -405,16 +405,16 @@ class FileModel {
 	/**
 	* Delete File
 	*
-	* @param Int $fileId
-	* @param Object $options
-	* @return String
+	* @param int $fileId
+	* @param object $options
+	* @return string
 	*/
 	public static function delete($fileId, $options = '{}') {
 		$defaults = '{debug: false, deleteRecord: true, deleteFile: true}';
 		$options = SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$result = (Object) [
+		$result = (object) [
 			'photoInused' => false,
 			'msg' => null,
 			'_query' => [],
@@ -422,7 +422,7 @@ class FileModel {
 
 		$fileInfo = FileModel::get($fileId);
 
-		if (empty($fileInfo->fileId)) return (Object) ['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'msg' => 'File not found'];
+		if (empty($fileInfo->fileId)) return (object) ['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'msg' => 'File not found'];
 
 		if ($fileInfo->info->type == 'photo') {
 			// Delete file record
@@ -496,7 +496,7 @@ class FileModel {
 		if (is_object($file)) {
 			$property = $file;
 		} else if (is_string($file)) {
-			$property = (Object) [
+			$property = (object) [
 				'name' => $file,
 				'src' => null,
 				'url' => null,
@@ -564,7 +564,7 @@ class FileModel {
 		if (is_object($file)) {
 			$property = $file;
 		} else if (is_string($file)) {
-			$property = (Object) [
+			$property = (object) [
 				'name' => $file,
 				'src' => null,
 				'url' => null,
