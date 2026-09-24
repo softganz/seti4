@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
  * Modified :: 2026-09-24
- * Version  :: 21
+ * Version  :: 22
  *
  * @return object
  *
@@ -491,7 +491,8 @@ class FileModel {
 	}
 
 	public static function photoProperty($file, $folder = null) {
-		$folder = preg_replace('/\/$/', '', $folder);
+		$folder = preg_replace('/\/$/', '', $folder ?? '');
+		$folderName = '';
 
 		if (is_object($file)) {
 			$property = $file;
