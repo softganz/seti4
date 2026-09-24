@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-19
- * Version  :: 52
+ * Modified :: 2026-09-24
+ * Version  :: 53
  *
  * @param Array $args
  *
@@ -565,7 +565,7 @@ class Form extends Widget {
 			. 'name="' . $name . '" '
 			. 'id="' . $tag_id . '" '
 			. 'class="form-' . $formElement->type . ($formElement->class ? ' ' . $formElement->class : '') . ($formElement->require ? ' -require' : '') . ($this->readonly || $formElement->readonly ? ' -disabled' : '') . '"'
-			. $this->onElementEvent('onChange', $formElement->onChange)
+			. (!empty($formElement->onChange) ? $this->onElementEvent('onChange', $formElement->onChange) : '')
 			. ($formElement->style ? 'style="' . $formElement->style . '"' : '')
 			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
 			. '>' . _NL;
