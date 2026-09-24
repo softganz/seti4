@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
  * Modified :: 2026-09-24
- * Version  :: 58
+ * Version  :: 59
  */
 
 /*************************************************************
@@ -814,6 +814,17 @@ class SgCore {
 		static $folders = [];
 		static $counter = 0;
 
+		$para = (object) array_replace(
+			[
+				'widget-request' => null,
+				'data-url' => null,
+				'data-header' => null,
+				'data-header-url' => null,
+				'data-option-replace' => null,
+				'option-header' => null,
+			],
+			(array) $para
+		);
 		$result = '';
 		// $result.='name='.$name.'<br />'.print_o($para,'$para');
 
@@ -880,7 +891,7 @@ class SgCore {
 		// Result of $widget_result must be string
 		$widget_result = trim($widget_result);
 
-		if (!empty($para->{'data-header'}) && !in_array(strtolower($para->{'option-header'}), ['0','no'])) {
+		if (!empty($para->{'data-header'}) && !in_array(strtolower($para->{'option-header'} ?? ''), ['0','no'])) {
 			$header = '<h2>'.($para->{'data-header-url'}?'<a href="'.$para->{'data-header-url'}.'">':'').'<span>'.\SG\getFirst($para->{'data-header'},$para->id).'</span>'.($para->{'data-header-url'}?'</a>':'').'</h2>'._NL;
 		}
 
