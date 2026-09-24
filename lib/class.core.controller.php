@@ -1449,7 +1449,7 @@ class SgCore {
 
 	static function setPageClass($q) {
 		page_class('module');
-		page_class('module-'.$q[0]);
+		if (isset($q[0])) page_class('module-'.$q[0]);
 
 		// Remove element that value is numeric or * or leading with 0
 		$subModule = array_filter($q, function($v){if (!(is_numeric($v) || $v==='*' || preg_match('/^0/', $v))) return $v;});
