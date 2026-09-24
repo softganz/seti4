@@ -3,8 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-08-23
- * Version  :: 19
+ * Modified :: 2026-09-24
+ * Version  :: 20
  *
  * @return Object
  *
@@ -16,8 +16,8 @@ use Softganz\DB;
 
 class FileModel {
 	/**
-	 * @param Int/Array $fileId
-	 * @return Object/NULL
+	 * @param int/array $fileId
+	 * @return object/null
 	 */
 	public static function get($fileId) {
 		if (is_array($fileId)) {
@@ -25,7 +25,7 @@ class FileModel {
 			$fileId = $fileId['fileId'];
 		}
 
-		if (empty($fileId)) return NULL;
+		if (empty($fileId)) return null;
 
 		$rs = DB::select([
 			'SELECT
@@ -59,12 +59,12 @@ class FileModel {
 			'where' => [
 				'%WHERE%' => [
 					['`fid` = :fileId', ':fileId' => $fileId],
-					$nodeId ? ['`tpid` = :nodeId', ':nodeId' => $nodeId] : NULL,
+					$nodeId ? ['`tpid` = :nodeId', ':nodeId' => $nodeId] : null,
 				],
 			],
 		]);
 
-		if (empty($rs->id)) return NULL;
+		if (empty($rs->id)) return null;
 
 		$result = (Object) [
 			'fileId' => $rs->id,
@@ -72,7 +72,7 @@ class FileModel {
 			'folder' => $rs->folder,
 			'title' => $rs->title,
 			'info' => $rs,
-			'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName, $rs->folder) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName, $rs->folder) : NULL),
+			'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName, $rs->folder) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName, $rs->folder) : null),
 		];
 
 		return $result;
@@ -81,15 +81,15 @@ class FileModel {
 	public static function items($conditions = []) {
 		$conditions = (Object) array_replace(
 			[
-				'nodeId' => NULL,
-				'type' => NULL,
-				'refId' => NULL,
-				'orgId' => NULL,
-				'tagName' => NULL,
-				'tagNameLike' => NULL,
+				'nodeId' => null,
+				'type' => null,
+				'refId' => null,
+				'orgId' => null,
+				'tagName' => null,
+				'tagNameLike' => null,
 				'orderBy' => 'id',
 				'orderDir' => 'ASC',
-				'resultGroup' => NULL,
+				'resultGroup' => null,
 				'cover' => false,
 			],
 			(Array) $conditions
@@ -164,7 +164,7 @@ class FileModel {
 	 * @param array $options
 	 * @return object
 	 */
-	public static function upload($photoFiles, $data = NULL, $options = '{}') {
+	public static function upload($photoFiles, $data = null, $options = '{}') {
 		$defaults = '{debug: false, showDetail: true, useSourceFilename: false, fileNameLength: 30, showDetail: false}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
@@ -173,19 +173,19 @@ class FileModel {
 
 		$data = (Object) array_replace_recursive(
 			[
-				'nodeId' => NULL, // Int
-				'fileId' => NULL, // Int,
-				'cid' => NULL, // Int
-				'title' => NULL, // String
-				'orgId' => NULL, // Int
-				'uid' => NULL, // Int
-				'refId' => NULL, // Int
-				'tagName' => NULL, // String
-				'folder' => NULL, // String
-				'preName' => NULL, // String
-				'deleteUrl' => NULL, // String,
-				'link' => NULL, // String
-				'description' => NULL, // String
+				'nodeId' => null, // Int
+				'fileId' => null, // Int,
+				'cid' => null, // Int
+				'title' => null, // String
+				'orgId' => null, // Int
+				'uid' => null, // Int
+				'refId' => null, // Int
+				'tagName' => null, // String
+				'folder' => null, // String
+				'preName' => null, // String
+				'deleteUrl' => null, // String,
+				'link' => null, // String
+				'description' => null, // String
 				'onComplete' => function($data) {}
 			],
 			(Array) $data
@@ -196,10 +196,10 @@ class FileModel {
 		if ($data->folder && !preg_match('/\//$', $data->folder)) $data->folder .= '/';
 
 		$result = (Object) [
-			'fileId' => NULL,
-			'link' => NULL,
-			'photofile' => NULL,
-			'uploadfile' => NULL,
+			'fileId' => null,
+			'link' => null,
+			'photofile' => null,
+			'uploadfile' => null,
 			'error' => [],
 			'items' => [],
 			'query' => [],
@@ -285,7 +285,7 @@ class FileModel {
 					continue;
 				}
 				if (!$upload->valid_size(cfg('photo.max_file_size')*1024)) {
-					sg_photo_resize($upload->upload->tmp_name, cfg('photo.resize.width'), NULL, NULL,true, cfg('photo.resize.quality'));
+					sg_photo_resize($upload->upload->tmp_name, cfg('photo.resize.width'), null, null,true, cfg('photo.resize.quality'));
 				}
 			}
 
@@ -313,7 +313,7 @@ class FileModel {
 				'description' => is_array($data->description) ? $postFile['name'] : $data->description,
 				'timestamp' => 'func.NOW()',
 				'ip' => ip2long(GetEnv('REMOTE_ADDR')),
-				'link' => NULL,
+				'link' => null,
 			];
 
 			$linkInfo = '';
@@ -416,7 +416,7 @@ class FileModel {
 
 		$result = (Object) [
 			'photoInused' => false,
-			'msg' => NULL,
+			'msg' => null,
 			'_query' => [],
 		];
 
@@ -476,7 +476,7 @@ class FileModel {
 		return $result;
 	}
 
-	public static function getFileInUse($fileId = NULL, $fileName, $folder) {
+	public static function getFileInUse($fileId = null, $fileName, $folder) {
 		return DB::select([
 			'SELECT `fid`, `tpid` `nodeId`, `folder`, `file`
 			FROM %topic_files%
@@ -490,7 +490,7 @@ class FileModel {
 		])->items;
 	}
 
-	public static function photoProperty($file, $folder = NULL) {
+	public static function photoProperty($file, $folder = null) {
 		$folder = preg_replace('/\/$/', '', $folder);
 
 		if (is_object($file)) {
@@ -498,13 +498,13 @@ class FileModel {
 		} else if (is_string($file)) {
 			$property = (Object) [
 				'name' => $file,
-				'src' => NULL,
-				'url' => NULL,
+				'src' => null,
+				'url' => null,
 				'exists' => false,
-				'size' => NULL,
-				'width' => NULL,
-				'height' => NULL,
-				'mime' => NULL,
+				'size' => null,
+				'width' => null,
+				'height' => null,
+				'mime' => null,
 			];
 		} else {
 			return false;
@@ -558,7 +558,7 @@ class FileModel {
 		return $property;
 	}
 
-	public static function docProperty($file, $folder = NULL) {
+	public static function docProperty($file, $folder = null) {
 		$folder = preg_replace('/\/$/', '', $folder);
 		$subFolder = 'forum/';
 		if (is_object($file)) {
@@ -566,10 +566,10 @@ class FileModel {
 		} else if (is_string($file)) {
 			$property = (Object) [
 				'name' => $file,
-				'src' => NULL,
-				'url' => NULL,
+				'src' => null,
+				'url' => null,
 				'exists' => false,
-				'size' => NULL,
+				'size' => null,
 			];
 		} else {
 			return false;
