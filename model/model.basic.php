@@ -6,9 +6,9 @@
  * @version 0.20
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
- * @created 2007-07-09
- * @modify  2026-09-19
- * Version  5
+ * Created  :: 2007-07-09
+ * Modified :: 2026-09-24
+ * Version  :: 6
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,6 +179,7 @@ class BasicModel extends Model {
 
 	public static function get_taxonomy_tree($vid, $parent = 0, $depth = -1, $max_depth = NULL) {
 		static $children, $parents, $terms;
+		$tree = [];
 
 		$depth++;
 
@@ -194,23 +195,23 @@ class BasicModel extends Model {
 			}
 		}
 		$max_depth = (is_null($max_depth)) ? count($children[$vid]) : $max_depth;
-		if ($children[$vid][$parent]) {
+		if (isset($children[$vid][$parent])) {
 			foreach ($children[$vid][$parent] as $child) {
 			  if ($max_depth > $depth) {
-				$term = sg_clone($terms[$vid][$child]);
-				$term->depth = $depth;
-				// The "parent" attribute is not useful, as it would show one parent only.
-				unset($term->parent);
-				$term->parents = $parents[$vid][$child];
-				$tree[] = $term;
+					$term = sg_clone($terms[$vid][$child]);
+					$term->depth = $depth;
+					// The "parent" attribute is not useful, as it would show one parent only.
+					unset($term->parent);
+					$term->parents = $parents[$vid][$child];
+					$tree[] = $term;
 
-				if ($children[$vid][$child]) {
-				  $tree = array_merge($tree, (array)BasicModel::get_taxonomy_tree($vid, $child, $depth, $max_depth));
+					if (!empty($children[$vid][$child])) {
+						$tree = array_merge($tree, (array)BasicModel::get_taxonomy_tree($vid, $child, $depth, $max_depth));
+					}
 				}
-			  }
 			}
 		}
-		return $tree ? $tree : array();
+		return $tree ? $tree : [];
 	}
 
 	public static function add_taxonomy($vid,$name,$parent=0,$description='',$weight=0) {
@@ -333,6 +334,8 @@ sg_text2html($topic->post->body).'
 	}
 
 	public static function get_photo_property($file, $folder = null) {
+		$folderName = '';
+
 		if (is_object($file)) {
 			$property = $file;
 		} else if (is_string($file)) {
@@ -353,7 +356,7 @@ sg_text2html($topic->post->body).'
 
 		//debugMsg('file='.$file.' , dirname='.$dirname.' , folder='.$folder.' , filename='.$filename.' , cfg(upload.url)='.cfg('upload.url').' , cfg(upload_folder) = '.cfg('upload_folder'));
 
-		if ($dirname) {
+		if (isset($dirname)) {
 			$property->_src = $dirname.'/'.sg_urlencode($filename);
 			$property->_file = cfg('folder.abs').$dirname.'/'.sg_tis620_file($filename);
 		} else if ($folder && preg_match('/^upload/', $folder)) {
