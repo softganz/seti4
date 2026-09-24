@@ -3,11 +3,11 @@
  * Model    :: Node Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-09-30
- * Modified :: 2026-06-24
- * Version  :: 29
+ * Modified :: 2026-09-24
+ * Version  :: 30
  *
- * @param Array $args
- * @return Object
+ * @param array $args
+ * @return object
  *
  * @usage new NodeModel([])
  * @usage NodeModel::function($conditions, $options)
@@ -23,7 +23,7 @@ class NodeModel {
 		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$result = (Object) ['nodeId' => NULL, 'title' => '', 'info' => NULL];
+		$result = (object) ['nodeId' => null, 'title' => '', 'info' => null];
 
 		$result->info = DB::select([
 			'SELECT t.`tpid` `nodeId`, t.* FROM %topic% t WHERE t.`tpid` = :nodeId LIMIT 1',
@@ -32,7 +32,7 @@ class NodeModel {
 
 		// debugMsg(R('query'));
 
-		if (empty($result->info->nodeId)) return NULL;
+		if (empty($result->info->nodeId)) return null;
 
 		$result->nodeId = $result->info->nodeId;
 		$result->title = $result->info->title;
@@ -72,7 +72,7 @@ class NodeModel {
 	}
 
 	public static function items($conditions) {
-		$conditions = (Object) $conditions;
+		$conditions = (object) $conditions;
 		$defaults = '{debug: false, order: "nodeId", sort: "DESC", items: 10, page: 1, field: "detail"}';
 		$options = \SG\json_decode($conditions->options, $defaults);
 		$debug = $options->debug;
@@ -82,19 +82,19 @@ class NodeModel {
 
 		if (empty($options->page)) $options->page = 1;
 
-		$conditions = (Object) array_merge(
+		$conditions = (object) array_merge(
 			[
-				'nodeId' => NULL,
-				'tags' => NULL,
-				'type' => NULL,
-				'sticky' => NULL,
-				'format' => NULL,
-				'user' => NULL,
-				'ip' => NULL,
-				'year' => NULL,
-				'searchText' => NULL,
+				'nodeId' => null,
+				'tags' => null,
+				'type' => null,
+				'sticky' => null,
+				'format' => null,
+				'user' => null,
+				'ip' => null,
+				'year' => null,
+				'searchText' => null,
 			],
-			(Array) $conditions
+			(array) $conditions
 		);
 
 		if ($conditions->type === '*') unset($conditions->type);
@@ -104,7 +104,7 @@ class NodeModel {
 			unset($conditions->tag);
 		}
 
-		$result = (Object) [
+		$result = (object) [
 			'count' => 0,
 			'total' => 0,
 			'items' => [],
@@ -204,7 +204,7 @@ class NodeModel {
 		$result->debug['ITEMS'] = R('query');
 
 		$result->items = $dbs->items;
-		$result->count = count((Array) $result->items);
+		$result->count = count((array) $result->items);
 		$result->total = intval($dbs->_found_rows);
 
 
@@ -231,7 +231,7 @@ class NodeModel {
 			])->items;
 			foreach ($tagList as $tag) {
 				if (empty($result->items[$tag->nodeId]->tags)) $result->items[$tag->nodeId]->tags = [];
-				$result->items[$tag->nodeId]->tags[] = (Object) [
+				$result->items[$tag->nodeId]->tags[] = (object) [
 					'id' => $tag->tagId,
 					'name' => $tag->tagName,
 				];
@@ -281,7 +281,7 @@ class NodeModel {
 		return $result;
 	}
 
-	public static function getAlbum($docId, $projectId = NULL) {
+	public static function getAlbum($docId, $projectId = null) {
 		return DB::select([
 			'SELECT
 			`doc`.`tpid` `nodeId`
@@ -300,22 +300,22 @@ class NodeModel {
 			'where' => [
 				'%WHERE%' => [
 					['`doc`.`fid` = :docId AND `doc`.`refId` IS NULL', ':docId' => $docId],
-					$projectId ? ['`doc`.`tpid` = :projectId', ':projectId' => $projectId] : NULL,
+					$projectId ? ['`doc`.`tpid` = :projectId', ':projectId' => $projectId] : null,
 				]
 			]
 		]);
 	}
 
 	public static function getAlbums($conditions = []) {
-		$conditions = (Object) array_replace_recursive(
+		$conditions = (object) array_replace_recursive(
 			[
-				'nodeId' => NULL, // Int
-				'tagNameLike' => NULL, // String
+				'nodeId' => null, // int
+				'tagNameLike' => null, // string
 			],
-			(Array) $conditions
+			(array) $conditions
 		);
 
-		return (Array) DB::select([
+		return (array) DB::select([
 			'SELECT
 			`doc`.`tpid` `nodeId`
 			, `doc`.`fid` `docId`
@@ -342,8 +342,8 @@ class NodeModel {
 
 	/**
 	 * Count user create node by user id
-	 * @param Int $userId
-	 * @return Int
+	 * @param int $userId
+	 * @return int
 	 */
 	public static function countNodeByUserId($userId) {
 		return DB::select([
@@ -354,8 +354,8 @@ class NodeModel {
 
 	/**
 	 * Count user join node by user id
-	 * @param Int $userId
-	 * @return Int
+	 * @param int $userId
+	 * @return int
 	 */
 	public static function countNodeJoinByUserId($userId) {
 		return DB::select([
@@ -379,20 +379,20 @@ class NodeModel {
 	* Create New Node
 	* Created 2019-06-10
 	* Modify  2022-10-22
-	* @param Object $topic
-	* @param Object $option
-	* @return Object
+	* @param object $topic
+	* @param object $option
+	* @return object
 	*/
 	public static function create($topic, $options = '{}') {
 		$defaults = '{debug: false}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$result = (Object) [
-			'tpid' => NULL,
+		$result = (object) [
+			'tpid' => null,
 			'complete' => false,
 			'error' => false,
-			'document' => (Object) [],
+			'document' => (object) [],
 			'photo' => [],
 			'process' => [],
 		];
@@ -427,7 +427,7 @@ class NodeModel {
 
 		//up load file document
 		if (user_access('upload document') && is_uploaded_file($_FILES['document']['tmp_name'])) {
-			$document = (Object) $_FILES['document'];
+			$document = (object) $_FILES['document'];
 
 			$upload_folder=cfg('paper.upload.document.folder');
 			$document->_property=sg_explode_filename($upload_folder.$document->name,'doc');
@@ -521,8 +521,8 @@ class NodeModel {
 			unset($topic->post->property->input_format);
 		}
 		$topic->post->property = sg_json_encode($topic->post->property);
-		$topic->post->revid = NULL;
-		if (empty($topic->post->areacode)) $topic->post->areacode = NULL;
+		$topic->post->revid = null;
+		if (empty($topic->post->areacode)) $topic->post->areacode = null;
 
 		$error=null;
 
@@ -702,15 +702,15 @@ class NodeModel {
 	/**
 	* Node Delete
 	*
-	* @param Object $nodeId
-	* @return Object $options
+	* @param object $nodeId
+	* @return object $options
 	*/
 	public static function delete($nodeId) {
 		$defaults = '{debug: false, simulate: false}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$result = (Object) [
+		$result = (object) [
 			'complete' => false,
 			'error' => false,
 			'process' => ['NodeModel:::delete() request'],
@@ -866,11 +866,11 @@ class NodeModel {
 
 	/**
 	 * Delete comment by comment ID
-	 * @param Int $commentId
-	 * @return Object
+	 * @param int $commentId
+	 * @return object
 	 */
-	public static function deleteCommentById(Int $commentId) {
-		$result = (Object) [
+	public static function deleteCommentById(int $commentId) {
+		$result = (object) [
 			'complete' => false,
 			'error' => false,
 			'process' => ['Node comment '.$commentId.' delete request'],
@@ -879,7 +879,7 @@ class NodeModel {
 		$simulate = debug('simulate');
 
 		if (empty($commentId)) {
-			return (Object) [
+			return (object) [
 				'error' => true,
 				'message' => 'Comment ID is empty',
 			];
@@ -890,7 +890,7 @@ class NodeModel {
 			'var' => [':commentId' => $commentId]
 		]);
 
-		if (empty($toDelete->commentId)) return (Object) ['error' => true, 'message' => 'Nothing to delete'];
+		if (empty($toDelete->commentId)) return (object) ['error' => true, 'message' => 'Nothing to delete'];
 
 		$result->process[] = 'Process delete file of comment';
 		$photoDbs = DB::select([
@@ -965,7 +965,7 @@ class NodeModel {
 		}
 	}
 
-	public static function deleteAllUserComment(Int $userId) {
+	public static function deleteAllUserComment(int $userId) {
 		if (empty($userId)) return false;
 
 		$comments = DB::select([
@@ -982,10 +982,10 @@ class NodeModel {
 
 	/**
 	 * Get comment by comment ID
-	 * @param Int $commentId
-	 * @return Object
+	 * @param int $commentId
+	 * @return object
 	 */
-	public static function getCommentById(Int $commentId) {
+	public static function getCommentById(int $commentId) {
 		return DB::select([
 			'SELECT
 				c.`cid` `commentId`, c.`tpid` `nodeId`
@@ -1016,7 +1016,7 @@ class NodeModel {
 	}
 
 	public static function members($nodeId) {
-		return (Array) DB::select([
+		return (array) DB::select([
 			'SELECT a.`uid`, UPPER(a.`membership`) `membership`
 			, u.`username`, u.`name`, u.`email`
 			FROM
@@ -1038,7 +1038,7 @@ class NodeModel {
 	}
 
 	public static function pageNavigator($conditions) {
-		$conditions = (Object) $conditions;
+		$conditions = (object) $conditions;
 		// $pagePara = is_array($options->pagePara) ? $options->pagePara : array();
 		// if ($conditions->year) $pagePara['year'] = $conditions->year;
 		// if ($conditions->user) $pagePara['user'] = $conditions->user;
@@ -1056,7 +1056,7 @@ class NodeModel {
 		return $pagenv;
 	}
 
-	public static function hideCommentById(Int $commentId) {
+	public static function hideCommentById(int $commentId) {
 		if (empty($commentId)) return false;
 
 		DB::query([
