@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-09-19
- * Version  :: 41
+ * Modified :: 2026-09-24
+ * Version  :: 42
  */
 
 /* Core Function */
@@ -191,7 +191,7 @@ function process_widget($html) {
 			// $widget_request.='Loading widget <strong>'.$widget_name.'</strong> with '.$widget_attr;
 			// $widget_request.=print_o($attrs,'$attrs');
 			$regWidgetContentTag = '/<div class=\"widget\-content\">(.*?)<\/div>/i';
-			if ($attrs["data-option-replace"]=='yes') {
+			if (!empty($attrs["data-option-replace"]) && $attrs["data-option-replace"] === 'yes') {
 				$widet_result = $widget_request;
 			} else if (preg_match($regWidgetContentTag,$widget_tag)) {
 				$widet_result = preg_replace($regWidgetContentTag,$widget_request,$widget_tag);
