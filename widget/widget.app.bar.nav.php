@@ -3,8 +3,8 @@
  * Widget  :: App Bar Navigator Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-13
- * Modified :: 2026-07-29
- * Version  :: 2
+ * Modified :: 2026-09-25
+ * Version  :: 3
  *
  * @param Array $args
  *
@@ -40,7 +40,7 @@ class AppBarNavWidget extends Widget {
 						// 	if (!defined($menuItem->access)) continue;
 						// 	else if (!($this->projectInfo->RIGHT & constant($menuItem->access))) continue;
 						// }
-						$childrens[$navKey] = '<a href="'.url($menuItem->url ? $menuItem->url : '').'" title="'.$menuItem->title.'" '.sg_implode_attr($menuItem->attribute).'>'
+						$childrens[$navKey] = '<a href="'.url($menuItem->url ? $menuItem->url : '').'" title="'.$menuItem->title.'" '.sg_implode_attr($menuItem->attribute ?? []).'>'
 							. '<i class="icon -material">'.$menuItem->icon.'</i>'
 							. '<span>'.$menuItem->label.'</span>'
 							. '</a>';
