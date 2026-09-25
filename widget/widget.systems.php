@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-09-25
- * Version  :: 96
+ * Version  :: 97
  *
  * @param Array $args
  *
@@ -92,8 +92,6 @@ class Widget extends WidgetBase {
 	public $attribute = []; // Array
 	public $childContainer = []; // Array
 
-	// @deprecated
-	public $attributeText;
 	// @deprecated
 	public $config = NULL;
 
@@ -209,7 +207,6 @@ class Widget extends WidgetBase {
 			. ($this->data('class-name') ? ' data-class-name="' . $this->data('class-name') . '"' . _NL : '')
 			. ($this->style ?? false ? ' style="' . $this->style . '"' . _NL : '')
 			. ($this->attribute && is_array($this->attribute) ? ' ' . sg_implode_attr($this->attribute) . _NL : '')
-			. ($this->attributeText ? ' ' . $this->attributeText . _NL : '')
 			. ($callbackFunction && is_callable($callbackFunction) ? $callbackFunction() : '')
 			. '>' . _NL
 		: '';
@@ -1061,7 +1058,7 @@ class Icon extends Widget {
 	function __construct($icon, $args = []) {
 		$this->icon = $icon;
 		parent::__construct($args);
-		unset($this->config, $this->childContainer, $this->child, $this->children, $this->attributeText);
+		unset($this->config, $this->childContainer, $this->child, $this->children);
 	}
 
 	function toString() {
@@ -1149,7 +1146,7 @@ class StepMenu extends Widget {
 	protected function renderChildContainerStart($stepIndex, $args = [], $child = []) {
 		$stepIndex++;
 		return '<' . $this->childContainer['tagName'] . ' '
-			. 'class="ui-item -step-' . $stepIndex . ($this->childContainer['class'] ? $this->childContainer['class'] : '' )
+			. 'class="ui-item -step-' . $stepIndex . (!empty($this->childContainer['class']) ? $this->childContainer['class'] : '' )
 			. ($stepIndex == $this->currentStep ? ' -current-step' : '')
 			. (isset($this->activeStep[$stepIndex]) && $this->activeStep[$stepIndex] ? ' -active' : '')
 			. '" '

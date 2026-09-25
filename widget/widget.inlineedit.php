@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-09-06
- * Version  :: 40
+ * Modified :: 2026-09-25
+ * Version  :: 41
  *
  * @param Array $args
  *
@@ -49,7 +49,7 @@ class InlineEdit extends Widget {
 		unset($this->child);
 		unset($this->mainAxisAlignment, $this->crossAxisAlignment, $this->href, $this->dataUrl, $this->webview);
 		unset($this->rel, $this->done);
-		unset($this->childContainer, $this->attributeText, $this->config);
+		unset($this->childContainer, $this->config);
 	}
 
 	/**

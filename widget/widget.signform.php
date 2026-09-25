@@ -3,8 +3,8 @@
  * Widget   :: Sign Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-20
- * Modified :: 2026-08-27
- * Version  :: 10
+ * Modified :: 2026-09-25
+ * Version  :: 11
  *
  * @param Array $args
  *
@@ -47,7 +47,7 @@ class SignForm extends Widget {
 				$args
 			)
 		);
-		unset($this->childContainer, $this->attributeText, $this->config, $this->childTagName);
+		unset($this->childContainer, $this->config, $this->childTagName);
 		unset($this->header, $this->itemClass, $this->mainAxisAlignment, $this->crossAxisAlignment);
 		unset($this->href, $this->dataUrl, $this->webview);
 		unset($this->children, $this->child);
