@@ -3,8 +3,8 @@
  * Function :: Common Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-09-18
- * Version  :: 11
+ * Modified :: 2026-09-25
+ * Version  :: 12
  *
  * @param Array $args
  * @return Widget
@@ -14,8 +14,8 @@
 
 use Softganz\DB;
 
-function sg_budget_year($date) {
-	return sg_date($date,'Y')+(sg_date($date,'m')>=10?1:0);
+function sg_budget_year(?string $date): ?int {
+	return empty($date) ? null : sg_date($date, 'Y') + (sg_date($date, 'm') >= 10 ? 1 : 0);
 }
 
 function sg_clone($object) {
