@@ -3,8 +3,8 @@
  * Widget   :: Table Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-19
- * Version  :: 11
+ * Modified :: 2026-09-25
+ * Version  :: 12
  *
  * @param Array $args
  *
@@ -252,7 +252,7 @@ class Table extends Widget {
 				$ret .= $colData . _NL;
 			} else {
 				// Column data is String
-				list($colFirstKey) = explode(' ', trim($this->headerKey[$colNo]));
+				list($colFirstKey) = explode(' ', trim($this->headerKey[$colNo] ?? ''));
 				$ret .= '	<td';
 				if (is_string($colKey) && substr($colKey, 0, 1) != '-')
 					$ret .= ' class="' . $colKey . '"';
