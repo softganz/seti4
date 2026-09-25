@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-24
- * Version  :: 53
+ * Modified :: 2026-09-25
+ * Version  :: 54
  *
  * @param Array $args
  *
@@ -58,7 +58,11 @@ class Form extends Widget {
 
 	private static function changeOptionsToChoice(&$children) {
 		foreach ($children as $key => $value) {
-			if (is_array($value) && in_array($value['type'], ['radio', 'checkbox', 'select']) && $value['options'] && !array_key_exists('choice', $value)) {
+			if (
+				is_array($value) && in_array($value['type'], ['radio', 'checkbox', 'select'])
+				&& !empty($value['options'])
+				&& !array_key_exists('choice', $value)
+			) {
 				$children[$key]['choice'] = $value['options'];
 				unset($children[$key]['options']);
 			}
@@ -655,6 +659,17 @@ class Form extends Widget {
 	}
 
 	protected function renderFile($tag_id, $name, $formElement) {
+		$formElement = (object) array_replace(
+			[
+				'count' => null,
+				'size' => null,
+				'multiple' => null,
+			],
+			(array) $formElement
+		);
+
+		$ret = '';
+
 		if ($formElement->count) {
 			for ($i = 1; $i <= $formElement->count; $i++) {
 				$ret .= '<input '
