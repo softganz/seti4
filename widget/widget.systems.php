@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-23
- * Version  :: 95
+ * Modified :: 2026-09-25
+ * Version  :: 96
  *
  * @param Array $args
  *
@@ -475,10 +475,10 @@ class Header extends Widget {
 	public $version = '0.0.01';
 	public $tagName = 'header';
 	public $titleTag = 'span';
-	public $leading;
-	public $title;
-	public $subTitle;
-	public $trailing;
+	public $leading = '';
+	public $title = '';
+	public $subTitle = '';
+	public $trailing = '';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -490,7 +490,7 @@ class Header extends Widget {
 			. ($this->leading ? '<div class="-leading">' . $this->renderEachChildWidget($this->leading) . '</div>' . _NL : '')
 			. '<div class="-title">'
 			. ($this->title ? '<' . $this->titleTag . ' class="-title-text">' . $this->renderEachChildWidget($this->title) . '</' . $this->titleTag . '>' : '')
-			. ($this->subTitle ?? $this->subtitle ? '<span class="-subtitle-text">' . $this->renderEachChildWidget($this->subTitle ?? $this->subtitle) . '</span>' : '')
+			. ($this->subTitle ? '<span class="-subtitle-text">' . $this->renderEachChildWidget($this->subTitle) . '</span>' : '')
 			. '</div>' . _NL
 			. ($this->trailing ? '<div class="-trailing">' . $this->renderEachChildWidget($this->trailing) . '</div>' . _NL : '')
 			. $this->renderChildren($this->children())

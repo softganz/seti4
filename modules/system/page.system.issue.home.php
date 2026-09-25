@@ -1,14 +1,14 @@
 <?php
 /**
- * System  :: Issue Home Page
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-10-14
- * Modify  :: 2026-06-08
- * Version :: 24
+ * System   :: Issue Home Page
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-10-14
+ * Modified :: 2026-09-25
+ * Version  :: 25
  *
  * @return Widget
  *
- * @usage system/issue
+ * @uses system/issue
  */
 
 use Softganz\DB;
@@ -83,7 +83,7 @@ class SystemIssueHome extends Page {
 										new Header([
 											'title' => $item->issueType,
 											'leading' => new Icon($this->issueIcon($item->issueType)),
-											'subtitle' => '@' . $item->reportDate,
+											'subTitle' => '@' . $item->reportDate,
 											'trailing' => new Nav([
 												'children' => [
 													$item->status == _COMPLETE ? null : new Button([
