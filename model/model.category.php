@@ -1,13 +1,13 @@
 <?php
 /**
- * Model   :: Category
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-08-10
- * Modify  :: 2026-05-28
- * Version :: 4
+ * Model    :: Category
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-08-10
+ * Modified :: 2026-09-25
+ * Version  :: 5
  *
- * @usage new CategoryModel([])
- * @usage CategoryModel::function($conditions, $options)
+ * @uses new CategoryModel([])
+ * @uses CategoryModel::function($conditions, $options)
  */
 
 use Softganz\DB;
@@ -19,10 +19,22 @@ class CategoryModel {
 		$debug = $options->debug;
 
 		if (is_object($conditions)) ;
-		else if (is_array($conditions)) $conditions = (Object) $conditions;
+		else if (is_array($conditions)) $conditions = (object) $conditions;
 		else {
-			$conditions = (Object) ['group' => $conditions];
+			$conditions = (object) ['group' => $conditions];
 		}
+
+		$conditions = (object) array_replace_recursive(
+			[
+				'group' => null,
+				'fullValue' => null,
+				'vid' => null,
+				'process' => null,
+				'key' => null,
+			],
+			(array) $conditions
+		);
+
 		if (empty($conditions->group)) $conditions->group = null;
 
 		$fullValue = $conditions->fullValue ?? $options->fullValue;
