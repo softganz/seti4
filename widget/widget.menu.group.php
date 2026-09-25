@@ -3,8 +3,8 @@
  * Widget   :: Menu Group Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-09-07
- * Modified :: 2026-07-29
- * Version  :: 8
+ * Modified :: 2026-09-25
+ * Version  :: 9
  *
  * @param Array $args
  *
@@ -25,13 +25,25 @@ class MenuGroupWidget extends Widget {
 
 	#[\Override]
 	function build() {
+		$menuItemProperty = (object) [
+			'widget' => null,
+			'call' => null,
+			'condition' => null,
+			'access' => null,
+			'right' => null,
+			'href' => null,
+		];
+		
 		return new Row([
-			'children' => (function() {
+			'children' => (function() use($menuItemProperty) {
 				$childrens = [];
 
 				// Show menu in follow appBar config
 				foreach (explode(',', $this->use) as $navKey) {
-					$menuItem = $this->menu->{$navKey};
+					$menuItem = (object) array_replace(
+						(array) $menuItemProperty,
+						(array) $this->menu->{$navKey}
+					);
 					// Create menu button
 					if ($menuItem->widget) {
 						// Menu is widget
@@ -60,9 +72,12 @@ class MenuGroupWidget extends Widget {
 				// Show Dropbox menu in follow appBar config
 				if ($this->dropbox && $this->dropbox['use']) {
 					$childrens['dropbox'] = new Dropbox([
-						'children' => (function() {
+						'children' => (function() use($menuItemProperty) {
 							foreach (explode(',', $this->dropbox['use']) as $navKey) {
-								$menuItem = $this->dropbox['menu']->{$navKey};
+								$menuItem = (object) array_replace(
+									(array) $menuItemProperty,
+									(array) $this->dropbox['menu']->{$navKey}
+								);
 
 								if ($button = $this->renderButton($navKey, $menuItem)) {
 									$childrens[$navKey] = $button;
