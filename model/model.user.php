@@ -3,11 +3,11 @@
  * Model    :: User Information
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-07-22
- * Modified :: 2026-08-23
- * Version  :: 29
+ * Modified :: 2026-09-26
+ * Version  :: 30
  *
  * @param Int $userId
- * @return Object
+ * @return object
  *
  * @uses new UserModel($userId)
  * @uses UserModel::function($conditions, $options)
@@ -19,9 +19,9 @@ use Softganz\DbException;
 class UserModel {
 	var $userId;
 
-	function __construct($userId = NULL) {
+	function __construct($userId = null) {
 		$this->userId = empty($userId) ? i()->uid : $userId;
-		if ($this->userId) $this->_getUserInfo();
+		if ($this->userId) $this->getUserInfo();
 	}
 
 	public static function get($conditions, $options = '{}') {
@@ -35,11 +35,20 @@ class UserModel {
 		else if (is_array($conditions)) $conditions = (object) $conditions;
 		else {
 			$id = $conditions;
-			$conditions = (Object) ['id' => $id];
+			$conditions = (object) ['id' => $id];
 		}
 
+		$conditions = (object) array_replace(
+			[
+				'id' => null,
+				'username' => null,
+				'email' => null,
+			],
+			(array) $conditions
+		);
+
 		if (!$id && $conditions->username && $conditions->email) {
-			return NULL;
+			return null;
 		}
 
 		$result = DB::select([
@@ -53,7 +62,7 @@ class UserModel {
 
 		if ($debug) debugMsg(R('query'));
 
-		if (!$result->userId) return NULL;
+		if (!$result->userId) return null;
 
 		$result->roles = empty($result->roles) ? array('member') : explode(',','member,'.$result->roles);
 
@@ -67,31 +76,31 @@ class UserModel {
 
 		if (is_object($user)) ; // Do nothing
 		else if (is_string($user) && preg_match('/^{/',$user)) $user = \SG\json_decode($user);
-		else if (is_array($user)) $user = (Object) $user;
-		else $user = (Object) [];
+		else if (is_array($user)) $user = (object) $user;
+		else $user = (object) [];
 
 		if (empty($user->username)) {
-			return (Object) [
-				'uid' => NULL,
+			return (object) [
+				'uid' => null,
 				'complete' => false,
 				'error' => true,
 				'text' => 'Username not specify'
 			];
 		} else if (UserModel::get(['username' => $user->username])) {
-			return (Object) [
-				'uid' => NULL,
+			return (object) [
+				'uid' => null,
 				'complete' => false,
 				'error' => true,
 				'text' => 'Username was duplicate'
 			];
 		}
 
-		$result = (Object) [
-			'userId' => NULL,
-			'uid' => NULL,
+		$result = (object) [
+			'userId' => null,
+			'uid' => null,
 			'complete' => false,
 			'error' => false,
-			'password' => NULL,
+			'password' => null,
 			'username' => $user->username,
 			'name' => $user->name,
 			'email' => $user->email,
@@ -116,7 +125,7 @@ class UserModel {
 			$result->process[] = 'create user and ready to used';
 		}
 
-		$user->encryptPassword = $user->password ? sg_encrypt($user->password,cfg('encrypt_key')) : NULL;
+		$user->encryptPassword = $user->password ? sg_encrypt($user->password,cfg('encrypt_key')) : null;
 		$user->datein = 'func.NOW()';
 		if (empty($user->about)) $user->about = '';
 		if (empty($user->phone)) $user->phone = '';
@@ -160,7 +169,7 @@ class UserModel {
 			'type' => 'Create user' . ($result->status === 'enable' ? '' : ' - ' . $result->status),
 			'user' => SG\getFirst(i()->uid, $result->userId),
 			'name' => SG\getFirst(i()->name, $user->name),
-			'description' => (Object) [
+			'description' => (object) [
 				'username' => $user->username,
 				'name' => $user->name,
 				'id' => $result->userId,
@@ -196,20 +205,20 @@ class UserModel {
 	}
 
 	public static function getUsers($condition = []) {
-		$condition = (Object) array_replace(
+		$condition = (object) array_replace(
 			[
-				'query' => NULL,
-				'username' => NULL,
-				'email' => NULL,
+				'query' => null,
+				'username' => null,
+				'email' => null,
 				'status' => 'all', // all,enable,disable,block,waiting,locked
 				'option' => [
-					'item' => NULL,
+					'item' => null,
 				],
 			],
-			(Array) $condition
+			(array) $condition
 		);
 
-		$condition->option = (Object) $condition->option;
+		$condition->option = (object) $condition->option;
 
 		return DB::select([
 			'SELECT `user`.`uid` AS `userId`, `user`.`username`, `user`.`name`, `user`.`email`, `user`.`status`
@@ -218,10 +227,10 @@ class UserModel {
 			ORDER BY CONVERT(`user`.`name` USING tis620) ASC
 			$LIMIT$',
 			'%WHERE%' => [
-				$condition->status && $condition->status != 'all' ? ['`user`.`status` = :status', ':status' => $condition->status] : NULL,
-				$condition->queryText ? ['(`user`.`username` LIKE :queryText OR `user`.`name` LIKE :queryText  OR `user`.`email` LIKE :queryText)', ':queryText' => '%'.$condition->queryText.'%'] : NULL,
-				$condition->username ? ['`user`.`username` LIKE :username', ':username' => $condition->username.'%'] : NULL,
-				$condition->email ? ['`user`.`email` LIKE :email', ':email' => $condition->email.'%'] : NULL,
+				$condition->status && $condition->status != 'all' ? ['`user`.`status` = :status', ':status' => $condition->status] : null,
+				$condition->queryText ? ['(`user`.`username` LIKE :queryText OR `user`.`name` LIKE :queryText  OR `user`.`email` LIKE :queryText)', ':queryText' => '%'.$condition->queryText.'%'] : null,
+				$condition->username ? ['`user`.`username` LIKE :username', ':username' => $condition->username.'%'] : null,
+				$condition->email ? ['`user`.`email` LIKE :email', ':email' => $condition->email.'%'] : null,
 			],
 			'var' => [
 				'$LIMIT$' => $condition->option->item ? 'LIMIT '.$condition->option->item : '',
@@ -293,9 +302,9 @@ class UserModel {
 	// delete user information
 	public static function delete($uid) {
 		$rs = UserModel::get($uid);
-		$result = (Object) [
-			'code' => NULL,
-			'message' => NULL,
+		$result = (object) [
+			'code' => null,
+			'message' => null,
 		];
 
 		$uid = $rs->uid;
@@ -333,33 +342,49 @@ class UserModel {
 	}
 
 	public static function clearLogin() {
-		$user = (Object) [
+		$user = (object) [
 			'ok' => false,
 			'group' => [],
 		];
-		setcookie(cfg('cookie.id'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
-		setcookie(cfg('cookie.u'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
+		self::clearUserCookie();
 		$_SESSION['user'] = null;
 	}
 
-	public static function signOutProcess() {
-		$token = i()->token;
-		if (i()->ok) {
-			$cacheId = 'user:'.$token;
-			setcookie(cfg('cookie.id'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
-			setcookie(cfg('cookie.u'),"",time() - 3600,cfg('cookie.path'),cfg('cookie.domain'));
-			$_SESSION['user'] = NULL;
-			Cache::Clear($cacheId);
-		}
-
-		$result = (Object) [
+	/**
+	 * Sign out process
+	 *
+	 * @return object
+	 */
+	public static function signOutProcess(): object {
+		$result = (object) [
 			'signed' => false,
 		];
 
-		return $result;
+		if (!i()->ok) return $result;
+
+		self::clearUserCookie();
+
+		$_SESSION['user'] = null;
+		$_SESSION['logas'] = null;
+
+		$cacheId = 'user:' . i()->token;
+		Cache::Clear($cacheId);
+
+		// session_unset();
+		// session_destroy();
+
+	return $result;
 	}
 
-	public static function signInProcess($username = NULL, $password = NULL, $cookielength = NULL) {
+	/**
+	 * Sign in process
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param int $cookielength
+	 * @return object|boolean
+	 */
+	public static function signInProcess($username = null, $password = null, $cookielength = null): object|bool {
 		$debug = false; //$username=='softganz';
 
 		if (empty($username) || empty($password)) return false;
@@ -411,31 +436,30 @@ class UserModel {
 		// Sign in ok :: Set session id to cookie
 		if ($cookielength == -1) $cookielength = 10*365*24*60;
 		if (empty($cookielength)) $cookielength = cfg('member.signin.remembertime');
-		$remember_time = time()+$cookielength*60;
+		$rememberTime = time()+$cookielength*60;
 
 		// Create JWT token
-		$session_id = Jwt::generate(
+		$sessionId = Jwt::generate(
 			[
 				"type" => "JWT",
 				"alg" => "HS256"
 			],
-			['id' => intval($rs->uid), 'username' => $rs->username, 'name' => $rs->name, 'roles' => $rs->roles ? explode(',',$rs->roles) : [], 'exp' => $remember_time ],
+			['id' => intval($rs->uid), 'username' => $rs->username, 'name' => $rs->name, 'roles' => $rs->roles ? explode(',',$rs->roles) : [], 'exp' => $rememberTime ],
 			cfg('system')->loginToken->jwtSecret
 		);
 
-		if (strlen($session_id) > 1000) $session_id = md5(uniqid(rand(), true));
+		if (strlen($sessionId) > 1000) $sessionId = md5(uniqid(rand(), true));
 
-		setcookie(cfg('cookie.id'),$session_id,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
-		setcookie(cfg('cookie.u'),$rs->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
+		self::setUserCookie($sessionId, $rs->username, $rememberTime);
 
 		$debug_str .= '<p>cookie.id : '.cfg('cookie.id').'</p>';
 		$debug_str .= '<p>cookie.u : '.cfg('cookie.u').'</p>';
 		$debug_str .= '<p>cookie.path : '.cfg('cookie.path').'</p>';
 		$debug_str .= '<p>cookie.domain : '.cfg('cookie.domain').'</p>';
-		$debug_str .= '<p>remember time : '.$remember_time.' second.</p>';
+		$debug_str .= '<p>remember time : '.$rememberTime.' second.</p>';
 
 		// add session into cache
-		$user = (Object) [
+		$user = (object) [
 			'ok' => true,
 			'uid' => intval($rs->uid),
 			'username' => $rs->username,
@@ -444,14 +468,14 @@ class UserModel {
 			'remember' => $cookielength*60,
 			'ip' => GetEnv('REMOTE_ADDR'),
 			'admin' => false,
-			'session' => $session_id,
-			'token' => $session_id,
+			'session' => $sessionId,
+			'token' => $sessionId,
 			'roles' => $rs->roles ? explode(',',$rs->roles) : [],
 		];
 
 		$_SESSION['user'] = $user;
 
-		cache::add('user:'.$session_id, $user, $remember_time, $username);
+		cache::add('user:'.$sessionId, $user, $rememberTime, $username);
 
 		DB::query([
 			'UPDATE %users% SET
@@ -488,14 +512,14 @@ class UserModel {
 	 */
 	public static function externalUserCreate(
 		$user = [
-			'email' => NULL,
-			'name' => NULL,
-			'prefix' => NULL,
+			'email' => null,
+			'name' => null,
+			'prefix' => null,
 			'signin' => true,
-			'token' => NULL,
+			'token' => null,
 		]
 	) {
-		$user = (Object) $user;
+		$user = (object) $user;
 		if (empty($user->email) || empty($user->name)) return false;
 
 		do {
@@ -504,19 +528,19 @@ class UserModel {
 
 		$createUserResult = UserModel::create([
 			'username' => $username,
-			'password' => NULL,
+			'password' => null,
 			'name' => $user->name,
 			'email' => $user->email,
 		]);
 
 		if (!$createUserResult->uid) {
-			return (Object) [
+			return (object) [
 				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
 				'text' => 'ไม่สามารถสร้างสมาชิกตามข้อมูลที่ระบุได้',
 			];
 		}
 
-		$result = (Object) [
+		$result = (object) [
 			'userId' => $createUserResult->uid,
 			'username' => $createUserResult->username,
 			'name' => $createUserResult->name,
@@ -536,28 +560,28 @@ class UserModel {
 	}
 
 	public static function externalSignIn($args) {
-		$result = (Object) [];
-		$session_id = $args['token'];
+		$result = (object) [];
+		$sessionId = $args['token'];
 		$cookielength = 10*365*24*60;
-		$remember_time = time()+$cookielength*60;
+		$rememberTime = time()+$cookielength*60;
 		// if ($cookielength == -1) $cookielength = 10*365*24*60;
 
-		if ($args['email'] && $session_id) {
+		if ($args['email'] && $sessionId) {
 			$user = DB::select([
 				'SELECT * FROM %users% WHERE `email` = :email LIMIT 1',
 				'var' => [':email' => $args['email']]
 			]);
 			$result->query = R('query');
 			// debugMsg($user, '$user');
-			if (!$user->uid) return (Object) ['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Invalid email'];
-			$result = (Object) [
+			if (!$user->uid) return (object) ['code' => _HTTP_ERROR_BAD_REQUEST, 'text' => 'Invalid email'];
+			$result = (object) [
 				'ok' => true,
 				'uid' => intval($user->uid),
 				'username' => $user->username,
 				'name' => $user->name,
 				'email' => $user->email,
-				'session' => $session_id,
-				'token' => $session_id,
+				'session' => $sessionId,
+				'token' => $sessionId,
 				'remember' => $cookielength*60,
 				'ip' => GetEnv('REMOTE_ADDR'),
 				'admin' => false,
@@ -565,13 +589,13 @@ class UserModel {
 			];
 
 			$_SESSION['user'] = $result;
-			cache::add('user:'.$session_id, $result, $remember_time, $result->username);
+			cache::add('user:'.$sessionId, $result, $rememberTime, $result->username);
 
 			if ($cookielength == -1) $cookielength = 10*365*24*60;
 			if (empty($cookielength)) $cookielength = cfg('member.signin.remembertime');
-			$remember_time = time()+$cookielength*60;
-			setcookie(cfg('cookie.id'),$session_id,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
-			setcookie(cfg('cookie.u'),$result->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
+			$rememberTime = time()+$cookielength*60;
+
+			self::setUserCookie($sessionId, $result->username, $rememberTime);
 
 			DB::query([
 				'UPDATE %users% SET
@@ -597,9 +621,9 @@ class UserModel {
 	}
 
 	public static function checkLogin() {
-		$user = (Object) [
+		$user = (object) [
 			'ok' => false,
-			'signInResult' => NULL,
+			'signInResult' => null,
 			'roles' => [],
 		];
 
@@ -689,14 +713,14 @@ class UserModel {
 					]);
 				}
 
-				return $result->uid ? $result : (Object) ['signInErrorMessage' => 'Google account '.$jwt->payload->email.' is not recognized for Google Sign-In on this site. Please make sure you are using the same account that you have previously linked.'];
+				return $result->uid ? $result : (object) ['signInErrorMessage' => 'Google account '.$jwt->payload->email.' is not recognized for Google Sign-In on this site. Please make sure you are using the same account that you have previously linked.'];
 			} else {
 				LogModel::save([
 					'module' => 'user',
 					'keyword' => 'Invalid signin',
 					'message' => 'Invalid credential => '.$credential
 				]);
-				return (Object) ['signInResult' => 'Invalid user signin'];
+				return (object) ['signInResult' => 'Invalid user signin'];
 			}
 		} else if (isset($authHeader) && $authHeader) {
 			list($authType, $authToken) = explode(' ', $authHeader);
@@ -719,16 +743,15 @@ class UserModel {
 				return $user;
 			} else {
 				// set new expire time to current time + session time
-				$remember_time = time()+$data->remember;
-				setcookie(cfg('cookie.id'),$data->session,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
-				setcookie(cfg('cookie.u'),$data->username,$remember_time, cfg('cookie.path'),cfg('cookie.domain'));
-				//echo '$remember_time='.$remember_time.'<br />';
+				$rememberTime = time()+$data->remember;
+
+				self::setUserCookie($data->session, $data->username, $rememberTime);
 
 				DB::query([
 					'UPDATE %cache% SET `expire` = :expire WHERE `cid` = :cid LIMIT 1',
 					'var' => [
 						':cid' => 'user:'.$data->session,
-						':expire' => $remember_time
+						':expire' => $rememberTime
 					]
 				]);
 			}
@@ -743,12 +766,12 @@ class UserModel {
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$result = NULL;
+		$result = null;
 
 		if (is_object($conditions)) ;
 		else if (is_array($conditions)) $conditions = (object) $conditions;
 		else {
-			$conditions = (Object) ['code' => $conditions];
+			$conditions = (object) ['code' => $conditions];
 		}
 
 		$code = $conditions->code;
@@ -783,7 +806,7 @@ class UserModel {
 	}
 
 	public static function getNextUsername($prefixUsername, $sep = '-', $length = 4) {
-		if (empty($prefixUsername)) return NULL;
+		if (empty($prefixUsername)) return null;
 
 		$prefixUsername = strtolower($prefixUsername);
 		$lastUsername = DB::select([
@@ -797,7 +820,7 @@ class UserModel {
 		return $nextUsername;
 	}
 
-	public static function profilePhoto($username = NULL, $fullSize = true) {
+	public static function profilePhoto($username = null, $fullSize = true) {
 		$filename = $fullSize ? 'profile.photo.jpg' : 'small.avatar.jpg';
 		$photo_file = cfg('upload.folder').'/'.$username.'/'.$filename;
 		$photo_url = cfg('upload.url').$username.'/'.$filename;
@@ -848,13 +871,13 @@ class UserModel {
 		}
 	}
 
-	private function _getUserInfo() {
+	private function getUserInfo() {
 		$result = DB::select([
 			'SELECT * FROM %users% u WHERE `uid` = :userId LIMIT 1',
 			'var' => [':userId' => $this->userId]
 		]);
 
-		if (empty($result->uid)) return NULL;
+		if (empty($result->uid)) return null;
 
 		foreach ($result as $key => $value) $this->{$key} = $value;
 		$this->fullName = trim($this->real_name.' '.$this->last_name);
@@ -874,6 +897,41 @@ class UserModel {
 		}
 		// debugMsg($dbs,'$dbs');
 		// debugMsg($this, '$this');
+	}
+
+	private static function setUserCookie($sessionId, $username, $rememberTime) {
+		// Set session id
+		setcookie(
+			cfg('cookie.id'),
+			$sessionId,
+			[
+				'expires' => $rememberTime, // Expires in minute
+				'path' => cfg('cookie.path'),
+				'domain' => cfg('cookie.domain'),
+				'secure' => true,           // Highly recommended (HTTPS only)
+				'httponly' => true,         // Prevents JavaScript access
+				'samesite' => 'Lax'         // Restricts cross-site requests
+			]
+		);
+
+		// Set user name
+		setcookie(
+			cfg('cookie.u'),
+			$username,
+			[
+				'expires' => $rememberTime, // Expires in minute
+				'path' => cfg('cookie.path'),
+				'domain' => cfg('cookie.domain'),
+				'secure' => true,           // Highly recommended (HTTPS only)
+				'httponly' => true,         // Prevents JavaScript access
+				'samesite' => 'Lax'         // Restricts cross-site requests
+			]
+		);
+	}
+
+	private static function clearUserCookie() {
+		setcookie(cfg('cookie.id'), "", time() - 3600, cfg('cookie.path'), cfg('cookie.domain'));
+		setcookie(cfg('cookie.u'), "", time() - 3600, cfg('cookie.path'), cfg('cookie.domain'));
 	}
 }
 ?>
