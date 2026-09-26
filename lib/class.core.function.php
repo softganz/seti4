@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-09-24
- * Version  :: 42
+ * Modified :: 2026-09-26
+ * Version  :: 43
  */
 
 /* Core Function */
@@ -424,6 +424,27 @@ function q($from = NULL, $to = NULL, $return_type = 'array') {
 	if ($return_type === 'string' && is_array($ret)) $ret = implode('/', $ret);
 
 	return $ret;
+}
+
+/**
+ * Set develop mode to on/off to session data
+ *
+ * @return void
+ */
+function setDevMode() {
+	if (isset($_GET['devMode'])) {
+		if (in_array($_GET['devMode'], ['','clear'])) {
+			unset($_SESSION['devMode']);
+			// unset($_COOKIE['devMode']);
+			// setcookie('devMode', 'yes', time() - 1000, '/');
+		} else {
+			$_SESSION['devMode'] = 'yes';
+			// $_COOKIE['devMode'] = 'yes';
+			// setcookie('devMode', 'yes', time()+7*24*60*60, '/');
+		}
+	}
+
+	define('_DEV_MODE', isset($_SESSION['devMode']) && $_SESSION['devMode'] === 'yes');
 }
 
 /**

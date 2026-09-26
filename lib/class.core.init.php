@@ -3,8 +3,8 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-09-19
- * Version  :: 34
+ * Modified :: 2026-09-26
+ * Version  :: 35
  */
 
 global $R;
@@ -301,19 +301,9 @@ try {
 rateLimit(cfg('system')->rateLimit->limit, cfg('system')->rateLimit->seconds); // 60 requests per 60 seconds
 
 // Set JS Min file, ?jsMin=no/yes/clear
-if (isset($_GET['devMode'])) {
-	if (in_array($_GET['devMode'], ['','clear'])) {
-		unset($_SESSION['devMode']);
-		unset($_COOKIE['devMode']);
-		setcookie('devMode', 'yes', time() - 1000, '/');
-	} else {
-		$_SESSION['devMode'] = 'yes';
-		$_COOKIE['devMode'] = 'yes';
-		setcookie('devMode', 'yes', time()+7*24*60*60, '/');
-	}
-}
 
-define('_DEV_MODE', isset($_SESSION['devMode']) && $_SESSION['devMode'] === 'yes');
+// Set develope mode
+setDevMode();
 
 /**
 * Process normal and AJAX request
