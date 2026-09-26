@@ -3,11 +3,11 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-09-18
- * Version  :: 55
+ * Modified :: 2026-09-26
+ * Version  :: 56
  *
- * @param Array $args
- * @return Object
+ * @param array $args
+ * @return object
  *
  * @uses new Softganz\DB([])
  * @uses DB::select([stmt, where, var, options])
@@ -71,12 +71,12 @@ class DbSelect {
 	}
 
 	public function count() {return $this->count;}
-	public function valueOf($field) {return isset($this->{$field}) ? $this->{$field} : NULL;}
+	public function valueOf($field) {return isset($this->{$field}) ? $this->{$field} : null;}
 
 	public function values($fields = []) {
-		$values = (Object) [];
-		foreach ((Array) $fields as $field) {
-			$values->{$field} = isset($this->{$field}) ? $this->{$field} : NULL;
+		$values = (object) [];
+		foreach ((array) $fields as $field) {
+			$values->{$field} = isset($this->{$field}) ? $this->{$field} : null;
 		}
 
 		return $values;
@@ -115,7 +115,7 @@ class DbException extends \Exception {
 	private $state;
 	private $query;
 	
-	public function __construct($message = NULL, $code = NULL, $error = NULL, $query = NULL) {
+	public function __construct($message = null, $code = null, $error = null, $query = null) {
 		parent::__construct($message, (Int) $code);
 		$this->error = $error;
 		$this->query = $query;
@@ -128,11 +128,11 @@ class DbException extends \Exception {
 
 /**
 * Array Arguments:
-* statment   :: String without key
-* connection :: String | Array
-* var        :: Object | Array
-* where      :: Array of Array
-* options    :: Array of debug, key, value, group
+* statment   :: string without key
+* connection :: string | array
+* var        :: object | array
+* where      :: array of array
+* options    :: array of debug, key, value, group
 */
 
 #[AllowDynamicProperties]
@@ -159,8 +159,8 @@ class DB {
 	public $count = 0;
 	public $items = [];
 
-	function __construct($args = NULL) {
-		$args = is_string($args) ? [0 => $args] : (Array) $args;
+	function __construct($args = null) {
+		$args = is_string($args) ? [0 => $args] : (array) $args;
 
 		// Connect to database
 		if (isset($args['connection']) && $args['connection']) {
@@ -172,7 +172,7 @@ class DB {
 
 		if (!$this->status) return;
 
-		$this->srcStmt = isset($args[0]) ? trim($args[0]) : NULL;
+		$this->srcStmt = isset($args[0]) ? trim($args[0]) : null;
 		unset($args[0]);
 		$this->args = $args;
 
@@ -215,7 +215,7 @@ class DB {
 		} else {
 			$result = new DbSelect([
 				'count' => $selectResult->count,
-				'foundRows' => NULL,
+				'foundRows' => null,
 				'items' => $selectResult->items,
 			]);
 
@@ -289,9 +289,9 @@ class DB {
 	/**
 	* Get Column Name of Table
 	*
-	* @param String $table
-	* @param String $colName
-	* @return Array
+	* @param string $table
+	* @param string $colName
+	* @return array
 	*/
 	public static function columns($table, $colName = '', $dbname = '') {
 		static $tables = null;
@@ -382,7 +382,7 @@ class DB {
 			return new DbException(
 				$errorMsg,
 				$errorCode,
-				(Object) [
+				(object) [
 					'state' => $queryError[0],
 					'query' => $queryStmt
 				]
@@ -459,10 +459,10 @@ class DB {
 	function fetchRow($items) {
 		$result = [];
 		foreach ($items as $key => $value) {
-			$value = (Object) $value;
+			$value = (object) $value;
 			if (isset($this->options->jsonDecode) && $this->options->jsonDecode) {
 				foreach ($this->options->jsonDecode as $jsonDecode) {
-					$jsonDecodeResult = json_decode($value->{$jsonDecode['field']});
+					$jsonDecodeResult = json_decode($value->{$jsonDecode['field']} ?? '{}');
 					if ($jsonDecode['type'] === 'merge') {
 						$foundField = false;
 						$before = [];
@@ -475,10 +475,10 @@ class DB {
 							if (!$foundField) $before[$itemKey] = $itemValue;
 							else $after[$itemKey] = $itemValue;
 						}
-						$value = (Object) array_replace_recursive(
-							(Array) $before,
-							(Array) $jsonDecodeResult,
-							(Array) $after
+						$value = (object) array_replace_recursive(
+							(array) $before,
+							(array) $jsonDecodeResult,
+							(array) $after
 						);
 					} else {
 						$value->{$jsonDecode['field']} = $jsonDecodeResult;
@@ -524,7 +524,7 @@ class DB {
 
 	function PDO() {return $this->PDO;}
 
-	function close() {$this->PDO = NULL;}
+	function close() {$this->PDO = null;}
 
 	// Create statement with message and error code
 	private function stmt($addMessage = []) {
@@ -549,7 +549,7 @@ class DB {
 
 	function errorMsg() {return $this->errorMsg;}
 
-	function queryItems($stmt = NULL) {
+	function queryItems($stmt = null) {
 		if ($stmt) $this->queryItems[] = $stmt;
 		return $this->queryItems;
 	}
@@ -621,26 +621,26 @@ class DB {
 		// $this->PDO->query('SET GLOBAL slow_query_log=1;');
 	}
 
-	private function setOptions(Array $options) {
-		$this->options = (Object) array_replace_recursive(
+	private function setOptions(array $options) {
+		$this->options = (object) array_replace_recursive(
 			[
 				'log' => true,
 				'history' => true,
-				'key' => NULL,
-				'value' => NULL,
-				'group' => NULL,
+				'key' => null,
+				'value' => null,
+				'group' => null,
 				'multiple' => false,
 				'showResult' => false,
 				'debug' => false,
 				'sum' => [],
 				'jsonDecode' => [],
 			],
-			(Array) $options
+			(array) $options
 		);
 
 		if ($this->options->sum) {
 			$sumFields = $this->options->sum;
-			$this->options->sum = (Object) [];
+			$this->options->sum = (object) [];
 			foreach (explode(',', $sumFields) as $value) {
 			 	$this->options->sum->{$value} = 0;
 			 }
@@ -803,10 +803,10 @@ class DB {
 		foreach ($object as $key => $value) {
 			if (!is_numeric($value)) $object->{$key} = $this->quote($value);
 		}
-		return implode(' , ', (Array) $object);
+		return implode(' , ', (array) $object);
 	}
 
-	private function valueObjectConvert(Object $object) {
+	private function valueObjectConvert(object $object) {
 		$result = [];
 		foreach ($object as $key => $value) {
 			if (preg_match('/^\$/', $key, $out)) {
@@ -819,24 +819,24 @@ class DB {
 		return $result;
 	}
 
-	private function quote($value) {return is_null($value) ? NULL : $this->PDO->quote($value);}
+	private function quote($value) {return is_null($value) ? null : $this->PDO->quote($value);}
 
 	/**
 	 * Set & get table with keyword
-	 * @param String $key
-	 * @param String $new_value
-	 * @param String $prefix
-	 * @param String $db
-	 * @return String
+	 * @param string $key
+	 * @param string $new_value
+	 * @param string $prefix
+	 * @param string $db
+	 * @return string
 	 */
-	private function db($key = NULL, $new_value = NULL, $prefix = NULL, $db = NULL) {
+	private function db($key = null, $new_value = null, $prefix = null, $db = null) {
 		static $items = [];
 		static $src = [];
 
 		if (empty($items) && function_exists('db')) $items = db();
 
 		$tablePrefix = function_exists('cfg') ? cfg('db.prefix') : '';
-		$ret=NULL;
+		$ret=null;
 
 		if (isset($key) && isset($new_value)) {
 			$src[$key]=$new_value;
@@ -871,7 +871,7 @@ class DB {
 		return $ret;
 	}
 
-	private function jsonObjectString($value, $key = NULL) {
+	private function jsonObjectString($value, $key = null) {
 		// Encode to json string and decode to value becuase array has index as string will convert to object
 		$value = json_decode(json_encode($value));
 
@@ -880,7 +880,7 @@ class DB {
 		if ($key) $jsonString .= '	"'.$key.'", ';
 		$jsonString .= is_object($value) ? 'JSON_OBJECT('._NL : 'JSON_ARRAY('._NL;
 
-		foreach ((Array) $value as $jsonKey => $jsonValue) {
+		foreach ((array) $value as $jsonKey => $jsonValue) {
 			if (is_array($jsonValue)) {
 				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).', '._NL;
 			} else if (is_object($jsonValue)) {
@@ -902,13 +902,13 @@ class DB {
 		return $jsonString;
 	}
 
-	private function jsonArrayString($value, $key = NULL) {
+	private function jsonArrayString($value, $key = null) {
 		// debugMsg($value, 'JSON Value');
 		$jsonString = '';
 		if ($key) $jsonString .= '"'.$key.'" , ';
 		$jsonString .= 'JSON_ARRAY('
-			. '"'.implode('","', (Array) $value).'"';
-		// foreach ((Array) $value as $jsonKey => $jsonValue) {
+			. '"'.implode('","', (array) $value).'"';
+		// foreach ((array) $value as $jsonKey => $jsonValue) {
 		// 	// debugMsg('KEY '.$jsonKey.' = '.$jsonValue);
 		// 	$jsonString .= '"'.$jsonKey.'" , "'.preg_replace('/[\"]/', '', $jsonValue).'" ,';
 		// 	// debugMsg($jsonString);
@@ -921,11 +921,11 @@ class DB {
 	private function updateLastQueryStmt($method, $stmt, $error = []) {
 		if (isset($this->options->history) && $this->options->history === false) return; // Do not save query history
 
-		$this->setDebugMessage(NULL, $stmt);
+		$this->setDebugMessage(null, $stmt);
 
 		// Add message to error
 		if ($error) {
-			$this->errors[] = (Object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt];
+			$this->errors[] = (object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt];
 			$this->errorMsg = $errorMessage;
 
 			// Save error to log
@@ -949,7 +949,7 @@ class DB {
 		if (function_exists('R')) {
 			R('query', $stmt);
 			R()->query_items[] = $stmt;
-			R('error', $error ? (Object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt] : '');
+			R('error', $error ? (object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt] : '');
 		}
 	}
 
