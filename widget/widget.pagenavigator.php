@@ -3,8 +3,8 @@
  * Widget   :: Page Navigator Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-29
- * Version  :: 3
+ * Modified :: 2026-09-29
+ * Version  :: 4
  *
  * @param Array $args
  *
@@ -29,10 +29,10 @@ class PageNavigator extends Widget {
 		if ( $linkPara ) $this->linkPara = $linkPara;
 
 		if ($this->linkPara) {
-			$this->linkPara['attribute'] = (Array) SG\getFirst($this->linkPara['attribute'], $this->linkPara['attr']);
+			$this->linkPara['attribute'] = (Array) SG\getFirst($this->linkPara['attribute'] ?? null, $this->linkPara['attr'] ?? null);
 			unset($this->linkPara['attr']);
 
-			if ($this->linkPara['attribute']['class']) {
+			if (!empty($this->linkPara['attribute']['class'])) {
 				$this->class .= trim(' '.$this->linkPara['attribute']['class']);
 				unset($this->linkPara['attribute']['class']);
 			}
