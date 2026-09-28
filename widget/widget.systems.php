@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-25
- * Version  :: 97
+ * Modified :: 2026-09-28
+ * Version  :: 98
  *
  * @param Array $args
  *
@@ -348,14 +348,14 @@ class Widget extends WidgetBase {
 				$child = '';
 			} else if (is_object($child) && get_class($child) === 'Children') {
 				// children is class of Children
-				if ($child->tagName) $ret .= '<' . $child->tagName . ' id="' . $child->id . '" class="-children-widget ' . $child->class . '">';
+				if (!empty($child->tagName)) $ret .= '<' . $child->tagName . ' id="' . $child->id . '" class="-children-widget ' . $child->class . '">';
 				foreach ($child->children as $subKey => $subChild) {
 					if (is_string($subKey)) $subChild['inputName'] = $subKey;
 					$ret .= $this->renderChildContainerStart($subKey, [], $subChild);
 					$ret .= $this->renderEachChildWidget($subChild, $subKey);
 					$ret .= $this->renderChildContainerEnd($subChild, $subKey) . _NL;
 				}
-				if ($child->tagName) $ret .= '</' . $child->tagName . '>';
+				if (!empty($child->tagName)) $ret .= '</' . $child->tagName . '>';
 				continue;
 			} else if (is_string($childKey)) {
 				// echo '<br> childKey='.$childKey.' | '.gettype($child).'<br>';
