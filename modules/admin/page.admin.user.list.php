@@ -1,24 +1,25 @@
 <?php
 /**
- * Admin   :: List All Member
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2019-09-01
- * Modify  :: 2026-05-01
- * Version :: 5
+ * Admin    :: List All Member
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-09-01
+ * Modified :: 2026-09-28
+ * Version  :: 6
  *
  * @return Widget
  *
- * @usage admin/user/list
+ * @uses admin/user/list
  */
 
 class AdminUserList extends Page {
-	var $role;
-	var $status;
-	var $search;
-	var $uid;
-	var $order;
-	var $items;
-	var $page;
+	protected $role;
+	protected $status;
+	protected $search;
+	protected $uid;
+	protected $order;
+	protected $sort;
+	protected $items;
+	protected $page;
 
 	function __construct($arg1 = NULL) {
 		$this->role = post('r');
@@ -57,7 +58,7 @@ class AdminUserList extends Page {
 		mydb::value('$ORDER$', $orderList[$this->order]);
 		mydb::value('$SORT$', 'ASC');
 
-		if ($this->item < 0) {
+		if ($this->items < 0) {
 			mydb::value('$LIMIT$', '');
 		} else {
 			$firstRow = $this->page > 1 ? ($this->page - 1) * $this->items : 0;
@@ -107,13 +108,13 @@ class AdminUserList extends Page {
 							'caption' => 'User listing',
 							'thead' => [
 								'',
-								'name -nowrap'=>'Name <a href="'.Url::link($currentUrl, ['order' => 'name']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'name' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
-								'email'=>'Email <a href="'.Url::link($currentUrl, ['order' => 'email']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'email' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
-								'roles'=>'Roles <a href="'.Url::link($currentUrl, ['order' => 'role']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'role' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'name -nowrap'=>'Name <a href="'.Url::link($currentUrl, ['order' => 'name']+$pagePara).'"><i class="icon -material'.($this->order === 'name' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'email'=>'Email <a href="'.Url::link($currentUrl, ['order' => 'email']+$pagePara).'"><i class="icon -material'.($this->order === 'email' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'roles'=>'Roles <a href="'.Url::link($currentUrl, ['order' => 'role']+$pagePara).'"><i class="icon -material'.($this->order === 'role' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'hits -center' => 'Hits',
-								'reg -date'=>'Register date <a href="'.Url::link($currentUrl, ['order' => 'reg']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'reg' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'reg -date'=>'Register date <a href="'.Url::link($currentUrl, ['order' => 'reg']+$pagePara).'"><i class="icon -material'.($this->order === 'reg' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'currentIn -date' => 'Current Login',
-								'last -date' => 'Last login <a href="'.Url::link($currentUrl, ['order' => 'login']+$pagePara).'"><i class="icon -material'.($getOrderBy == 'login' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
+								'last -date' => 'Last login <a href="'.Url::link($currentUrl, ['order' => 'login']+$pagePara).'"><i class="icon -material'.($this->order === 'login' ? ' -sg-active' : ' -sg-inactive').' -no-print">unfold_more</i></a>',
 								'remark' => 'Admin remark',
 								'icons -hover-parent' => '',
 							],
