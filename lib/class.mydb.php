@@ -3,8 +3,8 @@
  * MyDb     :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2009-07-06
- * Modified :: 2026-09-18
- * Version  :: 14
+ * Modified :: 2026-10-01
+ * Version  :: 15
  *
  * @uses mydb::select(stmt, where, var)
  * @uses mydb::query(stmt, where, var)
@@ -275,7 +275,7 @@ class MyDb {
 
 					$vars[$args[$i]] = $value;
 
-				} else if (is_null($args[$i]) && is_null($args[$i+1])) {
+				} else if (isset($args[$i]) && is_null($args[$i]) && is_null($args[$i+1])) {
 					// Do nothing
 				} else if ($args[$i]) {
 					$value = "NULL";
@@ -544,7 +544,7 @@ class MyDb {
 
 
 		$myDb->_last_query_time = $timer->get('query',3);
-		$myDb->_query_times += $myDb->_last_query_time;
+		$myDb->_query_times += (float) str_replace(',', '', (string) $myDb->_last_query_time);
 		$myDb->insert_id = $myDb->mysqli->insert_id;
 
 		$myDb->setMultiQuery(false);
@@ -689,7 +689,9 @@ class MyDb {
 		$timer->stop('query');
 
 		$myDb->_last_query_time = $timer->get('query',3);
-		$myDb->_query_times += $myDb->_last_query_time;
+		// debugMsg('$myDb->_query_times='.$myDb->_query_times);
+		// debugMsg('$myDb->_last_query_time = '.$myDb->_last_query_time);
+		$myDb->_query_times += (float) str_replace(',', '', (string) ($myDb->_last_query_time ?? 0));
 
 
 		if ((isset($prepareStmt->_error_msg) && $prepareStmt->_error_msg) || post('debug')=='query') $caller = get_caller(__FUNCTION__);
