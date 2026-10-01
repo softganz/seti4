@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-09-26
- * Version  :: 56
+ * Modified :: 2026-10-01
+ * Version  :: 57
  *
  * @param array $args
  * @return object
@@ -509,7 +509,7 @@ class DB {
 			// Generate sum value of fields
 			if (isset($this->options->sum) && $this->options->sum) {
 				foreach ($this->options->sum as $keySum => $valueSum) {
-					$this->options->sum->{$keySum} += $value->{$keySum};
+					$this->options->sum->{$keySum} += $value->{$keySum} ?? 0;
 				}
 			}
 		}
