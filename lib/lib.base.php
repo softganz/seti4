@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created  :: 2019-12-08
- * Modified :: 2026-09-18
- * Version  :: 23
+ * Modified :: 2026-10-01
+ * Version  :: 24
  */
 
 namespace SG;
@@ -435,22 +435,63 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 
 	if (is_string($fld)) {$t = $fld; $fld = array(); $fld['fld'] = $t;}
 
+	$fld = array_replace(
+		[
+			'label' => null,
+			'class' => null,
+			'fld' => null,
+			'options' => null,
+			'container' => null,
+			'desc' => null,
+			'posttext' => null,
+			'min-value' => null,
+			'max-value' => null,
+			'value' => null,
+			'button' => null,
+			'ret' => null,
+			'name' => null,
+			'updateUrl' => null,
+			'require' => null,
+		],
+		(array) $fld
+	);
+
 	$dataOptions = (Object) [];
 	if (array_key_exists('options', $fld)) {
 		$dataOptions = json_decode($fld['options']);
 		unset($fld['options']);
 	}
 
+	$dataOptions = (object) array_replace(
+		[
+			'class' => null,
+			'noEmptyChoice' => null,
+			'rawValue' => null,
+		],
+		(array) ($dataOptions ?? [])
+	);
+
 	if (isset($fld['container'])) {
 		$container = json_decode($fld['container']);
 		unset($fld['container']);
 	}
 
+	$container = (object) array_replace(
+		[
+			'class' => null,
+			'id' => null,
+			'placeholder' => null,
+		],
+		(array) ($container ?? [])
+	);
+
+	$desc = '';
 	if (isset($fld['desc'])) {
 		$desc = $fld['desc'];
 		unset($fld['desc']);
 	}
 
+	$posttext = '';
 	if (isset($fld['posttext'])) {
 		$posttext = $fld['posttext'];
 		unset($fld['posttext']);
@@ -481,12 +522,12 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 
 
 		if (array_key_exists('value', $fld)) {
-			$value = $dataOptions->rawValue ? $fld['value'] : htmlspecialchars($fld['value']);
+			$value = $dataOptions->rawValue ? $fld['value'] : htmlspecialchars($fld['value'] ?? '');
 			unset($fld['value']);
 		}
 		//debugMsg(sg_json_encode($dataOptions));
 
-		$placeholder = getFirst($dataOptions->placeholder, $emptytext);
+		$placeholder = getFirst($dataOptions->placeholder ?? null, $emptytext);
 
 		if ($input_type == 'textarea' && $fld['button'] != 'no') $fld['button'] = 'yes';
 
@@ -502,7 +543,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 			}
 			$ret .= '</ul>'._NL;
 		} else {
-			$text = trim($text);
+			$text = trim($text ?? '');
 			$value = isset($value) ? $value : $text;
 			$require = $fld['require']?'<span class="require">!</span>':'';
 			if ($input_type == 'datepicker') {
@@ -516,7 +557,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 			else if ($fld['ret'] == 'html') $text = trim(sg_text2html($text));
 			else if ($fld['ret'] == 'text') $text = trim(str_replace("\n",'<br />',$text));
 			else if ($fld['ret'] == 'money' && $text != '') $text = number_format(sg_strip_money($text), 2);
-			else if (substr($fld['ret'], 0, 4) == 'date' && $text) {
+			else if (substr($fld['ret'] ?? '', 0, 4) == 'date' && $text) {
 				list($retType, $retFormat) = explode(':', $fld['ret']);
 				if (!$retFormat) $retFormat = 'ว ดดด ปปปป';
 				$text = sg_date($value, $retFormat);
@@ -524,45 +565,45 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 			if ($input_type == "textfield") {
 				$ret .= '<span class="inline-edit-view">'.$text.'</span>';
 			} else if (in_array($input_type, ['radio', 'checkbox'])) {
-				list($choice, $label, $info) = explode(':', $text);
+				list($choice, $label, $info) = array_pad(explode(':', $text), 3, '');
 				$choice = trim($choice);
-				$name = getFirst($fld['name'], $fld['fld']);
+				$name = getFirst($fld['name'], $fld['fld'] ?? null);
 				if ($label == '' && strpos($text, ':') == false) $label = $choice;
 				$label = trim($label);
 				$ret .= '<label><input class="inlineedit-field inline-edit-field '
-					.'-'.$input_type
-					.($class ? ' '.$class : '').'" '
-					.($dataOptions->id ? 'id="'.$dataOptions->id.'"' : '')
-					.'type="'.$input_type.'" '
-					.'data-type="'.$input_type.'" '
-					.'name="'.$name.'" '
-					.'value="'.$choice.'"'
-					.(isset($value) && $value == $choice ? ' checked="checked"':'')
-					.' onclick="" '
-					.$attr
-					.' style="width: 1.1em; min-width: 1.1em; vertical-align:middle;" '
-					.'/> '
-					.$label
-					.'</label>'
-					.$require
-					.($info ? '<sup class="sg-info" title="'.$info.'">?</sup>' : '')
-					.$posttext;
+					. '-'.$input_type
+					. ($class ? ' '.$class : '').'" '
+					. (!empty($dataOptions->id) ? 'id="'.$dataOptions->id.'"' : '')
+					. 'type="'.$input_type.'" '
+					. 'data-type="'.$input_type.'" '
+					. 'name="'.$name.'" '
+					. 'value="'.$choice.'"'
+					. (isset($value) && $value == $choice ? ' checked="checked"':'')
+					. ' onclick="" '
+					. $attr
+					. ' style="width: 1.1em; min-width: 1.1em; vertical-align:middle;" '
+					. '/> '
+					. $label
+					. '</label>'
+					. $require
+					. ($info ? '<sup class="sg-info" title="'.$info.'">?</sup>' : '')
+					. $posttext;
 			} else {
 				$ret .= '<span class="inlineedit-field inline-edit-field -text '
-					.'-'.$input_type
-					.($class ? ' '.$class : '')
-					.'" '
-					.($dataOptions->id ? 'id="'.$dataOptions->id.'"' : '')
-					.'onclick="" '
-					.$attr
-					.' data-type="'.$input_type.'" '
-					.'data-value="'.htmlspecialchars($value).'" '
-					.($data ? ' data-data="'.htmlspecialchars(json_encode($data, JSON_UNESCAPED_UNICODE)).'"' : '')
-					.' title="คลิกเพื่อแก้ไข">'
-					.'<span class="-for-input">'.$text.'</span>'
-					.'</span>'
-					.$require
-					.$posttext;
+					. '-'.$input_type
+					. ($class ? ' '.$class : '')
+					. '" '
+					. (!empty($dataOptions->id) ? 'id="'.$dataOptions->id.'"' : '')
+					. 'onclick="" '
+					. $attr
+					. ' data-type="'.$input_type.'" '
+					. 'data-value="'.htmlspecialchars($value).'" '
+					. ($data ? ' data-data="'.htmlspecialchars(json_encode($data, JSON_UNESCAPED_UNICODE)).'"' : '')
+					. ' title="คลิกเพื่อแก้ไข">'
+					. '<span class="-for-input">'.$text.'</span>'
+					. '</span>'
+					. $require
+					. $posttext;
 			}
 			if ($desc) $ret .= '<div class="inline-edit-desc">'.$desc.'</div>';
 		}
@@ -581,7 +622,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 			} else if ($input_type == "money") {
 				$ret .= number_format(sg_strip_money($text), 2);
 			} else if (in_array($input_type, array('radio', 'checkbox'))) {
-				list($choice, $label, $info) = explode(':', $text);
+				list($choice, $label, $info) = array_pad(explode(':', $text), 3, '');
 				$choice = trim($choice);
 				$name = getFirst($fld['name'],$fld['fld']);
 				if ($label == '' && strpos($text, ':') == false) $label = $choice;
@@ -749,7 +790,7 @@ function implode_address($rs, $type = 'long') {
 	$zipCode = getFirst($rs->zipCode ?? null, $rs->zip ?? null, $rs->zipcode ?? null);
 
 	$result = trim(
-		$rs->house
+		($rs->house ?? '')
 		. ($rs->soi ?? null ? ' ซอย' . $rs->soi : '')
 		. ($rs->road ?? null ? ' ถนน' . $rs->road : '')
 		. ($rs->village ?? null ? ' ' . $words[$type]['village'] . intval($rs->village) : '')
