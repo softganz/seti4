@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-28
- * Version  :: 98
+ * Modified :: 2026-10-01
+ * Version  :: 99
  *
  * @param Array $args
  *
@@ -425,8 +425,8 @@ class DOM extends Widget {
 	function __construct($args = []) {
 		$this->tagName = array_shift($args);
 		$this->widgetName = 'dom-' . $this->tagName;
-		$this->settings = (Array) $args['settings'];
-		if ($args['children']) $this->children = $args['children'];
+		$this->settings = (Array) ($args['settings'] ?? []);
+		if (isset($args['children'])) $this->children = $args['children'];
 		else if ($args['child']) $this->children[] = $args['child'];
 		$this->class = ($args['class'] ? $args['class'] : '');
 
@@ -434,7 +434,7 @@ class DOM extends Widget {
 
 		parent::__construct(['attribute' => $args]);
 
-		if ($this->settings['debug']) debugMsg($this, '$this');
+		if (!empty($this->settings['debug'])) debugMsg($this, '$this');
 	}
 
 	// @override
