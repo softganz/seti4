@@ -14,8 +14,8 @@
  * ============================================
  * 
  * Created  :: 2007-07-09
- * Modified :: 2026-09-19
- * Version  :: 24
+ * Modified :: 2026-10-02
+ * Version  :: 25
  */
 
 use Softganz\DB;
@@ -889,7 +889,7 @@ class Jwt {
 		// echo '$base64_url_signature = '.$base64_url_signature.'<br /><br />';
 		// echo '$signature_provided = '.$signature_provided.'<br /><br />';
 
-		return (Object) [
+		return (object) [
 			'header' => json_decode($header),
 			'payload' => json_decode($payload),
 			'expiration' => $expiration,
@@ -973,116 +973,139 @@ class Url {
 }
 
 /**
- * Class  :: Request
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2026-04-16
- * Modify  :: 2026-05-06
- * Version :: 2
+ * Class    :: Request
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2026-04-16
+ * Modified :: 2026-10-02
+ * Version  :: 3
  */
 class Request {
 	/**
 	 * Get value by key from $_POST
-	 * @param String $key
-	 * @param String $regx
-	 * @param Integer $flag
-	 *
-	 * @return Mixed
+	 * @param string $key
+	 * @param string $regx
+	 * @param mixed $defaultValue
+	 * @param integer $flag
+	 * @return mixed
 	 */
-	public static function post($key = null, $regx = null, $flag = _TRIM) {
+	public static function post($key = null, $regx = null, mixed $defaultValue = null, $flag = _TRIM) {
 		static $count = 0;
-		$post = $_POST;
-		$count++;
 
-		return self::getValue($post, $key, $regx, $flag);
+		$count++;
+		$post = $_POST;
+
+		return self::getValue($post, $key, $regx, $defaultValue, $flag);
 	}
 
 	/**
 	 * Get value by key from $_GET
-	 * @param String $key
-	 * @param String $regx
-	 * @param Integer $flag
-	 *
-	 * @return Mixed
+	 * @param string $key
+	 * @param string $regx
+	 * @param mixed $defaultValue
+	 * @param integer $flag
+	 * @return mixed
 	 */
-	public static function get($key = null, $regx = null, $flag = _TRIM) {
+	public static function get($key = null, $regx = null, mixed $defaultValue = null, $flag = _TRIM) {
 		static $count = 0;
-		$get = (Array) array_replace_recursive([], $_GET); // Clone array to avoid reference issues
-		$get = array_slice($get, 1, null, true); // remove first element which is controller command, preserve keys
-		$count++;
 
-		return self::getValue($get, $key, $regx, $flag);
+		$count++;
+		$get = self::getRequestValue($_GET);
+
+		return self::getValue($get, $key, $regx, $defaultValue, $flag);
 	}
 
 	/**
 	 * Get value by key from $_REQUEST
-	 * @param String $key
-	 * @param String $regx
-	 * @param Integer $flag
-	 *
-	 * @return Mixed
+	 * @param string $key
+	 * @param string $regx
+	 * @param mixed $defaultValue
+	 * @param integer $flag
+	 * @return mixed
 	 */
-	public static function all($key = null, $regx = null, $flag = _TRIM) {
+	public static function all($key = null, $regx = null, mixed $defaultValue = null, $flag = _TRIM) {
 		static $count = 0;
-		// $request = $_REQUEST; // Clone array to avoid reference issues
-		$request = (Array) array_replace_recursive([], $_REQUEST); // Clone array to avoid reference issues
-		$request = array_slice($request, 1, null, true); // remove first element which is controller command, preserve keys
-		$count++;
 
-		return self::getValue($request, $key, $regx, $flag);
+		$count++;
+		$request = self::getRequestValue($_REQUEST);
+
+		return self::getValue($request, $key, $regx, $defaultValue, $flag);
+	}
+
+	/**
+	 * Get request value and remove first element
+	 *
+	 * @param array $request
+	 * @return array
+	 */
+	static private function getRequestValue(array $request): array {
+		$request = (array) array_replace_recursive([], $request); // Clone array to avoid reference issues
+		$request = array_slice($request, 1, null, true); // Remove first element which is controller command, preserve keys
+		return $request;
 	}
 
 	/**
 	 * Get value by key from $values
-	 * @param Array $values
-	 * @param String $key
-	 * @param String $regx
-	 * @param Integer $flag
-	 *
-	 * @return Mixed
+	 * @param array $values
+	 * @param string $key
+	 * @param string $regx
+	 * @param mixed $defaultValue
+	 * @param integer $flag
+	 * @return mixed
 	 */
-	static private function getValue($values, $key, $regx, $flag = _TRIM) {
+	static private function getValue($values, $key, $regx, mixed $defaultValue, $flag = _TRIM): mixed {
 		if (!user_access('input format type script')) $flag = $flag | _STRIPTAG;
 
 		if ($flag) $values = Arrays::convert($values, $flag);
 
-		if (!isset($key)) return (Object) $values;
+		if (!isset($key)) return (object) $values;
 
 		// Multiple request key
 		if (is_array($key)) {
-			$value = null;
+			$srcValue = null;
 			foreach ($key as $getKey) {
-				$value = $values[$getKey] ?? null;
+				$srcValue = $values[$getKey] ?? null;
 				// Value not set or is set but empty string
-				if (is_null($value) || $value === '') continue;
-
-				// Check valid with regular expression
-				if ($regx && !(is_array($value) || is_object($value) || is_null($value))) {
-					$value = \SG\valid($value, $regx);
-				}
-
-				if (is_null($value)) continue;
+				if (is_null($srcValue) || $srcValue === '') continue;
 
 				// If found then break
 				break;
 			}
-			return $value;
+		} else {
+			// Single request key
+			$srcValue = $values[$key] ?? null;
 		}
 
-		// Single request key
-		$value = $values[$key] ?? null;
-		// Check valid with regular expression
-		if ($regx && !(is_array($value) || is_object($value) || is_null($value))) {
-			if ($value === '') return $value; // Return on empty string
+		// return on array, object, null
+		if (is_array($srcValue) || is_object($srcValue) || is_null($srcValue)) {
+			return self::setDefaultValue($srcValue, $defaultValue);
+		}
 
-			$value = \SG\valid($value, $regx);
-			if ($value != $values[$key]) $value = '';
+		// Check valid with regular expression
+		if ($regx) {
+			$value = \SG\valid($srcValue, $regx);
+			if ($value != $srcValue) $value = null;
 
 			if ($regx === 'int' && $value != '' && !is_null($value)) {
 				$value = intval($value);
 			}
 			// debugMsg('key = ' . $key . ', regx = ' . $regx . ', src = ' . '(' . gettype($values[$key]) . ') ' . $values[$key] . ', value = (' . (gettype($value)) . ') ' . (gettype($value) === 'boolean' ? ($value ? 'true' : 'false') : $value));
+		} else {
+			$value = $srcValue;
 		}
-		return $value;
+
+		return self::setDefaultValue($value, $defaultValue);
+	}
+
+	/**
+	 * Check defaut value
+	 *
+	 * @param mixed $value
+	 * @param mixed $defaultValue
+	 * @return mixed
+	 */
+	private static function setDefaultValue(mixed $value, mixed $defaultValue): mixed {
+		if ($value === '') $value = null;
+		return is_null($value) && !is_null($defaultValue) ? $defaultValue : $value;
 	}
 }
 ?>
