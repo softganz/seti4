@@ -3,8 +3,8 @@
  * Model    :: Export File
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2024-09-14
- * Modified :: 2026-10-01
- * Version  :: 5
+ * Modified :: 2026-10-02
+ * Version  :: 6
  *
  * @param Array $args
  * @return Object
@@ -60,6 +60,7 @@ class ExportModel {
 				'debug' => false, // boolean
 				'header' => [], // Array
 				'children' => [], // Array
+				'footer' => [], // array
 			],
 			(Array) $args
 		);
@@ -72,7 +73,13 @@ class ExportModel {
 		// $xlsx = Shuchkin\SimpleXLSXGen::fromArray( $books );
 		// $xlsx->saveAs('books.xlsx'); // or downloadAs('books.xlsx') or $xlsx_content = (string) $xlsx
 
-		$xlsx = Shuchkin\SimpleXLSXGen::fromArray(array_merge([$args->header], (array) ($args->children ?? [])));
+		$xlsx = Shuchkin\SimpleXLSXGen::fromArray(
+			array_merge(
+				[$args->header],
+				(array) ($args->children ?? []),
+				(array) ($args->footer ?? []),
+			)
+		);
 		if ($args->debug) {
 			return (string) $xlsx;
 		} else {
