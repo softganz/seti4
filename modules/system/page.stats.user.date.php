@@ -3,8 +3,8 @@
  * Stats    :: List of user hits by date
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-27
- * Modified :: 2026-08-24
- * Version  :: 2
+ * Modified :: 2026-10-03
+ * Version  :: 3
  *
  * @param String $date
  * @return Widget
@@ -50,7 +50,7 @@ class StatsUserDate extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Member list',
+				'title' => '{{ .Number }} Members online.',
 				'boxHeader' => true,
 				'leading' => _HEADER_BACK
 			]), // AppBar
@@ -69,6 +69,9 @@ class StatsUserDate extends Page {
 					$dbs->items
 				)
 			]), // Table
+			'var' => [
+				'Number' => number_format(count($dbs->items))
+			]
 		]);
 	}
 }
