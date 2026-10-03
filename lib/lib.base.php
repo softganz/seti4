@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created  :: 2019-12-08
- * Modified :: 2026-10-01
- * Version  :: 24
+ * Modified :: 2026-10-03
+ * Version  :: 25
  */
 
 namespace SG;
@@ -126,16 +126,17 @@ function valid($value, $regx, $debug = false) {
 	if ($debug) debugMsg('Debug of function SG\valid of <b>' . $value . '</b> with regx <b>' . $regx . '</b>');
 
 	switch ($regx) {
-		case 'int': $regx = '/^[0-9]+$/'; break;
+		case 'int': $regx = '/^[0-9]+\z/'; break;
 		case 'number':
-		case 'numeric': $regx = '/^[0-9]+$/'; break;
-		case 'money': $regx = '/^[0-9\.\,\+\-]+$/'; break;
-		case 'en': $regx = '/^[a-z0-9\_\-\. ]+$/i'; break;
-		case 'date': $regx = '/^[0-9\-\/]+$/'; break;
-		case 'year': $regx = '/^(\d{4}|\*)$/'; break;
+		case 'numeric': $regx = '/^[0-9]+\z/'; break;
+		case 'money': $regx = '/^[+-]?(\d{1,3}(,\d{3})*|\d+)(\.\d+)?\z/'; break;
+		case 'en': $regx = '/^[a-z0-9_\-.]+\z/i'; break;
+		case 'email': $regx = '/^[a-z0-9_%+\-]+(\.[a-z0-9_%+\-]+)*@[a-z0-9]([a-z0-9\-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9\-]*[a-z0-9])?)*\.[a-z]{2,}\z/i'; break;
+		case 'date': $regx = '/^\d{4}[-\/](0?[1-9]|1[0-2])[-\/](0?[1-9]|[12][0-9]|3[01])\z/'; break;
+		case 'year': $regx = '/^(\d{4}|\*)\z/'; break;
 	}
 
-	$valid = preg_match($regx, $value, $out);
+	$valid = preg_match($regx, (string) $value, $out);
 	if ($debug) debugMsg($out, '$out');
 
 	return $valid ? $value : null;
