@@ -1,16 +1,16 @@
 <?php
 /**
- * Calendar:: Calendar Model
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2023-01-15
- * Modify  :: 2026-03-01
- * Version :: 4
+ * Calendar :: Calendar Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-01-15
+ * Modified :: 2026-10-05
+ * Version  :: 5
  *
  * @param Array $args
  * @return Object
  *
- * @usage new CalendarModel([])
- * @usage CalendarModel::function($conditions, $options)
+ * @uses new CalendarModel([])
+ * @uses CalendarModel::function($conditions, $options)
  */
 
 use Softganz\DB;
@@ -61,11 +61,11 @@ class CalendarModel {
 		$is_category = DB::tableExists('%calendar_category%');
 		$joins = $fields = [];
 
-		if ($args->get == '*') {
+		if (!empty($args->get) && $args->get === '*') {
 			// Get all calendar items
-		} else if (substr($args->get,0,1) == '*') {
+		} else if (substr($args->get ?? '',0,1) === '*') {
 			// Get all calendar items + other condition
-			$conditions = array();
+			$conditions = [];
 			$conditions[] = 'c.`tpid` IS NULL';		
 			foreach (explode(',', $args->get) AS $value) {
 				if (!preg_match('/(^[a-z])\:(.*)/', $value, $out)) continue;
@@ -78,11 +78,11 @@ class CalendarModel {
 				}
 			}
 			mydb::where('('.implode(' OR ',$conditions).')',$whereValue);
-		} else if ($args->orgId) {
+		} else if (!empty($args->orgId)) {
 			mydb::where('(c.`orgId` = :orgId OR t.`orgId` = :orgId)', ':orgId',$args->orgId);
-		} else if ($args->nodeId == '*') {
+		} else if (!empty($args->nodeId) && $args->nodeId === '*') {
 			mydb::where('c.`nodeId` IS NOT NULL');
-		} else if ($args->nodeId) {
+		} else if (!empty($args->nodeId)) {
 			mydb::where('c.`tpid` IN ( :nodeId )', ':nodeId', 'SET:'.$args->nodeId);
 		} else {
 			mydb::where('c.`tpid` IS NULL');		
@@ -112,9 +112,9 @@ class CalendarModel {
 		// if ($args->from) mydb::where('c.`from_date` >= :fromdate', ':fromdate', $args->from);
 		// if ($args->to) mydb::where('c.`to_date` <= :todate', ':todate', $args->to);
 
-		if ($args->date) {
+		if (!empty($args->date)) {
 			$getFromDate = $getToDate = $args->date;
-		} else if ($args->from && $args->to) {
+		} else if (!empty($args->from) && !empty($args->to)) {
 			$getFromDate = $args->from;
 			$getToDate = $args->to;
 		} else if ($args->getMonth) {
@@ -175,7 +175,7 @@ class CalendarModel {
 
 		mydb::value('$FIELD$', ($fields ? ', ' : '') . implode(_NL.'		, ', $fields), false);
 		mydb::value('$JOIN$', implode(_NL, $joins), false);
-		mydb::value('$ORDER$', $args->order ? $args->order : 'c.`from_date` ASC');
+		mydb::value('$ORDER$', !empty($args->order) ? $args->order : 'c.`from_date` ASC');
 
 		$stmt = 'SELECT
 				c.*

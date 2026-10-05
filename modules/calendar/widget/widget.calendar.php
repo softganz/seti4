@@ -3,8 +3,8 @@
  * Calendar :: Calcendr Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-20
- * Modified :: 2026-07-29
- * Version  :: 9
+ * Modified :: 2026-10-05
+ * Version  :: 10
  *
  * @param Array $args
  *
@@ -50,19 +50,19 @@ class CalendarWidget extends Widget {
 					'debug' => $this->debug,
 					'attribute' => array_replace_recursive(
 						[
-							'data-year' => $args['year'] ?? SG\getFirstInt($args['year'], date('Y')),
-							'data-month' => SG\getFirstInt($args['month'], date('m')),
-							'data-hash' => SG\getFirst($args['hash']),
-							'data-src' => SG\getFirst($args['src']),
-							'data-nodeId' => SG\getFirstInt($args['nodeId']),
-							'data-orgId' => SG\getFirstInt($args['orgId']),
-							'data-callFrom' => $args['callFrom'],
-							'data-apiUrl' => SG\getFirst($args['url'], url('calendar')),
-							'data-get' => SG\getFirst($args['get']),
+							'data-year' => $args['year'] ?? SG\getFirstInt($args['year'] ?? null, date('Y')),
+							'data-month' => SG\getFirstInt($args['month'] ?? null, date('m')),
+							'data-hash' => SG\getFirst($args['hash'] ?? null),
+							'data-src' => SG\getFirst($args['src'] ?? null),
+							'data-nodeId' => SG\getFirstInt($args['nodeId'] ?? null),
+							'data-orgId' => SG\getFirstInt($args['orgId'] ?? null),
+							'data-callFrom' => $args['callFrom'] ?? null,
+							'data-apiUrl' => SG\getFirst($args['url'] ?? null, url('calendar')),
+							'data-get' => SG\getFirst($args['get'] ?? null),
 						],
 						(Array) $this->attribute
 					),
-					'navigator' => SG\getFirst($args['navigator'], new CalendarNavWidget()),
+					'navigator' => SG\getFirst($args['navigator'] ?? null, new CalendarNavWidget()),
 					'right' => (Object) [
 						'add' => empty($args['callFrom']) ? user_access('administer calendars,create calendar content') : false,
 					],
@@ -82,7 +82,7 @@ class CalendarWidget extends Widget {
 					// new DebugMsg($args, '$args'),
 					new Container([
 						'class' => $this->classContent,
-						'atribute' => ['data-month' => sg_date($year.'-'.$month.'-01','ดดด ปปปป')],
+						'atribute' => ['data-month' => sg_date($this->year.'-'.$this->month.'-01','ดดด ปปปป')],
 						'child' => $this->month($this->year, $this->month),
 					]), // Container
 					'<script type="module" src="/calendar/js.calendar.js"></script>'
