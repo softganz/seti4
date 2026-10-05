@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-10-05
- * Version  :: 100
+ * Version  :: 101
  *
  * @param Array $args
  *
@@ -790,7 +790,7 @@ class DebugMsg extends Widget {
 
 		$callString = '<details><summary>Call from : ' . $this->callFrom[0]['file'] . ' @line ' . $this->callFrom[0]['line'] . '</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">';
 		foreach ($this->callFrom as $key => $value) {
-			$callString .= $value['file'] . ' @line ' . $value['line'] . '<br>';
+			$callString .= ($value['file'] ?? '') . ' @line ' . ($value['line'] ?? '') . '<br>';
 		}
 		$callString .= '</pre></div></details>';
 
