@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created  :: 2019-12-08
- * Modified :: 2026-10-03
- * Version  :: 25
+ * Modified :: 2026-10-05
+ * Version  :: 26
  */
 
 namespace SG;
@@ -386,7 +386,7 @@ function json_escape($value) {
 }
 
 function confirm() {
-	return strtoupper(post('confirm')) == strtoupper(_CONFIRM_VALUE);
+	return strtoupper(\Request::all('confirm') ?? '') === strtoupper(_CONFIRM_VALUE);
 }
 
 
@@ -632,7 +632,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 					.($fld['value'] == $choice ? 'checked="checked" readonly="readonly" disabled="disabled"' : 'disabled="disabled"')
 					.' style="margin:0;margin-top: -1px; display:inline-block;min-width: 1em; vertical-align: middle;" /> '
 					.$label;
-			} else if (substr($fld['ret'], 0, 4) == 'date') {
+			} else if (substr($fld['ret'] ?? '', 0, 4) === 'date') {
 				$format = substr($fld['ret'], 5);
 				$ret .= $text ? sg_date($text, $format) : '';
 			} else {

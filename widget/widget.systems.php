@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-10-01
- * Version  :: 99
+ * Modified :: 2026-10-05
+ * Version  :: 100
  *
  * @param Array $args
  *
@@ -553,7 +553,7 @@ class ListOrder extends Widget {
 
 	function __construct($args = []) {
 		parent::__construct($args);
-		if ($this->type) $this->tagName = $this->type;
+		if (!empty($this->type)) $this->tagName = $this->type;
 	}
 } // End of class ListOrder
 
@@ -656,12 +656,12 @@ class Card extends Widget {
 			. (
 				$this->header ?
 					'<header class="-header">'
-					. ($this->header['leading'] ? '<div class="-leading">' . $this->renderEachChildWidget($this->header['leading']) . '</div>' . _NL : '')
+					. (isset($this->header['leading']) ? '<div class="-leading">' . $this->renderEachChildWidget($this->header['leading']) . '</div>' . _NL : '')
 					. '<div class="-title">'
-					. ($this->header['title'] ? '<' . \SG\getFirst($this->header['titleTag'], $this->titleTag) . ' class="-title-text">' . $this->renderEachChildWidget($this->header['title']) . '</' . \SG\getFirst($this->header['titleTag'], $this->titleTag) . '>' : '')
-					. ($this->header['subtitle'] ? '<span class="-subtitle-text">' . $this->renderEachChildWidget($this->header['subtitle']) . '</span>' : '')
+					. (isset($this->header['title']) ? '<' . \SG\getFirst($this->header['titleTag'] ?? null, $this->titleTag ?? null) . ' class="-title-text">' . $this->renderEachChildWidget($this->header['title']) . '</' . \SG\getFirst($this->header['titleTag'] ?? null, $this->titleTag ?? null) . '>' : '')
+					. (isset($this->header['subtitle']) ? '<span class="-subtitle-text">' . $this->renderEachChildWidget($this->header['subtitle']) . '</span>' : '')
 					. '</div>'._NL
-					. ($this->header['trailing'] ? '<div class="-trailing">' . $this->renderEachChildWidget($this->header['trailing']) . '</div>' . _NL : '')
+					. (isset($this->header['trailing']) ? '<div class="-trailing">' . $this->renderEachChildWidget($this->header['trailing']) . '</div>' . _NL : '')
 					. '</header><!-- header -->'
 			 : '' // header
 			)
@@ -879,7 +879,7 @@ class Message extends WidgetBase {
 		if (_AJAX) return $result;
 
 		return '<div class="widget-message' . ($this->error ? ' -error' : '') . ($this->responseCode ? ' -code-' . $this->responseCode : '') . '">'
-			. $tmessage
+			. $message
 			. ($this->error ? $this->errorMessage : '')
 			. '</div>';
 	}

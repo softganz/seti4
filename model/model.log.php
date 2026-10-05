@@ -1,40 +1,47 @@
 <?php
 /**
- * Log     :: Log Model
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2024-06-26
- * Modify  :: 2026-01-13
- * Version :: 6
+ * Log      :: Log Model
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-06-26
+ * Modified :: 2026-10-05
+ * Version  :: 7
  *
- * @param Array $args
- * @return Object
- *
- * @usage import('model:module.modelname.php')
- * @usage new LogModel([])
- * @usage LogModel::function($conditions)
+ * @uses import('model:module.modelname.php')
+ * @uses new LogModel([])
+ * @uses LogModel::function($conditions)
  */
 
 use Softganz\DB, Softganz\JsonDataModel;
 
 class LogModel {
-	public static function save($args = []) {
+	public static function save($data = []) {
 		// $module = null, $keyword = null, $message = null, $uid = null, $keyid = null, $fldname = null) {
-		$args = (Object) $args;
+		$data = (object) array_replace(
+			[
+				'userId' => null,
+				'module' => null,
+				'keyword' => null,
+				'message' => null,
+				'keyId' => null,
+				'fieldName' => null,
+			],
+			(array) $data
+		);
 
 		if (!DB::tableExists('watchdog')) return false;
 
 		$data = (Object) [
 			'date' => date('Y-m-d H:i:s'),
-			'uid' => SG\getFirst($args->userId, i()->uid),
-			'ip' => ip2long(i()->ip),
-			'module' => SG\getFirst($args->module),
-			'keyword' => SG\getFirst($args->keyword),
-			'message' => SG\getFirst($args->message),
-			'url' => preg_match('/IIS/i',$_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'],
-			'referer' => SG\getFirst($_SERVER['HTTP_REFERER']),
+			'uid' => SG\getFirst($data->userId, i()->uid ?? null),
+			'ip' => ip2long(i()->ip ?? null),
+			'module' => SG\getFirst($data->module),
+			'keyword' => SG\getFirst($data->keyword),
+			'message' => SG\getFirst($data->message),
+			'url' => preg_match('/IIS/i', $_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SCRIPT_NAME'] . '?' . $_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'],
+			'referer' => SG\getFirst($_SERVER['HTTP_REFERER'] ?? null),
 			'browser' => $_SERVER['HTTP_USER_AGENT'],
-			'keyId' => $args->keyId,
-			'fieldName' => $args->fieldName,
+			'keyId' => $data->keyId,
+			'fieldName' => $data->fieldName,
 		];
 
 		try {

@@ -1,10 +1,10 @@
 <?php
 /**
- * Widget  :: Album
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-10-09
- * Modify  :: 2026-07-29
- * Version :: 5
+ * Widget   :: Album
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-10-09
+ * Modified :: 2026-10-05
+ * Version  :: 6
  *
  * @param Array $args
  *
@@ -36,8 +36,8 @@ class Album extends Widget {
 			$args['class'] = $child->class;
 			$args['id'] = $child->id;
 		} else {
-			$args['class'] = $child['class'];
-			$args['id'] = $child['id'];
+			$args['class'] = $child['class'] ?? null;
+			$args['id'] = $child['id'] ?? null;
 		}
 		return parent::renderChildContainerStart($key, $args, $child);
 	}
@@ -54,9 +54,9 @@ class Album extends Widget {
 		} else {
 			$ret .= $imageTag;
 		}
-		if ($widget['title']) $ret .= parent::renderEachChildWidget($widget['title']);
-		if ($widget['detail']) $ret .= parent::renderEachChildWidget($widget['detail']);
-		if ($widget['navigator']) {
+		if (isset($widget['title'])) $ret .= parent::renderEachChildWidget($widget['title']);
+		if (isset($widget['detail'])) $ret .= parent::renderEachChildWidget($widget['detail']);
+		if (isset($widget['navigator'])) {
 			if (is_array($widget['navigator'])) {
 				$ret .= (new Nav($widget['navigator']))->build();
 			} else {
@@ -67,7 +67,7 @@ class Album extends Widget {
 	}
 
 	function build() {
-		if ($this->upload) {
+		if (!empty($this->upload)) {
 			$this->children = array_replace_recursive(['upload' => &$this->upload], $this->children);
 		}
 		return parent::build();

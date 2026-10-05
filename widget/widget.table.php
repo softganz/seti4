@@ -3,8 +3,8 @@
  * Widget   :: Table Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-25
- * Version  :: 12
+ * Modified :: 2026-10-05
+ * Version  :: 13
  *
  * @param Array $args
  *
@@ -257,7 +257,7 @@ class Table extends Widget {
 				if (is_string($colKey) && substr($colKey, 0, 1) != '-')
 					$ret .= ' class="' . $colKey . '"';
 				else
-					$ret .= ($this->headerKey[$colNo] ? ' class="col -' . $this->headerKey[$colNo] . ' col-' . $colFirstKey . (is_string($colKey) ? ' ' . $colKey : '') . '"' : '');
+					$ret .= (!empty($this->headerKey[$colNo]) ? ' class="col -' . $this->headerKey[$colNo] . ' col-' . $colFirstKey . (is_string($colKey) ? ' ' . $colKey : '') . '"' : '');
 				$ret .= '>' . $colData . '</td>' . _NL;
 			}
 		}
@@ -306,7 +306,7 @@ class Table extends Widget {
 						$colNo = 0;
 						foreach ($tfoot as $tfoot_text) {
 							++$colNo;
-							$ret .= '	'.(strtolower(substr($tfoot_text,0,3)) == '<td' ? $tfoot_text : '<td class="col -'.$this->headerKey[$colNo].' col-'.$this->headerKey[$colNo].'">'.$tfoot_text.'</td>');
+							$ret .= '	' . (strtolower(substr($tfoot_text, 0, 3)) === '<td' ? $tfoot_text : '<td class="col -' . ($this->headerKey[$colNo] ?? '') . ' col-' . ($this->headerKey[$colNo] ?? '') . '">' . $tfoot_text . '</td>');
 							$ret .= _NL;
 						}
 						$ret .= '</tr>'._NL;
