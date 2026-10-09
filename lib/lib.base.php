@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created  :: 2019-12-08
- * Modified :: 2026-10-05
- * Version  :: 26
+ * Modified :: 2026-10-09
+ * Version  :: 27
  */
 
 namespace SG;
@@ -522,20 +522,23 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 		unset($fld['fld']);
 
 
-		if (array_key_exists('value', $fld)) {
+		if (!is_null($fld['value'])) {
 			$value = $dataOptions->rawValue ? $fld['value'] : htmlspecialchars($fld['value'] ?? '');
 			unset($fld['value']);
 		}
+		// debugMsg('$fld[value] = ' . $fld['value'] . ' value=' . $value . (isset($value) ? 'SET' : 'NOT SET') . ' text = ' . $text);
 		//debugMsg(sg_json_encode($dataOptions));
 
 		$placeholder = getFirst($dataOptions->placeholder ?? null, $emptytext);
 
 		if ($input_type == 'textarea' && $fld['button'] != 'no') $fld['button'] = 'yes';
 
-		foreach ($fld as $k => $v) $attr .= 'data-' . $k . '="' . $v . '" ';
+		foreach ($fld as $k => $v) {
+			if (is_null($v)) continue;
+			$attr .= 'data-' . $k . '="' . $v . '" ';
+		}
 
 		if ($dataOptions) $attr .= ' data-options=\''.sg_json_encode($dataOptions).'\'';
-
 
 		if (is_array($text)) {
 			$ret .= '<ul>'._NL;
@@ -547,7 +550,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 			$text = trim($text ?? '');
 			$value = isset($value) ? $value : $text;
 			$require = $fld['require']?'<span class="require">!</span>':'';
-			if ($input_type == 'datepicker') {
+			if ($input_type === 'datepicker') {
 				$value = $value ? sg_date($value, 'd/m/Y') : date('d/m/Y');
 			}
 			if (is_null($text) || $text == '') {
@@ -596,9 +599,9 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 					. '" '
 					. (!empty($dataOptions->id) ? 'id="'.$dataOptions->id.'"' : '')
 					. 'onclick="" '
-					. $attr
-					. ' data-type="'.$input_type.'" '
-					. 'data-value="'.htmlspecialchars($value).'" '
+					. $attr . ' '
+					. 'data-type="' . $input_type . '" '
+					. 'data-value="' . $value . '" '
 					. ($data ? ' data-data="'.htmlspecialchars(json_encode($data, JSON_UNESCAPED_UNICODE)).'"' : '')
 					. ' title="คลิกเพื่อแก้ไข">'
 					. '<span class="-for-input">'.$text.'</span>'
