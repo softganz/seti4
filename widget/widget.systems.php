@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-10-05
- * Version  :: 101
+ * Modified :: 2026-10-13
+ * Version  :: 102
  *
  * @param Array $args
  *
@@ -878,9 +878,13 @@ class Message extends WidgetBase {
 
 		if (_AJAX) return $result;
 
+		if ($this->responseCode === _HTTP_ERROR_FORBIDDEN) {
+			$templateFile = 'access_denied';
+			$message = file_get_contents(_CORE_FOLDER . '/core/assets/template/' . $templateFile . '.html');
+		}
+
 		return '<div class="widget-message' . ($this->error ? ' -error' : '') . ($this->responseCode ? ' -code-' . $this->responseCode : '') . '">'
 			. $message
-			. ($this->error ? $this->errorMessage : '')
 			. '</div>';
 	}
 } // End of class Message
@@ -1581,7 +1585,7 @@ class PageApi extends PageBase {
 	public $widgetName = 'PageApi';
 	public $version = '0.0.01';
 	private $runInternalMethod = true;
-	protected $actionDefault;
+	protected $actionDefault = null;
 	protected $action;
 	private $actionMethod;
 	protected $args = [];
@@ -1590,15 +1594,15 @@ class PageApi extends PageBase {
 		$this->args = $args;
 		parent::__construct($args);
 
-		if (empty($this->action)) $this->action = $this->actionDefault;
+		$this->action = empty($this->action) ? $this->actionDefault : $this->action;
 
-		if (preg_match('/^api\./', $this->action)) $this->runInternalMethod = false;
+		if (preg_match('/^api\./', $this->action ?? '')) $this->runInternalMethod = false;
 
 		// Replace .a with .A
 		$this->actionMethod = preg_replace_callback(
 			'/\.(\w)/',
 			function($matches) {return strtoupper($matches[1]);},
-			$this->action
+			$this->action ?? ''
 		);
 	}
 

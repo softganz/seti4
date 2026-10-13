@@ -23,6 +23,8 @@ class FileModel {
 		if (is_array($fileId)) {
 			$nodeId = $fileId['nodeId'];
 			$fileId = $fileId['fileId'];
+		} else {
+			$nodeId = null;
 		}
 
 		if (empty($fileId)) return null;
@@ -470,7 +472,7 @@ class FileModel {
 			LogModel::save([
 				'module' => 'photo',
 				'keyword' => 'remove doc',
-				'message' => 'File id '.$fileInfo->info->fid.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')'
+				'message' => 'Photo id ' . $fileId . ' - ' . ($fileInfo->info->file ?? '') . ' was removed from topic ' . ($fileInfo->info->tpid ?? '') . ' by ' . i()->name . '(' . i()->uid . ')'
 			]);
 		}
 		return $result;
@@ -560,7 +562,7 @@ class FileModel {
 	}
 
 	public static function docProperty($file, $folder = null) {
-		$folder = preg_replace('/\/$/', '', $folder);
+		$folder = preg_replace('/\/$/', '', $folder ?? '');
 		$subFolder = 'forum/';
 		if (is_object($file)) {
 			$property = $file;
@@ -576,12 +578,13 @@ class FileModel {
 			return false;
 		}
 
-		if (substr($property->name,0,2) == './') {
-			$folderName = substr(dirname($property->name),2).'/';
+		if (substr($property->name, 0, 2) === './') {
+			$folderName = substr(dirname($property->name), 2) . '/';
 			$fileName = basename($property->name);
 		} else {
 			$dirName = dirname($property->name);
 			$fileName = basename($property->name);
+			$folderName = $folder;
 		}
 
 		if ($dirName == '.') unset($dirName);
@@ -604,11 +607,11 @@ class FileModel {
 		// }
 
 		if ($folder) {
-			$property->name = cfg('folder.abs').$folder.'/'.sg_tis620_file($fileName);
-			$property->src = _URL.$folder.'/'.sg_urlencode($fileName);
+			$property->name = cfg('folder.abs') . $folder . '/' . sg_tis620_file($fileName);
+			$property->src = _URL . $folder . '/' . sg_urlencode($fileName);
 		} else {
-			$property->name = $photo_location = cfg('folder.abs').cfg('upload_folder').$subFolder.$folderName.$fileName;
-			$property->src = _URL.cfg('upload_folder').$subFolder.$folderName.sg_urlencode($fileName);
+			$property->name = $photo_location = cfg('folder.abs') . cfg('upload_folder') . $subFolder . $folderName . $fileName;
+			$property->src = _URL . cfg('upload_folder') . $subFolder . $folderName . sg_urlencode($fileName);
 		}
 
 		if (file_exists($property->name)) {

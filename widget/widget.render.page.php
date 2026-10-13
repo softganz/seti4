@@ -3,8 +3,8 @@
  * Widget   :: Page Render Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
- * Modified :: 2026-09-23
- * Version  :: 17
+ * Modified :: 2026-10-13
+ * Version  :: 18
  *
  * @param String $requestResult
  *
@@ -142,9 +142,9 @@ class renderPageWidget extends Widget {
 					. ($this->pageClass->theme->appBarClass ? ' '.$this->pageClass->theme->appBarClass : ''),
 				'title' => $this->pageClass->theme->title,
 				'subTitle' => isset($this->pageClass->theme->subtitle) ? $this->pageClass->theme->subtitle : NULL,
-				'leading' => $this->pageClass->theme->leading,
-				'trailing' => $this->pageClass->theme->trailing,
-				'navigator' => $this->pageClass->theme->moduleNav ? $this->pageClass->theme->moduleNav : $this->pageClass->theme->toolbar,
+				'leading' => $this->pageClass->theme->leading ?? null,
+				'trailing' => $this->pageClass->theme->trailing ?? null,
+				'navigator' => isset($this->pageClass->theme->moduleNav) ? $this->pageClass->theme->moduleNav : ($this->pageClass->theme->toolbar ?? null),
 			]))->build();
 
 			// $ret .= '<!-- Module Toolbar Start -->'._NL

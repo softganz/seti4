@@ -3,8 +3,8 @@
  * Function :: Common Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-10-05
- * Version  :: 13
+ * Modified :: 2026-10-13
+ * Version  :: 14
  *
  * @param Array $args
  * @return Widget
@@ -81,9 +81,9 @@ function sg_generate_token($length = 16) {
  * Date ( [string Format] ) //--- Show Current Date with format
  * Date ( DateString,FormatString ) Show Date with format
  */
-function sg_date($para1 = NULL, $para2 = NULL) {
+function sg_date($para1 = null, $para2 = null) {
 	$lang = cfg('lang');
-	$date = NULL;
+	$date = null;
 	$format = cfg('date.format.short');
 	$dd = $mm = $yy = $hr = $min = $sec = 0;
 	if (isset($para1) and isset($para2)) {
@@ -99,9 +99,9 @@ function sg_date($para1 = NULL, $para2 = NULL) {
 		else if (is_numeric($date)) $date = date('Y-m-d H:i:s', $date);
 		$date .= ' ';
 		list($d,$t) = explode(" ", $date);
-		//debugMsg('date ='.$date.'=>'.$d.'<br />'.print_o(preg_split('/[-\/]+/',$d),'split'));
-		if (list($yy, $mm, $dd) = preg_split('/[-\/]+/', $d)) {
-			if (strlen($dd) == 4) list($yy, $dd) = [$dd, $yy];
+		// debugMsg('date ='.$date.'=>'.$d.'<br />'.print_o(preg_split('/[-\/]+/',$d),'split'));
+		if (list($yy, $mm, $dd) = array_pad(preg_split('/[-\/]+/', $d), 3, 0)) {
+			if (!(empty($dd)) && strlen($dd) == 4) list($yy, $dd) = [$dd, $yy];
 			$yy = intval($yy);
 			if ($yy > 2400) $yy -= 543;
 		}
@@ -950,7 +950,9 @@ function sg_dropbox($ui, $options = '{}') {
 			text: "",
 			icon: null,
 			iconText : "more_vert",
-			title: "มีเมนูย่อย"
+			title: "มีเมนูย่อย",
+			link: null,
+			url: null
 		}';
 
 	$options = sg_json_decode($options,$default);
@@ -962,11 +964,11 @@ function sg_dropbox($ui, $options = '{}') {
 
 	$dropLink = \SG\getFirst($options->link, $defaultLink);
 
-	$ret .= '<span class="widget-dropbox sg-dropbox '.$options->type.' '.$options->class.'" data-type="'.$options->type.'"'.($options->url ? ' data-url="'.$options->url.'"' : '').'>'
+	$ret = '<span class="widget-dropbox sg-dropbox ' . $options->type . ' ' . $options->class . '" data-type="' . $options->type . '"' . ($options->url ? ' data-url="' . $options->url . '"' : '') . '>'
 		. $dropLink
 		. '<div class="-wrapper -wrapper -hidden">'
 		. '<div class="-arrow -arrow"></div>'
-		. '<div class="-content -content">'.$ui.'</div>'
+		. '<div class="-content -content">' . $ui . '</div>'
 		. '</div>'
 		. '</span>';
 

@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-25
- * Version  :: 54
+ * Modified :: 2026-10-13
+ * Version  :: 55
  *
  * @param Array $args
  *
@@ -297,7 +297,7 @@ class Form extends Widget {
 
 		$containerClass = $formElement->containerclass;
 		if ($formElement->container) {
-			if ($formElement->container['class']) {
+			if (!empty($formElement->container['class'])) {
 				$containerClass .= trim(' ' . $formElement->container['class']);
 			}
 		}
