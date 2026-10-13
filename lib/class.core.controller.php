@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-09-24
- * Version  :: 59
+ * Modified :: 2026-10-13
+ * Version  :: 60
  */
 
 /*************************************************************
@@ -1245,6 +1245,9 @@ class SgCore {
 				$requestResult .= ob_get_contents();
 				ob_end_clean();
 				$request = '';
+			} else if ($home && preg_match('/^https/', $home)) {
+				header("Location: " . $home);
+				die;
 			} else {
 				R()->request = $request = $home;
 				q($request);
