@@ -1,17 +1,17 @@
 <?php
 /**
- * Admin   :: Ban Management
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2024-07-08
- * Modify  :: 2026-01-02
- * Version :: 4
+ * Admin    :: Ban Management
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-07-08
+ * Modified :: 2026-10-16
+ * Version  :: 5
  *
  * @return Widget
  *
- * @usage admin/ban
+ * @uses admin/user/ban
  */
 
-class AdminBan extends Page {
+class AdminUserBan extends Page {
 	var $ip;
 	var $host;
 

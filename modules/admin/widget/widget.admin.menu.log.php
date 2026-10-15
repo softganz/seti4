@@ -3,8 +3,8 @@
  * Admin    :: Log Menu
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2016-11-08
- * Modified :: 2026-08-24
- * Version  :: 4
+ * Modified :: 2026-10-16
+ * Version  :: 5
  *
  * @return Widget
  *
@@ -23,7 +23,7 @@ class AdminMenuLogWidget extends Widget {
 							'leading' => new Icon('block'),
 							'trailing' => new Button([
 								'type' => 'secondary',
-								'href' => Url::link('admin/ban..list'),
+								'href' => Url::link('admin/user/ban..list'),
 								'text' => 'Ban List',
 								'icon' => new Icon('arrow_circle_right'),
 								'iconPosition' => 'right'

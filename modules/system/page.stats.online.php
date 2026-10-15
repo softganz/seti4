@@ -3,12 +3,12 @@
  * Stats    :: Current User Online
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2018-09-01
- * Modified :: 2026-06-29
- * Version  :: 7
+ * Modified :: 2026-10-16
+ * Version  :: 8
  *
  * @return Widget
  *
- * @example stats/online
+ * @uses stats/online
  */
 
 use Softganz\DB;
@@ -109,7 +109,7 @@ class StatsOnline extends Page {
 							'access -date'=>'Access',
 							'amt hits'=>'Hits',
 							'Browser/Host',
-							'ban -center' => $this->right->fullView ? '<a class="sg-action" href="' . Url::link('admin/ban..list') . '" data-rel="box" data-width = "full">Ban</a>' : '',
+							'ban -center' => $this->right->fullView ? '<a class="sg-action" href="' . Url::link('admin/user/ban..list') . '" data-rel="box" data-width = "full">Ban</a>' : '',
 						],
 						'children' => array_map(
 							function($rs) {
@@ -142,7 +142,7 @@ class StatsOnline extends Page {
 									$this->right->fullView ? new Button([
 										'type' => 'link',
 										'class' => 'sg-action',
-										'href' => Url::link('admin/ban', ['ip' => $full_ip, 'host' => $rs->host]),
+										'href' => Url::link('admin/user/ban', ['ip' => $full_ip, 'host' => $rs->host]),
 										'icon' => new Icon('block'),
 										'rel' => 'box',
 										'boxWidth' => 900
