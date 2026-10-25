@@ -3,8 +3,8 @@
  * Function :: Common Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-10-13
- * Version  :: 14
+ * Modified :: 2026-10-14
+ * Version  :: 15
  *
  * @param Array $args
  * @return Widget
@@ -320,6 +320,7 @@ function sg_utf8_to_tis620($string) {
 }
 
 function sg_tis620_to_utf8($tis) {
+	$utf8 = '';
 	for( $i=0 ; $i< strlen($tis) ; $i++ ){
 		$s = substr($tis, $i, 1);
 		$val = ord($s);
@@ -715,6 +716,8 @@ function sg_photo_resize($srcFile, $dstWidth, $dstHeight, $dstFile , $autoSave, 
 	$srcWidth = $srcTypes[0];
 	$srcHeight = $srcTypes[1];
 	$srcType = $srcTypes['mime'];
+
+	if (empty($srcWidth)) return false;
 
 	if ( empty($dstFile) ) $dstFile = $srcFile;
 	if ( !$autoSave ) $dstFile = dirname($srcFile)."/auto_image_resize.jpg";
