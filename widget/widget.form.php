@@ -790,7 +790,7 @@ class Form extends Widget
         }
       } else {
         // option value is string
-        if ($formElement->separate) {
+        if (!empty($formElement->separate)) {
           $name = $formElement->name
             ? $formElement->name . $optionKey
             : ($this->variable
@@ -798,7 +798,7 @@ class Form extends Widget
               : $fieldKey);
         }
 
-        if ($formElement->config->capsule) {
+        if (!empty($formElement->config->capsule)) {
           $ret .=
             "<" .
             $formElement->config->capsule->tag .
@@ -834,7 +834,7 @@ class Form extends Widget
               ? ' readonly="readonly" disabled="disabled"'
               : "") .
             ' name="' .
-            ($formElement->namePrefix
+            (!empty($formElement->namePrefix)
               ? $formElement->namePrefix . $optionKey
               : "") .
             $name .
@@ -870,7 +870,7 @@ class Form extends Widget
             $formElement->type .
             '"' .
             ($formElement->attribute ? " " . $formElement->attribute : "") .
-            $this->onElementEvent("onChange", $formElement->onChange) .
+            $this->onElementEvent("onChange", $formElement->onChange ?? null) .
             "> ";
           $ret .= "<span>" . $optionValue . "</span>";
           $ret .= "</label></abbr>" . _NL;
