@@ -14,882 +14,1548 @@
  *		- Text
  *		- new Widget([])
  *		- (Object) [tagName => String, children = Array]
-*/
-
-class Form extends Widget {
-	var $widgetName = 'Form';
-	var $version = 41;
-	var $tagName = 'form';
-	var $method = 'POST';
-	var $enctype;
-	var $action;
-	var $variable = NULL;
-	var $readonly = false;
-	var $checkValid = false;
-	var $leading; // @deprecated
-	var $trailing; // @deprecated
-	var $title;
-	var $description;
-	var $footer;
-	var $disableOnSubmit = false;
-	var $onSubmit;
-	var $onFormSubmit;
-	var $config; // @deprecated
-	var $children = [];
-	var $formArray = []; // @deprecated
-
-	function __construct($args = []) {
-		$this->initConfig();
-		if (is_object($args) || is_array($args)) {
-			$args = is_array($args) ? (Object) $args : $args;
-			parent::__construct($args);
-		} else {
-			// @deprecated, use argument as array
-			$args = func_get_args();
-			$this->variable = $args[0];
-			$this->action = $args[1];
-			$this->id = $args[2];
-			$this->class = $args[3];
-		}
-
-		self::changeOptionsToChoice($this->children);
-		unset($this->child);
-	}
-
-	private static function changeOptionsToChoice(&$children) {
-		foreach ($children as $key => $value) {
-			if (
-				is_array($value) && in_array($value['type'], ['radio', 'checkbox', 'select'])
-				&& !empty($value['options'])
-				&& !array_key_exists('choice', $value)
-			) {
-				$children[$key]['choice'] = $value['options'];
-				unset($children[$key]['options']);
-			}
-		}
-	}
-
-	function count() {return count($this->children);}
-
-	function addText($text) {$this->children[uniqid()] = $text;}
-
-	// @deprecated, use children
-	function addField($key, $value) {
-		$children = [$value];
-		self::changeOptionsToChoice($children);
-		$this->children[$key] = $children[0];
-	}
-
-	function field($key = NULL) {return $this->children;}
-
-	//TODO:: Move form item to array $this->formArray
-	function renderForm() {
-		$ret = '';
-
-		// Backward compattible
-		if (empty($this->children)) {
-			foreach ($this as $fieldKey => $value) {
-				if (is_null($value) || in_array($fieldKey, ['id', 'class', 'method', 'action', 'variable', 'readonly', 'config', 'widgetName', 'tagName', 'children', 'header', 'enctype', 'title', 'description', 'footer', 'leading', 'trailing'])) continue;
-
-				$this->children[$fieldKey] = $value;
-				unset($this->{$fieldKey});
-			}
-		}
-
-		$this->config = is_array($this->config) ? (Object) $this->config : $this->config;
-		$this->readonly = SG\getFirst($this->readonly, $this->config->readonly ?? null);
-		$this->variable = SG\getFirst($this->variable, $this->config->variable ?? null);
-		$this->enctype = SG\getFirst($this->enctype, $this->config->enctype ?? null);
-		$this->method = SG\getFirst($this->method, $this->config->method ?? null);
-		$this->action = SG\getFirst($this->action, $this->config->action ?? null);
-		$this->checkValid = SG\getFirst($this->checkValid, $this->data['data-checkValid'] ?? null, $this->data['data-checkvalid'] ?? null);
-		$this->title = SG\getFirst($this->title, $this->config->title ?? null);
-		
-		unset($this->config->data['rel']);
-
-		$ret .= _NL . '<!-- sg-form -->' . _NL;
-
-
-		$formStr = '<form'
-			. ' id="' . $this->id . '"'
-			. ' class="widget-form form '
-			. ($this->class ? $this->class : '')
-			. ($this->readonly ? ' -readonly' : '')
-			. ($this->mainAxisAlignment ? ' -main-axis-' . strtolower($this->mainAxisAlignment) : '')
-			. ($this->crossAxisAlignment ? ' -cross-axis-' . strtolower($this->crossAxisAlignment) : '')
-			. '"' // class
-			. ' method="' . $this->method . '"'
-			. ($this->enctype ? ' enctype="multipart/form-data"' : '')
-			. ($this->action ? ' action="' . $this->action . '"' : '')
-			. (isset($this->checkValid) && $this->checkValid ? ' data-checkvalid="true"' : '')
-			. ($this->disableOnSubmit ? ' data-disable-on-submit="' . htmlspecialchars($this->disableOnSubmit) . '"' : '')
-			. (isset($this->attribute) ? ' ' . (is_array($this->attribute) ? sg_implode_attr($this->attribute) : $this->attribute) : '')
-			. (isset($this->config->attr) ? ' ' . (is_array($this->config->attr) ? sg_implode_attr($this->config->attr) : $this->config->attr) : '')
-			. (isset($this->config->data) ? ' ' . (is_array($this->config->data) ? sg_implode_attr($this->config->data) : $this->config->data) : '')
-			. ($this->onSubmit ? ' onSubmit = \'return ' . $this->onSubmit . '(event)\'' : '')
-			. ($this->onFormSubmit ? ' data-onformsubmit = \'' . $this->onFormSubmit . '\'' : '')
-			. ($this->style ? ' style="' . $this->style . '"' : '')
-			. ' >';
-
-		$ret .= $formStr . _NL . _NL;
-
-		$this->formArray['form'] = $formStr;
-
-		$ret .= $this->debug ? $this->renderEachChildWidget(new DebugMsg($this, '$form')) : '';
-
-		// Render form title
-		$ret .= $this->title ? $this->renderEachChildWidget($this->title, NULL, NULL, ['prefix' => '<div class="-title">', 'subfix' => '</div>']) : '';
-
-
-		// Render form description
-		$ret .= $this->description ? $this->renderEachChildWidget($this->description, NULL, NULL, ['prefix' => '<div class="-description">', 'subfix' => '</div>']) : '';
-
-		// Render form children
-		$ret .= $this->renderFormChild($this->children);
-
-		// Render form footer
-		$ret .= $this->footer ? $this->renderEachChildWidget($this->footer, NULL, NULL, ['prefix' => '<div class="-footer">', 'subfix' => '</div>']) : '';
-
-		$ret .= '</form>' . _NL;
-
-		return $ret;
-	}
-
-	protected function renderFormChild($childrens) {
-		$ret = '';
-
-		foreach ($childrens as $fieldKey => $formElement) {
-			if (is_object($formElement) && method_exists($formElement, 'build')) {
-				// Form element is widget
-				$ret .= $formElement->build();
-			} else if (is_object($formElement)) {
-				// Form element is object
-				self::changeOptionsToChoice($formElement->children);
-				if ($formElement->tagName) {
-					$ret .= '<' . $formElement->tagName . ' id="' . $formElement->id . '" class="form-container -type-' . $formElement->tagName . ($formElement->class ? ' ' . $formElement->class : '') . '">'
-						. ($formElement->label ? '<label>' . $formElement->label . '</label>' : '');
-				}
-				$ret .= $this->renderFormChild($formElement->children);
-				if ($formElement->tagName) {
-					$ret .= '</' . $formElement->tagName . '>';
-				}
-			} else if (is_array($formElement) AND is_array(reset($formElement))) {
-				// @deprecated
-				// Form element is array and children is array, Render each children as form element
-				foreach ($formElement as $groupKey => $groupItem) {
-					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
-						// Item is widget
-						$ret .= $groupItem->build();
-					} else {
-						// Item is array or string
-						list($tag_id, $renderChildrenResult) = $this->renderChild($groupKey, $groupItem);
-						$this->formArray[$tag_id] = $renderChildrenResult;
-						$ret .= $renderChildrenResult;
-					}
-				}
-			} else if (is_array($formElement) && array_key_exists('children', $formElement)) {
-				// @deprecated
-				// Form element is array and has key children
-				foreach ($formElement['children'] as $groupKey => $groupItem) {
-					if (is_object($groupItem) && method_exists($groupItem, 'build')) {
-						// Item is widget
-						$ret .= $groupItem->build();
-					} else {
-						// Item is array or string
-						list($tag_id, $renderChildrenResult) = $this->renderChild($groupKey, $groupItem);
-						$this->formArray[$tag_id] = $renderChildrenResult;
-						$ret .= $renderChildrenResult;
-					}
-				}
-			} else {
-				$renderChild = $this->renderChild($fieldKey, $formElement);
-				if ($renderChild) {
-					list($tag_id, $renderChildrenResult) = $renderChild;
-					if ($tag_id) $this->formArray[$tag_id] = $renderChildrenResult;
-					$ret .= $renderChildrenResult;
-				}
-			}
-		}
-		return $ret;
-	}
-
-	protected function renderChild($fieldKey, $formElement) {
-		$ret = '';
-
-		if (is_string($formElement)) {
-			if ($formElement === '<spacer>') $formElement = '<div class="form-item -spacer"></div>';
-			return [NULL, $formElement . _NL . _NL];
-		}
-
-		$formElement = (Object) array_replace(
-			[
-				'type' => null,
-				'id' => null,
-				'class' => null,
-				'name' => null,
-				'label' => null,
-				'require' => null,
-				'preText' => null,
-				'postText' => null,
-				'description' => null,
-				'value' => null,
-				'readonly' => false,
-				'style' => null,
-				'autocomplete' => null,
-				'autocompleteUrl' => null,
-				'attribute' => null,
-				'config' => null,
-				'container' => [],
-				'containerclass' => null,
-				// Type text,password
-				'maxLength' => null,
-				'size' => null,
-				// Type text, password, textarea
-				'placeholder' => null,
-				// Type textarea
-				'cols' => null,
-				'rows' => null,
-				// Type select
-				'multiple' => false,
-				// Type button
-				'icon' => null
-			],
-			(array) $formElement
-		);
-
-		// Fallback attribute
-		$formElement->preText = SG\getFirst($formElement->preText, $formElement->pretext ?? null);
-		$formElement->attribute = SG\getFirst($formElement->attribute, $formElement->attr ?? null, []);
-		$formElement->postText = SG\getFirst($formElement->postText, $formElement->posttext ?? null);
-		$formElement->maxLength = SG\getFirst($formElement->maxLength, $formElement->maxlength ?? null);
-
-		// Remove fallback attribute
-		unset($formElement->pretext, $formElement->attr, $formElement->posttext, $formElement->maxlength);
-
-		$name = '';
-		$tag_id = '';
-		$containerClass = '';
-
-		if ($formElement->config) {
-			$formElement->config = SG\json_decode($formElement->config);
-		}
-
-		if ($formElement->id) {
-			$tag_id = $formElement->id;
-		} else {
-			$tag_id = $formElement->name ? $formElement->name : ($this->variable ? $this->variable . '-' : '') . $fieldKey;
-			$tag_id = 'edit-' . preg_replace(['/([\W]+$)+/','/([\W])+/'], ['', '-'], $tag_id);
-		}
-
-		$tag_id = strtolower($tag_id);
-
-		if ($formElement->name !== false) {
-			$name = $formElement->name ? $formElement->name : ($this->variable ? $this->variable . '[' . $fieldKey . ']' : $fieldKey);
-		}
-
-		if (is_object($formElement->container)) {
-			$formElement->container = (Array) $formElement->container;
-		} else if (is_string($formElement->container) && substr($formElement->container, 0, 1) == '{') {
-			$formElement->container = (Array) SG\json_decode($formElement->container);
-		}
-
-		$isFormGroup = preg_match('/-group/', $formElement->container['class'] ?? '');
-
-		$containerClass = $formElement->containerclass;
-		if ($formElement->container) {
-			if (!empty($formElement->container['class'])) {
-				$containerClass .= trim(' ' . $formElement->container['class']);
-			}
-		}
-
-		$containerTagName = $formElement->container['tagName'] ?? 'div';
-
-		unset($formElement->container['class'], $formElement->container['tagName']);
-
-		// Add open container tag when type is not hidden
-		if ($formElement->type != 'hidden') {
-			$ret .= '<' . $containerTagName . ' id="form-item-' . $tag_id . '" '
-				. 'class="form-' . (in_array($formElement->type, ['','']) ? $formElement->type : 'item -' . $tag_id) . ($containerClass ? ' ' . $containerClass : '')
-				. ($formElement->type === 'hidden' ? ' -hidden' : '')
-				. '"'
-				. ' ' . sg_implode_attr($formElement->container)
-				. '>' . _NL;
-			if ($formElement->label) {
-				$ret .= '	<label for="' . $tag_id . '" class="' . ($formElement->config?->label === 'hide' ? '-hidden' : '') . '">'
-					. $formElement->label . (in_array($formElement->type, ['select', 'radio', 'checkbox']) && !preg_match('/\:$/', $formElement->label) ? ':' : '')
-					. ($formElement->require ? ' <span class="form-required" title="This field is required.">*</span>' : '')
-					. '</label>'
-					. _NL;
-			}
-		}
-
-		if ($isFormGroup) $ret .= '<span class="form-group">' . _NL;
-
-		$ret .= $this->renderAttribute($formElement->preText);
-
-		// Item attribute from key attribute, if not define use key attr
-		// Implode attribute to string
-		if (!is_scalar($formElement->attribute)) {
-			$formElement->attribute = sg_implode_attr($formElement->attribute);
-		}
-
-		switch ($formElement->type) {
-			case 'textfield' : $ret .= $this->renderTextField($tag_id, $name, $formElement); break;
-			case 'hidden': $ret .= $this->renderHidden($tag_id, $name, $formElement); break;
-			case 'text' :
-			case 'number':
-			case 'date':
-			case 'time':
-			case 'email':
-			case 'search':
-			case 'tel':
-			case 'datetime-local':
-			case 'color':
-			case 'password' : $ret .= $this->renderTextPassword($tag_id, $name, $formElement); break;
-			case 'textarea' : $ret .= $this->renderTextArea($tag_id, $name, $formElement); break;
-			case 'radio' :
-			case 'checkbox' : $ret .= $this->renderRadioCheckbox($tag_id, $name, $formElement); break;
-			case 'select' : $ret .= $this->renderSelect($tag_id, $name, $formElement); break;
-			case 'file' : $ret .= $this->renderFile($tag_id, $name, $formElement); break;
-			case 'button' : $ret .= $this->renderButton($tag_id, $name, $formElement); break;
-			case 'submit' : $ret .= $this->renderSubmit($tag_id, $name, $formElement); break;
-			case 'day' : $ret .= $this->renderDate($tag_id, $name, $formElement); break;
-			case 'time' : $ret .= $this->renderTime($tag_id, $name, $formElement); break;
-			case 'hour' : $ret .= $this->renderHour($tag_id, $name, $formElement); break;
-			case 'colorpicker' : $ret .= $this->renderColorPicker($tag_id, $name, $formElement); break;
-		}
-
-		$ret .= $this->renderAttribute($formElement->postText);
-
-		if ($isFormGroup) $ret .= '</span><!-- form-group -->' . _NL;
-		if ($formElement->description) $ret .= _NL . '<div class="description">' . $formElement->description . '</div>';
-
-		// Add class container tag when type is not hidden
-		if ($formElement->type != 'hidden') {
-			$ret .= _NL . '</' . $containerTagName .'>';
-		}
-
-		$ret .= _NL . _NL;
-		return [$tag_id, $ret];
-	}
-
-	protected function renderAttribute($attribute) {
-		if (is_object($attribute) && method_exists($attribute, 'build')) {
-			// Item is widget
-			$ret = $attribute->build();
-		} else {
-			// Item is array or string
-			$ret = $attribute;
-		}
-		return $ret;
-	}
-
-	protected function onElementEvent($event, $onChangeValue) {
-		if (empty($onChangeValue)) return '';
-		switch ($onChangeValue) {
-			case 'submit':
-				$result = ' ' . $event . ' = \'$(this).closest(form).submit()\'';
-				break;
-
-			default:
-				$result = ' ' . $event . ' = \'' . $onChangeValue . '\'';
-				break;
-		}
-		return $result;
-	}
-
-	// Render Field
-
-	protected function renderTextField($tag_id, $name, $formElement) {
-		return '<div id="' . $tag_id . '">' . $formElement->value . '</div>';
-	}
-
-	protected function renderHidden($tag_id, $name, $formElement) {
-		return '<input type="hidden" name="' . $name
-			. '" id="' . $tag_id . '"'
-			. ' class="' . ($formElement->require ? '-require' : '') . '"'
-			. ' value="' . htmlspecialchars($formElement->value ?? '') . '"'
-			. ' placeholder="' . $formElement->placeholder . '"'
-			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
-			. ' >' . _NL . _NL;
-	}
-
-	protected function renderTextPassword($tag_id, $name, $formElement) {
-		$ret = '<input'
-			. ($this->readonly || $formElement->readonly ? ' readonly="readonly"' : '')
-			. ($formElement->autocomplete ? ' autocomplete="' . $formElement->autocomplete . '"' : '')
-			. ($formElement->maxLength ? ' maxlength="' . $formElement->maxLength . '"' : '')
-			. ($formElement->size ? ' size="' . $formElement->size . '"' : '')
-			. ($name ? ' name="' . $name . '"' : ' ')
-			. ' id="' . $tag_id . '"'
-			. ' class="' . ($formElement->type != 'text' ? 'form-text ' : '') . 'form-' . $formElement->type . ' '
-				. ($formElement->class ? $formElement->class . ' ' : '')
-				. ($formElement->require ? '-require ' : '')
-				. ($formElement->readonly ? '-readonly ' : '')
-				. '"'
-			. ' type="' . $formElement->type . '"'
-			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
-			. ($formElement->style ? ' style="' . $formElement->style . '"' : '')
-			. ($formElement->autocompleteUrl ? ' autocomplete-url="' . $formElement->autocompleteUrl . '"' : '')
-			. ' value="' . htmlspecialchars($formElement->value ?? '') . '"'
-			. (isset($formElement->placeholder) ? ' placeholder="' . $formElement->placeholder . '"' : '')
-			. '>';
-		return $ret;
-	}
-
-	protected function renderTextArea($tag_id, $name, $formElement) {
-		$ret = '	<div class="resizable-textarea">'
-			. '<textarea'
-			. ($this->readonly || $formElement->readonly ? ' readonly="readonly"' : '')
-			. ' cols="' . ($formElement->cols ? $formElement->cols : '60').'"'
-			. ' rows="' . ($formElement->rows ? $formElement->rows : 10) . '"'
-			. ' name="' . $name . '"'
-			. ' id="' . $tag_id . '"'
-			. ' class="form-textarea resizable processed'
-				. ($formElement->require ? ' -require' : '')
-				. ($formElement->readonly ? ' -readonly' : '')
-				. ($formElement->class ? ' ' . $formElement->class : '')
-				. '"'
-			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
-			. (isset($formElement->placeholder) ? ' placeholder="' . $formElement->placeholder . '"' : '')
-			. '>'
-			. $formElement->value
-			. '</textarea>'
-			. '<div style="margin-right: -4px;" class="grippie"></div>'
-			. '</div>';
-		return $ret;
-	}
-
-	/*
-	* Options format:
-	* 	[key1 => value1, key2 => value2, groupObject, groupArray, ...]
-	* 		groupArray: [['key' => 'xxx', value'=>'xxx'], ...]
-	*			groupObject: [[key1 => value1], [key2 => value2], ...]
-	* Option value format: LABEL:, SEPARATOR, &nbsp;, space, tab
-	*/
-	protected function renderRadioCheckbox($tag_id, $name, $formElement) {
-		static $itemIndex = 0;
-		$choices = isset($formElement->choices) ? $formElement->choices : $formElement->choice;
-
-		$ret = '';
-		if (!isset($formElement->display)) $formElement->display = '-block';
-
-		// choice begin with RANGE:
-		if (is_string($choices) && preg_match('/^RANGE\:(.*)/', $choices, $out)) {
-			$choices = [];
-			if (preg_match('/\.\./', $out[1])) {
-				// TODO: range from start to end
-			} else {
-				foreach (explode(',', $out[1]) as $value) $choices[trim($value)] = trim($value);
-			}
-		}
-
-		foreach ($choices as $optionKey => $optionValue) {
-			if (is_null($optionValue)) continue;
-
-			if (is_array($optionValue) || is_object($optionValue)) {
-				$optionValue = (Array) $optionValue;
-
-				if (isset($optionValue['key'])) {
-					// Option format is [['key' => 'xxx', value'=>'xxx'],...]
-					$itemFormElement = clone $formElement;
-					$itemFormElement->choice = [$optionValue['key'] => $optionValue['value']];
-					$ret .= $this->renderRadioCheckbox(
-						$tag_id,
-						$name,
-						$itemFormElement
-					);
-				} else {
-					// Option format is ['value'=>'label',...]
-					$ret .= '<span class="options-group"><span class="options-group-label">' . $optionKey . ':</span>'._NL;
-					$itemFormElement = clone $formElement;
-					$itemFormElement->choice = $optionValue;
-					$ret .= $this->renderRadioCheckbox(
-						$tag_id,
-						$name,
-						$itemFormElement
-					);
-					$ret .= '</span>'._NL;
-				}
-			} else {
-				// option value is string
-				if ($formElement->separate) {
-					$name = $formElement->name ? $formElement->name . $optionKey : ($this->variable ? $this->variable . '[' . $fieldKey . $optionKey . ']' : $fieldKey);
-				}
-
-				if ($formElement->config->capsule) {
-					$ret .= '<' . $formElement->config->capsule->tag . ' class="' . $formElement->config->capsule->class . '">';
-				}
-				if (preg_match('/^(LABEL\:)(.*)/', $optionValue, $out)) {
-					$ret .= '<div>' . $out[2] . '</div>';
-				} else if (preg_match('/^SEPARATOR$/', $optionValue)) {
-					$ret .= '<hr class="-sep" />';
-				} else if (preg_match('/^(\&nbsp\;)(.*)/', $optionValue, $out)) {
-					// Show label only
-					$ret .= '<div>' . $out[2] . '</div>';
-				} else {
-					$itemIndex++;
-					$ret .= '<abbr class="' . $formElement->type . '"><label class="option' . ($formElement->display ? ' '.$formElement->display : '') . '">';
-					if (preg_match('/^\s/', $optionValue)) {
-						$ret .= '&nbsp;&nbsp;&nbsp;&nbsp;';
-					}
-					$ret .= '<input id="' . $tag_id . '-' . $optionKey . '"'
-						. ($this->readonly || $formElement->readonly ? ' readonly="readonly" disabled="disabled"' : '')
-						. ' name="' . ($formElement->namePrefix ? $formElement->namePrefix . $optionKey : '') . $name . ($formElement->multiple ? '[' . $optionKey . ']' : '') . '"'
-						. ' value="' . $optionKey . '"';
-					if (is_array($formElement->value)) {
-						$optionValue_key = array_keys($formElement->value);
-						$ret .= in_array($optionKey, array_intersect(array_keys((Array) $choices), (Array) $formElement->value)) ? ' checked="checked"' : '';
-					} else if (isset($formElement->value) && $optionKey == $formElement->value) {
-						$ret .= ' checked="checked"';
-					}
-					$ret .= ' class="form-' . $formElement->type . ($formElement->class ? ' ' . $formElement->class : '') . ($formElement->require?' -require' : '') . '"'
-						. ' type="' . $formElement->type . '"'
-						. ($formElement->attribute ? ' ' . $formElement->attribute : '')
-						. $this->onElementEvent('onChange', $formElement->onChange)
-						. '> ';
-					$ret .= '<span>' . $optionValue . '</span>';
-					$ret .= '</label></abbr>' . _NL;
-				}
-				if ($formElement->config->capsule) {
-					$ret .= '</' . $formElement->config->capsule->tag . '>';
-				}
-			}
-		}
-		return $ret;
-	}
-
-	protected function renderSelect($tag_id, $name, $formElement) {
-		$choices = isset($formElement->choices) ? $formElement->choices : $formElement->choice;
-
-		if (!is_array($formElement->value)) $formElement->value = (Array) $formElement->value;
-		$ret = '	<select '
-			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" ' : '') . ' '
-			. ($formElement->multiple ? 'multiple="multiple" ' : '') . ($formElement->size ? 'size="' . $formElement->size . '" ':'')
-			. 'name="' . $name . '" '
-			. 'id="' . $tag_id . '" '
-			. 'class="form-' . $formElement->type . ($formElement->class ? ' ' . $formElement->class : '') . ($formElement->require ? ' -require' : '') . ($this->readonly || $formElement->readonly ? ' -disabled' : '') . '"'
-			. (!empty($formElement->onChange) ? $this->onElementEvent('onChange', $formElement->onChange) : '')
-			. ($formElement->style ? 'style="' . $formElement->style . '"' : '')
-			. ($formElement->attribute ? ' ' . $formElement->attribute : '')
-			. '>' . _NL;
-
-		if (is_string($choices) && preg_match('/^\</', $choices)) {
-			// Option is HTML Tag
-			$ret .= $choices;
-			unset($choices);
-		} else if (is_string($choices)) {
-			// Option is string and contain ,
-			$selectOptions = [];
-			foreach (explode(',', $choices) as $eachOption) {
-				if (preg_match('/(.*)\=\>(.*)/', $eachOption, $out)) {
-					// Option format key=value
-					$selectOptions[strtoupper(trim($out[1])) === 'NULL' ? '' : trim($out[1])] = trim($out[2]);
-				} else if (preg_match('/^([0-9\-]+)\.\.([0-9\-]+)/', $eachOption, $out)) {
-					// Option format 1..10
-					for ($i = $out[1]; $i <= $out[2]; $i++) {
-						$selectOptions[$i] = $i;
-					}
-				} else {
-					$selectOptions[$eachOption] = $eachOption;
-				}
-			}
-			$choices = $selectOptions;
-		}
-		if ($choices) $ret .= $this->renderSelectOption($choices, $formElement->value);
-		$ret .= '	</select>';
-		return $ret;
-	}
-
-	protected function renderSelectOption($choice, $inputValue) {
-		$ret = '';
-		// debugMsg($choice, '$choice');
-		// debugMsg('<pre>'.print_r($choice,1).'</pre>');
-		foreach ($choice as $optionKey => $optionValue) {
-			if ($optionValue === null) continue;
-
-			if (is_object($optionValue)) $optionValue = (Array) $optionValue;
-
-			if (is_array($optionValue) && array_key_exists('label', $optionValue)) {
-				// Option is array has key label : [1=>"label", attr=>["data-key"=>"data-key-value",...]]
-				$ret .= '	<option'
-					. ' value="' . $optionKey . '"'
-					. (in_array($optionKey, $inputValue) ? ' selected="selected"' : '')
-					. ($optionValue['attr'] ? ' ' . sg_implode_attr($optionValue['attr']) : '')
-					. '>'
-					. $optionValue['label']
-					. '</option>' . _NL;
-			} else if (is_array($optionValue)) {
-				// Option is array, then make option group
-				$ret .= '	<optgroup label="' . $optionKey . '">' . _NL
-					. $this->renderSelectOption($optionValue, $inputValue)
-					. '	</optgroup>' . _NL;
-			} else if (preg_match('/^LABEL\:/', $optionValue)) {
-				// Show as label
-				$ret .= '<option class="-choice-label" disabled="disabled">' . preg_replace('/^LABEL\:/', '', $optionValue) . '</option>' . _NL;
-			} else if (preg_match('/^SEPARATOR$/', $optionValue)) {
-				// Option is seperatpr
-				$ret .= '<option class="-choice-sep -sep" disabled="disabled" style="height: 1px; display: block;">---</option>' . _NL;
-			} else if (preg_match('/^DISABLED\:/', $optionValue)) {
-				// Option is disabled
-				$ret .= '<option class="-choice-disabled" disabled="disabled">' . preg_replace('/^DISABLED\:/', '', $optionValue) . '</option>' . _NL;
-			} else if (preg_match('/^HIDE\:/', $optionValue)) {
-				// Option is hide
-				$ret .= '<option class="-choice-hide -hidden">' . preg_replace('/^HIDE\:/', '', $optionValue) . '</option>' . _NL;
-			} else if (preg_match('/^</', $optionValue)) {
-				$ret .= $optionValue . _NL;
-			} else if (preg_match('/^([0-9\-]+)\.\.([0-9\-]+)$/', $optionValue, $out)) {
-				// Option format 1..10
-				for ($i = $out[1]; $i <= $out[2]; $i++) {
-					$ret .= '<option value="' . $i . '"' . (in_array($i, $inputValue) ? ' selected="selected"' : '') . '>' . $i . '</option>' . _NL;
-				}
-			} else if (is_int($optionKey) && preg_match('/\,/', $optionValue)) {
-				// debugMsg($optionKey . ' IS ' . gettype($optionKey));
-				// debugMsg(ctype_digit((string)$key));
-				// Option format 1,5,10
-				foreach (explode(',', $optionValue) as $value) {
-					$ret .= '<option value="' . $value . '"' . (in_array($value, $inputValue) ? ' selected="selected"' : '') . '>' . $value . '</option>' . _NL;
-				}
-			} else {
-				// Option is string
-				$ret .= '<option value="' . $optionKey . '"' . (in_array($optionKey, $inputValue) ? ' selected="selected"' : '') . '>' . $optionValue . '</option>' . _NL;
-			}
-		}
-		return $ret;
-	}
-
-	protected function renderFile($tag_id, $name, $formElement) {
-		$formElement = (object) array_replace(
-			[
-				'count' => null,
-				'size' => null,
-				'multiple' => null,
-			],
-			(array) $formElement
-		);
-
-		$ret = '';
-
-		if ($formElement->count) {
-			for ($i = 1; $i <= $formElement->count; $i++) {
-				$ret .= '<input '
-					. ($formElement->size ? 'size="' . $formElement->size . '" ' : '')
-					. 'name="' . $name . '[' . $i . ']" '
-					. 'id="' . $tag_id . '-' . $i . '" '
-					. 'class="form-' . $formElement->type
-					. ($formElement->require ? ' -require' : '')
-					. '" '
-					. 'type="'.$formElement->type.'" '
-					. '>';
-			}
-		} else {
-			$ret .= '<input '
-				. ($formElement->size ? 'size="' . $formElement->size . '" ' : '')
-				. 'name="' . $name . '" '
-				. 'id="' . $tag_id . '" '
-				. 'class="form-' . $formElement->type
-				. ($formElement->class ? ' ' . $formElement->class : '')
-				. ($formElement->require ? ' -require' : '')
-				. '" '
-				. 'type="' . $formElement->type . '" '
-				. ($formElement->multiple ? 'multiple="multiple"' : '')
-				. ($formElement->accept ? 'accept="' . $formElement->accept . '" ' : '')
-				. ($formElement->attribute ? ' ' . $formElement->attribute : '')
-				. '>';
-		}
-		return $ret;
-	}
-
-	protected function renderButton($tag_id, $name, $formElement) {
-		$ret = '';
-		$text = isset($formElement->text) ? $formElement->text : $formElement->value;
-		if (empty($formElement->items) && !empty($text)) {
-			// Single button
-			$ret .= '<button type="submit" '
-				. (empty($formElement->name) ? '' : 'name="' . $name . '"')
-				. ' class="btn ' . ($formElement->class ? $formElement->class : '-primary') . '"'
-				. ' value="' . htmlspecialchars(strip_tags($formElement->value)) . '"'
-				. ($this->readonly || $formElement->readonly ? ' disabled="disabled" ' : '')
-				. ($formElement->attribute ? ' ' . $formElement->attribute : '')
-				. '>'
-				// Have parameter icon, show icon and text
-				. ($formElement->icon ? (function($icon, $text) {
-					return ($icon ? $this->renderEachChildWidget($icon) : '')
-						. ($text ? '<span>' . $text . '</span>' : '');
-				})($formElement->icon, $text) : $text)
-				. '</button>';
-		} else if (is_array($formElement->items) && !empty($formElement->items['value'])) {
-			$ret .= '<button'
-				. (isset($formElement->items['type']) ? ' type="' . $formElement->items['type'] . '"' : '')
-				. ' name="' . (isset($formElement->items['name']) ? $formElement->items['name'] : $name).'"'
-				. ' class="btn' . ($formElement->items['class'] ? ' ' . $formElement->items['class'] : '') . '"'
-				. ' value="' . htmlspecialchars(strip_tags($formElement->items['value'])) . '"'
-				. ($this->readonly || $formElement->readonly ? ' disabled="disabled"' : '')
-				. $formElement->attribute
-				. ' >'
-				. $formElement->items['value']
-				. '</button>';
-		} else {
-			// Multiple button
-			foreach ($formElement->items as $key => $button) {
-				if (is_null($button)) continue;
-
-				$button = array_replace(
-					[
-						'type' => null,
-						'name' => null,
-						'class' => null,
-						'value' => null,
-						'btnvalue' => null,
-						'attribute' => null,
-					],
-					(array) $button
-				);
-
-				if ($button['type'] === 'text') {
-					$ret .= $button['value'];
-				} else {
-					$ret .= '<button'
-						. (isset($button['type']) ? ' type="' . $button['type'] . '"' : '')
-						. ' name="' . SG\getFirst($button['name'] , is_string($key) ? $key : $name) . '"'
-						. ' class="btn' . ($button['class'] ? ' ' . $button['class'] : '') . '"'
-						. ' value="' . SG\getFirst($button['btnvalue'], htmlspecialchars(strip_tags($button['value']))) . '"'
-						. ($this->readonly || $formElement->readonly ? ' disabled="disabled"' : '')
-						. ($button['attribute'] && (is_array($button['attribute']) || is_object($button['attribute'])) ? ' ' . sg_implode_attr($button['attribute']) : $button['attribute'])
-						.' >'
-						. $button['value']
-						. '</button>';
-				}
-			}
-		}
-		return $ret;
-	}
-
-	protected function renderSubmit($tag_id, $name, $formElement) {
-		$ret = '';
-		foreach ($formElement->items as $key=>$value) {
-			if (substr($key,0,4) === 'text') $ret .= $value;
-			else $ret .= '	<input '
-				. 'name="' . $key . '" '
-				. ($this->isReadOnly || $formElement->readonly?'readonly="readonly" ':'')
-				. 'class="btn' . ($key === 'save' ? ' -primary' : '') . ' -' . $key . ($formElement->class ? ' ' . $formElement->class : '') . '" '
-				. 'type="' . $formElement->type . '" '
-				. 'value="' . $value . '">';
-		}
-		return $ret;
-	}
-
-	protected function renderDate($tag_id, $name, $formElement) {
-		$months['BC'] = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-		$months['DC'] = ['Jan', 'Feb', 'Apr', 'March', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-		list($year_from, $year_no, $year_sort) = explode(',', $formElement->year->range);
-		if (empty($year_from)) $year_from = date('Y');
-		else if (in_array(substr($year_from, 0, 1), ['-','+'])) $year_from = date('Y') + $year_from;
-		if (empty($year_no)) $year_no = 5;
-
-		$ret = '<select '
-			. 'id="' . $tag_id . '-date" '
-			. 'class="form-select' . ($formElement->class ? ' ' . $formElement->class : '').'" '
-			. 'name="' . $name . '[date]" ' . ($this->readonly || $formElement->readonly ? 'readonly="readonly" disabled="disabled" ' : '')
-			. '>' . _NL;
-		$ret .= '<option value="">' . ($formElement->year->type === 'BC' ? 'วันที่' : 'Date') . '</option>' . _NL;
-		for ($i = 1; $i <= 31; $i++) {
-			$ret .= '<option value="' . sprintf('%02d', $i).'"' . ($formElement->value->date == $i ? ' selected' : '') . '>' . sprintf('%02d', $i) . '</option>' . _NL;
-		}
-		$ret .= '</select>' . _NL;
-		$ret .= '<select '
-			. 'id="' . $tag_id . '-month" '
-			. 'class="form-select' . ($formElement->class ? ' ' . $formElement->class : '') . '" '
-			. 'name="' . $name . '[month]" '
-			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" disabled="disabled" ' : '')
-			. '>' . _NL;
-		$ret .= '<option value="">' . ($formElement->year->type === 'BC' ? 'เดือน' : 'Month') . '</option>' . _NL;
-		for ($i = 1; $i <= 12; $i++) {
-			$ret .= '<option value="' . sprintf('%02d', $i) . '"' . ($formElement->value->month == $i ? ' selected' : '') . '>' . sprintf('%02d', $i) . '-' . ($formElement->year->type === 'BC' ? $months['BC'][$i-1] : $months['DC'][$i-1]) . '</option>' . _NL;
-		}
-		$ret .= '</select>' . _NL;
-		$ret .= '<select '
-			. 'id="' . $tag_id . '-year" '
-			. 'class="form-select' . ($formElement->class ? ' ' . $formElement->class : '') . '" '
-			. 'name="' . $name . '[year]" '
-			. ($this->readonly || $formElement->readonly ? 'readonly="readonly" disabled="disabled" ' : '')
-			. '>' . _NL;
-		$ret .= '<option value="">' . ($formElement->year->type === 'BC' ? 'ปี พ.ศ.' : 'Year') . '</option>' . _NL;
-		if ($year_sort === 'DESC') {
-			for ($i = $year_from; $i > $year_from - $year_no; $i--) {
-				$ret .= '<option value="' . $i . '"' . ($formElement->value->year == $i ? ' selected' : '') . '>' . ($formElement->year->type === 'BC' ? $i + 543 : $i) . '</option>' . _NL;
-			}
-		} else {
-			for ($i = $year_from; $i < $year_from + $year_no; $i++) {
-				$ret .= '<option value="' . $i . '"' . ($formElement->value->year == $i?' selected' : '') . '>' . ($formElement->year->type === 'BC' ? $i + 543 : $i) . '</option>' . _NL;
-			}
-		}
-		$ret .= '</select>' . _NL;
-		return $ret;
-	}
-
-	protected function renderTime($tag_id, $name, $formElement) {
-		$times = [];
-		$start_time = SG\getFirst($formElement->start, 0);
-		$end_time = SG\getFirst($formElement->end ,24);
-		$step_time = SG\getFirst($formElement->step, 15);
-		for ($hr = $start_time; $hr < $end_time; $hr++) {
-			for ($min = 0; $min < 60; $min += $step_time) {
-				$times[] = sprintf('%02d', $hr) . ':' . sprintf('%02d', $min);
-			}
-		}
-		$ret = '<select id="' . $tag_id . '" '
-			. 'class="form-select' . ($formElement->class ? ' ' . $formElement->class : '') . '" '
-			. 'name="' . $name . '"'
-			. '>' . _NL;
-		foreach ($times as $time) {
-			$ret .= '<option value="' . $time . '"' . ($time == $formElement->value ? ' selected="selected"' : '') . '>' . $time . '</option>';
-		}
-		$ret .= '</select>';
-		return $ret;
-	}
-
-	protected function renderHour($tag_id, $name, $formElement) {
-		$start_time = SG\getFirst($formElement->start, 0);
-		$end_time = SG\getFirst($formElement->end, 24);
-		$step_time = SG\getFirst($formElement->step, 15);
-		$ret = '<select id="' . $tag_id . '" '
-			. 'class="form-select" '
-			. 'name="' . $name . '[hour]">' . _NL;
-		for ($hr = $start_time; $hr < $end_time; $hr++) {
-			$ret .= '<option value="' . sprintf('%02d', $hr) . '"' . ($hr == $formElement->value->hour ? ' selected="selected"' : '') . '>' . sprintf('%02d', $hr) . '</option>';
-		}
-		$ret .= '</select> : ';
-		$ret .= '<select id="' . $tag_id . '" class="form-select" name="' . $name . '[min]">' . _NL;
-		for ($min = 0; $min < 60; $min++) {
-			$ret .= '<option value="' . sprintf('%02d', $min).'"' . ($min == $formElement->value->min ? ' selected="selected"' : '') . '>' . sprintf('%02d', $min) . '</option>';
-		}
-		$ret .= '</select>';
-		return $ret;
-	}
-
-	protected function renderColorPicker($tag_id, $name, $formElement) {
-		$ret = '';
-		if (empty($formElement->color)) $formElement->color='#ffffff, #cccccc, #c0c0c0, #999999, #666666, #333333, #000000, #ffcccc, #ff6666, #ff0000, #cc0000, #990000, #660000, #330000, #ffcc99, #ff9966, #ff9900, #ff6600, #cc6600, #993300, #663300, #ffff99, #ffff66, #ffcc66, #ffcc33, #cc9933, #996633, #663333, #ffffcc, #ffff33, #ffff00, #ffcc00, #999900, #666600, #333300, #99ff99, #66ff99, #33ff33, #33cc00, #009900, #006600, #003300, #99ffff, #33ffff, #66cccc, #00cccc, #339999, #336666, #003333, #ccffff, #66ffff, #33ccff, #3366ff, #3333ff, #000099, #000066, #ccccff, #9999ff, #6666cc, #6633ff, #6600cc, #333399, #330099, #ffccff, #ff99ff, #cc66cc, #cc33cc, #993399, #663366, #330033';
-		foreach (explode(',', $formElement->color) as $color) {
-			$color = trim($color);
-			$ret .= '<span '
-				. 'style="background:' . $color . '; display:inline-block; padding: 6px; border-radius: 4px; width: 3.2rem; height: 3.2rem;">'
-				. '<input type="radio" name="' . $name.'" value="' . $color . '"' . ($color == $formElement->value ? ' checked="checked"' : '')
-				. ' style="outline: none; box-shadow: none; margin: 0; padding: 0; height: 2rem; width: 2rem; border: none;">'
-				. '</span>' . _NL;
-		}
-		return $ret;
-	}
-
-	function build() {
-		return $this->renderForm();
-	}
-
-	function get($id = NULL) {
-		$this->renderForm();
-		return $id ? $this->formArray[$id] : $this->formArray;
-	}
+ */
+
+class Form extends Widget
+{
+  var $widgetName = "Form";
+  var $version = 41;
+  var $tagName = "form";
+  var $method = "POST";
+  var $enctype;
+  var $action;
+  var $variable = null;
+  var $readonly = false;
+  var $checkValid = false;
+  var $leading; // @deprecated
+  var $trailing; // @deprecated
+  var $title;
+  var $description;
+  var $footer;
+  var $disableOnSubmit = false;
+  var $onSubmit;
+  var $onFormSubmit;
+  var $config; // @deprecated
+  var $children = [];
+  var $formArray = []; // @deprecated
+
+  function __construct($args = [])
+  {
+    $this->initConfig();
+    if (is_object($args) || is_array($args)) {
+      $args = is_array($args) ? (object) $args : $args;
+      parent::__construct($args);
+    } else {
+      // @deprecated, use argument as array
+      $args = func_get_args();
+      $this->variable = $args[0];
+      $this->action = $args[1];
+      $this->id = $args[2];
+      $this->class = $args[3];
+    }
+
+    self::changeOptionsToChoice($this->children);
+    unset($this->child);
+  }
+
+  private static function changeOptionsToChoice(&$children)
+  {
+    foreach ($children as $key => $value) {
+      if (
+        is_array($value) &&
+        in_array($value["type"], ["radio", "checkbox", "select"]) &&
+        !empty($value["options"]) &&
+        !array_key_exists("choice", $value)
+      ) {
+        $children[$key]["choice"] = $value["options"];
+        unset($children[$key]["options"]);
+      }
+    }
+  }
+
+  function count()
+  {
+    return count($this->children);
+  }
+
+  function addText($text)
+  {
+    $this->children[uniqid()] = $text;
+  }
+
+  // @deprecated, use children
+  function addField($key, $value)
+  {
+    $children = [$value];
+    self::changeOptionsToChoice($children);
+    $this->children[$key] = $children[0];
+  }
+
+  function field($key = null)
+  {
+    return $this->children;
+  }
+
+  //TODO:: Move form item to array $this->formArray
+  function renderForm()
+  {
+    $ret = "";
+
+    // Backward compattible
+    if (empty($this->children)) {
+      foreach ($this as $fieldKey => $value) {
+        if (
+          is_null($value) ||
+          in_array($fieldKey, [
+            "id",
+            "class",
+            "method",
+            "action",
+            "variable",
+            "readonly",
+            "config",
+            "widgetName",
+            "tagName",
+            "children",
+            "header",
+            "enctype",
+            "title",
+            "description",
+            "footer",
+            "leading",
+            "trailing",
+          ])
+        ) {
+          continue;
+        }
+
+        $this->children[$fieldKey] = $value;
+        unset($this->{$fieldKey});
+      }
+    }
+
+    $this->config = is_array($this->config)
+      ? (object) $this->config
+      : $this->config;
+    $this->readonly = SG\getFirst(
+      $this->readonly,
+      $this->config->readonly ?? null,
+    );
+    $this->variable = SG\getFirst(
+      $this->variable,
+      $this->config->variable ?? null,
+    );
+    $this->enctype = SG\getFirst(
+      $this->enctype,
+      $this->config->enctype ?? null,
+    );
+    $this->method = SG\getFirst($this->method, $this->config->method ?? null);
+    $this->action = SG\getFirst($this->action, $this->config->action ?? null);
+    $this->checkValid = SG\getFirst(
+      $this->checkValid,
+      $this->data["data-checkValid"] ?? null,
+      $this->data["data-checkvalid"] ?? null,
+    );
+    $this->title = SG\getFirst($this->title, $this->config->title ?? null);
+
+    unset($this->config->data["rel"]);
+
+    $ret .= _NL . "<!-- sg-form -->" . _NL;
+
+    $formStr =
+      "<form" .
+      ' id="' .
+      $this->id .
+      '"' .
+      ' class="widget-form form ' .
+      ($this->class ? $this->class : "") .
+      ($this->readonly ? " -readonly" : "") .
+      ($this->mainAxisAlignment
+        ? " -main-axis-" . strtolower($this->mainAxisAlignment)
+        : "") .
+      ($this->crossAxisAlignment
+        ? " -cross-axis-" . strtolower($this->crossAxisAlignment)
+        : "") .
+      '"' . // class
+      ' method="' .
+      $this->method .
+      '"' .
+      ($this->enctype ? ' enctype="multipart/form-data"' : "") .
+      ($this->action ? ' action="' . $this->action . '"' : "") .
+      (isset($this->checkValid) && $this->checkValid
+        ? ' data-checkvalid="true"'
+        : "") .
+      ($this->disableOnSubmit
+        ? ' data-disable-on-submit="' .
+          htmlspecialchars($this->disableOnSubmit) .
+          '"'
+        : "") .
+      (isset($this->attribute)
+        ? " " .
+          (is_array($this->attribute)
+            ? sg_implode_attr($this->attribute)
+            : $this->attribute)
+        : "") .
+      (isset($this->config->attr)
+        ? " " .
+          (is_array($this->config->attr)
+            ? sg_implode_attr($this->config->attr)
+            : $this->config->attr)
+        : "") .
+      (isset($this->config->data)
+        ? " " .
+          (is_array($this->config->data)
+            ? sg_implode_attr($this->config->data)
+            : $this->config->data)
+        : "") .
+      ($this->onSubmit
+        ? ' onSubmit = \'return ' . $this->onSubmit . '(event)\''
+        : "") .
+      ($this->onFormSubmit
+        ? ' data-onformsubmit = \'' . $this->onFormSubmit . '\''
+        : "") .
+      ($this->style ? ' style="' . $this->style . '"' : "") .
+      " >";
+
+    $ret .= $formStr . _NL . _NL;
+
+    $this->formArray["form"] = $formStr;
+
+    $ret .= $this->debug
+      ? $this->renderEachChildWidget(new DebugMsg($this, '$form'))
+      : "";
+
+    // Render form title
+    $ret .= $this->title
+      ? $this->renderEachChildWidget($this->title, null, null, [
+        "prefix" => '<div class="-title">',
+        "subfix" => "</div>",
+      ])
+      : "";
+
+    // Render form description
+    $ret .= $this->description
+      ? $this->renderEachChildWidget($this->description, null, null, [
+        "prefix" => '<div class="-description">',
+        "subfix" => "</div>",
+      ])
+      : "";
+
+    // Render form children
+    $ret .= $this->renderFormChild($this->children);
+
+    // Render form footer
+    $ret .= $this->footer
+      ? $this->renderEachChildWidget($this->footer, null, null, [
+        "prefix" => '<div class="-footer">',
+        "subfix" => "</div>",
+      ])
+      : "";
+
+    $ret .= "</form>" . _NL;
+
+    return $ret;
+  }
+
+  protected function renderFormChild($childrens)
+  {
+    $ret = "";
+
+    foreach ($childrens as $fieldKey => $formElement) {
+      if (is_object($formElement) && method_exists($formElement, "build")) {
+        // Form element is widget
+        $ret .= $formElement->build();
+      } elseif (is_object($formElement)) {
+        // Form element is object
+        self::changeOptionsToChoice($formElement->children);
+        if (!empty($formElement->tagName)) {
+          $ret .=
+            "<" .
+            $formElement->tagName .
+            ' id="' .
+            $formElement->id .
+            '" class="form-container -type-' .
+            $formElement->tagName .
+            ($formElement->class ? " " . $formElement->class : "") .
+            '">' .
+            ($formElement->label
+              ? "<label>" . $formElement->label . "</label>"
+              : "");
+        }
+        $ret .= $this->renderFormChild($formElement->children);
+        if (!empty($formElement->tagName)) {
+          $ret .= "</" . $formElement->tagName . ">";
+        }
+      } elseif (is_array($formElement) and is_array(reset($formElement))) {
+        // @deprecated
+        // Form element is array and children is array, Render each children as form element
+        foreach ($formElement as $groupKey => $groupItem) {
+          if (is_object($groupItem) && method_exists($groupItem, "build")) {
+            // Item is widget
+            $ret .= $groupItem->build();
+          } else {
+            // Item is array or string
+            [$tag_id, $renderChildrenResult] = $this->renderChild(
+              $groupKey,
+              $groupItem,
+            );
+            $this->formArray[$tag_id] = $renderChildrenResult;
+            $ret .= $renderChildrenResult;
+          }
+        }
+      } elseif (
+        is_array($formElement) &&
+        array_key_exists("children", $formElement)
+      ) {
+        // @deprecated
+        // Form element is array and has key children
+        foreach ($formElement["children"] as $groupKey => $groupItem) {
+          if (is_object($groupItem) && method_exists($groupItem, "build")) {
+            // Item is widget
+            $ret .= $groupItem->build();
+          } else {
+            // Item is array or string
+            [$tag_id, $renderChildrenResult] = $this->renderChild(
+              $groupKey,
+              $groupItem,
+            );
+            $this->formArray[$tag_id] = $renderChildrenResult;
+            $ret .= $renderChildrenResult;
+          }
+        }
+      } else {
+        $renderChild = $this->renderChild($fieldKey, $formElement);
+        if ($renderChild) {
+          [$tag_id, $renderChildrenResult] = $renderChild;
+          if ($tag_id) {
+            $this->formArray[$tag_id] = $renderChildrenResult;
+          }
+          $ret .= $renderChildrenResult;
+        }
+      }
+    }
+    return $ret;
+  }
+
+  protected function renderChild($fieldKey, $formElement)
+  {
+    $ret = "";
+
+    if (is_string($formElement)) {
+      if ($formElement === "<spacer>") {
+        $formElement = '<div class="form-item -spacer"></div>';
+      }
+      return [null, $formElement . _NL . _NL];
+    }
+
+    $formElement = (object) array_replace(
+      [
+        "type" => null,
+        "id" => null,
+        "class" => null,
+        "name" => null,
+        "label" => null,
+        "require" => null,
+        "preText" => null,
+        "postText" => null,
+        "description" => null,
+        "value" => null,
+        "readonly" => false,
+        "style" => null,
+        "autocomplete" => null,
+        "autocompleteUrl" => null,
+        "attribute" => null,
+        "config" => null,
+        "container" => [],
+        "containerclass" => null,
+        // Type text,password
+        "maxLength" => null,
+        "size" => null,
+        // Type text, password, textarea
+        "placeholder" => null,
+        // Type textarea
+        "cols" => null,
+        "rows" => null,
+        // Type select
+        "multiple" => false,
+        // Type button
+        "icon" => null,
+      ],
+      (array) $formElement,
+    );
+
+    // Fallback attribute
+    $formElement->preText = SG\getFirst(
+      $formElement->preText,
+      $formElement->pretext ?? null,
+    );
+    $formElement->attribute = SG\getFirst(
+      $formElement->attribute,
+      $formElement->attr ?? null,
+      [],
+    );
+    $formElement->postText = SG\getFirst(
+      $formElement->postText,
+      $formElement->posttext ?? null,
+    );
+    $formElement->maxLength = SG\getFirst(
+      $formElement->maxLength,
+      $formElement->maxlength ?? null,
+    );
+
+    // Remove fallback attribute
+    unset(
+      $formElement->pretext,
+      $formElement->attr,
+      $formElement->posttext,
+      $formElement->maxlength,
+    );
+
+    $name = "";
+    $tag_id = "";
+    $containerClass = "";
+
+    if ($formElement->config) {
+      $formElement->config = SG\json_decode($formElement->config);
+    }
+
+    if ($formElement->id) {
+      $tag_id = $formElement->id;
+    } else {
+      $tag_id = $formElement->name
+        ? $formElement->name
+        : ($this->variable ? $this->variable . "-" : "") . $fieldKey;
+      $tag_id =
+        "edit-" .
+        preg_replace(['/([\W]+$)+/', "/([\W])+/"], ["", "-"], $tag_id);
+    }
+
+    $tag_id = strtolower($tag_id);
+
+    if ($formElement->name !== false) {
+      $name = $formElement->name
+        ? $formElement->name
+        : ($this->variable
+          ? $this->variable . "[" . $fieldKey . "]"
+          : $fieldKey);
+    }
+
+    if (is_object($formElement->container)) {
+      $formElement->container = (array) $formElement->container;
+    } elseif (
+      is_string($formElement->container) &&
+      substr($formElement->container, 0, 1) == "{"
+    ) {
+      $formElement->container = (array) SG\json_decode($formElement->container);
+    }
+
+    $isFormGroup = preg_match(
+      "/-group/",
+      $formElement->container["class"] ?? "",
+    );
+
+    $containerClass = $formElement->containerclass;
+    if ($formElement->container) {
+      if (!empty($formElement->container["class"])) {
+        $containerClass .= trim(" " . $formElement->container["class"]);
+      }
+    }
+
+    $containerTagName = $formElement->container["tagName"] ?? "div";
+
+    unset($formElement->container["class"], $formElement->container["tagName"]);
+
+    // Add open container tag when type is not hidden
+    if ($formElement->type != "hidden") {
+      $ret .=
+        "<" .
+        $containerTagName .
+        ' id="form-item-' .
+        $tag_id .
+        '" ' .
+        'class="form-' .
+        (in_array($formElement->type, ["", ""])
+          ? $formElement->type
+          : "item -" . $tag_id) .
+        ($containerClass ? " " . $containerClass : "") .
+        ($formElement->type === "hidden" ? " -hidden" : "") .
+        '"' .
+        " " .
+        sg_implode_attr($formElement->container) .
+        ">" .
+        _NL;
+      if ($formElement->label) {
+        $ret .=
+          '	<label for="' .
+          $tag_id .
+          '" class="' .
+          ($formElement->config?->label === "hide" ? "-hidden" : "") .
+          '">' .
+          $formElement->label .
+          (in_array($formElement->type, ["select", "radio", "checkbox"]) &&
+          !preg_match('/\:$/', $formElement->label)
+            ? ":"
+            : "") .
+          ($formElement->require
+            ? ' <span class="form-required" title="This field is required.">*</span>'
+            : "") .
+          "</label>" .
+          _NL;
+      }
+    }
+
+    if ($isFormGroup) {
+      $ret .= '<span class="form-group">' . _NL;
+    }
+
+    $ret .= $this->renderAttribute($formElement->preText);
+
+    // Item attribute from key attribute, if not define use key attr
+    // Implode attribute to string
+    if (!is_scalar($formElement->attribute)) {
+      $formElement->attribute = sg_implode_attr($formElement->attribute);
+    }
+
+    switch ($formElement->type) {
+      case "textfield":
+        $ret .= $this->renderTextField($tag_id, $name, $formElement);
+        break;
+      case "hidden":
+        $ret .= $this->renderHidden($tag_id, $name, $formElement);
+        break;
+      case "text":
+      case "number":
+      case "date":
+      case "time":
+      case "email":
+      case "search":
+      case "tel":
+      case "datetime-local":
+      case "color":
+      case "password":
+        $ret .= $this->renderTextPassword($tag_id, $name, $formElement);
+        break;
+      case "textarea":
+        $ret .= $this->renderTextArea($tag_id, $name, $formElement);
+        break;
+      case "radio":
+      case "checkbox":
+        $ret .= $this->renderRadioCheckbox($tag_id, $name, $formElement);
+        break;
+      case "select":
+        $ret .= $this->renderSelect($tag_id, $name, $formElement);
+        break;
+      case "file":
+        $ret .= $this->renderFile($tag_id, $name, $formElement);
+        break;
+      case "button":
+        $ret .= $this->renderButton($tag_id, $name, $formElement);
+        break;
+      case "submit":
+        $ret .= $this->renderSubmit($tag_id, $name, $formElement);
+        break;
+      case "day":
+        $ret .= $this->renderDate($tag_id, $name, $formElement);
+        break;
+      case "time":
+        $ret .= $this->renderTime($tag_id, $name, $formElement);
+        break;
+      case "hour":
+        $ret .= $this->renderHour($tag_id, $name, $formElement);
+        break;
+      case "colorpicker":
+        $ret .= $this->renderColorPicker($tag_id, $name, $formElement);
+        break;
+    }
+
+    $ret .= $this->renderAttribute($formElement->postText);
+
+    if ($isFormGroup) {
+      $ret .= "</span><!-- form-group -->" . _NL;
+    }
+    if ($formElement->description) {
+      $ret .=
+        _NL .
+        '<div class="description">' .
+        $formElement->description .
+        "</div>";
+    }
+
+    // Add class container tag when type is not hidden
+    if ($formElement->type != "hidden") {
+      $ret .= _NL . "</" . $containerTagName . ">";
+    }
+
+    $ret .= _NL . _NL;
+    return [$tag_id, $ret];
+  }
+
+  protected function renderAttribute($attribute)
+  {
+    if (is_object($attribute) && method_exists($attribute, "build")) {
+      // Item is widget
+      $ret = $attribute->build();
+    } else {
+      // Item is array or string
+      $ret = $attribute;
+    }
+    return $ret;
+  }
+
+  protected function onElementEvent($event, $onChangeValue)
+  {
+    if (empty($onChangeValue)) {
+      return "";
+    }
+    switch ($onChangeValue) {
+      case "submit":
+        $result = " " . $event . ' = \'$(this).closest(form).submit()\'';
+        break;
+
+      default:
+        $result = " " . $event . ' = \'' . $onChangeValue . '\'';
+        break;
+    }
+    return $result;
+  }
+
+  // Render Field
+
+  protected function renderTextField($tag_id, $name, $formElement)
+  {
+    return '<div id="' . $tag_id . '">' . $formElement->value . "</div>";
+  }
+
+  protected function renderHidden($tag_id, $name, $formElement)
+  {
+    return '<input type="hidden" name="' .
+      $name .
+      '" id="' .
+      $tag_id .
+      '"' .
+      ' class="' .
+      ($formElement->require ? "-require" : "") .
+      '"' .
+      ' value="' .
+      htmlspecialchars($formElement->value ?? "") .
+      '"' .
+      ' placeholder="' .
+      $formElement->placeholder .
+      '"' .
+      ($formElement->attribute ? " " . $formElement->attribute : "") .
+      " >" .
+      _NL .
+      _NL;
+  }
+
+  protected function renderTextPassword($tag_id, $name, $formElement)
+  {
+    $ret =
+      "<input" .
+      ($this->readonly || $formElement->readonly
+        ? ' readonly="readonly"'
+        : "") .
+      ($formElement->autocomplete
+        ? ' autocomplete="' . $formElement->autocomplete . '"'
+        : "") .
+      ($formElement->maxLength
+        ? ' maxlength="' . $formElement->maxLength . '"'
+        : "") .
+      ($formElement->size ? ' size="' . $formElement->size . '"' : "") .
+      ($name ? ' name="' . $name . '"' : " ") .
+      ' id="' .
+      $tag_id .
+      '"' .
+      ' class="' .
+      ($formElement->type != "text" ? "form-text " : "") .
+      "form-" .
+      $formElement->type .
+      " " .
+      ($formElement->class ? $formElement->class . " " : "") .
+      ($formElement->require ? "-require " : "") .
+      ($formElement->readonly ? "-readonly " : "") .
+      '"' .
+      ' type="' .
+      $formElement->type .
+      '"' .
+      ($formElement->attribute ? " " . $formElement->attribute : "") .
+      ($formElement->style ? ' style="' . $formElement->style . '"' : "") .
+      ($formElement->autocompleteUrl
+        ? ' autocomplete-url="' . $formElement->autocompleteUrl . '"'
+        : "") .
+      ' value="' .
+      htmlspecialchars($formElement->value ?? "") .
+      '"' .
+      (isset($formElement->placeholder)
+        ? ' placeholder="' . $formElement->placeholder . '"'
+        : "") .
+      ">";
+    return $ret;
+  }
+
+  protected function renderTextArea($tag_id, $name, $formElement)
+  {
+    $ret =
+      '	<div class="resizable-textarea">' .
+      "<textarea" .
+      ($this->readonly || $formElement->readonly
+        ? ' readonly="readonly"'
+        : "") .
+      ' cols="' .
+      ($formElement->cols ? $formElement->cols : "60") .
+      '"' .
+      ' rows="' .
+      ($formElement->rows ? $formElement->rows : 10) .
+      '"' .
+      ' name="' .
+      $name .
+      '"' .
+      ' id="' .
+      $tag_id .
+      '"' .
+      ' class="form-textarea resizable processed' .
+      ($formElement->require ? " -require" : "") .
+      ($formElement->readonly ? " -readonly" : "") .
+      ($formElement->class ? " " . $formElement->class : "") .
+      '"' .
+      ($formElement->attribute ? " " . $formElement->attribute : "") .
+      (isset($formElement->placeholder)
+        ? ' placeholder="' . $formElement->placeholder . '"'
+        : "") .
+      ">" .
+      $formElement->value .
+      "</textarea>" .
+      '<div style="margin-right: -4px;" class="grippie"></div>' .
+      "</div>";
+    return $ret;
+  }
+
+  /*
+   * Options format:
+   * 	[key1 => value1, key2 => value2, groupObject, groupArray, ...]
+   * 		groupArray: [['key' => 'xxx', value'=>'xxx'], ...]
+   *			groupObject: [[key1 => value1], [key2 => value2], ...]
+   * Option value format: LABEL:, SEPARATOR, &nbsp;, space, tab
+   */
+  protected function renderRadioCheckbox($tag_id, $name, $formElement)
+  {
+    static $itemIndex = 0;
+    $choices = isset($formElement->choices)
+      ? $formElement->choices
+      : $formElement->choice;
+
+    $ret = "";
+    if (!isset($formElement->display)) {
+      $formElement->display = "-block";
+    }
+
+    // choice begin with RANGE:
+    if (is_string($choices) && preg_match("/^RANGE\:(.*)/", $choices, $out)) {
+      $choices = [];
+      if (preg_match("/\.\./", $out[1])) {
+        // TODO: range from start to end
+      } else {
+        foreach (explode(",", $out[1]) as $value) {
+          $choices[trim($value)] = trim($value);
+        }
+      }
+    }
+
+    foreach ($choices as $optionKey => $optionValue) {
+      if (is_null($optionValue)) {
+        continue;
+      }
+
+      if (is_array($optionValue) || is_object($optionValue)) {
+        $optionValue = (array) $optionValue;
+
+        if (isset($optionValue["key"])) {
+          // Option format is [['key' => 'xxx', value'=>'xxx'],...]
+          $itemFormElement = clone $formElement;
+          $itemFormElement->choice = [
+            $optionValue["key"] => $optionValue["value"],
+          ];
+          $ret .= $this->renderRadioCheckbox($tag_id, $name, $itemFormElement);
+        } else {
+          // Option format is ['value'=>'label',...]
+          $ret .=
+            '<span class="options-group"><span class="options-group-label">' .
+            $optionKey .
+            ":</span>" .
+            _NL;
+          $itemFormElement = clone $formElement;
+          $itemFormElement->choice = $optionValue;
+          $ret .= $this->renderRadioCheckbox($tag_id, $name, $itemFormElement);
+          $ret .= "</span>" . _NL;
+        }
+      } else {
+        // option value is string
+        if ($formElement->separate) {
+          $name = $formElement->name
+            ? $formElement->name . $optionKey
+            : ($this->variable
+              ? $this->variable . "[" . $fieldKey . $optionKey . "]"
+              : $fieldKey);
+        }
+
+        if ($formElement->config->capsule) {
+          $ret .=
+            "<" .
+            $formElement->config->capsule->tag .
+            ' class="' .
+            $formElement->config->capsule->class .
+            '">';
+        }
+        if (preg_match("/^(LABEL\:)(.*)/", $optionValue, $out)) {
+          $ret .= "<div>" . $out[2] . "</div>";
+        } elseif (preg_match('/^SEPARATOR$/', $optionValue)) {
+          $ret .= '<hr class="-sep" />';
+        } elseif (preg_match("/^(\&nbsp\;)(.*)/", $optionValue, $out)) {
+          // Show label only
+          $ret .= "<div>" . $out[2] . "</div>";
+        } else {
+          $itemIndex++;
+          $ret .=
+            '<abbr class="' .
+            $formElement->type .
+            '"><label class="option' .
+            ($formElement->display ? " " . $formElement->display : "") .
+            '">';
+          if (preg_match("/^\s/", $optionValue)) {
+            $ret .= "&nbsp;&nbsp;&nbsp;&nbsp;";
+          }
+          $ret .=
+            '<input id="' .
+            $tag_id .
+            "-" .
+            $optionKey .
+            '"' .
+            ($this->readonly || $formElement->readonly
+              ? ' readonly="readonly" disabled="disabled"'
+              : "") .
+            ' name="' .
+            ($formElement->namePrefix
+              ? $formElement->namePrefix . $optionKey
+              : "") .
+            $name .
+            ($formElement->multiple ? "[" . $optionKey . "]" : "") .
+            '"' .
+            ' value="' .
+            $optionKey .
+            '"';
+          if (is_array($formElement->value)) {
+            $optionValue_key = array_keys($formElement->value);
+            $ret .= in_array(
+              $optionKey,
+              array_intersect(
+                array_keys((array) $choices),
+                (array) $formElement->value,
+              ),
+            )
+              ? ' checked="checked"'
+              : "";
+          } elseif (
+            isset($formElement->value) &&
+            $optionKey == $formElement->value
+          ) {
+            $ret .= ' checked="checked"';
+          }
+          $ret .=
+            ' class="form-' .
+            $formElement->type .
+            ($formElement->class ? " " . $formElement->class : "") .
+            ($formElement->require ? " -require" : "") .
+            '"' .
+            ' type="' .
+            $formElement->type .
+            '"' .
+            ($formElement->attribute ? " " . $formElement->attribute : "") .
+            $this->onElementEvent("onChange", $formElement->onChange) .
+            "> ";
+          $ret .= "<span>" . $optionValue . "</span>";
+          $ret .= "</label></abbr>" . _NL;
+        }
+        if (!empty($formElement->config->capsule)) {
+          $ret .= "</" . $formElement->config->capsule->tag . ">";
+        }
+      }
+    }
+    return $ret;
+  }
+
+  protected function renderSelect($tag_id, $name, $formElement)
+  {
+    $choices = isset($formElement->choices)
+      ? $formElement->choices
+      : $formElement->choice;
+
+    if (!is_array($formElement->value)) {
+      $formElement->value = (array) $formElement->value;
+    }
+    $ret =
+      "	<select " .
+      ($this->readonly || $formElement->readonly
+        ? 'readonly="readonly" '
+        : "") .
+      " " .
+      ($formElement->multiple ? 'multiple="multiple" ' : "") .
+      ($formElement->size ? 'size="' . $formElement->size . '" ' : "") .
+      'name="' .
+      $name .
+      '" ' .
+      'id="' .
+      $tag_id .
+      '" ' .
+      'class="form-' .
+      $formElement->type .
+      ($formElement->class ? " " . $formElement->class : "") .
+      ($formElement->require ? " -require" : "") .
+      ($this->readonly || $formElement->readonly ? " -disabled" : "") .
+      '"' .
+      (!empty($formElement->onChange)
+        ? $this->onElementEvent("onChange", $formElement->onChange)
+        : "") .
+      ($formElement->style ? 'style="' . $formElement->style . '"' : "") .
+      ($formElement->attribute ? " " . $formElement->attribute : "") .
+      ">" .
+      _NL;
+
+    if (is_string($choices) && preg_match("/^\</", $choices)) {
+      // Option is HTML Tag
+      $ret .= $choices;
+      unset($choices);
+    } elseif (is_string($choices)) {
+      // Option is string and contain ,
+      $selectOptions = [];
+      foreach (explode(",", $choices) as $eachOption) {
+        if (preg_match("/(.*)\=\>(.*)/", $eachOption, $out)) {
+          // Option format key=value
+          $selectOptions[
+            strtoupper(trim($out[1])) === "NULL" ? "" : trim($out[1])
+          ] = trim($out[2]);
+        } elseif (
+          preg_match("/^([0-9\-]+)\.\.([0-9\-]+)/", $eachOption, $out)
+        ) {
+          // Option format 1..10
+          for ($i = $out[1]; $i <= $out[2]; $i++) {
+            $selectOptions[$i] = $i;
+          }
+        } else {
+          $selectOptions[$eachOption] = $eachOption;
+        }
+      }
+      $choices = $selectOptions;
+    }
+    if ($choices) {
+      $ret .= $this->renderSelectOption($choices, $formElement->value);
+    }
+    $ret .= "	</select>";
+    return $ret;
+  }
+
+  protected function renderSelectOption($choice, $inputValue)
+  {
+    $ret = "";
+    // debugMsg($choice, '$choice');
+    // debugMsg('<pre>'.print_r($choice,1).'</pre>');
+    foreach ($choice as $optionKey => $optionValue) {
+      if ($optionValue === null) {
+        continue;
+      }
+
+      if (is_object($optionValue)) {
+        $optionValue = (array) $optionValue;
+      }
+
+      if (is_array($optionValue) && array_key_exists("label", $optionValue)) {
+        // Option is array has key label : [1=>"label", attr=>["data-key"=>"data-key-value",...]]
+        $ret .=
+          "	<option" .
+          ' value="' .
+          $optionKey .
+          '"' .
+          (in_array($optionKey, $inputValue) ? ' selected="selected"' : "") .
+          ($optionValue["attr"]
+            ? " " . sg_implode_attr($optionValue["attr"])
+            : "") .
+          ">" .
+          $optionValue["label"] .
+          "</option>" .
+          _NL;
+      } elseif (is_array($optionValue)) {
+        // Option is array, then make option group
+        $ret .=
+          '	<optgroup label="' .
+          $optionKey .
+          '">' .
+          _NL .
+          $this->renderSelectOption($optionValue, $inputValue) .
+          "	</optgroup>" .
+          _NL;
+      } elseif (preg_match("/^LABEL\:/", $optionValue)) {
+        // Show as label
+        $ret .=
+          '<option class="-choice-label" disabled="disabled">' .
+          preg_replace("/^LABEL\:/", "", $optionValue) .
+          "</option>" .
+          _NL;
+      } elseif (preg_match('/^SEPARATOR$/', $optionValue)) {
+        // Option is seperatpr
+        $ret .=
+          '<option class="-choice-sep -sep" disabled="disabled" style="height: 1px; display: block;">---</option>' .
+          _NL;
+      } elseif (preg_match("/^DISABLED\:/", $optionValue)) {
+        // Option is disabled
+        $ret .=
+          '<option class="-choice-disabled" disabled="disabled">' .
+          preg_replace("/^DISABLED\:/", "", $optionValue) .
+          "</option>" .
+          _NL;
+      } elseif (preg_match("/^HIDE\:/", $optionValue)) {
+        // Option is hide
+        $ret .=
+          '<option class="-choice-hide -hidden">' .
+          preg_replace("/^HIDE\:/", "", $optionValue) .
+          "</option>" .
+          _NL;
+      } elseif (preg_match("/^</", $optionValue)) {
+        $ret .= $optionValue . _NL;
+      } elseif (
+        preg_match('/^([0-9\-]+)\.\.([0-9\-]+)$/', $optionValue, $out)
+      ) {
+        // Option format 1..10
+        for ($i = $out[1]; $i <= $out[2]; $i++) {
+          $ret .=
+            '<option value="' .
+            $i .
+            '"' .
+            (in_array($i, $inputValue) ? ' selected="selected"' : "") .
+            ">" .
+            $i .
+            "</option>" .
+            _NL;
+        }
+      } elseif (is_int($optionKey) && preg_match("/\,/", $optionValue)) {
+        // debugMsg($optionKey . ' IS ' . gettype($optionKey));
+        // debugMsg(ctype_digit((string)$key));
+        // Option format 1,5,10
+        foreach (explode(",", $optionValue) as $value) {
+          $ret .=
+            '<option value="' .
+            $value .
+            '"' .
+            (in_array($value, $inputValue) ? ' selected="selected"' : "") .
+            ">" .
+            $value .
+            "</option>" .
+            _NL;
+        }
+      } else {
+        // Option is string
+        $ret .=
+          '<option value="' .
+          $optionKey .
+          '"' .
+          (in_array($optionKey, $inputValue) ? ' selected="selected"' : "") .
+          ">" .
+          $optionValue .
+          "</option>" .
+          _NL;
+      }
+    }
+    return $ret;
+  }
+
+  protected function renderFile($tag_id, $name, $formElement)
+  {
+    $formElement = (object) array_replace(
+      [
+        "count" => null,
+        "size" => null,
+        "multiple" => null,
+      ],
+      (array) $formElement,
+    );
+
+    $ret = "";
+
+    if ($formElement->count) {
+      for ($i = 1; $i <= $formElement->count; $i++) {
+        $ret .=
+          "<input " .
+          ($formElement->size ? 'size="' . $formElement->size . '" ' : "") .
+          'name="' .
+          $name .
+          "[" .
+          $i .
+          ']" ' .
+          'id="' .
+          $tag_id .
+          "-" .
+          $i .
+          '" ' .
+          'class="form-' .
+          $formElement->type .
+          ($formElement->require ? " -require" : "") .
+          '" ' .
+          'type="' .
+          $formElement->type .
+          '" ' .
+          ">";
+      }
+    } else {
+      $ret .=
+        "<input " .
+        ($formElement->size ? 'size="' . $formElement->size . '" ' : "") .
+        'name="' .
+        $name .
+        '" ' .
+        'id="' .
+        $tag_id .
+        '" ' .
+        'class="form-' .
+        $formElement->type .
+        ($formElement->class ? " " . $formElement->class : "") .
+        ($formElement->require ? " -require" : "") .
+        '" ' .
+        'type="' .
+        $formElement->type .
+        '" ' .
+        ($formElement->multiple ? 'multiple="multiple"' : "") .
+        ($formElement->accept ? 'accept="' . $formElement->accept . '" ' : "") .
+        ($formElement->attribute ? " " . $formElement->attribute : "") .
+        ">";
+    }
+    return $ret;
+  }
+
+  protected function renderButton($tag_id, $name, $formElement)
+  {
+    $ret = "";
+    $text = isset($formElement->text)
+      ? $formElement->text
+      : $formElement->value;
+    if (empty($formElement->items) && !empty($text)) {
+      // Single button
+      $ret .=
+        '<button type="submit" ' .
+        (empty($formElement->name) ? "" : 'name="' . $name . '"') .
+        ' class="btn ' .
+        ($formElement->class ? $formElement->class : "-primary") .
+        '"' .
+        ' value="' .
+        htmlspecialchars(strip_tags($formElement->value)) .
+        '"' .
+        ($this->readonly || $formElement->readonly
+          ? ' disabled="disabled" '
+          : "") .
+        ($formElement->attribute ? " " . $formElement->attribute : "") .
+        ">" .
+        // Have parameter icon, show icon and text
+        ($formElement->icon
+          ? (function ($icon, $text) {
+            return ($icon ? $this->renderEachChildWidget($icon) : "") .
+              ($text ? "<span>" . $text . "</span>" : "");
+          })($formElement->icon, $text)
+          : $text) .
+        "</button>";
+    } elseif (
+      is_array($formElement->items) &&
+      !empty($formElement->items["value"])
+    ) {
+      $ret .=
+        "<button" .
+        (isset($formElement->items["type"])
+          ? ' type="' . $formElement->items["type"] . '"'
+          : "") .
+        ' name="' .
+        (isset($formElement->items["name"])
+          ? $formElement->items["name"]
+          : $name) .
+        '"' .
+        ' class="btn' .
+        ($formElement->items["class"]
+          ? " " . $formElement->items["class"]
+          : "") .
+        '"' .
+        ' value="' .
+        htmlspecialchars(strip_tags($formElement->items["value"])) .
+        '"' .
+        ($this->readonly || $formElement->readonly
+          ? ' disabled="disabled"'
+          : "") .
+        $formElement->attribute .
+        " >" .
+        $formElement->items["value"] .
+        "</button>";
+    } else {
+      // Multiple button
+      foreach ($formElement->items as $key => $button) {
+        if (is_null($button)) {
+          continue;
+        }
+
+        $button = array_replace(
+          [
+            "type" => null,
+            "name" => null,
+            "class" => null,
+            "value" => null,
+            "btnvalue" => null,
+            "attribute" => null,
+          ],
+          (array) $button,
+        );
+
+        if ($button["type"] === "text") {
+          $ret .= $button["value"];
+        } else {
+          $ret .=
+            "<button" .
+            (isset($button["type"]) ? ' type="' . $button["type"] . '"' : "") .
+            ' name="' .
+            SG\getFirst($button["name"], is_string($key) ? $key : $name) .
+            '"' .
+            ' class="btn' .
+            ($button["class"] ? " " . $button["class"] : "") .
+            '"' .
+            ' value="' .
+            SG\getFirst(
+              $button["btnvalue"],
+              htmlspecialchars(strip_tags($button["value"])),
+            ) .
+            '"' .
+            ($this->readonly || $formElement->readonly
+              ? ' disabled="disabled"'
+              : "") .
+            ($button["attribute"] &&
+            (is_array($button["attribute"]) || is_object($button["attribute"]))
+              ? " " . sg_implode_attr($button["attribute"])
+              : $button["attribute"]) .
+            " >" .
+            $button["value"] .
+            "</button>";
+        }
+      }
+    }
+    return $ret;
+  }
+
+  protected function renderSubmit($tag_id, $name, $formElement)
+  {
+    $ret = "";
+    foreach ($formElement->items as $key => $value) {
+      if (substr($key, 0, 4) === "text") {
+        $ret .= $value;
+      } else {
+        $ret .=
+          "	<input " .
+          'name="' .
+          $key .
+          '" ' .
+          ($this->isReadOnly || $formElement->readonly
+            ? 'readonly="readonly" '
+            : "") .
+          'class="btn' .
+          ($key === "save" ? " -primary" : "") .
+          " -" .
+          $key .
+          ($formElement->class ? " " . $formElement->class : "") .
+          '" ' .
+          'type="' .
+          $formElement->type .
+          '" ' .
+          'value="' .
+          $value .
+          '">';
+      }
+    }
+    return $ret;
+  }
+
+  protected function renderDate($tag_id, $name, $formElement)
+  {
+    $months["BC"] = [
+      "มกราคม",
+      "กุมภาพันธ์",
+      "มีนาคม",
+      "เมษายน",
+      "พฤษภาคม",
+      "มิถุนายน",
+      "กรกฎาคม",
+      "สิงหาคม",
+      "กันยายน",
+      "ตุลาคม",
+      "พฤศจิกายน",
+      "ธันวาคม",
+    ];
+    $months["DC"] = [
+      "Jan",
+      "Feb",
+      "Apr",
+      "March",
+      "May",
+      "June",
+      "July",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    [$year_from, $year_no, $year_sort] = explode(
+      ",",
+      $formElement->year->range,
+    );
+    if (empty($year_from)) {
+      $year_from = date("Y");
+    } elseif (in_array(substr($year_from, 0, 1), ["-", "+"])) {
+      $year_from = date("Y") + $year_from;
+    }
+    if (empty($year_no)) {
+      $year_no = 5;
+    }
+
+    $ret =
+      "<select " .
+      'id="' .
+      $tag_id .
+      '-date" ' .
+      'class="form-select' .
+      ($formElement->class ? " " . $formElement->class : "") .
+      '" ' .
+      'name="' .
+      $name .
+      '[date]" ' .
+      ($this->readonly || $formElement->readonly
+        ? 'readonly="readonly" disabled="disabled" '
+        : "") .
+      ">" .
+      _NL;
+    $ret .=
+      '<option value="">' .
+      ($formElement->year->type === "BC" ? "วันที่" : "Date") .
+      "</option>" .
+      _NL;
+    for ($i = 1; $i <= 31; $i++) {
+      $ret .=
+        '<option value="' .
+        sprintf("%02d", $i) .
+        '"' .
+        ($formElement->value->date == $i ? " selected" : "") .
+        ">" .
+        sprintf("%02d", $i) .
+        "</option>" .
+        _NL;
+    }
+    $ret .= "</select>" . _NL;
+    $ret .=
+      "<select " .
+      'id="' .
+      $tag_id .
+      '-month" ' .
+      'class="form-select' .
+      ($formElement->class ? " " . $formElement->class : "") .
+      '" ' .
+      'name="' .
+      $name .
+      '[month]" ' .
+      ($this->readonly || $formElement->readonly
+        ? 'readonly="readonly" disabled="disabled" '
+        : "") .
+      ">" .
+      _NL;
+    $ret .=
+      '<option value="">' .
+      ($formElement->year->type === "BC" ? "เดือน" : "Month") .
+      "</option>" .
+      _NL;
+    for ($i = 1; $i <= 12; $i++) {
+      $ret .=
+        '<option value="' .
+        sprintf("%02d", $i) .
+        '"' .
+        ($formElement->value->month == $i ? " selected" : "") .
+        ">" .
+        sprintf("%02d", $i) .
+        "-" .
+        ($formElement->year->type === "BC"
+          ? $months["BC"][$i - 1]
+          : $months["DC"][$i - 1]) .
+        "</option>" .
+        _NL;
+    }
+    $ret .= "</select>" . _NL;
+    $ret .=
+      "<select " .
+      'id="' .
+      $tag_id .
+      '-year" ' .
+      'class="form-select' .
+      ($formElement->class ? " " . $formElement->class : "") .
+      '" ' .
+      'name="' .
+      $name .
+      '[year]" ' .
+      ($this->readonly || $formElement->readonly
+        ? 'readonly="readonly" disabled="disabled" '
+        : "") .
+      ">" .
+      _NL;
+    $ret .=
+      '<option value="">' .
+      ($formElement->year->type === "BC" ? "ปี พ.ศ." : "Year") .
+      "</option>" .
+      _NL;
+    if ($year_sort === "DESC") {
+      for ($i = $year_from; $i > $year_from - $year_no; $i--) {
+        $ret .=
+          '<option value="' .
+          $i .
+          '"' .
+          ($formElement->value->year == $i ? " selected" : "") .
+          ">" .
+          ($formElement->year->type === "BC" ? $i + 543 : $i) .
+          "</option>" .
+          _NL;
+      }
+    } else {
+      for ($i = $year_from; $i < $year_from + $year_no; $i++) {
+        $ret .=
+          '<option value="' .
+          $i .
+          '"' .
+          ($formElement->value->year == $i ? " selected" : "") .
+          ">" .
+          ($formElement->year->type === "BC" ? $i + 543 : $i) .
+          "</option>" .
+          _NL;
+      }
+    }
+    $ret .= "</select>" . _NL;
+    return $ret;
+  }
+
+  protected function renderTime($tag_id, $name, $formElement)
+  {
+    $times = [];
+    $start_time = SG\getFirst($formElement->start, 0);
+    $end_time = SG\getFirst($formElement->end, 24);
+    $step_time = SG\getFirst($formElement->step, 15);
+    for ($hr = $start_time; $hr < $end_time; $hr++) {
+      for ($min = 0; $min < 60; $min += $step_time) {
+        $times[] = sprintf("%02d", $hr) . ":" . sprintf("%02d", $min);
+      }
+    }
+    $ret =
+      '<select id="' .
+      $tag_id .
+      '" ' .
+      'class="form-select' .
+      ($formElement->class ? " " . $formElement->class : "") .
+      '" ' .
+      'name="' .
+      $name .
+      '"' .
+      ">" .
+      _NL;
+    foreach ($times as $time) {
+      $ret .=
+        '<option value="' .
+        $time .
+        '"' .
+        ($time == $formElement->value ? ' selected="selected"' : "") .
+        ">" .
+        $time .
+        "</option>";
+    }
+    $ret .= "</select>";
+    return $ret;
+  }
+
+  protected function renderHour($tag_id, $name, $formElement)
+  {
+    $start_time = SG\getFirst($formElement->start, 0);
+    $end_time = SG\getFirst($formElement->end, 24);
+    $step_time = SG\getFirst($formElement->step, 15);
+    $ret =
+      '<select id="' .
+      $tag_id .
+      '" ' .
+      'class="form-select" ' .
+      'name="' .
+      $name .
+      '[hour]">' .
+      _NL;
+    for ($hr = $start_time; $hr < $end_time; $hr++) {
+      $ret .=
+        '<option value="' .
+        sprintf("%02d", $hr) .
+        '"' .
+        ($hr == $formElement->value->hour ? ' selected="selected"' : "") .
+        ">" .
+        sprintf("%02d", $hr) .
+        "</option>";
+    }
+    $ret .= "</select> : ";
+    $ret .=
+      '<select id="' .
+      $tag_id .
+      '" class="form-select" name="' .
+      $name .
+      '[min]">' .
+      _NL;
+    for ($min = 0; $min < 60; $min++) {
+      $ret .=
+        '<option value="' .
+        sprintf("%02d", $min) .
+        '"' .
+        ($min == $formElement->value->min ? ' selected="selected"' : "") .
+        ">" .
+        sprintf("%02d", $min) .
+        "</option>";
+    }
+    $ret .= "</select>";
+    return $ret;
+  }
+
+  protected function renderColorPicker($tag_id, $name, $formElement)
+  {
+    $ret = "";
+    if (empty($formElement->color)) {
+      $formElement->color =
+        "#ffffff, #cccccc, #c0c0c0, #999999, #666666, #333333, #000000, #ffcccc, #ff6666, #ff0000, #cc0000, #990000, #660000, #330000, #ffcc99, #ff9966, #ff9900, #ff6600, #cc6600, #993300, #663300, #ffff99, #ffff66, #ffcc66, #ffcc33, #cc9933, #996633, #663333, #ffffcc, #ffff33, #ffff00, #ffcc00, #999900, #666600, #333300, #99ff99, #66ff99, #33ff33, #33cc00, #009900, #006600, #003300, #99ffff, #33ffff, #66cccc, #00cccc, #339999, #336666, #003333, #ccffff, #66ffff, #33ccff, #3366ff, #3333ff, #000099, #000066, #ccccff, #9999ff, #6666cc, #6633ff, #6600cc, #333399, #330099, #ffccff, #ff99ff, #cc66cc, #cc33cc, #993399, #663366, #330033";
+    }
+    foreach (explode(",", $formElement->color) as $color) {
+      $color = trim($color);
+      $ret .=
+        "<span " .
+        'style="background:' .
+        $color .
+        '; display:inline-block; padding: 6px; border-radius: 4px; width: 3.2rem; height: 3.2rem;">' .
+        '<input type="radio" name="' .
+        $name .
+        '" value="' .
+        $color .
+        '"' .
+        ($color == $formElement->value ? ' checked="checked"' : "") .
+        ' style="outline: none; box-shadow: none; margin: 0; padding: 0; height: 2rem; width: 2rem; border: none;">' .
+        "</span>" .
+        _NL;
+    }
+    return $ret;
+  }
+
+  function build()
+  {
+    return $this->renderForm();
+  }
+
+  function get($id = null)
+  {
+    $this->renderForm();
+    return $id ? $this->formArray[$id] : $this->formArray;
+  }
 } // End of class Form
 ?>
