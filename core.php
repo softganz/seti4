@@ -23,40 +23,45 @@ $coreFolder = preg_replace('/(\/|\\\\)core$/i', '', dirname(__FILE__));
 if (array_key_exists('core', $_GET)) {
 	$setCore = $_GET['core'];
 	if ($setCore === 'clear') {
-		setcookie('core', NULL, time()-1000,'/');
+		setcookie('core', null, time() - 1000, '/');
 		unset($_COOKIE['core']);
 	} else {
-		setcookie('core', $setCore, time()+10*365*24*60*60, '/');
+		setcookie('core', $setCore, time() + 10 * 365 * 24 * 60 * 60, '/');
 		$_COOKIE['core'] = $setCore;
 	}
 }
 if (array_key_exists('core', $_COOKIE)) {
-	$include_path = '/Users/httpdocs/cms/'.$_COOKIE['core'];
+	$include_path = '/Users/httpdocs/cms/' . $_COOKIE['core'];
 	if (is_dir($include_path)) {
 		ini_set('include_path', $include_path);
 		$coreFolder = $include_path;
 	}
 }
 
-define('_CORE_FOLDER',          $coreFolder);
-define('_CORE_CONTROLLER_FILE', _CORE_FOLDER.'/core/lib/class.core.controller.php');
-define('_CORE_LIB_FILE',        _CORE_FOLDER.'/core/lib/class.core.function.php');
-define('_CORE_INIT_FILE',       _CORE_FOLDER.'/core/lib/class.core.init.php');
-define('_CORE_MODULE_FOLDER',   _CORE_FOLDER.'/core/modules');
+define('_CORE_FOLDER', $coreFolder);
+define(
+	'_CORE_CONTROLLER_FILE',
+	_CORE_FOLDER . '/core/lib/class.core.controller.php'
+);
+define('_CORE_LIB_FILE', _CORE_FOLDER . '/core/lib/class.core.function.php');
+define('_CORE_INIT_FILE', _CORE_FOLDER . '/core/lib/class.core.init.php');
+define('_CORE_MODULE_FOLDER', _CORE_FOLDER . '/core/modules');
 
-if (!defined('_CONFIG_FILE')) define('_CONFIG_FILE', 'conf.web.php');
+if (!defined('_CONFIG_FILE')) {
+	define('_CONFIG_FILE', 'conf.web.php');
+}
 
-cfg('core.version.name',        'Seti');
-cfg('core.version.major',       4);
-cfg('core.version.code',        54);
-cfg('core.version',             '4.5.00');
-cfg('core.release',             '2026-06-05');
-cfg('core.location',            ini_get('include_path'));
-cfg('core.folder',              _CORE_FOLDER);
-cfg('core.config',              _CONFIG_FILE);
+cfg('core.version.name', 'Seti');
+cfg('core.version.major', 4);
+cfg('core.version.code', 54);
+cfg('core.version', '4.5.00');
+cfg('core.release', '2026-06-05');
+cfg('core.location', ini_get('include_path'));
+cfg('core.folder', _CORE_FOLDER);
+cfg('core.config', _CONFIG_FILE);
 
 // Current version will compare with version.install for upgrade database table
-cfg('core.version.install',			'4.0');
+cfg('core.version.install', '4.0');
 
 // set to the user defined error handler
 set_error_handler('sgErrorHandler');
@@ -74,28 +79,50 @@ ini_set('session.gc_probability', 1);
 
 unset($include_path, $coreFolder, $setCore);
 
-if ($_SERVER['SERVER_SOFTWARE'] === 'FrankenPHP') return;
+if ($_SERVER['SERVER_SOFTWARE'] === 'FrankenPHP') {
+	return;
+}
 
 $request = requestString();
 
-$ext = strtolower(substr($request,strrpos($request,'.')+1));
+$ext = strtolower(substr($request, strrpos($request, '.') + 1));
 
-if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && basename($request) != 'theme.css')) {
+if (
+	preg_match('/^(js|css)\//', $request) ||
+	(in_array($ext, ['js', 'css']) && basename($request) != 'theme.css')
+) {
 	// echo "/* Load JS/CSS ".$request." */\r\n";
-	loadJS($request,$ext);
-	die;
-} else if (in_array($ext, ['ico', 'jpg', 'gif', 'png', 'htm', 'html', 'php', 'xml', 'pdf', 'doc', 'swf'])) {
+	loadJS($request, $ext);
+	die();
+} elseif (
+	in_array($ext, [
+		'ico',
+		'jpg',
+		'gif',
+		'png',
+		'htm',
+		'html',
+		'php',
+		'xml',
+		'pdf',
+		'doc',
+		'swf'
+	])
+) {
 	die(fileNotFound() ?? '');
-} else if (file_exists(_CORE_CONTROLLER_FILE)) {
-	require(_CORE_CONTROLLER_FILE);
-	if (file_exists(_CORE_LIB_FILE)) require(_CORE_LIB_FILE);
-	if (file_exists(_CORE_INIT_FILE)) require(_CORE_INIT_FILE);
+} elseif (file_exists(_CORE_CONTROLLER_FILE)) {
+	require _CORE_CONTROLLER_FILE;
+	if (file_exists(_CORE_LIB_FILE)) {
+		require _CORE_LIB_FILE;
+	}
+	if (file_exists(_CORE_INIT_FILE)) {
+		require _CORE_INIT_FILE;
+	}
 } else {
 	die('SORRY!!!! Core Function Not Exists.');
 }
 
 /* Core Process Load End */
-
 
 /* Core Function */
 
@@ -105,9 +132,9 @@ if (preg_match('/^(js|css)\//', $request) || (in_array($ext, ['js', 'css']) && b
  * @param String $message
  * @return String
  */
-function fileNotFound($message = NULL) {
+function fileNotFound($message = null) {
 	ob_start();
-	include('error/404.php');
+	include 'error/404.php';
 	$ret = ob_get_contents();
 	ob_end_clean();
 	return $ret;
@@ -127,39 +154,51 @@ function loadJS($requestFile, $ext) {
 
 	if (preg_match('/^(js|css)\//', $requestFile)) {
 		// Core js/css
-		$fileName = _CORE_FOLDER.'/core/'.$requestFile;
-	} else if (is_dir(_CORE_FOLDER.'/core/modules/'.$module)) {
+		$fileName = _CORE_FOLDER . '/core/' . $requestFile;
+	} elseif (is_dir(_CORE_FOLDER . '/core/modules/' . $module)) {
 		// Module is core module
-		$fileName .=  _CORE_FOLDER.'/core/modules/'.$module.'/'.basename($requestFile);
+		$fileName .=
+			_CORE_FOLDER . '/core/modules/' . $module . '/' . basename($requestFile);
 	} else {
 		// Module is user module
-		$fileName .=  _CORE_FOLDER.'/modules/'.$requestFile;
+		$fileName .= _CORE_FOLDER . '/modules/' . $requestFile;
 	}
 
 	switch ($ext) {
-		case 'js': $headerType = 'text/javascript'.'; charset=utf-8'; break;
-		case 'css': $headerType = 'text/css'.'; charset=utf-8'; break;
-		case 'png': $headerType = 'image/png'; break;
-		case 'gif': $headerType = 'image/gif'; break;
-		default: $headerType = 'text/plain';
+		case 'js':
+			$headerType = 'text/javascript' . '; charset=utf-8';
+			break;
+		case 'css':
+			$headerType = 'text/css' . '; charset=utf-8';
+			break;
+		case 'png':
+			$headerType = 'image/png';
+			break;
+		case 'gif':
+			$headerType = 'image/gif';
+			break;
+		default:
+			$headerType = 'text/plain';
 	}
 
-	header('Content-Type: '.$headerType);
+	header('Content-Type: ' . $headerType);
 
 	// if ($cacheTime > 0) {
 	// 	header("Cache-Control: public, max-age=" . $cacheTime); // HTTP/1.1
 	// 	header("Expires: " . gmdate("D, d M Y H:i:s", time() + $cacheTime) . " GMT");
 	// } else {
-		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-		header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-		header("Pragma: no-cache"); // HTTP/1.0
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+	header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
+	header('Pragma: no-cache'); // HTTP/1.0
 	// }
-	header("Date: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
-	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
+	header('Date: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
 
 	// echo "Request = $requestFile \r\nModule = $module \r\nFile location = $fileName\r\n\r\n";
 
-	if (file_exists($fileName)) require($fileName);
+	if (file_exists($fileName)) {
+		require $fileName;
+	}
 	// else echo '// '.$requestFile.' '.$fileName.' not found!!!';
 
 	// $logFile = '/tmp/js_load.log';
@@ -188,9 +227,11 @@ function requestString() {
 	// debugMsg('_URL = '._URL);
 
 	if ($key && empty($value)) {
-		$folder = isset($_SERVER['DOCUMENT_URI']) ? dirname($_SERVER['DOCUMENT_URI']) : '';
+		$folder = isset($_SERVER['DOCUMENT_URI'])
+			? dirname($_SERVER['DOCUMENT_URI'])
+			: '';
 		$request_string = $_SERVER['QUERY_STRING'];
-		$pattern = '%^'.preg_quote(addslashes($folder)).'%';
+		$pattern = '%^' . preg_quote(addslashes($folder)) . '%';
 
 		// debugMsg('$folder = ['.$folder.']<br>$request_string1 = '.$request_string.'<br>reg = '.$pattern);
 
@@ -200,9 +241,11 @@ function requestString() {
 
 		$request_string = ltrim($request_string, '/');
 		// if (preg_match('/^index.php/i', $request_string,$out)) $request_string = substr($request_string, 10);
-		list($key) = explode('&', $request_string);
+		[$key] = explode('&', $request_string);
 		$request = str_replace('%2F', '/', $key);
-		if (substr($request, -1) == '=') $request = substr($request, 0, -1);
+		if (substr($request, -1) == '=') {
+			$request = substr($request, 0, -1);
+		}
 
 		// debugMsg('__FILE__ = '.__FILE__);
 	}
@@ -225,7 +268,7 @@ function requestString() {
  * @param String $configFolder
  */
 function initConfig($configFolder) {
-	SgCore::loadConfig('conf.default.php', _CORE_FOLDER.'/core/assets/conf'); // load default config file
+	SgCore::loadConfig('conf.default.php', _CORE_FOLDER . '/core/assets/conf'); // load default config file
 	SgCore::loadConfig('conf.core.json', $configFolder); // load core config file
 	// echo "_CONFIG_FILE="._CONFIG_FILE.' configFolder='.$configFolder;
 	SgCore::loadConfig(_CONFIG_FILE, $configFolder); // load web config file
@@ -239,7 +282,9 @@ function initConfig($configFolder) {
  */
 function sg_autoloader(string $class) {
 	// debugMsg('AUTOLOAD START => '.$class);
-	if (empty($class)) return false;
+	if (empty($class)) {
+		return false;
+	}
 	$class = trim($class, '\\');
 	// debugMsg('AUTOLOAD BEGIN => '.$class);
 
@@ -256,13 +301,19 @@ function sg_autoloader(string $class) {
 	if (in_array($lowerClass, array_keys($registerFileList))) {
 		load_lib($registerFileList[$lowerClass]);
 		if ($debug) {
-			debugMsg('AUTOLOAD '.$class.' from register list of <b style="color: green">'.$registerFileList[$lowerClass].'</b>');
+			debugMsg(
+				'AUTOLOAD '
+					. $class
+					. ' from register list of <b style="color: green">'
+					. $registerFileList[$lowerClass]
+					. '</b>'
+			);
 		}
 		return;
 	}
 
 	// Load class from import
-	$pieces = preg_split('/(?=[A-Z])/',$class, -1, PREG_SPLIT_NO_EMPTY);
+	$pieces = preg_split('/(?=[A-Z])/', $class, -1, PREG_SPLIT_NO_EMPTY);
 	$endName = strToLower(end($pieces));
 
 	switch ($endName) {
@@ -281,10 +332,21 @@ function sg_autoloader(string $class) {
 	$import = $importFile ? strtolower($importFile) : null;
 
 	if ($debug) {
-		debugMsg('AUTOLOAD ' . $class . ' ' . ($importFile ? 'from <b style="color: green">import("' . strtolower($importFile) . '")</b>' : 'not load.'));
+		debugMsg(
+			'AUTOLOAD '
+				. $class
+				. ' '
+				. ($importFile
+					? 'from <b style="color: green">import("'
+						. strtolower($importFile)
+						. '")</b>'
+					: 'not load.')
+		);
 	}
 
-	if ($import) import($import);
+	if ($import) {
+		import($import);
+	}
 }
 
 /**
@@ -295,23 +357,25 @@ function sg_autoloader(string $class) {
  * @param String $action
  * @return Mixed
  */
-function cfg($key = NULL, $new_value = NULL, $action = NULL) {
+function cfg($key = null, $new_value = null, $action = null) {
 	static $cfg = [];
 	// Set config with array
 	if (is_array($key)) {
 		$cfg = array_merge($cfg, $key);
 		ksort($cfg);
-	} else if (isset($key) && isset($new_value)) {
+	} elseif (isset($key) && isset($new_value)) {
 		$cfg[$key] = $new_value;
 		ksort($cfg);
 	}
 
 	// Remove config name and value
-	if ($action == 'delete' && array_key_exists($key, $cfg)) unset($cfg[$key]);
+	if ($action == 'delete' && array_key_exists($key, $cfg)) {
+		unset($cfg[$key]);
+	}
 
 	// Return value of key
 	if (isset($key) && is_string($key)) {
-		$ret = array_key_exists($key,$cfg) ? $cfg[$key] : null;
+		$ret = array_key_exists($key, $cfg) ? $cfg[$key] : null;
 		if (is_string($ret) && substr(trim($ret), 0, 1) == '{') {
 			$ret = json_decode($ret);
 		}
@@ -319,7 +383,9 @@ function cfg($key = NULL, $new_value = NULL, $action = NULL) {
 		$ret = $cfg;
 	}
 
-	if (is_array($ret)) reset($ret);
+	if (is_array($ret)) {
+		reset($ret);
+	}
 	return $ret;
 }
 
@@ -329,15 +395,14 @@ function cfg($key = NULL, $new_value = NULL, $action = NULL) {
  * @param String $type eg. text/html, text/css, text/xml,
  */
 function sendHeader($type = 'text/html') {
-	header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-	header("Date: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
-	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
-	header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
-	header("Pragma: no-cache"); // HTTP/1.0
-	header('Content-Type: '.$type.'; charset='.cfg('client.characterset'));
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+	header('Date: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+	header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
+	header('Pragma: no-cache'); // HTTP/1.0
+	header('Content-Type: ' . $type . '; charset=' . cfg('client.characterset'));
 	cfg('Content-Type', $type);
 }
-
 
 /**
  * Store debug message and display in div class="debug" of page
@@ -353,16 +418,23 @@ function sendHeader($type = 'text/html') {
  * $varname
  * 	Show as name of array or object
  */
-function debugMsg($message = NULL, $varname = NULL) {
+function debugMsg($message = null, $varname = null) {
 	static $debugMsg = '';
-	if ($message === 'clear') return $debugMsg = '';
+	if ($message === 'clear') {
+		return $debugMsg = '';
+	}
 
 	$callerFrom = debug_backtrace();
 
 	// No need to check "access debugging program" because will check in index.tpl.php
 
 	if (isset($message)) {
-		$message = in_array('DebugMsg', get_declared_classes()) ? (new DebugMsg($message, $varname, $callerFrom))->build() : '<div class="debug-msg">'.print_r($message, 1).'</div>';
+		if (in_array('DebugMsg', get_declared_classes())) {
+			$debugMsgObject = new DebugMsg($message, $varname, $callerFrom);
+			$message = $debugMsgObject->build();
+		} else {
+			$message = '<div class="debug-msg">' . print_r($message, 1) . '</div>';
+		}
 
 		$debugMsg .= $message;
 
@@ -380,22 +452,30 @@ function debugMsg($message = NULL, $varname = NULL) {
  */
 function showError($message = []) {
 	ini_set('display_errors', 'off');
-	$isDebug = (function_exists('i') && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
+	$isDebug =
+		(function_exists('i') && i()->uid == 1) ||
+		(function_exists('user_access') && user_access('access debugging program'));
 	$debugMsg = $isDebug ? debugMsg() : '';
 
-	$templateFile = isset($message['template']) ? $message['template'] : (_AJAX ? 'error' : 'fatal');
-	$content = file_get_contents(__DIR__.'/assets/template/'.$templateFile.'.html');
+	$templateFile = isset($message['template'])
+		? $message['template']
+		: (_AJAX
+			? 'error'
+			: 'fatal');
+	$content = file_get_contents(
+		__DIR__ . '/assets/template/' . $templateFile . '.html'
+	);
 
 	$var = array_replace_recursive(
 		[
 			'Title' => 'Oops! An Error Occurred',
-			'Version' => $isDebug ? '@PHP Version '.phpversion() : '',
-			'Url' => _DOMAIN.$_SERVER['REQUEST_URI'],
+			'Version' => $isDebug ? '@PHP Version ' . phpversion() : '',
+			'Url' => _DOMAIN . $_SERVER['REQUEST_URI'],
 			'ServerName' => $_SERVER['SERVER_NAME'],
 			'Message' => '',
-			'DebugMessage' => $isDebug && $debugMsg ? $debugMsg : '',
+			'DebugMessage' => $isDebug && $debugMsg ? $debugMsg : ''
 		],
-		(Array) $message
+		(array) $message
 	);
 
 	// Replace {{ .Name }} with variable
@@ -403,7 +483,9 @@ function showError($message = []) {
 		'/\{\{\s*\.([\w]*)\s*\}\}/s',
 		function ($m) use ($var) {
 			return isset($var[$m[1]]) ? $var[$m[1]] : $m[0];
-		}, $content);
+		},
+		$content
+	);
 
 	return $content;
 }
@@ -421,15 +503,17 @@ function showError($message = []) {
 function sgErrorHandler($code, $description, $file = null, $line = null) {
 	static $count = 0;
 
-	$displayErrors = strtolower(ini_get("display_errors"));
-	$isDebug = (function_exists('i') && isset(i()->ok) && i()->uid == 1) || (function_exists('user_access') && user_access('access debugging program'));
+	$displayErrors = strtolower(ini_get('display_errors'));
+	$isDebug =
+		(function_exists('i') && isset(i()->ok) && i()->uid == 1) ||
+		(function_exists('user_access') && user_access('access debugging program'));
 
 	if ($displayErrors === 'off') {
 		return false;
-	} else if (!(error_reporting() & $code)) {
+	} elseif (!(error_reporting() & $code)) {
 		// This error code is not included in error_reporting.
 		return false;
-	} else if (sgIsFatalError($code)) {
+	} elseif (sgIsFatalError($code)) {
 		// On fatal error
 		// Memory safety guard: if we are already critically low on memory (e.g. the
 		// original error was a memory exhaustion), do NOT attempt the heavy reporting
@@ -463,24 +547,38 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 		}
 
 		$errorType = 'Fatal Error';
-		$isDbError = preg_match('/DbException|Update data to database was error/', $description);
-		$description = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/i', '', $description);
+		$isDbError = preg_match(
+			'/DbException|Update data to database was error/',
+			$description
+		);
+		$description = preg_replace(
+			'/^(Uncaught Exception\: |Uncaught Error: )/i',
+			'',
+			$description
+		);
 
 		if (preg_match('/^(\[(\w.*)\])/', $description, $out)) {
 			$errorType = $out[2];
 			$description = str_replace($out[1], '', $description);
 		}
 
-		$fullDescription = '<ul><li>'.implode('</li><li>', explode("\n", $description)).'</li></ul>';
+		$fullDescription =
+			'<ul><li>'
+			. implode('</li><li>', explode("\n", $description))
+			. '</li></ul>';
 		$errorDescription = explode("\n", str_replace('\\', '\\\\', $description));
 
 		if (count($errorDescription) === 1) {
 			$errorDescription[0] .= ' in ' . $file . ':' . $line;
 			foreach (debug_backtrace() as $key => $value) {
 				if (isset($value['file'])) {
-					$errorDescription[] = $value['file']
-						. ' @line ' . $value['line']
-						. (isset($value['function']) ? ' in ' . $value['function'] . '()' : '');
+					$errorDescription[] =
+						$value['file']
+						. ' @line '
+						. $value['line']
+						. (isset($value['function'])
+							? ' in ' . $value['function'] . '()'
+							: '');
 					continue;
 				}
 				if (isset($value['function'])) {
@@ -490,18 +588,23 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 		}
 
 		if ($isDbError) {
-			$dbErrorMessage = '<pre style="white-space: pre-wrap; font-size: 80%;">' . R('query') . '</pre>';
+			$dbErrorMessage =
+				'<pre style="white-space: pre-wrap; font-size: 80%;">'
+				. R('query')
+				. '</pre>';
 			$errorDescription[] = $dbErrorMessage;
 
-			if ($isDbError && $isDebug) $fullDescription .= $dbErrorMessage;
+			if ($isDbError && $isDebug) {
+				$fullDescription .= $dbErrorMessage;
+			}
 		}
 
 		sgSendLog([
 			'file' => $file,
 			'line' => $line,
 			'type' => $errorType,
-			'user' => function_exists('i') ? i()->uid : NULL,
-			'name' => function_exists('i') ? i()->name : NULL,
+			'user' => function_exists('i') ? i()->uid : null,
+			'name' => function_exists('i') ? i()->name : null,
 			'description' => $errorDescription
 		]);
 
@@ -509,10 +612,16 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 			$cleanDescription = 'เกิดความผิดพลาดในการดำเนินการกับฐานข้อมูล';
 		} else {
 			// Remove "Uncaught Exception: +" prefix if present
-			$cleanDescription = preg_replace('/^(Uncaught Exception\: |Uncaught Error: )/', '', $description);
+			$cleanDescription = preg_replace(
+				'/^(Uncaught Exception\: |Uncaught Error: )/',
+				'',
+				$description
+			);
 
 			// Extract short description (everything before " in ")
-			$cleanDescription = preg_match('/(.*)( in )/', $cleanDescription, $out) ? $out[1] : '';
+			$cleanDescription = preg_match('/(.*)( in )/', $cleanDescription, $out)
+				? $out[1]
+				: '';
 
 			// If first charactoe is + then force show that error message
 			if (substr($cleanDescription, 0, 1) === '+') {
@@ -520,7 +629,7 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 			} else {
 				$cleanDescription = 'Oops! An Error Occurred';
 			}
-			$cleanDescription .= ' [code = '.$code.']';
+			$cleanDescription .= ' [code = ' . $code . ']';
 		}
 
 		$memoryLimit = intval(ini_get('memory_limit'));
@@ -529,19 +638,60 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
 		die(
 			showError([
 				'Title' => $cleanDescription,
-				'Message' => $isDebug ? 'There is error in <b>'.$reportFileName.'</b> '
-					. ' at line <b>'.$line.'</b>.<br>'
-					. 'Memory used ' . round($memoryUsed / (1024 * 1024), 2) . '/' . $memoryLimit . 'MB.'
-					. $fullDescription : '',
+				'Message' => $isDebug
+					? 'There is error in <b>'
+						. $reportFileName
+						. '</b> '
+						. ' at line <b>'
+						. $line
+						. '</b>.<br>'
+						. 'Memory used '
+						. round($memoryUsed / (1024 * 1024), 2)
+						. '/'
+						. $memoryLimit
+						. 'MB.'
+						. $fullDescription
+					: ''
 			])
 		);
-	} else if ($isDebug) {
+	} elseif ($isDebug) {
 		// Do not throw an Exception for deprecation warnings as new or unexpected
 		// deprecations would break the application.
+		$errorDescription = [];
+		foreach (debug_backtrace() as $key => $value) {
+			if (isset($value['file'])) {
+				$errorDescription[] =
+					$value['file']
+					. ' @line '
+					. $value['line']
+					. (isset($value['function'])
+						? ' in ' . $value['function'] . '()'
+						: '');
+				continue;
+			}
+			if (isset($value['function'])) {
+				$errorDescription[] = 'function ' . $value['function'] . '()';
+			}
+		}
 		cfg(
 			'web.message',
 			cfg('web.message')
-			. '<div><b>' . getErrorTypeName($code) . ':</b> ' . $description . ' in ' . $file . ' on line <b>' .$line . '</b></div>');
+				. '<div class="debug-msg"><div><b>'
+				. getErrorTypeName($code)
+				. ':</b> '
+				. $description
+				. ' in '
+				. $file
+				. ' on line <b>'
+				. $line
+				. '</b></div>'
+				. '<span class="widget-button -link sg-expand" data-rel="next"><i class="icon -material">expand_more</i></span>'
+				. '<ul class="-hidden"><li>'
+				. implode('</li><li>', $errorDescription)
+				. '</ul>'
+				. '</div>'
+		);
+
 		return false;
 	}
 
@@ -561,7 +711,7 @@ function getErrorTypeName($code) {
 			return $name;
 		}
 	}
-	return "Unknown Error Type";
+	return 'Unknown Error Type';
 }
 
 /**
@@ -572,29 +722,31 @@ function getErrorTypeName($code) {
 function sgSendLog($data = []) {
 	$forceSend = $_GET['forceSendLog'];
 	$sendLogToUrl = $forceSend ? $forceSend : cfg('error')->sendLog->toUrl;
-	$domainNotSendLog = (Array) cfg('error')->sendLog->domainNotSend;
+	$domainNotSendLog = (array) cfg('error')->sendLog->domainNotSend;
 
-	if (empty($sendLogToUrl)) return;
+	if (empty($sendLogToUrl)) {
+		return;
+	}
 
 	$data = array_replace_recursive(
 		[
-			'url' => _DOMAIN.$_SERVER['REQUEST_URI'],
-			'referer' => $_SERVER["HTTP_REFERER"],
+			'url' => _DOMAIN . $_SERVER['REQUEST_URI'],
+			'referer' => $_SERVER['HTTP_REFERER'],
 			'agent' => $_SERVER['HTTP_USER_AGENT'],
 			'date' => date('Y-m-d H:i:s'),
-			'user' => function_exists('i') ? i()->uid : NULL,
-			'name' => function_exists('i') ? i()->name : NULL,
-			'type' => NULL,
-			'file' => NULL,
-			'line' => NULL,
+			'user' => function_exists('i') ? i()->uid : null,
+			'name' => function_exists('i') ? i()->name : null,
+			'type' => null,
+			'file' => null,
+			'line' => null,
 			'sendRequest' => true,
-			'description' => NULL,
-			'data' => (Object) [
-				'get' => (Object) Request::get(),
-				'post' => (Object) Request::post(),
-			],
+			'description' => null,
+			'data' => (object) [
+				'get' => (object) Request::get(),
+				'post' => (object) Request::post()
+			]
 		],
-		(Array) $data,
+		(array) $data
 	);
 
 	if (isset($data['data']->post->register)) {
@@ -610,7 +762,10 @@ function sgSendLog($data = []) {
 		unset($data['forceSend']);
 	}
 
-	if ($data['description'] && (is_object($data['description']) || is_array($data['description']))) {
+	if (
+		$data['description'] &&
+		(is_object($data['description']) || is_array($data['description']))
+	) {
 		$data['description'] = json_encode(
 			$data['description'],
 			JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
@@ -634,7 +789,7 @@ function sgSendLog($data = []) {
 				'postFields' => $data,
 				'returnTransfer' => true,
 				'result' => 'json',
-				'debug' => false,
+				'debug' => false
 			],
 			$curlOptions
 		);
@@ -648,7 +803,13 @@ function sgSendLog($data = []) {
  * @return Boolean
  */
 function sgIsFatalError($code) {
-	return in_array($code, [E_PARSE, E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR]);
+	return in_array($code, [
+		E_PARSE,
+		E_ERROR,
+		E_CORE_ERROR,
+		E_COMPILE_ERROR,
+		E_USER_ERROR
+	]);
 }
 
 /**
@@ -657,14 +818,19 @@ function sgIsFatalError($code) {
 function sgShutdown() {
 	global $R;
 	$error = error_get_last();
-	if (is_object($R->DB) && method_exists($R->DB,'close')) {
+	if (is_object($R->DB) && method_exists($R->DB, 'close')) {
 		$R->DB->close();
 	}
-	if (is_object($R->myDb) && method_exists($R->myDb,'close')) {
+	if (is_object($R->myDb) && method_exists($R->myDb, 'close')) {
 		$R->myDb->close();
 	}
-	if ( sgIsFatalError($error["type"]) ) {
-		sgErrorHandler( $error["type"], $error["message"], $error["file"], $error["line"] );
+	if (sgIsFatalError($error['type'])) {
+		sgErrorHandler(
+			$error['type'],
+			$error['message'],
+			$error['file'],
+			$error['line']
+		);
 	}
 }
 ?>

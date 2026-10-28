@@ -3,8 +3,8 @@
  * Ban     :: Ban Model
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2025-12-26
- * Modify  :: 2026-01-04
- * Version :: 2
+ * Modify  :: 2026-10-28
+ * Version :: 3
  *
  * @param Array $args
  * @return Object
@@ -29,20 +29,20 @@ class BanModel {
 				UNIQUE KEY `ip` (`ip`),
 				UNIQUE KEY `host` (`host`),
 				INDEX `end` (`end`)
-			)',
+			)'
 		]);
 	}
 
 	public static function save($data) {
-		$data = (Object) array_merge(
+		$data = (object) array_merge(
 			[
-				'id' => NULL,
-				'ip' => NULL,
-				'host' => NULL,
+				'id' => null,
+				'ip' => null,
+				'host' => null,
 				'start' => date('Y-m-d H:i:s'),
-				'end' => NULL,
+				'end' => null
 			],
-			(Array) $data
+			(array) $data
 		);
 
 		DB::query([
@@ -56,7 +56,7 @@ class BanModel {
 				':host' => $data->host,
 				':start' => $data->start,
 				':end' => $data->end
-			],
+			]
 		]);
 	}
 
@@ -72,8 +72,8 @@ class BanModel {
 						'(`ip` = :ip OR :ip REGEXP `ip` OR :host REGEXP `host`)',
 						':ip' => $ip,
 						':host' => $host
-					],
-				],
+					]
+				]
 			]
 		])->id;
 
@@ -82,55 +82,55 @@ class BanModel {
 
 	public static function deleteExpiredBan() {
 		DB::query([
-			'DELETE FROM %ban% WHERE `end` IS NOT NULL AND :currentTime > `end`',
-			'var' => [':currentTime' => date('Y-m-d H:i:s')],
+			'DELETE FROM %ban% WHERE `end` IS NOT NULL AND `end` <= :currentTime',
+			'var' => [':currentTime' => date('Y-m-d H:i:s')]
 		]);
 	}
 
 	// Insert ban from configuration
 	public static function copyFromConfig() {
-		foreach ((Array) cfg('ban.ip') as $ban) {
+		foreach ((array) cfg('ban.ip') as $ban) {
 			try {
 				DB::query([
 					'INSERT INTO %ban% ( `ip` , `host` , `start` , `end` ) VALUES ( :ip, :host, :start, :end )',
 					'var' => [
-						':ip' => property_exists($ban, 'ip') ? $ban->ip : NULL,
-						':host' => property_exists($ban, 'host') ? $ban->host : NULL,
-						':start' => property_exists($ban, 'start') ? $ban->start : date('Y-m-d H:i:s'),
-						':end' => property_exists($ban, 'end') ? $ban->end : NULL,
-					],
+						':ip' => property_exists($ban, 'ip') ? $ban->ip : null,
+						':host' => property_exists($ban, 'host') ? $ban->host : null,
+						':start' => property_exists($ban, 'start')
+							? $ban->start
+							: date('Y-m-d H:i:s'),
+						':end' => property_exists($ban, 'end') ? $ban->end : null
+					]
 				]);
-			} catch (Exception $e) {}
+			} catch (Exception $e) {
+			}
 		}
 
 		// Clear ban configuration
-		// cfg_db_delete('ban.ip');		
+		// cfg_db_delete('ban.ip');
 	}
 
 	public static function getList($conditions = []) {
-		$conditions = (Object) array_merge_recursive(
-			[],
-			(Array) $conditions
-		);
+		$conditions = (object) array_merge_recursive([], (array) $conditions);
 
-		$banList = DB::select([
-			'SELECT * FROM %ban% ORDER BY `id` ASC',
-		]);
+		$banList = DB::select(['SELECT * FROM %ban% ORDER BY `id` ASC']);
 
-		return (Object) [
+		return (object) [
 			'items' => $banList->items,
-			'total' => $banList->count,
+			'total' => $banList->count
 		];
 	}
 
 	public static function remove($id) {
-		if (empty($id)) return;
+		if (empty($id)) {
+			return;
+		}
 
 		DB::query([
 			'DELETE FROM %ban% WHERE `id` = :id LIMIT 1',
 			'var' => [
-				':id' => $id,
-			],
+				':id' => $id
+			]
 		]);
 	}
 }
