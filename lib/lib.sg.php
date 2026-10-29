@@ -3,8 +3,8 @@
  * Function :: Common Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-10-14
- * Version  :: 15
+ * Modified :: 2026-10-29
+ * Version  :: 16
  *
  * @param Array $args
  * @return Widget
@@ -503,7 +503,7 @@ function sg_money2bath($num, $digit = false){
 				$kaDigit[$kaNumWord[$i]] = "สอง";
 			}
 			if (($kaNumWord[$i] == 1 && $i <= 2 && $i == 0) || ($kaNumWord[$i] == 1 && $lenNumber > 6 && $i == 6)){
-				if (isset($kaNumWord[$i+1]) && $kaNumWord[$i+1] == 0){
+				if (($i == 6 && $lenNumber == 7) || (isset($kaNumWord[$i+1]) && $kaNumWord[$i+1] == 0)){
 					$kaDigit[$kaNumWord[$i]] = "หนึ่ง";
 				} else {
 					$kaDigit[$kaNumWord[$i]] = "เอ็ด";
