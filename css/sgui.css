@@ -1680,30 +1680,44 @@
 			--sticky-inset: 0px;
 		}
 	}
+	/* .-sidebar-toggle เป็น .widget-header ซึ่งมี display:flex อยู่แล้ว */
 	.-sidebar-toggle {
 		/* ตรึงปุ่ม grip ไว้ด้านบนเสมอ แม้เนื้อหาใน sidebar จะยาวเกินจอ */
 		position: sticky;
 		top: 0;
 		z-index: 1;
-		display: flex;
+		flex-wrap: nowrap;
 		align-items: center;
-		height: 48px;
-		flex: 0 0 48px;
-		background-color: var(--sidebar-surface);
-		/* justify-content: flex-end; */
-		.-grip-header {
-			/* ซ่อนบนจอแคบ เพราะแถบแคบกว่าปุ่ม grip ไม่มีพื้นที่ให้ข้อความ */
-			display: none;
+		height: var(--min-width);
+		flex: 0 0 var(--min-width);
+		gap: 8px;
+		/* ล้าง padding ของ .widget-header ไม่ให้ดันปุ่ม grip หลุดขอบ sidebar */
+		padding: 0;
+		/* พื้นหลังใช้สีเดียวกับ sidebar เพื่อให้ปุ่ม grip ลอยอยู่บนพื้นหลัง ไม่ทับกับ header */
+		/* --header-bg-color: var(--sidebar-surface); */
+		> .-title {
+			/* ความกว้างจำกัด จึงต้องตัดข้อความบรรทัดเดียวไม่ให้ header สูงเกิน 48px */
 			min-width: 0;
-			margin-right: auto;
-			/* font-size: 1.4rem; */
-			font-weight: bold;
-			letter-spacing: 0.05em;
-			color: #444;
-			flex: 1;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
+			> .-title-text {
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+		}
+		/* trailing ต้องไม่หด เพราะปุ่ม grip สูงเท่า header */
+		> .-trailing {
+			display: flex;
+			align-items: center;
+			flex: 0 0 auto;
+		}
+		/* ซ่อน icon และชื่อหัวข้อบนจอแคบ เพราะแถบแคบกว่าปุ่ม grip ไม่มีพื้นที่ให้ข้อความ */
+		> .-leading,
+		> .-title {
+			display: none;
+			padding: 0;
+		}
+		> .-leading {
+			margin-left: 16px;
 		}
 		.-toggle-checkbox {
 			position: absolute;
@@ -1721,13 +1735,13 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 48px;
-			height: 48px;
+			width: var(--min-width);
+			height: var(--min-width);
 			cursor: pointer;
-			color: #000;
-			background-color: #f4fbfc;
+			/* color: #000; */
+			/* background-color: #f4fbfc; */
 			border-radius: 8px;
-			box-shadow: 0 1px 2px #0000001f;
+			/* box-shadow: 0 1px 2px #0000001f; */
 			&:hover {
 				background-color: #e8f0fe;
 			}
@@ -1840,7 +1854,9 @@
 		.-grip .icon {
 			transform: rotate(180deg);
 		}
-		.-sidebar-toggle .-grip-header {
+		/* มีพื้นที่พอ จึงแสดง icon และชื่อหัวข้อใน widget header */
+		.-sidebar-toggle > .-leading,
+		.-sidebar-toggle > .-title {
 			display: block;
 		}
 	}
