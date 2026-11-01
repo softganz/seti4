@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-09-26
- * Version  :: 43
+ * Modified :: 2026-11-01
+ * Version  :: 44
  */
 
 /* Core Function */
@@ -292,7 +292,7 @@ function i($key = NULL, $value = NULL) {
 	// 	$i->ip = GetEnv('REMOTE_ADDR');
 	// 	$i->server = &$_SERVER;
 	// }
-	if (isset($key) && isset($value)) $i->{$key} = $value;
+	if (isset($key) && isset($value)) R('i')->{$key} = $value;
 	return $R->user;
 }
 
@@ -455,7 +455,7 @@ function setDevMode() {
  *
  * set theme configuration etc theme , theme.name , theme.absfolder , theme.stylesheet
  */
-function set_theme($name = NULL, $style = 'style.css') {
+function set_theme($themeName = NULL, $style = 'style.css') {
 	/*
 	themes -> current url+themes
 	./themes -> current url+./themes
@@ -464,10 +464,11 @@ function set_theme($name = NULL, $style = 'style.css') {
 	/folder/themes -> /folder/themes
 	*/
 
+	$css_file = '';
 	$getTemporaryTheme = isset($_GET['theme']) ? $_GET['theme'] : '';
 
 	$themes = [];
-	if (isset($name)) $themes[] = $name;
+	if (isset($themeName)) $themes[] = $themeName;
 	if ($getTemporaryTheme == ':clear') {
 		setcookie('theme', '', time()-3600, cfg('cookie.path'), cfg('cookie.domain'));
 		unset($_COOKIE['theme']);
@@ -776,10 +777,10 @@ function page_class($addClass = NULL) {
 /**
  * This function will return the name string of the function that called $function. To return the
  * caller of your function, either call get_caller(), or get_caller(__FUNCTION__).
- * @param String $function
- * @param Array $use_stack
- * @param String $key
- * @return String
+ * @param string $function
+ * @param array $use_stack
+ * @param string $key
+ * @return string
  **/
 function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 	// Cache result per (function, key) so repeated calls (e.g. DB::select/DB::query on
@@ -787,6 +788,7 @@ function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 	// a given function does not change within a single request, so this is safe.
 	static $cache = [];
 
+	$cacheKey = '';
 	$cacheable = is_string($function) && $function != '' && !is_array($use_stack);
 	if ($cacheable) {
 		$cacheKey = $function.'|'.($key ?? '');
@@ -882,6 +884,7 @@ function core_version_check() {
 	// set_time_limit(0); // run very long time
 
 	$d = dir($upgrade_folder);
+	$upgrade_file = [];
 	while (false !== ($entry = $d->read())) {
 		if ( $entry=='.' || $entry=='..' ) continue;
 		$upver=substr($entry,0,strrpos($entry,'.'));
@@ -890,7 +893,7 @@ function core_version_check() {
 	asort($upgrade_file);
 	$d->close();
 
-	$ret.='<h3>Start upgrading from '.$version_install.' to '.$version_current.'</h3>';
+	$ret = '<h3>Start upgrading from '.$version_install.' to '.$version_current.'</h3>';
 	if ($version_force) $ret.='<p>Force upgrade version of '.$version_force.'</p>';
 	foreach ($upgrade_file as $upver=>$file) {
 		if ($version_force && $upver==$version_force) {
@@ -1186,7 +1189,7 @@ function post($key = NULL, $flag = _TRIM) {
 function htmlview($html, $title = NULL, $line_no = true) {
 	$code = explode("\n", trim($html));
 	$i = 1;
-	$ret .= '<div style="background:#fff;color:#000;">';
+	$ret = '<div style="background:#fff;color:#000;">';
 	if ($title) $ret .= '<h2>'.stripslashes($title).'</h2>';
 	foreach ($code as $line => $syntax) {
 		if ($line_no) $ret .= '<font color="gray"><em>'.$i.' : </em></font> ';
@@ -1318,6 +1321,7 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 	$is_accessdenied = false;
 
 	$ret = '';
+	$errmsg = '';
 	if ($args['type']) {
 		$ret .= '<div class="messages -'.($args['type'] ? $args['type'] : 'status').'">'._NL;
 		$ret .= '<dl>'._NL;
