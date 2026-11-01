@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
  * Modified :: 2026-10-01
- * Version  :: 57
+ * Version  :: 58
  *
  * @param array $args
  * @return object
@@ -30,8 +30,12 @@ class DataModel {
 #[AllowDynamicProperties]
 class SetDataModel extends DataModel {
 	function __construct($args) {
-		if (is_string($args)) $args = explode(',', $args);
-		foreach ($args as $key => $value) $this->{$key} = $value;
+		if (is_string($args)) {
+			$args = explode(',', $args);
+		}
+		foreach ($args as $key => $value) {
+			$this->{$key} = $value;
+		}
 	}
 }
 
@@ -52,7 +56,7 @@ class JsonArrayDataModel extends DataModel {
 /**
  * For limit = 1
  * @return array of fields
- * 
+ *
  * For limit != 1
  * @return count
  * @return foundRows: select with SQL_CALC_FOUND_ROWS
@@ -66,12 +70,18 @@ class DbSelect {
 
 	function __construct($args = []) {
 		if ($args) {
-			foreach ($args as $key => $value) $this->{$key} = $value;
+			foreach ($args as $key => $value) {
+				$this->{$key} = $value;
+			}
 		}
 	}
 
-	public function count() {return $this->count;}
-	public function valueOf($field) {return isset($this->{$field}) ? $this->{$field} : null;}
+	public function count() {
+		return $this->count;
+	}
+	public function valueOf($field) {
+		return isset($this->{$field}) ? $this->{$field} : null;
+	}
 
 	public function values($fields = []) {
 		$values = (object) [];
@@ -82,12 +92,22 @@ class DbSelect {
 		return $values;
 	}
 
-	public function DB() {return $this->DB;}
-	public function result() {return $this->result;}
-	public function rowCount() {return $this->result ? $this->result->rowCount() : null;}
+	public function DB() {
+		return $this->DB;
+	}
+	public function result() {
+		return $this->result;
+	}
+	public function rowCount() {
+		return $this->result ? $this->result->rowCount() : null;
+	}
 
-	public function setDB($db) {$this->DB = $db;}
-	public function setResult($result) {$this->result = $result;}
+	public function setDB($db) {
+		$this->DB = $db;
+	}
+	public function setResult($result) {
+		$this->result = $result;
+	}
 }
 
 class DbQuery {
@@ -101,12 +121,24 @@ class DbQuery {
 		$this->DB = $args['DB'] ?? null;
 	}
 
-	public function DB() {return $this->DB;}
-	public function result() {return $this->result;}
-	public function insertId() {return $this->DB ? $this->DB->insertId() : null;}
-	public function rowCount() {return $this->result ? $this->result->rowCount() : null;}
-	public function error() {return $this->DB ? $this->DB->errors() : null;}
-	public function errorMsg() {return $this->DB ? $this->DB->errorMsg() : null;}
+	public function DB() {
+		return $this->DB;
+	}
+	public function result() {
+		return $this->result;
+	}
+	public function insertId() {
+		return $this->DB ? $this->DB->insertId() : null;
+	}
+	public function rowCount() {
+		return $this->result ? $this->result->rowCount() : null;
+	}
+	public function error() {
+		return $this->DB ? $this->DB->errors() : null;
+	}
+	public function errorMsg() {
+		return $this->DB ? $this->DB->errorMsg() : null;
+	}
 }
 
 // Add custom exception class
@@ -114,26 +146,35 @@ class DbException extends \Exception {
 	var $error = false;
 	private $state;
 	private $query;
-	
-	public function __construct($message = null, $code = null, $error = null, $query = null) {
-		parent::__construct($message, (Int) $code);
+
+	public function __construct(
+		$message = null,
+		$code = null,
+		$error = null,
+		$query = null
+	) {
+		parent::__construct($message, (int) $code);
 		$this->error = $error;
 		$this->query = $query;
 	}
-	
-	public function getQuery() {return $this->query;}
 
-	public function getState() {return $this->state;}
+	public function getQuery() {
+		return $this->query;
+	}
+
+	public function getState() {
+		return $this->state;
+	}
 }
 
 /**
-* Array Arguments:
-* statment   :: string without key
-* connection :: string | array
-* var        :: object | array
-* where      :: array of array
-* options    :: array of debug, key, value, group
-*/
+ * Array Arguments:
+ * statment   :: string without key
+ * connection :: string | array
+ * var        :: object | array
+ * where      :: array of array
+ * options    :: array of debug, key, value, group
+ */
 
 #[AllowDynamicProperties]
 class DB {
@@ -165,12 +206,14 @@ class DB {
 		// Connect to database
 		if (isset($args['connection']) && $args['connection']) {
 			$this->createDbConnection($args['connection']);
-		} else if (function_exists('R')) {
+		} elseif (function_exists('R')) {
 			$this->PDO = R()->DB->PDO();
 			$this->status = R()->DB->status;
 		}
 
-		if (!$this->status) return;
+		if (!$this->status) {
+			return;
+		}
 
 		$this->srcStmt = isset($args[0]) ? trim($args[0]) : null;
 		unset($args[0]);
@@ -184,7 +227,10 @@ class DB {
 		// $debugSelect = $args['options']['debugTest'];
 
 		$selectResult = new DB($args);
-		$selectResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $selectResult->multipleQuery);
+		$selectResult->PDO->setAttribute(
+			\PDO::ATTR_EMULATE_PREPARES,
+			$selectResult->multipleQuery
+		);
 		// Only resolve caller when query history is enabled (callerFrom is used in stmt()
 		// which only runs when history is on). Avoids expensive debug_backtrace() on every query.
 		if ($selectResult->options->history !== false) {
@@ -194,7 +240,8 @@ class DB {
 
 		// Query error, return exception
 		if ($queryResult instanceof DbException) {
-			$errorMessage = $selectResult->stmt
+			$errorMessage =
+				$selectResult->stmt
 				. '; <span style="color:red;">-- ERROR :: '
 				. ($selectResult->errorMsg ?? 'Select data from database was error.')
 				. '</font>';
@@ -216,7 +263,7 @@ class DB {
 			$result = new DbSelect([
 				'count' => $selectResult->count,
 				'foundRows' => null,
-				'items' => $selectResult->items,
+				'items' => $selectResult->items
 			]);
 
 			if (preg_match('/SQL_CALC_FOUND_ROWS/', $selectResult->stmt)) {
@@ -232,12 +279,18 @@ class DB {
 		$result->setDB($selectResult);
 		$result->setResult($queryResult);
 
-		if (isset($args['onComplete']) && is_callable($args['onComplete'])) $args['onComplete']($result);
+		if (isset($args['onComplete']) && is_callable($args['onComplete'])) {
+			$args['onComplete']($result);
+		}
 
-		if (isset($selectResult->options->sum) && $selectResult->options->sum) $result->sum = $selectResult->options->sum;
+		if (isset($selectResult->options->sum) && $selectResult->options->sum) {
+			$result->sum = $selectResult->options->sum;
+		}
 
 		if ($selectResult->options->showResult) {
-			if (function_exists('debugMsg')) debugMsg($result, 'DB::select');
+			if (function_exists('debugMsg')) {
+				debugMsg($result, 'DB::select');
+			}
 		}
 
 		return $result;
@@ -253,7 +306,8 @@ class DB {
 		$result = $queryResult->queryResult();
 
 		if ($result instanceof DbException) {
-			$errorMessage = $queryResult->stmt
+			$errorMessage =
+				$queryResult->stmt
 				. '; <span style="color:red;">-- ERROR :: '
 				. ($queryResult->errorMsg ?? 'Update data to database was error.')
 				. '</font>';
@@ -266,14 +320,17 @@ class DB {
 				$errorMessage
 			);
 		}
-		
+
 		unset($queryResult->items, $queryResult->count);
-		$queryResult->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $queryResult->multipleQuery);
+		$queryResult->PDO->setAttribute(
+			\PDO::ATTR_EMULATE_PREPARES,
+			$queryResult->multipleQuery
+		);
 
 		return new DbQuery([
 			'query' => $queryResult->stmt,
 			'result' => $result,
-			'DB' => $queryResult,
+			'DB' => $queryResult
 		]);
 	}
 
@@ -281,47 +338,61 @@ class DB {
 		return DB::select([
 			'SHOW TABLES LIKE :table',
 			'var' => [
-				':table'=> preg_replace('/`/', '', db($table)), // Remove `
+				':table' => preg_replace('/`/', '', db($table)) // Remove `
 			]
 		])->count;
 	}
 
 	/**
-	* Get Column Name of Table
-	*
-	* @param string $table
-	* @param string $colName
-	* @return array
-	*/
+	 * Get Column Name of Table
+	 *
+	 * @param string $table
+	 * @param string $colName
+	 * @return array
+	 */
 	public static function columns($table, $colName = '', $dbname = '') {
 		static $tables = null;
 		if (!isset($tables[$table])) {
 			$tables = [];
 			if (substr($table, 0, 1) === '`') {
 				$tablename = $table;
-			} else if (substr($table, 0, 1) === '%') {
+			} elseif (substr($table, 0, 1) === '%') {
 				$tablename = $table;
 			} else {
-				$tablename = '%'.$table.'%';
+				$tablename = '%' . $table . '%';
 			}
-			
-			foreach (DB::select([
-				'SHOW COLUMNS FROM ' . ($dbname ? '`' . $dbname . '`.' : '') . $tablename
-			])->items as $rs) {
-				foreach ( $rs as $key => $value ) if ( is_long($key) ) unset($rs[$key]);
+
+			foreach (
+				DB::select([
+					'SHOW COLUMNS FROM '
+					. ($dbname ? '`' . $dbname . '`.' : '')
+					. $tablename
+				])->items
+				as $rs
+			) {
+				foreach ($rs as $key => $value) {
+					if (is_long($key)) {
+						unset($rs[$key]);
+					}
+				}
 				$tables[$table][$rs->Field] = $rs;
 			}
 			// debugMsg($tables[$table], '$tables[' .$table .']');
 		}
-		return $colName ? (array_key_exists($colName, $tables[$table]) ? $tables[$table][$colName] : false) : $tables[$table];
+		return $colName
+			? (array_key_exists($colName, $tables[$table])
+				? $tables[$table][$colName]
+				: false)
+			: $tables[$table];
 	}
-
 
 	// Public method
 	function prepare() {
 		$this->stmt = $this->srcStmt;
 
-		if (isset($this->args['var'])) $this->setVariable($this->args['var']);
+		if (isset($this->args['var'])) {
+			$this->setVariable($this->args['var']);
+		}
 		$this->setWhere();
 
 		$this->replaceWhere();
@@ -332,15 +403,21 @@ class DB {
 	}
 
 	function selectResult() {
-		if (!$this->status || empty($this->srcStmt)) return;
+		if (!$this->status || empty($this->srcStmt)) {
+			return;
+		}
 
 		// Prepare statement
 		$this->prepare();
 
 		$this->setDebugMessage('SRC', $this->srcStmt);
 		$this->setDebugMessage('PREPARE', $this->stmt);
-		if (isset($this->args['var'])) $this->setDebugMessage('VAR', $this->args['var']);
-		if (isset($this->args['where'])) $this->setDebugMessage('WHERE', $this->args['where']);
+		if (isset($this->args['var'])) {
+			$this->setDebugMessage('VAR', $this->args['var']);
+		}
+		if (isset($this->args['where'])) {
+			$this->setDebugMessage('WHERE', $this->args['where']);
+		}
 		$this->setDebugMessage('OPTIONS', $this->options);
 
 		try {
@@ -367,14 +444,14 @@ class DB {
 				'SqlState' => $exception->getCode()
 			]);
 
-			$this->updateLastQueryStmt(
-				'Select',
-				$queryStmt,
-				$queryError
-			);
+			$this->updateLastQueryStmt('Select', $queryStmt, $queryError);
 
 			// Show debug message if debug mode is on, otherwise return exception
-			if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) {
+			if (
+				isset($this->options->debug) &&
+				$this->options->debug &&
+				function_exists('debugMsg')
+			) {
 				debugMsg($this->debugMsg());
 				return;
 			}
@@ -387,10 +464,14 @@ class DB {
 					'query' => $queryStmt
 				]
 			);
-		}		
+		}
 
 		// Show debug message if debug mode is on
-		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) {
+		if (
+			isset($this->options->debug) &&
+			$this->options->debug &&
+			function_exists('debugMsg')
+		) {
 			debugMsg($this->debugMsg());
 		}
 
@@ -398,15 +479,21 @@ class DB {
 	}
 
 	function queryResult() {
-		if (!$this->status || empty($this->srcStmt)) return;
+		if (!$this->status || empty($this->srcStmt)) {
+			return;
+		}
 
 		// Prepare statement
 		$this->prepare();
 
 		$this->setDebugMessage('SRC', $this->srcStmt);
 		$this->setDebugMessage('QUERY', $this->stmt);
-		if (isset($this->args['var'])) $this->setDebugMessage('VAR', $this->args['var']);
-		if (isset($this->args['where'])) $this->setDebugMessage('WHERE', $this->args['where']);
+		if (isset($this->args['var'])) {
+			$this->setDebugMessage('VAR', $this->args['var']);
+		}
+		if (isset($this->args['where'])) {
+			$this->setDebugMessage('WHERE', $this->args['where']);
+		}
 		$this->setDebugMessage('OPTIONS', $this->options);
 
 		$start = microtime(true);
@@ -423,24 +510,19 @@ class DB {
 				'SqlState' => $exception->getCode()
 			]);
 
-			$this->updateLastQueryStmt(
-				'Query',
-				$queryStmt,
-				$queryError
-			);
+			$this->updateLastQueryStmt('Query', $queryStmt, $queryError);
 
 			// Show debug message if debug mode is on, otherwise return exception
-			if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) {
+			if (
+				isset($this->options->debug) &&
+				$this->options->debug &&
+				function_exists('debugMsg')
+			) {
 				debugMsg($this->debugMsg());
 				return;
 			}
 
-			return new DbException(
-				$errorMsg,
-				$errorCode,
-				$queryError[0],
-				$queryStmt
-			);
+			return new DbException($errorMsg, $errorCode, $queryError[0], $queryStmt);
 		}
 
 		// Query complete
@@ -450,8 +532,19 @@ class DB {
 			$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
 		);
 
-		if (isset($this->args['onComplete']) && is_callable($this->args['onComplete'])) $this->args['onComplete']($this);
-		if (isset($this->options->debug) && $this->options->debug && function_exists('debugMsg')) debugMsg($this->debugMsg());
+		if (
+			isset($this->args['onComplete']) &&
+			is_callable($this->args['onComplete'])
+		) {
+			$this->args['onComplete']($this);
+		}
+		if (
+			isset($this->options->debug) &&
+			$this->options->debug &&
+			function_exists('debugMsg')
+		) {
+			debugMsg($this->debugMsg());
+		}
 
 		return $query;
 	}
@@ -462,7 +555,9 @@ class DB {
 			$value = (object) $value;
 			if (isset($this->options->jsonDecode) && $this->options->jsonDecode) {
 				foreach ($this->options->jsonDecode as $jsonDecode) {
-					$jsonDecodeResult = json_decode($value->{$jsonDecode['field']} ?? '{}');
+					$jsonDecodeResult = json_decode(
+						$value->{$jsonDecode['field']} ?? '{}'
+					);
 					if ($jsonDecode['type'] === 'merge') {
 						$foundField = false;
 						$before = [];
@@ -472,8 +567,11 @@ class DB {
 								$foundField = true;
 								continue;
 							}
-							if (!$foundField) $before[$itemKey] = $itemValue;
-							else $after[$itemKey] = $itemValue;
+							if (!$foundField) {
+								$before[$itemKey] = $itemValue;
+							} else {
+								$after[$itemKey] = $itemValue;
+							}
 						}
 						$value = (object) array_replace_recursive(
 							(array) $before,
@@ -488,17 +586,32 @@ class DB {
 
 			if (isset($this->options->group) && $this->options->group) {
 				// Collect result using group of items and/or using key and value
-				if (isset($this->options->key) && $this->options->key && isset($this->options->value) && $this->options->value) {
-					$result[$value->{$this->options->group}][$value->{$this->options->key}] = $value->{$this->options->value};
-				} else if (isset($this->options->key) && $this->options->key) {
-					$result[$value->{$this->options->group}][$value->{$this->options->key}] = $value;
+				if (
+					isset($this->options->key) &&
+					$this->options->key &&
+					isset($this->options->value) &&
+					$this->options->value
+				) {
+					$result[$value->{$this->options->group}][
+						$value->{$this->options->key}
+					] = $value->{$this->options->value};
+				} elseif (isset($this->options->key) && $this->options->key) {
+					$result[$value->{$this->options->group}][
+						$value->{$this->options->key}
+					] = $value;
 				} else {
 					$result[$value->{$this->options->group}][] = $value;
 				}
-			} else if (isset($this->options->key) && isset($this->options->value) && $this->options->key && $this->options->value) {
+			} elseif (
+				isset($this->options->key) &&
+				isset($this->options->value) &&
+				$this->options->key &&
+				$this->options->value
+			) {
 				// Collect result using key and value
-				$result[$value->{$this->options->key}] = $value->{$this->options->value};
-			} else if (isset($this->options->key) && $this->options->key) {
+				$result[$value->{$this->options->key}] =
+					$value->{$this->options->value};
+			} elseif (isset($this->options->key) && $this->options->key) {
 				// Collect result using key
 				$result[$value->{$this->options->key}] = $value;
 			} else {
@@ -516,41 +629,76 @@ class DB {
 		return $result;
 	}
 
-	function insertId() {return intval($this->PDO->lastInsertId());}
+	function insertId() {
+		return intval($this->PDO->lastInsertId());
+	}
 
-	function args() {return $this->args;}
+	function args() {
+		return $this->args;
+	}
 
-	function options() {return $this->options;}
+	function options() {
+		return $this->options;
+	}
 
-	function PDO() {return $this->PDO;}
+	function PDO() {
+		return $this->PDO;
+	}
 
-	function close() {$this->PDO = null;}
+	function close() {
+		$this->PDO = null;
+	}
 
 	// Create statement with message and error code
 	private function stmt($addMessage = []) {
 		$stmt = $this->stmt;
 		if (isset($addMessage['errorMessage']) && $addMessage['errorMessage']) {
-			$stmt .= ';<br><span style="color:red;">-- ERROR #'.$addMessage['errorCode'].' '.$addMessage['errorMessage'].'</span>';
+			$stmt .=
+				';<br><span style="color:red;">-- ERROR #'
+				. $addMessage['errorCode']
+				. ' '
+				. $addMessage['errorMessage']
+				. '</span>';
 		}
 
 		if (isset($addMessage['rowCount'])) {
-			$stmt .= '<br><span style="color:green">-- '
-				. (isset($addMessage['rowCount']) ? '<b>'.number_format($addMessage['rowCount']).'</b> affected rows' : '')
-				. (isset($addMessage['time']) ? ' in <b>'.number_format($addMessage['time'] * 1000, 2).'</b> ms' : '')
+			$stmt .=
+				'<br><span style="color:green">-- '
+				. (isset($addMessage['rowCount'])
+					? '<b>'
+						. number_format($addMessage['rowCount'])
+						. '</b> affected rows'
+					: '')
+				. (isset($addMessage['time'])
+					? ' in <b>' . number_format($addMessage['time'] * 1000, 2) . '</b> ms'
+					: '')
 				. '</span>';
 		}
-		$stmt .= '<br><font color="gray">-- Call <b>DB</b> from '.$this->callerFrom.'</font>';
+		$stmt .=
+			'<br><font color="gray">-- Call <b>DB</b> from '
+			. $this->callerFrom
+			. '</font>';
 		return $stmt;
 	}
 
-	function sum($key) {if ($this->options->sum) return $this->options->sum->{$key};}
+	function sum($key) {
+		if ($this->options->sum) {
+			return $this->options->sum->{$key};
+		}
+	}
 
-	function errors() {return $this->errors;}
+	function errors() {
+		return $this->errors;
+	}
 
-	function errorMsg() {return $this->errorMsg;}
+	function errorMsg() {
+		return $this->errorMsg;
+	}
 
 	function queryItems($stmt = null) {
-		if ($stmt) $this->queryItems[] = $stmt;
+		if ($stmt) {
+			$this->queryItems[] = $stmt;
+		}
 		return $this->queryItems;
 	}
 
@@ -558,11 +706,17 @@ class DB {
 		$ret = '';
 		foreach ($this->debugMessage as $debugKey => $debugText) {
 			$ret .= '<div>';
-			if (!is_numeric($debugKey)) $ret .= '<b><i>'.$debugKey.' ::</i></b><br />';
+			if (!is_numeric($debugKey)) {
+				$ret .= '<b><i>' . $debugKey . ' ::</i></b><br />';
+			}
 			if (is_string($debugText)) {
-				$ret .= preg_match('/^SELECT|UPDATE|INSERT|DELETE|ALTER/i', $debugText) ? '<pre>'.$debugText.'</pre>' : $debugText;
+				$ret .= preg_match('/^SELECT|UPDATE|INSERT|DELETE|ALTER/i', $debugText)
+					? '<pre>' . $debugText . '</pre>'
+					: $debugText;
 			} else {
-				$ret .= class_exists('\DebugMsg') ? (new \DebugMsg($debugText, $debugKey))->build() : '<pre>'.print_r($debugText, true).'</pre>';
+				$ret .= class_exists('\DebugMsg')
+					? new \DebugMsg($debugText, $debugKey)->build()
+					: '<pre>' . print_r($debugText, true) . '</pre>';
 			}
 			$ret .= '</div>';
 		}
@@ -573,17 +727,20 @@ class DB {
 		return $this->connection;
 	}
 
-
 	// Private method
 	private function createDbConnection($connection) {
 		if (is_string($connection['uri'])) {
-			preg_match('/(mysql)\:\/\/([^:]*)\:([^@]*)\@([^\/]*)\/(.*)/i', $connection['uri'], $out);
+			preg_match(
+				'/(mysql)\:\/\/([^:]*)\:([^@]*)\@([^\/]*)\/(.*)/i',
+				$connection['uri'],
+				$out
+			);
 			$connection['type'] = $out[1];
 			$connection['user'] = $out[2];
 			$connection['password'] = $out[3];
 			$connection['host'] = $out[4];
 			$connection['database'] = $out[5];
-		} else if (is_array($connection['uri'])) {
+		} elseif (is_array($connection['uri'])) {
 			$connection['type'] = $connection['uri']['type'];
 			$connection['user'] = $connection['uri']['user'];
 			$connection['password'] = $connection['uri']['password'];
@@ -592,25 +749,40 @@ class DB {
 		}
 
 		$this->connection = (object) $connection;
-		$dsn = $connection['type'] . ':host=' . $connection['host'] . ';dbname=' . $connection['database'] . ';charset=' . $connection['characterSetName'];
+		$dsn =
+			$connection['type']
+			. ':host='
+			. $connection['host']
+			. ';dbname='
+			. $connection['database']
+			. ';charset='
+			. $connection['characterSetName'];
 
 		$start_time = microtime(true);
 
 		try {
 			$pdoOptions = [
-				\PDO::ATTR_EMULATE_PREPARES   => $this->multipleQuery, // turn off emulation mode for "real" prepared statements
-				\PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION, //turn on errors in the form of exceptions
+				\PDO::ATTR_EMULATE_PREPARES => $this->multipleQuery, // turn off emulation mode for "real" prepared statements
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, //turn on errors in the form of exceptions
 				\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC, //make the default fetch be an associative array
-				\Pdo\Mysql::ATTR_FOUND_ROWS		=> true
+				\Pdo\Mysql::ATTR_FOUND_ROWS => true
 			];
-			$this->PDO = new \PDO($dsn, $connection['user'], $connection['password'], $pdoOptions);
+			$this->PDO = new \PDO(
+				$dsn,
+				$connection['user'],
+				$connection['password'],
+				$pdoOptions
+			);
 		} catch (\PDOException $e) {
 			$this->errors[] = $this->errorMsg = $e->getMessage();
-			throw new \Exception('+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล', $e->getCode());
+			throw new \Exception(
+				'+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล',
+				$e->getCode()
+			);
 		}
 
 		$end_time = microtime(true);
-		$connection_time = ($end_time - $start_time);
+		$connection_time = $end_time - $start_time;
 
 		$this->connectionTime = round($connection_time, 4);
 
@@ -633,7 +805,7 @@ class DB {
 				'showResult' => false,
 				'debug' => false,
 				'sum' => [],
-				'jsonDecode' => [],
+				'jsonDecode' => []
 			],
 			(array) $options
 		);
@@ -642,8 +814,8 @@ class DB {
 			$sumFields = $this->options->sum;
 			$this->options->sum = (object) [];
 			foreach (explode(',', $sumFields) as $value) {
-			 	$this->options->sum->{$value} = 0;
-			 }
+				$this->options->sum->{$value} = 0;
+			}
 		}
 
 		if ($this->options->multiple) {
@@ -658,7 +830,11 @@ class DB {
 			$this->debugMessage[] = $message;
 		}
 		if ($this->debug) {
-			if (function_exists('debugMsg')) debugMsg($message); else echo '<div class="debug-msg">'.$message.'</div>';
+			if (function_exists('debugMsg')) {
+				debugMsg($message);
+			} else {
+				echo '<div class="debug-msg">' . $message . '</div>';
+			}
 		}
 		return $this->debugMessage;
 	}
@@ -672,24 +848,36 @@ class DB {
 			}
 		}
 
-		if (empty($this->args['where'])) return;
+		if (empty($this->args['where'])) {
+			return;
+		}
 
 		foreach ($this->args['where'] as $whereKey => $whereGroup) {
 			$where = [];
 			foreach ($whereGroup as $whereItem) {
-				if (isset($whereItem[0]) && $whereItem[0]) $where[] = $whereItem[0];
+				if (isset($whereItem[0]) && $whereItem[0]) {
+					$where[] = $whereItem[0];
+				}
 				unset($whereItem[0]);
-				if ($whereItem) $this->setVariable($whereItem);
+				if ($whereItem) {
+					$this->setVariable($whereItem);
+				}
 			}
-			$this->where[$whereKey] = empty($where) ? '' : 'WHERE '.implode(' AND ', $where);
+			$this->where[$whereKey] = empty($where)
+				? ''
+				: 'WHERE ' . implode(' AND ', $where);
 		}
 	}
 
 	private function setVariable($variable = []) {
-		if (empty($variable)) return;
+		if (empty($variable)) {
+			return;
+		}
 
 		// Value of var is object, convert to array with : in front of key
-		if (is_object($variable)) $variable = $this->valueObjectConvert($variable);
+		if (is_object($variable)) {
+			$variable = $this->valueObjectConvert($variable);
+		}
 
 		foreach ($variable as $key => $value) {
 			self::setEachVariable($key, $value);
@@ -699,39 +887,48 @@ class DB {
 	private function setEachVariable($key, $value) {
 		if (is_null($value)) {
 			$value = 'NULL';
-		} else if (is_object($value) && get_class($value) === 'Softganz\JsonDataModel') {
+		} elseif (
+			is_object($value) &&
+			get_class($value) === 'Softganz\JsonDataModel'
+		) {
 			$value = $this->jsonObjectString($value->args);
-		} else if (is_object($value) && get_class($value) === 'Softganz\JsonArrayDataModel') {
+		} elseif (
+			is_object($value) &&
+			get_class($value) === 'Softganz\JsonArrayDataModel'
+		) {
 			$value = $this->jsonArrayString($value->args);
-		} else if (is_object($value) && get_class($value) === 'Softganz\SetDataModel') {
+		} elseif (
+			is_object($value) &&
+			get_class($value) === 'Softganz\SetDataModel'
+		) {
 			$value = $this->valueOfSet($value);
-		} else if (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key)) {
+		} elseif (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key)) {
 			$value = $this->jsonObjectString($value);
-		} else if (is_object($value)) {
+		} elseif (is_object($value)) {
 			// If value is object, recursive all element with add : in front of key
 			return self::setVariable($value);
-		} else if (is_array($value)) {
+		} elseif (is_array($value)) {
 			// If value is object, recursive all element without add : in front of key
 			return self::setVariable($value);
-		} else if (preg_match('/^(\:\`).*(\`)$/', $key)) {
+		} elseif (preg_match('/^(\:\`).*(\`)$/', $key)) {
 			// If key leading with :` and end with ` then value is quote and remove ' and add ` at front and end
-			$value = '`'.trim($this->quote($value), '\'').'`';
-		} else if (preg_match('/^(\:\:).*(\:\:)$/', $key)) {
+			$value = '`' . trim($this->quote($value), '\'') . '`';
+		} elseif (preg_match('/^(\:\:).*(\:\:)$/', $key)) {
 			// If key leading with :" and end with " then value is quote and remove ' and add ` at front and end
 			$value = trim($this->quote($value), '\'');
-		} else if (preg_match('/^\$([a-zA-Z0-9_]*)\$$/', $key)) {
+		} elseif (preg_match('/^\$([a-zA-Z0-9_]*)\$$/', $key)) {
 			// If key leading and ending with $ and function name format, Don't quote
 			$value = $value;
-		} else if (preg_match('/^\$([a-zA-Z0-9_]*)/', $key)) {
+		} elseif (preg_match('/^\$([a-zA-Z0-9_]*)/', $key)) {
 			// If key leading with $ and follow by function name format, Quote value
 			$value = $this->quote($value);
-		} else if (is_string($value) && preg_match('/^func\./i', $value)) {
+		} elseif (is_string($value) && preg_match('/^func\./i', $value)) {
 			$value = substr($value, 5);
-		} else if (is_string($value)) {
+		} elseif (is_string($value)) {
 			$value = $this->quote($value);
-		} else if (is_numeric($value)) {
+		} elseif (is_numeric($value)) {
 			$value = $value;
-		} else if (is_bool($value)) {
+		} elseif (is_bool($value)) {
 			$value = $value ? 1 : 0;
 		} else {
 			$value = '""';
@@ -741,24 +938,32 @@ class DB {
 	}
 
 	private function replaceWhere() {
-		if (empty($this->where)) return;
+		if (empty($this->where)) {
+			return;
+		}
 
 		$whereKey = array_keys($this->where);
 
 		// Quote value keys before use preg_replace
-		$whereKey = array_map(function($v) {return "#".preg_quote($v)."#";}, $whereKey);
+		$whereKey = array_map(function ($v) {
+			return '#' . preg_quote($v) . '#';
+		}, $whereKey);
 
 		// Replace value keys with $this->var
 		$this->stmt = preg_replace($whereKey, $this->where, $this->stmt);
 	}
 
 	private function replaceVariable() {
-		if (empty($this->var)) return;
+		if (empty($this->var)) {
+			return;
+		}
 
 		$varKey = array_keys($this->var);
 
 		// Quote value keys before use preg_replace
-		$varKey = array_map(function($v) {return "#".preg_quote($v)."#";}, $varKey);
+		$varKey = array_map(function ($v) {
+			return '#' . preg_quote($v) . '#';
+		}, $varKey);
 
 		// Replace value keys with $this->var
 		$this->stmt = preg_replace($varKey, $this->var, $this->stmt);
@@ -778,9 +983,12 @@ class DB {
 			// debugMsg($out, '$out');
 
 			// Convert format from `table`.`field` ->> "$.jsonKey" to JSON_UNQUOTE(JSON_EXTRACT())
-			$this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.[\w\-\_\*\.0-9]*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
+			$this->stmt = preg_replace(
+				'/(`\w*`\.`\w*`) \-\>\> ("\$\.[\w\-\_\*\.0-9]*")/',
+				'JSON_UNQUOTE(JSON_EXTRACT($1, $2))',
+				$this->stmt
+			);
 			# $this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.[\u0E01-\u0E5B]*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
-
 
 			// $this->stmt = preg_replace('/(`dos`\.`information`) \-\>\> ("\$\.\w*\")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
 			// debugMsg('CONVERT STMT');
@@ -792,16 +1000,18 @@ class DB {
 		// Replace %tablename% with db(%tablename%)
 		$this->stmt = preg_replace_callback(
 			'/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i',
-			function($m) {
-				return ' '.$this->db($m[1]);
-			} ,
+			function ($m) {
+				return ' ' . $this->db($m[1]);
+			},
 			$this->stmt
 		);
 	}
 
 	private function valueOfSet($object) {
 		foreach ($object as $key => $value) {
-			if (!is_numeric($value)) $object->{$key} = $this->quote($value);
+			if (!is_numeric($value)) {
+				$object->{$key} = $this->quote($value);
+			}
 		}
 		return implode(' , ', (array) $object);
 	}
@@ -813,13 +1023,15 @@ class DB {
 				// Key leading with $ will not add : to front of it
 				$result[$key] = $value;
 			} else {
-				$result[':'.$key] = $value;
+				$result[':' . $key] = $value;
 			}
 		}
 		return $result;
 	}
 
-	private function quote($value) {return is_null($value) ? null : $this->PDO->quote($value);}
+	private function quote($value) {
+		return is_null($value) ? null : $this->PDO->quote($value);
+	}
 
 	/**
 	 * Set & get table with keyword
@@ -829,44 +1041,57 @@ class DB {
 	 * @param string $db
 	 * @return string
 	 */
-	private function db($key = null, $new_value = null, $prefix = null, $db = null) {
+	private function db(
+		$key = null,
+		$new_value = null,
+		$prefix = null,
+		$db = null
+	) {
 		static $items = [];
 		static $src = [];
 
-		if (empty($items) && function_exists('db')) $items = db();
+		if (empty($items) && function_exists('db')) {
+			$items = db();
+		}
 
 		$tablePrefix = function_exists('cfg') ? cfg('db.prefix') : '';
-		$ret=null;
+		$ret = null;
 
 		if (isset($key) && isset($new_value)) {
-			$src[$key]=$new_value;
-			$tablename=(isset($db)?'`'.$db.'`.':''); // Set database name
-			if (preg_match('/\`([a-zA-Z0-9_].*)\`/',$new_value,$out)) {
-				$tablename.=$new_value; // Use new_value on `table` or `db`.`table` format
+			$src[$key] = $new_value;
+			$tablename = isset($db) ? '`' . $db . '`.' : ''; // Set database name
+			if (preg_match('/\`([a-zA-Z0-9_].*)\`/', $new_value, $out)) {
+				$tablename .= $new_value; // Use new_value on `table` or `db`.`table` format
 			} else {
-				$tablename.='`'.$tablePrefix.$new_value.'`'; // Add prefix on table format
+				$tablename .= '`' . $tablePrefix . $new_value . '`'; // Add prefix on table format
 			}
-			$items[$key]=$tablename;
-			$ret=$items;
-		} else if (!isset($key) && isset($prefix)) {
+			$items[$key] = $tablename;
+			$ret = $items;
+		} elseif (!isset($key) && isset($prefix)) {
 			// Change all table items to new prefix value
-			foreach ($src as $key=>$value) $items[$key]=$prefix.$value;
-			$ret=$items;
-		} else if (isset($key)) {
+			foreach ($src as $key => $value) {
+				$items[$key] = $prefix . $value;
+			}
+			$ret = $items;
+		} elseif (isset($key)) {
 			// if key return value in condition
 			// key format `table_name` return `table_name`
 			// key format %table_name% return value in `$items[table_name]`
 			// key format table_name and key in array items return items[table_name]
 			// key format table_name and key not in items return db.prefix+table_name
-			if (preg_match('/\`([a-zA-Z0-9_].*)\`/',$key,$out)) {
-				$ret=$key;
-			} else if (preg_match('/\%([a-zA-Z0-9_].*)\%/',$key,$out)) {
-				$ret = array_key_exists($out[1],$items) ? $items[$out[1]] : '`'.$tablePrefix.$out[1].'`';
+			if (preg_match('/\`([a-zA-Z0-9_].*)\`/', $key, $out)) {
+				$ret = $key;
+			} elseif (preg_match('/\%([a-zA-Z0-9_].*)\%/', $key, $out)) {
+				$ret = array_key_exists($out[1], $items)
+					? $items[$out[1]]
+					: '`' . $tablePrefix . $out[1] . '`';
 			} else {
-				$ret = array_key_exists($key,$items) ? $items[$key] : '`'.$tablePrefix.$key.'`';
+				$ret = array_key_exists($key, $items)
+					? $items[$key]
+					: '`' . $tablePrefix . $key . '`';
 			}
 		} else {
-			$ret=$items;
+			$ret = $items;
 		}
 		return $ret;
 	}
@@ -876,38 +1101,51 @@ class DB {
 		$value = json_decode(json_encode($value));
 
 		$jsonString = '';
-		
-		if ($key) $jsonString .= '	"'.$key.'", ';
-		$jsonString .= is_object($value) ? 'JSON_OBJECT('._NL : 'JSON_ARRAY('._NL;
+
+		if ($key) {
+			$jsonString .= '	"' . $key . '", ';
+		}
+		$jsonString .= is_object($value)
+			? 'JSON_OBJECT(' . _NL
+			: 'JSON_ARRAY(' . _NL;
 
 		foreach ((array) $value as $jsonKey => $jsonValue) {
 			if (is_array($jsonValue)) {
-				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).', '._NL;
-			} else if (is_object($jsonValue)) {
-				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey).', ';
+				$jsonString .=
+					$this->jsonObjectString($jsonValue, $jsonKey) . ', ' . _NL;
+			} elseif (is_object($jsonValue)) {
+				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey) . ', ';
 			} else {
 				// Convert value to type
-				if (is_null($jsonValue) || (is_string($jsonValue) && trim($jsonValue) === '')) $jsonValue = 'null';
-				else if (is_numeric($jsonValue)) $jsonValue = floatval($jsonValue);
-				else {
-					$jsonValue = '"'.preg_replace('/[\"]/', '', $jsonValue).'"';
+				if (
+					is_null($jsonValue) ||
+					(is_string($jsonValue) && trim($jsonValue) === '')
+				) {
+					$jsonValue = 'null';
+				} elseif (is_numeric($jsonValue)) {
+					$jsonValue = floatval($jsonValue);
+				} else {
+					$jsonValue = '"' . preg_replace('/[\"]/', '', $jsonValue) . '"';
 				}
-				$jsonString .= (is_array($value) ? '	' : '	"'.$jsonKey.'", ')
+				$jsonString .=
+					(is_array($value) ? '	' : '	"' . $jsonKey . '", ')
 					. $jsonValue
-					. ', '._NL;
+					. ', '
+					. _NL;
 			}
 		}
-		$jsonString = rtrim($jsonString, ' , '._NL);
-		$jsonString .= _NL.')';
+		$jsonString = rtrim($jsonString, ' , ' . _NL);
+		$jsonString .= _NL . ')';
 		return $jsonString;
 	}
 
 	private function jsonArrayString($value, $key = null) {
 		// debugMsg($value, 'JSON Value');
 		$jsonString = '';
-		if ($key) $jsonString .= '"'.$key.'" , ';
-		$jsonString .= 'JSON_ARRAY('
-			. '"'.implode('","', (array) $value).'"';
+		if ($key) {
+			$jsonString .= '"' . $key . '" , ';
+		}
+		$jsonString .= 'JSON_ARRAY(' . '"' . implode('","', (array) $value) . '"';
 		// foreach ((array) $value as $jsonKey => $jsonValue) {
 		// 	// debugMsg('KEY '.$jsonKey.' = '.$jsonValue);
 		// 	$jsonString .= '"'.$jsonKey.'" , "'.preg_replace('/[\"]/', '', $jsonValue).'" ,';
@@ -919,28 +1157,38 @@ class DB {
 	}
 
 	private function updateLastQueryStmt($method, $stmt, $error = []) {
-		if (isset($this->options->history) && $this->options->history === false) return; // Do not save query history
+		if (isset($this->options->history) && $this->options->history === false) {
+			return;
+		} // Do not save query history
 
 		$this->setDebugMessage(null, $stmt);
 
 		// Add message to error
 		if ($error) {
-			$this->errors[] = (object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt];
-			$this->errorMsg = $errorMessage;
+			$this->errors[] = (object) [
+				'code' => $error[1],
+				'message' => $error[2],
+				'query' => $stmt
+			];
+			$this->errorMsg = $error[2];
 
 			// Save error to log
 			if ($this->options->log && class_exists('\LogModel')) {
 				\LogModel::save([
 					'module' => 'DB',
 					'keyword' => $method,
-					'message' => $stmt
-					. '<pre>'
-					. '<hr>GET: ' . \json_encode($_GET, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-					. '<hr>POST: ' . \json_encode($_POST, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-					. '<hr>FILES: ' . \json_encode($_FILES, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-					. '</pre>',
+					'message' =>
+						$stmt
+						. '<pre>'
+						. '<hr>GET: '
+						. \json_encode($_GET, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+						. '<hr>POST: '
+						. \json_encode($_POST, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+						. '<hr>FILES: '
+						. \json_encode($_FILES, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+						. '</pre>'
 				]);
-			}		
+			}
 		}
 
 		$this->queryItems($stmt);
@@ -949,9 +1197,17 @@ class DB {
 		if (function_exists('R')) {
 			R('query', $stmt);
 			R()->query_items[] = $stmt;
-			R('error', $error ? (object) ['code' => $error[1], 'message' => $error[2], 'query' => $stmt] : '');
+			R(
+				'error',
+				$error
+					? (object) [
+						'code' => $error[1],
+						'message' => $error[2],
+						'query' => $stmt
+					]
+					: ''
+			);
 		}
 	}
-
 }
 ?>
