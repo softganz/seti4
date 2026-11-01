@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
  * Modified :: 2026-11-01
- * Version  :: 45
+ * Version  :: 46
  */
 
 /* Core Function */
@@ -374,7 +374,7 @@ function db($key = null, $new_value = null, $prefix = null, $db = null) {
 		$ret=$items;
 	} else if (!isset($key) && isset($prefix)) {
 		// Change all table items to new prefix value
-		foreach ($src as $key=>$value) $items[$key]=$prefix.$value;
+		foreach ($src as $srcKey=>$value) $items[$srcKey]=$prefix.$value;
 		$ret=$items;
 	} else if (isset($key)) {
 		// if key return value in condition
@@ -398,7 +398,7 @@ function db($key = null, $new_value = null, $prefix = null, $db = null) {
 /**
  * Convert request string into array and get each index
  * @param mixed $from explode into array if is string
- * @param mixed $all numeric or 'all'
+ * @param mixed $to numeric or 'all'
  * @param string $return_type
  * @return mixed
  *
