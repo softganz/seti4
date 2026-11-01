@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
  * Modified :: 2026-11-01
- * Version  :: 44
+ * Version  :: 45
  */
 
 /* Core Function */
@@ -13,14 +13,14 @@ use Softganz\DB;
 /**
  * function R :: Access core resource
  */
-function R($resourceKey = NULL, $value = NULL) {
+function R($resourceKey = null, $value = null) {
 	if (isset($resourceKey) && isset($value)) $GLOBALS['R']->{$resourceKey} = $value;
 	return $resourceKey ? $GLOBALS['R']->{$resourceKey} : $GLOBALS['R'];
 }
 
 /**
  * Import library in module folder and found
- * @param String $packageName ex. widget|page|view:module[.submodule], module/folder/file
+ * @param string $packageName ex. widget|page|view:module[.submodule], module/folder/file
  * @return boolean
  */
 function import($packageName) {
@@ -36,17 +36,17 @@ function import($packageName) {
  * Web Page Controller
  * Find and load web page from file
  */
-function controller($loadTemplate = true, $pageTemplate = NULL) {
+function controller($loadTemplate = true, $pageTemplate = null) {
 	return SgCore::processController($loadTemplate, $pageTemplate);
 }
 
 /**
  * Load Library
- * @param String $file
- * @param String $folder
- * @return Mixed String Library Filename or False
+ * @param string $file
+ * @param string $folder
+ * @return mixed String Library Filename or False
  */
-function load_lib($file, $folder = NULL) {
+function load_lib($file, $folder = null) {
 	$error = error_reporting(E_ALL);
 	$libFile = _CORE_FOLDER.'/core/'.($folder ? $folder.'/' : '').$file;
 	// echo 'LOAD LIB '.$libFile.(file_exists($libFile) ? ' COMPLETE' : ' <font color="red">NOT FOUND</font>').' [error_reporting = '.$error.']<br />'."\r\n";
@@ -62,18 +62,17 @@ function load_lib($file, $folder = NULL) {
 
 /**
  * Load function in module folder and call it
- * @param String $module exp [form/]module[.submodule].method as package name
- * @param Mixed $parameter
- * @return Mixed
+ * @param string $packageName exp [form/]module[.submodule].method as package name
+ * @return mixed
  */
 function load_resource($packageName) {
-	$ret = NULL;
+	$ret = null;
 	$args = func_get_args();
 
 	$debugLoadfile = debug('load');
 	$debugStr = '';
 
-	$funcName = $found = $fileName = $resourceType = NULL;
+	$funcName = $found = $fileName = $resourceType = null;
 	$loadResult = SgCore::loadResourceFile($packageName);
 	if (is_array($loadResult)) {
 		list($funcName, $found, $fileName, $resourceType) = $loadResult;
@@ -93,13 +92,13 @@ function load_resource($packageName) {
 
 			// debugMsg('Loaded resource ans create result from class '.$funcName.' get_class = '.get_class($instance));
 
-			//$instance->theme = (Object)['option' => (Object)[]];
+			//$instance->theme = (object)['option' => (object)[]];
 			if (method_exists($instance, 'build')) {
 				$ret = $instance->build();
 			} else {
 				$ret = 'No Build Method on '.get_class($instance);
 			}
-			//debugMsg('Result is '.(is_string($ret) ? $ret : 'Object'));
+			//debugMsg('Result is '.(is_string($ret) ? $ret : 'object'));
 			// $ret = (new $funcName())->build();
 		} else if (function_exists($funcName)) {
 			$debugStr .= '<span style="color:green;">Execute function <b>'.$funcName.'()</b> complete.</span>';
@@ -119,8 +118,8 @@ function load_resource($packageName) {
 
 /**
  * Process widget tag <div class="widget WidgetName" ...></div>
- * @param String $html
- * @return String
+ * @param string $html
+ * @return string
  */
 function process_widget($html) {
 	if (!is_string($html)) return $html;
@@ -222,8 +221,8 @@ function process_widget($html) {
 /**
  * Process installation new module
  *
- * @param String $module
- * @return String
+ * @param string $module
+ * @return string
  */
 function process_install_module($module) {
 	if (empty($module)) return;
@@ -242,7 +241,7 @@ function process_install_module($module) {
 	// return false;
 
 	// Add Permission
-	$perm = cfg('perm') ? cfg('perm') : (Object) [];
+	$perm = cfg('perm') ? cfg('perm') : (object) [];
 	// $modulePerm = cfg($module.'.permission');
 	// $modulePermExtend = R::Module($module.'.permission');
 	// if ($modulePermExtend) $modulePerm .= ($modulePerm ? ',':'').$modulePermExtend;
@@ -266,11 +265,11 @@ function process_install_module($module) {
 /**
  * Get current web viewer information and set value to key
  *
- * @param String $key
- * @param String  $value
+ * @param string $key
+ * @param string  $value
  * @return object
  */
-function i($key = NULL, $value = NULL) {
+function i($key = null, $value = null) {
 	// static $i;
 	global $R;
 	if (!isset($R->user)) return;
@@ -279,7 +278,7 @@ function i($key = NULL, $value = NULL) {
 	if ($key === 'R') {
 		// print_o(get_caller(__FUNCTION__),'$caller',1);
 		// print_o($value, '$value',1);
-		// $i = (Object) ['a' => 'aaaa'];//$GLOBALS['user']; //\SG\getFirst(R()->user,(Object)[]);
+		// $i = (object) ['a' => 'aaaa'];//$GLOBALS['user']; //\SG\getFirst(R()->user,(object)[]);
 		// $i = &$GLOBALS['R']->user;//value;
 		// $i = $R->user;
 		// print_o(R()->user,'(i)R()->user',1);
@@ -298,11 +297,11 @@ function i($key = NULL, $value = NULL) {
 
 /**
  * Set & set configuration to database
- * @param String $name
- * @param Mixed $value
- * @return Mixed
+ * @param string $name
+ * @param mixed $value
+ * @return mixed
  */
-function cfg_db($name = NULL, $value = NULL) {
+function cfg_db($name = null, $value = null) {
 	if (isset($name) && isset($value)) {
 		// Update $value to db config by key $name
 		if (is_object($value) || is_array($value)) $write_value =  sg_json_encode($value);
@@ -322,7 +321,7 @@ function cfg_db($name = NULL, $value = NULL) {
 			'SELECT `name`, `value` FROM %variable% WHERE name = :name LIMIT 1;',
 			'var' => [':name' => $name]
 		]);
-		$result = $rs->name ? (__is_serialized($rs->value) ? unserialize($rs->value) : $rs->value) : NULL;
+		$result = $rs->name ? (__is_serialized($rs->value) ? unserialize($rs->value) : $rs->value) : null;
 	} else {
 		$dbs = DB::select(['SELECT `name`, `value` FROM %variable%']);
 
@@ -339,7 +338,7 @@ function cfg_db($name = NULL, $value = NULL) {
 
 /**
  * Delete configuration from database
- * @param String $name
+ * @param string $name
  */
 function cfg_db_delete($name) {
 	if (isset($name)) {
@@ -347,22 +346,22 @@ function cfg_db_delete($name) {
 			'DELETE FROM %variable% WHERE name = :name LIMIT 1',
 			'var' => [':name' => $name]
 		]);
-		cfg($name, NULL, 'delete');
+		cfg($name, null, 'delete');
 	}
 }
 
 /**
  * Set & get table with keyword
- * @param String $key
- * @param String $new_value
- * @param String $prefix
- * @param String $db
- * @return String
+ * @param string $key
+ * @param string $new_value
+ * @param string $prefix
+ * @param string $db
+ * @return string
  */
-function db($key = NULL, $new_value = NULL, $prefix = NULL, $db = NULL) {
+function db($key = null, $new_value = null, $prefix = null, $db = null) {
 	static $items = [];
 	static $src = [];
-	$ret=NULL;
+	$ret=null;
 	if (isset($key) && isset($new_value)) {
 		$src[$key]=$new_value;
 		$tablename=(isset($db)?'`'.$db.'`.':''); // Set database name
@@ -398,18 +397,18 @@ function db($key = NULL, $new_value = NULL, $prefix = NULL, $db = NULL) {
 
 /**
  * Convert request string into array and get each index
- * @param Mixed $from explode into array if is string
- * @param Mixed $all numeric or 'all'
- * @param String $return_type
- * @return Mixed
+ * @param mixed $from explode into array if is string
+ * @param mixed $all numeric or 'all'
+ * @param string $return_type
+ * @return mixed
  *
  * If first param is string -> explode request string to array and store in $q
  * If only first param (from) -> get all value start from first param
  * If first param and second param (from,to) -> get all value between from and to
  */
-function q($from = NULL, $to = NULL, $return_type = 'array') {
+function q($from = null, $to = null, $return_type = 'array') {
 	static $q = [];
-	static $rq = NULL;
+	static $rq = null;
 	if (is_string($from)) {
 		$rq = $from;
 		$q = explode('/', $from);
@@ -417,7 +416,7 @@ function q($from = NULL, $to = NULL, $return_type = 'array') {
 		return;
 	}
 	if ($to === 'all') $to = count($q);
-	if (isset($from) && !isset($to)) $ret = array_key_exists($from, $q) ? $q[$from] : NULL;
+	if (isset($from) && !isset($to)) $ret = array_key_exists($from, $q) ? $q[$from] : null;
 	else if (isset($from) && isset($to)) $ret = array_slice($q, $from, $to);
 	else $ret = $rq;
 
@@ -449,13 +448,13 @@ function setDevMode() {
 
 /**
  * Set theme folder
- * @param String $name Theme name
- * @param String $style Stylesheet file
- * @return Array $template_folder
+ * @param string $themeName Theme name
+ * @param string $style Stylesheet file
+ * @return array $template_folder
  *
  * set theme configuration etc theme , theme.name , theme.absfolder , theme.stylesheet
  */
-function set_theme($themeName = NULL, $style = 'style.css') {
+function set_theme($themeName = null, $style = 'style.css') {
 	/*
 	themes -> current url+themes
 	./themes -> current url+./themes
@@ -533,21 +532,21 @@ function set_theme($themeName = NULL, $style = 'style.css') {
 
 /**
  * Check user permission to each menu from roles or user's role or is owner's content
- * @param String $role
- * @param String $urole
- * @param Integer $uid
- * @param Boolean $debug
- * @return Boolean
+ * @param string $role
+ * @param string $urole
+ * @param int $uid
+ * @param bool $debug
+ * @return bool
  */
-function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
+function user_access($role, $urole = null, $uid = null, $debug = false) {
 	static $roles;
 	static $member_roles = [];
 
-	if ($role === 'reset') $roles = NULL;
+	if ($role === 'reset') $roles = null;
 
 	if (!isset($roles)) {
 		$roles = [];
-		foreach ((Array) cfg('roles') as $name => $item) {
+		foreach ((array) cfg('roles') as $name => $item) {
 			$roles[$name] = trim($item) === '' ? [] : explode(',', $item);
 		}
 		array_walk_recursive($roles, '__trim');
@@ -586,7 +585,7 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 				}
 			}
 			$roles_user = cfg('roles_user');
-			if (is_object($roles_user) && array_key_exists(i()->username, (Array) $roles_user)) {
+			if (is_object($roles_user) && array_key_exists(i()->username, (array) $roles_user)) {
 				$member_roles[i()->uid] = array_merge($member_roles[i()->uid], explode(',', $roles_user->{i()->username}));
 			}
 			$member_roles[i()->uid] = array_unique($member_roles[i()->uid]);
@@ -620,7 +619,7 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 	// anonymous user role
 	// echo '<pre>'.print_r($roles, 1).'</pre>';
 	if ($debug && isset($roles['anonymous'])) {
-		echo '$roles[anonymous] = '.implode(',', (Array) $roles['anonymous']).'<br />';
+		echo '$roles[anonymous] = '.implode(',', (array) $roles['anonymous']).'<br />';
 		if ($str = implode(',', array_intersect($role, $roles['anonymous']))) echo 'roles intersection=<b>'.$str.'</b><br />';
 	}
 
@@ -632,8 +631,8 @@ function user_access($role, $urole = NULL, $uid = NULL, $debug = false) {
 
 /**
  * Check module was install
- * @param String $module
- * @return Boolean
+ * @param string $module
+ * @return bool
  */
 function module_install($module) {
 	if (empty($module) && !is_string($module)) return false;
@@ -643,7 +642,7 @@ function module_install($module) {
 
 /**
  * Check homepage was requested
- * @return Boolean
+ * @return bool
  */
 function is_home() {
 	$request = R('request');
@@ -652,10 +651,10 @@ function is_home() {
 
 /**
  * Check current user is admin or module admin
- * @param String $module
- * @return Boolean
+ * @param string $module
+ * @return bool
  */
-function is_admin($module = NULL) {
+function is_admin($module = null) {
 	$is_right = false;
 	if (is_null($module)) {
 		$is_right = user_access('access administrator pages');
@@ -669,12 +668,12 @@ function is_admin($module = NULL) {
 
 /**
  * Generate url for anchor
- * @param String $q
- * @param String $get
- * @param String $frement
- * @return String
+ * @param string $q
+ * @param string $get
+ * @param string $frement
+ * @return string
  */
-function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
+function url($q = null, $get = null, $frement = null, $subdomain = null) {
 	$q = is_null($q) ? '' : $q;
 	$ret = '';
 	$get_a = '';
@@ -705,11 +704,11 @@ function url($q = NULL, $get = NULL, $frement = NULL, $subdomain = NULL) {
 
 /**
  * Get url alias
- * @param String $request
- * @return String or False on not found
+ * @param string $request
+ * @return string or False on not found
  */
-function url_alias($request = NULL) {
-	static $alias = NULL;
+function url_alias($request = null) {
+	static $alias = null;
 
 	try {
 		if (!isset($alias)) $alias = DB::select(['SELECT * FROM %url_alias% ORDER BY `alias` ASC']);
@@ -719,7 +718,7 @@ function url_alias($request = NULL) {
 
 	if (!isset($request)) return $alias;
 
-	$result = (Object) [];
+	$result = (object) [];
 	foreach ($alias->items as $item) {
 		$reg_url_alias = str_replace('/','\/',preg_quote($item->alias));
 		$reg = '/^('.$reg_url_alias.'\z|'.$reg_url_alias.'\/)(.*)/';
@@ -738,8 +737,8 @@ function url_alias($request = NULL) {
 
 /**
  * Get url alias of system
- * @param String $request
- * @return String or False on not found
+ * @param string $request
+ * @return string or False on not found
  */
 function url_alias_of_system($request) {
 	$alias = url_alias();
@@ -762,10 +761,10 @@ function url_alias_of_system($request) {
 
 /**
  * Set / Get page_class config
- * @param String $addClass
- * @return String
+ * @param string $addClass
+ * @return string
  */
-function page_class($addClass = NULL) {
+function page_class($addClass = null) {
 	if (isset($addClass)) {
 		R()->pageClass[] = $addClass;
 		R()->pageClass = array_unique(R()->pageClass);
@@ -782,7 +781,7 @@ function page_class($addClass = NULL) {
  * @param string $key
  * @return string
  **/
-function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
+function get_caller($function = null, $use_stack = null, $key = null) {
 	// Cache result per (function, key) so repeated calls (e.g. DB::select/DB::query on
 	// every query) don't rebuild the expensive debug_backtrace() each time. The caller of
 	// a given function does not change within a single request, so this is safe.
@@ -806,7 +805,7 @@ function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 		//echo "\n";
 	}
 
-	if ($function == NULL) {
+	if ($function == null) {
 		// We need $function to be a function name to retrieve its caller. If it is omitted, then
 		// we need to first find what function called get_caller(), and substitute that as the
 		// default $function. Remember that invoking get_caller() recursively will add another
@@ -830,7 +829,7 @@ function get_caller($function = NULL, $use_stack = NULL, $key = NULL) {
 				$stackList .= ($curr_function['function'] ?? '?').'() line '.($curr_function['line'] ?? '?').' of file '.($curr_function['file'] ?? '?').'<br />';
 				//echo '$stackList='.$stackList.'<br />'._NL;
 			} else {
-				if ( ($curr_function["function"] ?? NULL) == $function && ($i + 1) < count($stack) ) {
+				if ( ($curr_function["function"] ?? null) == $function && ($i + 1) < count($stack) ) {
 					$stack[$i + 1]['from']=(!empty($stack[$i + 1]['class'])?$stack[$i + 1]['class'].($stack[$i + 1]['type']?$stack[$i + 1]['type']:'.'):'').($stack[$i + 1]['function'] ?? '?').'() line '.($stack[$i]['line'] ?? '?').' of file '.($stack[$i]['file'] ?? '?');
 					//print_o($stack[$i + $level],'$return['.($i + $level).']',1);
 					unset($stack[$i + 1]['args']);
@@ -863,7 +862,7 @@ function callFromApp() {
 
 /**
  * Check Core version and upgrade
- * @return String
+ * @return string
  */
 function core_version_check() {
 	if (!user_access('access administrator pages')) return;
@@ -918,10 +917,10 @@ function core_version_check() {
 
 /**
  * Check IP was ban
- * @param String $ip
+ * @param string $ip
  * @return boolean
  */
-function banRequest($ip = NULL, $host = NULL) {
+function banRequest($ip = null, $host = null) {
 	// Delete expired ban or create ban table
 	try {
 		BanModel::deleteExpiredBan();
@@ -951,11 +950,11 @@ function banRequest($ip = NULL, $host = NULL) {
 
 /**
  * Translate text from English to current language used my dictiondary
- * @param String $text
- * @param String $translateText
- * @return String
+ * @param string $text
+ * @param string $translateText
+ * @return string
  */
-function tr($text, $translateText = NULL) {
+function tr($text, $translateText = null) {
 	static $dictionary = [];
 	static $load = [];
 
@@ -1009,11 +1008,19 @@ function tr($text, $translateText = NULL) {
 
 /**
  * Add string to website header section
- * @param String $str
+ * @param string $str
  */
-function head($key = NULL, $value = NULL, $pos = NULL) {
+/**
+ * Add string to website header section
+ *
+ * @param string $key
+ * @param mixed $value
+ * @param int $pos
+ * @return void
+ */
+function head($key = null, $value = null, $pos = null) {
 	static $items = [];
-	if ($value === NULL) $value = $key;
+	if ($value === null) $value = $key;
 	if ($key && preg_match('/[\n]/', $key)) unset($key);
 	if (!in_array($value, $items)) {
 		if ($pos == -1) {
@@ -1021,16 +1028,16 @@ function head($key = NULL, $value = NULL, $pos = NULL) {
 		} else if (isset($key) && $key) $items[$key] = $value;
 		else $items[] = $value;
 	}
-	if ((!isset($key) || $key === NULL) && $value === NULL) return $items;
+	if ((!isset($key) || $key === null) && $value === null) return $items;
 	else if (isset($key) && $key && isset($items[$key])) return $items[$key];
 }
 
 /**
  * Set and get program debug
- * @param String $key
- * @return Mixed
+ * @param string $key
+ * @return mixed
  */
-function debug($key = NULL) {
+function debug($key = null) {
 	static $items = [];
 	if (empty($items)) {
 		$debug = '';
@@ -1045,16 +1052,16 @@ function debug($key = NULL) {
 
 /**
  * Generate module menu
- * @param String $path
- * @param String $title
- * @param String $module
- * @param Array $arg
- * @param String $access
- * @param String $type
- * @param String $default
- * @return Mixed True/False/Array
+ * @param string $path
+ * @param string $title
+ * @param string $module
+ * @param array $arg
+ * @param string $access
+ * @param string $type
+ * @param string $options
+ * @return mixed True/False/array
  */
-function menu($path = NULL, $title = NULL, $module = NULL, $method = NULL, $arg = [], $access = NULL, $type = NULL, $options = NULL) {
+function menu($path = null, $title = null, $module = null, $method = null, $arg = [], $access = null, $type = null, $options = null) {
 	/**
 	* Items store format
 	* [
@@ -1129,12 +1136,12 @@ function menu($path = NULL, $title = NULL, $module = NULL, $method = NULL, $arg 
 
 /**
  * Set header to new location and die
- * @param String $url
- * @param String $get
- * @param String $frement
- * @return relocation to new url address
+ * @param string $url
+ * @param string $get
+ * @param string $frement
+ * @return void relocation to new url address
  */
-function location($url = NULL, $get = NULL, $frement = NULL, $str = NULL) {
+function location($url = null, $get = null, $frement = null, $str = null) {
 	//	if (_AJAX) return $str;
 	// echo '$url = '.$url.'</br />';
 	if (!preg_match('/^(http:\/\/|https:\/\/|ftp:\/\/)/i',$url)) {
@@ -1148,12 +1155,12 @@ function location($url = NULL, $get = NULL, $frement = NULL, $str = NULL) {
 
 /**
  * Get post value from $_POST
- * @param String $key
- * @param Integer $flag
+ * @param string $key
+ * @param int $flag
  *
- * @return Array
+ * @return array
  */
-function post($key = NULL, $flag = _TRIM) {
+function post($key = null, $flag = _TRIM) {
 	static $count = 0;
 	$post = $_REQUEST;
 	if ( is_long($key) ) {
@@ -1172,7 +1179,7 @@ function post($key = NULL, $flag = _TRIM) {
 	if ($flag) $post = Arrays::convert($post, $flag);
 
 	if ( isset($key) ) {
-		return isset($post[$key]) ? $post[$key] : NULL;
+		return isset($post[$key]) ? $post[$key] : null;
 	} else {
 		return $post;
 	}
@@ -1180,13 +1187,13 @@ function post($key = NULL, $flag = _TRIM) {
 
 /**
  * View html text in plain text with highlight
- * @param String $html
- * @param String $title
- * @param Boolean $line_no
+ * @param string $html
+ * @param string $title
+ * @param bool $line_no
  *
- * @return String
+ * @return string
  */
-function htmlview($html, $title = NULL, $line_no = true) {
+function htmlview($html, $title = null, $line_no = true) {
 	$code = explode("\n", trim($html));
 	$i = 1;
 	$ret = '<div style="background:#fff;color:#000;">';
@@ -1202,12 +1209,13 @@ function htmlview($html, $title = NULL, $line_no = true) {
 
 /**
  * Get error message from error code
- * @param String $code
- * @param String $ext_msg
+ * @param string $code
+ * @param string $message
+ * @param mixed $detail
  *
- * @return String
+ * @return string
  */
-function error($code, String $message, $detail = NULL) {
+function error($code, string $message, $detail = null) {
 	$message = showError([
 		'template' => 'error',
 		'Title' => $message,
@@ -1227,12 +1235,12 @@ function error($code, String $message, $detail = NULL) {
 
 /**
  * Return success value
- * @param String/Array/Object $message
- * @return Array
+ * @param string/array/object $message
+ * @return array
  */
 function success($message) {
 	if (is_object($message) || is_array($message)) {
-		$message = (Array) $message;
+		$message = (array) $message;
 		if (!$message['responseCode']) $message['responseCode'] = _HTTP_OK;
 		$result = new Message($message);
 	} else {
@@ -1245,7 +1253,7 @@ function success($message) {
 }
 
 /** Check if the current request is an API request
- * @return Boolean
+ * @return bool
  */
 function isApiRequest() {
 	return preg_match('/api\//i', R('request'));
@@ -1253,19 +1261,20 @@ function isApiRequest() {
 
 /**
  * Get error message from error code
- * @param String $code
- * @param String $ext_msg
+ * @param string $code
+ * @param string $message
+ * @param mixed $debugMsg
  *
- * @return String
+ * @return string
  */
-function apiError($code, String $message, $debugMsg = NULL) {
+function apiError($code, string $message, $debugMsg = null) {
 	// Generate debug message
 	if (isset($debugMsg) && user_access('access debugging program')) {
 		$callFrom = debug_backtrace()[0]['file'].' @line '.debug_backtrace()[0]['line'];
 		if (is_array($debugMsg)) {
-			foreach ($debugMsg as $key => $value) $message .= (new DebugMsg($value, NULL, $callFrom))->build();
-		} else if (is_object($debugMsg)) $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
-		else $message .= (new DebugMsg($debugMsg, NULL, $callFrom))->build();
+			foreach ($debugMsg as $key => $value) $message .= (new DebugMsg($value, null, $callFrom))->build();
+		} else if (is_object($debugMsg)) $message .= (new DebugMsg($debugMsg, null, $callFrom))->build();
+		else $message .= (new DebugMsg($debugMsg, null, $callFrom))->build();
 	}
 	
 	if (strtolower($message) === 'access denied') {
@@ -1275,42 +1284,39 @@ function apiError($code, String $message, $debugMsg = NULL) {
 		]);
 	}
 	if ($code) http_response_code($code);
-	return (Object) ['responseCode' => $code, 'errorMessage' => $message];
+	return (object) ['responseCode' => $code, 'errorMessage' => $message];
 }
 
 /**
  * Return success value
- * @param String/Array/Object $message
- * @return Array
+ * @param string/array/object $message
+ * @return array
  */
 function apiSuccess($message) {
 	if (is_array($message) || is_object($message)) {
-		return (Object) array_merge_recursive(
+		return (object) array_merge_recursive(
 			['responseCode' => _HTTP_OK],
-			(Array) $message
+			(array) $message
 		);
 	} else {
-		return (Object) ['responseCode' => _HTTP_OK, 'text' => $message];
+		return (object) ['responseCode' => _HTTP_OK, 'text' => $message];
 	}
 }
 
 /**
  * Generate message box
- * @param String $type
- * @param Mixed $message_list
- * @param String $module
- * @return String
+ * @param string $type
+ * @param mixed $text
+ * @param string $module
+ * @return string
  */
-function message($type = NULL, $text = [], $module = NULL, $options = '{class: "signform -accessdenied"}') {
+function message($type = null, $text = [], $module = null, $options = '{class: "signform -accessdenied"}') {
 	if (is_array($type)) {
 		$args = $type;
 		unset($type);
 	} else {
 		$args = ['type' => $type, 'text' => $text, 'module' => $module, 'options' => $options];
 	}
-
-	$responseCode = \SG\getFirst($args['code'], $args['responseCode']);
-	if ($responseCode) http_response_code($responseCode);
 
 	if (is_string($args['text'])) $args['text'] = [$args['text']];
 	if (is_string($args['msg'])) $args['text'] = [$args['msg']];
@@ -1367,7 +1373,6 @@ function message($type = NULL, $text = [], $module = NULL, $options = '{class: "
 	// print_r($args);
 	// print_o($args['text'],'$args[text]',1);
 	return $ret;
-	return $args['text'] ? $args['text'] : $ret;
 }
 
 function rateLimit($limit = 60, $seconds = 60, $key = '') {
@@ -1411,10 +1416,10 @@ function rateLimit($limit = 60, $seconds = 60, $key = '') {
 
 /**
  * Generate even tricker
- * @param String $event
- * @param Mixed $arg1 ... $arg9
+ * @param string $event
+ * @param mixed $arg1 ... $arg9
  */
-function event_tricker($event = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = NULL, &$arg4 = NULL, &$arg5 = NULL, &$arg6 = NULL, &$arg7 = NULL, &$arg8 = NULL, &$arg9 = NULL) {
+function event_tricker($event = null, &$arg1 = null, &$arg2 = null, &$arg3 = null, &$arg4 = null, &$arg5 = null, &$arg6 = null, &$arg7 = null, &$arg8 = null, &$arg9 = null) {
 	//debugMsg($event);
 	static $extensions = null;
 	$ret = '';
@@ -1441,14 +1446,14 @@ function event_tricker($event = NULL, &$arg1 = NULL, &$arg2 = NULL, &$arg3 = NUL
 
 /**
  * Trim only string type in array
- * @param Mixed $value
- * @return Mixed
+ * @param mixed $value
+ * @return mixed
  */
 function __trim(&$value) {$value = is_string($value) ? trim($value):$value;}
 
-function __htmlspecialchars(&$value) {$value = is_string($value) ? htmlspecialchars($value):$value;}
+function __htmlspecialchars(mixed &$value) {$value = is_string($value) ? htmlspecialchars($value):$value;}
 
-function __is_serialized($val) {
+function __is_serialized(mixed $val) {
 	if (!is_string($val)){ return false; }
 	if (trim($val) == '') { return false; }
 	if (preg_match('/^(i|s|a|o|d|b):(.*);/si',$val)) { return true; }
