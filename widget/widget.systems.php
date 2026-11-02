@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-02
- * Version  :: 107
+ * Version  :: 108
  *
  * @param array $args
  *
@@ -91,16 +91,23 @@ class Widget extends WidgetBase {
 	public $done; // string
 	public $action; // string
 	public $debug; // string
-	public $child; // mixed
-	public $children = []; // array
-	public $attribute = []; // array
-	public $childContainer = []; // array
+	public mixed $child; // mixed
+	public array $children = []; // array
+	public array $attribute = []; // array
+	public array $childContainer = []; // array
 
 	// @deprecated
 	public $config = null;
 
-	function __construct($args = []) {
+	function __construct(
+		$args = [],
+		mixed $children = null
+	) {
 		$this->initConfig();
+
+		// Set named argument
+		if ($children) $args['children'] = $children;
+
 		foreach ($args as $argKey => $argValue) {
 			if ($argKey === 'class') {
 				$this->class .= ($this->class ? ' ' : '') . $argValue;
@@ -764,7 +771,7 @@ class ListOrder extends Widget {
 	public $widgetName = 'ListOrder';
 	public $version = '0.0.01';
 	public $tagName = 'ul';
-	public $childContainer = ['tagName' => 'li', 'class' => '-item'];
+	public array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -784,10 +791,26 @@ class Column extends Widget {
 	public $widgetName = 'Column';
 	public $version = '0.0.01';
 	public $tagName = 'div';
-	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $style = null,
+		?array $children = [],
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'style' => $style,
+					'children' => $children,
+				],
+				$args
+			)
+		);
 	}
 } // End of class Column
 
@@ -801,7 +824,7 @@ class Row extends Widget {
 	public $widgetName = 'Row';
 	public $version = '0.0.10';
 	public $tagName = 'div';
-	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class Row
 
 /**
@@ -814,7 +837,7 @@ class FloatingActionButton extends Widget {
 	public $widgetName = 'FloatingActionButton';
 	public $version = '0.0.01';
 	public $tagName = 'div';
-	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class FloatingActionButton
 
 /**
@@ -1629,7 +1652,7 @@ class StepMenu extends Widget {
 	public $tagName = 'nav';
 	public $class = '';
 	public $childrenContainer = ['tagName' => 'ul'];
-	public $childContainer = ['tagName' => 'li'];
+	public array $childContainer = ['tagName' => 'li'];
 	public $currentStep = null;
 	public $activeStep = [];
 
@@ -1903,8 +1926,26 @@ class Notify extends Widget {
 	public $titleTag = 'div';
 	public $class = 'notify';
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $style = null,
+		mixed $child = null,
+		mixed $children = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'style' => $style,
+					'child' => $child,
+					'children' => $children
+				],
+				$args
+			)
+		);
 	}
 
 	// @override
