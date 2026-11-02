@@ -49,9 +49,7 @@ class R {
 		if (isset($key) && isset($value)) {
 			$R->options->{$key} = $key;
 		}
-		return isset($R->options->{$key})
-			? $R->options->{$key}
-			: null;
+		return isset($R->options->{$key}) ? $R->options->{$key} : null;
 	}
 
 	public static function setting($key = null, $value = null) {
@@ -64,9 +62,7 @@ class R {
 			return $R->setting;
 		} elseif (isset($key) && isset($value)) {
 			$R->setting->{$key} = $key;
-			return isset($R->setting->{$key})
-				? $R->setting->{$key}
-				: null;
+			return isset($R->setting->{$key}) ? $R->setting->{$key} : null;
 		}
 	}
 
@@ -205,7 +201,7 @@ class R {
 		return $loadResult;
 	}
 
-	public static function Asset($assetName) {
+	public static function asset($assetName) {
 		// assetName Format : project:name.ext
 		// assetFile Format : {module}.name.ext
 		// Location Folder : modules/{}/template/assets, modules/{module}/assets, core/assets
