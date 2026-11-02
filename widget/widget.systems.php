@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-02
- * Version  :: 104
+ * Version  :: 105
  *
  * @param array $args
  *
@@ -1489,14 +1489,33 @@ class BackButton extends Widget {
 class Icon extends Widget {
 	public $widgetName = 'Icon';
 	public $version = '0.0.03';
-	public $icon;
-	public $secondary; // For secondary icon
-	public $type = 'material';
+	public string $icon;
+	public ?string $secondary = null; // For secondary icon
+	public string $type;
 
-	function __construct($icon, $args = []) {
+	function __construct(
+		string $icon,
+		$args = [],
+		string $type = 'material',
+		?string $class = null,
+		?string $secondary = null,
+		?bool $debug = false
+	) {
 		$this->icon = $icon;
-		parent::__construct($args);
-		unset($this->config, $this->childContainer, $this->child, $this->children);
+
+		parent::__construct(
+			array_replace(
+				[
+					'type' => $type,
+					'class' => $class,
+					'secondary' => $secondary,
+					'debug' => $debug
+				],
+				(array) $args
+			)
+		);
+		unset($this->config, $this->childContainer, $this->child, $this->children, $this->header, $this->childTagName, $this->tagName, $this->itemClass, $this->href, $this->dataUrl, $this->webview, $this->rel, $this->done, $this->action);
+		if ($this->debug) debugMsg($this, 'Icon');
 	}
 
 	function toString() {
