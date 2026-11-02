@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-02
- * Version  :: 103
+ * Version  :: 104
  *
  * @param array $args
  *
@@ -1327,9 +1327,6 @@ class Button extends Widget {
 			$this->itemClass,
 			$this->childTagName
 		);
-		if ($this->variable) {
-			debugMsg($this, '$this');
-		}
 	}
 
 	function toString() {
