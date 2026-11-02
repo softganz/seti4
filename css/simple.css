@@ -1,5 +1,3 @@
-
-
 /**
  * Theme Name  :: Simple
  * Theme URI   :: httsp://softganz.com
@@ -90,7 +88,7 @@ pre {
 	display: block;
 }
 .-clearfix::after {
-	content: "";
+	content: '';
 	display: block;
 	clear: both;
 }
@@ -123,7 +121,7 @@ pre {
 
 .-sg-clearfix::after {
 	clear: both;
-	content: " ";
+	content: ' ';
 	display: table;
 }
 .-sg-pulled-left {
@@ -417,14 +415,6 @@ h2.header {
 	.-value {
 		color: var(--debug-value-font-color);
 	}
-	.sg-expand {
-		cursor: pointer;
-		margin: 0;
-		padding: 0;
-		display: inline;
-		white-space: nowrap;
-		flex-wrap: nowrap;
-	}
 	.-array-value {
 		margin: 0 0 0 15px;
 		padding: 0px;
@@ -434,7 +424,14 @@ h2.header {
 	}
 	> .sg-expand {
 		position: absolute;
-		right: 16px;
+		right: 8px;
+		top: 8px;
+		cursor: pointer;
+		margin: 0;
+		padding: 0;
+		display: block;
+		white-space: nowrap;
+		flex-wrap: nowrap;
 	}
 }
 
@@ -616,18 +613,30 @@ div.photo-multiple img.photo-tall {
 	.theme-dark & {
 		--code-font-color: #f60;
 	}
-	h1, h2, h3, h4, h5 {color: var(--font-color);}
-	blockquote, pre {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5 {
+		color: var(--font-color);
+	}
+	blockquote,
+	pre {
 		padding: 8px;
 		background-color: var(--card-bg-color);
 		border: none;
 		border-radius: 8px;
 	}
-	code {color: var(--code-font-color);}
+	code {
+		color: var(--code-font-color);
+	}
 	table {
 		display: block;
 		background-color: var(--card-bg-color);
-		td {padding: 8px; border-bottom: 1px var(--border-color) solid;}
+		td {
+			padding: 8px;
+			border-bottom: 1px var(--border-color) solid;
+		}
 	}
 }
 @media (min-width: 30em) {
@@ -1732,18 +1741,18 @@ $SCREENS
 		outline: none;
 	}
 
-	span[cssclass="inlineedit-block"] {
+	span[cssclass='inlineedit-block'] {
 		display: inline-block;
 		min-width: 100px;
 		width: auto;
 	}
-	span[cssclass="inlineedit-num"] {
+	span[cssclass='inlineedit-num'] {
 		display: inline-block;
 		min-width: 2em;
 		width: auto;
 		text-align: center;
 	}
-	span[cssclass="inlineedit-num"] input {
+	span[cssclass='inlineedit-num'] input {
 		text-align: center;
 	}
 	/* @end */
@@ -1784,13 +1793,13 @@ $SCREENS
 	}
 
 	/*@group form */
-	input[type="text"],
-	input[type="number"],
-	input[type="email"],
-	input[type="tel"],
-	input[type="search"],
-	input[type="url"],
-	input[type="password"],
+	input[type='text'],
+	input[type='number'],
+	input[type='email'],
+	input[type='tel'],
+	input[type='search'],
+	input[type='url'],
+	input[type='password'],
 	textarea,
 	.ui-autocomplete-input,
 	.uneditable-input {
@@ -1803,22 +1812,22 @@ $SCREENS
 		border-radius: 3px;
 		background-color: #fff;
 	}
-	input[type="radio"],
-	input[type="checkbox"] {
+	input[type='radio'],
+	input[type='checkbox'] {
 		transition: none;
 		-webkit-transition: none;
 		-moz-transition: none;
 		-o-transition: none;
 		box-shadow: none;
 	}
-	input[type="radio"] + .icon,
-	input[type="checkbox"] + .icon {
+	input[type='radio'] + .icon,
+	input[type='checkbox'] + .icon {
 		color: #d0d0d0;
 		border: none;
 		box-shadow: none;
 	}
-	input[type="radio"]:checked + .icon,
-	input[type="checkbox"]:checked + .icon {
+	input[type='radio']:checked + .icon,
+	input[type='checkbox']:checked + .icon {
 		color: green;
 	}
 
@@ -1859,7 +1868,7 @@ $SCREENS
 	.search-box .form-item:first-child {
 		flex: 1;
 	}
-	.search-box input[type="text"] {
+	.search-box input[type='text'] {
 		flex: 1;
 		height: 100%;
 		font-size: 1em;
@@ -1909,7 +1918,7 @@ $SCREENS
 		align-items: center;
 		li.-has-sub {
 			&:after {
-				content: "";
+				content: '';
 				position: absolute;
 				margin-top: -24px;
 				left: auto;
@@ -2003,7 +2012,7 @@ $SCREENS
 			height: 48px;
 			li.-has-sub {
 				&:after {
-					content: "";
+					content: '';
 					position: absolute;
 					margin-top: -24px;
 					left: auto;
@@ -2094,7 +2103,6 @@ $SCREENS
 				background-color: #e5e5e5;
 				margin-right: 8px;
 			}
-
 		}
 		.menu.-sub > li > a {
 			padding: 10px;
@@ -2428,7 +2436,7 @@ $SCREENS
 			margin: 8px auto 16px;
 			background-color: transparent;
 			border-radius: 50%;
-			background-image: url("https://img.softganz.com/icon/icons-local.png");
+			background-image: url('https://img.softganz.com/icon/icons-local.png');
 			background-repeat: no-repeat;
 		}
 		.icon.-project {
@@ -3799,7 +3807,6 @@ $SCREENS
 		line-height: 48px;
 		padding: 0;
 		z-index: 0;
-		background-color: var(--appbar-bg-color);
 		box-sizing: border-box;
 		width: 100%;
 	}
@@ -3886,7 +3893,8 @@ $SCREENS
 			top: 0;
 			left: 0;
 			right: 0;
-			z-index: 1;
+			margin: 0;
+			z-index: 20;
 			> .-leading {
 				> .nav.-back {
 					display: block;
@@ -3975,16 +3983,18 @@ $SCREENS
 	}
 
 	#colorbox.-full {
+		--margin: 8px;
+		--border-radius: 8px;
 		margin: 0 auto;
-		width: 100% !important;
-		height: 100vh !important;
-		top: 0 !important;
-		left: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
+		width: calc(100% - 2 * var(--margin)) !important;
+		height: calc(100vh - 2 * var(--margin)) !important;
+		top: var(--margin) !important;
+		left: var(--margin) !important;
+		right: var(--margin) !important;
+		bottom: var(--margin) !important;
 		margin-top: 0;
 		float: none !important;
-		border-radius: 0;
+		border-radius: var(--border-radius);
 		#cboxWrapper,
 		#cboxContent,
 		#cboxLoadedContent {
@@ -4003,10 +4013,6 @@ $SCREENS
 		}
 		#cboxTitle {
 			top: 0;
-		}
-		#cboxLoadedContent .widget-appbar {
-			top: 0;
-			right: 0;
 		}
 		#cboxPrevious,
 		#cboxNext,
@@ -4237,10 +4243,10 @@ $PRINT
 	body {
 		padding: 0 0 0 0.25in;
 		font:
-			1.4rem/1.6rem "TH Sarabun New",
-			"TH SarabunPSK",
-			"Browallia New",
-			"BrowalliaUPC",
+			1.4rem/1.6rem 'TH Sarabun New',
+			'TH SarabunPSK',
+			'Browallia New',
+			'BrowalliaUPC',
 			Arial,
 			sans-serif;
 		color: #000;
@@ -4252,10 +4258,10 @@ $PRINT
 	h5,
 	h6 {
 		font:
-			15pt/16pt "TH Sarabun New",
-			"TH SarabunPSK",
-			"Browallia New",
-			"BrowalliaUPC",
+			15pt/16pt 'TH Sarabun New',
+			'TH SarabunPSK',
+			'Browallia New',
+			'BrowalliaUPC',
 			Arial,
 			sans-serif;
 		color: #000;
@@ -4447,14 +4453,14 @@ $PRINT
 		box-shadow: none;
 	}
 
-	input[type="radio"] + .icon,
-	input[type="checkbox"] + .icon {
+	input[type='radio'] + .icon,
+	input[type='checkbox'] + .icon {
 		color: #eee;
 		box-shadow: 0 0 0 1px #eee inset;
 		border: none;
 	}
-	input[type="radio"]:checked + .icon,
-	input[type="checkbox"]:checked + .icon {
+	input[type='radio']:checked + .icon,
+	input[type='checkbox']:checked + .icon {
 		color: #000;
 		box-shadow: 0 0 0 2px #000 inset !important;
 		border: none;
