@@ -290,6 +290,12 @@ SgCore::setLang();
 // session_cache_expire(1);
 // echo session_cache_expire();
 
+// ini_set('session.gc_probability', '1');
+// ini_set('session.gc_divisor', '10'); // 1 หาร 1 = 100% โอกาสทำงานเต็มที่
+
+// // ลองตั้งค่าให้ session หมดอายุเร็วขึ้น เช่น 10 วินาที เพื่อทดสอบลบข้อมูลเก่า
+// ini_set('session.gc_maxlifetime', '10'); 
+
 // Start session handler register using database
 // Session use database
 try {
