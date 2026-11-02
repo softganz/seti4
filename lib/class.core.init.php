@@ -3,13 +3,17 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-09-26
- * Version  :: 35
+ * Modified :: 2026-11-02
+ * Version  :: 36
  */
 
 global $R;
 
 use Softganz\DB;
+
+global $request;
+
+$domainName = '';
 
 if ($_SERVER['HTTP_HOST']) {
 	$domainName = $_SERVER['HTTP_HOST'];
@@ -54,14 +58,11 @@ define('_PROTOCOL', $protocol);
 if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
 	$request = $out[2];
 	cfg('template', $out[1]);
-	// debugMsg('$template = '.cfg('template'));
-	// debugMsg('$request = '.$request);
-	// debugMsg($out, '$out');
 }
 
 $R = new R();
 $R->request = $request;
-// $R->core = json_decode(file_get_contents(_CORE_FOLDER.'/core/assets/conf/conf.core.json'));
+
 $R->configFolder = isset($_GET['setting:conf']) ? $_GET['setting:conf'] : 'conf.d';
 
 $includeFileList = [
@@ -124,7 +125,7 @@ if ($callFromApp) {
 	//debugMsg('Call from '.($callFromApp ? 'APP' : 'WEB'));
 	//debugMsg($_SERVER['HTTP_USER_AGENT']);
 	// debugMsg($out,'$out');
-	$appAgent = (Object) ['dev' => trim($out[1]), 'ver' => trim($out[2]), 'type' => '', 'OS' => '', 'theme' => ''];
+	$appAgent = (object) ['dev' => trim($out[1]), 'ver' => trim($out[2]), 'type' => '', 'OS' => '', 'theme' => ''];
 	$appType = preg_split('/\;/', $out[3]);
 	$appAgent->type = trim($appType[0]);
 	$appAgent->OS = trim($appType[1]);
@@ -223,7 +224,7 @@ try {
 	$R->myDb = new MyDb(cfg('db'));
 
 	// Get mysql version from string eg "mysqlnd 8.2.19"
-	$R->mysql = (Object) [
+	$R->mysql = (object) [
 		'clientInfo' => mysqli_get_client_info(),
 		'version' => preg_filter('/^\w*\s([\d\.].*)$/i', '$1', mysqli_get_client_info()),
 		'verionCode' => intval(preg_filter('/^\w*\s([\d])[\.\d]*/i', '$1', mysqli_get_client_info())),
@@ -334,7 +335,7 @@ try {
 
 // Check site status
 if (cfg('web.status') == 0 && !$R->user->admin) {
-	die(R::View('site.maintenance'));
+	die(R::view('site.maintenance'));
 }
 
 // Set header for AJAX request

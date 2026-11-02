@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-09-23
- * @version :: 54
+ * @modify  :: 2026-11-02
+ * @version :: 55
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,11 @@
  * ============================================
  */
 
+declare(strict_types=1);
+
 error_reporting(E_ALL);
+
+global $request;
 
 $coreFolder = preg_replace('/(\/|\\\\)core$/i', '', dirname(__FILE__));
 
@@ -129,8 +133,8 @@ if (
 /**
  * Generate file not found from include file
  *
- * @param String $message
- * @return String
+ * @param string $message
+ * @return string
  */
 function fileNotFound($message = null) {
 	ob_start();
@@ -143,9 +147,9 @@ function fileNotFound($message = null) {
 /**
  * Load module JS file
  *
- * @param String $requestFile
- * @param String $ext
- * @return String file content
+ * @param string $requestFile
+ * @param string $ext
+ * @return string file content
  */
 function loadJS($requestFile, $ext) {
 	// $cacheTime = defined(_DEV_MODE) && _DEV_MODE ? 0 : 1*60*60; // in minutes
@@ -157,11 +161,11 @@ function loadJS($requestFile, $ext) {
 		$fileName = _CORE_FOLDER . '/core/' . $requestFile;
 	} elseif (is_dir(_CORE_FOLDER . '/core/modules/' . $module)) {
 		// Module is core module
-		$fileName .=
+		$fileName =
 			_CORE_FOLDER . '/core/modules/' . $module . '/' . basename($requestFile);
 	} else {
 		// Module is user module
-		$fileName .= _CORE_FOLDER . '/modules/' . $requestFile;
+		$fileName = _CORE_FOLDER . '/modules/' . $requestFile;
 	}
 
 	switch ($ext) {
@@ -212,7 +216,7 @@ function loadJS($requestFile, $ext) {
 /**
  * Get request string from first key of $_GET
  *
- * @return String
+ * @return string
  */
 function requestString() {
 	$request = '';
@@ -265,7 +269,7 @@ function requestString() {
 /**
  * Load all config file
  *
- * @param String $configFolder
+ * @param string $configFolder
  */
 function initConfig($configFolder) {
 	SgCore::loadConfig('conf.default.php', _CORE_FOLDER . '/core/assets/conf'); // load default config file
@@ -278,7 +282,7 @@ function initConfig($configFolder) {
 /**
  * Set auto loader file
  *
- * @param String $class
+ * @param string $class
  */
 function sg_autoloader(string $class) {
 	// debugMsg('AUTOLOAD START => '.$class);
@@ -352,10 +356,10 @@ function sg_autoloader(string $class) {
 /**
  * Set & get config value
  *
- * @param Mixed $key
- * @param Mixed $new_value
- * @param String $action
- * @return Mixed
+ * @param mixed $key
+ * @param mixed $new_value
+ * @param string $action
+ * @return mixed
  */
 function cfg($key = null, $new_value = null, $action = null) {
 	static $cfg = [];
@@ -392,7 +396,7 @@ function cfg($key = null, $new_value = null, $action = null) {
 /**
  * send header
  *
- * @param String $type eg. text/html, text/css, text/xml,
+ * @param string $type eg. text/html, text/css, text/xml,
  */
 function sendHeader($type = 'text/html') {
 	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
@@ -407,18 +411,15 @@ function sendHeader($type = 'text/html') {
 /**
  * Store debug message and display in div class="debug" of page
  *
- * @param Mixed $message
- * @param String $varname
- * @return String
- * $message:
- * 	"clear" : Clear all value
- * 	String  : Show string value
- * 	Array   : Show array value
- *  Object  : Show object value
- * $varname
- * 	Show as name of array or object
+ * @param mixed $message Information to show in debug
+ * 		"clear" : Clear all value
+ * 		string  : Show string value
+ * 		array   : Show array value
+ * 		object  : Show object value
+ * @param string $varname Show as name of array or object
+ * @return string
  */
-function debugMsg($message = null, $varname = null) {
+function debugMsg($message = null, $varname = null): string {
 	static $debugMsg = '';
 	if ($message === 'clear') {
 		return $debugMsg = '';
@@ -447,8 +448,8 @@ function debugMsg($message = null, $varname = null) {
 /**
  * Show Error Message
  *
- * @param String $message
- * @return String
+ * @param string $message
+ * @return string
  */
 function showError($message = []) {
 	ini_set('display_errors', 'off');
@@ -496,8 +497,7 @@ function showError($message = []) {
  * @param integer $code
  * @param string $description
  * @param string $file
- * @param interger $line
- * @param mixed $context
+ * @param int $line
  * @return boolean
  */
 function sgErrorHandler($code, $description, $file = null, $line = null) {
@@ -702,7 +702,7 @@ function sgErrorHandler($code, $description, $file = null, $line = null) {
  * Function to convert error codes to string names
  *
  * @param Int $code
- * @return String
+ * @return string
  */
 function getErrorTypeName($code) {
 	$constants = get_defined_constants(true)['Core'];
@@ -717,7 +717,7 @@ function getErrorTypeName($code) {
 /**
  * Function to send error to service site
  *
- * @param Array $data
+ * @param array $data
  */
 function sgSendLog($data = []) {
 	$forceSend = $_GET['forceSendLog'];
@@ -799,8 +799,8 @@ function sgSendLog($data = []) {
 /**
  * Function check error to is fatal error
  *
- * @param Int @code
- * @return Boolean
+ * @param int $code
+ * @return boolean
  */
 function sgIsFatalError($code) {
 	return in_array($code, [

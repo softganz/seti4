@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-01
- * Version  :: 46
+ * Modified :: 2026-11-02
+ * Version  :: 47
  */
 
 /* Core Function */
@@ -227,9 +227,9 @@ function process_widget($html) {
 function process_install_module($module) {
 	if (empty($module)) return;
 
-	list($className, $found, $filename) = R::Manifest($module);
+	list($className, $found, $filename) = R::manifest($module);
 
-	if (!$found) R::Manifest('system');
+	if (!$found) R::manifest('system');
 	
 	$permission = cfg($module.'.permission');
 
@@ -243,7 +243,7 @@ function process_install_module($module) {
 	// Add Permission
 	$perm = cfg('perm') ? cfg('perm') : (object) [];
 	// $modulePerm = cfg($module.'.permission');
-	// $modulePermExtend = R::Module($module.'.permission');
+	// $modulePermExtend = R::module($module.'.permission');
 	// if ($modulePermExtend) $modulePerm .= ($modulePerm ? ',':'').$modulePermExtend;
 
 	$perm->{$module} = $permission;
@@ -254,7 +254,7 @@ function process_install_module($module) {
 	// Process installation
 	$ret = '<h3>Permission of module '.$module.'</h3>'.$perm->{$module}.'<br /><br />';
 	$ret .= '<h3>Installation of module '.$module.'</h3>';
-	$ret .= R::Module($module.'.install').'<br /><br />';
+	$ret .= R::module($module.'.install').'<br /><br />';
 
 	return $ret;
 }
@@ -1021,7 +1021,7 @@ function tr($text, $translateText = null) {
 function head($key = null, $value = null, $pos = null) {
 	static $items = [];
 	if ($value === null) $value = $key;
-	if ($key && preg_match('/[\n]/', $key)) unset($key);
+	if ($key && preg_match('/[\n]/', $key)) $key = null;
 	if (!in_array($value, $items)) {
 		if ($pos == -1) {
 			$items = [$key => $value] + $items;
@@ -1340,7 +1340,7 @@ function message($type = null, $text = [], $module = null, $options = '{class: "
 			break;
 		}
 		$key = tr(trim($key));
-		if (empty($description)) $description = R::View('error', $key);
+		if (empty($description)) $description = R::view('error', $key);
 
 		$errmsg .= '<dt>'.$key.'</dt>'._NL;
 		if ($description) $errmsg .= '<dd>'.$description .'</dd>'._NL;
@@ -1361,7 +1361,7 @@ function message($type = null, $text = [], $module = null, $options = '{class: "
 			if ($description) $ret .= '<p class="notify">'.$description.'</p>';
 			$ret .= '</div>';
 		} else {
-			return R::View('signform', $options);
+			return R::view('signform', $options);
 		}
 		LogModel::save([
 			'module' => $args['module'],

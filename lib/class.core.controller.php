@@ -18,26 +18,24 @@
 //---------------------------------------
 #[AllowDynamicProperties]
 class R {
-	public $configFolder;
-	public $colorScheme;
-	public $request;
-	public $appAgent = null;
-	public $message;
-	public $setting;
-	public $options;
-	public $counter;
-	public $timer;
-	public $user;
-	public $error;
-	public $debug;
+	public string $configFolder;
+	public ?string $colorScheme;
+	public string $request;
+	public ?object $appAgent = null;
+	public object $message;
+	public object $setting;
+	public object $options;
+	public object $counter;
+	public object $timer;
+	public object $user;
+	public string $error;
 	public $pageClass = [];
 	public $pageAttribute = [];
-	public $core;
-	public $DB;
-	public $myDb;
-	public $mysql;
-	public $query;
-	public $query_items = [];
+	public ?object $core = null;
+	public object $DB;
+	public object $myDb;
+	public string $query;
+	public array $query_items = [];
 
 	function __construct() {
 		$this->setting = (object) [];
@@ -45,30 +43,34 @@ class R {
 		$this->message = (object) [];
 	}
 
-	public static function Option($key = null, $value = null) {
+	public static function option($key = null, $value = null) {
+		global $R;
+
 		if (isset($key) && isset($value)) {
-			$GLOBALS['R']->options->{$key} = $key;
+			$R->options->{$key} = $key;
 		}
-		return isset($GLOBALS['R']->options->{$key})
-			? $GLOBALS['R']->options->{$key}
+		return isset($R->options->{$key})
+			? $R->options->{$key}
 			: null;
 	}
 
-	public static function Setting($key = null, $value = null) {
+	public static function setting($key = null, $value = null) {
+		global $R;
+
 		if (empty($key)) {
-			return $GLOBALS['R']->setting;
+			return $R->setting;
 		} elseif (is_object($key)) {
-			$GLOBALS['R']->setting = $key;
-			return $GLOBALS['R']->setting;
+			$R->setting = $key;
+			return $R->setting;
 		} elseif (isset($key) && isset($value)) {
-			$GLOBALS['R']->setting->{$key} = $key;
-			return isset($GLOBALS['R']->setting->{$key})
-				? $GLOBALS['R']->setting->{$key}
+			$R->setting->{$key} = $key;
+			return isset($R->setting->{$key})
+				? $R->setting->{$key}
 				: null;
 		}
 	}
 
-	public static function Module($moduleName, $className = null) {
+	public static function module($moduleName, $className = null) {
 		$paraArgs = func_get_args();
 		$rName = $paraArgs[0];
 		$rName = 'module.' . $rName;
@@ -77,7 +79,7 @@ class R {
 		return $ret;
 	}
 
-	public static function Model($modelName) {
+	public static function model($modelName) {
 		$paraArgs = func_get_args();
 		$rName = $paraArgs[0];
 		$rName = 'r.' . $rName;
@@ -86,7 +88,7 @@ class R {
 		return $ret;
 	}
 
-	public static function View($viewName) {
+	public static function view($viewName) {
 		$paraArgs = func_get_args();
 		$rName = $paraArgs[0];
 		$rName = 'view.' . $rName;
@@ -95,14 +97,14 @@ class R {
 		return $ret;
 	}
 
-	public static function Page($pageName) {
+	public static function page($pageName) {
 		$paraArgs = func_get_args();
 		$paraArgs[0] = 'page.' . $paraArgs[0];
 		$ret = call_user_func_array('load_resource', $paraArgs);
 		return $ret;
 	}
 
-	public static function PageWidget($pageName, $args = []) {
+	public static function pageWidget($pageName, $args = []) {
 		$filePrefix = 'page.';
 		$buildMethod = 'build'; // Default build method
 		$reservedMethod = ['rightToBuild'];
@@ -188,7 +190,7 @@ class R {
 		return error(_HTTP_ERROR_NOT_FOUND, 'PAGE NOT FOUND');
 	}
 
-	public static function On($eventName) {
+	public static function on($eventName) {
 		$paraArgs = func_get_args();
 		$ret = null;
 		if (is_string($paraArgs[0])) {
@@ -198,7 +200,7 @@ class R {
 		return $ret;
 	}
 
-	public static function Manifest($modulename) {
+	public static function manifest($modulename) {
 		$loadResult = SgCore::loadResourceFile('manifest.' . $modulename);
 		return $loadResult;
 	}
@@ -1120,8 +1122,8 @@ class SgCore {
 					$paraArgs[] = $v;
 				}
 			}
-			R::Manifest($module);
-			$widget_result = R::PageWidget($pageName, $paraArgs);
+			R::manifest($module);
+			$widget_result = R::pageWidget($pageName, $paraArgs);
 			// debugMsg('widget module = '.$module.' $pageName = '.$pageName);
 			// $widget_result .= print_o($paraArgs,'$paraArgs');
 			// debugMsg($widget_result,'$widget_result');
@@ -1476,11 +1478,11 @@ class SgCore {
 			cfg('page_id', $module);
 		}
 
-		R::Module($module . '.init', $pageClass);
+		R::module($module . '.init', $pageClass);
 
 		$options = \SG\json_decode($menu['options']);
 		$verify = isset($options->verify)
-			? R::Model($options->verify, $pageClass)
+			? R::model($options->verify, $pageClass)
 			: true;
 
 		if ($verify === false) {
@@ -1688,7 +1690,7 @@ class SgCore {
 				R()->request = $request = $home;
 				q($request);
 				// debugMsg('$home='.$home.' $request='.$request.' q()='.q()).' cfg(page_id)='.cfg('page_id');
-				$manifest = R::Manifest(q(0));
+				$manifest = R::manifest(q(0));
 				$menu = menu($request);
 			}
 		} elseif ($request) {
@@ -1702,10 +1704,10 @@ class SgCore {
 			}
 
 			// Load system manifest
-			$manifest = R::Manifest('system');
+			$manifest = R::manifest('system');
 
 			if (q(0)) {
-				$manifest = R::Manifest(q(0));
+				$manifest = R::manifest(q(0));
 			}
 
 			if ($url_alias = url_alias($request)) {
@@ -1719,13 +1721,13 @@ class SgCore {
 				$request = $url_alias->system;
 				q($request);
 				$process_debug .= print_o(q(0, 'all'), '$q');
-				$manifest = R::Manifest(q(0));
+				$manifest = R::manifest(q(0));
 				$menu = menu($request);
 			} elseif ($menu = menu($request)) {
 				// debugMsg('Do request menu');
 			} else {
 				// @deprecated
-				// Do request from R::Page
+				// Do request from R::page
 				// debugMsg('Do request from R::page');
 				// menu(q(0),q(0).' page',q(0),'__controller',1,true,'static');
 				$menu = menu($request);
