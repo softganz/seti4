@@ -17,7 +17,7 @@
  *
  * Created  :: 2019-12-08
  * Modified :: 2026-11-02
- * Version  :: 28
+ * Version  :: 29
  */
 
 namespace SG;
@@ -262,19 +262,19 @@ function array_merge_recursive(array ...$arrays): array {
 * @return Object
 */
 function object_merge_recursive() {
-	$debug = R('debug');
+	// $debug = R('debug');
 	$args = func_get_args();
 	//$flag = is_numeric($args[count($args) - 1]) ? array_pop($args) : 0;
 	$firstArg = array_shift($args);
 	$result = is_object($firstArg) ? clone $firstArg : $firstArg;
-	if ($debug) debugMsg($firstArg, '\SG\ObjectMerge $firstArg');
-	if ($debug) debugMsg($args,'\SG\ObjectMerge $args');
+	// if ($debug) debugMsg($firstArg, '\SG\ObjectMerge $firstArg');
+	// if ($debug) debugMsg($args,'\SG\ObjectMerge $args');
 
 	foreach ($args as $arg) {
 		if (gettype($arg) == 'NULL') continue;
 		foreach ($arg as $key => $value) {
 			if (is_object($value)) {
-				if ($debug) debugMsg('Merge object key '.$key);
+				// if ($debug) debugMsg('Merge object key '.$key);
 				if (!isset($result->{$key})) $result->{$key} = (Object) [];
 				$result->{$key} = object_merge_recursive($result->{$key}, $value);
 			} else if (is_array($value)) {
@@ -294,7 +294,7 @@ function object_merge_recursive() {
 				//debugMsg($result,'is_array($result)');
 				$result[$key] = $value;
 			} else {
-				if ($debug) debugMsg('SET $result->'.$key.' = '.$value.' ('.gettype($value).')');
+				// if ($debug) debugMsg('SET $result->'.$key.' = '.$value.' ('.gettype($value).')');
 				$result->{$key} = $value;
 			}
 		}
