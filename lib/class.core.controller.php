@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
  * Modified :: 2026-11-02
- * Version  :: 61
+ * Version  :: 62
  */
 
 /*************************************************************
@@ -233,7 +233,7 @@ class SgCore {
 	/**
 	 * Find template location
 	 * @param string $filename
-	 * @param string ext_folder Each folder seperate by ;
+	 * @param string $ext_folder Each folder seperate by ;
 	 * @return mixed False on file not found and file location on found
 	 */
 	static function getTemplate($filename = null, $ext_folder = null) {
@@ -273,7 +273,7 @@ class SgCore {
 	/**
 	 * Load configuration from file and store into cfg
 	 * @param mixed $configFile
-	 * @param mixed $folder
+	 * @param mixed $folders
 	 */
 	static function loadConfig(
 		$configFile = null,
@@ -431,7 +431,7 @@ class SgCore {
 	/**
 	 * Find and load template
 	 * @param string $filename
-	 * @param string ext_folder Each folder seperate by ;
+	 * @param string $ext_folder Each folder seperate by ;
 	 * @param boolean $show_result
 	 * @return string Result from template file
 	 */
@@ -484,6 +484,7 @@ class SgCore {
 		$fixFolders = ['widget' => 'widget', 'model' => 'model', 'api' => 'api'];
 		$template = cfg('template');
 		$caller = get_caller(__FUNCTION__);
+		$packageFolder = null;
 
 		if (cfg('template.add')) {
 			$template = cfg('template.add') . ';' . $template;
@@ -1105,8 +1106,6 @@ class SgCore {
 					$wpara .= '/' . $dk . '/' . $v;
 				}
 			}
-			//$result.='gadget #'.(++$counter).' para='.($para->{'widget-request'}).$wpara;
-			$widget_result = gadget($para->{'widget-request'} . $wpara);
 		} elseif (!empty($para->{'data-url'})) {
 			// Load widget from page url
 			[$module] = explode('/', $para->{'data-url'});
@@ -1845,7 +1844,7 @@ class SgCore {
 				is_array($requestResult) &&
 				isset($requestResult['location'])
 			) {
-				location($body['location']);
+				location($requestResult['location']);
 			}
 
 			// Content is array or object and force return to html
@@ -1971,8 +1970,8 @@ class SgCore {
 
 	/**
 	 * Set current language
+	 *
 	 * @param string $lang
-	 * @param string
 	 */
 	static function setLang($lang = null) {
 		if ($lang) {
@@ -2084,10 +2083,8 @@ class SgCore {
 				? '<p><strong> Load file detail</strong><br />'
 					. print_o($menu, '$menu')
 					. '<br />'
-				: '')
-			. // . 'File : <strong>'.$mainFolder.$pageFile.'</strong><br />'
-			// . 'Routine : <strong>function '.$retFunc.'()</strong></p>'
-			'<hr>
+				: '') // . 'File : <strong>'.$mainFolder.$pageFile.'</strong><br />' // . 'Routine : <strong>function '.$retFunc.'()</strong></p>'
+			. '<hr>
 		<address>copyright <a href="//'
 			. $_SERVER['SERVER_NAME']
 			. '">'
