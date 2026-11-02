@@ -14,17 +14,19 @@
 class My extends Page {
 	#[\Override]
 	function build() {
-		if (!i()->ok) return new SignForm();
+		if (!i()->ok) {
+			return new SignForm();
+		}
 
 		$uid = i()->uid;
 		$userInfo = UserModel::get($uid);
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => '@'.i()->name,
-				'leading' => _HEADER_BACK,
+				'title' => '@' . i()->name,
+				'leading' => _HEADER_BACK
 			]), // AppBar
-			'sideBar' => R::View('my.menu'),
+			'sideBar' => R::view('my.menu'),
 			'body' => new Column([
 				'children' => [
 					new ProfilePhotoWidget([
@@ -35,61 +37,187 @@ class My extends Page {
 								'enctype' => 'multipart/form-data',
 								'action' => Url::link('my/api/photo.change'),
 								'rel' => 'notify',
-								'done' => 'load:#main:'.Url::link('my'),
+								'done' => 'load:#main:' . Url::link('my'),
 								'children' => [
 									'<span class="fileinput-button"><i class="icon -material">add_a_photo</i><input type="file" name="photo" class="inline-upload" accept="image/*;capture=camcorder" onchange="$(this).closest(form).submit(); return false;"></span>'
-									], // children
+								] // children
 							]), // Form
 
-							user_access('administer users') ? new Container([
-								'class' => '-sg-text-center',
-								'child' => 'ชื่อที่ใช้ในการเข้าระบบ'.' : <strong><a href="'.Url::link('admin/user/edit/'.$userInfo->uid).'">'.$userInfo->username.'</a></strong> | <a href="'.Url::link('profile/'.$uid).'" class="sg-action" data-rel="#main">Refresh</a>']
-							) : NULL,
+							user_access('administer users')
+								? new Container([
+									'class' => '-sg-text-center',
+									'child' =>
+										'ชื่อที่ใช้ในการเข้าระบบ'
+										. ' : <strong><a href="'
+										. Url::link('admin/user/edit/' . $userInfo->uid)
+										. '">'
+										. $userInfo->username
+										. '</a></strong> | <a href="'
+										. Url::link('profile/' . $uid)
+										. '" class="sg-action" data-rel="#main">Refresh</a>'
+								])
+								: null,
 
-							user_access('administer users','change own profile',$userInfo->uid) ? new Row([
-								'mainAxisAlignment' => 'center',
-								'style' => 'gap: 16px;',
-								'children' => [
-									'<a class="btn" href="'.Url::link('my/change/detail').'"><i class="icon -material">person</i><span>'.tr('change your profile details').'</span></a>',
-									'<a class="sg-action btn" href="'.Url::link('my/change/password').'" data-rel="#main"><i class="icon -material">enhanced_encryption</i><span>'.tr('change password').'</span></a>',
-									'<a class="btn" href="'.Url::link('my/change/photo').'"><i class="icon -material">add_a_photo</i><span>'.tr('change photo').'</span></a>',
-								],
-							]) : NULL,
-						], // children
+							user_access(
+								'administer users',
+								'change own profile',
+								$userInfo->uid
+							)
+								? new Row([
+									'mainAxisAlignment' => 'center',
+									'style' => 'gap: 16px;',
+									'children' => [
+										'<a class="btn" href="'
+										. Url::link('my/change/detail')
+										. '"><i class="icon -material">person</i><span>'
+										. tr('change your profile details')
+										. '</span></a>',
+										'<a class="sg-action btn" href="'
+										. Url::link('my/change/password')
+										. '" data-rel="#main"><i class="icon -material">enhanced_encryption</i><span>'
+										. tr('change password')
+										. '</span></a>',
+										'<a class="btn" href="'
+										. Url::link('my/change/photo')
+										. '"><i class="icon -material">add_a_photo</i><span>'
+										. tr('change photo')
+										. '</span></a>'
+									]
+								])
+								: null
+						] // children
 					]),
 
 					new Card([
 						'children' => [
-							'<p><a href="'.Url::link('paper/user/'.$userInfo->uid).'">'.tr('หัวข้อที่เขียนโดย ').$userInfo->name.'</a></p>',
+							'<p><a href="'
+							. Url::link('paper/user/' . $userInfo->uid)
+							. '">'
+							. tr('หัวข้อที่เขียนโดย ')
+							. $userInfo->name
+							. '</a></p>',
 
-							$userInfo->real_name || $userInfo->mid_name || $userInfo->last_name ? 'ชื่อจริง : '.($userInfo->name_prefix?$userInfo->name_prefix.' ':'').$userInfo->real_name.($userInfo->mid_name?' ('.$userInfo->mid_name.')':'').' '.$userInfo->last_name.'<br /><br />' : '',
+							$userInfo->real_name ||
+							$userInfo->mid_name ||
+							$userInfo->last_name
+								? 'ชื่อจริง : '
+									. ($userInfo->name_prefix ? $userInfo->name_prefix . ' ' : '')
+									. $userInfo->real_name
+									. ($userInfo->mid_name
+										? ' (' . $userInfo->mid_name . ')'
+										: '')
+									. ' '
+									. $userInfo->last_name
+									. '<br /><br />'
+								: '',
 
-							($userInfo->occupation ? 'อาชีพ : '.$userInfo->occupation.'<br /><br />':'').'
-								'.($userInfo->position? 'ตำแหน่ง : '.$userInfo->position.'<br /><br />':'').'
-								'.($userInfo->organization ? 'องค์กร / บริษัท : '.$userInfo->organization.'<br /><br />':'').'
-								'.($userInfo->address || $userInfo->amphur || $userInfo->province ? 'ที่อยู่ : '.$userInfo->address.' '.$userInfo->amphur.' '.$userInfo->province.' '.$userInfo->zipcode.' '.$userInfo->country.'<br /><br />':'').'
-								'.($userInfo->latitude ? 'ละติจูด : '.$userInfo->latitude.'<br /><br />':'').'
-								'.($userInfo->longitude ? 'ลองกิจูด : '.$userInfo->longitude.'<br /><br />':'').'
-								'.($userInfo->phone && (user_access('administer users') || i()->uid==$userInfo->uid) ? 'โทรศัพท์ : '.$userInfo->phone.'<br /><br />':'').'
-								'.($userInfo->mobile && (user_access('administer users') || i()->uid==$userInfo->uid) ? 'โทรศัพท์เคลื่อนที่ : '.$userInfo->mobile.'<br /><br />':'').'
-								'.($userInfo->fax ? 'แฟกซ์ : '.$userInfo->fax.'<br /><br />':'').'
-								'.($userInfo->website ? 'เว็บไซท์ : '.'<a href="'.$userInfo->website.'" target="_blank">'.$userInfo->website.'</a><br /><br />':'').'
-								'.'คำหลัก'.' : <br /><br />
-								'.($userInfo->about?'ประวัติย่อ'.' : <br /><br />'.sg_text2html($userInfo->about):'').'<br /><br />
-								<p align="right">'.'เริ่มเป็นสมาชิกตั้งแต่ วัน'.sg_date($userInfo->datein,'ววว ว ดด ปป H:i').' น.'.'<br />'
-								. ($userInfo->login_time ? 'เข้าระบบล่าสุดเมื่อ วัน'.sg_date($userInfo->login_time,'ววว ว ดด ปปปป H:i').' น.'.'<br />' : NULL)
-								. 'เข้าชมเว็บไซท์ : '.number_format($userInfo->hits).' ครั้ง'.'<br />'
-								. 'อ่าน : '.number_format($userInfo->views).' ครั้ง'.'</p>',
-							], // children
-						]), // Card
+							($userInfo->occupation
+								? 'อาชีพ : ' . $userInfo->occupation . '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->position
+								? 'ตำแหน่ง : ' . $userInfo->position . '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->organization
+								? 'องค์กร / บริษัท : '
+									. $userInfo->organization
+									. '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->address || $userInfo->amphur || $userInfo->province
+								? 'ที่อยู่ : '
+									. $userInfo->address
+									. ' '
+									. $userInfo->amphur
+									. ' '
+									. $userInfo->province
+									. ' '
+									. $userInfo->zipcode
+									. ' '
+									. $userInfo->country
+									. '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->latitude
+								? 'ละติจูด : ' . $userInfo->latitude . '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->longitude
+								? 'ลองกิจูด : ' . $userInfo->longitude . '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->phone &&
+							(user_access('administer users') || i()->uid == $userInfo->uid)
+								? 'โทรศัพท์ : ' . $userInfo->phone . '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->mobile &&
+							(user_access('administer users') || i()->uid == $userInfo->uid)
+								? 'โทรศัพท์เคลื่อนที่ : ' . $userInfo->mobile . '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->fax
+								? 'แฟกซ์ : ' . $userInfo->fax . '<br /><br />'
+								: '')
+							. '
+								'
+							. ($userInfo->website
+								? 'เว็บไซท์ : '
+									. '<a href="'
+									. $userInfo->website
+									. '" target="_blank">'
+									. $userInfo->website
+									. '</a><br /><br />'
+								: '')
+							. '
+								'
+							. 'คำหลัก'
+							. ' : <br /><br />
+								'
+							. ($userInfo->about
+								? 'ประวัติย่อ'
+									. ' : <br /><br />'
+									. sg_text2html($userInfo->about)
+								: '')
+							. '<br /><br />
+								<p align="right">'
+							. 'เริ่มเป็นสมาชิกตั้งแต่ วัน'
+							. sg_date($userInfo->datein, 'ววว ว ดด ปป H:i')
+							. ' น.'
+							. '<br />'
+							. ($userInfo->login_time
+								? 'เข้าระบบล่าสุดเมื่อ วัน'
+									. sg_date($userInfo->login_time, 'ววว ว ดด ปปปป H:i')
+									. ' น.'
+									. '<br />'
+								: null)
+							. 'เข้าชมเว็บไซท์ : '
+							. number_format($userInfo->hits)
+							. ' ครั้ง'
+							. '<br />'
+							. 'อ่าน : '
+							. number_format($userInfo->views)
+							. ' ครั้ง'
+							. '</p>'
+						] // children
+					]), // Card
 
 					'<script type="text/javascript">
 					$(document).ready(function () {
 						$(".NO-CACHE").attr("src",function () { return $(this).attr("src") + "?a=" + Math.random() });
 					});
-					</script>',
-				], // children
-			]), // Widget
+					</script>'
+				] // children
+			]) // Widget
 		]);
 	}
 }

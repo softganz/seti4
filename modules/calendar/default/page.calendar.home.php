@@ -26,15 +26,21 @@ class CalendarHome extends Page {
 	var $nodeId;
 	var $orgId;
 
-	function __construct($action = NULL) {
+	function __construct($action = null) {
 		parent::__construct([
 			'url' => url('calendar'),
 			'year' => SG\getFirstInt(Request::all('year'), date('Y')), // 2025
 			'month' => SG\getFirstInt(Request::all('month'), date('m')), // 01
 			'hash' => SG\getFirst(Request::all('hash'), 'month'), // month, agenda
-			'get' => SG\valid(preg_match('/^\*/',$action) ? $action : NULL, '/^[\*\,\:\dto]*$/'), // *,t:1,o:1
-			'nodeId' => SG\valid(SG\getFirst(Request::all('nodeId'), Request::all('nodeid')), '/^[0-9\,]*[0-9]$/'), // 1,2,3
-			'orgId' => SG\getFirstInt(Request::all('orgId'), Request::all('orgid')), // 1,2,3
+			'get' => SG\valid(
+				preg_match('/^\*/', $action) ? $action : null,
+				'/^[\*\,\:\dto]*$/'
+			), // *,t:1,o:1
+			'nodeId' => SG\valid(
+				SG\getFirst(Request::all('nodeId'), Request::all('nodeid')),
+				'/^[0-9\,]*[0-9]$/'
+			), // 1,2,3
+			'orgId' => SG\getFirstInt(Request::all('orgId'), Request::all('orgid')) // 1,2,3
 		]);
 	}
 
@@ -60,18 +66,17 @@ class CalendarHome extends Page {
 		// 	$ret .= '<div id="calendar" class="widget-calendar" '.sg_implode_attr($calendarAttr).'>'._NL;
 		// }
 
-
 		// //$ret .= 'Year = '.$year.' , Month = '.$month.' , Hash = '.$hash.'<br />';
 		// //$ret .= print_o($calendarAttr,'$calendarAttr',2);
 		// //$ret .= print_o($post,'$post',2);
 
 		// switch ($hash) {
 		// 	case 'agenda' :
-		// 		$ret .= R::Model('calendar.get.agenda',$year,$month,$post);
+		// 		$ret .= R::model('calendar.get.agenda',$year,$month,$post);
 		// 		break;
 
 		// 	default :
-		// 		$ret .= R::Model('calendar.get.month',$year,$month,$post);
+		// 		$ret .= R::model('calendar.get.month',$year,$month,$post);
 		// 		break;
 		// }
 
@@ -82,7 +87,7 @@ class CalendarHome extends Page {
 		// die('This page is deprecated. Please use the new CalendarWidget instead.');
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Calendar',
+				'title' => 'Calendar'
 			]), // AppBar
 			'body' => new CalendarWidget([
 				'year' => $this->year,
@@ -91,12 +96,12 @@ class CalendarHome extends Page {
 				'url' => $this->url,
 				'get' => $this->get,
 				'nodeId' => $this->nodeId,
-				'orgId' => $this->orgId,
+				'orgId' => $this->orgId
 				// 'date' => SG\getFirst(Request::all('date')),
 				// 'from' => SG\getFirst(Request::all('from')),
 				// 'to' => SG\getFirst(Request::all('to')),
 				// 'callFrom' => $this->callFrom,
-			]), // CalendarWidget
+			]) // CalendarWidget
 		]);
 	}
 }

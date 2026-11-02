@@ -1,17 +1,17 @@
 <?php
 /**
-* Node    :: Node Info API
-* Created :: 2023-07-26
-* Modify  :: 2025-02-25
-* Version :: 2
-*
-* @param Int $nodeId
-* @param String $action
-* @param Int $tranId
-* @return Array/Object
-*
-* @usage api/node/info/{nodeId}/{action}[/{tranId}]
-*/
+ * Node    :: Node Info API
+ * Created :: 2023-07-26
+ * Modify  :: 2025-02-25
+ * Version :: 2
+ *
+ * @param Int $nodeId
+ * @param String $action
+ * @param Int $tranId
+ * @return Array/Object
+ *
+ * @usage api/node/info/{nodeId}/{action}[/{tranId}]
+ */
 
 use Softganz\DB;
 
@@ -20,17 +20,21 @@ class NodeInfoApi extends PageApi {
 	var $action;
 	var $tranId;
 
-	function __construct($nodeId = NULL, $action = NULL, $tranId = NULL) {
+	function __construct($nodeId = null, $action = null, $tranId = null) {
 		parent::__construct([
 			'action' => $action,
 			'tranId' => $tranId,
-			'nodeInfo' => $nodeInfo = (is_numeric($nodeId) ? \NodeModel::get($nodeId) : NULL),
-			'nodeId' => $nodeInfo->nodeId,
+			'nodeInfo' => ($nodeInfo = is_numeric($nodeId)
+				? \NodeModel::get($nodeId)
+				: null),
+			'nodeId' => $nodeInfo->nodeId
 		]);
 	}
 
 	function build() {
-		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'PROCESS ERROR');
+		if (empty($this->nodeId)) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'PROCESS ERROR');
+		}
 		// if (!$this->right->access) return error(_HTTP_ERROR_NOT_ALLOWED, 'Access Denied');
 		// if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
 
@@ -39,19 +43,37 @@ class NodeInfoApi extends PageApi {
 
 	function bookmark() {
 		$bookmarkLabel = $this->tranId;
-		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-		if (empty($bookmarkLabel)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลประเภท Bookmark');
-		R::Model('reaction.add', $this->nodeId, $bookmarkLabel, '{addType: "toggle"}');
+		if (!i()->ok) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
+		if (empty($bookmarkLabel)) {
+			return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลประเภท Bookmark');
+		}
+		R::model(
+			'reaction.add',
+			$this->nodeId,
+			$bookmarkLabel,
+			'{addType: "toggle"}'
+		);
 		return success('บันทึกเรียบร้อย');
 		// return \ReactionModel::get(['id' => $this->nodeId, 'bookmark' => $bookmarkLabel]);
 	}
 
 	function like() {
 		$likeLabel = $this->tranId;
-		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-		if (empty($this->tranId)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลประเภท Like');
+		if (!i()->ok) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
+		if (empty($this->tranId)) {
+			return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลประเภท Like');
+		}
 
-		$result = R::Model('reaction.add', $this->nodeId, $likeLabel, '{addType: "toggle", count: "topic:liketimes"}');
+		$result = R::model(
+			'reaction.add',
+			$this->nodeId,
+			$likeLabel,
+			'{addType: "toggle", count: "topic:liketimes"}'
+		);
 
 		return success('บันทึกเรียบร้อย');
 		// return \ReactionModel::get(['id' => $this->nodeId, 'bookmark' => $this->tranId.'.BOOKM']);
@@ -59,9 +81,13 @@ class NodeInfoApi extends PageApi {
 
 	function reviewSave() {
 		$getRating = SG\getFirstInt(post('rate'));
-		if (!i()->ok) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!i()->ok) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 
-		if (empty($getRating)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลการให้คะแนน');
+		if (empty($getRating)) {
+			return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่มีข้อมูลการให้คะแนน');
+		}
 
 		if ($this->nodeInfo->info->ratetimes) {
 			$reviewInfo = DB::select([
@@ -69,14 +95,15 @@ class NodeInfoApi extends PageApi {
 				'var' => [':tpid' => $this->nodeId, ':uid' => i()->uid]
 			]);
 
-			$currentRating = $this->nodeInfo->info->rating*$this->nodeInfo->info->ratetimes;
+			$currentRating =
+				$this->nodeInfo->info->rating * $this->nodeInfo->info->ratetimes;
 			$currentTimes = $this->nodeInfo->info->ratetimes;
 			if ($reviewInfo->_num_rows) {
 				$currentRating -= $reviewInfo->giverating;
 				$currentTimes--;
 			}
 			$rateTimes = $currentTimes + 1;
-			$newRating = round(($currentRating + $getRating) / $rateTimes,1);
+			$newRating = round(($currentRating + $getRating) / $rateTimes, 1);
 		} else {
 			$newRating = $getRating;
 			$rateTimes = 1;
@@ -92,8 +119,8 @@ class NodeInfoApi extends PageApi {
 		]);
 		// debugMsg(R('query'));
 
-		$data = (Object) [
-			'cid' => post('cid') ? post('cid') : NULL,
+		$data = (object) [
+			'cid' => post('cid') ? post('cid') : null,
 			'tpid' => $this->nodeId,
 			'uid' => i()->uid,
 			'giverating' => $getRating,
@@ -102,7 +129,7 @@ class NodeInfoApi extends PageApi {
 			'comment' => post('msg') ? post('msg') : '',
 			'thread' => $this->nodeInfo->title,
 			'name' => i()->name,
-			'ip' => ip2long(getenv('REMOTE_ADDR')),
+			'ip' => ip2long(getenv('REMOTE_ADDR'))
 		];
 
 		DB::query([

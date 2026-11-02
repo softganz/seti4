@@ -287,7 +287,7 @@ Submit by <b>'
 		$ret .= print_o($topicInfo, '$topicInfo');
 		$ret .= print_o($mail, '$mail');
 	} else {
-		$ret .= R::View('paper.comment.render', $comment);
+		$ret .= R::view('paper.comment.render', $comment);
 	}
 	return $ret;
 }

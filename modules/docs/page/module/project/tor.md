@@ -30,31 +30,31 @@
 
 <h4>project.tor</h4>
 <p>File :: project.tor.php</p>
-<code>R::Page('project.tor',$self,$tpid,$action,$trid)</code>
+<code>R::page('project.tor',$self,$tpid,$action,$trid)</code>
 
 <h4>project.tor.list</h4>
 <p>File :: project.tor.list.php</p>
-<code>R::Page('project.tor.list',$self)</code>
+<code>R::page('project.tor.list',$self)</code>
 
 <h3>View</h3>
 
 <h4>view.project.tor.view</h4>
 <p>File :: view.project.tor.view.php</p>
-<code>R::View('project.tor.view',$torInfo)</code>
+<code>R::view('project.tor.view',$torInfo)</code>
 
 <h3>Model</h3>
 
 <h4>project.tor.create</h4>
 <code>
-R::Model('project.tor.create',$tpid);
+R::model('project.tor.create',$tpid);
 </code>
 
 <h4>project.tor.get</h4>
 <code>
-R::Model('project.tor.get',$tpid);
+R::model('project.tor.get',$tpid);
 </code>
 
 <h4>project.tor.remove</h4>
 <code>
-R::Model('project.tor.remove',$tpid);
+R::model('project.tor.remove',$tpid);
 </code>

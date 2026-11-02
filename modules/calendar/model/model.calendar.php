@@ -16,8 +16,7 @@
 use Softganz\DB;
 
 class CalendarModel {
-	function __construct($args = []) {
-	}
+	function __construct($args = []) {}
 
 	public static function getById($calendarId, $options = '{}') {
 		$defaults = '{debug: false}';
@@ -40,52 +39,65 @@ class CalendarModel {
 			'var' => [':calendarId' => $calendarId]
 		]);
 
-		if (empty($result->calId)) return;
+		if (empty($result->calId)) {
+			return;
+		}
 
 		$result->options = json_decode($result->options);
 
-		if ($result->from_time) $result->from_time = substr($result->from_time,0,5);
-		if ($result->to_time) $result->to_time = substr($result->to_time,0,5);
-		$result->areacode = $result->changwat.$result->ampur.$result->tambon;
+		if ($result->from_time) {
+			$result->from_time = substr($result->from_time, 0, 5);
+		}
+		if ($result->to_time) {
+			$result->to_time = substr($result->to_time, 0, 5);
+		}
+		$result->areacode = $result->changwat . $result->ampur . $result->tambon;
 
-		$result->property = (object)property('calendar::'.$calendarId);
+		$result->property = (object) property('calendar::' . $calendarId);
 
-		if ($debug) debugMsg($result, '$result');
+		if ($debug) {
+			debugMsg($result, '$result');
+		}
 
 		return $result;
-
 	}
 
 	public static function getEvents($args = []) {
-		$args = (Object) $args;
+		$args = (object) $args;
 		$is_category = DB::tableExists('%calendar_category%');
 		$joins = $fields = [];
 
 		if (!empty($args->get) && $args->get === '*') {
 			// Get all calendar items
-		} else if (substr($args->get ?? '',0,1) === '*') {
+		} elseif (substr($args->get ?? '', 0, 1) === '*') {
 			// Get all calendar items + other condition
 			$conditions = [];
-			$conditions[] = 'c.`tpid` IS NULL';		
-			foreach (explode(',', $args->get) AS $value) {
-				if (!preg_match('/(^[a-z])\:(.*)/', $value, $out)) continue;
+			$conditions[] = 'c.`tpid` IS NULL';
+			foreach (explode(',', $args->get) as $value) {
+				if (!preg_match('/(^[a-z])\:(.*)/', $value, $out)) {
+					continue;
+				}
 				if ($out[1] == 't') {
 					$conditions[] = 't.`tpid` IN (:nodeId)';
-					mydb::where(NULL,':nodeId', 'SET:'.str_replace(':', ',',$out[2]));
-				} else if ($out[1] == 'o') {
+					mydb::where(null, ':nodeId', 'SET:' . str_replace(':', ',', $out[2]));
+				} elseif ($out[1] == 'o') {
 					$conditions[] = 't.`orgId` IN (:orgId)';
-					mydb::where(NULL,':orgId', 'SET:'.str_replace(':', ',',$out[2]));
+					mydb::where(null, ':orgId', 'SET:' . str_replace(':', ',', $out[2]));
 				}
 			}
-			mydb::where('('.implode(' OR ',$conditions).')',$whereValue);
-		} else if (!empty($args->orgId)) {
-			mydb::where('(c.`orgId` = :orgId OR t.`orgId` = :orgId)', ':orgId',$args->orgId);
-		} else if (!empty($args->nodeId) && $args->nodeId === '*') {
+			mydb::where('(' . implode(' OR ', $conditions) . ')', $whereValue);
+		} elseif (!empty($args->orgId)) {
+			mydb::where(
+				'(c.`orgId` = :orgId OR t.`orgId` = :orgId)',
+				':orgId',
+				$args->orgId
+			);
+		} elseif (!empty($args->nodeId) && $args->nodeId === '*') {
 			mydb::where('c.`nodeId` IS NOT NULL');
-		} else if (!empty($args->nodeId)) {
-			mydb::where('c.`tpid` IN ( :nodeId )', ':nodeId', 'SET:'.$args->nodeId);
+		} elseif (!empty($args->nodeId)) {
+			mydb::where('c.`tpid` IN ( :nodeId )', ':nodeId', 'SET:' . $args->nodeId);
 		} else {
-			mydb::where('c.`tpid` IS NULL');		
+			mydb::where('c.`tpid` IS NULL');
 		}
 
 		// if ($args->category) mydb::where('c.`category` = :category', ':category', $args->category);
@@ -114,13 +126,13 @@ class CalendarModel {
 
 		if (!empty($args->date)) {
 			$getFromDate = $getToDate = $args->date;
-		} else if (!empty($args->from) && !empty($args->to)) {
+		} elseif (!empty($args->from) && !empty($args->to)) {
 			$getFromDate = $args->from;
 			$getToDate = $args->to;
-		} else if ($args->getMonth) {
-			list($year,$month) = explode('-', $args->getMonth);
-			$getFromDate = $year.'-'.$month.'-01';
-			$getToDate = date("Y-m-t", strtotime($getFromDate)); // End of month date
+		} elseif ($args->getMonth) {
+			[$year, $month] = explode('-', $args->getMonth);
+			$getFromDate = $year . '-' . $month . '-01';
+			$getToDate = date('Y-m-t', strtotime($getFromDate)); // End of month date
 		}
 
 		if ($getFromDate && $getToDate) {
@@ -133,8 +145,14 @@ class CalendarModel {
 						(:getFromDate BETWEEN `c`.`from_date` AND `c`.`to_date`) OR (:getToDate BETWEEN `c`.`from_date` AND `c`.`to_date`)
 					)
 				)',
-				':month', $month, ':year', $year,
-				':getFromDate', $getFromDate, ':getToDate', $getToDate
+				':month',
+				$month,
+				':year',
+				$year,
+				':getFromDate',
+				$getFromDate,
+				':getToDate',
+				$getToDate
 			);
 			// -- (MONTH(c.`from_date`) = :month AND YEAR(c.`from_date`) = :year) OR (MONTH(c.`to_date`) = :month AND YEAR(c.`to_date`) = :year) OR
 		}
@@ -146,36 +164,63 @@ class CalendarModel {
 		//if ($args->main) mydb::where('c.`tpid` IS NULL');
 
 		if ($args->callFrom === 'project') {
-			$joins[] = 'LEFT JOIN %project_tr% `activity` ON `activity`.`formId` = "info" AND `activity`.`part` = "activity" AND `activity`.`calId` = `c`.`id`';
-			mydb::where('(`activity`.`tagName` IS NULL OR `activity`.`tagName` != "group")');
+			$joins[] =
+				'LEFT JOIN %project_tr% `activity` ON `activity`.`formId` = "info" AND `activity`.`part` = "activity" AND `activity`.`calId` = `c`.`id`';
+			mydb::where(
+				'(`activity`.`tagName` IS NULL OR `activity`.`tagName` != "group")'
+			);
 			$fields[] = '`activity`.`tagName`';
 		}
 
 		if (!i()->ok) {
 			// get only public privacy
 			mydb::where('c.`privacy` = "public"');
-		} else if (user_access('administer contents')) {
+		} elseif (user_access('administer contents')) {
 			// get all privacy
 		} else {
 			// get owner and public privacy
-			foreach (i()->roles as $role)
-				if (!in_array($role,array('admin','member'))) $urole=$role;
-			if ($urole) {
-				$ruser = mydb::select('SELECT `uid` FROM %users% WHERE `roles` LIKE :urole; -- {reset: false}',':urole','%'.$urole.'%');
-				if ($ruser->lists->text)
-					$role_sql = '(c.`privacy` = "group" AND c.`owner` IN ('.$ruser->lists->text.'))';
+			foreach (i()->roles as $role) {
+				if (!in_array($role, ['admin', 'member'])) {
+					$urole = $role;
+				}
 			}
-			mydb::where('(c.`privacy` = "public" OR c.`owner` = :myuid)'.($role_sql ? ' OR '.$role_sql:''),':myuid', i()->uid);
+			if ($urole) {
+				$ruser = mydb::select(
+					'SELECT `uid` FROM %users% WHERE `roles` LIKE :urole; -- {reset: false}',
+					':urole',
+					'%' . $urole . '%'
+				);
+				if ($ruser->lists->text) {
+					$role_sql =
+						'(c.`privacy` = "group" AND c.`owner` IN ('
+						. $ruser->lists->text
+						. '))';
+				}
+			}
+			mydb::where(
+				'(c.`privacy` = "public" OR c.`owner` = :myuid)'
+					. ($role_sql ? ' OR ' . $role_sql : ''),
+				':myuid',
+				i()->uid
+			);
 		}
 
 		if ($is_category) {
-			$joins[] = 'LEFT JOIN %calendar_category% AS cat ON c.`category` = cat.`category_id`';
+			$joins[] =
+				'LEFT JOIN %calendar_category% AS cat ON c.`category` = cat.`category_id`';
 			$fields[] = 'cat.`category_shortname` , cat.`category_name`';
 		}
 
-		mydb::value('$FIELD$', ($fields ? ', ' : '') . implode(_NL.'		, ', $fields), false);
+		mydb::value(
+			'$FIELD$',
+			($fields ? ', ' : '') . implode(_NL . '		, ', $fields),
+			false
+		);
 		mydb::value('$JOIN$', implode(_NL, $joins), false);
-		mydb::value('$ORDER$', !empty($args->order) ? $args->order : 'c.`from_date` ASC');
+		mydb::value(
+			'$ORDER$',
+			!empty($args->order) ? $args->order : 'c.`from_date` ASC'
+		);
 
 		$stmt = 'SELECT
 				c.*
@@ -211,12 +256,18 @@ class CalendarModel {
 		$result = [];
 
 		foreach ($dbs->items as $value) {
-			$value = (Array) $value;
+			$value = (array) $value;
 			if ($value['day_repeat']) {
-				list($year,$month,$date) = explode('-', $value['from_date']);
+				[$year, $month, $date] = explode('-', $value['from_date']);
 				for ($i = 0; $i <= $value['day_repeat']; $i++) {
-					$calendar_date = getdate(mktime(0,0,0,$month,$date+$i,$year));
-					$result[$calendar_date['year'].'-'.sprintf('%02d',$calendar_date['mon']).'-'.sprintf('%02d',$calendar_date['mday'])][] = $value;
+					$calendar_date = getdate(mktime(0, 0, 0, $month, $date + $i, $year));
+					$result[
+						$calendar_date['year']
+							. '-'
+							. sprintf('%02d', $calendar_date['mon'])
+							. '-'
+							. sprintf('%02d', $calendar_date['mday'])
+					][] = $value;
 				}
 			} else {
 				$result[$value['from_date']][] = $value;
@@ -225,15 +276,17 @@ class CalendarModel {
 
 		// debugMsg($result,'$result');
 
-		if (debug('sql')) debugMsg(R('query'));
+		if (debug('sql')) {
+			debugMsg(R('query'));
+		}
 
 		return $result;
 	}
 
-	public static function getAgenda($year='',$month='') {
-		$para=para(func_get_args(),2);
+	public static function getAgenda($year = '', $month = '') {
+		$para = para(func_get_args(), 2);
 
-		$isAdd=user_access('administer calendars,create calendar content');
+		$isAdd = user_access('administer calendars,create calendar content');
 
 		$currentYear = date('Y');
 		$currentMon = date('m');
@@ -241,34 +294,45 @@ class CalendarModel {
 
 		# if date is not specified
 		# assume current date
-		if ((!$month || !$year) || $month<1 || $year<1 || $month>12) {
+		if (!$month || !$year || $month < 1 || $year < 1 || $month > 12) {
 			$year = $currentYear;
 			$month = $currentMon;
 		}
-		$year=intval($year);
-		$month=intval($month);
+		$year = intval($year);
+		$month = intval($month);
 
-		$last_month_day = getdate (mktime(0, 0, 0, $month+1, 0, $year));
+		$last_month_day = getdate(mktime(0, 0, 0, $month + 1, 0, $year));
 
 		// get month event list
-		$even_para=isset($para->_src)?'/'.$para->_src:'';
-		$para->from=date($year.'-'.sprintf('%02d',$month).'-01');
-		$monthItems = CalendarModel::getEvents((Array) $para);
+		$even_para = isset($para->_src) ? '/' . $para->_src : '';
+		$para->from = date($year . '-' . sprintf('%02d', $month) . '-01');
+		$monthItems = CalendarModel::getEvents((array) $para);
 
 		$tables = new Table();
 		$tables->addClass('calendar-agenda');
 		//		$tables->thead=array('วัน','เวลา','รายการ');
-		foreach ($monthItems as $date=>$dayItems) {
+		foreach ($monthItems as $date => $dayItems) {
 			unset($row);
-			$row[]='<strong>'.sg_date($date,'ววว j ดด ปป').'</strong>';
-			foreach ($dayItems as $i=>$rs) {
-				if ($i!=0) {
+			$row[] = '<strong>' . sg_date($date, 'ววว j ดด ปป') . '</strong>';
+			foreach ($dayItems as $i => $rs) {
+				if ($i != 0) {
 					unset($row);
-					$row[]='';
+					$row[] = '';
 				}
-				$row[]=substr($rs['from_time'],0,5).' น.'.($rs['to_time']!=$rs['from_time']?' - '.substr($rs['to_time'],0,5).' น.':'');
-				$row[]='<strong>กิจกรรม : '.$rs['title'].'</strong>'. ($rs['topicTitle']?'<br />โครงการ : '.$rs['topicTitle'].'':'');
-				$tables->rows[]=$row;
+				$row[] =
+					substr($rs['from_time'], 0, 5)
+					. ' น.'
+					. ($rs['to_time'] != $rs['from_time']
+						? ' - ' . substr($rs['to_time'], 0, 5) . ' น.'
+						: '');
+				$row[] =
+					'<strong>กิจกรรม : '
+					. $rs['title']
+					. '</strong>'
+					. ($rs['topicTitle']
+						? '<br />โครงการ : ' . $rs['topicTitle'] . ''
+						: '');
+				$tables->rows[] = $row;
 			}
 		}
 		$ret .= $tables->build();
@@ -282,13 +346,13 @@ class CalendarModel {
 	 * @return Record Set
 	 */
 	public static function getResv($resvid) {
-		$stmt='SELECT r.`resvId`, r.* ,tg.`name` as `room_name`, u.`name` AS `resv_name`
+		$stmt = 'SELECT r.`resvId`, r.* ,tg.`name` as `room_name`, u.`name` AS `resv_name`
 		FROM %calendar_room% r
 			LEFT JOIN %users% u USING (uid)
 			LEFT JOIN %tag% tg ON r.roomid=tg.tid
 		WHERE r.resvid=:resvid LIMIT 1';
 
-		$rs = mydb::select($stmt,':resvid',$resvid);
+		$rs = mydb::select($stmt, ':resvid', $resvid);
 
 		return $rs;
 	}
@@ -298,51 +362,55 @@ class CalendarModel {
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$data->id = empty($data->id) ? NULL : intval($data->id);
+		$data->id = empty($data->id) ? null : intval($data->id);
 
 		$isUpdateData = !empty($data->id);
 		$isAddData = empty($data->id);
 
-		$result = (Object) [
-			'_invalid' => NULL,
-			'module_add' => NULL,
-			'module_edit' => NULL,
+		$result = (object) [
+			'_invalid' => null,
+			'module_add' => null,
+			'module_edit' => null,
 			'data' => $data,
-			'_query' => NULL,
+			'_query' => null
 		];
 
 		$data->owner = i()->uid;
 
 		$data->from_date = sg_date($data->from_date, 'Y-m-d');
 		$data->to_date = sg_date($data->to_date, 'Y-m-d');
-		if ($data->from_date > $data->to_date) $result->_invalid[] = 'วันที่เริ่มต้น หรือ วันที่สิ้นสุดผิดพลาด';
+		if ($data->from_date > $data->to_date) {
+			$result->_invalid[] = 'วันที่เริ่มต้น หรือ วันที่สิ้นสุดผิดพลาด';
+		}
 
 		$data->from_time = \SG\getFirst($data->from_time);
 		$data->to_time = \SG\getFirst($data->to_time);
 
 		$data->tpid = \SG\getFirst($data->tpid);
 		$data->category = \SG\getFirst($data->category);
-		$data->reminder = \SG\getFirst($data->reminder,'no');
-		$data->repeat = \SG\getFirst($data->repeat,'no');
+		$data->reminder = \SG\getFirst($data->reminder, 'no');
+		$data->repeat = \SG\getFirst($data->repeat, 'no');
 
 		$address = \SG\explode_address($data->location, $data->areacode);
-		$data->changwat = \SG\getFirst($address['changwatCode'],' ');
-		$data->ampur = \SG\getFirst($address['ampurCode'],' ');
-		$data->tambon = \SG\getFirst($address['tambonCode'],' ');
-		$data->village = \SG\getFirst($address['villageCode'],' ');
+		$data->changwat = \SG\getFirst($address['changwatCode'], ' ');
+		$data->ampur = \SG\getFirst($address['ampurCode'], ' ');
+		$data->tambon = \SG\getFirst($address['tambonCode'], ' ');
+		$data->village = \SG\getFirst($address['villageCode'], ' ');
 
 		$data->ip = ip2long(GetEnv('REMOTE_ADDR'));
 		$data->created_date = date('Y-m-d H:i:s');
 
-		$calendarOptions = (Object) [
-			'color' => $data->color,
+		$calendarOptions = (object) [
+			'color' => $data->color
 		];
 
 		$data->options = sg_json_encode($calendarOptions);
 
-		if ($debug) debugMsg($address,'$address');
+		if ($debug) {
+			debugMsg($address, '$address');
+		}
 
-		$stmt='INSERT INTO %calendar%
+		$stmt = 'INSERT INTO %calendar%
 			(
 				`id`, `tpid`, `owner`, `privacy`, `category`, `title`, `location`, `latlng`
 			, `village`, `tambon`, `ampur`, `changwat`
@@ -369,24 +437,35 @@ class CalendarModel {
 			, `options` = :options
 			';
 
-		mydb::query($stmt,$data);
+		mydb::query($stmt, $data);
 
 		$result->_query[] = R('query');
 
-		if (empty($data->id)) $data->id=mydb()->insert_id;
+		if (empty($data->id)) {
+			$data->id = mydb()->insert_id;
+		}
 
-
-		list($year,$month)=explode('-',$data->from_date);
-		$month=sprintf('%02d',$month);
+		[$year, $month] = explode('-', $data->from_date);
+		$month = sprintf('%02d', $month);
 
 		if ($data->module && $isAddData) {
-			$result->module_add = R::On($data->module.'.calendar.add', $data, $para);
-		} else if ($data->module && $isUpdateData) {
-			$result->module_edit = R::On($data->module.'.calendar.edit', $data, $para);
+			$result->module_add = R::on(
+				$data->module . '.calendar.add',
+				$data,
+				$para
+			);
+		} elseif ($data->module && $isUpdateData) {
+			$result->module_edit = R::on(
+				$data->module . '.calendar.edit',
+				$data,
+				$para
+			);
 		}
 
 		$result->data = $data;
-		if ($debug) debugMsg($result, '$result');
+		if ($debug) {
+			debugMsg($result, '$result');
+		}
 		return $result;
 	}
 }

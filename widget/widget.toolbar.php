@@ -13,24 +13,38 @@
 
 class Toolbar extends Widget {
 	var $widgetName = 'Toolbar';
-	var $self = NULL;
+	var $self = null;
 	var $title = '';
-	var $navGroup = Array();
+	var $navGroup = [];
 	var $nav = '';
-	var $info = NULL;
+	var $info = null;
 
-	function __construct($self, $title = NULL, $nav = NULL, $info = NULL, $class = NULL, $options = '{}') {
+	function __construct(
+		$self,
+		$title = null,
+		$nav = null,
+		$info = null,
+		$class = null,
+		$options = '{}'
+	) {
 		parent::__construct();
 
 		$this->self = $self;
 		$this->title = $title;
-		$this->class = 'sg-toolbar '.($class ? $class : '-main');
-		$this->info = (is_string($info) AND substr($info,0,1) == '{') ? \SG\json_decode($info) : $info;
+		$this->class = 'sg-toolbar ' . ($class ? $class : '-main');
+		$this->info =
+			(is_string($info) and substr($info, 0, 1) == '{')
+				? \SG\json_decode($info)
+				: $info;
 
 		if (is_string($nav)) {
 			$this->nav = $nav;
-			$this->navGroup = R::View($self->module.'.'.$nav.'.nav', $info, $options);
-			$this->class .= ' -'.$self->module.'-'.str_replace('.', '-', $nav);
+			$this->navGroup = R::view(
+				$self->module . '.' . $nav . '.nav',
+				$info,
+				$options
+			);
+			$this->class .= ' -' . $self->module . '-' . str_replace('.', '-', $nav);
 		}
 		$this->options = \SG\json_decode($options);
 
@@ -45,43 +59,66 @@ class Toolbar extends Widget {
 	}
 
 	function toString() {
-		$ret .= '<!-- Module Toolbar Start -->'._NL
+		$ret .=
+			'<!-- Module Toolbar Start -->'
+			. _NL
 			. '<div '
-			. 'id="'.$this->self->module.'-toolbar" '
-			. 'class="'.$this->class
-			. (isset($this->self->theme->submodule) ? ' -'.$this->self->theme->submodule : '')
+			. 'id="'
+			. $this->self->module
+			. '-toolbar" '
+			. 'class="'
+			. $this->class
+			. (isset($this->self->theme->submodule)
+				? ' -' . $this->self->theme->submodule
+				: '')
 			. '"' // end of class
-			. '>'._NL;
-		if ($this->title) $ret .= '<h2>'.$this->title.'</h2>'._NL;
-		if ($this->subTitle) $ret .= '<h5>'.$this->subTitle.'</h5>'._NL;
+			. '>'
+			. _NL;
+		if ($this->title) {
+			$ret .= '<h2>' . $this->title . '</h2>' . _NL;
+		}
+		if ($this->subTitle) {
+			$ret .= '<h5>' . $this->subTitle . '</h5>' . _NL;
+		}
 
 		if ($this->navGroup) {
 			$navStr = '';
 			$isMoreNav = false;
 			foreach ($this->navGroup as $navKey => $navUi) {
 				if (strtoupper($navKey) == 'PRETEXT' && is_string($navUi)) {
-					$navStr = $navUi.$navUi;
-				} else if (is_string($navUi)) {
+					$navStr = $navUi . $navUi;
+				} elseif (is_string($navUi)) {
 					// String Ui
 					$navStr .= $navUi;
-				} else if (is_object($navUi)) {
+				} elseif (is_object($navUi)) {
 					// Widget
 					if (strtoupper($navKey) == 'MORE' && $navUi->count()) {
-						$moreNav = new Ui(NULL, 'ui-nav -more');
+						$moreNav = new Ui(null, 'ui-nav -more');
 						$moreNav->add(sg_dropbox($navUi->build()));
 						//$navStr .= $moreNav->build()._NL;
-						$navStr .= '<span class="ui-nav -more">'.sg_dropbox($navUi->build()).'</span>';
+						$navStr .=
+							'<span class="ui-nav -more">'
+							. sg_dropbox($navUi->build())
+							. '</span>';
 						$isMoreNav = true;
 					} else {
-						$navStr .= $navUi->build()._NL;
+						$navStr .= $navUi->build() . _NL;
 					}
 				}
 			}
-			$ret .= '<nav class="nav -submodule'.($this->nav ? ' -'.str_replace('.', '-', $this->nav) : '').($isMoreNav ? ' -is-more-nav' : '').'"><!-- nav of '.$this->nav.'.nav -->'._NL
+			$ret .=
+				'<nav class="nav -submodule'
+				. ($this->nav ? ' -' . str_replace('.', '-', $this->nav) : '')
+				. ($isMoreNav ? ' -is-more-nav' : '')
+				. '"><!-- nav of '
+				. $this->nav
+				. '.nav -->'
+				. _NL
 				. $navStr
-				. '</nav><!-- nav -->'._NL;
+				. '</nav><!-- nav -->'
+				. _NL;
 		}
-		$ret .= '</div><!-- Module Toolbar End :: sg-toolbar -->'._NL._NL;
+		$ret .= '</div><!-- Module Toolbar End :: sg-toolbar -->' . _NL . _NL;
 		return $ret;
 	}
 

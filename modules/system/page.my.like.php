@@ -17,23 +17,29 @@ class MyLike extends Page {
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'My Likes @'.i()->name,
+				'title' => 'My Likes @' . i()->name
 			]),
-			'sideBar' => R::View('my.menu'),
+			'sideBar' => R::view('my.menu'),
 			'body' => new Table([
-				'thead' => ['no'=>'', 'หัวข้อ','atdate -date'=>'เมื่อ'],
+				'thead' => ['no' => '', 'หัวข้อ', 'atdate -date' => 'เมื่อ'],
 				'children' => array_map(
-					function($rs) {
+					function ($rs) {
 						static $no = 0;
 						$url = '';
-						if ($rs->action == 'PDEV.LIKE') $url = 'project/proposal/'.$rs->tpid;
-						else if ($rs->type == 'project') $url = 'project/'.$rs->tpid;
-						else if ($rs->tpid) $url = 'paper/'.$rs->tpid;
-						if (empty($url)) return NULL;
+						if ($rs->action == 'PDEV.LIKE') {
+							$url = 'project/proposal/' . $rs->tpid;
+						} elseif ($rs->type == 'project') {
+							$url = 'project/' . $rs->tpid;
+						} elseif ($rs->tpid) {
+							$url = 'paper/' . $rs->tpid;
+						}
+						if (empty($url)) {
+							return null;
+						}
 						return [
 							++$no,
-							'<a href="'.url($url).'">'.$rs->title.'</a>',
-							sg_date($rs->dateact, 'd/m/Y'),
+							'<a href="' . url($url) . '">' . $rs->title . '</a>',
+							sg_date($rs->dateact, 'd/m/Y')
 						];
 					},
 					DB::select([
@@ -43,8 +49,8 @@ class MyLike extends Page {
 						WHERE r.`uid` = :uid AND `action` IN ("PROJ.LIKE", "PDEV.LIKE", "TOPIC.LIKE")',
 						'var' => [':uid' => i()->uid]
 					])->items
-				), // children
-			]), // Table
+				) // children
+			]) // Table
 		]);
 	}
 }

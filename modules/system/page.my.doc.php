@@ -18,24 +18,36 @@ class MyDoc extends Page {
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'My Documents @'.i()->name,
+				'title' => 'My Documents @' . i()->name
 			]),
-			'sideBar' => R::View('my.menu'),
+			'sideBar' => R::view('my.menu'),
 			'body' => new Table([
-				'thead' => ['no'=>'', 'หัวข้อ','ประเภท','owner -nowrap'=>'เจ้าของ','atdate -date'=>'เมื่อ'],
+				'thead' => [
+					'no' => '',
+					'หัวข้อ',
+					'ประเภท',
+					'owner -nowrap' => 'เจ้าของ',
+					'atdate -date' => 'เมื่อ'
+				],
 				'children' => array_map(
-					function($rs) {
+					function ($rs) {
 						static $no = 0;
-						if ($rs->type == 'project') $url = 'project/'.$rs->tpid;
-						else if ($rs->type == 'project-develop') $url = 'project/proposal/'.$rs->tpid;
-						else if ($rs->tpid) $url = 'paper/'.$rs->tpid;
-						if (empty($url)) return NULL;
+						if ($rs->type == 'project') {
+							$url = 'project/' . $rs->tpid;
+						} elseif ($rs->type == 'project-develop') {
+							$url = 'project/proposal/' . $rs->tpid;
+						} elseif ($rs->tpid) {
+							$url = 'paper/' . $rs->tpid;
+						}
+						if (empty($url)) {
+							return null;
+						}
 						return [
 							++$no,
-							'<a href="'.url($url).'">'.$rs->title.'</a>',
+							'<a href="' . url($url) . '">' . $rs->title . '</a>',
 							$rs->type,
-							($rs->topicUid == i()->uid ? 'Is Owner': $rs->membership),
-							sg_date($rs->created, 'd/m/Y'),
+							$rs->topicUid == i()->uid ? 'Is Owner' : $rs->membership,
+							sg_date($rs->created, 'd/m/Y')
 						];
 					},
 					DB::select([
@@ -49,8 +61,8 @@ class MyDoc extends Page {
 						ORDER BY t.`tpid` DESC',
 						'var' => [':uid' => i()->uid]
 					])->items
-				), // children
-			]), // Table
+				) // children
+			]) // Table
 		]);
 	}
 }

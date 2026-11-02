@@ -752,12 +752,12 @@ class FloodApi extends PageApi {
 
 - Action `api.list` → method `list()`
 - Action `api.getDetail` → method `getDetail()`
-- Action ที่ขึ้นต้นด้วย `api.` → เรียก `runExternalMethod()` → `R::PageWidget()`
+- Action ที่ขึ้นต้นด้วย `api.` → เรียก `runExternalMethod()` → `R::pageWidget()`
 - ตรวจสอบ `rightToBuild()` ก่อน execute (ถ้ามี method นี้)
 
 ### 9.4 PageController
 
-Page controller/router — forward action ไปยัง `R::PageWidget()`
+Page controller/router — forward action ไปยัง `R::pageWidget()`
 
 ```php
 class FloodController extends PageController {

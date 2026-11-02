@@ -15,34 +15,38 @@
 
 $debug = true;
 
-function forum($self, $forumId = NULL, $action = NULL, $tranId = NULL) {
-	if (empty($action)) return R::Page('forum.home',$self, $forumId);
+function forum($self, $forumId = null, $action = null, $tranId = null) {
+	if (empty($action)) {
+		return R::page('forum.home', $self, $forumId);
+	}
 
 	$args = func_get_args();
 
 	switch ($action) {
-
 		default:
-
-			if (empty($topicInfo)) $topicInfo = $tpid;
+			if (empty($topicInfo)) {
+				$topicInfo = $tpid;
+			}
 			$argIndex = 3; // Start argument
 
 			//debugMsg('PAGE PAPER Topic = '.$tpid.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.$args[$argIndex]);
 			//$ret .= print_o(func_get_args(), '$args');
 
-			$ret = R::Page(
-				'forum.'.$action,
+			$ret = R::page(
+				'forum.' . $action,
 				$self,
 				$topicInfo,
 				$args[$argIndex],
-				$args[$argIndex+1],
-				$args[$argIndex+2],
-				$args[$argIndex+3],
-				$args[$argIndex+4]
+				$args[$argIndex + 1],
+				$args[$argIndex + 2],
+				$args[$argIndex + 3],
+				$args[$argIndex + 4]
 			);
 
 			//debugMsg('TYPE = '.gettype($ret));
-			if (is_null($ret)) $ret = 'ERROR : PAGE NOT FOUND';
+			if (is_null($ret)) {
+				$ret = 'ERROR : PAGE NOT FOUND';
+			}
 
 			//$ret .= print_o($topicInfo,'$topicInfo');
 			break;

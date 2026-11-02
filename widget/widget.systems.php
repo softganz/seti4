@@ -1031,8 +1031,8 @@ class SideBar extends Widget {
 				</svg></span>
 				</label>';
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-			. // . '<span class="-grip-header">'
-			$this->renderChildren([$header]); // . '</span>'
+		// . '<span class="-grip-header">'
+			. $this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -2212,7 +2212,7 @@ class PageApi extends PageBase {
 	}
 
 	private function runExternalMethod() {
-		return R::PageWidget($this->action, (array) $this->args);
+		return R::pageWidget($this->action, (array) $this->args);
 	}
 
 	private function canRunMethod() {
@@ -2241,7 +2241,7 @@ class PageController extends PageBase {
 	}
 
 	function build() {
-		return R::PageWidget(
+		return R::pageWidget(
 			$this->action,
 			[-1 => $this->info] + array_slice($this->args, $this->argIndex)
 		);

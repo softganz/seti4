@@ -1,22 +1,22 @@
 <?php
 /**
-* Module Method
-*
-* @param Object $self
-* @param Int $var
-* @return String
-*/
+ * Module Method
+ *
+ * @param Object $self
+ * @param Int $var
+ * @return String
+ */
 
 $debug = true;
 
-function paper_revision($self, $tpid = NULL, $revid = NULL) {
+function paper_revision($self, $tpid = null, $revid = null) {
 	if ($revid) {
-		$topic = paper_BasicModel::get_topic_by_id($tpid,NULL,$revid);
-		$topic->reply=0;
+		$topic = paper_BasicModel::get_topic_by_id($tpid, null, $revid);
+		$topic->reply = 0;
 		unset($topic->comment);
 		//$ret .= print_o($topic, '$tpic');
-		$ret .= R::Page('paper.view', NULL, $topic);
-		//foreach (R::Page('paper.view', NULL, $topic) as $str)
+		$ret .= R::page('paper.view', null, $topic);
+		//foreach (R::page('paper.view', NULL, $topic) as $str)
 		// if (is_string($str)) $ret.=$str;
 		return $ret;
 	}
@@ -27,16 +27,28 @@ function paper_revision($self, $tpid = NULL, $revid = NULL) {
 							FROM %topic_revisions% r
 								LEFT JOIN %users% u ON u.uid=r.uid
 							WHERE tpid = :tpid ORDER BY r.revid DESC';
-	$revisions=mydb::select($stmt, ':tpid', $tpid);
+	$revisions = mydb::select($stmt, ':tpid', $tpid);
 
-	$self->theme->title='Revisions for '.$topic->title;
-	$ret.='<ul class="tabs"><li><a href="'.url('paper/'.$tpid).'">View</a></li><li><a href="'.url('paper/revision/'.$tpid).'">Revisions</a></li></ul>';
-	$ret.='<ul>';
+	$self->theme->title = 'Revisions for ' . $topic->title;
+	$ret .=
+		'<ul class="tabs"><li><a href="'
+		. url('paper/' . $tpid)
+		. '">View</a></li><li><a href="'
+		. url('paper/revision/' . $tpid)
+		. '">Revisions</a></li></ul>';
+	$ret .= '<ul>';
 	foreach ($revisions->items as $rev) {
-		$ret.='<li><a class="sg-action" href="'.url('paper/revision/'.$tpid.'/'.$rev->revid).'" data-rel="#revision-body">'.$rev->timestamp.' by '.$rev->name.'</a></li>';
+		$ret .=
+			'<li><a class="sg-action" href="'
+			. url('paper/revision/' . $tpid . '/' . $rev->revid)
+			. '" data-rel="#revision-body">'
+			. $rev->timestamp
+			. ' by '
+			. $rev->name
+			. '</a></li>';
 	}
-	$ret.='</ul>';
-	$ret.='<div id="revision-body"></div>';
+	$ret .= '</ul>';
+	$ret .= '<div id="revision-body"></div>';
 
 	return $ret;
 }

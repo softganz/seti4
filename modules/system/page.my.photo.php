@@ -17,27 +17,32 @@ class MyPhoto extends Page {
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'My Photos @'.i()->name,
+				'title' => 'My Photos @' . i()->name
 			]),
-			'sideBar' => R::View('my.menu'),
+			'sideBar' => R::view('my.menu'),
 			'body' => new Ui([
 				'type' => 'album',
-				'children' => array_map(
-					function($rs) {
-						$photo = FileModel::photoProperty($rs->file, $rs->folder);
-						if ($photo->exists) {
-							$cardStr = '<a class="sg-action" href="'.$photo->url.'" data-rel="img"><img class="photoitem -'.($photo->width>$photo->height?'wide':'tall').'" src="'.$photo->url.'" height="206" width="206" /></a>';
-						} else {
-							$cardStr = '<span title="'.$rs->file.'">Photo not exists</span>';
-						}
-						return $cardStr;
-					},
-					DB::select([
-						'SELECT `file`, `folder` FROM %topic_files% WHERE `uid` = :uid AND `type` = "photo"',
-						'var' => [':uid' => i()->uid]
-					])->items
-				),
-			]),
+				'children' => array_map(function ($rs) {
+					$photo = FileModel::photoProperty($rs->file, $rs->folder);
+					if ($photo->exists) {
+						$cardStr =
+							'<a class="sg-action" href="'
+							. $photo->url
+							. '" data-rel="img"><img class="photoitem -'
+							. ($photo->width > $photo->height ? 'wide' : 'tall')
+							. '" src="'
+							. $photo->url
+							. '" height="206" width="206" /></a>';
+					} else {
+						$cardStr =
+							'<span title="' . $rs->file . '">Photo not exists</span>';
+					}
+					return $cardStr;
+				}, DB::select([
+					'SELECT `file`, `folder` FROM %topic_files% WHERE `uid` = :uid AND `type` = "photo"',
+					'var' => [':uid' => i()->uid]
+				])->items)
+			])
 		]);
 	}
 }

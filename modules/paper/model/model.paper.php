@@ -95,7 +95,7 @@ class PaperModel extends \NodeModel {
 
 		if (empty($rs->nodeId)) return NULL;
 
-		if ($rs->orgid && $options->initTemplate) \R::Module('org.template', $rs->orgid);
+		if ($rs->orgid && $options->initTemplate) \R::module('org.template', $rs->orgid);
 
 		$result->nodeId = $rs->nodeId;
 		$result->tpid = $rs->tpid;

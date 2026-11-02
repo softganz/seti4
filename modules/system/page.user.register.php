@@ -28,7 +28,7 @@ class UserRegister extends Page {
 			'signWith' => post('signWith'),
 			'rel' => post('rel'),
 			'ret' => post('ret'),
-			'register' => (Object) post('register',_TRIM+_STRIPTAG),
+			'register' => (object) post('register', _TRIM + _STRIPTAG)
 		]);
 		$this->register->rel = SG\getFirst($this->register->rel, $this->rel);
 		$this->register->ret = SG\getFirst($this->register->ret, $this->ret);
@@ -43,34 +43,43 @@ class UserRegister extends Page {
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => tr('Register New Member'),
+				'title' => tr('Register New Member')
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
-					(function(){
-						if ($this->signWith === 'google') return $this->signWithGoogle();
-						else return new UserRegisterFormWidget($this->register);
+					(function () {
+						if ($this->signWith === 'google') {
+							return $this->signWithGoogle();
+						} else {
+							return new UserRegisterFormWidget($this->register);
+						}
 					})()
-				], // children
-			]), // Widget
+				] // children
+			]) // Widget
 		]);
 	}
 
 	function user_register() {
-		if ($_POST['cancel']) location();
+		if ($_POST['cancel']) {
+			location();
+		}
 
-		$register = (Object) post('register',_TRIM+_STRIPTAG);
+		$register = (object) post('register', _TRIM + _STRIPTAG);
 
 		// print_o($register,'$register',1);
-		if (post('rel')) $register->rel = post('rel');
+		if (post('rel')) {
+			$register->rel = post('rel');
+		}
 
- 		if ($error && $register->step == 1) {
-			$ret .= R::View('user.register.form',$register);
-		} else if ($error && $register->step == 2) {
-			$ret .= R::View('user.register.confirm',$register);
+		if ($error && $register->step == 1) {
+			$ret .= R::view('user.register.form', $register);
+		} elseif ($error && $register->step == 2) {
+			$ret .= R::view('user.register.confirm', $register);
 		} else {
-			if (post('ret')) $register->ret = post('ret');
-			$ret .= R::View('user.register.form',$register);
+			if (post('ret')) {
+				$register->ret = post('ret');
+			}
+			$ret .= R::view('user.register.form', $register);
 		}
 		return $ret;
 	}
@@ -85,41 +94,56 @@ class UserRegister extends Page {
 				'class' => 'sg-form',
 				'checkValid' => true,
 				'rel' => 'notify',
-				'done' => 'reload:'.url('api/system/date', ['credential' => post('credential')]),
+				'done' =>
+					'reload:'
+					. url('api/system/date', ['credential' => post('credential')]),
 				'children' => [
 					new Container([
 						'class' => '-sg-text-center',
-						'child' => '<img class="profile-photo" src="'.$jwt->payload->picture.'" /> '.$jwt->payload->email,
+						'child' =>
+							'<img class="profile-photo" src="'
+							. $jwt->payload->picture
+							. '" /> '
+							. $jwt->payload->email
 					]), // Container
 					'name' => [
 						'type' => 'text',
 						'class' => '-fill',
 						'require' => true,
 						'value' => $jwt->payload->name,
-						'placeholder' => 'ระบุชื่อ-นามสกุล',
+						'placeholder' => 'ระบุชื่อ-นามสกุล'
 					],
 					'email' => [
 						'type' => 'text',
 						'class' => '-fill',
 						'readonly' => true,
-						'value' => $jwt->payload->email,
+						'value' => $jwt->payload->email
 					],
 					'googleToken' => [
 						'type' => 'hidden',
-						'value' => post('credential'),
+						'value' => post('credential')
 					],
 					'accept' => [
 						'type' => 'checkbox',
 						'require' => true,
-						'options' => ['yes' => 'ใช่, ฉันเข้าใจและยอมรับข้อตกลงรวมทั้งเงื่อนไขในการใช้บริการ'],
+						'options' => [
+							'yes' =>
+								'ใช่, ฉันเข้าใจและยอมรับข้อตกลงรวมทั้งเงื่อนไขในการใช้บริการ'
+						]
 					],
 					'save' => [
 						'type' => 'button',
 						'value' => 'Create my account',
-						'class' => '-primary -fill',
+						'class' => '-primary -fill'
 					],
-					new Container(['class' => '-sg-text-center', 'child' => 'ฉันมีบัญชีการใช้งานอยู่แล้ว? <a class="btn -link" href="'.url('my').'"><i class="icon -material">login</i><s[an>เข้าสู่ระบบสมาชิก</span></a>']), // Container
-				], // children
+					new Container([
+						'class' => '-sg-text-center',
+						'child' =>
+							'ฉันมีบัญชีการใช้งานอยู่แล้ว? <a class="btn -link" href="'
+							. url('my')
+							. '"><i class="icon -material">login</i><s[an>เข้าสู่ระบบสมาชิก</span></a>'
+					]) // Container
+				] // children
 			]);
 		} else {
 			return error(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีข้อมูลจาก Google');
@@ -127,7 +151,7 @@ class UserRegister extends Page {
 	}
 
 	function verify() {
-		return (Object) ['text' => Poison::getDayKey(5,true)];
+		return (object) ['text' => Poison::getDayKey(5, true)];
 	}
 
 	function save() {
@@ -147,12 +171,17 @@ class UserRegister extends Page {
 
 		$recaptcha = Request::all('g-recaptcha-response');
 
-		if (cfg('captcha') && !$recaptcha) $this->register->status = 'waiting';
+		if (cfg('captcha') && !$recaptcha) {
+			$this->register->status = 'waiting';
+		}
 
 		$result = $this->createUser();
 
 		return [
-			'location' => $result->status === 'waiting' ? Url::link('user/waiting', ['u' => $result->username]) : SG\getFirst($this->register->ret, 'my'),
+			'location' =>
+				$result->status === 'waiting'
+					? Url::link('user/waiting', ['u' => $result->username])
+					: SG\getFirst($this->register->ret, 'my')
 			// 'status' => $this->register->status,
 			// 'recaptcha' => $recaptcha,
 			// 'register' => $this->register,
@@ -166,56 +195,106 @@ class UserRegister extends Page {
 
 		$errors = [];
 
-		if (empty($this->register->username)) $errors['username'][] = 'กรุณาป้อน ชื่อสมาชิก (Username)';
+		if (empty($this->register->username)) {
+			$errors['username'][] = 'กรุณาป้อน ชื่อสมาชิก (Username)';
+		}
 
 		if ($this->register->username) {
-			if (strlen($this->register->username) < 4) $errors['username'][] = 'ชื่อสมาชิก (Username) อย่างน้อย 4 อักษร'; //-- username length
+			if (strlen($this->register->username) < 4) {
+				$errors['username'][] = 'ชื่อสมาชิก (Username) อย่างน้อย 4 อักษร';
+			} //-- username length
 
-			if (!preg_match($cfgUserRegister->usernameMatch,$this->register->username)) $errors['username'][] = 'ชื่อสมาชิก (Username) <strong><em>'.$this->register->username.'</em></strong> มีอักษรหรือความยาวไม่ตรงตามเงื่อนไข'; //-- check valid char
+			if (
+				!preg_match($cfgUserRegister->usernameMatch, $this->register->username)
+			) {
+				$errors['username'][] =
+					'ชื่อสมาชิก (Username) <strong><em>'
+					. $this->register->username
+					. '</em></strong> มีอักษรหรือความยาวไม่ตรงตามเงื่อนไข';
+			} //-- check valid char
 
-			if (DB::select([
-				'SELECT `uid` FROM %users% WHERE `username` = :username LIMIT 1',
-				'var' => [':username' => $this->register->username]
-			])->uid) {
-				$errors['username'][] = 'ชื่อสมาชิก (Username) <strong><em>'.$this->register->username.'</em></strong> มีผู้อื่นใช้ไปแล้ว'; //-- duplicate username
+			if (
+				DB::select([
+					'SELECT `uid` FROM %users% WHERE `username` = :username LIMIT 1',
+					'var' => [':username' => $this->register->username]
+				])->uid
+			) {
+				$errors['username'][] =
+					'ชื่อสมาชิก (Username) <strong><em>'
+					. $this->register->username
+					. '</em></strong> มีผู้อื่นใช้ไปแล้ว'; //-- duplicate username
 			}
 		}
 
 		// Check password valid
-		if (!UserValidModel::checkPasswordValid($this->register->password, $passwordError)) {
+		if (
+			!UserValidModel::checkPasswordValid(
+				$this->register->password,
+				$passwordError
+			)
+		) {
 			$errors['password'] = $passwordError;
 		}
 
 		// Check re-password valid
-		if (!UserValidModel::checkRePasswordValid($this->register->password, $this->register->repassword, $rePasswordError)) {
+		if (
+			!UserValidModel::checkRePasswordValid(
+				$this->register->password,
+				$this->register->repassword,
+				$rePasswordError
+			)
+		) {
 			$errors['repassword'] = $rePasswordError;
 		}
 
-		if ($this->register->name == '') $errors['name'][] = 'กรุณาป้อน ชื่อสำหรับแสดง (Name)'; //-- fill name
+		if ($this->register->name == '') {
+			$errors['name'][] = 'กรุณาป้อน ชื่อสำหรับแสดง (Name)';
+		} //-- fill name
 
- 		// Check duplicate name
-		if (DB::SELECT([
-			'SELECT `uid` FROM %users% WHERE `name` = :name LIMIT 1',
-			'var' => [':name' => $this->register->name]
-		])->uid) {
-			$errors['name'][] = 'ชื่อ <strong><em>'.$this->register->name.'</em></strong> มีผู้อื่นใช้ไปแล้ว';
+		// Check duplicate name
+		if (
+			DB::SELECT([
+				'SELECT `uid` FROM %users% WHERE `name` = :name LIMIT 1',
+				'var' => [':name' => $this->register->name]
+			])->uid
+		) {
+			$errors['name'][] =
+				'ชื่อ <strong><em>'
+				. $this->register->name
+				. '</em></strong> มีผู้อื่นใช้ไปแล้ว';
 		}
 
-		if ( $this->register->email === '') $errors['email'][] = 'กรุณาป้อน อีเมล์ (E-mail)'; //-- fill email
+		if ($this->register->email === '') {
+			$errors['email'][] = 'กรุณาป้อน อีเมล์ (E-mail)';
+		} //-- fill email
 
-		if ($this->register->email && !sg_is_email($this->register->email)) $errors['email'][] = 'อีเมล์ (E-mail) ไม่ถูกต้อง'; //-- invalid email
+		if ($this->register->email && !sg_is_email($this->register->email)) {
+			$errors['email'][] = 'อีเมล์ (E-mail) ไม่ถูกต้อง';
+		} //-- invalid email
 
 		// Check duplicate email
-		if ($this->register->email && DB::select([
-			'SELECT `uid` FROM %users% WHERE `email` = :email LIMIT 1',
-			'var' => [':email' => $this->register->email]
-		])->uid) {
-			$errors['email'][] = 'อีเมล์ <strong><em>'.$this->register->email.'</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'.url('user/password').'">ท่านจำรหัสผ่านไม่ได้</a>';
+		if (
+			$this->register->email &&
+			DB::select([
+				'SELECT `uid` FROM %users% WHERE `email` = :email LIMIT 1',
+				'var' => [':email' => $this->register->email]
+			])->uid
+		) {
+			$errors['email'][] =
+				'อีเมล์ <strong><em>'
+				. $this->register->email
+				. '</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'
+				. url('user/password')
+				. '">ท่านจำรหัสผ่านไม่ได้</a>';
 		}
 
-		if (sg::is_spam_word([$this->register->email])) $errors['accept'][] = 'มีคำต้องห้ามอยู่ในข้อมูลที่ป้อนเข้ามา';
+		if (sg::is_spam_word([$this->register->email])) {
+			$errors['accept'][] = 'มีคำต้องห้ามอยู่ในข้อมูลที่ป้อนเข้ามา';
+		}
 
-		if (!$this->register->accept) $errors['accept'][] = 'กรุณายอมรับข้อตกลงการใช้งาน';
+		if (!$this->register->accept) {
+			$errors['accept'][] = 'กรุณายอมรับข้อตกลงการใช้งาน';
+		}
 
 		return $errors;
 	}
@@ -230,31 +309,64 @@ class UserRegister extends Page {
 		// return $ret;
 
 		switch (cfg('user')->registrationConfirmMethod) {
-			case 'email' :
-				$confirm_url=cfg('domain').url('user/email/confirm',array('code'=>$register->code));
-				$mail->to=$register->email;
+			case 'email':
+				$confirm_url =
+					cfg('domain')
+					. url('user/email/confirm', ['code' => $register->code]);
+				$mail->to = $register->email;
 				//$mail->title='ยืนยันการสมัครเป็นสมาชิกเว็บไซท์ '.cfg('domain.short');
-				$mail->title=cfg('domain.short').' : '.tr('Confirm to be member of').' '.cfg('domain.short');
-				$mail->from=cfg('member.registration.email');
-				$mail->encoding='UTF-8';
-				$mail->body='<p>สวัสดีครับ</p>
-					<p>ท่านได้ทำการลงทะเบียนเพื่อสมัครเป็นสมาชิกของเว็บไซท์ '.cfg('domain.short').'</p>
+				$mail->title =
+					cfg('domain.short')
+					. ' : '
+					. tr('Confirm to be member of')
+					. ' '
+					. cfg('domain.short');
+				$mail->from = cfg('member.registration.email');
+				$mail->encoding = 'UTF-8';
+				$mail->body =
+					'<p>สวัสดีครับ</p>
+					<p>ท่านได้ทำการลงทะเบียนเพื่อสมัครเป็นสมาชิกของเว็บไซท์ '
+					. cfg('domain.short')
+					. '</p>
 
-					<p>ชื่อ ( username ) : '.$register->username.'<br />
-					รหัสผ่าน ( password ) : '.$register->repassword.'<br />
-					อีเมล์ ( e-mail ) : '.$register->email.'</p>
+					<p>ชื่อ ( username ) : '
+					. $register->username
+					. '<br />
+					รหัสผ่าน ( password ) : '
+					. $register->repassword
+					. '<br />
+					อีเมล์ ( e-mail ) : '
+					. $register->email
+					. '</p>
 
-					<p>ขอให้ท่านยืนยันการสมัครเป็นสมาชิก โดย <a href="'.$confirm_url.'">คลิกยืนยันการเป็นสมาชิก</a><br />หรือนำที่อยู่นี้ -> '.$confirm_url.' ไปวางไว้ในช่องที่อยู่ของเบราเซอร์ที่ท่านใช้<p>
+					<p>ขอให้ท่านยืนยันการสมัครเป็นสมาชิก โดย <a href="'
+					. $confirm_url
+					. '">คลิกยืนยันการเป็นสมาชิก</a><br />หรือนำที่อยู่นี้ -> '
+					. $confirm_url
+					. ' ไปวางไว้ในช่องที่อยู่ของเบราเซอร์ที่ท่านใช้<p>
 
 					<p>ขอแสดงความนับถือ</p>
 
 					<p>Web Team.</p>';
-										$mail->body.='<p>Hi</p>
-					<p>You are register on website '.cfg('domain.short').'</p>
-					<p>username : '.$register->username.'<br />
-					password : '.$register->repassword.'<br />
-					e-mail : '.$register->email.'</p>
-					<p>Plese confirm by <a href="'.$confirm_url.'">click here to confirm</a><br />or copy url address -> '.$confirm_url.' and paste in address bar of your browser</p>
+				$mail->body .=
+					'<p>Hi</p>
+					<p>You are register on website '
+					. cfg('domain.short')
+					. '</p>
+					<p>username : '
+					. $register->username
+					. '<br />
+					password : '
+					. $register->repassword
+					. '<br />
+					e-mail : '
+					. $register->email
+					. '</p>
+					<p>Plese confirm by <a href="'
+					. $confirm_url
+					. '">click here to confirm</a><br />or copy url address -> '
+					. $confirm_url
+					. ' and paste in address bar of your browser</p>
 
 					<p>Sincerely,</p>
 
@@ -262,37 +374,52 @@ class UserRegister extends Page {
 
 				BasicModel::sendmail($mail);
 				//BasicModel::sendmail($mail,'PHPMailer');
-				$ret .= message('status','Member register complete');
-				$ret .= '<p>ได้ทำการส่งอี-เมล์ไปที่ <strong>'.$register->email.'</strong> เรียบร้อย ให้ท่านเปิดอ่านอีเมล์และคลิกยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</p><p>หากท่านไม่ได้รับอีเมล์ กรุณาตรวจสอบในพื้นที่ของ <strong>Junk mail</strong> ด้วย</p>';
+				$ret .= message('status', 'Member register complete');
+				$ret .=
+					'<p>ได้ทำการส่งอี-เมล์ไปที่ <strong>'
+					. $register->email
+					. '</strong> เรียบร้อย ให้ท่านเปิดอ่านอีเมล์และคลิกยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</p><p>หากท่านไม่ได้รับอีเมล์ กรุณาตรวจสอบในพื้นที่ของ <strong>Junk mail</strong> ด้วย</p>';
 				return $ret;
 				break;
 
-			case 'waiting' :
-				$ret.=message('status',tr('Member register complete'));
-				$ret.='<p>กรุณารอสักครู่ เพื่อให้ผู้ดูแลระบบตรวจสอบและกำหนดสิทธิ์ในการใช้งานให้ท่าน</p>';
-				R()->user = UserModel::signInProcess($register->username,$register->repassword);
+			case 'waiting':
+				$ret .= message('status', tr('Member register complete'));
+				$ret .=
+					'<p>กรุณารอสักครู่ เพื่อให้ผู้ดูแลระบบตรวจสอบและกำหนดสิทธิ์ในการใช้งานให้ท่าน</p>';
+				R()->user = UserModel::signInProcess(
+					$register->username,
+					$register->repassword
+				);
 				return $ret;
 
-			case 'waiting,email' :
-				$ret.=message('status',tr('Member register complete'));
-				$ret.='<p>กรุณารอสักครู่ เพื่อให้ผู้ดูแลระบบตรวจสอบและกำหนดสิทธิ์ในการใช้งานให้ท่าน และจะส่งอี-เมล์ยืนยันการใช้งานไปที่ <strong>'.$register->email.'</strong> ให้ท่านเปิดอ่านอีเมล์และคลิกยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</p><p>หากท่านไม่ได้รับอีเมล์ กรุณาตรวจสอบในพื้นที่ของ <strong>Junk mail</strong> ด้วย';
-				R()->user = UserModel::signInProcess($register->username,$register->repassword);
+			case 'waiting,email':
+				$ret .= message('status', tr('Member register complete'));
+				$ret .=
+					'<p>กรุณารอสักครู่ เพื่อให้ผู้ดูแลระบบตรวจสอบและกำหนดสิทธิ์ในการใช้งานให้ท่าน และจะส่งอี-เมล์ยืนยันการใช้งานไปที่ <strong>'
+					. $register->email
+					. '</strong> ให้ท่านเปิดอ่านอีเมล์และคลิกยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</p><p>หากท่านไม่ได้รับอีเมล์ กรุณาตรวจสอบในพื้นที่ของ <strong>Junk mail</strong> ด้วย';
+				R()->user = UserModel::signInProcess(
+					$register->username,
+					$register->repassword
+				);
 				return $ret;
 
-			default :
-				$ret .= message('status','Member register complete');
+			default:
+				$ret .= message('status', 'Member register complete');
 				unset($GLOBALS['counter']->members);
 				CounterModel::make(cfg('counter'));
-				cfg_db('counter',$GLOBALS['counter']);
+				cfg_db('counter', $GLOBALS['counter']);
 				break;
 		}
 
 		if ($result->status === 'enable') {
-			R()->user = UserModel::signInProcess($this->register->username,$this->register->password);
+			R()->user = UserModel::signInProcess(
+				$this->register->username,
+				$this->register->password
+			);
 		}
 
 		return $result;
 	}
-
 }
 ?>

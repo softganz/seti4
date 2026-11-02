@@ -9,22 +9,39 @@
  * @param Object $options
  * @return String
  */
-function view_toolbar($self, $title = NULL, $nav = 'default', $info = NULL, $options = '{}') {
+function view_toolbar(
+	$self,
+	$title = null,
+	$nav = 'default',
+	$info = null,
+	$options = '{}'
+) {
 	$defaults = '{menu: ""}';
 	$options = sg_json_decode($options);
-	if (is_string($info) AND substr($info,0,1) == '{') $info = sg_json_decode($info);
-	if (empty($nav)) $nav = 'default';
+	if (is_string($info) and substr($info, 0, 1) == '{') {
+		$info = sg_json_decode($info);
+	}
+	if (empty($nav)) {
+		$nav = 'default';
+	}
 
 	$ret = '';
 
 	$self->theme->title = isset($title) ? $title : 'Proejct Management';
 
-	$subnav = R::View($nav.'.nav', $info, $options);
+	$subnav = R::view($nav . '.nav', $info, $options);
 	if ($subnav) {
-		$ret .= '<nav class="nav -submodule -'.(str_replace('.', '-', $nav)).'"><!-- nav of '.$nav.'.nav -->';
+		$ret .=
+			'<nav class="nav -submodule -'
+			. str_replace('.', '-', $nav)
+			. '"><!-- nav of '
+			. $nav
+			. '.nav -->';
 		$ret .= $subnav;
 		$ret .= '</nav><!-- submodule -->';
-	} else $ret = '<span style="display: none;"></span>';
+	} else {
+		$ret = '<span style="display: none;"></span>';
+	}
 
 	$self->theme->toolbar = $ret;
 	return $ret;

@@ -32,60 +32,77 @@ class CalendarWidget extends Widget {
 	var $right;
 
 	function __construct($args = []) {
-		if (isset($args['class'])) $this->class .= ' '.$args['class'];
+		if (isset($args['class'])) {
+			$this->class .= ' ' . $args['class'];
+		}
 		unset($args['class']);
 
 		parent::__construct(
 			array_replace_recursive(
 				[
-					'year' => NULL,
-					'month' => NULL,
-					'hash' => NULL,
+					'year' => null,
+					'month' => null,
+					'hash' => null,
 					'url' => url('calendar'),
-					'get' => NULL,
-					'nodeId' => NULL,
-					'orgId' => NULL,
-					'module' => NULL,
-					'src' => NULL,
+					'get' => null,
+					'nodeId' => null,
+					'orgId' => null,
+					'module' => null,
+					'src' => null,
 					'debug' => $this->debug,
 					'attribute' => array_replace_recursive(
 						[
-							'data-year' => $args['year'] ?? SG\getFirstInt($args['year'] ?? null, date('Y')),
+							'data-year' =>
+								$args['year'] ??
+								SG\getFirstInt($args['year'] ?? null, date('Y')),
 							'data-month' => SG\getFirstInt($args['month'] ?? null, date('m')),
 							'data-hash' => SG\getFirst($args['hash'] ?? null),
 							'data-src' => SG\getFirst($args['src'] ?? null),
 							'data-nodeId' => SG\getFirstInt($args['nodeId'] ?? null),
 							'data-orgId' => SG\getFirstInt($args['orgId'] ?? null),
 							'data-callFrom' => $args['callFrom'] ?? null,
-							'data-apiUrl' => SG\getFirst($args['url'] ?? null, url('calendar')),
-							'data-get' => SG\getFirst($args['get'] ?? null),
+							'data-apiUrl' => SG\getFirst(
+								$args['url'] ?? null,
+								url('calendar')
+							),
+							'data-get' => SG\getFirst($args['get'] ?? null)
 						],
-						(Array) $this->attribute
+						(array) $this->attribute
 					),
-					'navigator' => SG\getFirst($args['navigator'] ?? null, new CalendarNavWidget()),
-					'right' => (Object) [
-						'add' => empty($args['callFrom']) ? user_access('administer calendars,create calendar content') : false,
-					],
+					'navigator' => SG\getFirst(
+						$args['navigator'] ?? null,
+						new CalendarNavWidget()
+					),
+					'right' => (object) [
+						'add' => empty($args['callFrom'])
+							? user_access('administer calendars,create calendar content')
+							: false
+					]
 				],
 				$args,
-				['args' => (Array) $args]
+				['args' => (array) $args]
 			)
 		);
 
 		// if ($this->module) {
-		// 	$this->right->add = R::On($this->module.'.calendar.isadd', $this);
+		// 	$this->right->add = R::on($this->module.'.calendar.isadd', $this);
 		// }
 
 		if (!_AJAX || $this->forceBuild) {
 			$this->children = [
-					'navigator' => new CalendarNavWidget(),
-					// new DebugMsg($args, '$args'),
-					new Container([
-						'class' => $this->classContent,
-						'atribute' => ['data-month' => sg_date($this->year.'-'.$this->month.'-01','ดดด ปปปป')],
-						'child' => $this->month($this->year, $this->month),
-					]), // Container
-					'<script type="module" src="/calendar/js.calendar.js"></script>'
+				'navigator' => new CalendarNavWidget(),
+				// new DebugMsg($args, '$args'),
+				new Container([
+					'class' => $this->classContent,
+					'atribute' => [
+						'data-month' => sg_date(
+							$this->year . '-' . $this->month . '-01',
+							'ดดด ปปปป'
+						)
+					],
+					'child' => $this->month($this->year, $this->month)
+				]), // Container
+				'<script type="module" src="/calendar/js.calendar.js"></script>'
 			]; // children
 		}
 		// debugMsg($this->right, '$this->right');
@@ -93,7 +110,9 @@ class CalendarWidget extends Widget {
 
 	#[\Override]
 	function build() {
-		if (_AJAX && !$this->forceBuild) return $this->month($this->year, $this->month);
+		if (_AJAX && !$this->forceBuild) {
+			return $this->month($this->year, $this->month);
+		}
 
 		// head('calendar.js', '<script type="module" src="/calendar/js.calendar.js"></script>');
 
@@ -137,9 +156,9 @@ class CalendarWidget extends Widget {
 	}
 
 	// Render month calendar
-	function month($year = NULL, $month = NULL) {
+	function month($year = null, $month = null) {
 		# If date is not specified assume current date
-		if ((!$month || !$year) || $month<1 || $year<1 || $month>12) {
+		if (!$month || !$year || $month < 1 || $year < 1 || $month > 12) {
 			$year = date('Y');
 			$month = date('m');
 		}
@@ -150,32 +169,47 @@ class CalendarWidget extends Widget {
 		$firstDay = mktime(0, 0, 0, $month, 1, $year);
 		$daysInMonth = date('t', $firstDay); // Number of days in month
 		$startDayOfWeek = date('w', $firstDay); // Day of week (0=Sunday)
-		$lastMonthDay = mktime(0, 0, 0, $month-1, 1, $year);
+		$lastMonthDay = mktime(0, 0, 0, $month - 1, 1, $year);
 		$daysInLastMonth = date('t', $lastMonthDay); // Number of days in last month
 
 		$even_title_field = cfg('calendar.month.event_title_field');
-		$dayNames = ['Sun' , 'Mon' , 'Tue' , 'Wed' , 'Thu' , 'Fri' , 'Sat'];
+		$dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 		// debugMsg('year = '.$year.' month = '.$month);
 
 		// Get month event list
-		$calendarList = CalendarModel::getEvents(['getMonth' => $year.'-'.sprintf('%02d',$month)] + (Array) $this->args);
+		$calendarList = CalendarModel::getEvents(
+			['getMonth' => $year . '-' . sprintf('%02d', $month)] +
+				(array) $this->args
+		);
 
 		// Show current month
-		$ret = '<table class="calendar-month" width="100%" height="400" border="0" cellspacing="2" cellpadding="1" data-current-month="'.sg_date($year.'-'.$month.'-01', 'ดดด ปปปป').'">'._NL;
+		$ret =
+			'<table class="calendar-month" width="100%" height="400" border="0" cellspacing="2" cellpadding="1" data-current-month="'
+			. sg_date($year . '-' . $month . '-01', 'ดดด ปปปป')
+			. '">'
+			. _NL;
 
 		// Show day name
-		$ret .= '<thead><tr align="center">'._NL;
-		foreach ( $dayNames as $dayName ) {
-			$ret .= '<th width="14.2857%"><div class="dayname">'.$dayName.'</div></th>'._NL;
+		$ret .= '<thead><tr align="center">' . _NL;
+		foreach ($dayNames as $dayName) {
+			$ret .=
+				'<th width="14.2857%"><div class="dayname">'
+				. $dayName
+				. '</div></th>'
+				. _NL;
 		}
-		$ret .= '</tr></thead>'._NL;
+		$ret .= '</tr></thead>' . _NL;
 
-		$ret .= '<tbody><tr align="left" valign="top">'._NL;
+		$ret .= '<tbody><tr align="left" valign="top">' . _NL;
 
 		// Empty cells for days before the first day of the month
-		for ($i = $startDayOfWeek-1; $i >= 0 ; $i--) {
-			$ret .= '<td><div class="daynum -empty">'.($daysInLastMonth - $i).'</div></td>'._NL;
+		for ($i = $startDayOfWeek - 1; $i >= 0; $i--) {
+			$ret .=
+				'<td><div class="daynum -empty">'
+				. ($daysInLastMonth - $i)
+				. '</div></td>'
+				. _NL;
 		}
 
 		// Print every month days
@@ -189,17 +223,43 @@ class CalendarWidget extends Widget {
 				}
 
 				// Check is today
-				$isToday = $year == date('Y') && $month == date('n') && $currentDay == date('j');
-				
-				$ret .= '<td id="'.(sprintf('%02d',$currentDay).'/'.sprintf('%02d',$month).'/'.$year).'" '
-					. 'class="daybox'.($isToday ? ' currentdaybox' : '').($this->right->add ? ' calendar-add' : '').'"'
-					. ($this->right->add ? ' title="'.tr('Add new event','คลิกเพื่อเพิ่มกิจกรรมใหม่') : '').'"'
-					. '>'._NL;
+				$isToday =
+					$year == date('Y') && $month == date('n') && $currentDay == date('j');
 
-				$showDate = $year.'-'.sprintf('%02d',$month).'-'.sprintf('%02d',$currentDay);
+				$ret .=
+					'<td id="'
+					. (sprintf('%02d', $currentDay)
+						. '/'
+						. sprintf('%02d', $month)
+						. '/'
+						. $year)
+					. '" '
+					. 'class="daybox'
+					. ($isToday ? ' currentdaybox' : '')
+					. ($this->right->add ? ' calendar-add' : '')
+					. '"'
+					. ($this->right->add
+						? ' title="' . tr('Add new event', 'คลิกเพื่อเพิ่มกิจกรรมใหม่')
+						: '')
+					. '"'
+					. '>'
+					. _NL;
+
+				$showDate =
+					$year
+					. '-'
+					. sprintf('%02d', $month)
+					. '-'
+					. sprintf('%02d', $currentDay);
 				$hasCalendarItem = array_key_exists($showDate, $calendarList);
 
-				$ret .= '<div class="daynum'.($hasCalendarItem?' have_item':'').'" ><span>'.$currentDay.'</span></div>'._NL;
+				$ret .=
+					'<div class="daynum'
+					. ($hasCalendarItem ? ' have_item' : '')
+					. '" ><span>'
+					. $currentDay
+					. '</span></div>'
+					. _NL;
 
 				// Show calendar items for the day
 				$maxItemsPerDay = 100;
@@ -207,14 +267,16 @@ class CalendarWidget extends Widget {
 					// echo $showDate.' has '.count($calendarList[$showDate]).' items.<br />';
 					foreach ($calendarList[$showDate] as $calendar) {
 						if (--$maxItemsPerDay < 0) {
-							$ret .= '<div class="month-event -more-events">{tr:More}...</div>'._NL;
+							$ret .=
+								'<div class="month-event -more-events">{tr:More}...</div>'
+								. _NL;
 							break;
 						}
 						$ret .= $this->renderCalendarItem($calendar, $even_title_field);
 					}
 				}
 
-				$ret .= '</td>'._NL;
+				$ret .= '</td>' . _NL;
 				$currentDay++;
 			}
 		} catch (Exception $e) {
@@ -224,71 +286,131 @@ class CalendarWidget extends Widget {
 		// Fill remaining cells in the last row
 		$endDayOfWeek = ($startDayOfWeek + $daysInMonth - 1) % 7;
 		for ($day = $endDayOfWeek + 1; $day < 7; $day++) {
-			$ret .= '<td><div class="daynum -empty">'.($day - $endDayOfWeek).'</div></td>'._NL;
+			$ret .=
+				'<td><div class="daynum -empty">'
+				. ($day - $endDayOfWeek)
+				. '</div></td>'
+				. _NL;
 		}
-		
-		$ret .= '</tr>'._NL;
-		$ret .= '<tbody></table>'._NL;
-		
+
+		$ret .= '</tr>' . _NL;
+		$ret .= '<tbody></table>' . _NL;
+
 		return new Container([
 			'class' => $this->classContent,
-			'atribute' => ['data-month' => sg_date($year.'-'.$month.'-01','ดดด ปปปป')],
+			'atribute' => [
+				'data-month' => sg_date($year . '-' . $month . '-01', 'ดดด ปปปป')
+			],
 
 			'children' => [
 				// '@'.date('H:i:s').' Year ='.$year.' Month ='.$month,
 				// new DebugMsg($this->args, '$this->args'),
 				// new DebugMsg($this->right, '$this->right'),
 				new ScrollView(['child' => $ret]),
-				$this->right->add ? new Container([
-					'class' => 'tips -sg-paddingnorm',
-					'child' => tr('Add new calendar item by click on date you want to add.'),
-				]) : NULL,
-			], // children
+				$this->right->add
+					? new Container([
+						'class' => 'tips -sg-paddingnorm',
+						'child' => tr(
+							'Add new calendar item by click on date you want to add.'
+						)
+					])
+					: null
+			] // children
 		]);
 	}
 
 	protected function renderCalendarItem($calendar, $even_title_field) {
 		$calendarOptions = $calendar['options'];
 
-		$title = $calendar[$even_title_field] ? $calendar[$even_title_field].($even_title_field != 'title' ? ':'.$calendar['title'] : '') : $calendar['title'];
+		$title = $calendar[$even_title_field]
+			? $calendar[$even_title_field]
+				. ($even_title_field != 'title' ? ':' . $calendar['title'] : '')
+			: $calendar['title'];
 		$eventTitle = $calendar['title'];
-		if ($calendar['category_name']) $eventTitle .= ' ('.$calendar['category_name'].')';
-		$eventDetail = ' วัน'.sg_date($calendar['from_date'],'ววว ว ดดด ปปปป');
-		if ($calendar['to_date'] != $calendar['from_date']) $eventDetail .= ' - '.sg_date($calendar['to_date'],'ววว ว ดดด ปปปป');
-		if ($calendar['from_time']) $eventDetail .= ' เวลา '.substr($calendar['from_time'],0,5);
-		if ($calendar['to_time']) $eventDetail .= '-'.substr($calendar['to_time'],0,5);
-		if ($calendar['location']) $eventDetail .= '<br />ที่ '.$calendar['location'];
-		$eventDetail .= '<br />by '.$calendar['owner_name'].' ('.$calendar['privacy'].')';
+		if ($calendar['category_name']) {
+			$eventTitle .= ' (' . $calendar['category_name'] . ')';
+		}
+		$eventDetail = ' วัน' . sg_date($calendar['from_date'], 'ววว ว ดดด ปปปป');
+		if ($calendar['to_date'] != $calendar['from_date']) {
+			$eventDetail .= ' - ' . sg_date($calendar['to_date'], 'ววว ว ดดด ปปปป');
+		}
+		if ($calendar['from_time']) {
+			$eventDetail .= ' เวลา ' . substr($calendar['from_time'], 0, 5);
+		}
+		if ($calendar['to_time']) {
+			$eventDetail .= '-' . substr($calendar['to_time'], 0, 5);
+		}
+		if ($calendar['location']) {
+			$eventDetail .= '<br />ที่ ' . $calendar['location'];
+		}
+		$eventDetail .=
+			'<br />by ' . $calendar['owner_name'] . ' (' . $calendar['privacy'] . ')';
 		$eventTitle = htmlspecialchars($eventTitle);
 		$eventDetail = htmlspecialchars($eventDetail);
 
-		$ret .= '<div id="reldiv'.$calendar['id'].'" '
-			. 'class="month-event -calendar-item-'.$calendar['id'].($calendar['category'] ? ' tags-'.$calendar['category'] : '').'" '
-			. 'data-tooltip="'.$eventTitle.'<br />'.$eventDetail.'" '
-			. 'data-color="'.$calendarOptions->color.'" '
+		$ret .=
+			'<div id="reldiv'
+			. $calendar['id']
+			. '" '
+			. 'class="month-event -calendar-item-'
+			. $calendar['id']
+			. ($calendar['category'] ? ' tags-' . $calendar['category'] : '')
+			. '" '
+			. 'data-tooltip="'
+			. $eventTitle
+			. '<br />'
+			. $eventDetail
+			. '" '
+			. 'data-color="'
+			. $calendarOptions->color
+			. '" '
 			. '>';
-		$ret .= '<div class="-bg"'.($calendarOptions->color ? ' style="background-color: '.$calendarOptions->color.';"' : '').'></div>';
-		$ret .= '<a class="sg-action '.$calendar['privacy'].'" '
-			. 'href="'.url('calendar/'.$calendar['id'], ['nodeId' => $this->nodeId, 'callFrom' => $this->callFrom]).'" '
-			. ($calendarOptions->color ? 'style="color: '.$calendarOptions->color.';" ' : '')
+		$ret .=
+			'<div class="-bg"'
+			. ($calendarOptions->color
+				? ' style="background-color: ' . $calendarOptions->color . ';"'
+				: '')
+			. '></div>';
+		$ret .=
+			'<a class="sg-action '
+			. $calendar['privacy']
+			. '" '
+			. 'href="'
+			. url('calendar/' . $calendar['id'], [
+				'nodeId' => $this->nodeId,
+				'callFrom' => $this->callFrom
+			])
+			. '" '
+			. ($calendarOptions->color
+				? 'style="color: ' . $calendarOptions->color . ';" '
+				: '')
 			. 'data-rel="box" data-width="600" data-height="300"'
 			. '>';
-		if ($calendar['from_time'] && (intval(substr($calendar['from_time'],0,2)) || intval(substr($calendar['from_time'],3,2)))) {
+		if (
+			$calendar['from_time'] &&
+			(intval(substr($calendar['from_time'], 0, 2)) ||
+				intval(substr($calendar['from_time'], 3, 2)))
+		) {
 			if (cfg('calendar.format.time') === 'short') {
-				$hr = intval(substr($calendar['from_time'],0,2));
+				$hr = intval(substr($calendar['from_time'], 0, 2));
 				$am = $hr < 12 ? '' : 'p';
-				$hr = $hr < 12 ? $hr : $hr-12;
-				$min = intval(substr($calendar['from_time'],3,2));
-				if ($min === 0) $min = '';
-				$time = $hr.($min ? ':' : '').$min.$am;
+				$hr = $hr < 12 ? $hr : $hr - 12;
+				$min = intval(substr($calendar['from_time'], 3, 2));
+				if ($min === 0) {
+					$min = '';
+				}
+				$time = $hr . ($min ? ':' : '') . $min . $am;
 			} else {
-				$time = substr($calendar['from_time'],0,5).' น.';
+				$time = substr($calendar['from_time'], 0, 5) . ' น.';
 			}
-			$ret .= '<em class="time">'.$time.'</em>&nbsp;';
+			$ret .= '<em class="time">' . $time . '</em>&nbsp;';
 		}
-		$ret .= '<span class="event-title" style="cursor: pointer;">'.$title.'</span>';
+		$ret .=
+			'<span class="event-title" style="cursor: pointer;">'
+			. $title
+			. '</span>';
 		$ret .= '</a>';
-		$ret .= '</div>'._NL;
+		$ret .= '</div>' . _NL;
 
 		return $ret;
 	}

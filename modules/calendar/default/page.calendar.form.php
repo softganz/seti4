@@ -17,47 +17,61 @@ class CalendarForm extends Page {
 
 	function __construct() {
 		parent::__construct([
-			'calendarId' => $calendarId = SG\getFirstInt(Request::get('calendarId')),
-			'calendarInfo' => $calendarId ? CalendarModel::getById($calendarId) : NULL,
-			'right' => new CalendarRightModel($calendarId),
+			'calendarId' => ($calendarId = SG\getFirstInt(
+				Request::get('calendarId')
+			)),
+			'calendarInfo' => $calendarId
+				? CalendarModel::getById($calendarId)
+				: null,
+			'right' => new CalendarRightModel($calendarId)
 		]);
 	}
 
 	function rightToBuild() {
-		if (empty($this->calendarId) && !$this->right->create) return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
-		if ($this->calendarId && !$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		if (empty($this->calendarId) && !$this->right->create) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		}
+		if ($this->calendarId && !$this->right->edit) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		}
 		return true; // Allow to build if user has permission
 	}
 
 	#[\Override]
 	function build() {
-		$post = (Object) post();
+		$post = (object) post();
 
 		if ($this->calendarId && $post->module) {
-			$isEdit = R::On($post->module.'.calendar.isadd',$this->calendarInfo);
-			if (!$isEdit) return error(_HTTP_ERROR_FORBIDDEN,'Access denied');
+			$isEdit = R::on($post->module . '.calendar.isadd', $this->calendarInfo);
+			if (!$isEdit) {
+				return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+			}
 		}
 
 		if (empty($this->calendarInfo->calId)) {
-			$this->calendarInfo = (Object) [
+			$this->calendarInfo = (object) [
 				'from_date' => SG\getFirst($post->d, date('Y-m-d')),
 				'to_date' => SG\getFirst($post->d, date('Y-m-d')),
 				'tpid' => $post->tpid
 			];
 		}
 
-		$this->calendarInfo->from_date = sg_date($this->calendarInfo->from_date,'d/m/Y');
-		$this->calendarInfo->to_date = sg_date($this->calendarInfo->to_date,'d/m/Y');
+		$this->calendarInfo->from_date = sg_date(
+			$this->calendarInfo->from_date,
+			'd/m/Y'
+		);
+		$this->calendarInfo->to_date = sg_date(
+			$this->calendarInfo->to_date,
+			'd/m/Y'
+		);
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Caendar Form',
+				'title' => 'Caendar Form'
 			]), // AppBar
 			'body' => new Widget([
-				'children' => [
-					new calendarFormWidget($this->calendarInfo, $post),
-				], // children
-			]), // Widget
+				'children' => [new calendarFormWidget($this->calendarInfo, $post)] // children
+			]) // Widget
 		]);
 	}
 }

@@ -1,14 +1,14 @@
 <?php
 /**
-* SignIn  :: Sign In
-* Created :: 2019-09-05
-* Modify  :: 2025-12-10
-* Version :: 3
-*
-* @return Widget
-*
-* @usage signin
-*/
+ * SignIn  :: Sign In
+ * Created :: 2019-09-05
+ * Modify  :: 2025-12-10
+ * Version :: 3
+ *
+ * @return Widget
+ *
+ * @usage signin
+ */
 
 class Signin extends Page {
 	var $username;
@@ -47,7 +47,7 @@ class Signin extends Page {
 		if (i()->ok) {
 			location('my');
 		} else {
-			$options = (Object) [
+			$options = (object) [
 				'username' => $this->username,
 				'password' => $this->password,
 				'time' => $this->time,
@@ -59,27 +59,37 @@ class Signin extends Page {
 				'showGuide' => $this->showGuide,
 				'showInfo' => $this->showInfo,
 				'showRegist' => $this->showRegist,
-				'done' => $this->done,
+				'done' => $this->done
 			];
 		}
 
-		if (!$this->showHeader) cfg('web.header', false);
-		if (!$this->showNav) cfg('web.navigator', false);
-		if (!$this->showFooter) cfg('web.footer', false);
+		if (!$this->showHeader) {
+			cfg('web.header', false);
+		}
+		if (!$this->showNav) {
+			cfg('web.navigator', false);
+		}
+		if (!$this->showFooter) {
+			cfg('web.footer', false);
+		}
 
 		return new Scaffold([
 			'body' => new Widget([
 				'children' => [
 					'<header class="header -box -hidden"><h3>@Secure Sign In</h3></header>',
-					R::View('signform', $options),
+					R::view('signform', $options),
 					// print_o($this, '$this'),
 					'<style>
 					.package-footer {display: none !Important}'
-					. ($this->showHeader ? '' : '.page.-header {display: none !Important;}')
-					. ($this->showFooter ? '' : '.page.-footer {display: none !Important;}')
-					. '</style>',
-				], // children
-			]), // Widget
+					. ($this->showHeader
+						? ''
+						: '.page.-header {display: none !Important;}')
+					. ($this->showFooter
+						? ''
+						: '.page.-footer {display: none !Important;}')
+					. '</style>'
+				] // children
+			]) // Widget
 		]);
 	}
 }

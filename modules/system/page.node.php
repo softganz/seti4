@@ -1,15 +1,15 @@
 <?php
 /**
-* Module :: Page Controller
-* Created 2021-09-30
-* Modify 	2021-09-30
-*
-* @param Int $NodeId
-* @param String $action
-* @return Widget
-*
-* @usage module[/{id}/{action}/{tranId}]
-*/
+ * Module :: Page Controller
+ * Created 2021-09-30
+ * Modify 	2021-09-30
+ *
+ * @param Int $NodeId
+ * @param String $action
+ * @return Widget
+ *
+ * @usage module[/{id}/{action}/{tranId}]
+ */
 
 $debug = true;
 
@@ -20,12 +20,11 @@ class Node extends Page {
 	var $action;
 	var $_args = [];
 
-	function __construct($nodeId = NULL, $action = NULL) {
+	function __construct($nodeId = null, $action = null) {
 		$this->nodeId = $nodeId;
 		$this->action = $action;
 		$this->_args = func_get_args();
 	}
-
 
 	function build() {
 		// debugMsg('Id '.$this->nodeId.' Action = '.$this->action.' TranId = '.$this->tranId);
@@ -36,18 +35,23 @@ class Node extends Page {
 		// if (!$isAccess) message(['responseCode' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'access denied']);
 		// else if (!$isEdit) return message(['responseCode' => _HTTP_ERROR_FORBIDDEN, 'text' => 'access denied']);
 
-		$nodeInfo = is_numeric($this->nodeId) ? NodeModel::get($this->nodeId, '{debug: false}') : NULL;
+		$nodeInfo = is_numeric($this->nodeId)
+			? NodeModel::get($this->nodeId, '{debug: false}')
+			: null;
 
-		if (empty($this->nodeId) && empty($this->action)) $this->action = 'home';
-		else if ($this->nodeId && empty($this->action)) $this->action = 'view';
+		if (empty($this->nodeId) && empty($this->action)) {
+			$this->action = 'home';
+		} elseif ($this->nodeId && empty($this->action)) {
+			$this->action = 'view';
+		}
 
 		$argIndex = 2;
 
 		// debugMsg('PAGE CONTROLLER Id = '.$this->nodeId.' , Action = '.$this->action.' , Arg['.$argIndex.'] = '.$this->_args[$argIndex]);
 		//debugMsg($this->_args, '$args');
 
-		return R::PageWidget(
-			'node.'.$this->action,
+		return R::pageWidget(
+			'node.' . $this->action,
 			[-1 => $nodeInfo] + array_slice($this->_args, $argIndex)
 		);
 	}

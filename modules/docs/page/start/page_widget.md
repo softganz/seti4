@@ -13,8 +13,7 @@
 http://example.com/module/[{id}/]sub[?arg1=1&arg2=2&...]
 
 <h5>PageWidget call:</h5>
-R::Pagewidget('module/[{id}/]sub', [arg1=1, arg2=2])
-
+R::pagewidget('module/[{id}/]sub', [arg1=1, arg2=2])
 
 <h4>Page widget extends</h4>
 <code>
@@ -25,7 +24,7 @@ import('package:module/folder/filename.php');
 // Ex. package:project/proposal/api/api.project.proposal.create.follow.php
 
 Class ModuleSub extends \Module\ModuleSub {
-	// Ex. Class ProjectProposalCreateFollowApi extends \Project\ProjectProposalCreateFollowApi
+// Ex. Class ProjectProposalCreateFollowApi extends \Project\ProjectProposalCreateFollowApi
 
 }
 </code>
