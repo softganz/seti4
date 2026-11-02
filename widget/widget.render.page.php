@@ -3,8 +3,8 @@
  * Widget   :: Page Render Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
- * Modified :: 2026-10-13
- * Version  :: 18
+ * Modified :: 2026-11-02
+ * Version  :: 19
  *
  * @param String $requestResult
  *
@@ -21,12 +21,15 @@ class renderPageWidget extends Widget {
 		parent::__construct([
 			'pageClass' => $pageClass,
 			'requestResult' => $requestResult,
-			'debug' => debug('render'),
+			'debug' => debug('render')
 		]);
 	}
 
 	function build() {
-		if (is_object($this->requestResult) && method_exists($this->requestResult, 'build'))  {
+		if (
+			is_object($this->requestResult) &&
+			method_exists($this->requestResult, 'build')
+		) {
 			return $this->buildObject();
 		}
 
@@ -38,7 +41,8 @@ class renderPageWidget extends Widget {
 	}
 
 	protected function buildObject() {
-		$ret = $this->renderAppBar()
+		$ret =
+			$this->renderAppBar()
 			. $this->renderToolbar()
 			. $this->renderRibbon()
 			. $this->renderFloatingActionButton()
@@ -47,18 +51,29 @@ class renderPageWidget extends Widget {
 			. $this->renderNavBar() // @deprecated
 			. $this->buildWidget($this->requestResult)
 			. '</div>';
-			
+
 		// Send script to index process to add at last of body
-		if (isset($this->requestResult->script)) cfg('mainScript', $this->requestResult->script)._NL;
+		if (isset($this->requestResult->script)) {
+			cfg('mainScript', $this->requestResult->script) . _NL;
+		}
 
 		return $ret;
 	}
 
 	protected function buildWidget($widget) {
 		$ret = '';
-		if ($this->count > 4) return $ret;
+		if ($this->count > 4) {
+			return $ret;
+		}
 		if (method_exists($widget, 'build')) {
-			if ($this->debug) debugMsg('BUILD EXISTS #'.(++$this->count).' WIDGET NAME: '.$widget->widgetName);
+			if ($this->debug) {
+				debugMsg(
+					'BUILD EXISTS #'
+						. ++$this->count
+						. ' WIDGET NAME: '
+						. $widget->widgetName
+				);
+			}
 
 			return $this->buildWidget($widget->build());
 		} else {
@@ -68,10 +83,12 @@ class renderPageWidget extends Widget {
 	}
 
 	protected function renderAppBar() {
-		if (!isset($this->pageClass->appBarText)) return;
-		
+		if (!isset($this->pageClass->appBarText)) {
+			return;
+		}
+
 		page_class('-module-has-toolbar');
-		
+
 		return $this->pageClass->appBarText;
 	}
 
@@ -85,7 +102,9 @@ class renderPageWidget extends Widget {
 			$this->pageClass->theme->sidebar ?? null
 		);
 
-		if (!isset($sideBar)) return;
+		if (!isset($sideBar)) {
+			return;
+		}
 
 		$sideBarWidget = false;
 
@@ -94,10 +113,10 @@ class renderPageWidget extends Widget {
 				$sideBarWidget = get_class($sideBar) === 'SideBar';
 				$sideBar = $sideBar->build();
 			} while (is_object($sideBar) && method_exists($sideBar, 'build'));
-		} else if (is_string($sideBar)) {
+		} elseif (is_string($sideBar)) {
 			// do nothing
 		} else {
-			$sideBar = NULL;
+			$sideBar = null;
 		}
 
 		if (!empty($sideBar)) {
@@ -105,9 +124,9 @@ class renderPageWidget extends Widget {
 			if ($sideBarWidget) {
 				$ret .= $sideBar;
 			} else {
-				$ret .= '<div id="sidebar" class="page -sidebar">'._NL;
-				$ret .= $sideBar._NL;
-				$ret .= '</div><!--sidebar-->'._NL;
+				$ret .= '<div id="sidebar" class="page -sidebar">' . _NL;
+				$ret .= $sideBar . _NL;
+				$ret .= '</div><!--sidebar-->' . _NL;
 			}
 		}
 		return $ret;
@@ -115,8 +134,12 @@ class renderPageWidget extends Widget {
 
 	protected function renderFloatingActionButton() {
 		$ret = '';
-		
-		if (isset($this->requestResult->floatingActionButton) && is_object($this->requestResult->floatingActionButton) && method_exists($this->requestResult->floatingActionButton, 'build')) {
+
+		if (
+			isset($this->requestResult->floatingActionButton) &&
+			is_object($this->requestResult->floatingActionButton) &&
+			method_exists($this->requestResult->floatingActionButton, 'build')
+		) {
 			$ret = $this->requestResult->floatingActionButton->build();
 		}
 
@@ -124,28 +147,50 @@ class renderPageWidget extends Widget {
 	}
 
 	protected function renderToolbar() {
-		if (!(!R::option('notoolbar') && $this->pageClass->theme->option->title && isset($this->pageClass->theme->title))) {
+		if (
+			!(
+				!R::option('notoolbar') &&
+				$this->pageClass->theme->option->title &&
+				isset($this->pageClass->theme->title)
+			)
+		) {
 			return;
 		}
 
-		if (is_object($this->pageClass->theme->toolbar)) {
+		if (
+			isset($this->pageClass->theme->toolbar) &&
+			is_object($this->pageClass->theme->toolbar)
+		) {
 			page_class('-module-has-toolbar');
 			return $this->pageClass->theme->toolbar->toString();
 		}
-		
-		if (is_string($this->pageClass->theme->toolbar)) {
+
+		if (
+			isset($this->pageClass->theme->toolbar) &&
+			is_string($this->pageClass->theme->toolbar)
+		) {
 			page_class('-module-has-toolbar');
-			return (new AppBar([
-				'id' => $this->pageClass->module.'-toolbar',
-				'class' => 'sg-toolbar toolbar -main -'.$this->pageClass->module
-					. (isset($this->pageClass->theme->submodule) ? ' -'.$this->pageClass->theme->submodule : '')
-					. ($this->pageClass->theme->appBarClass ? ' '.$this->pageClass->theme->appBarClass : ''),
+			return new AppBar([
+				'id' => $this->pageClass->module . '-toolbar',
+				'class' =>
+					'sg-toolbar toolbar -main -'
+					. $this->pageClass->module
+					. (isset($this->pageClass->theme->submodule)
+						? ' -' . $this->pageClass->theme->submodule
+						: '')
+					. ($this->pageClass->theme->appBarClass
+						? ' ' . $this->pageClass->theme->appBarClass
+						: ''),
 				'title' => $this->pageClass->theme->title,
-				'subTitle' => isset($this->pageClass->theme->subtitle) ? $this->pageClass->theme->subtitle : NULL,
+				'subTitle' => isset($this->pageClass->theme->subtitle)
+					? $this->pageClass->theme->subtitle
+					: null,
 				'leading' => $this->pageClass->theme->leading ?? null,
 				'trailing' => $this->pageClass->theme->trailing ?? null,
-				'navigator' => isset($this->pageClass->theme->moduleNav) ? $this->pageClass->theme->moduleNav : ($this->pageClass->theme->toolbar ?? null),
-			]))->build();
+				'navigator' => isset($this->pageClass->theme->moduleNav)
+					? $this->pageClass->theme->moduleNav
+					: $this->pageClass->theme->toolbar ?? null
+			])->build();
 
 			// $ret .= '<!-- Module Toolbar Start -->'._NL
 			// 	. '<div '
@@ -166,28 +211,46 @@ class renderPageWidget extends Widget {
 			// return $ret;
 		}
 
-		return (new AppBar([
-			'title' => $this->pageClass->theme->title,
-			'subTitle' => $this->pageClass->theme->subtitle
-		]))->build();
+		return new AppBar([
+			'title' => $this->pageClass->theme->title ?? null,
+			'subTitle' => $this->pageClass->theme->subtitle ?? null
+		])->build();
 	}
 
 	protected function renderRibbon() {
 		$ret = '';
-		if ($this->pageClass->theme->option->ribbon && isset($this->pageClass->theme->navigator)) {
-			$ret .= '<div id="ribbon" class="ribbon navigator'.(isset($this->pageClass->theme->ribbon->class)?' '.$this->pageClass->theme->ribbon->class:'').'">'.$this->pageClass->theme->navigator.'</div>'._NL;
-			if ($this->pageClass->theme->option->toolbar) $ret .= '<div id="ribbon-toolbar"></div>'._NL;
+		if (
+			$this->pageClass->theme->option->ribbon &&
+			isset($this->pageClass->theme->navigator)
+		) {
+			$ret .=
+				'<div id="ribbon" class="ribbon navigator'
+				. (isset($this->pageClass->theme->ribbon->class)
+					? ' ' . $this->pageClass->theme->ribbon->class
+					: '')
+				. '">'
+				. $this->pageClass->theme->navigator
+				. '</div>'
+				. _NL;
+			if ($this->pageClass->theme->option->toolbar) {
+				$ret .= '<div id="ribbon-toolbar"></div>' . _NL;
+			}
 		}
 
 		return $ret;
 	}
 
 	protected function renderNavBar() {
-		if (empty($this->pageClass->theme->navbar)) return;
+		if (empty($this->pageClass->theme->navbar)) {
+			return;
+		}
 
-		return '<div class="navbar -main">'._NL
-			. $this->pageClass->theme->navbar._NL
-			. '</div><!--navbar-->'._NL;
+		return '<div class="navbar -main">'
+			. _NL
+			. $this->pageClass->theme->navbar
+			. _NL
+			. '</div><!--navbar-->'
+			. _NL;
 	}
 
 	protected function renderJson($json) {
@@ -200,48 +263,89 @@ class renderPageWidget extends Widget {
 		$ret = '';
 
 		if (!empty($GLOBALS['gadget'])) {
-			return $this->pageClass->theme->requestResult.$this->requestResult;
-		} else if (cfg('Content-Type') == 'text/xml') {
-			return $this->pageClass->theme->requestResult.$this->requestResult;
-		} else if (!_AJAX && is_array($this->requestResult) && isset($this->requestResult['location'])) {
-			call_user_func_array('location',$this->requestResult['location']);
-		} else if (_AJAX) {
+			return $this->pageClass->theme->requestResult . $this->requestResult;
+		} elseif (cfg('Content-Type') == 'text/xml') {
+			return $this->pageClass->theme->requestResult . $this->requestResult;
+		} elseif (
+			!_AJAX &&
+			is_array($this->requestResult) &&
+			isset($this->requestResult['location'])
+		) {
+			call_user_func_array('location', $this->requestResult['location']);
+		} elseif (_AJAX) {
 			// debugMsg('RENDER AJAX REQUEST');
-			if (is_array($this->pageClass->theme->requestResult) || is_object($this->pageClass->theme->requestResult)) {
-				$ret=json_encode($this->pageClass->theme->requestResult);
-			} else if (is_array($this->requestResult) || is_object($this->requestResult)) {
+			if (
+				is_array($this->pageClass->theme->requestResult) ||
+				is_object($this->pageClass->theme->requestResult)
+			) {
+				$ret = json_encode($this->pageClass->theme->requestResult);
+			} elseif (
+				is_array($this->requestResult) ||
+				is_object($this->requestResult)
+			) {
 				//echo 'Return json_encode '.print_o($this->requestResult,'$this->requestResult');
 				$ret = json_encode($this->requestResult);
 			} else {
-				$ret = $this->pageClass->theme->requestResult.$this->requestResult;
+				$ret = $this->pageClass->theme->requestResult . $this->requestResult;
 			}
 			if (is_object($ret) && method_exists($ret, 'build')) {
 				return $ret->build();
 			} else {
 				return $ret;
 			}
-		} else if (_HTML && is_array($this->requestResult)) {
+		} elseif (_HTML && is_array($this->requestResult)) {
 			$ret = print_o($this->requestResult);
 			return $ret;
-		} else if (_HTML) {
+		} elseif (_HTML) {
 			return $this->requestResult;
 		}
 
-		if (isset($this->pageClass->menu)) $GLOBALS['module_menu'] = $this->pageClass->menu;
-		$id = isset($this->pageClass->theme->id) ? $this->pageClass->theme->id : 'content-'.$this->pageClass->module;
-		$class = 'page -main'.(isset($this->pageClass->theme->class)?' '.$this->pageClass->theme->class:'');
+		if (isset($this->pageClass->menu)) {
+			$GLOBALS['module_menu'] = $this->pageClass->menu;
+		}
+		$id = isset($this->pageClass->theme->id)
+			? $this->pageClass->theme->id
+			: 'content-' . $this->pageClass->module;
+		$class =
+			'page -main'
+			. (isset($this->pageClass->theme->class)
+				? ' ' . $this->pageClass->theme->class
+				: '');
 		$option = $this->pageClass->theme->option;
 
-		if (isset($this->pageClass->theme->title) && $option->title) title(strip_tags($this->pageClass->theme->title));
+		if (isset($this->pageClass->theme->title) && $option->title) {
+			title(strip_tags($this->pageClass->theme->title));
+		}
 		//if ($option->container) $ret .= _NL.'<div id="'.$id.'" class="'.$class.'">'._NL;
 		//$ret.='<div class="overlay">'._NL;
 
 		if ($option->header) {
-			if (isset($this->pageClass->theme->pretext)) $ret.=$this->pageClass->theme->pretext;
-			if (isset($this->pageClass->theme->header->text)) $ret .= '<h2 class="header">'.$this->pageClass->theme->header->text.'</h2>'._NL;
-			if (isset($this->pageClass->theme->header->posttext)) $ret .= $this->pageClass->theme->header->posttext._NL;
-			if (isset($GLOBALS['ad']->header)) $ret.='<div id="ad-header" class="ads">'.$GLOBALS['ad']->header.'</div>';
-			if (isset($this->pageClass->theme->header->description)) $ret .= '<div class="header-description">'.$this->pageClass->theme->header->description.'</div>'._NL;
+			if (isset($this->pageClass->theme->pretext)) {
+				$ret .= $this->pageClass->theme->pretext;
+			}
+			if (isset($this->pageClass->theme->header->text)) {
+				$ret .=
+					'<h2 class="header">'
+					. $this->pageClass->theme->header->text
+					. '</h2>'
+					. _NL;
+			}
+			if (isset($this->pageClass->theme->header->posttext)) {
+				$ret .= $this->pageClass->theme->header->posttext . _NL;
+			}
+			if (isset($GLOBALS['ad']->header)) {
+				$ret .=
+					'<div id="ad-header" class="ads">'
+					. $GLOBALS['ad']->header
+					. '</div>';
+			}
+			if (isset($this->pageClass->theme->header->description)) {
+				$ret .=
+					'<div class="header-description">'
+					. $this->pageClass->theme->header->description
+					. '</div>'
+					. _NL;
+			}
 		}
 
 		// debugMsg(R::option('notoolbar') ? 'No Toolbar is true' : 'No Toolbar is false');
@@ -344,29 +448,63 @@ class renderPageWidget extends Widget {
 		// 	}
 		// }
 
-		$container_id=is_string($option->container)?$option->container:'main';
+		$container_id = is_string($option->container) ? $option->container : 'main';
 		//$this->pageClass->theme->container->{'data-refresh'}='aaaa';
 		$container_attr = sg_implode_attr($this->pageClass->theme->container ?? []);
 
 		$showContainer = $option->container && !R::option('fullpage');
-		if ($showContainer) $ret .= _NL.'<div id="'.$container_id.'" class="'.$class.'" '.$container_attr.'>';
-		if (!empty($this->pageClass->theme->navbar)) {
-			$ret.='<div class="navbar -main">'._NL;
-			$ret.=$this->pageClass->theme->navbar._NL;
-			$ret.='</div><!--navbar-->'._NL;
+		if ($showContainer) {
+			$ret .=
+				_NL
+				. '<div id="'
+				. $container_id
+				. '" class="'
+				. $class
+				. '" '
+				. $container_attr
+				. '>';
 		}
-		if (isset($this->pageClass->theme->requestResult)) $ret .= _NL.$this->pageClass->theme->requestResult._NL;
-		if (is_array($this->requestResult) && isset($this->requestResult['html'])) $ret .= _NL.$this->requestResult['html']._NL;
-		else if (isset($this->requestResult)) $ret .= _NL.$this->requestResult._NL;
-		if ($showContainer) $ret .= '</div><!--'.$container_id.'-->'._NL;
+		if (!empty($this->pageClass->theme->navbar)) {
+			$ret .= '<div class="navbar -main">' . _NL;
+			$ret .= $this->pageClass->theme->navbar . _NL;
+			$ret .= '</div><!--navbar-->' . _NL;
+		}
+		if (isset($this->pageClass->theme->requestResult)) {
+			$ret .= _NL . $this->pageClass->theme->requestResult . _NL;
+		}
+		if (is_array($this->requestResult) && isset($this->requestResult['html'])) {
+			$ret .= _NL . $this->requestResult['html'] . _NL;
+		} elseif (isset($this->requestResult)) {
+			$ret .= _NL . $this->requestResult . _NL;
+		}
+		if ($showContainer) {
+			$ret .= '</div><!--' . $container_id . '-->' . _NL;
+		}
 
-		if (is_object($this->pageClass->floatingActionButton ?? null) && method_exists($this->pageClass->floatingActionButton, 'build')) {
+		if (
+			is_object($this->pageClass->floatingActionButton ?? null) &&
+			method_exists($this->pageClass->floatingActionButton, 'build')
+		) {
 			$ret .= $this->pageClass->floatingActionButton->build();
 			// debugMsg($this->pageClass->floatingActionButton, '$floatingActionButton');
 		}
 
-		$release_date=cfg($this->pageClass->module.'.release');
-		if ($option->package) $ret .= '<div class="package-footer -no-print">'.$this->pageClass->module.' version '.$this->pageClass->version.($release_date?' release '.$release_date:'').'. <a class="sg-action" href="'.url($this->pageClass->module.'/help').'" data-rel="box" data-width="640">'.tr('Help').'</a></div>'._NL._NL;
+		$release_date = cfg($this->pageClass->module . '.release');
+		if ($option->package) {
+			$ret .=
+				'<div class="package-footer -no-print">'
+				. $this->pageClass->module
+				. ' version '
+				. $this->pageClass->version
+				. ($release_date ? ' release ' . $release_date : '')
+				. '. <a class="sg-action" href="'
+				. url($this->pageClass->module . '/help')
+				. '" data-rel="box" data-width="640">'
+				. tr('Help')
+				. '</a></div>'
+				. _NL
+				. _NL;
+		}
 		//if ($option->container) $ret .= '</div><!--'.$id.'-->'._NL._NL;
 		//if (i()->username == 'softganz') debugMsg(htmlview($ret));
 
