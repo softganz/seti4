@@ -4,29 +4,66 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-02
- * Version  :: 15
+ * Version  :: 16
  *
- * @param Array $args
+ * @param array $args
  *
  * @uses new Table([key => value,...])
  */
 
 class Table extends Widget {
-	var $config = [];
-	var $showHeader = true;
-	var $repeatHeader = 0;
-	var $caption;
-	var $colgroup = [];
-	var $rows = []; // @deprecated
+	public $tagName = 'table';
+	public bool $showHeader = true;
+	public int $repeatHeader = 0;
+	public ?string $caption;
+	public array $colgroup = [];
+	public array|string $footer = [];
 
-	private $headerKey = [];
-	private $headerTag = '';
-	private $rowNo = 0;
+	private array $headerKey = [];
+	private string $headerTag = '';
+	private int $rowNo = 0;
 
-	function __construct($args = []) {
-		if (is_array($args)) {
-			parent::__construct($args);
-		}
+	// @deprecated
+	public array $rows = [];
+
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $style = null,
+		bool $showHeader = true,
+		int $repeatHeader = 0,
+		?string $caption = null,
+		?bool $debug = false,
+		?array $colgroup = [],
+		array|string $header = [],
+		array $children = [],
+		array|string $footer = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'style' => $style,
+					'showHeader' => $showHeader,
+					'repeatHeader' => $repeatHeader,
+					'caption' => $caption,
+					'debug' => $debug,
+					'colgroup' => $colgroup,
+					'header' => $header,
+					'children' => $children,
+					'footer' => $footer
+				],
+				$args
+			)
+		);
+
+		if (!empty($this->rows) && empty($this->children)) $this->children = $this->rows;
+		if (!empty($this->tfoot) && empty($this->footer)) $this->footer = $this->tfoot;
+
+		unset($this->childTagName, $this->itemClass, $this->mainAxisAlignment, $this->crossAxisAlignment, $this->href, $this->dataUrl, $this->webview, $this->rel, $this->done, $this->action, $this->child, $this->attribute, $this->childContainer, $this->config, $this->rows);
+		if ($this->debug) debugMsg($this, 'Table');
 	}
 
 	// @deprecated
@@ -61,17 +98,17 @@ class Table extends Widget {
 			. strtolower($this->widgetName)
 			. ' item'
 			. ($this->class ? ' ' . $this->class : '')
-			. ($this->mainAxisAlignment
-				? ' -main-axis-' . strtolower($this->mainAxisAlignment)
-				: '')
-			. ($this->crossAxisAlignment
-				? ' -cross-axis-' . strtolower($this->crossAxisAlignment)
-				: '')
+			// . ($this->mainAxisAlignment
+			// 	? ' -main-axis-' . strtolower($this->mainAxisAlignment)
+			// 	: '')
+			// . ($this->crossAxisAlignment
+			// 	? ' -cross-axis-' . strtolower($this->crossAxisAlignment)
+			// 	: '')
 			. '" '
-			. ($this->style ? ' style="' . $this->style . '"' : '')
-			. ($this->attribute && is_array($this->attribute)
-				? ' ' . sg_implode_attr($this->attribute)
-				: '');
+			. ($this->style ? ' style="' . $this->style . '"' : '');
+			// . ($this->attribute && is_array($this->attribute)
+			// 	? ' ' . sg_implode_attr($this->attribute)
+			// 	: '');
 
 		// @deprecated
 		if (isset($this->attr)) {
@@ -355,13 +392,13 @@ class Table extends Widget {
 	protected function renderFooter() {
 		$ret = '';
 
-		if (isset($this->tfoot)) {
+		if (isset($this->footer)) {
 			$ret .= '<tfoot>' . _NL;
-			if (is_string($this->tfoot)) {
-				$ret .= $this->tfoot . _NL;
-			} elseif (is_array($this->tfoot)) {
+			if (is_string($this->footer)) {
+				$ret .= $this->footer . _NL;
+			} elseif (is_array($this->footer)) {
 				$colNo = 0;
-				foreach ($this->tfoot as $tfoot) {
+				foreach ($this->footer as $tfoot) {
 					if (is_string($tfoot)) {
 						$ret .= $tfoot . _NL;
 					} elseif (is_array($tfoot)) {
