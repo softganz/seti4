@@ -3,8 +3,8 @@
  * Widget   :: Dropbox widget for create Dropbox
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-29
- * Version  :: 7
+ * Modified :: 2026-11-02
+ * Version  :: 8
  *
  * @param Array $args
  *
@@ -17,24 +17,48 @@
  */
 
 class Dropbox extends Widget {
-	var $type = 'click';
-	var $class = '';
-	var $text = '';
-	var $icon = NULL;
-	var $iconText = 'more_vert';
-	var $title = 'มีเมนูย่อย';
-	var $url = NULL;
-	var $link = NULL;
-	var $position = 'left';
-	var $hideOnNoChild = false;
-	var $print = false;
-	var $debug = false;
-	var $footer = '';
-	var $childrenContainer = ['tagName' => 'ul'];
-	var $childContainer = ['tagName' => 'li', 'class' => '-item'];
+	public $type = 'click';
+	public $class = '';
+	public $text = '';
+	public $icon = NULL;
+	public $iconText = 'more_vert';
+	public $title = 'มีเมนูย่อย';
+	public $url = NULL;
+	public $link = NULL;
+	public $position = 'left';
+	public bool $hideOnNoChild;
+	public $print = false;
+	public $debug = false;
+	public $footer = '';
+	public $childrenContainer = ['tagName' => 'ul'];
+	public array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $style = null,
+		mixed $child = null,
+		mixed $children = null,
+		string $position = 'left',
+		bool $hideOnNoChild = false,
+		bool $debug = false
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'style' => $style,
+					'child' => $child,
+					'children' => $children,
+					'position' => $position,
+					'hideOnNoChild' => $hideOnNoChild,
+					'debug' => $debug
+				],
+				$args
+			)
+		);
 	}
 
 	function add($value = NULL) {
