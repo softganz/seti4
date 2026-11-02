@@ -3,8 +3,8 @@
  * Model    :: Node Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-09-30
- * Modified :: 2026-09-24
- * Version  :: 31
+ * Modified :: 2026-10-02
+ * Version  :: 32
  *
  * @param array $args
  * @return object
@@ -17,12 +17,7 @@ use Softganz\DB;
 use Softganz\SetDataModel;
 
 class NodeModel {
-
 	public static function get($id) {
-		$defaults = '{debug: false}';
-		$options = \SG\json_decode($options, $defaults);
-		$debug = $options->debug;
-
 		$result = (object) ['nodeId' => null, 'title' => '', 'info' => null];
 
 		$result->info = DB::select([
@@ -32,7 +27,9 @@ class NodeModel {
 
 		// debugMsg(R('query'));
 
-		if (empty($result->info->nodeId)) return null;
+		if (empty($result->info->nodeId)) {
+			return null;
+		}
 
 		$result->nodeId = $result->info->nodeId;
 		$result->title = $result->info->title;
@@ -53,8 +50,11 @@ class NodeModel {
 			WHERE `topic`.`tpid` = :nodeId
 			LIMIT 1',
 			'var' => [':nodeId' => $nodeId],
-			'onComplete' => function(&$data) {
-				$data->data = json_encode(json_decode($data->data), JSON_PRETTY_PRINT  + JSON_UNESCAPED_UNICODE);
+			'onComplete' => function (&$data) {
+				$data->data = json_encode(
+					json_decode($data->data),
+					JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE
+				);
 			}
 		]);
 	}
@@ -64,23 +64,26 @@ class NodeModel {
 			'SELECT `json` FROM %topic_data% WHERE `tpid` = :nodeId LIMIT 1',
 			'var' => [':nodeId' => $nodeId],
 			'options' => [
-				'jsonDecode' => [
-					['field' => 'json']
-				]
+				'jsonDecode' => [['field' => 'json']]
 			]
 		])->json;
 	}
 
 	public static function items($conditions) {
 		$conditions = (object) $conditions;
-		$defaults = '{debug: false, order: "nodeId", sort: "DESC", items: 10, page: 1, field: "detail"}';
+		$defaults =
+			'{debug: false, order: "nodeId", sort: "DESC", items: 10, page: 1, field: "detail"}';
 		$options = \SG\json_decode($conditions->options, $defaults);
 		$debug = $options->debug;
 		unset($conditions->options);
 
-		if (!is_numeric($options->page)) return null;
+		if (!is_numeric($options->page)) {
+			return null;
+		}
 
-		if (empty($options->page)) $options->page = 1;
+		if (empty($options->page)) {
+			$options->page = 1;
+		}
 
 		$conditions = (object) array_merge(
 			[
@@ -94,19 +97,22 @@ class NodeModel {
 				'ip' => null,
 				'year' => null,
 				'searchText' => null,
-				'condition' => null,
+				'condition' => null
 			],
 			(array) $conditions
 		);
 
-		if ($conditions->type === '*') unset($conditions->type);
-		else if (!$conditions->type) $conditions->type = 'story';
+		if ($conditions->type === '*') {
+			$conditions->type = null;
+		} elseif (!$conditions->type) {
+			$conditions->type = 'story';
+		}
 
 		$result = (object) [
 			'count' => 0,
 			'total' => 0,
 			'items' => [],
-			'debug' => [],
+			'debug' => []
 		];
 
 		$result->debug['CONDITIONS'] = $conditions;
@@ -124,7 +130,7 @@ class NodeModel {
 			'reply' => '`topic`.`reply`',
 			'answer' => '`topic`.`comment`',
 			'view' => '`topic`.`last_view`',
-			'lastComment' => '`topic`.`last_reply`',
+			'lastComment' => '`topic`.`last_reply`'
 		];
 
 		$orderBy = \SG\getFirst($orderList[$options->order], $orderList['nodeId']);
@@ -132,10 +138,12 @@ class NodeModel {
 		$page = intval($options->page);
 		$items = intval($options->items);
 
-		if ($page <= 0) $page = 1;
+		if ($page <= 0) {
+			$page = 1;
+		}
 
 		if ($items) {
-			$limit = 'LIMIT '.(($page - 1) * $items).','.$items;
+			$limit = 'LIMIT ' . ($page - 1) * $items . ',' . $items;
 		} else {
 			$limit = 'LIMIT 10';
 			// $total_items=mydb::select('SELECT COUNT(*) `total` FROM '.$table_cmd.($where_cmd?' WHERE '.$where_cmd:'').' LIMIT 1')->total;
@@ -153,40 +161,132 @@ class NodeModel {
 		// }
 
 		// Field
-		$fld_cmd = '`topic`.`tpid` `nodeId`, `topic`.`type`, `topic`.`title`, `topic`.`access`, `topic`.`status`, `topic`.`view`, `topic`.`last_view` `lastView`, `topic`.`comment`, `topic`.`reply`, `topic`.`last_reply` `lastReply`, `topic`.`created`'._NL;
-		$fld_cmd .= '  , `user`.`username`, `user`.`name` `ownerName` '._NL;
-		if (in_array('detail', $fields)) $fld_cmd .= '    , `revision`.`format` , `revision`.`body` , `revision`.`property` , `revision`.`email` , `revision`.`homepage`'._NL;
-		if (in_array('comment', $fields)) $fld_cmd .= ' ,(SELECT COUNT(*) FROM %topic_comments% `comment` WHERE `comment`.`tpid` = `topic`.`tpid`) comments'._NL;
+		$fld_cmd =
+			'`topic`.`tpid` `nodeId`, `topic`.`type`, `topic`.`title`, `topic`.`access`, `topic`.`status`, `topic`.`view`, `topic`.`last_view` `lastView`, `topic`.`comment`, `topic`.`reply`, `topic`.`last_reply` `lastReply`, `topic`.`created`'
+			. _NL;
+		$fld_cmd .= '  , `user`.`username`, `user`.`name` `ownerName` ' . _NL;
+		if (in_array('detail', $fields)) {
+			$fld_cmd .=
+				'    , `revision`.`format` , `revision`.`body` , `revision`.`property` , `revision`.`email` , `revision`.`homepage`'
+				. _NL;
+		}
+		if (in_array('comment', $fields)) {
+			$fld_cmd .=
+				' ,(SELECT COUNT(*) FROM %topic_comments% `comment` WHERE `comment`.`tpid` = `topic`.`tpid`) comments'
+				. _NL;
+		}
 
 		// Join table
-		$joins[] = '  LEFT JOIN %users% `user` ON `topic`.`uid` = `user`.`uid` '._NL;
-		if (in_array('detail', $fields)) $joins[] = '  LEFT JOIN %topic_revisions% `revision` on `revision`.`revid` = `topic`.`revid` '._NL;
-		if ($conditions->tags || $conditions->category) $joins[] = '  LEFT JOIN %tag_topic% `tag_topic` ON `tag_topic`.`tpid` = `topic`.`tpid` '._NL;
-		if ($conditions->category) $joins[] = '  LEFT JOIN %tag% `category` ON `category`.tid = `tag_topic`.`tid` '._NL;
+		$joins[] =
+			'  LEFT JOIN %users% `user` ON `topic`.`uid` = `user`.`uid` ' . _NL;
+		if (in_array('detail', $fields)) {
+			$joins[] =
+				'  LEFT JOIN %topic_revisions% `revision` on `revision`.`revid` = `topic`.`revid` '
+				. _NL;
+		}
+		if ($conditions->tags || $conditions->category) {
+			$joins[] =
+				'  LEFT JOIN %tag_topic% `tag_topic` ON `tag_topic`.`tpid` = `topic`.`tpid` '
+				. _NL;
+		}
+		if ($conditions->category) {
+			$joins[] =
+				'  LEFT JOIN %tag% `category` ON `category`.tid = `tag_topic`.`tid` '
+				. _NL;
+		}
 
 		// Condition
-		if ($conditions->type) \mydb::where('`topic`.`type` IN ( :type )', ':SET-STRING:type', $conditions->type);
-		if ($conditions->nodeId) \mydb::where('`topic`.`tpid` IN ( :nodeId )', ':SET:nodeId', $conditions->nodeId);
-		if ($conditions->tags) \mydb::where('`tag_topic`.`tid` IN ( :tags )', ':SET-STRING:tags', $conditions->tags);
-		if ($conditions->sticky) \mydb::where('`topic`.`sticky` = :sticky', ':sticky', $conditions->sticky);
-		if ($conditions->user) \mydb::where('(`topic`.`uid` = :userId || `topic`.`tpid` IN (SELECT `tpid` FROM %topic_user% WHERE `uid` = :userId))', ':userId', $conditions->user);
-		if ($conditions->ip) \mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
-		if ($conditions->year) \mydb::where('YEAR(`topic`.`created`) = :year', ':year', $conditions->year);
-		if ($conditions->format) \mydb::where('`revision`.`property` ->> "$.input_format" = :inputFormat', ':inputFormat', $conditions->format);
-		if ($conditions->searchText) \mydb::where('`topic`.`title` LIKE :searchText', ':searchText', '%'.$conditions->searchText.'%');
-		if (i()->ok) {
-			if (!user_access('administer contents,administer papers')) \mydb::where('(`topic`.`status` IN ('._PUBLISH.','._LOCK.') || (`topic`.`status` IN ('._DRAFT.','._WAITING.') AND `topic`.`uid` = '.i()->uid.'))');
-		} else {
-			\mydb::where('`topic`.`status` IN ('._PUBLISH.','._LOCK.')');
+		if ($conditions->type) {
+			\mydb::where(
+				'`topic`.`type` IN ( :type )',
+				':SET-STRING:type',
+				$conditions->type
+			);
 		}
-		if ($conditions->condition) \mydb::where($conditions->condition);
+		if ($conditions->nodeId) {
+			\mydb::where(
+				'`topic`.`tpid` IN ( :nodeId )',
+				':SET:nodeId',
+				$conditions->nodeId
+			);
+		}
+		if ($conditions->tags) {
+			\mydb::where(
+				'`tag_topic`.`tid` IN ( :tags )',
+				':SET-STRING:tags',
+				$conditions->tags
+			);
+		}
+		if ($conditions->sticky) {
+			\mydb::where(
+				'`topic`.`sticky` = :sticky',
+				':sticky',
+				$conditions->sticky
+			);
+		}
+		if ($conditions->user) {
+			\mydb::where(
+				'(`topic`.`uid` = :userId || `topic`.`tpid` IN (SELECT `tpid` FROM %topic_user% WHERE `uid` = :userId))',
+				':userId',
+				$conditions->user
+			);
+		}
+		if ($conditions->ip) {
+			\mydb::where('`topic`.`ip` = :ip', ':ip', ip2long($conditions->ip));
+		}
+		if ($conditions->year) {
+			\mydb::where(
+				'YEAR(`topic`.`created`) = :year',
+				':year',
+				$conditions->year
+			);
+		}
+		if ($conditions->format) {
+			\mydb::where(
+				'`revision`.`property` ->> "$.input_format" = :inputFormat',
+				':inputFormat',
+				$conditions->format
+			);
+		}
+		if ($conditions->searchText) {
+			\mydb::where(
+				'`topic`.`title` LIKE :searchText',
+				':searchText',
+				'%' . $conditions->searchText . '%'
+			);
+		}
+		if (i()->ok) {
+			if (!user_access('administer contents,administer papers')) {
+				\mydb::where(
+					'(`topic`.`status` IN ('
+						. _PUBLISH
+						. ','
+						. _LOCK
+						. ') || (`topic`.`status` IN ('
+						. _DRAFT
+						. ','
+						. _WAITING
+						. ') AND `topic`.`uid` = '
+						. i()->uid
+						. '))'
+				);
+			}
+		} else {
+			\mydb::where('`topic`.`status` IN (' . _PUBLISH . ',' . _LOCK . ')');
+		}
+		if ($conditions->condition) {
+			\mydb::where($conditions->condition);
+		}
 
 		\mydb::value('$JOINS$', implode($joins), false);
-		\mydb::value('$ORDER$', 'ORDER BY '.$orderBy.' '.$sortBy);
+		\mydb::value('$ORDER$', 'ORDER BY ' . $orderBy . ' ' . $sortBy);
 		\mydb::value('$LIMIT$', $limit, false);
 
-		$sql_cmd = 'SELECT SQL_CALC_FOUND_ROWS
-			'.$fld_cmd.'
+		$sql_cmd =
+			'SELECT SQL_CALC_FOUND_ROWS
+			'
+			. $fld_cmd
+			. '
 			FROM %topic% `topic`
 			$JOINS$
 			%WHERE%
@@ -205,11 +305,12 @@ class NodeModel {
 		$result->count = count((array) $result->items);
 		$result->total = intval($dbs->_found_rows);
 
-
 		$nodeList = [];
 		foreach ($result->items as $nodeId => $topic) {
 			$nodeList[] = $topic->nodeId;
-			if (in_array('detail', $fields)) $result->items[$nodeId]->summary = sg_summary_text($topic->body);
+			if (in_array('detail', $fields)) {
+				$result->items[$nodeId]->summary = sg_summary_text($topic->body);
+			}
 		}
 
 		if (in_array('tag', $fields) && $nodeList) {
@@ -223,17 +324,21 @@ class NodeModel {
 				%WHERE%',
 				'where' => [
 					'%WHERE%' => [
-						['`node`.`tpid` IN ( :nodeList )', ':nodeList' => new SetDataModel($nodeList)]
+						[
+							'`node`.`tpid` IN ( :nodeList )',
+							':nodeList' => new SetDataModel($nodeList)
+						]
 					]
 				]
 			])->items;
 			foreach ($tagList as $tag) {
-				if (empty($result->items[$tag->nodeId]->tags)) $result->items[$tag->nodeId]->tags = [];
+				if (empty($result->items[$tag->nodeId]->tags)) {
+					$result->items[$tag->nodeId]->tags = [];
+				}
 				$result->items[$tag->nodeId]->tags[] = (object) [
 					'id' => $tag->tagId,
-					'name' => $tag->tagName,
+					'name' => $tag->tagName
 				];
-
 			}
 		}
 
@@ -244,13 +349,16 @@ class NodeModel {
 				WHERE `tpid` IN ( :nodeList ) AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "photo" AND `tagName` IS NULL
 				GROUP BY `tpid`
 				ORDER BY `tpid` ASC',
-				[':nodeList' => 'SET:'.implode(',',$nodeList)]
+				[':nodeList' => 'SET:' . implode(',', $nodeList)]
 			)->items;
 
 			$result->debug['PHOTOS'] = R('query');
 
 			foreach ($photoList as $photo) {
-				$result->items[$photo->nodeId]->photo = FileModel::photoProperty($photo->file, $photo->folder);
+				$result->items[$photo->nodeId]->photo = FileModel::photoProperty(
+					$photo->file,
+					$photo->folder
+				);
 			}
 		}
 
@@ -274,7 +382,9 @@ class NodeModel {
 			}
 		}
 
-		if (!$debug) unset($result->debug);
+		if (!$debug) {
+			unset($result->debug);
+		}
 
 		return $result;
 	}
@@ -297,8 +407,13 @@ class NodeModel {
 			LIMIT 1',
 			'where' => [
 				'%WHERE%' => [
-					['`doc`.`fid` = :docId AND `doc`.`refId` IS NULL', ':docId' => $docId],
-					$projectId ? ['`doc`.`tpid` = :projectId', ':projectId' => $projectId] : null,
+					[
+						'`doc`.`fid` = :docId AND `doc`.`refId` IS NULL',
+						':docId' => $docId
+					],
+					$projectId
+						? ['`doc`.`tpid` = :projectId', ':projectId' => $projectId]
+						: null
 				]
 			]
 		]);
@@ -308,7 +423,7 @@ class NodeModel {
 		$conditions = (object) array_replace_recursive(
 			[
 				'nodeId' => null, // int
-				'tagNameLike' => null, // string
+				'tagNameLike' => null // string
 			],
 			(array) $conditions
 		);
@@ -330,8 +445,14 @@ class NodeModel {
 			ORDER BY `doc`.`fid` ASC',
 			'where' => [
 				'%WHERE%' => [
-					['`doc`.`tpid` = :nodeId AND `doc`.`refId` IS NULL', ':nodeId' => $conditions->nodeId],
-					['`doc`.`tagName` LIKE :tagNameLike', ':tagNameLike' => $conditions->tagNameLike]
+					[
+						'`doc`.`tpid` = :nodeId AND `doc`.`refId` IS NULL',
+						':nodeId' => $conditions->nodeId
+					],
+					[
+						'`doc`.`tagName` LIKE :tagNameLike',
+						':tagNameLike' => $conditions->tagNameLike
+					]
 				]
 			],
 			'options' => ['group' => 'tagName']
@@ -372,19 +493,21 @@ class NodeModel {
 			'var' => [':userId' => $userId]
 		])->count;
 	}
-	
+
 	/**
-	* Create New Node
-	* Created 2019-06-10
-	* Modify  2022-10-22
-	* @param object $topic
-	* @param object $option
-	* @return object
-	*/
+	 * Create New Node
+	 * Created 2019-06-10
+	 * Modify  2022-10-22
+	 * @param object $topic
+	 * @param object $option
+	 * @return object
+	 */
 	public static function create($topic, $options = '{}') {
 		$defaults = '{debug: false}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
+
+		$simulate = false;
 
 		$result = (object) [
 			'tpid' => null,
@@ -392,122 +515,223 @@ class NodeModel {
 			'error' => false,
 			'document' => (object) [],
 			'photo' => [],
-			'process' => [],
+			'process' => []
 		];
 
-		$error=$field_missing=$document_error=array();
+		$error = $field_missing = $document_error = [];
 
-		$result->process[]='NodeModel::save_topic '.($simulate?'<strong>simulation</strong> ':'').'request';
+		$result->process[] =
+			'NodeModel::save_topic '
+			. ($simulate ? '<strong>simulation</strong> ' : '')
+			. 'request';
 
 		// Get node type on wmpty
-		if (!$topic->type->type) $topic->type = BasicModel::get_topic_type($topic->post->type);
+		if (!$topic->type->type) {
+			$topic->type = BasicModel::get_topic_type($topic->post->type);
+		}
 
-		if (sg_invalid_poster_name($topic->post->poster)) $error[]= 'Duplicate poster name';
-		if (!i()->ok && !sg_valid_daykey(5,$_POST['daykey'])) $error[]='Invalid Anti-spam word';
+		if (sg_invalid_poster_name($topic->post->poster)) {
+			$error[] = 'Duplicate poster name';
+		}
+		if (!i()->ok && !sg_valid_daykey(5, $_POST['daykey'])) {
+			$error[] = 'Invalid Anti-spam word';
+		}
 
-		if (!i()->ok && empty($_POST['daykey'])) $topic->field_missing[]='Anti-spam word';
-		if (empty($topic->post->title)) $topic->field_missing[]= 'Title (หัวข้อ)';
-		if ($topic->type->min_word_count>0 && strlen($topic->post->body)<$topic->type->min_word_count) $topic->field_missing[]='Body (รายละเอียด อย่างน้อย '.$topic->type->min_word_count.' ตัวอักษร)';
-		if (empty($topic->post->poster)) $topic->field_missing[]='Sender (ชื่อผู้ส่ง)';
-		if (!i()->ok && cfg('topic.require.mail') && (empty($topic->post->email) || !sg_is_email($topic->post->email))) $topic->field_missing[] = 'E-mail - อีเมล์';
-		if (!i()->ok && cfg('topic.require.homepage') && empty($topic->post->website)) $topic->field_missing[] = 'Homepage - เว็บไซท์';
+		if (!i()->ok && empty($_POST['daykey'])) {
+			$topic->field_missing[] = 'Anti-spam word';
+		}
+		if (empty($topic->post->title)) {
+			$topic->field_missing[] = 'Title (หัวข้อ)';
+		}
+		if (
+			$topic->type->min_word_count > 0 &&
+			strlen($topic->post->body) < $topic->type->min_word_count
+		) {
+			$topic->field_missing[] =
+				'Body (รายละเอียด อย่างน้อย '
+				. $topic->type->min_word_count
+				. ' ตัวอักษร)';
+		}
+		if (empty($topic->post->poster)) {
+			$topic->field_missing[] = 'Sender (ชื่อผู้ส่ง)';
+		}
+		if (
+			!i()->ok &&
+			cfg('topic.require.mail') &&
+			(empty($topic->post->email) || !sg_is_email($topic->post->email))
+		) {
+			$topic->field_missing[] = 'E-mail - อีเมล์';
+		}
+		if (
+			!i()->ok &&
+			cfg('topic.require.homepage') &&
+			empty($topic->post->website)
+		) {
+			$topic->field_missing[] = 'Homepage - เว็บไซท์';
+		}
 
-		if (!user_access('upload photo') && preg_match('/\[img\]|<img|\&lt\;img|\!\[.*?\]/i',$topic->post->body)) $error[] = 'ขออภัย ท่านไม่มีสิทธิ์ในการส่งภาพ';
+		if (
+			!user_access('upload photo') &&
+			preg_match('/\[img\]|<img|\&lt\;img|\!\[.*?\]/i', $topic->post->body)
+		) {
+			$error[] = 'ขออภัย ท่านไม่มีสิทธิ์ในการส่งภาพ';
+		}
 
 		// do external module post form
-		R::On($topic->type->module.'.paper.post.check',$self,$topic,$result);
+		R::On($topic->type->module . '.paper.post.check', null, $topic, $result);
 		//if ($topic->type->module!='paper') do_class_method($topic->type->module,'__post_check',$this,$topic,$result);
 
+		if ($topic->field_missing) {
+			$error[] =
+				'กรุณาป้อนข้อมูลต่อไปนี้ให้ครบถ้วน : <ul><li>'
+				. implode('</li><li>', $topic->field_missing)
+				. '</li></ul>';
+		}
 
-		if ($topic->field_missing) $error[]='กรุณาป้อนข้อมูลต่อไปนี้ให้ครบถ้วน : <ul><li>'.implode('</li><li>',$topic->field_missing).'</li></ul>';
-
-		if (sg::is_spam_word($topic->post)) $error[]='มีข้อความที่ไม่เหมาะสมอยู่ในสิ่งที่ป้อนมา';
+		if (sg::is_spam_word($topic->post)) {
+			$error[] = 'มีข้อความที่ไม่เหมาะสมอยู่ในสิ่งที่ป้อนมา';
+		}
 
 		//up load file document
-		if (user_access('upload document') && is_uploaded_file($_FILES['document']['tmp_name'])) {
+		if (
+			user_access('upload document') &&
+			is_uploaded_file($_FILES['document']['tmp_name'])
+		) {
 			$document = (object) $_FILES['document'];
 
-			$upload_folder=cfg('paper.upload.document.folder');
-			$document->_property=sg_explode_filename($upload_folder.$document->name,'doc');
-			$document->title = \SG\getFirst($topic->post->document_title,sg_explode_filename($upload_folder.$document->name)->basename);
-			$document->name=$document->_property->name;
+			$upload_folder = cfg('paper.upload.document.folder');
+			$document->_property = sg_explode_filename(
+				$upload_folder . $document->name,
+				'doc'
+			);
+			$document->title = \SG\getFirst(
+				$topic->post->document_title,
+				sg_explode_filename($upload_folder . $document->name)->basename
+			);
+			$document->name = $document->_property->name;
 
 			if (cfg('topic.doc.file_ext')) {
-				if (!in_array($document->_property->ext,cfg('topic.doc.file_ext'))) $document_error[]='Invalid file format : Only <strong>'.implode(',',cfg('topic.doc.file_ext')).'</strong> file can be send.';
-			} else if (cfg('topic.doc.file_type')) {
-				if (!in_array($document->type,cfg('topic.doc.file_type'))) $document_error[]='Invalid file format';
+				if (!in_array($document->_property->ext, cfg('topic.doc.file_ext'))) {
+					$document_error[] =
+						'Invalid file format : Only <strong>'
+						. implode(',', cfg('topic.doc.file_ext'))
+						. '</strong> file can be send.';
+				}
+			} elseif (cfg('topic.doc.file_type')) {
+				if (!in_array($document->type, cfg('topic.doc.file_type'))) {
+					$document_error[] = 'Invalid file format';
+				}
 			}
 
 			// check duplicate filename and rename to next number
-			if (file_exists($document->_property->location) && is_file($document->_property->location)) {
-				$new_filename=sg_generate_nextfile($upload_folder,'doc',$document->_property->ext);
-				$document->_property=sg_explode_filename($new_filename);
-				$document->name=$document->_property->name;
+			if (
+				file_exists($document->_property->location) &&
+				is_file($document->_property->location)
+			) {
+				$new_filename = sg_generate_nextfile(
+					$upload_folder,
+					'doc',
+					$document->_property->ext
+				);
+				$document->_property = sg_explode_filename($new_filename);
+				$document->name = $document->_property->name;
 			}
 
 			if ($document_error) {
-				$error[]='Document upload error : <ul><li>'.implode('</li><li>',$document_error).'</li></ul>';
+				$error[] =
+					'Document upload error : <ul><li>'
+					. implode('</li><li>', $document_error)
+					. '</li></ul>';
 			} else {
 				$document->file = $document->name;
 			}
-			$result->document=$document;
+			$result->document = $document;
 		}
 
 		// Save upload video
-		if (cfg('topic.video.allow') && user_access('upload video') && is_uploaded_file($_FILES['video']['tmp_name'])) {
-			$video=(object)$_FILES['video'];
+		if (
+			cfg('topic.video.allow') &&
+			user_access('upload video') &&
+			is_uploaded_file($_FILES['video']['tmp_name'])
+		) {
+			$video = (object) $_FILES['video'];
 
-			$folder=sg_user_folder(i()->username);
-			$video->_property=sg_explode_filename($folder.$video->name,'flv');
-			$video->name=$video->_property->name;
+			$folder = sg_user_folder(i()->username);
+			$video->_property = sg_explode_filename($folder . $video->name, 'flv');
+			$video->name = $video->_property->name;
 
-			if (!(in_array($video->_property->ext,array('flv','f4v')) || in_array($video->type,array('video/x-flv')))) $video_error[]='Invalid video format. Support FLV video format only.';
+			if (
+				!(
+					in_array($video->_property->ext, ['flv', 'f4v']) ||
+					in_array($video->type, ['video/x-flv'])
+				)
+			) {
+				$video_error[] = 'Invalid video format. Support FLV video format only.';
+			}
 
 			// check duplicate filename and rename to next number
-			if (file_exists($video->_property->location) && is_file($video->_property->location)) {
-				$new_filename=sg_generate_nextfile($folder,'flv',$video->_property->ext);
-				$video->_property=sg_explode_filename($new_filename);
-				$video->name=$video->_property->name;
+			if (
+				file_exists($video->_property->location) &&
+				is_file($video->_property->location)
+			) {
+				$new_filename = sg_generate_nextfile(
+					$folder,
+					'flv',
+					$video->_property->ext
+				);
+				$video->_property = sg_explode_filename($new_filename);
+				$video->name = $video->_property->name;
 			}
 
 			if ($video_error) {
-				$error[]='Video upload error : <ul><li>'.implode('</li><li>',$video_error).'</li></ul>';
+				$error[] =
+					'Video upload error : <ul><li>'
+					. implode('</li><li>', $video_error)
+					. '</li></ul>';
 			} else {
 				$video->file = $video->name;
 			}
-			$result->video=$video;
+			$result->video = $video;
 		}
 
-
-		$result->process[]='Complete of check invalid input';
+		$result->process[] = 'Complete of check invalid input';
 
 		if ($error) {
-			$result->process[]='There is invalid input';
-			$result->error=message('error',$error);
+			$result->process[] = 'There is invalid input';
+			$result->error = message('error', $error);
 			return $result;
 		}
 
-		$result->process[]='Start <strong>saving</strong> process';
-
-
+		$result->process[] = 'Start <strong>saving</strong> process';
 
 		// start saving process
 		$topic->post->type = $topic->type->type;
-		$topic->post->promote=$topic->type->topic_options->promote?1:0;
-		if ($topic->forum->require_approve=='yes' || !user_access('post paper without approval')) {
-			$topic->post->status=_WAITING;
-		} else if ($_POST['draft']) {
-			$topic->post->status=_DRAFT;
+		$topic->post->promote = $topic->type->topic_options->promote ? 1 : 0;
+		if (
+			$topic->forum->require_approve == 'yes' ||
+			!user_access('post paper without approval')
+		) {
+			$topic->post->status = _WAITING;
+		} elseif ($_POST['draft']) {
+			$topic->post->status = _DRAFT;
 		} else {
-			$topic->post->status=_PUBLISH;
+			$topic->post->status = _PUBLISH;
 		}
 
 		$topic->post->created = $topic->post->timestamp = date('Y-m-d H:i:s');
 		$topic->post->ip = ip2long(GetEnv('REMOTE_ADDR'));
-		if ($topic->post->ip=="") $topic->post->ip='func.NULL';
+		if ($topic->post->ip == '') {
+			$topic->post->ip = 'func.NULL';
+		}
 		$topic->post->uid = i()->uid;
-		if ($topic->post->poster===i()->name) unset($topic->post->poster);
-		$topic->post->comment = SG\getFirst($topic->post->comment,$topic->type->topic_options->comment,_COMMENT_READWRITE);
+		if ($topic->post->poster === i()->name) {
+			unset($topic->post->poster);
+		}
+		$topic->post->comment = SG\getFirst(
+			$topic->post->comment,
+			$topic->type->topic_options->comment,
+			_COMMENT_READWRITE
+		);
 
 		// topic poperty
 		$topic->post->property = (object) $topic->post->property;
@@ -515,131 +739,182 @@ class NodeModel {
 		if (!isset($topic->post->property->show_photo)) {
 			$topic->post->property->show_photo = cfg('topic.property.show_photo');
 		}
-		if (!user_access('administer contents') && $topic->post->property->input_format=='php') {
+		if (
+			!user_access('administer contents') &&
+			$topic->post->property->input_format == 'php'
+		) {
 			unset($topic->post->property->input_format);
 		}
 		$topic->post->property = sg_json_encode($topic->post->property);
 		$topic->post->revid = null;
-		if (empty($topic->post->areacode)) $topic->post->areacode = null;
+		if (empty($topic->post->areacode)) {
+			$topic->post->areacode = null;
+		}
 
-		$error=null;
+		$error = null;
 
 		// check for clear sticky
-		if ($_POST['clear_sticky'] && $topic->post->sticky && user_access('administer contents,administer papers')) {
-			$sticky=cfg('sticky');
-			$result->process[]='Clear sticky of '.$sticky[$topic->post->sticky];
-			$sql_cmd='UPDATE %topic% SET sticky=0 WHERE sticky='.$topic->post->sticky;
-			mydb::query($sql_cmd,$simulate);
-			$result->process[]=R('query');
+		if (
+			$_POST['clear_sticky'] &&
+			$topic->post->sticky &&
+			user_access('administer contents,administer papers')
+		) {
+			$sticky = cfg('sticky');
+			$result->process[] = 'Clear sticky of ' . $sticky[$topic->post->sticky];
+			$sql_cmd =
+				'UPDATE %topic% SET sticky=0 WHERE sticky=' . $topic->post->sticky;
+			mydb::query($sql_cmd, $simulate);
+			$result->process[] = R('query');
 		}
 
 		// save title into topic
-		$sql_topic = mydb::create_insert_cmd('%topic%',$topic->post);
-		mydb::query($sql_topic,$topic->post);
-
-
+		$sql_topic = mydb::create_insert_cmd('%topic%', $topic->post);
+		mydb::query($sql_topic, $topic->post);
 
 		//debugMsg(R('query'));
 
-		$result->process[]=R('query');
+		$result->process[] = R('query');
 
-		if (mydb()->_error) $error['topic']='Error on create topic query command'.(user_access('access debugging program')?'<br />'.mydb()->_error:'');
+		if (mydb()->_error) {
+			$error['topic'] =
+				'Error on create topic query command'
+				. (user_access('access debugging program')
+					? '<br />' . mydb()->_error
+					: '');
+		}
 		$nodeId = $topic->tpid = $topic->post->tpid = mydb()->insert_id;
 		$result->tpid = $nodeId;
 
-		if ( $simulate ) {
-			$nodeId = $topic->tpid = $topic->post->tpid = db_query_one_cell('SELECT MAX(tpid)+1 from %topic%');
+		if ($simulate) {
+			$nodeId = $topic->tpid = $topic->post->tpid = DB::select([
+				'SELECT MAX(tpid)+1 AS `nodeId` from %topic%'
+			])->nodeId;
 		}
 
 		// save detail into revision and update revision in topic
-		$sql_detail = mydb::create_insert_cmd('%topic_revisions%',$topic->post);
+		$sql_detail = mydb::create_insert_cmd('%topic_revisions%', $topic->post);
 
 		if (!isset($error['topic'])) {
-			mydb::query($sql_detail,$topic->post);
-			if (mydb()->_error) $error['detail']='Error on create detail query command'.(user_access('access debugging program')?'<br />'.mydb()->_error:'');
-			$result->process[]=R('query');
+			mydb::query($sql_detail, $topic->post);
+			if (mydb()->_error) {
+				$error['detail'] =
+					'Error on create detail query command'
+					. (user_access('access debugging program')
+						? '<br />' . mydb()->_error
+						: '');
+			}
+			$result->process[] = R('query');
 
-			$revid=mydb()->insert_id;
+			$revid = mydb()->insert_id;
 
 			// update revision id into reference topic
-			$sql_cmd = 'UPDATE %topic% SET revid='.$revid.' WHERE tpid='.$nodeId.' LIMIT 1';
+			$sql_cmd =
+				'UPDATE %topic% SET revid='
+				. $revid
+				. ' WHERE tpid='
+				. $nodeId
+				. ' LIMIT 1';
 			mydb::query($sql_cmd);
-			$result->process[]=R('query');
+			$result->process[] = R('query');
 		}
 
 		// add taxonomy into topic_tag table
 		if ($topic->post->taxonomy) {
-			$topic_tag = array();
-			$taxonomy=$topic->post->taxonomy;
-			if (array_key_exists('tags',$taxonomy)) {
-				$tags=$taxonomy['tags'];
+			$topic_tag = [];
+			$taxonomy = $topic->post->taxonomy;
+			if (array_key_exists('tags', $taxonomy)) {
+				$tags = $taxonomy['tags'];
 				unset($taxonomy['tags']);
-			} else $tags=array();
-
-			foreach ($taxonomy as $vid=>$tids) {
-				if (is_array($tids)) {
-					foreach ($tids as $tid) if (!empty($tid)) $topic_tag[$tid]=$nodeId .' , '.$vid.' , '. $tid;
-				} else if (!empty($tids)) $topic_tag[$tids]=$nodeId .' , '.$vid.' , '. $tids;
+			} else {
+				$tags = [];
 			}
 
+			foreach ($taxonomy as $vid => $tids) {
+				if (is_array($tids)) {
+					foreach ($tids as $tid) {
+						if (!empty($tid)) {
+							$topic_tag[$tid] = $nodeId . ' , ' . $vid . ' , ' . $tid;
+						}
+					}
+				} elseif (!empty($tids)) {
+					$topic_tag[$tids] = $nodeId . ' , ' . $vid . ' , ' . $tids;
+				}
+			}
 
-			foreach ($tags as $vid=>$tag_desc) {
-				if (empty($tag_desc)) continue;
-				foreach (explode(',',$tag_desc) as $tag_name) {
-					$tag_name=trim($tag_name);
-					$tag_db = mydb::select('SELECT tid FROM %tag% WHERE `vid` = :vid AND `name` = :name LIMIT 1', ':vid', $vid, ':name', $tag_name)->tid;
+			foreach ($tags as $vid => $tag_desc) {
+				if (empty($tag_desc)) {
+					continue;
+				}
+				foreach (explode(',', $tag_desc) as $tag_name) {
+					$tag_name = trim($tag_name);
+					$tag_db = mydb::select(
+						'SELECT tid FROM %tag% WHERE `vid` = :vid AND `name` = :name LIMIT 1',
+						':vid',
+						$vid,
+						':name',
+						$tag_name
+					)->tid;
 					$result->process[] = R('query');
-					$tid =  $tag_db ? $tag_db : BasicModel::add_taxonomy($vid,$tag_name);
-					$topic_tag[$tid] = $nodeId .' , '.$vid.' , '. $tid;
+					$tid = $tag_db ? $tag_db : BasicModel::add_taxonomy($vid, $tag_name);
+					$topic_tag[$tid] = $nodeId . ' , ' . $vid . ' , ' . $tid;
 				}
 			}
 
 			$result->process[] = print_o($topic_tag, '$topic_tag');
 			if ($topic_tag) {
-				mydb::query('INSERT INTO %tag_topic% ( `tpid` , `vid` , `tid` ) VALUES ( ' . implode(' ) , ( ',$topic_tag) .' ) ',$simulate);
-				$result->process[]=R('query');
+				mydb::query(
+					'INSERT INTO %tag_topic% ( `tpid` , `vid` , `tid` ) VALUES ( '
+						. implode(' ) , ( ', $topic_tag)
+						. ' ) ',
+					$simulate
+				);
+				$result->process[] = R('query');
 
-				$stmt = 'SELECT tid,name FROM %tag% WHERE tid IN ('.implode(',',array_keys($topic_tag)).')';
+				$stmt =
+					'SELECT tid,name FROM %tag% WHERE tid IN ('
+					. implode(',', array_keys($topic_tag))
+					. ')';
 				$topic->tags = mydb::select($stmt)->items;
-				$result->process[]=R('query');
+				$result->process[] = R('query');
 			}
-
 		}
-		$result->process[]=print_o($taxonomy,'$taxonomy');
+		$result->process[] = print_o($taxonomy, '$taxonomy');
 
 		// Save upload photo to folder and add to table
 		if (user_access('upload photo') && !$error) {
-			$desc=(object)post('topic[photo_desc]',_TRIM+_STRIPTAG);
-			$desc->tpid=$nodeId;
-			$desc->cid=0;
-			$desc->type='photo';
-			$desc->timestamp='func.NOW()';
+			$desc = (object) post('topic[photo_desc]', _TRIM + _STRIPTAG);
+			$desc->tpid = $nodeId;
+			$desc->cid = 0;
+			$desc->type = 'photo';
+			$desc->timestamp = 'func.NOW()';
 			$desc->ip = ip2long(GetEnv('REMOTE_ADDR'));
 			$desc->uid = i()->uid;
 
-			$photos= array();
+			$photos = [];
 			// convert multiple upload file to each upload file
 			if (is_string($_FILES['photo']['name'])) {
-				$photos[]=(object)$_FILES['photo'];
+				$photos[] = (object) $_FILES['photo'];
 			} elseif (is_array($_FILES['photo']['name'])) {
-				foreach ($_FILES['photo']['name'] as $key=>$name) {
-					$photos[$key]->name=$_FILES['photo']['name'][$key];
-					$photos[$key]->type=$_FILES['photo']['type'][$key];
-					$photos[$key]->tmp_name=$_FILES['photo']['tmp_name'][$key];
-					$photos[$key]->error=$_FILES['photo']['error'][$key];
-					$photos[$key]->size=$_FILES['photo']['size'][$key];
+				foreach ($_FILES['photo']['name'] as $key => $name) {
+					$photos[$key]->name = $_FILES['photo']['name'][$key];
+					$photos[$key]->type = $_FILES['photo']['type'][$key];
+					$photos[$key]->tmp_name = $_FILES['photo']['tmp_name'][$key];
+					$photos[$key]->error = $_FILES['photo']['error'][$key];
+					$photos[$key]->size = $_FILES['photo']['size'][$key];
 				}
 			}
 
-			$uploads=array();
+			$uploads = [];
 			foreach ($photos as $photo) {
-				if (!is_uploaded_file($photo->tmp_name)) continue;
-				$photo_result=$result->photo[] = R::Model('photo.save',$photo);
+				if (!is_uploaded_file($photo->tmp_name)) {
+					continue;
+				}
+				$photo_result = $result->photo[] = R::Model('photo.save', $photo);
 				if ($photo_result->complete && $photo_result->save->_file) {
-					$desc->file=$photo_result->save->_file;
-					$sql_cmd = mydb::create_insert_cmd('%topic_files%',$desc);
-					mydb::query($sql_cmd,$desc);
-					$result->process[]=R('query');
+					$desc->file = $photo_result->save->_file;
+					$sql_cmd = mydb::create_insert_cmd('%topic_files%', $desc);
+					mydb::query($sql_cmd, $desc);
+					$result->process[] = R('query');
 				}
 			}
 		}
@@ -647,83 +922,87 @@ class NodeModel {
 		// Save document file to folder and add to table
 		if ($document->file && !$error) {
 			if (!$simulate) {
-				if (copy($document->tmp_name,$document->_property->location)) {
-					if (cfg('upload.file.chmod')) chmod($document->dest,cfg('upload.file.chmod'));
+				if (copy($document->tmp_name, $document->_property->location)) {
+					if (cfg('upload.file.chmod')) {
+						chmod($document->dest, cfg('upload.file.chmod'));
+					}
 				}
 				$document->tpid = $nodeId;
 				$document->cid = 0;
 				$document->type = 'doc';
 				$document->description = $topic->post->document_description;
-				$document->timestamp='func.NOW()';
+				$document->timestamp = 'func.NOW()';
 				$document->ip = ip2long(GetEnv('REMOTE_ADDR'));
 				$document->uid = i()->uid;
-				$sql_doc = mydb::create_insert_cmd('%topic_files%',$document);
-				$result->process[]='Saving upload document to '.$document->dest;
-				mydb::query($sql_doc,$document);
-				$result->process[]=R('query');
-				$result->document=$document;
+				$sql_doc = mydb::create_insert_cmd('%topic_files%', $document);
+				$result->process[] = 'Saving upload document to ' . $document->dest;
+				mydb::query($sql_doc, $document);
+				$result->process[] = R('query');
+				$result->document = $document;
 			}
 		}
 
 		if (cfg('topic.video.allow') && $video->file && !$error) {
 			if (!$simulate) {
-				if (copy($video->tmp_name,$video->_property->location)) {
-					if (cfg('upload.file.chmod')) chmod($video->_property->location,cfg('upload.file.chmod'));
+				if (copy($video->tmp_name, $video->_property->location)) {
+					if (cfg('upload.file.chmod')) {
+						chmod($video->_property->location, cfg('upload.file.chmod'));
+					}
 				}
 				$video->tpid = $nodeId;
 				$video->cid = 0;
 				$video->type = 'movie';
 				$video->title = $topic->post->document_title;
 				$video->description = $topic->post->document_description;
-				$video->timestamp='func.NOW()';
+				$video->timestamp = 'func.NOW()';
 				$video->ip = ip2long(GetEnv('REMOTE_ADDR'));
 				$video->uid = i()->uid;
-				$sql_doc = mydb::create_insert_cmd('%topic_files%',$video);
-				$result->process[]='Saving upload document to '.$video->_property->location;
-				mydb::query($sql_doc,$video);
-				$result->process[]=R('query');
-				$result->video=$video;
+				$sql_doc = mydb::create_insert_cmd('%topic_files%', $video);
+				$result->process[] =
+					'Saving upload document to ' . $video->_property->location;
+				mydb::query($sql_doc, $video);
+				$result->process[] = R('query');
+				$result->video = $video;
 			}
 		}
 
 		//		if ($topic->type->module!='paper') do_class_method($topic->type->module,'_post',$this,$topic);
 
 		if ($error) {
-			$result->error='Create topic error : <ul><li>'.implode('</li><li>',(array)$error).'</li></ul>';
+			$result->error =
+				'Create topic error : <ul><li>'
+				. implode('</li><li>', (array) $error)
+				. '</li></ul>';
 		} else {
-			$result->complete=true;
+			$result->complete = true;
 		}
-		$result->process[]='NodeModel::save_topic complete';
+		$result->process[] = 'NodeModel::save_topic complete';
 		return $result;
 	}
 
 	/**
-	* Node Delete
-	*
-	* @param object $nodeId
-	* @return object $options
-	*/
+	 * Node Delete
+	 *
+	 * @param object $nodeId
+	 * @return object $options
+	 */
 	public static function delete($nodeId) {
-		$defaults = '{debug: false, simulate: false}';
-		$options = sg_json_decode($options, $defaults);
-		$debug = $options->debug;
-
 		$result = (object) [
 			'complete' => false,
 			'error' => false,
-			'process' => ['NodeModel:::delete() request'],
+			'process' => ['NodeModel:::delete() request']
 		];
 
-		$simulate = $options->simulate;
+		$simulate = false;
 
 		$result->data = DB::select([
 			'SELECT * FROM %topic%
 			WHERE `tpid` = :tpid LIMIT 1',
-			'var' => [':tpid' => $nodeId],
+			'var' => [':tpid' => $nodeId]
 		]);
 
 		// delete topic
-		$result->process[]='Delete paper topic and re-autoindex';
+		$result->process[] = 'Delete paper topic and re-autoindex';
 		DB::query([
 			'DELETE FROM %topic% WHERE `tpid` = :tpid LIMIT 1',
 			'var' => [':tpid' => $nodeId]
@@ -787,17 +1066,20 @@ class NodeModel {
 		$result->process[] = R('query');
 
 		foreach ($photoDbs->items as $photo) {
-			$filename = cfg('folder.abs').cfg('upload_folder').'pics/'.$photo->file;
+			$filename =
+				cfg('folder.abs') . cfg('upload_folder') . 'pics/' . $photo->file;
 			if (file_exists($filename) and is_file($filename)) {
 				if (self::photoInUsed($photo->file, $photo->fid)) {
-					$result->process[] = 'File <em>'.$photo->_file.'</em> was used by other item';
+					$result->process[] =
+						'File <em>' . $photo->_file . '</em> was used by other item';
 				} else {
-					$result->process[] = '<em>Delete file '.$filename.'</em>';
-					if (!$simulate) unlink($filename);
+					$result->process[] = '<em>Delete file ' . $filename . '</em>';
+					if (!$simulate) {
+						unlink($filename);
+					}
 				}
 			}
 		}
-
 
 		// delete documents
 		$result->process[] = 'Delete document';
@@ -813,10 +1095,13 @@ class NodeModel {
 		]);
 		$result->process[] = R('query');
 
-		foreach ( $docDbs->items as $rs ) {
-			$filename = cfg('folder.abs').cfg('upload_folder').'forum/'.$rs->file;
-			$result->process[] = '<em>Delete document '.$filename.'</em>';
-			if (!$simulate && file_exists($filename) && is_file($filename)) unlink($filename);
+		foreach ($docDbs->items as $rs) {
+			$filename =
+				cfg('folder.abs') . cfg('upload_folder') . 'forum/' . $rs->file;
+			$result->process[] = '<em>Delete document ' . $filename . '</em>';
+			if (!$simulate && file_exists($filename) && is_file($filename)) {
+				unlink($filename);
+			}
 		}
 
 		/*
@@ -847,13 +1132,13 @@ class NodeModel {
 		LogModel::save([
 			'module' => 'paper',
 			'keyword' => 'Paper delete',
-			'message' => 'paper/'.$nodeId.' - '.$result->data->title.' was delete'
+			'message' =>
+				'paper/' . $nodeId . ' - ' . $result->data->title . ' was delete'
 		]);
 
 		// delete was complete
 		$result->complete = true;
 		$result->process[] = 'NodeModel::delete() complete';
-
 
 		// Call node delete complete
 		// TODO : Do it later
@@ -871,7 +1156,7 @@ class NodeModel {
 		$result = (object) [
 			'complete' => false,
 			'error' => false,
-			'process' => ['Node comment '.$commentId.' delete request'],
+			'process' => ['Node comment ' . $commentId . ' delete request']
 		];
 
 		$simulate = debug('simulate');
@@ -879,7 +1164,7 @@ class NodeModel {
 		if (empty($commentId)) {
 			return (object) [
 				'error' => true,
-				'message' => 'Comment ID is empty',
+				'message' => 'Comment ID is empty'
 			];
 		}
 
@@ -888,7 +1173,9 @@ class NodeModel {
 			'var' => [':commentId' => $commentId]
 		]);
 
-		if (empty($toDelete->commentId)) return (object) ['error' => true, 'message' => 'Nothing to delete'];
+		if (empty($toDelete->commentId)) {
+			return (object) ['error' => true, 'message' => 'Nothing to delete'];
+		}
 
 		$result->process[] = 'Process delete file of comment';
 		$photoDbs = DB::select([
@@ -899,7 +1186,8 @@ class NodeModel {
 		// Delete comment file
 		$result->process[] = R('query');
 		foreach ($photoDbs->items as $photo) {
-			$result->process[] = 'Delete comment file '.$photo->fileId.' : '.$photo->file;
+			$result->process[] =
+				'Delete comment file ' . $photo->fileId . ' : ' . $photo->file;
 			$fileResult = FileModel::delete($photo->fileId, $photo->file);
 		}
 
@@ -927,35 +1215,36 @@ class NodeModel {
 		LogModel::save([
 			'module' => 'paper',
 			'keyword' => 'Paper comment delete',
-			'message' => 'Delete comment id '.$commentId.' of <a href="'.url('paper/'.$toDelete->nodeId).'">paper/'.$toDelete->nodeId.'</a>'
+			'message' =>
+				'Delete comment id '
+				. $commentId
+				. ' of <a href="'
+				. url('paper/' . $toDelete->nodeId)
+				. '">paper/'
+				. $toDelete->nodeId
+				. '</a>'
 		]);
 
 		return $result;
 	}
 
 	public static function deleteAllUserNode($userId) {
-		if (empty($userId)) return false;
+		if (empty($userId)) {
+			return false;
+		}
 
 		R::Manifest('project');
 
 		$dbs = DB::select([
 			'SELECT `tpid`, `type`, `title`
 			 FROM %topic%
-			 WHERE `uid` = :uid
+			 WHERE `uid` = :uid AND `type` IN ("story", "page", "forum")
 			 ORDER BY `created` DESC',
-			 'var' => [':uid' => $userId]
+			'var' => [':uid' => $userId]
 		]);
 
 		// Delete node
 		foreach ($dbs->items as $rs) {
-			if (!in_array($rs->type, ['story', 'page', 'forum', 'project-develop'])) continue;
-			if (empty($rs->tpid)) continue;
-
-			if ($rs->type === 'project-develop') {
-				ProjectProposalModel::delete($rs->tpid);
-				continue;
-			}
-
 			$nodeDeleteResult = self::delete($rs->tpid);
 			if ($nodeDeleteResult->complete) {
 				// $ret .= 'Topic '.$rs->tpid.' DELETED<br />';
@@ -964,13 +1253,15 @@ class NodeModel {
 	}
 
 	public static function deleteAllUserComment(int $userId) {
-		if (empty($userId)) return false;
+		if (empty($userId)) {
+			return false;
+		}
 
 		$comments = DB::select([
 			'SELECT `cid` `commentId`, `tpid`
 			 FROM %topic_comments%
 			 WHERE `uid` = :userId',
-			 'var' => [':userId' => $userId]
+			'var' => [':userId' => $userId]
 		])->items;
 
 		foreach ($comments as $comment) {
@@ -1002,7 +1293,9 @@ class NodeModel {
 
 	public static function photoInUsed($fileName, $fileId) {
 		$fileName = trim($fileName);
-		if (empty($fileName) || empty($fileId)) return false;
+		if (empty($fileName) || empty($fileId)) {
+			return false;
+		}
 
 		return DB::SELECT([
 			'SELECT COUNT(*) `amt` FROM %topic_files% WHERE `file` = :fileName AND `fid` != :fileId LIMIT 1',
@@ -1055,7 +1348,9 @@ class NodeModel {
 	}
 
 	public static function hideCommentById(int $commentId) {
-		if (empty($commentId)) return false;
+		if (empty($commentId)) {
+			return false;
+		}
 
 		DB::query([
 			'UPDATE %topic_comments% SET
