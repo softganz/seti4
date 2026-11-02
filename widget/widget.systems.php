@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-02
- * Version  :: 105
+ * Version  :: 106
  *
  * @param array $args
  *
@@ -649,8 +649,28 @@ class Header extends Widget {
 	public $subTitle = '';
 	public $trailing = '';
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		mixed $title = null,
+		mixed $leading = null,
+		mixed $trailing = null,
+		bool $debug = false
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'title' => $title,
+					'leading' => $leading,
+					'trailing' => $trailing,
+					'debug' => $debug
+				],
+				$args
+			)
+		);
 	}
 
 	// @override
@@ -1327,6 +1347,7 @@ class Button extends Widget {
 			$this->itemClass,
 			$this->childTagName
 		);
+		if ($this->debug) debugMsg($this, 'Icon');
 	}
 
 	function toString() {
