@@ -3,8 +3,8 @@
  * Widget   :: Report Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-02
- * Version  :: 16
+ * Modified :: 2026-11-02
+ * Version  :: 17
  *
  * @param Array $args
  *
@@ -19,12 +19,15 @@ class Report extends Widget {
 	var $dataType = 'json';
 	var $graphType = 'Bar';
 	var $class = 'sg-drawreport';
+	var $metric;
 	var $submitIcon;
 	var $submitText;
 	var $filterBar;
 	var $showArrowLeft;
 	var $showArrowRight;
 	var $filterPretext;
+	var $callback;
+	var $data;
 	var $showPage = false;
 	var $debug = false;
 	var $input = [];
@@ -32,14 +35,16 @@ class Report extends Widget {
 	var $filter = [];
 	var $output = [];
 
-	function __construct($queryUrl, $class = NULL) {
+	function __construct($queryUrl, $class = null) {
 		$this->initConfig();
 
 		if (is_array($queryUrl)) {
 			parent::__construct($queryUrl);
 		} else {
 			$this->queryUrl = $queryUrl;
-			if ($class) $this->class = $this->class . ' ' . $class;
+			if ($class) {
+				$this->class = $this->class . ' ' . $class;
+			}
 		}
 	}
 
@@ -47,41 +52,68 @@ class Report extends Widget {
 		$this->filter[$key] = $value;
 	}
 
-	function output($key, $html = NULL) {
+	function output($key, $html = null) {
 		$this->output[$key] = $html;
 	}
 
 	function renderCheckbox($items, $filterValue) {
-		if (is_scalar($items)) return [$items];
+		if (is_scalar($items)) {
+			return [$items];
+		}
 
 		$inputs = [];
-		foreach ($items as $selKey => $selVal) {
-			$inputType = \SG\getFirst($filterValue['type'], 'checkbox');
+		foreach ((array) $items as $selKey => $selVal) {
+			$inputType = \SG\getFirst($filterValue['type'] ?? null, 'checkbox');
 			$inputTypeMultiple = $inputType === 'checkbox';
-			$selItem = (Object) [];
+			$selItem = (object) [];
 			if (is_string($selVal)) {
 				$selItem->label = $selVal;
-			} else if (is_array($selVal)) {
-				$selItem = (Object) $selVal;
-			} else if (is_object($selVal)) {
+			} elseif (is_array($selVal)) {
+				$selItem = (object) $selVal;
+			} elseif (is_object($selVal)) {
 				// Do nothing
 			} else {
 				continue;
 			}
 
-			$filter = \SG\getFirst(is_object($selItem) ? $selItem->filter : NULL, $filterValue['name'], $filterValue['filter']);
+			$filter = \SG\getFirst(
+				is_object($selItem) ? $selItem->filter ?? null : null,
+				$filterValue['name'] ?? null,
+				$filterValue['filter'] ?? null
+			);
 
-			$renderItem = '<abbr class="' . (preg_match('/^\t/', $selItem->label) ? '-level-2' : '') . '">'
+			$renderItem =
+				'<abbr class="'
+				. (preg_match('/^\t/', $selItem->label) ? '-level-2' : '')
+				. '">'
 				. '<label>'
 				. '<input '
-				. 'id="' . $filter . '_' . $selKey . '" '
-				. 'class="-checkbox-' . $filter . ' -filter-checkbox' . ($filterValue['class'] ? ' ' . $filterValue['class'] : '') . '" '
-				. 'type="' . $inputType . '" '
-				. 'name="' . $filter . ($inputTypeMultiple ? '[]' : '') . '" '
-				. 'value="' . $selKey . '" '
-				. sg_implode_attr($selItem->attribute) . ' '
+				. 'id="'
+				. $filter
+				. '_'
+				. $selKey
+				. '" '
+				. 'class="-checkbox-'
+				. $filter
+				. ' -filter-checkbox'
+				. (!empty($filterValue['class']) ? ' ' . $filterValue['class'] : '')
+				. '" '
+				. 'type="'
+				. $inputType
+				. '" '
+				. 'name="'
+				. $filter
+				. ($inputTypeMultiple ? '[]' : '')
+				. '" '
+				. 'value="'
+				. $selKey
+				. '" '
+				. sg_implode_attr($selItem->attribute ?? [])
+				. ' '
 				. '/>'
-				. '<span>' . $selItem->label . '</span>'
+				. '<span>'
+				. $selItem->label
+				. '</span>'
 				. '</label>';
 			$renderItem .= '</abbr>';
 			$inputs[] = $renderItem;
@@ -93,27 +125,46 @@ class Report extends Widget {
 		// Render filter
 		$groupUi = new Ui();
 		foreach ($this->filter as $filterKey => $filterValue) {
-			if (is_null($filterValue)) continue;
+			if (is_null($filterValue)) {
+				continue;
+			}
 
 			if (is_object($filterValue)) {
 				$groupUi->add($this->renderEachChildWidget($filterValue));
-			} else if (is_array($filterValue)) {
-				$groupUiStr = $filterValue['group'] ? '<span class="-group-name"><a class="-submit -submit-group" href="#' . $filterKey . '"><span>' . $filterValue['group'] . '</span></a></span>' : '';
-				$groupUiStr .= (new Dropbox([
+			} elseif (is_array($filterValue)) {
+				$groupUiStr = !empty($filterValue['group'])
+					? '<span class="-group-name"><a class="-submit -submit-group" href="#'
+						. $filterKey
+						. '"><span>'
+						. $filterValue['group']
+						. '</span></a></span>'
+					: '';
+				$groupUiStr .= new Dropbox([
 					'text' => $filterValue['text'],
 					'position' => 'right',
 					'childrenContainer' => ['tagName' => 'ul', 'class' => '-checkbox'],
-					'children' => $this->renderCheckbox($filterValue['choices'] ?? $filterValue['choice'], $filterValue),
+					'children' => $this->renderCheckbox(
+						$filterValue['choices'] ?? ($filterValue['choice'] ?? null),
+						$filterValue
+					),
 					'footer' => new Widget([
 						'children' => [
-							'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()"><i class="icon -material">done</i><span>Apply</span></a></nav>',
-						],
-					]),
-				]))->build();
-				$groupUiStr .= '<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>' . _NL;
+							'<nav class="nav -footer"><a class="btn -primary -submit" onClick="$(\'.sg-dropbox\').children(\'div\').hide()"><i class="icon -material">done</i><span>Apply</span></a></nav>'
+						]
+					])
+				])->build();
+				$groupUiStr .=
+					'<span class="-check-count -hidden"><span class="-amt"></span><span class="-unit">ตัวกรอง</span></span>'
+					. _NL;
 				$groupUi->add(
 					$groupUiStr,
-					'{class: "' . ('-group-'.$filterValue['filter']) . ($filterValue['active'] ? '-active' : '') . ($filterValue['group'] ? '' : ' -no-name') . '"}'
+					'{class: "'
+						. ('-group-' . $filterValue['filter'])
+						. (isset($filterValue['active']) && $filterValue['active']
+							? '-active'
+							: '')
+						. (!empty($filterValue['group']) ? '' : ' -no-name')
+						. '"}'
 				);
 			} else {
 				$groupUi->add($filterValue);
@@ -121,17 +172,19 @@ class Report extends Widget {
 		}
 
 		// Render widget container
-		$ret = $this->renderWidgetContainerStart(function() {
+		$ret = $this->renderWidgetContainerStart(function () {
 			$attributes = [
 				'data-query' => $this->queryUrl,
 				'data-callback' => $this->callback,
 				'data-options' => [
-					'dataType' => $this->dataType,
-				],
+					'dataType' => $this->dataType
+				]
 			];
-			if ($this->debug) $attributes['data-options']['debug'] = true;
+			if ($this->debug) {
+				$attributes['data-options']['debug'] = true;
+			}
 
-			foreach ($this->data as $key => $value) {
+			foreach ((array) $this->data as $key => $value) {
 				$attributes[$key] = $value;
 			}
 
@@ -147,47 +200,78 @@ class Report extends Widget {
 			'class' => 'form',
 			'action' => 'javascript:void(0)',
 			'children' => [
-				'<input type="hidden" name="dataType" value="' . $this->dataType . '" />',
+				'<input type="hidden" name="dataType" value="'
+				. $this->dataType
+				. '" />',
 				'<input type="hidden" name="r" id="reporttype" value="" />',
-				'<input type="hidden" name="g" id="graphtype" value="' . $this->graphType . '" />',
+				'<input type="hidden" name="g" id="graphtype" value="'
+				. $this->graphType
+				. '" />',
 				'<input type="hidden" name="metric" id="metric" value="" />',
-				new Children(['children' => (Array) $this->input]),
+				new Children(['children' => (array) $this->input]),
 				// ...$this->input, // error on php 7.2
-				$this->showPage ? '<input id="page" type="hidden" name="page" value="" />' : '',
-				$this->debug && user_access('access debugging program') ? '<input type="hidden" name="debug" value="report" />' : '',
+				$this->showPage
+					? '<input id="page" type="hidden" name="page" value="" />'
+					: '',
+				$this->debug && user_access('access debugging program')
+					? '<input type="hidden" name="debug" value="report" />'
+					: '',
 
 				'<div class="-toolbar">',
 				// Metric
-				'<div class="-metric">' . $this->renderChildren($this->metric) . '</div><!-- -metric -->',
+				'<div class="-metric">'
+				. $this->renderChildren($this->metric)
+				. '</div><!-- -metric -->',
 				// filter bar & submit button
 				'<div class="-filter">'
-					. '<span class="-title -text">'
-					. (is_array($this->filterBar) ? $this->renderEachChildWidget(\SG\getFirst($this->filterBar['title'], '{tr:Filter by}')) : \SG\getFirst($this->filterBar, '{tr:Filter by}'))
-					. '</span>'
-					. '<span id="toolbar-report-filter" class="-select">'
-					. ($this->filterPretext ? $this->renderEachChildWidget($this->filterPretext) : '')
-					. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item"></span>'
-					. '</span><!-- toolbar-report-filter -->'
-					. '<span class="">'
-					. '<button class="btn -primary -submit" type="submit">' . ($this->submitIcon ? $this->submitIcon : '<i class="icon -material">search</i>') . ($this->submitText ? '<span>'.$this->submitText.'</span>' : '') . '</button>'
-					. '</span>' . _NL
-					. '</div><!-- -filter -->' . _NL,
+				. '<span class="-title -text">'
+				. (is_array($this->filterBar)
+					? $this->renderEachChildWidget(
+						\SG\getFirst($this->filterBar['title'], '{tr:Filter by}')
+					)
+					: \SG\getFirst($this->filterBar, '{tr:Filter by}'))
+				. '</span>'
+				. '<span id="toolbar-report-filter" class="-select">'
+				. ($this->filterPretext
+					? $this->renderEachChildWidget($this->filterPretext)
+					: '')
+				. '<span id="toolbar-report-filter-items" class="toolbar-report-filter-items -item"></span>'
+				. '</span><!-- toolbar-report-filter -->'
+				. '<span class="">'
+				. '<button class="btn -primary -submit" type="submit">'
+				. ($this->submitIcon
+					? $this->submitIcon
+					: '<i class="icon -material">search</i>')
+				. ($this->submitText ? '<span>' . $this->submitText . '</span>' : '')
+				. '</button>'
+				. '</span>'
+				. _NL
+				. '</div><!-- -filter -->'
+				. _NL,
 
 				// Filter & Metric
-				($groupUi->count() ?
-					'<div class="-group">' . _NL
-						. ($this->showArrowLeft ? '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>' : '')
-						. $groupUi->build() . _NL
-						. ($this->showArrowRight ? '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>' . _NL : '')
-						. '</div>' . _NL
-					: ''),
+				$groupUi->count()
+					? '<div class="-group">'
+						. _NL
+						. ($this->showArrowLeft
+							? '<a class="group-nav -left"><i class="icon -material">navigate_before</i></a>'
+							: '')
+						. $groupUi->build()
+						. _NL
+						. ($this->showArrowRight
+							? '<a class="group-nav -right"><i class="icon -material">navigate_next</i></a>'
+								. _NL
+							: '')
+						. '</div>'
+						. _NL
+					: '',
 				// Option bar
 				new Row([
 					'tagName' => 'div',
 					'class' => '-options',
-					'children' => $this->optionBar,
+					'children' => $this->optionBar
 				]),
-				'</div><!-- toolbar -report -->' . _NL,
+				'</div><!-- toolbar -report -->' . _NL
 			]
 		]);
 
@@ -197,15 +281,23 @@ class Report extends Widget {
 			'class' => 'report-output',
 			'children' => array_replace(
 				[
-					'debug' => '<div id="report-output-debug" class="report-output-debug debug-msg"></div>'
+					'debug' =>
+						'<div id="report-output-debug" class="report-output-debug debug-msg"></div>'
 				],
 				array_map(
-					function($html, $key) {
-						return '<div id="report-output-' . $key . '" class="report-output-' . $key.'">' . $html . '</div>';
+					function ($html, $key) {
+						return '<div id="report-output-'
+							. $key
+							. '" class="report-output-'
+							. $key
+							. '">'
+							. $html
+							. '</div>';
 					},
-					$this->output, array_keys($this->output)
+					$this->output,
+					array_keys($this->output)
 				)
-			),
+			)
 		]);
 
 		$ret .= $this->renderChildren($this->children());
