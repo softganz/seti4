@@ -3,8 +3,8 @@
  * Widget   :: Sign Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-20
- * Modified :: 2026-10-25
- * Version  :: 12
+ * Modified :: 2026-11-02
+ * Version  :: 13
  *
  * @param Array $args
  *
@@ -131,9 +131,9 @@ class SignForm extends Widget {
 							'name' => 'signin',
 							'class' => '-primary -fill',
 							'value' =>
-								'<i class="icon -material">login</i><span>' .
-								tr('Sign in') .
-								'</span>'
+								'<i class="icon -material">login</i><span>'
+								. tr('Sign in')
+								. '</span>'
 						],
 						$this->postText ? $this->postText : null
 					] // children
@@ -145,9 +145,9 @@ class SignForm extends Widget {
 						'class' => '-fill',
 						'href' => 'javascript:void(0)',
 						'onClick' =>
-							'window.location="' .
-							Url::link('user/password') .
-							'";return false;',
+							'window.location="'
+							. Url::link('user/password')
+							. '";return false;',
 						'icon' => new Icon('restore'),
 						'text' => tr('Request new password') . '?'
 					])
@@ -216,39 +216,39 @@ function widget_signform() {
 	$ret = '';
 
 	$ret .=
-		'<a href="' .
-		url('my') .
-		'">' .
-		(i()->ok
-			? '<img class="profile-photo" src="' .
-				BasicModel::user_photo(i()->username) .
-				'" width="32" height="32" />'
-			: '<i class="icon -material">person</i>') .
-		'<span>' .
-		(i()->ok
+		'<a href="'
+		. url('my')
+		. '">'
+		. (i()->ok
+			? '<img class="profile-photo" src="'
+				. BasicModel::user_photo(i()->username)
+				. '" width="32" height="32" />'
+			: '<i class="icon -material">person</i>')
+		. '<span>'
+		. (i()->ok
 			? '<strong>' . i()->name . '</strong>'
-			: tr('Member zone', 'มุมสมาชิก')) .
-		'</span>' .
-		'</a>';
+			: tr('Member zone', 'มุมสมาชิก'))
+		. '</span>'
+		. '</a>';
 
 	if (i()->ok) {
 		$ret .= '<ul class="menu -sub -member">' . _NL;
 		$ret .=
-			'<li><a href="' .
-			url('my') .
-			'">' .
-			tr('Welcome') .
-			' ' .
-			i()->name .
-			'</a></li>' .
-			_NL;
+			'<li><a href="'
+			. url('my')
+			. '">'
+			. tr('Welcome')
+			. ' '
+			. i()->name
+			. '</a></li>'
+			. _NL;
 		$ret .=
-			'<li><a href="' .
-			url('my') .
-			'">' .
-			tr('Edit My <strong>Profile</strong>') .
-			'</a></li>' .
-			_NL;
+			'<li><a href="'
+			. url('my')
+			. '">'
+			. tr('Edit My <strong>Profile</strong>')
+			. '</a></li>'
+			. _NL;
 		if ($para->{'data-paper'}) {
 			foreach (explode(',', $para->{'data-paper'}) as $fid) {
 				[$fid, $text] = explode(':', $fid);
@@ -257,12 +257,12 @@ function widget_signform() {
 					: tr('Create') . ' <strong>' . $fid . '</strong> ' . tr('content');
 				if (user_access('administer papers,create ' . $fid . ' paper')) {
 					$ret .=
-						'<li><a href="' .
-						url('paper/post/' . $fid) .
-						'">' .
-						$text .
-						'</a></li>' .
-						_NL;
+						'<li><a href="'
+						. url('paper/post/' . $fid)
+						. '">'
+						. $text
+						. '</a></li>'
+						. _NL;
 				}
 			}
 		}
@@ -276,61 +276,61 @@ function widget_signform() {
 			foreach ($para->menu as $menu) {
 				if (user_access($menu['access'])) {
 					$ret .=
-						'<li class="member-zone-link">' .
-						'<a href="' .
-						$menu['url'] .
-						'">' .
-						$menu['text'] .
-						'</a>' .
-						'</li>' .
-						_NL;
+						'<li class="member-zone-link">'
+						. '<a href="'
+						. $menu['url']
+						. '">'
+						. $menu['text']
+						. '</a>'
+						. '</li>'
+						. _NL;
 				}
 			}
 		}
 
 		if (module_install('blog')) {
 			$ret .=
-				'<li><a href="' .
-				url('dashboard') .
-				'">บล็อก (Blog) ของฉัน</a></li>' .
-				_NL;
+				'<li><a href="'
+				. url('dashboard')
+				. '">บล็อก (Blog) ของฉัน</a></li>'
+				. _NL;
 		}
 
 		if (module_install('paper')) {
 			$ret .=
-				'<li><a class="-new" href="' .
-				url('paper/my') .
-				'">จัดการเอกสาร</a></li>' .
-				_NL;
+				'<li><a class="-new" href="'
+				. url('paper/my')
+				. '">จัดการเอกสาร</a></li>'
+				. _NL;
 		}
 
 		if (user_access('access administrator pages')) {
 			$ret .=
-				'<li><a href="' .
-				url('admin') .
-				'">Website <strong>Admin</strong>istrator</a></li>' .
-				_NL;
+				'<li><a href="'
+				. url('admin')
+				. '">Website <strong>Admin</strong>istrator</a></li>'
+				. _NL;
 		}
 
 		$ret .=
-			'<li><a href="' .
-			url('signout') .
-			'">' .
-			tr('Sign out') .
-			'</a></li>' .
-			_NL;
+			'<li><a href="'
+			. url('signout')
+			. '">'
+			. tr('Sign out')
+			. '</a></li>'
+			. _NL;
 		$ret .= '</ul>' . _NL;
 	} elseif ($para->form == 'link') {
 		$ret .=
-			'<ul><li><a href="' .
-			url('user') .
-			'">' .
-			tr('Sign in') .
-			'</a></li><li><a href="' .
-			url('user/register') .
-			'">' .
-			tr('Create Account') .
-			'!</a></li></ul>';
+			'<ul><li><a href="'
+			. url('user')
+			. '">'
+			. tr('Sign in')
+			. '</a></li><li><a href="'
+			. url('user/register')
+			. '">'
+			. tr('Create Account')
+			. '!</a></li></ul>';
 	} else {
 		//			$ret.='$_GET[action]='.$_GET['action'].' , $para->actiion='.$para->action.' , _URL='._URL.' , HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 
@@ -386,22 +386,22 @@ function widget_signform() {
 					'type' => 'button',
 					'name' => 'signin',
 					'value' =>
-						'<i class="icon -material">login</i><span>' .
-						tr('Sign in') .
-						'</span>'
+						'<i class="icon -material">login</i><span>'
+						. tr('Sign in')
+						. '</span>'
 				],
 				user_access('register new member')
-					? '<a class="btn -link" href="' .
-						url('user/register') .
-						'"><i class="icon -material">person_add</i><span>' .
-						tr('Create new account') .
-						'</span></a>'
+					? '<a class="btn -link" href="'
+						. url('user/register')
+						. '"><i class="icon -material">person_add</i><span>'
+						. tr('Create new account')
+						. '</span></a>'
 					: null,
-				'<a class="btn -link" href="#" onclick="window.location=\'' .
-				url('user/password') .
-				'\';return false;"><i class="icon -material">restore</i><span>' .
-				tr('Request new password') .
-				'?</span></a>'
+				'<a class="btn -link" href="#" onclick="window.location=\''
+				. url('user/password')
+				. '\';return false;"><i class="icon -material">restore</i><span>'
+				. tr('Request new password')
+				. '?</span></a>'
 			] // children
 		]);
 
