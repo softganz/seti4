@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
  * Modified :: 2026-11-02
- * Version  :: 19
+ * Version  :: 20
  *
  * @param String $requestResult
  *
@@ -262,9 +262,7 @@ class renderPageWidget extends Widget {
 	protected function renderOldPage() {
 		$ret = '';
 
-		if (!empty($GLOBALS['gadget'])) {
-			return $this->pageClass->theme->requestResult . $this->requestResult;
-		} elseif (cfg('Content-Type') == 'text/xml') {
+		if (cfg('Content-Type') == 'text/xml') {
 			return $this->pageClass->theme->requestResult . $this->requestResult;
 		} elseif (
 			!_AJAX &&
