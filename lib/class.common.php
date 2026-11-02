@@ -14,8 +14,8 @@
  * ============================================
  * 
  * Created  :: 2007-07-09
- * Modified :: 2026-10-02
- * Version  :: 25
+ * Modified :: 2026-11-02
+ * Version  :: 26
  */
 
 use Softganz\DB;
@@ -82,9 +82,9 @@ class Cfg {
 	}
 
 	/**
-	Property :: value
-	purpose : get configuration value
-	*/
+	 * Property :: value
+	 * purpose : get configuration value
+	 */
 	function value($key=null,$cfg_value=null) {
 	global $cfg;
 		$cfg_name=isset($this) && get_class($this)=='cfg' ? 'this':'cfg';
@@ -97,9 +97,9 @@ class Cfg {
 	}
 
 	/**
-	Method :: load
-	purpose : process configuration line and store in property cfg
-	*/
+	 * Method :: load
+	 * purpose : process configuration line and store in property cfg
+	 */
 	function load($config_file_list=null,$folders=null) {
 		//echo 'load config from <b>'.$config_file_list.'</b> in folder '.$folders.'<br>';
 		if (is_array($config_file_list)) {
@@ -122,9 +122,9 @@ class Cfg {
 	}
 
 	/**
-	Method :: add
-	purpose : add config value
-	*/
+	 * Method :: add
+	 * purpose : add config value
+	 */
 	function add($key,$value) {
 	global $cfg;
 		$cfg_name=get_class($this)=='cfg' ? 'this':'cfg';
@@ -132,9 +132,9 @@ class Cfg {
 	}
 
 	/**
-	Method :: delete
-	purpose : delete config value
-	*/
+	 * Method :: delete
+	 * purpose : delete config value
+	 */
 	function delete($key) {
 	global $cfg;
 		$cfg_name=get_class($this)=='cfg' ? 'this':'cfg';
@@ -316,6 +316,13 @@ class Session implements SessionHandlerInterface {
 			'DELETE FROM %session% WHERE sess_last_acc < :end',
 			'var' => [':end' => date('Y-m-d H:i:s', time() - $maxLifetime)]
 		]);
+
+		LogModel::save([
+			'module' => 'session',
+			'keyword' => 'gc',
+			'message' => 'gc was execute',
+		]);
+		
 		return true;
 	}
 }
@@ -359,13 +366,15 @@ class Arrays {
 	static function table($arr=array(),$name="") {
 		if (is_resource($arr)) {
 			if (!function_exists('db_fetch_object')) return;
-			while ($item=db_fetch_object($arr)) $data[]=(array)$item;
-			$arr=$data;
+			$$data = [];
+			while ($item = db_fetch_object($arr)) $data[] = (array) $item;
+			$arr = $data;
 		}
 		if (!is_array($arr) || empty($arr)) return false;
-		$header=each($arr);
-		$header=array_keys($header['value']);
-		$ret .= '<table class="item" cellspacing=0 cellpadding=2><caption>'.$name.'</caption><tr>';
+		$firstElement = array_first($arr);
+		$header = array_keys($firstElement['value']);
+		$no = 0;
+		$ret = '<table class="item" cellspacing=0 cellpadding=2><caption>'.$name.'</caption><tr>';
 		foreach ($header as $key) $ret .='<th>'.$key.'</th>';
 		$ret .= '</tr>';
 		foreach ($arr as $item) {
@@ -499,6 +508,8 @@ class classFile {
 	var $format=array();
 	var $upload=null;
 	var $folder=null;
+	var $filename=null;
+	var $upload_folder;
 	var $destination=null;
 	var $replace=false;
 	var $check_valid_name=true;
