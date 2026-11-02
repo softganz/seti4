@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-02
- * Version  :: 106
+ * Version  :: 107
  *
  * @param array $args
  *
@@ -1956,14 +1956,32 @@ class Drawer extends Widget {
 class Scaffold extends Widget {
 	public $widgetName = 'Scaffold';
 	public $version = '0.0.01';
-	public $appBar = null;
-	public $sideBar = null;
-	public $body = null;
-	public $floatingActionButton = null;
-	public $script = null;
+	public mixed $appBar = null;
+	public mixed $sideBar = null;
+	public mixed $body = null;
+	public mixed $floatingActionButton = null;
+	public mixed $script = null;
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		mixed $appBar = null,
+		mixed $sideBar = null,
+		mixed $body = null,
+		mixed $floatingActionButton = null,
+		mixed $script = null,
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'appBar' => $appBar,
+					'sideBar' => $sideBar,
+					'body' => $body,
+					'floatingActionButton' => $floatingActionButton,
+					'script' => $script,
+				],
+				$args
+			)
+		);
 	}
 } // End of class Scaffold
 
@@ -1977,19 +1995,47 @@ class AppBar extends Widget {
 	public $widgetName = 'AppBar';
 	public $version = '0.0.01';
 	public $tagName = 'div';
-	public $title;
-	public $subTitle;
-	public $leading;
-	public $trailing;
-	public $navigator;
-	public $dropbox;
-	public $boxHeader = false;
-	public $showInBox = false;
-	public $removeOnApp = false;
-	public $navigatorMultipleLevel = false;
+	public mixed $title;
+	public mixed $subTitle;
+	public mixed $leading;
+	public mixed $trailing;
+	public mixed $navigator;
+	public ?object $dropbox;
+	public bool $boxHeader = false;
+	public bool $showInBox = false;
+	public bool $removeOnApp = false;
+	public bool $navigatorMultipleLevel = false;
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		mixed $title = null,
+		mixed $subTitle = null,
+		mixed $leading = null,
+		mixed $trailing = null,
+		mixed $navigator = null,
+		?object $dropbox = null,
+		bool $boxHeader = false,
+		bool $showInBox = false,
+		bool $removeOnApp = false,
+		bool $navigatorMultipleLevel = false,
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'title' => $title,
+					'subTitle' => $subTitle,
+					'leading' => $leading,
+					'trailing' => $trailing,
+					'navigator' => $navigator,
+					'dropbox' => $dropbox,
+					'boxHeader' => $boxHeader,
+					'showInBox' => $showInBox,
+					'removeOnApp' => $removeOnApp,
+					'navigatorMultipleLevel' => $navigatorMultipleLevel,
+				],
+				$args
+			)
+		);
 	}
 
 	/**
