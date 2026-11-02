@@ -31,28 +31,28 @@ Widget System เป็น **UI Component Framework** แบบ Tree-based ส�
 
 ### แนวคิดหลัก
 
-| แนวคิด | คำอธิบาย |
-|--------|----------|
-| **Widget Tree** | Widgets สามารถซ้อนกันเป็นลำดับชั้นผ่าน `children` / `child` |
-| **Declarative** | ประกาศ UI structure ผ่าน constructor arguments |
-| **Render Pipeline** | กระบวนการ render เป็นขั้นตอน: `build()` → `toString()` → methods ย่อย |
+| แนวคิด              | คำอธิบาย                                                               |
+| ------------------- | ---------------------------------------------------------------------- |
+| **Widget Tree**     | Widgets สามารถซ้อนกันเป็นลำดับชั้นผ่าน `children` / `child`            |
+| **Declarative**     | ประกาศ UI structure ผ่าน constructor arguments                         |
+| **Render Pipeline** | กระบวนการ render เป็นขั้นตอน: `build()` → `toString()` → methods ย่อย  |
 | **Override Points** | Method ที่ขึ้นต้นด้วย `_render` สามารถ override เพื่อปรับแต่งการแสดงผล |
-| **Config System** | แต่ละ Widget มี `$config` object สำหรับเก็บ attr/data/header |
+| **Config System**   | แต่ละ Widget มี `$config` object สำหรับเก็บ attr/data/header           |
 
 ### ตัวอย่างการใช้งานพื้นฐาน
 
 ```php
 // สร้าง Container ที่มี Column และ Button
 new Container([
-    'children' => [
-        new Header(['title' => 'Hello World']),
-        new Button([
-            'text' => 'Click Me',
-            'type' => 'primary',
-            'icon' => '<i class="icon -material">check</i>',
-            'href' => '/page',
-        ]),
-    ],
+	'children' => [
+		new Header(['title' => 'Hello World']),
+		new Button([
+			'text' => 'Click Me',
+			'type' => 'primary',
+			'icon' => '<i class="icon -material">check</i>',
+			'href' => '/page'
+		])
+	]
 ]);
 ```
 
@@ -144,19 +144,19 @@ build()
 
 ### จุดที่ Override ได้
 
-| Method | ไว้ใช้ทำอะไร |
-|--------|-------------|
-| `initWidget()` | กำหนดค่าเริ่มต้นเพิ่มเติม (เรียกใน constructor) |
-| `_renderWidgetContainerStart()` | เปลี่ยน HTML opening tag ของ widget |
-| `_renderWidgetContainerEnd()` | เปลี่ยน HTML closing tag |
-| `_renderChildrenContainerStart()` | เปิด container ที่ครอบ children ทั้งหมด |
-| `_renderChildrenContainerEnd()` | ปิด container ที่ครอบ children ทั้งหมด |
-| `_renderChildContainerStart()` | เปิด container สำหรับ child แต่ละตัว |
-| `_renderChildContainerEnd()` | ปิด container สำหรับ child แต่ละตัว |
-| `_renderEachChildWidget()` | เปลี่ยนวิธี render child แต่ละตัว |
-| `_renderChildren()` | เปลี่ยนวิธี render children ทั้งหมด |
-| `toString()` | เปลี่ยนโครงสร้างการ render ทั้งหมด |
-| `build()` | จุดเริ่มต้น — เปลี่ยน flow การทำงาน |
+| Method                            | ไว้ใช้ทำอะไร                                    |
+| --------------------------------- | ----------------------------------------------- |
+| `initWidget()`                    | กำหนดค่าเริ่มต้นเพิ่มเติม (เรียกใน constructor) |
+| `_renderWidgetContainerStart()`   | เปลี่ยน HTML opening tag ของ widget             |
+| `_renderWidgetContainerEnd()`     | เปลี่ยน HTML closing tag                        |
+| `_renderChildrenContainerStart()` | เปิด container ที่ครอบ children ทั้งหมด         |
+| `_renderChildrenContainerEnd()`   | ปิด container ที่ครอบ children ทั้งหมด          |
+| `_renderChildContainerStart()`    | เปิด container สำหรับ child แต่ละตัว            |
+| `_renderChildContainerEnd()`      | ปิด container สำหรับ child แต่ละตัว             |
+| `_renderEachChildWidget()`        | เปลี่ยนวิธี render child แต่ละตัว               |
+| `_renderChildren()`               | เปลี่ยนวิธี render children ทั้งหมด             |
+| `toString()`                      | เปลี่ยนโครงสร้างการ render ทั้งหมด              |
+| `build()`                         | จุดเริ่มต้น — เปลี่ยน flow การทำงาน             |
 
 ---
 
@@ -179,18 +179,18 @@ class WidgetBase {
 
 **Properties:**
 
-| Property | Type | Default | คำอธิบาย |
-|----------|------|---------|----------|
+| Property      | Type   | Default    | คำอธิบาย                         |
+| ------------- | ------ | ---------- | -------------------------------- |
 | `$widgetName` | string | `'Widget'` | ชื่อ widget (ใช้สร้าง CSS class) |
-| `$version` | string | — | เวอร์ชันของ widget |
+| `$version`    | string | —          | เวอร์ชันของ widget               |
 
 **Methods:**
 
-| Method | คำอธิบาย |
-|--------|----------|
-| `__construct($args)` | รับ associative array แล้ว assign เป็น properties |
-| `extension()` | จุดสำหรับ extension hook |
-| `valid($value, $regx)` | ตรวจสอบค่าด้วย regex ผ่าน `\SG\valid()` |
+| Method                 | คำอธิบาย                                          |
+| ---------------------- | ------------------------------------------------- |
+| `__construct($args)`   | รับ associative array แล้ว assign เป็น properties |
+| `extension()`          | จุดสำหรับ extension hook                          |
+| `valid($value, $regx)` | ตรวจสอบค่าด้วย regex ผ่าน `\SG\valid()`           |
 
 ### 4.2 Widget
 
@@ -198,83 +198,83 @@ Core class — เป็น base ให้ widget ส่วนใหญ่
 
 ```php
 class Widget extends WidgetBase {
-    public $widgetName = 'Widget';
-    public $version;
-    public $tagName = '';
-    public $childTagName;
-    public $id;
-    public $class;
-    public $header;
-    public $itemClass;
-    public $mainAxisAlignment;
-    public $crossAxisAlignment;
-    public $href;
-    public $dataUrl;
-    public $webview;
-    public $style;
-    public $onBuild;
-    public $rel;
-    public $done;
-    public $action;
-    public $debug;
-    public $child;
-    public $children = [];
-    public $attribute = [];
-    public $childContainer = [];
-    public $config = null;
+	public $widgetName = 'Widget';
+	public $version;
+	public $tagName = '';
+	public $childTagName;
+	public $id;
+	public $class;
+	public $header;
+	public $itemClass;
+	public $mainAxisAlignment;
+	public $crossAxisAlignment;
+	public ?string $href;
+	public $dataUrl;
+	public $webview;
+	public $style;
+	public $onBuild;
+	public $rel;
+	public $done;
+	public $action;
+	public $debug;
+	public $child;
+	public $children = [];
+	public $attribute = [];
+	public $childContainer = [];
+	public $config = null;
 }
 ```
 
 **Properties ที่สำคัญ:**
 
-| Property | Type | คำอธิบาย |
-|----------|------|----------|
-| `$tagName` | string | HTML tag ที่ใช้ห่อ widget (ถ้าว่าง = ไม่มี container) |
-| `$childTagName` | string | HTML tag สำหรับ child แต่ละตัว |
-| `$id` | string | HTML id |
-| `$class` | string | CSS class เพิ่มเติม |
-| `$header` | string/object/Widget | ส่วนหัว |
-| `$itemClass` | string | CSS class สำหรับ child แต่ละตัว |
-| `$mainAxisAlignment` | string | `'start'`, `'center'`, `'end'` |
-| `$crossAxisAlignment` | string | `'start'`, `'center'`, `'end'` |
-| `$href` | string | ลิงก์ |
-| `$dataUrl` | string | `data-url` attribute |
-| `$webview` | string | `data-webview` attribute |
-| `$style` | string | inline CSS |
-| `$onBuild` | callable | callback ก่อน render |
-| `$rel` | string | `data-rel` attribute |
-| `$done` | string | `data-done` attribute |
-| `$child` | any | child ตัวเดียว (auto-add to `$children[]`) |
-| `$children` | array | array ของ children |
-| `$attribute` | array | custom HTML attributes |
-| `$childContainer` | array | กำหนด tagName/class สำหรับ child container |
-| `$config` | object | internal config (`attr`, `data`, `header`) |
+| Property              | Type                 | คำอธิบาย                                              |
+| --------------------- | -------------------- | ----------------------------------------------------- |
+| `$tagName`            | string               | HTML tag ที่ใช้ห่อ widget (ถ้าว่าง = ไม่มี container) |
+| `$childTagName`       | string               | HTML tag สำหรับ child แต่ละตัว                        |
+| `$id`                 | string               | HTML id                                               |
+| `$class`              | string               | CSS class เพิ่มเติม                                   |
+| `$header`             | string/object/Widget | ส่วนหัว                                               |
+| `$itemClass`          | string               | CSS class สำหรับ child แต่ละตัว                       |
+| `$mainAxisAlignment`  | string               | `'start'`, `'center'`, `'end'`                        |
+| `$crossAxisAlignment` | string               | `'start'`, `'center'`, `'end'`                        |
+| `$href`               | string               | ลิงก์                                                 |
+| `$dataUrl`            | string               | `data-url` attribute                                  |
+| `$webview`            | string               | `data-webview` attribute                              |
+| `$style`              | string               | inline CSS                                            |
+| `$onBuild`            | callable             | callback ก่อน render                                  |
+| `$rel`                | string               | `data-rel` attribute                                  |
+| `$done`               | string               | `data-done` attribute                                 |
+| `$child`              | any                  | child ตัวเดียว (auto-add to `$children[]`)            |
+| `$children`           | array                | array ของ children                                    |
+| `$attribute`          | array                | custom HTML attributes                                |
+| `$childContainer`     | array                | กำหนด tagName/class สำหรับ child container            |
+| `$config`             | object               | internal config (`attr`, `data`, `header`)            |
 
 **Methods:**
 
-| Method | Signature | คำอธิบาย |
-|--------|-----------|----------|
-| `initConfig()` | `void` | เริ่มต้น `$config` object |
-| `addClass($class)` | `void` | เพิ่ม CSS class |
-| `addId($id)` | `void` | กำหนด id |
-| `addConfig($key, $value)` | `void` | เพิ่มค่าใน config |
-| `addAttr($key, $value)` | `void` | เพิ่ม HTML attribute |
-| `addData($key, $value)` | `void` | เพิ่ม data-* attribute |
-| `config($key, $value)` | `mixed` | getter/setter สำหรับ config |
-| `attr($key, $value)` | `mixed` | getter/setter สำหรับ attributes |
-| `data($key, $value)` | `mixed` | getter/setter สำหรับ data-* |
-| `header($str, $attr, $options)` | `void` | กำหนด header |
-| `children($value)` | `array` | getter/setter สำหรับ children |
-| `build()` | `string` | จุดเริ่มต้น render |
-| `toString()` | `string` | render widget เป็น HTML |
-| `_renderWidgetContainerStart()` | `string` | render opening tag |
-| `_renderWidgetContainerEnd()` | `string` | render closing tag |
-| `_renderChildrenContainerStart()` | `string` | render children container opening |
-| `_renderChildrenContainerEnd()` | `string` | render children container closing |
-| `_renderChildContainerStart($key, $attr, $child)` | `string` | render child container opening |
-| `_renderChildContainerEnd($child, $key)` | `string` | render child container closing |
-| `_renderEachChildWidget($widget, $key, $callback, $options)` | `string` | render child แต่ละตัว |
-| `_renderChildren($childrens, $args)` | `string` | render children ทั้งหมด |
+| Method                                                       | Signature | คำอธิบาย                          |
+| ------------------------------------------------------------ | --------- | --------------------------------- |
+| `initConfig()`                                               | `void`    | เริ่มต้น `$config` object         |
+| `addClass($class)`                                           | `void`    | เพิ่ม CSS class                   |
+| `addId($id)`                                                 | `void`    | กำหนด id                          |
+| `addConfig($key, $value)`                                    | `void`    | เพิ่มค่าใน config                 |
+| `addAttr($key, $value)`                                      | `void`    | เพิ่ม HTML attribute              |
+| `addData($key, $value)`                                      | `void`    | เพิ่ม data-* attribute            |
+| `config($key, $value)`                                       | `mixed`   | getter/setter สำหรับ config       |
+| `attr($key, $value)`                                         | `mixed`   | getter/setter สำหรับ attributes   |
+| `data($key, $value)`                                         | `mixed`   | getter/setter สำหรับ data-*       |
+| `header($str, $attr, $options)`                              | `void`    | กำหนด header                      |
+| `children($value)`                                           | `array`   | getter/setter สำหรับ children     |
+| `build()`                                                    | `string`  | จุดเริ่มต้น render                |
+| `toString()`                                                 | `string`  | render widget เป็น HTML           |
+| `_renderWidgetContainerStart()`                              | `string`  | render opening tag                |
+| `_renderWidgetContainerEnd()`                                | `string`  | render closing tag                |
+| `_renderChildrenContainerStart()`                            | `string`  | render children container opening |
+| `_renderChildrenContainerEnd()`                              | `string`  | render children container closing |
+| `_renderChildContainerStart($key, $attr, $child)`            | `string`  | render child container opening    |
+| `_renderChildContainerEnd($child, $key)`                     | `string`  | render child container closing    |
+| `_renderEachChildWidget($widget, $key, $callback, $options)` | `string`  | render child แต่ละตัว             |
+| `_renderChildren($childrens, $args)`                         | `string`  | render children ทั้งหมด           |
 
 ### 4.3 Children
 
@@ -282,8 +282,8 @@ class Widget extends WidgetBase {
 
 ```php
 class Children extends WidgetBase {
-    public $type;
-    public $children = [];
+	public $type;
+	public $children = [];
 }
 ```
 
@@ -291,16 +291,16 @@ class Children extends WidgetBase {
 
 ```php
 new Column([
-    'children' => [
-        new Children([
-            'tagName' => 'fieldset',
-            'class' => '-group',
-            'children' => [
-                new Button(['text' => 'Save']),
-                new Button(['text' => 'Cancel']),
-            ],
-        ]),
-    ],
+	'children' => [
+		new Children([
+			'tagName' => 'fieldset',
+			'class' => '-group',
+			'children' => [
+				new Button(['text' => 'Save']),
+				new Button(['text' => 'Cancel'])
+			]
+		])
+	]
 ]);
 ```
 
@@ -325,7 +325,7 @@ new Container([
 
 ```php
 new Center([
-    'child' => new Button(['text' => 'Centered Button']),
+	'child' => new Button(['text' => 'Centered Button'])
 ]);
 ```
 
@@ -335,20 +335,17 @@ new Center([
 
 ```php
 new Column([
-    'children' => [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-    ],
+	'children' => ['Item 1', 'Item 2', 'Item 3']
 ]);
 ```
 
 **HTML ที่ได้:**
+
 ```html
 <div class="widget-column">
-    <div class="-item">Item 1</div>
-    <div class="-item">Item 2</div>
-    <div class="-item">Item 3</div>
+	<div class="-item">Item 1</div>
+	<div class="-item">Item 2</div>
+	<div class="-item">Item 3</div>
 </div>
 ```
 
@@ -358,10 +355,7 @@ new Column([
 
 ```php
 new Row([
-    'children' => [
-        new Button(['text' => 'A']),
-        new Button(['text' => 'B']),
-    ],
+	'children' => [new Button(['text' => 'A']), new Button(['text' => 'B'])]
 ]);
 ```
 
@@ -371,8 +365,8 @@ new Row([
 
 ```php
 new ListOrder([
-    'type' => 'ol',  // 'ul' (default) หรือ 'ol'
-    'children' => ['Item 1', 'Item 2'],
+	'type' => 'ol', // 'ul' (default) หรือ 'ol'
+	'children' => ['Item 1', 'Item 2']
 ]);
 ```
 
@@ -382,10 +376,10 @@ new ListOrder([
 
 ```php
 new ListTile([
-    'leading' => new Icon('person'),
-    'title' => 'John Doe',
-    'subTitle' => 'Online',
-    'trailing' => new Icon('chevron_right'),
+	'leading' => new Icon('person'),
+	'title' => 'John Doe',
+	'subTitle' => 'Online',
+	'trailing' => new Icon('chevron_right')
 ]);
 ```
 
@@ -432,11 +426,11 @@ new Nav([
 
 **Properties:**
 
-| Property | Type | Default | คำอธิบาย |
-|----------|------|---------|----------|
-| `$type` | string | — | เพิ่ม class `-type-{type}` |
-| `$direction` | string | — | เพิ่ม class `-{direction}` |
-| `$multipleLevel` | bool | `false` | auto-detect ถ้า children เป็น array ซ้อน |
+| Property         | Type   | Default | คำอธิบาย                                 |
+| ---------------- | ------ | ------- | ---------------------------------------- |
+| `$type`          | string | —       | เพิ่ม class `-type-{type}`               |
+| `$direction`     | string | —       | เพิ่ม class `-{direction}`               |
+| `$multipleLevel` | bool   | `false` | auto-detect ถ้า children เป็น array ซ้อน |
 
 ### 6.2 SideBar
 
@@ -455,19 +449,19 @@ Tab interface — ต้องระบุ `action` (ปุ่ม tab) และ
 
 ```php
 new TabBar([
-    'children' => [
-        (object) [
-            'action' => new Button(['text' => 'Tab 1', 'href' => '#tab1']),
-            'content' => 'Content 1',
-            'id' => 'tab1',
-            'active' => true,
-        ],
-        (object) [
-            'action' => new Button(['text' => 'Tab 2', 'href' => '#tab2']),
-            'content' => 'Content 2',
-            'id' => 'tab2',
-        ],
-    ],
+	'children' => [
+		(object) [
+			'action' => new Button(['text' => 'Tab 1', 'href' => '#tab1']),
+			'content' => 'Content 1',
+			'id' => 'tab1',
+			'active' => true
+		],
+		(object) [
+			'action' => new Button(['text' => 'Tab 2', 'href' => '#tab2']),
+			'content' => 'Content 2',
+			'id' => 'tab2'
+		]
+	]
 ]);
 ```
 
@@ -477,9 +471,9 @@ Stepper / ขั้นตอนการทำงาน
 
 ```php
 new StepMenu([
-    'currentStep' => 2,
-    'activeStep' => [1 => true, 2 => true],
-    'children' => ['Step 1', 'Step 2', 'Step 3'],
+	'currentStep' => 2,
+	'activeStep' => [1 => true, 2 => true],
+	'children' => ['Step 1', 'Step 2', 'Step 3']
 ]);
 ```
 
@@ -489,25 +483,22 @@ Top app bar — มี leading, title, subtitle, trailing, navigator, dropbox
 
 ```php
 new AppBar([
-    'title' => 'Dashboard',
-    'subTitle' => 'Welcome back',
-    'leading' => new BackButton(),
-    'trailing' => new Button(['text' => 'Logout']),
-    'navigator' => [
-        '<a href="/">Home</a>',
-        '<a href="/report">Report</a>',
-    ],
+	'title' => 'Dashboard',
+	'subTitle' => 'Welcome back',
+	'leading' => new BackButton(),
+	'trailing' => new Button(['text' => 'Logout']),
+	'navigator' => ['<a href="/">Home</a>', '<a href="/report">Report</a>']
 ]);
 ```
 
 **Navigator Format:**
 
-| รูปแบบ | ตัวอย่าง |
-|--------|----------|
-| String | `'<a href="/">Home</a>'` |
-| Array | `['<a>1</a>', '<a>2</a>', widget, dropbox]` |
+| รูปแบบ         | ตัวอย่าง                                                     |
+| -------------- | ------------------------------------------------------------ |
+| String         | `'<a href="/">Home</a>'`                                     |
+| Array          | `['<a>1</a>', '<a>2</a>', widget, dropbox]`                  |
 | Array of Array | `[['<a>1</a>','<a>2</a>'], ['<a>3</a>','<a>4</a>'], widget]` |
-| Widget Object | `new Nav(['children' => [...]])` |
+| Widget Object  | `new Nav(['children' => [...]])`                             |
 
 ### 6.6 Scaffold
 
@@ -537,25 +528,26 @@ new Scaffold([
 
 ```php
 new Button([
-    'text' => 'Save',
-    'type' => 'primary',       // default, primary, secondary, success, info, warning, danger, link, cancel, floating
-    'icon' => '<i class="icon -material">save</i>',
-    'iconPosition' => 'left',  // left, right
-    'href' => '/save',
-    'rel' => 'ajax',           // data-rel
-    'before' => 'confirm()',   // data-before
-    'done' => 'reload()',      // data-done
-    'boxType' => 'large',      // เปิดใน box modal
-    'boxWidth' => '800',
-    'boxHeight' => '600',
-    'access' => 'RIGHT_ADMIN', // ตรวจสอบสิทธิ์
-    'description' => 'Save all changes',
-    'onClick' => 'alert("clicked")',
-    'target' => '_blank',
+	'text' => 'Save',
+	'type' => 'primary', // default, primary, secondary, success, info, warning, danger, link, cancel, floating
+	'icon' => '<i class="icon -material">save</i>',
+	'iconPosition' => 'left', // left, right
+	'href' => '/save',
+	'rel' => 'ajax', // data-rel
+	'before' => 'confirm()', // data-before
+	'done' => 'reload()', // data-done
+	'boxType' => 'large', // เปิดใน box modal
+	'boxWidth' => '800',
+	'boxHeight' => '600',
+	'access' => 'RIGHT_ADMIN', // ตรวจสอบสิทธิ์
+	'description' => 'Save all changes',
+	'onClick' => 'alert("clicked")',
+	'target' => '_blank'
 ]);
 ```
 
 **CSS Class ที่ได้:**
+
 ```
 widget-button btn -primary -icon-right my-custom-class
 ```
@@ -566,7 +558,7 @@ widget-button btn -primary -icon-right my-custom-class
 
 ```php
 new BackButton([
-    'text' => 'Back',
+	'text' => 'Back'
 ]);
 ```
 
@@ -576,7 +568,7 @@ new BackButton([
 
 ```php
 new ExpandButton([
-    'icon' => 'expand_more',
+	'icon' => 'expand_more'
 ]);
 ```
 
@@ -586,7 +578,7 @@ new ExpandButton([
 
 ```php
 new FloatingActionButton([
-    'children' => [new Icon('add')],
+	'children' => [new Icon('add')]
 ]);
 ```
 
@@ -600,13 +592,13 @@ Card component — มี header (leading, title, subtitle, trailing) และ 
 
 ```php
 new Card([
-    'header' => [
-        'leading' => new Icon('star'),
-        'title' => 'Card Title',
-        'subtitle' => 'Subtitle',
-        'trailing' => new Icon('more_vert'),
-    ],
-    'children' => ['Card content here'],
+	'header' => [
+		'leading' => new Icon('star'),
+		'title' => 'Card Title',
+		'subtitle' => 'Subtitle',
+		'trailing' => new Icon('more_vert')
+	],
+	'children' => ['Card content here']
 ]);
 ```
 
@@ -616,10 +608,10 @@ Header component — คล้าย ListTile แต่ใช้ `<header>` tag
 
 ```php
 new Header([
-    'title' => 'Section Title',
-    'subTitle' => 'Description',
-    'leading' => new Icon('info'),
-    'trailing' => new Button(['text' => 'View All']),
+	'title' => 'Section Title',
+	'subTitle' => 'Description',
+	'leading' => new Icon('info'),
+	'trailing' => new Button(['text' => 'View All'])
 ]);
 ```
 
@@ -636,7 +628,7 @@ new Icon('check,close');
 
 // With secondary element
 new Icon('person', [
-    'secondary' => '<span class="badge">3</span>',
+	'secondary' => '<span class="badge">3</span>'
 ]);
 ```
 
@@ -646,8 +638,8 @@ new Icon('person', [
 
 ```php
 new ProfilePhoto('username', [
-    'size' => 'small',  // small, big
-    'title' => 'John Doe',
+	'size' => 'small', // small, big
+	'title' => 'John Doe'
 ]);
 ```
 
@@ -657,7 +649,7 @@ Notification widget
 
 ```php
 new Notify([
-    'children' => ['New message received'],
+	'children' => ['New message received']
 ]);
 ```
 
@@ -667,7 +659,7 @@ new Notify([
 
 ```php
 new HtmlTemplate([
-    'children' => ['<div>Template content</div>'],
+	'children' => ['<div>Template content</div>']
 ]);
 ```
 
@@ -677,10 +669,20 @@ new HtmlTemplate([
 
 ```php
 // <img> tag
-new DOM(['img', 'src' => '/image.jpg', 'class' => '-round', 'onClick' => 'open()']);
+new DOM([
+	'img',
+	'src' => '/image.jpg',
+	'class' => '-round',
+	'onClick' => 'open()'
+]);
 
 // <video> tag
-new DOM(['video', 'src' => '/video.mp4', 'controls' => 'controls', 'children' => ['Your browser does not support video.']]);
+new DOM([
+	'video',
+	'src' => '/video.mp4',
+	'controls' => 'controls',
+	'children' => ['Your browser does not support video.']
+]);
 ```
 
 ---
@@ -695,7 +697,7 @@ Base class สำหรับ page-level widgets — auto-detect module name จ
 
 ```php
 class PageBase extends WidgetBase {
-    public $module;  // auto-detect: 'flood' จาก 'FloodPage'
+	public $module; // auto-detect: 'flood' จาก 'FloodPage'
 }
 ```
 
@@ -705,15 +707,15 @@ class PageBase extends WidgetBase {
 
 ```php
 class MyPage extends Page {
-    function appBar() {
-        return new AppBar(['title' => 'My Page']);
-    }
+	function appBar() {
+		return new AppBar(['title' => 'My Page']);
+	}
 
-    function body() {
-        return new Column([
-            'children' => ['Hello World'],
-        ]);
-    }
+	function body() {
+		return new Column([
+			'children' => ['Hello World']
+		]);
+	}
 }
 
 // เรียกใช้
@@ -747,6 +749,7 @@ class FloodApi extends PageApi {
 ```
 
 **การทำงาน:**
+
 - Action `api.list` → method `list()`
 - Action `api.getDetail` → method `getDetail()`
 - Action ที่ขึ้นต้นด้วย `api.` → เรียก `runExternalMethod()` → `R::PageWidget()`
@@ -758,8 +761,8 @@ Page controller/router — forward action ไปยัง `R::PageWidget()`
 
 ```php
 class FloodController extends PageController {
-    // action = 'flood.view'
-    // args = [url, module, action, ...]
+	// action = 'flood.view'
+// args = [url, module, action, ...]
 }
 ```
 
@@ -769,13 +772,13 @@ class FloodController extends PageController {
 
 ```php
 new ListItem([
-    'tagName' => 'ul',  // ul → <li>, div → <div>, span → <span>
-    'type' => 'action',
-    'children' => [
-        (object) ['text' => 'Item 1', 'options' => '{"class":"-active"}'],
-        (object) ['text' => '-', 'options' => '{}'],  // separator
-        (object) ['text' => 'Item 2', 'options' => '{}'],
-    ],
+	'tagName' => 'ul', // ul → <li>, div → <div>, span → <span>
+	'type' => 'action',
+	'children' => [
+		(object) ['text' => 'Item 1', 'options' => '{"class":"-active"}'],
+		(object) ['text' => '-', 'options' => '{}'], // separator
+		(object) ['text' => 'Item 2', 'options' => '{}']
+	]
 ]);
 ```
 
@@ -824,26 +827,26 @@ new ErrorMessage(['errorMessage' => 'Access denied', 'responseCode' => 403]);
 
 Widget container คือ HTML tag ที่ห่อ widget ทั้งหมด ควบคุมโดย:
 
-| Property | หน้าที่ |
-|----------|---------|
-| `$tagName` | HTML tag (ถ้าว่าง = ไม่มี container) |
-| `$id` | HTML id |
-| `$class` | CSS class (เพิ่มจาก `widget-{name}` auto) |
-| `$style` | inline CSS |
-| `$attribute` | custom attributes |
-| `$mainAxisAlignment` | เพิ่ม class `-main-axis-{value}` |
-| `$crossAxisAlignment` | เพิ่ม class `-cross-axis-{value}` |
+| Property              | หน้าที่                                   |
+| --------------------- | ----------------------------------------- |
+| `$tagName`            | HTML tag (ถ้าว่าง = ไม่มี container)      |
+| `$id`                 | HTML id                                   |
+| `$class`              | CSS class (เพิ่มจาก `widget-{name}` auto) |
+| `$style`              | inline CSS                                |
+| `$attribute`          | custom attributes                         |
+| `$mainAxisAlignment`  | เพิ่ม class `-main-axis-{value}`          |
+| `$crossAxisAlignment` | เพิ่ม class `-cross-axis-{value}`         |
 
 ### 11.2 Child Container
 
 Child container คือ HTML tag ที่ห่อ child แต่ละตัว ควบคุมโดย:
 
-| วิธี | รายละเอียด |
-|-----|------------|
-| `$childContainer` | array `['tagName' => 'div', 'class' => '-item']` |
-| `$childTagName` | string — ใช้แทน `$childContainer['tagName']` |
-| `$itemClass` | string — เพิ่ม class ให้ child แต่ละตัว |
-| `$childrenContainer` | array — container ที่ครอบ children ทั้งหมด |
+| วิธี                 | รายละเอียด                                       |
+| -------------------- | ------------------------------------------------ |
+| `$childContainer`    | array `['tagName' => 'div', 'class' => '-item']` |
+| `$childTagName`      | string — ใช้แทน `$childContainer['tagName']`     |
+| `$itemClass`         | string — เพิ่ม class ให้ child แต่ละตัว          |
+| `$childrenContainer` | array — container ที่ครอบ children ทั้งหมด       |
 
 ### 11.3 Container Inheritance
 
@@ -859,10 +862,10 @@ $container (global)
 
 ## 12. Special Children Tokens
 
-| Token | ความหมาย | HTML Output |
-|-------|----------|-------------|
-| `'<sep>'` | Separator | `<hr class="separator" size="0" />` |
-| `'<spacer>'` | Spacer | `<div class="-spacer"></div>` (empty) |
+| Token        | ความหมาย  | HTML Output                           |
+| ------------ | --------- | ------------------------------------- |
+| `'<sep>'`    | Separator | `<hr class="separator" size="0" />`   |
+| `'<spacer>'` | Spacer    | `<div class="-spacer"></div>` (empty) |
 
 ---
 
@@ -872,20 +875,22 @@ $container (global)
 
 ```php
 class MyWidget extends Widget {
-    public $widgetName = 'MyWidget';
-    public $tagName = 'div';
-    public $version = '0.01';
+	public $widgetName = 'MyWidget';
+	public $tagName = 'div';
+	public $version = '0.01';
 
-    function __construct($args = []) {
-        parent::__construct($args);
-    }
+	function __construct($args = []) {
+		parent::__construct($args);
+	}
 
-    // override render method ถ้าต้องการ
-    function toString() {
-        return $this->renderWidgetContainerStart()
-            . '<div class="-custom">' . $this->renderChildren($this->children()) . '</div>'
-            . $this->renderWidgetContainerEnd();
-    }
+	// override render method ถ้าต้องการ
+	function toString() {
+		return $this->renderWidgetContainerStart()
+			. '<div class="-custom">'
+			. $this->renderChildren($this->children())
+			. '</div>'
+			. $this->renderWidgetContainerEnd();
+	}
 }
 ```
 
@@ -893,12 +898,12 @@ class MyWidget extends Widget {
 
 ```php
 new Button([
-    'text' => 'Dynamic Button',
-    'onBuild' => function($widget) {
-        if (!user_access('admin')) {
-            $widget->class .= ' -hidden';
-        }
-    },
+	'text' => 'Dynamic Button',
+	'onBuild' => function ($widget) {
+		if (!user_access('admin')) {
+			$widget->class .= ' -hidden';
+		}
+	}
 ]);
 ```
 
@@ -907,8 +912,8 @@ new Button([
 ```php
 // ผ่าน constructor
 new Button([
-    'data-action' => 'delete',
-    'data-id' => $id,
+	'data-action' => 'delete',
+	'data-id' => $id
 ]);
 
 // ผ่าน method
@@ -920,9 +925,9 @@ $widget->data('id', $id);
 
 ```php
 new Button([
-    'text' => 'Admin Only',
-    'access' => 'RIGHT_ADMIN',  // ต้องมี constant นี้
-    'variable' => $userVariable, // ใช้ตรวจสอบ $variable->RIGHT
+	'text' => 'Admin Only',
+	'access' => 'RIGHT_ADMIN', // ต้องมี constant นี้
+	'variable' => $userVariable // ใช้ตรวจสอบ $variable->RIGHT
 ]);
 ```
 
@@ -932,48 +937,48 @@ new Button([
 
 ### 14.1 CSS Class Naming Convention
 
-| รูปแบบ | ตัวอย่าง | ที่มา |
-|--------|----------|------|
-| `widget-{name}` | `widget-button` | Auto จาก `$widgetName` |
-| `-{type}` | `-primary` | จาก property `$type` |
-| `-main-axis-{value}` | `-main-axis-center` | จาก `$mainAxisAlignment` |
-| `-cross-axis-{value}` | `-cross-axis-end` | จาก `$crossAxisAlignment` |
-| `-{childKey}` | `-home` | จาก key ของ child (ถ้าไม่ใช่ numeric) |
+| รูปแบบ                | ตัวอย่าง            | ที่มา                                 |
+| --------------------- | ------------------- | ------------------------------------- |
+| `widget-{name}`       | `widget-button`     | Auto จาก `$widgetName`                |
+| `-{type}`             | `-primary`          | จาก property `$type`                  |
+| `-main-axis-{value}`  | `-main-axis-center` | จาก `$mainAxisAlignment`              |
+| `-cross-axis-{value}` | `-cross-axis-end`   | จาก `$crossAxisAlignment`             |
+| `-{childKey}`         | `-home`             | จาก key ของ child (ถ้าไม่ใช่ numeric) |
 
 ### 14.2 Data Attributes ที่ใช้ในระบบ
 
-| Attribute | 用途 |
-|-----------|------|
-| `data-rel` | ความสัมพันธ์ (ajax, next, etc.) |
-| `data-done` | callback หลังทำ action สำเร็จ |
-| `data-url` | URL สำหรับโหลดข้อมูล |
-| `data-webview` | URL สำหรับ webview |
-| `data-options` | ตัวเลือกเพิ่มเติม (JSON) |
-| `data-class-name` | ชื่อ class สำหรับ box/modal |
-| `data-width` / `data-height` | ขนาด box |
-| `data-before` | callback ก่อนทำ action |
+| Attribute                    | 用途                            |
+| ---------------------------- | ------------------------------- |
+| `data-rel`                   | ความสัมพันธ์ (ajax, next, etc.) |
+| `data-done`                  | callback หลังทำ action สำเร็จ   |
+| `data-url`                   | URL สำหรับโหลดข้อมูล            |
+| `data-webview`               | URL สำหรับ webview              |
+| `data-options`               | ตัวเลือกเพิ่มเติม (JSON)        |
+| `data-class-name`            | ชื่อ class สำหรับ box/modal     |
+| `data-width` / `data-height` | ขนาด box                        |
+| `data-before`                | callback ก่อนทำ action          |
 
 ### 14.3 Alignment Values
 
-| Property | ค่าที่รองรับ |
-|----------|-------------|
-| `$mainAxisAlignment` | `start`, `center`, `end`, `space-between`, `space-around` |
-| `$crossAxisAlignment` | `start`, `center`, `end`, `stretch` |
+| Property              | ค่าที่รองรับ                                              |
+| --------------------- | --------------------------------------------------------- |
+| `$mainAxisAlignment`  | `start`, `center`, `end`, `space-between`, `space-around` |
+| `$crossAxisAlignment` | `start`, `center`, `end`, `stretch`                       |
 
 ### 14.4 Button Types
 
-| Type | CSS Class | ลักษณะ |
-|------|-----------|--------|
-| `default` | `widget-button` | ไม่มี class `btn` |
-| `primary` | `widget-button btn -primary` | ปุ่มหลัก |
-| `secondary` | `widget-button btn -secondary` | ปุ่มรอง |
-| `success` | `widget-button btn -success` | success |
-| `info` | `widget-button btn -info` | ข้อมูล |
-| `warning` | `widget-button btn -warning` | คำเตือน |
-| `danger` | `widget-button btn -danger` | อันตราย |
-| `link` | `widget-button btn -link` | ลิงก์ |
-| `cancel` | `widget-button btn -cancel` | ยกเลิก |
-| `floating` | `widget-button btn -floating` | ปุ่มลอย |
+| Type        | CSS Class                      | ลักษณะ            |
+| ----------- | ------------------------------ | ----------------- |
+| `default`   | `widget-button`                | ไม่มี class `btn` |
+| `primary`   | `widget-button btn -primary`   | ปุ่มหลัก          |
+| `secondary` | `widget-button btn -secondary` | ปุ่มรอง           |
+| `success`   | `widget-button btn -success`   | success           |
+| `info`      | `widget-button btn -info`      | ข้อมูล            |
+| `warning`   | `widget-button btn -warning`   | คำเตือน           |
+| `danger`    | `widget-button btn -danger`    | อันตราย           |
+| `link`      | `widget-button btn -link`      | ลิงก์             |
+| `cancel`    | `widget-button btn -cancel`    | ยกเลิก            |
+| `floating`  | `widget-button btn -floating`  | ปุ่มลอย           |
 
 ---
 
