@@ -26,7 +26,7 @@ class SchemaModel {
 	}
 
 	public static function get($schemaName) {
-		return json_decode(R::Asset($schemaName));
+		return json_decode(R::asset($schemaName));
 	}
 
 	/**

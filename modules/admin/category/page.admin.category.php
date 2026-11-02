@@ -63,7 +63,7 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 			$args = func_get_args();
 			$argIndex = 3; // Start argument
 
-			$ret = R::Page(
+			$ret = R::page(
 				'admin.category.'.$action,
 				$self,
 				$tagInfo,
@@ -262,9 +262,7 @@ function __admin_category_form($taggroup, $data = NULL) {
 		)
 	);
 
-	$ret .= $form->build();
-
-	return $ret;
+	return $form->build();
 }
 
 function __admin_category_list($taggroup) {

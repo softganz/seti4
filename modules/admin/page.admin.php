@@ -65,7 +65,6 @@ class Admin extends Page {
 										]), // Card
 
 										class_exists($menuWidget) ? new $menuWidget() : NULL,
-										// R::View('admin.menu.'.$menuKey),
 									], // children
 								]);
 							}

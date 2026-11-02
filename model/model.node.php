@@ -578,7 +578,7 @@ class NodeModel {
 		}
 
 		// do external module post form
-		R::On($topic->type->module . '.paper.post.check', null, $topic, $result);
+		R::on($topic->type->module . '.paper.post.check', null, $topic, $result);
 		//if ($topic->type->module!='paper') do_class_method($topic->type->module,'__post_check',$this,$topic,$result);
 
 		if ($topic->field_missing) {
@@ -909,7 +909,7 @@ class NodeModel {
 				if (!is_uploaded_file($photo->tmp_name)) {
 					continue;
 				}
-				$photo_result = $result->photo[] = R::Model('photo.save', $photo);
+				$photo_result = $result->photo[] = R::model('photo.save', $photo);
 				if ($photo_result->complete && $photo_result->save->_file) {
 					$desc->file = $photo_result->save->_file;
 					$sql_cmd = mydb::create_insert_cmd('%topic_files%', $desc);
@@ -1233,7 +1233,7 @@ class NodeModel {
 			return false;
 		}
 
-		R::Manifest('project');
+		R::manifest('project');
 
 		$dbs = DB::select([
 			'SELECT `tpid`, `type`, `title`
