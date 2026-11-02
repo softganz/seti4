@@ -16,8 +16,8 @@
  * ============================================
  *
  * Created  :: 2019-12-08
- * Modified :: 2026-10-09
- * Version  :: 27
+ * Modified :: 2026-11-02
+ * Version  :: 28
  */
 
 namespace SG;
@@ -78,10 +78,10 @@ function print_o() {
 		$varTitle = '<b>'.$title.(is_object($value) ? ' ['.get_class($value).']' : '').'</b>';
 		if ($echo) {
 			echo $varTitle;
-			echo (new DebugMsg($value, $title))->build();
+			echo (new \DebugMsg($value, $title))->build();
 		} else {
 			$ret .= $varTitle;
-			$ret .= (new DebugMsg($value, $title))->build();
+			$ret .= (new \DebugMsg($value, $title))->build();
 		}
 		unset($title);
 	}
@@ -93,26 +93,33 @@ function print_o() {
 /**
 * Get first value of parameter that not null and not empty string
 *
-* @param Mixed $arg1..$argn
+* @param mixed ...$values
 *
-* @return Mixed
+* @return mixed
 */
-function getFirst() {
-	for ( $i = 0; $i < func_num_args(); $i++ ) {
-		$value = func_get_arg($i);
+function getFirst(mixed ...$values): mixed {
+	foreach ($values as $value) {
 		if (!(is_null($value) || $value === '')) {
 			return $value;
 		}
 	}
-	return NULL;
+	return null;
 }
 
-function getFirstInt() {
-	for ( $i = 0; $i < func_num_args(); $i++ ) {
-		$value = func_get_arg($i);
-		if (is_numeric($value)) return intval($value);
+/**
+* Get first value of parameter that numeric
+*
+* @param mixed ...$values
+*
+* @return numeric
+*/
+function getFirstInt(mixed ...$values): ?int {
+	foreach ($values as $value) {
+		if (is_numeric($value)) {
+			return intval($value);
+		}
 	}
-	return NULL;
+	return null;
 }
 
 // function valid($value, $regx, $debug = false) {
@@ -154,9 +161,6 @@ function valid($value, $regx, $debug = false) {
 */
 function api($args = []) {
 	if (is_string($args)) $args = ['url' => $args];
-
-	$default = '{port: null, username: null, password: null, type: "text"}';
-	$options = json_decode($options, $default);
 
 	// Get file from camera with curl function
 	$ch = curl_init();
@@ -846,7 +850,7 @@ function paramToObject($param) {
 	} else {
 		$id = $param;
 		unset($param);
-		$param->id = $id;
+		$param = (object) ['id' => $id];
 	}
 	return $param;
 }
