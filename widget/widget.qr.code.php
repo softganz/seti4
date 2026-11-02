@@ -19,21 +19,20 @@
  *		'text' => new Container(['id' => 'text', 'child' => 'อัพโหลดใบเสร็จรับเงินโดยการถ่ายภาพจากสมาร์ทโฟนโดยใช้สมาร์ทโฟนสแกนคิวอาร์โค๊ดนี้ แล้วกด "ส่งภาพใบเสร็จรับเงิน" เลือกกล้องถ่ายรูป']),
  *		'attribute' => ['style' => 'display: block; margin:0 auto;']
  *	])
-*/
+ */
 
 class QrCodeWidget extends Widget {
-	var $widgetName = 'QrCode';
-	var $version = '0.0.01';
-	var $tagName = 'div'; // String
-	var $url;
-	var $domain;
-	var $text;
-	var $showUrl = true;
-	var $width = 160;
-	var $height = 160;
-	var $imgWidth = '100%';
-	var $imgHeight = '100%';
-	var $attribute = [];
+	public $widgetName = 'QrCode';
+	public $version = '0.0.01';
+	public $tagName = 'div'; // String
+	public $url;
+	public $domain;
+	public $text;
+	public $showUrl = true;
+	public $width = 160;
+	public $height = 160;
+	public $imgWidth = '100%';
+	public $imgHeight = '100%';
 
 	function toString() {
 		if (preg_match('/^(http\:|https\:)/', $this->url, $out)) {
@@ -42,15 +41,32 @@ class QrCodeWidget extends Widget {
 			$this->domain = $this->domain ? $this->domain : _DOMAIN;
 		}
 
-		$this->children[] = '<img class="-qrcode" '
-			. 'src="https://api.qrserver.com/v1/create-qr-code/?size=' . $this->width . 'x' . $this->height . '&data=' . $this->domain . urlencode($this->url) . '" '
+		$this->children[] =
+			'<img class="-qrcode" '
+			. 'src="https://api.qrserver.com/v1/create-qr-code/?size='
+			. $this->width
+			. 'x'
+			. $this->height
+			. '&data='
+			. $this->domain
+			. urlencode($this->url)
+			. '" '
 			. 'alt="QR-Code" '
-			. 'width="' . $this->imgWidth . '" '
-			. 'height="' . $this->imgHeight . '" '
+			. 'width="'
+			. $this->imgWidth
+			. '" '
+			. 'height="'
+			. $this->imgHeight
+			. '" '
 			. '/>';
 
-		if ($this->showUrl) $this->children[] = '<div class="-url">' . $this->domain . $this->url . '</div>';
-		if (isset($this->text)) $this->children[] = $this->renderEachChildWidget($this->text, 'text');
+		if ($this->showUrl) {
+			$this->children[] =
+				'<div class="-url">' . $this->domain . $this->url . '</div>';
+		}
+		if (isset($this->text)) {
+			$this->children[] = $this->renderEachChildWidget($this->text, 'text');
+		}
 
 		return parent::toString();
 	}

@@ -12,10 +12,10 @@
  */
 
 class renderPageWidget extends Widget {
-	var $debug = false;
-	var $pageClass;
-	var $requestResult;
-	var $count = 0;
+	public $debug = false;
+	public $pageClass;
+	public $requestResult;
+	public $count = 0;
 
 	function __construct($requestResult, $pageClass) {
 		parent::__construct([

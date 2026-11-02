@@ -12,11 +12,11 @@
  */
 
 class renderAjaxWidget extends Widget {
-	var $requestResult;
-	
+	public $requestResult;
+
 	function __construct($requestResult) {
 		parent::__construct([
-			'requestResult' => $requestResult,
+			'requestResult' => $requestResult
 		]);
 	}
 
@@ -27,10 +27,16 @@ class renderAjaxWidget extends Widget {
 		$ajaxResult = [];
 		// debugMsg('ERROR MESSAGE');
 		// debugMsg($this->pageBuildWidget, '$this->pageBuildWidget');
-		
-		if (is_object($this->requestResult) && $this->requestResult->widgetName === 'ErrorMessage') {
+
+		if (
+			is_object($this->requestResult) &&
+			$this->requestResult->widgetName === 'ErrorMessage'
+		) {
 			$ajaxResult = $this->requestResult->build();
-		} else if (is_object($this->requestResult) && method_exists($this->requestResult, 'build')) {
+		} elseif (
+			is_object($this->requestResult) &&
+			method_exists($this->requestResult, 'build')
+		) {
 			$this->requestResult = $this->renderWidget();
 		}
 
@@ -48,15 +54,23 @@ class renderAjaxWidget extends Widget {
 		if ($ajaxResult['responseCode']) {
 			sendHeader('application/json');
 			http_response_code($ajaxResult['responseCode']);
-			die(json_encode($this->requestResult->build(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+			die(
+				json_encode(
+					$this->requestResult->build(),
+					JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+				)
+			);
 		}
 
 		if (is_array($this->requestResult) || is_object($this->requestResult)) {
 			sendHeader('application/json');
-			$this->requestResult = json_encode($this->requestResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+			$this->requestResult = json_encode(
+				$this->requestResult,
+				JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+			);
 		}
 
-		die(debugMsg().process_widget($this->requestResult));
+		die(debugMsg() . process_widget($this->requestResult));
 	}
 
 	protected function renderWidget() {
@@ -64,15 +78,21 @@ class renderAjaxWidget extends Widget {
 		if ($this->requestResult->appBar->boxHeader) {
 			// Show header from text of boxHeader
 			if (is_string($this->requestResult->appBar->boxHeader)) {
-				$this->requestResult->appBar->title = $this->requestResult->appBar->boxHeader;
-				unset($this->requestResult->appBar->trailing, $this->requestResult->appBar->subTitle);
+				$this->requestResult->appBar->title =
+					$this->requestResult->appBar->boxHeader;
+				unset(
+					$this->requestResult->appBar->trailing,
+					$this->requestResult->appBar->subTitle
+				);
 			}
 			$ret .= $this->requestResult->appBar->build();
 		}
 
 		$ret .= self::buildRequest($this->requestResult);
 
-		if ($this->requestResult->var) $ret = SgCore::processTemplateVariable($ret, $this->requestResult->var);
+		if ($this->requestResult->var) {
+			$ret = SgCore::processTemplateVariable($ret, $this->requestResult->var);
+		}
 
 		return $ret;
 	}
@@ -81,7 +101,9 @@ class renderAjaxWidget extends Widget {
 	protected static function buildRequest($widget) {
 		if (is_object($widget) && method_exists($widget, 'build')) {
 			$buildResult = $widget->build();
-			return is_object($buildResult) && method_exists($buildResult, 'build') ? self::buildRequest($buildResult) : $buildResult;
+			return is_object($buildResult) && method_exists($buildResult, 'build')
+				? self::buildRequest($buildResult)
+				: $buildResult;
 		}
 
 		return $widget;

@@ -12,22 +12,18 @@
  */
 
 class InlineEdit extends Widget {
-	var $widgetName = 'InlineEdit';
-	var $tagName = 'div';
-	var $version = '0.04';
-	var $childTagName = 'span';
+	public $widgetName = 'InlineEdit';
+	public $tagName = 'div';
+	public $version = '0.04';
+	public $childTagName = 'span';
 
 	// Parent propoty
-	var $id;
-	var $class = '';
-	var $editMode = false;
-	var $action;
-	var $useParentEditClass = false;
-	var $numbering = 0;
-	var $attribute = [];
+	public $editMode = false;
+	public $action;
+	public $useParentEditClass = false;
+	public $numbering = 0;
 
-	var $children = []; // For multiple edit items
-	var $debug = []; // For debug message
+	public $debug = []; // For debug message
 
 	private $editModeClassName = 'sg-inlineedit';
 	private $editFieldClassName = 'inlineedit-field';

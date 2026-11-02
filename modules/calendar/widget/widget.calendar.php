@@ -13,23 +13,22 @@
  */
 
 class CalendarWidget extends Widget {
-	var $id = 'calendar-body';
-	var $class = 'widget-calendar';
-	var $tagName = 'div';
+	public $id = 'calendar-body';
+	public $class = 'widget-calendar';
+	public $tagName = 'div';
 	private $classContent = 'calendar-content'; // class for content div
-	var $forceBuild = false;
-	var $year;
-	var $month;
-	var $hash;
-	var $callFrom;
-	var $src;
-	var $nodeId;
-	var $orgId;
-	var $url;
-	var $debug = false; // debug mode
-	var $attribute = [];
-	var $navigator;
-	var $right;
+	public $forceBuild = false;
+	public $year;
+	public $month;
+	public $hash;
+	public $callFrom;
+	public $src;
+	public $nodeId;
+	public $orgId;
+	public $url;
+	public $debug = false; // debug mode
+	public $navigator;
+	public $right;
 
 	function __construct($args = []) {
 		if (isset($args['class'])) {

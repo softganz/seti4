@@ -12,15 +12,16 @@
  */
 
 class StatusbarWidget extends Widget {
-	var $tagName = 'ul';
-	public array $childContainer = ['tagName' => 'li', 'class' => '-item'];
-	var $class = 'widget-statusbar';
+	public $tagName = 'ul';
+	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
+	public $class = 'widget-statusbar';
+
 	function __construct(
 		$args = [],
 		?string $id = null,
 		?string $class = null,
 		?string $style = null,
-		?array $children = [],
+		?array $children = []
 	) {
 		parent::__construct(
 			array_replace(
@@ -28,7 +29,7 @@ class StatusbarWidget extends Widget {
 					'id' => $id,
 					'class' => $class,
 					'style' => $style,
-					'children' => $children,
+					'children' => $children
 				],
 				$args
 			)

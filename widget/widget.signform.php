@@ -12,19 +12,19 @@
  */
 
 class SignForm extends Widget {
-	var $version = '1.00';
-	var $action;
-	var $username;
-	var $password;
-	var $time = 10080;
-	var $done;
-	var $showRegisterButton = true;
-	var $showForgotButton = true;
-	var $showGuide = true;
-	var $registerRel = '#main';
-	var $registerReturnUrl;
-	var $registerText = 'Create new account';
-	var $guideText = '<div class="-guideline"><h5>คำแนะนำในการเข้าสู่ระบบ</h5><ul><li>ป้อน <b>บัญชีผู้ใช้ (username) หรืออีเมล์ (email)</b> ที่ลงทะเบียนไว้กับเว็บไซท์</li><li>ป้อน <b>รหัสผ่าน (password)</b></li><li>คลิกที่ปุ่ม <strong>เข้าสู่ระบบ (Sign In)</strong></li><li>กรณีลืมรหัสผ่านคลิกที่ <b>ลืมรหัสผ่าน?</b></li><li>กรณีที่ยังไม่มีบัญชีผู้ใช้ กรุณา <strong>สมัครสมาชิก</strong> ก่อน</li></ul></div>';
+	public $version = '1.00';
+	public $action;
+	public $username;
+	public $password;
+	public $time = 10080;
+	public $done;
+	public $showRegisterButton = true;
+	public $showForgotButton = true;
+	public $showGuide = true;
+	public $registerRel = '#main';
+	public $registerReturnUrl;
+	public $registerText = 'Create new account';
+	public $guideText = '<div class="-guideline"><h5>คำแนะนำในการเข้าสู่ระบบ</h5><ul><li>ป้อน <b>บัญชีผู้ใช้ (username) หรืออีเมล์ (email)</b> ที่ลงทะเบียนไว้กับเว็บไซท์</li><li>ป้อน <b>รหัสผ่าน (password)</b></li><li>คลิกที่ปุ่ม <strong>เข้าสู่ระบบ (Sign In)</strong></li><li>กรณีลืมรหัสผ่านคลิกที่ <b>ลืมรหัสผ่าน?</b></li><li>กรณีที่ยังไม่มีบัญชีผู้ใช้ กรุณา <strong>สมัครสมาชิก</strong> ก่อน</li></ul></div>';
 
 	function __construct($args = []) {
 		parent::__construct(

@@ -12,11 +12,13 @@
  */
 
 class AppBarNavWidget extends Widget {
-	var $configName;
-	var $userSigned = false;
+	public $configName;
+	public $userSigned = false;
 
 	function build() {
-		if ($this->userSigned && !i()->ok) return NULL;
+		if ($this->userSigned && !i()->ok) {
+			return null;
+		}
 
 		$children = [];
 
@@ -26,27 +28,41 @@ class AppBarNavWidget extends Widget {
 				'tagName' => 'ul',
 				'childTagName' => 'li',
 				'class' => '-info',
-				'children' => (function() {
+				'children' => (function () {
 					$childrens = [];
 
-					list($module, $navName) = explode('.', $this->configName);
+					[$module, $navName] = explode('.', $this->configName);
 					$navConfig = cfg($module)->{$navName};
 					$menuItems = $navConfig->appBar->navigatorMenu;
 
 					// Show button in follow navigator config
-					foreach (explode(',', $navConfig->appBar->navigatorMenuEnable) as $navKey) {
+					foreach (
+						explode(',', $navConfig->appBar->navigatorMenuEnable)
+						as $navKey
+					) {
 						$menuItem = $menuItems->{$navKey};
 						// if ($menuItem->access) {
 						// 	if (!defined($menuItem->access)) continue;
 						// 	else if (!($this->projectInfo->RIGHT & constant($menuItem->access))) continue;
 						// }
-						$childrens[$navKey] = '<a href="'.url($menuItem->url ? $menuItem->url : '').'" title="'.$menuItem->title.'" '.sg_implode_attr($menuItem->attribute ?? []).'>'
-							. '<i class="icon -material">'.$menuItem->icon.'</i>'
-							. '<span>'.$menuItem->label.'</span>'
+						$childrens[$navKey] =
+							'<a href="'
+							. url($menuItem->url ? $menuItem->url : '')
+							. '" title="'
+							. $menuItem->title
+							. '" '
+							. sg_implode_attr($menuItem->attribute ?? [])
+							. '>'
+							. '<i class="icon -material">'
+							. $menuItem->icon
+							. '</i>'
+							. '<span>'
+							. $menuItem->label
+							. '</span>'
 							. '</a>';
 					}
 					return $childrens;
-				})(), // children
+				})() // children
 			]);
 		}
 
@@ -59,14 +75,14 @@ class AppBarNavWidget extends Widget {
 					// 'class' => '-info',
 					'children' => $this->children
 				]);
-			} else if (is_object($this->children)) {
+			} elseif (is_object($this->children)) {
 				$children[] = $this->children;
 			}
 		}
 		// debugMsg($children, '$children');
 		// debugMsg($this,'$this');
 		return new Widget([
-			'children' => $children,
+			'children' => $children
 		]);
 	}
 }

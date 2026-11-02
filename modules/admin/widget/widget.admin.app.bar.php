@@ -6,17 +6,13 @@
  * Modified :: 2026-09-18
  * Version  :: 4
  *
- * @param Array $_args
+ * @param array $_args
  * @return AppBar
  *
  * @uses new AdminAppBarWidget($args)
  */
 
 class AdminAppBarWidget extends AppBar {
-	var $title;
-	var $leading;
-	var $trailing;
-	var $navigator;
 	var $search;
 
 	function __construct($args = []) {

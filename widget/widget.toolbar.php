@@ -12,12 +12,11 @@
  */
 
 class Toolbar extends Widget {
-	var $widgetName = 'Toolbar';
-	var $self = null;
-	var $title = '';
-	var $navGroup = [];
-	var $nav = '';
-	var $info = null;
+	public $widgetName = 'Toolbar';
+	public $self = null;
+	public $navGroup = [];
+	public $nav = '';
+	public $info = null;
 
 	function __construct(
 		$self,

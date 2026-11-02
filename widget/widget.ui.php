@@ -12,29 +12,45 @@
  */
 
 class Ui extends Widget {
-	var $widgetName = 'Ui';
-	var $forceBuild = false;
-	var $seperator = ' · ';
-	var $tagName = 'ul';
-	var $uiItemClass = 'ui-item -item';
-	var $wrapperType = array('ul' => 'li','span' => 'span','div' => 'div', 'div a'=>'a', 'ol'=>'li');
-	var $type = 'action';
-	var $columnPerRow;
-	var $header;
-	var $config;
-	var $container;
+	public $widgetName = 'Ui';
+	public $forceBuild = false;
+	public $seperator = ' · ';
+	public $tagName = 'ul';
+	public $uiItemClass = 'ui-item -item';
+	public $wrapperType = [
+		'ul' => 'li',
+		'span' => 'span',
+		'div' => 'div',
+		'div a' => 'a',
+		'ol' => 'li'
+	];
+	public $type = 'action';
+	public $columnPerRow;
+	public $header;
+	public $config;
+	public $container;
 
-	function __construct($join = NULL, $class = NULL) {
+	function __construct($join = null, $class = null) {
 		if (is_object($join) || is_array($join)) {
-			$parameter = is_array($join) ? (Object) $join : $join;
-			if (isset($parameter->id)) $this->id = $parameter->id;
+			$parameter = is_array($join) ? (object) $join : $join;
+			if (isset($parameter->id)) {
+				$this->id = $parameter->id;
+			}
 			// if (isset($parameter->class)) $this->class = $parameter->class;
-			if (isset($parameter->tagName)) $this->tagName = $parameter->tagName;
-			if (isset($parameter->class)) $this->class = (substr($parameter->class,0,1) == '-' ? $this->class.' ' : '').$parameter->class;
+			if (isset($parameter->tagName)) {
+				$this->tagName = $parameter->tagName;
+			}
+			if (isset($parameter->class)) {
+				$this->class =
+					(substr($parameter->class, 0, 1) == '-' ? $this->class . ' ' : '')
+					. $parameter->class;
+			}
 			if (isset($parameter->config)) {
 				foreach ($parameter->config as $key => $value) {
 					if (preg_match('/([\w]+)\-([\w\-]+)/', $key, $out)) {
-						if ($out[1] == 'data') $this->config->data[$key] = $value;
+						if ($out[1] == 'data') {
+							$this->config->data[$key] = $value;
+						}
 					} else {
 						$this->config->{$key} = $value;
 					}
@@ -43,73 +59,103 @@ class Ui extends Widget {
 			parent::__construct($parameter);
 		} else {
 			$this->initConfig();
-			if ($join) $this->tagName = $join;
-			if ($class) $this->class = (substr($class,0,1) == '-' ? $this->class.' ' : '').$class;
+			if ($join) {
+				$this->tagName = $join;
+			}
+			if ($class) {
+				$this->class =
+					(substr($class, 0, 1) == '-' ? $this->class . ' ' : '') . $class;
+			}
 		}
-		if ($this->debug) debugMsg($this,'Ui()');
+		if ($this->debug) {
+			debugMsg($this, 'Ui()');
+		}
 	}
 
 	function Add($link, $options = '{}') {
 		if (is_array($link)) {
 			foreach ($link as $key => $value) {
 				$options = $value[1];
-				$this->children[$key] = (Object) [
+				$this->children[$key] = (object) [
 					'text' => $value[0],
-					'options' => is_string($options) ? \SG\json_decode($options): (object) $options
+					'options' => is_string($options)
+						? \SG\json_decode($options)
+						: (object) $options
 				];
 			}
-		} else if ($link) {
-			$this->children[] = (Object) [
+		} elseif ($link) {
+			$this->children[] = (object) [
 				'text' => $link,
-				'options' => is_string($options) ? \SG\json_decode($options): (Object) $options
+				'options' => is_string($options)
+					? \SG\json_decode($options)
+					: (object) $options
 			];
 		}
 		return $this;
 	}
 
-	function Clear() {$this->children = []; return $this;}
+	function Clear() {
+		$this->children = [];
+		return $this;
+	}
 
-	function Count() {return count((Array) $this->children);}
+	function Count() {
+		return count((array) $this->children);
+	}
 
 	protected function renderChildren($childrens = [], $args = []) {
 		$ret = '';
 		foreach ($childrens as $key => $value) {
 			if (is_array($value)) {
-				$child = (Object) $value;
-			} else if (is_object($value)) {
+				$child = (object) $value;
+			} elseif (is_object($value)) {
 				$child = $value;
 			} else {
-				$child = (Object) ['text' => $value, 'options' => NULL];
+				$child = (object) ['text' => $value, 'options' => null];
 			}
 
 			// Convert options to object
 			$options = (object) array_replace(
 				[
-					'class' => null,
+					'class' => null
 				],
-				is_string($child->options) ? (array) \SG\json_decode($child->options): (array) $child->options
+				is_string($child->options)
+					? (array) \SG\json_decode($child->options)
+					: (array) $child->options
 			);
 
-			$uiItemClass = $this->uiItemClass.($options->class ?? false ? ' '.$options->class : '');
-			if (in_array($child->text, array('-','<sep>'))) {
+			$uiItemClass =
+				$this->uiItemClass
+				. ($options->class ?? false ? ' ' . $options->class : '');
+			if (in_array($child->text, ['-', '<sep>'])) {
 				$uiItemClass .= ' -sep';
 				$child->text = '<hr size="1" />';
 			}
 			$options->class = $uiItemClass;
 
 			$uiItemTag = $this->wrapperType[$this->tagName];
-			$ret .= $uiItemTag ? '<'.$uiItemTag.' '.sg_implode_attr($options).'>' : '';
+			$ret .= $uiItemTag
+				? '<' . $uiItemTag . ' ' . sg_implode_attr($options) . '>'
+				: '';
 			$ret .= $child->text;
-			$ret .= $uiItemTag ? '</'.$uiItemTag.'>' : '';
+			$ret .= $uiItemTag ? '</' . $uiItemTag . '>' : '';
 			$ret .= _NL;
 		}
 		return $ret;
 	}
 
 	function build() {
-		if (empty($this->children) && $this->forceBuild === false) return;
+		if (empty($this->children) && $this->forceBuild === false) {
+			return;
+		}
 
-		$uiType = ['action' => 'ui-action', 'card' => 'ui-card', 'menu' => 'ui-menu', 'album' => 'ui-album', 'nav' => 'ui-nav'];
+		$uiType = [
+			'action' => 'ui-action',
+			'card' => 'ui-card',
+			'menu' => 'ui-menu',
+			'album' => 'ui-album',
+			'nav' => 'ui-nav'
+		];
 
 		$ret = '';
 
@@ -117,43 +163,67 @@ class Ui extends Widget {
 		$join = $this->tagName;
 		$attrs = [];
 
-		if (!empty($this->config->id)) $attrs['id'] = $this->config->id;
-		else if ($this->id) $attrs['id'] = $this->id;
+		if (!empty($this->config->id)) {
+			$attrs['id'] = $this->config->id;
+		} elseif ($this->id) {
+			$attrs['id'] = $this->id;
+		}
 
-		$attrs['class'] = 'widget-'.strtolower($this->widgetName);
-		if ($this->type) $attrs['class'] .= ' '.$uiType[$this->type];
-		if ($this->class) $attrs['class'] .= ' '.$this->class;
-		if ($this->columnPerRow) $attrs['class'] .= ' -sg-flex -co-'.$this->columnPerRow;
+		$attrs['class'] = 'widget-' . strtolower($this->widgetName);
+		if ($this->type) {
+			$attrs['class'] .= ' ' . $uiType[$this->type];
+		}
+		if ($this->class) {
+			$attrs['class'] .= ' ' . $this->class;
+		}
+		if ($this->columnPerRow) {
+			$attrs['class'] .= ' -sg-flex -co-' . $this->columnPerRow;
+		}
 
-		foreach ($this->config->data as $key => $value) $attrs[$key] = $value;
+		foreach ($this->config->data as $key => $value) {
+			$attrs[$key] = $value;
+		}
 
-		foreach ($this->config->attr as $key => $value) $attrs[$key] = $value;
+		foreach ($this->config->attr as $key => $value) {
+			$attrs[$key] = $value;
+		}
 
 		foreach ($attrs as $key => $value) {
-			$attrText .= $key.'="'.$value.'" ';
+			$attrText .= $key . '="' . $value . '" ';
 		}
 
 		$attrText = trim($attrText);
 
-		list($joinTag) = explode(' ', $join);
-		$ret .= '<'.$joinTag.' '.$attrText.'>'._NL;
+		[$joinTag] = explode(' ', $join);
+		$ret .= '<' . $joinTag . ' ' . $attrText . '>' . _NL;
 
 		if ($this->header?->text) {
 			$headerClass = $this->header->attr->class ?? '';
 			unset($this->header->attr->class);
-			$ret .= '<header class="header'.($headerClass ? ' '.$headerClass : '').'" '.sg_implode_attr($this->header->attr).'>'
-				. ($this->header->options->preText ?? '' ? $this->header->options->preText : '')
+			$ret .=
+				'<header class="header'
+				. ($headerClass ? ' ' . $headerClass : '')
+				. '" '
+				. sg_implode_attr($this->header->attr)
+				. '>'
+				. ($this->header->options->preText ?? ''
+					? $this->header->options->preText
+					: '')
 				. ($this->header->text ?? '')
-				. ($this->header->options->postText ?? '' ? $this->header->options->postText : '')
+				. ($this->header->options->postText ?? ''
+					? $this->header->options->postText
+					: '')
 				. '</header>';
-			if ($headerClass) $this->header->attr->class = $headerClass;
+			if ($headerClass) {
+				$this->header->attr->class = $headerClass;
+			}
 		}
 		$ret .= $this->renderChildren($this->children());
-		$ret .= '</'.$joinTag.'>'._NL;
+		$ret .= '</' . $joinTag . '>' . _NL;
 
 		if (!empty($this->config->nav)) {
 			$this->container = $this->config->nav;
-		} else if (!empty($this->config->container)) {
+		} elseif (!empty($this->config->container)) {
 			$this->container = $this->config->container;
 		}
 
@@ -163,14 +233,25 @@ class Ui extends Widget {
 			unset($container->tag);
 			$containerAttr = sg_implode_attr($container);
 
-			$ret = '<'.$containerTag.' '.$containerAttr.'>'.$ret.'</'.$containerTag.'>';
+			$ret =
+				'<'
+				. $containerTag
+				. ' '
+				. $containerAttr
+				. '>'
+				. $ret
+				. '</'
+				. $containerTag
+				. '>';
 		}
 
 		return $ret;
 	}
 
-	function show($forceBuild = NULL) {
-		if (isset($forceBuild)) $this->forceBuild = $forceBuild;
+	function show($forceBuild = null) {
+		if (isset($forceBuild)) {
+			$this->forceBuild = $forceBuild;
+		}
 
 		return $this->build($forceBuild);
 	}

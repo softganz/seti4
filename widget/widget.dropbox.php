@@ -20,18 +20,18 @@ class Dropbox extends Widget {
 	public $type = 'click';
 	public $class = '';
 	public $text = '';
-	public $icon = NULL;
+	public $icon = null;
 	public $iconText = 'more_vert';
-	public $title = 'มีเมนูย่อย';
-	public $url = NULL;
-	public $link = NULL;
+	public mixed $title = 'มีเมนูย่อย';
+	public $url = null;
+	public $link = null;
 	public $position = 'left';
 	public bool $hideOnNoChild;
 	public $print = false;
 	public $debug = false;
 	public $footer = '';
 	public $childrenContainer = ['tagName' => 'ul'];
-	public array $childContainer = ['tagName' => 'li', 'class' => '-item'];
+	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
 	function __construct(
 		$args = [],
@@ -61,8 +61,10 @@ class Dropbox extends Widget {
 		);
 	}
 
-	function add($value = NULL) {
-		if (isset($value)) $this->children[] = $value;
+	function add($value = null) {
+		if (isset($value)) {
+			$this->children[] = $value;
+		}
 	}
 
 	function build() {
@@ -76,35 +78,77 @@ class Dropbox extends Widget {
 				}
 			}
 
-			if (!$hasChild) return;
+			if (!$hasChild) {
+				return;
+			}
 		}
 
-		if ($this->debug) debugMsg($this, '$this');
+		if ($this->debug) {
+			debugMsg($this, '$this');
+		}
 
-		if ($this->position === 'left') $this->class .= ' -leftside';
-		else if ($this->position === 'center') $this->class .= ' -centerside';
-		else $this->class .= ' -rightside';
-		if (!$this->print) $this->class .= ' -no-print';
+		if ($this->position === 'left') {
+			$this->class .= ' -leftside';
+		} elseif ($this->position === 'center') {
+			$this->class .= ' -centerside';
+		} else {
+			$this->class .= ' -rightside';
+		}
+		if (!$this->print) {
+			$this->class .= ' -no-print';
+		}
 
 		$dropLink = SG\getFirst(
 			$this->link,
-			'<a href="javascript:void(0)" title="' . $this->title . '">'
-				. ($this->text != '' ? '<span>' . $this->renderEachChildWidget($this->text) . '</span>' : '')
-				. ($this->icon ? $this->renderEachChildWidget($this->icon) : '<i class="icon -' . ($this->icon ? $this->icon : 'material') . '">' . $this->iconText . '</i>')
+			'<a href="javascript:void(0)" title="'
+				. $this->title
+				. '">'
+				. ($this->text != ''
+					? '<span>' . $this->renderEachChildWidget($this->text) . '</span>'
+					: '')
+				. ($this->icon
+					? $this->renderEachChildWidget($this->icon)
+					: '<i class="icon -'
+						. ($this->icon ? $this->icon : 'material')
+						. '">'
+						. $this->iconText
+						. '</i>')
 				. '</a>'
 		);
 
-		$ret = _NL . '<!-- Start of widget-dropbox -->' . _NL
-			. '<span class="widget-dropbox sg-dropbox ' . $this->type . ' ' . $this->class . '" data-type="' . $this->type . '"' . ($this->url ? ' data-url="' . $this->url . '"' : '') . '>' . _NL
-			. $dropLink . _NL
-			. '<div class="-wrapper -hidden">' . _NL
-			. '<div class="-arrow"></div>' . _NL
-			. '<div class="-content">' . _NL
+		$ret =
+			_NL
+			. '<!-- Start of widget-dropbox -->'
+			. _NL
+			. '<span class="widget-dropbox sg-dropbox '
+			. $this->type
+			. ' '
+			. $this->class
+			. '" data-type="'
+			. $this->type
+			. '"'
+			. ($this->url ? ' data-url="' . $this->url . '"' : '')
+			. '>'
+			. _NL
+			. $dropLink
+			. _NL
+			. '<div class="-wrapper -hidden">'
+			. _NL
+			. '<div class="-arrow"></div>'
+			. _NL
+			. '<div class="-content">'
+			. _NL
 			. $this->renderChildren($this->children())
-			. '<div class="-footer">' . ($this->footer ? $this->renderEachChildWidget($this->footer) : '') . '</div>' . _NL
-			. '</div>' . _NL
-			. '</div>' . _NL
-			. '</span><!-- End of widget-dropbox -->' . _NL;
+			. '<div class="-footer">'
+			. ($this->footer ? $this->renderEachChildWidget($this->footer) : '')
+			. '</div>'
+			. _NL
+			. '</div>'
+			. _NL
+			. '</div>'
+			. _NL
+			. '</span><!-- End of widget-dropbox -->'
+			. _NL;
 
 		return $ret;
 	}

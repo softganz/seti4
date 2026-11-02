@@ -13,31 +13,35 @@
 
 class UserRegisterFormWidget extends Widget {
 	protected $captchaKey;
-	var $register;
-	var $cfgUserRegister;
-	var $validCheck;
+	public $register;
+	public $cfgUserRegister;
+	public $validCheck;
 
 	function __construct($register = []) {
 		parent::__construct([
 			'captchaKey' => cfg('captcha'),
-			'register' => (Object) $register,
-			'cfgUserRegister' => $cfgUserRegister = cfg('user')->register,
-			'validCheck' => explode(',', $cfgUserRegister->valid),
+			'register' => (object) $register,
+			'cfgUserRegister' => ($cfgUserRegister = cfg('user')->register),
+			'validCheck' => explode(',', $cfgUserRegister->valid)
 		]);
 	}
 
 	function build() {
-			$emailDesc = '<ul><li>กรุณาป้อนอี-เมล์ของท่านให้ถูกต้อง ทางเว็บไซท์จะไม่มีการแสดงอีเมล์นี้ของท่านในหน้าเว็บไซท์ แต่จะใช้ในกรณีดังต่อไปนี้<ol><li>ท่านลืมรหัสผ่าน ระบบจะส่งรหัสผ่านไปให้ท่านตามอีเมล์ที่ระบุนี้</li><li>มีการติดต่อจากแบบฟอร์มที่ให้กรอกในหน้าเว็บไซท์เพื่อส่งถึงท่าน</li></ol></li>';
+		$emailDesc =
+			'<ul><li>กรุณาป้อนอี-เมล์ของท่านให้ถูกต้อง ทางเว็บไซท์จะไม่มีการแสดงอีเมล์นี้ของท่านในหน้าเว็บไซท์ แต่จะใช้ในกรณีดังต่อไปนี้<ol><li>ท่านลืมรหัสผ่าน ระบบจะส่งรหัสผ่านไปให้ท่านตามอีเมล์ที่ระบุนี้</li><li>มีการติดต่อจากแบบฟอร์มที่ให้กรอกในหน้าเว็บไซท์เพื่อส่งถึงท่าน</li></ol></li>';
 
 		switch (cfg('member.registration.method')) {
-			case 'email' :
-				$emailDesc .= '<li><strong>เมื่อท่านลงทะเบียนเรียบร้อย เราจะส่งอี-เมล์ถึงท่าน ตามอี-เมล์ที่ท่านระบุ และท่านจะต้องทำการยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</strong></li>';
+			case 'email':
+				$emailDesc .=
+					'<li><strong>เมื่อท่านลงทะเบียนเรียบร้อย เราจะส่งอี-เมล์ถึงท่าน ตามอี-เมล์ที่ท่านระบุ และท่านจะต้องทำการยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</strong></li>';
 				break;
-			case 'waiting' :
-				$emailDesc .= '<li><strong>เมื่อท่านลงทะเบียนเรียบร้อย กรุณารอจนกว่าผู้ดูแลเว็บไซท์กำหนดสิทธิ์ให้เริ่มใช้งานได้</strong></li>';
+			case 'waiting':
+				$emailDesc .=
+					'<li><strong>เมื่อท่านลงทะเบียนเรียบร้อย กรุณารอจนกว่าผู้ดูแลเว็บไซท์กำหนดสิทธิ์ให้เริ่มใช้งานได้</strong></li>';
 				break;
-			case 'waiting,email' :
-				$emailDesc .= '<li><strong>เมื่อท่านลงทะเบียนเรียบร้อย กรุณารอจนกว่าผู้ดูแลเว็บไซท์กำหนดสิทธิ์ให้เริ่มใช้งานได้</strong></li><li><strong>เมื่อผู้ดูแลระบบกำหนดสิทธิ์เรียบร้อย เราจะส่งอี-เมล์ถึงท่าน ตามอี-เมล์ที่ท่านระบุ และท่านจะต้องทำการยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</strong></li>';
+			case 'waiting,email':
+				$emailDesc .=
+					'<li><strong>เมื่อท่านลงทะเบียนเรียบร้อย กรุณารอจนกว่าผู้ดูแลเว็บไซท์กำหนดสิทธิ์ให้เริ่มใช้งานได้</strong></li><li><strong>เมื่อผู้ดูแลระบบกำหนดสิทธิ์เรียบร้อย เราจะส่งอี-เมล์ถึงท่าน ตามอี-เมล์ที่ท่านระบุ และท่านจะต้องทำการยืนยันการเป็นสมาชิก การสมัครสมาชิกจึงจะสมบูรณ์</strong></li>';
 				break;
 		}
 
@@ -52,24 +56,36 @@ class UserRegisterFormWidget extends Widget {
 			'checkValid' => true,
 			'rel' => SG\getFirst($this->register->rel, 'edit-register'),
 			'attribute' => [
-				'onSubmit' => $this->captchaKey ? NULL : 'checkComplete.registerSubmit(this)'
+				'onSubmit' => $this->captchaKey
+					? null
+					: 'checkComplete.registerSubmit(this)'
 			],
 			'children' => [
-				'rel' => $this->register->rel ? ['type' => 'hidden','value' => $this->register->rel] : NULL,
-				'ret' => $this->register->ret ? ['type' => 'hidden','value' => $this->register->ret] : NULL,
-				'step' => ['type' => 'hidden','value' => 1],
+				'rel' => $this->register->rel
+					? ['type' => 'hidden', 'value' => $this->register->rel]
+					: null,
+				'ret' => $this->register->ret
+					? ['type' => 'hidden', 'value' => $this->register->ret]
+					: null,
+				'step' => ['type' => 'hidden', 'value' => 1],
 
-				($googleId = cfg('signin')->google->id) ? new Container([
-					'class' => '-sg-text-center -sg-paddingmore',
-					'children' => [
-						new Row([
-							'mainAxisAlignment' => 'center',
-							// 'class' => '-sg-text-center',
-							'children' => [
-								'<script src="https://accounts.google.com/gsi/client" async defer></script>
+				($googleId = cfg('signin')->google->id)
+					? new Container([
+						'class' => '-sg-text-center -sg-paddingmore',
+						'children' => [
+							new Row([
+								'mainAxisAlignment' => 'center',
+								// 'class' => '-sg-text-center',
+								'children' => [
+									'<script src="https://accounts.google.com/gsi/client" async defer></script>
 								<div id="g_id_onload"
-									data-client_id="'.$googleId.'"
-									data-login_uri="'._DOMAIN.url('user/register', ['signWith' => 'google']).'"
+									data-client_id="'
+									. $googleId
+									. '"
+									data-login_uri="'
+									. _DOMAIN
+									. url('user/register', ['signWith' => 'google'])
+									. '"
 									data-auto_prompt="false"
 									data-ux_mode="redirect"
 									>
@@ -83,61 +99,90 @@ class UserRegisterFormWidget extends Widget {
 									data-shape="circle"
 									data-logo_alignment="left"
 									>
-								</div>',
-							], // children
-						]), // Row
-						'<div>หรือ</div>',
-						// '<hr />',
-					], // children
-				]) : NULL,
+								</div>'
+								] // children
+							]), // Row
+							'<div>หรือ</div>'
+							// '<hr />',
+						] // children
+					])
+					: null,
 
 				new ListTile([
 					'crossAxisAlignment' => 'center',
 					'title' => tr('Register New Member'),
-					'leading' => new Icon('person_add_alt'),
+					'leading' => new Icon('person_add_alt')
 				]),
 				'<fieldset id="account" class="user-register-form-account"><legend>ข้อมูลสมาชิก (Account information)</legend>',
 				'username' => [
 					'type' => 'text',
 					'label' => 'ชื่อสมาชิก ( Username )',
-					'maxlength' =>cfg('member.username.maxlength'),
+					'maxlength' => cfg('member.username.maxlength'),
 					'class' => '-fill -check-key-up',
 					'require' => true,
 					'value' => $this->register->username,
 					'placeholder' => 'username',
 					'description' => cfg('user')->register->usernameMatchText,
-					'attribute' => ['style' => 'text-transform:lowercase;', 'onKeyUp' => 'checkComplete.checkUserValid(this)', 'onblur' => 'checkComplete.checkUserValid(this)']
+					'attribute' => [
+						'style' => 'text-transform:lowercase;',
+						'onKeyUp' => 'checkComplete.checkUserValid(this)',
+						'onblur' => 'checkComplete.checkUserValid(this)'
+					]
 				],
 				'password' => [
 					'type' => 'password',
 					'label' => 'รหัสผ่าน ( Password )',
-					'maxlength' =>cfg('member.password.maxlength'),
+					'maxlength' => cfg('member.password.maxlength'),
 					'class' => '-fill',
 					'require' => true,
 					'value' => $this->register->password,
 					'placeholder' => 'password',
-					'attribute' => ['onKeyUp' => 'checkComplete.checkPasswordValid(this)'],
-					'description' => '<ul>'
-						. (in_array('passwordMinLength', $this->validCheck) ? '<li>รหัสผ่านต้องมีความยาวอย่างน้อย <strong>'.$this->cfgUserRegister->passwordMinLength.' ตัวอักษร</strong></li>' : '')
-						. (in_array('passwordContainNumeric', $this->validCheck) ? '<li>'.tr('Password must include at least one number').'</li>' : '')
-						. (in_array('passwordContainLetter', $this->validCheck) ? '<li>'.tr('Password must include at least one letter').'</li>' : '')
-						. (in_array('passwordContainUpperCase', $this->validCheck) ? '<li>'.tr('Password must include at least one upper case letter').'</li>' : '')
+					'attribute' => [
+						'onKeyUp' => 'checkComplete.checkPasswordValid(this)'
+					],
+					'description' =>
+						'<ul>'
+						. (in_array('passwordMinLength', $this->validCheck)
+							? '<li>รหัสผ่านต้องมีความยาวอย่างน้อย <strong>'
+								. $this->cfgUserRegister->passwordMinLength
+								. ' ตัวอักษร</strong></li>'
+							: '')
+						. (in_array('passwordContainNumeric', $this->validCheck)
+							? '<li>'
+								. tr('Password must include at least one number')
+								. '</li>'
+							: '')
+						. (in_array('passwordContainLetter', $this->validCheck)
+							? '<li>'
+								. tr('Password must include at least one letter')
+								. '</li>'
+							: '')
+						. (in_array('passwordContainUpperCase', $this->validCheck)
+							? '<li>'
+								. tr('Password must include at least one upper case letter')
+								. '</li>'
+							: '')
 						. '</ul>',
-					'posttext' => '<i class="icon -material -show-password" onClick=\'showPassword(this)\'>visibility_off</i>',
-					'container' => ['class' => '-group'],
+					'posttext' =>
+						'<i class="icon -material -show-password" onClick=\'showPassword(this)\'>visibility_off</i>',
+					'container' => ['class' => '-group']
 				],
 				'repassword' => [
 					'type' => 'password',
 					'label' => 'ยืนยันรหัสผ่าน ( Re-enter Password )',
-					'maxlength' =>cfg('member.password.maxlength'),
+					'maxlength' => cfg('member.password.maxlength'),
 					'class' => '-fill',
 					'require' => true,
 					'value' => $this->register->repassword,
-					'attribute' => ['onKeyUp' => 'checkComplete.checkRePasswordValid(this)'],
+					'attribute' => [
+						'onKeyUp' => 'checkComplete.checkRePasswordValid(this)'
+					],
 					'placeholder' => 're-password',
-					'description' => 'ยืนยันรหัสผ่านอีกครั้งเพื่อความถูกต้องของการป้อนรหัสผ่าน',
-					'posttext' => '<i class="icon -material -show-password" onClick=\'showPassword(this)\'>visibility_off</i>',
-					'container' => ['class' => '-group'],
+					'description' =>
+						'ยืนยันรหัสผ่านอีกครั้งเพื่อความถูกต้องของการป้อนรหัสผ่าน',
+					'posttext' =>
+						'<i class="icon -material -show-password" onClick=\'showPassword(this)\'>visibility_off</i>',
+					'container' => ['class' => '-group']
 				],
 				'</fieldset>',
 				'<fieldset id="personal" class="user-register-form-personal"><legend>ข้อมูลส่วนบุคคล (Personal information)</legend>',
@@ -160,12 +205,20 @@ class UserRegisterFormWidget extends Widget {
 					'value' => $this->register->email,
 					'description' => $emailDesc,
 					'placeholder' => 'name@example.com',
-					'attribute' => ['style' => 'text-transform:lowercase;', 'onKeyUp' => 'checkComplete.checkEmailValid(this)']
+					'attribute' => [
+						'style' => 'text-transform:lowercase;',
+						'onKeyUp' => 'checkComplete.checkEmailValid(this)'
+					]
 				],
 				'</fieldset>',
 				'accept' => [
 					'type' => 'checkbox',
-					'options' => ['yes' => '<b>ฉันเข้าใจและยอมรับข้อตกลงรวมทั้งเงื่อนไขในการใช้บริการ <a href="'.url('privacy').'" target="_blank" data-webview="เงื่อนไขการใช้งาน">รายละเอียดเงื่อนไข</a></b>'],
+					'options' => [
+						'yes' =>
+							'<b>ฉันเข้าใจและยอมรับข้อตกลงรวมทั้งเงื่อนไขในการใช้บริการ <a href="'
+							. url('privacy')
+							. '" target="_blank" data-webview="เงื่อนไขการใช้งาน">รายละเอียดเงื่อนไข</a></b>'
+					],
 					// 'description' => 'ยอมรับข้อตกลงการใช้งาน',
 					'attribute' => ['onChange' => 'checkComplete.checkAccept(this)']
 				],
@@ -175,9 +228,10 @@ class UserRegisterFormWidget extends Widget {
 					'require' => true,
 					'pretext' => '<em id="spamword" class="spamword"></em> ',
 					'placeholder' => 'พิมพ์อักขระที่ปรากฎด้านหน้าของช่อง',
-					'description' => 'ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
+					'description' =>
+						'ท่านจำเป็นต้องป้อนตัวอักษรของ Anti-spam word ในช่องข้างบนให้ถูกต้อง',
 					'attribute' => ['onKeyUp' => 'checkComplete.checkAllComplete(this)'],
-					'container' => ['class' => '-hidden'],
+					'container' => ['class' => '-hidden']
 				],
 				'submit' => [
 					'type' => 'button',
@@ -189,23 +243,27 @@ class UserRegisterFormWidget extends Widget {
 						// ],
 						'next' => [
 							'type' => 'submit',
-							'class' => '-primary -next -disabled'.($this->captchaKey ? ' g-recaptcha' : ''),
-							'value' => '<i class="icon -material">navigate_next</i><span><b>{tr:Sign up now}</b></span>',
+							'class' =>
+								'-primary -next -disabled'
+								. ($this->captchaKey ? ' g-recaptcha' : ''),
+							'value' =>
+								'<i class="icon -material">navigate_next</i><span><b>{tr:Sign up now}</b></span>',
 							'attribute' => [
 								'data-sitekey' => $this->captchaKey,
 								'data-callback' => 'onSubmit',
 								'data-action' => 'submit'
 							]
-						],
+						]
 					],
-					'container' => ['class' => '-sg-text-right'],
+					'container' => ['class' => '-sg-text-right']
 				],
 				'help' => [
 					'type' => 'textfield',
-					'value' => '<strong>หมายเหตุ</strong> กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * กํากับอยู่ให้ครบถ้วนสมบูรณ์'
+					'value' =>
+						'<strong>หมายเหตุ</strong> กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * กํากับอยู่ให้ครบถ้วนสมบูรณ์'
 				],
-				$this->script(),
-			], // children
+				$this->script()
+			] // children
 		]);
 
 		// event_tricker('user.register_form', $self, $this->register, $form);
@@ -231,7 +289,9 @@ class UserRegisterFormWidget extends Widget {
 			}
 
 			checkComplete = new function() {
-				let checkValids = '.json_encode($this->validCheck).'
+				let checkValids = '
+			. json_encode($this->validCheck)
+			. '
 				let usernameValid = true
 				let passwordValid = true
 				let emailValid = true
@@ -376,11 +436,19 @@ class UserRegisterFormWidget extends Widget {
 
 						if (password.length == 0) return true
 
-						// if (password.length < '.$this->cfgUserRegister->passwordMinLength.') errors.push("รหัสผ่านต้องมากกว่า '.$this->cfgUserRegister->passwordMinLength.' ตัวอักษร")
+						// if (password.length < '
+			. $this->cfgUserRegister->passwordMinLength
+			. ') errors.push("รหัสผ่านต้องมากกว่า '
+			. $this->cfgUserRegister->passwordMinLength
+			. ' ตัวอักษร")
 						if (password.length === 0) {
 							errors.push("กรุณาป้อนรหัสผ่านใหม่")
 						} else {
-							if (password.length < '.$this->cfgUserRegister->passwordMinLength.') errors.push("รหัสผ่านต้องมากกว่า '.$this->cfgUserRegister->passwordMinLength.' ตัวอักษร")
+							if (password.length < '
+			. $this->cfgUserRegister->passwordMinLength
+			. ') errors.push("รหัสผ่านต้องมากกว่า '
+			. $this->cfgUserRegister->passwordMinLength
+			. ' ตัวอักษร")
 							else if (checkValids.indexOf("passwordContainNumeric") && !password.match(/\d/)) errors.push("รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว")
 							else if (checkValids.indexOf("passwordContainLetter") && !password.match(passwordChar)) errors.push("รหัสผ่านต้องมีตัวอักษรอย่างน้อย 1 ตัว")
 						}

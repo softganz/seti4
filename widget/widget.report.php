@@ -12,28 +12,28 @@
  */
 
 class Report extends Widget {
-	var $widgetName = 'Report';
-	var $tagName = 'div';
-	var $version = '0.02';
-	var $queryUrl = '';
-	var $dataType = 'json';
-	var $graphType = 'Bar';
-	var $class = 'sg-drawreport';
-	var $metric;
-	var $submitIcon;
-	var $submitText;
-	var $filterBar;
-	var $showArrowLeft;
-	var $showArrowRight;
-	var $filterPretext;
-	var $callback;
-	var $data;
-	var $showPage = false;
-	var $debug = false;
-	var $input = [];
-	var $optionBar = [];
-	var $filter = [];
-	var $output = [];
+	public $widgetName = 'Report';
+	public $tagName = 'div';
+	public $version = '0.02';
+	public $queryUrl = '';
+	public $dataType = 'json';
+	public $graphType = 'Bar';
+	public $class = 'sg-drawreport';
+	public $metric;
+	public $submitIcon;
+	public $submitText;
+	public $filterBar;
+	public $showArrowLeft;
+	public $showArrowRight;
+	public $filterPretext;
+	public $callback;
+	public $data;
+	public $showPage = false;
+	public $debug = false;
+	public $input = [];
+	public $optionBar = [];
+	public $filter = [];
+	public $output = [];
 
 	function __construct($queryUrl, $class = null) {
 		$this->initConfig();

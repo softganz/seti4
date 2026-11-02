@@ -63,7 +63,7 @@ class Children extends WidgetBase {
 	public $widgetName = 'Children';
 	public $version = '0.0.01';
 	public $type;
-	public $children = [];
+	public ?array $children = [];
 }
 
 /**
@@ -92,21 +92,20 @@ class Widget extends WidgetBase {
 	public $action; // string
 	public $debug; // string
 	public mixed $child; // mixed
-	public array $children = []; // array
-	public array $attribute = []; // array
-	public array $childContainer = []; // array
+	public ?array $children = []; // array
+	public ?array $attribute = []; // array
+	public ?array $childContainer = []; // array
 
 	// @deprecated
 	public $config = null;
 
-	function __construct(
-		$args = [],
-		mixed $children = null
-	) {
+	function __construct($args = [], mixed $children = null) {
 		$this->initConfig();
 
 		// Set named argument
-		if ($children) $args['children'] = $children;
+		if ($children) {
+			$args['children'] = $children;
+		}
 
 		foreach ($args as $argKey => $argValue) {
 			if ($argKey === 'class') {
@@ -771,7 +770,7 @@ class ListOrder extends Widget {
 	public $widgetName = 'ListOrder';
 	public $version = '0.0.01';
 	public $tagName = 'ul';
-	public array $childContainer = ['tagName' => 'li', 'class' => '-item'];
+	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -791,14 +790,14 @@ class Column extends Widget {
 	public $widgetName = 'Column';
 	public $version = '0.0.01';
 	public $tagName = 'div';
-	public array $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 
 	function __construct(
 		$args = [],
 		?string $id = null,
 		?string $class = null,
 		?string $style = null,
-		?array $children = [],
+		?array $children = []
 	) {
 		parent::__construct(
 			array_replace(
@@ -806,7 +805,7 @@ class Column extends Widget {
 					'id' => $id,
 					'class' => $class,
 					'style' => $style,
-					'children' => $children,
+					'children' => $children
 				],
 				$args
 			)
@@ -824,7 +823,7 @@ class Row extends Widget {
 	public $widgetName = 'Row';
 	public $version = '0.0.10';
 	public $tagName = 'div';
-	public array $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class Row
 
 /**
@@ -837,7 +836,7 @@ class FloatingActionButton extends Widget {
 	public $widgetName = 'FloatingActionButton';
 	public $version = '0.0.01';
 	public $tagName = 'div';
-	public array $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class FloatingActionButton
 
 /**
@@ -1074,8 +1073,8 @@ class SideBar extends Widget {
 				</svg></span>
 				</label>';
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-		// . '<span class="-grip-header">'
-			. $this->renderChildren([$header]); // . '</span>'
+			. // . '<span class="-grip-header">'
+			$this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -1370,7 +1369,9 @@ class Button extends Widget {
 			$this->itemClass,
 			$this->childTagName
 		);
-		if ($this->debug) debugMsg($this, 'Icon');
+		if ($this->debug) {
+			debugMsg($this, 'Icon');
+		}
 	}
 
 	function toString() {
@@ -1558,8 +1559,25 @@ class Icon extends Widget {
 				(array) $args
 			)
 		);
-		unset($this->config, $this->childContainer, $this->child, $this->children, $this->header, $this->childTagName, $this->tagName, $this->itemClass, $this->href, $this->dataUrl, $this->webview, $this->rel, $this->done, $this->action);
-		if ($this->debug) debugMsg($this, 'Icon');
+		unset(
+			$this->config,
+			$this->childContainer,
+			$this->child,
+			$this->children,
+			$this->header,
+			$this->childTagName,
+			$this->tagName,
+			$this->itemClass,
+			$this->href,
+			$this->dataUrl,
+			$this->webview,
+			$this->rel,
+			$this->done,
+			$this->action
+		);
+		if ($this->debug) {
+			debugMsg($this, 'Icon');
+		}
 	}
 
 	function toString() {
@@ -1652,7 +1670,7 @@ class StepMenu extends Widget {
 	public $tagName = 'nav';
 	public $class = '';
 	public $childrenContainer = ['tagName' => 'ul'];
-	public array $childContainer = ['tagName' => 'li'];
+	public ?array $childContainer = ['tagName' => 'li'];
 	public $currentStep = null;
 	public $activeStep = [];
 
@@ -2009,7 +2027,7 @@ class Scaffold extends Widget {
 		mixed $sideBar = null,
 		mixed $body = null,
 		mixed $floatingActionButton = null,
-		mixed $script = null,
+		mixed $script = null
 	) {
 		parent::__construct(
 			array_replace(
@@ -2018,7 +2036,7 @@ class Scaffold extends Widget {
 					'sideBar' => $sideBar,
 					'body' => $body,
 					'floatingActionButton' => $floatingActionButton,
-					'script' => $script,
+					'script' => $script
 				],
 				$args
 			)
@@ -2058,7 +2076,7 @@ class AppBar extends Widget {
 		bool $boxHeader = false,
 		bool $showInBox = false,
 		bool $removeOnApp = false,
-		bool $navigatorMultipleLevel = false,
+		bool $navigatorMultipleLevel = false
 	) {
 		parent::__construct(
 			array_replace(
@@ -2072,7 +2090,7 @@ class AppBar extends Widget {
 					'boxHeader' => $boxHeader,
 					'showInBox' => $showInBox,
 					'removeOnApp' => $removeOnApp,
-					'navigatorMultipleLevel' => $navigatorMultipleLevel,
+					'navigatorMultipleLevel' => $navigatorMultipleLevel
 				],
 				$args
 			)

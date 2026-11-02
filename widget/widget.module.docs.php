@@ -14,29 +14,31 @@
 import('package:external/parsedown/Parsedown.php'); // https://github.com/parsedown/parsedown
 
 class ModuleDocsWidget extends WidgetBase {
-	var $widgetName = 'Widget';
-	var $version = 1;
-	var $title = 'Module Documentation.';
-	var $module = 'imed';
-	var $sideBarPage = 'toc';
-	var $startPage = 'overview';
-	var $folder;
-	var $docPath;
-	var $leading;
-	var $trailing;
+	public $widgetName = 'Widget';
+	public $version = 1;
+	public $title = 'Module Documentation.';
+	public $module = 'imed';
+	public $sideBarPage = 'toc';
+	public $startPage = 'overview';
+	public $folder;
+	public $docPath;
+	public $leading;
+	public $trailing;
 
 	function __construct($args = []) {
 		parent::__construct(
 			array_replace(
 				[
 					'leading' => new Icon('apk_document'),
-					'trailing' => NULL,
+					'trailing' => null
 				],
-				(Array) $args
+				(array) $args
 			)
 		);
 
-		if ($this->widgetName === 'Widget') $this->widgetName = get_class($this);
+		if ($this->widgetName === 'Widget') {
+			$this->widgetName = get_class($this);
+		}
 	}
 
 	function build() {
@@ -44,15 +46,17 @@ class ModuleDocsWidget extends WidgetBase {
 			'appBar' => new AppBar([
 				'leading' => $this->leading,
 				'title' => $this->title,
-				'trailing' => $this->trailing,
+				'trailing' => $this->trailing
 			]),
 			'sideBar' => $this->load($this->sideBarPage),
 			'body' => new Widget([
 				'children' => [
-					empty($this->docPath) ? $this->load($this->startPage) : $this->loadPage(),
-				], // children
+					empty($this->docPath)
+						? $this->load($this->startPage)
+						: $this->loadPage()
+				] // children
 			]),
-			'script' => $this->script(),
+			'script' => $this->script()
 		]);
 	}
 
@@ -64,28 +68,32 @@ class ModuleDocsWidget extends WidgetBase {
 					'tagName' => 'article',
 					'child' => new Container([
 						'class' => 'docs-article-body',
-						'child' => (function() {
-							$file = implode('/', (Array) $this->docPath);
+						'child' => (function () {
+							$file = implode('/', (array) $this->docPath);
 							return $this->load($file);
-						})(), // child
-					]), // Container
-				]), // Container
-			], // children
+						})() // child
+					]) // Container
+				]) // Container
+			] // children
 		]);
 	}
 
 	protected function load($file) {
-		$file = $this->folder.'/page/'.$file.'.md';
+		$file = $this->folder . '/page/' . $file . '.md';
 
 		$ret = file_get_contents($file);
 
-		if (empty($ret)) return new Container(['child' => 'Document not found.']);
+		if (empty($ret)) {
+			return new Container(['child' => 'Document not found.']);
+		}
 
 		$ret = preg_replace_callback(
 			'/\{([a-z0-9\-\/]+)\}/i',
-			function($m) {
-				if (strpos($m[1], '/') === 0) return Url::link($m[1]);
-				return Url::link($this->module.'/docs/'.$m[1]);
+			function ($m) {
+				if (strpos($m[1], '/') === 0) {
+					return Url::link($m[1]);
+				}
+				return Url::link($this->module . '/docs/' . $m[1]);
 			},
 			$ret
 		);

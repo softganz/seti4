@@ -14,9 +14,9 @@
 use Softganz\DB;
 
 class CommentRenderWidget extends Widget {
-	var $node;
-	var $options;
-	var $archive = false;
+	public $node;
+	public $options;
+	public $archive = false;
 
 	function __construct($args = []) {
 		parent::__construct($args);

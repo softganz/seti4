@@ -14,17 +14,19 @@
 $debug = true;
 
 class ProfilePhotoWidget extends Widget {
-	var $photo;
+	public $photo;
 
 	function build() {
 		return new Card([
 			'class' => 'profile-photo-wrapper',
 			'children' => [
 				'<div class="-profile-photo">'
-					. '<img class="member-photo NO-CACHE" src="'.$this->photo.'" width="100%" height="100%" />'
-					. '</div>',
-				$this->renderChildren($this->children()),
-			], // children
+				. '<img class="member-photo NO-CACHE" src="'
+				. $this->photo
+				. '" width="100%" height="100%" />'
+				. '</div>',
+				$this->renderChildren($this->children())
+			] // children
 		]);
 	}
 }

@@ -16,28 +16,26 @@
  *		- (Object) [tagName => String, children = Array]
  */
 
-class Form extends Widget
-{
-  var $widgetName = "Form";
-  var $version = 41;
-  var $tagName = "form";
-  var $method = "POST";
-  var $enctype;
-  var $action;
-  var $variable = null;
-  var $readonly = false;
-  var $checkValid = false;
-  var $leading; // @deprecated
-  var $trailing; // @deprecated
-  var $title;
-  var $description;
-  var $footer;
-  var $disableOnSubmit = false;
-  var $onSubmit;
-  var $onFormSubmit;
-  var $config; // @deprecated
-  var $children = [];
-  var $formArray = []; // @deprecated
+class Form extends Widget {
+  public $widgetName = "Form";
+  public $version = 41;
+  public $tagName = "form";
+  public $method = "POST";
+  public $enctype;
+  public $action;
+  public $variable = null;
+  public $readonly = false;
+  public $checkValid = false;
+  public $leading; // @deprecated
+  public $trailing; // @deprecated
+  public $title;
+  public $description;
+  public $footer;
+  public $disableOnSubmit = false;
+  public $onSubmit;
+  public $onFormSubmit;
+  public $config; // @deprecated
+  public $formArray = []; // @deprecated
 
   function __construct($args = [])
   {

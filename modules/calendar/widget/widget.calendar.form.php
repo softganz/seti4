@@ -16,8 +16,8 @@
 use Softganz\DB;
 
 class CalendarFormWidget extends Widget {
-	var $calendarInfo;
-	var $para;
+	public $calendarInfo;
+	public $para;
 
 	function __construct($calendarInfo = [], $para = null) {
 		parent::__construct([
@@ -230,26 +230,6 @@ class CalendarFormWidget extends Widget {
 				$form = $moduleForm;
 			}
 		}
-
-		// $gis['zoom'] = 7;
-
-		// if ($this->calendarInfo->latlng) {
-		// 	list($lat,$lng) = explode(',', $this->calendarInfo->latlng);
-		// 	$gis['center'] = $this->calendarInfo->latlng;
-		// 	$gis['zoom'] = 10;
-		// 	$gis['current'] = [
-		// 		'latitude' => $lat,
-		// 		'longitude' => $lng,
-		// 		'title' => $this->calendarInfo->location,
-		// 		'content' => '<h4>'.$this->calendarInfo->title.'</h4>'.($this->calendarInfo->topic_title?'<p><strong>'.$this->calendarInfo->topic_title.'</strong></p>':'').($this->calendarInfo->location?'<p>สถานที่ : '.$this->calendarInfo->location.'</p>':''),
-		// 	];
-		// } else {
-		// 	$gis['center'] = property('project:map.center:NULL');
-		// }
-
-		// $ret .= '<script type="text/javascript">
-		// 	var gis = '.json_encode($gis).'
-		// </script>';
 
 		return $form;
 	}

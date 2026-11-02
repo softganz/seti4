@@ -14,12 +14,12 @@
 class NodeAlbumWidget extends Page {
 	protected $tagName = 'node,album,';
 	protected $class = 'node-album';
-	var $albumName = 'manual,form,doc,photo';
-	var $nodeId;
-	var $docId;
-	var $right;
+	public $albumName = 'manual,form,doc,photo';
+	public $nodeId;
+	public $docId;
+	public $right;
 
-	function __construct(Array $args = NULL) {
+	function __construct(array $args = null) {
 		parent::__construct($args);
 		unset($this->theme);
 	}
@@ -29,17 +29,26 @@ class NodeAlbumWidget extends Page {
 	}
 
 	#[\Override]
-	function build($args = NULL) {
-		$albumNames = ['manual' => 'คู่มือ', 'form' => 'แบบฟอร์ม', 'doc' => 'เอกสาร', 'photo' => 'ภาพถ่าย'];
+	function build($args = null) {
+		$albumNames = [
+			'manual' => 'คู่มือ',
+			'form' => 'แบบฟอร์ม',
+			'doc' => 'เอกสาร',
+			'photo' => 'ภาพถ่าย'
+		];
 
-		$docs = is_callable($args['docs']) ? $args['docs']() : NodeModel::getAlbums([
-			'nodeId' => $this->nodeId,
-			'tagNameLike' => $this->tagName.'%',
-		]);
+		$docs = is_callable($args['docs'])
+			? $args['docs']()
+			: NodeModel::getAlbums([
+				'nodeId' => $this->nodeId,
+				'tagNameLike' => $this->tagName . '%'
+			]);
 
 		foreach ($docs as $key => $value) {
 			$name = $this->getAlbumNameFromTag($key);
-			if (array_key_exists($name, $albumNames)) continue;
+			if (array_key_exists($name, $albumNames)) {
+				continue;
+			}
 			$albumNames[$name] = $name;
 		}
 
@@ -50,55 +59,71 @@ class NodeAlbumWidget extends Page {
 				'class' => $this->class,
 				'attribute' => ['data-url' => $args['albumUrl']],
 				'children' => array_map(
-					function($albumTitle, $albumName) use($docs, $args) {
+					function ($albumTitle, $albumName) use ($docs, $args) {
 						// Check invalid album name
-						if (!$this->validAlbumName($albumName)) return 'Invalid album name <b>'.$albumName.'</b>';
+						if (!$this->validAlbumName($albumName)) {
+							return 'Invalid album name <b>' . $albumName . '</b>';
+						}
 						return new Container([
-							'class' => '-album-'.$albumName,
+							'class' => '-album-' . $albumName,
 							'children' => [
 								new ListTile([
 									'title' => $albumTitle,
 									'leading' => new Icon('menu_book'),
-									'trailing' => $args['uploadButton']($albumName),
+									'trailing' => $args['uploadButton']($albumName)
 								]),
-								$this->showAlbum($albumName, (Array) $docs[$this->tagName.$albumName]),
+								$this->showAlbum(
+									$albumName,
+									(array) $docs[$this->tagName . $albumName]
+								)
 							]
 						]);
 					},
-					$albumNames, array_keys($albumNames)
-				), // childrn
-			]), // Widget
+					$albumNames,
+					array_keys($albumNames)
+				) // childrn
+			]) // Widget
 		]);
 	}
 
-	private function validAlbumName(String $albumName = NULL) {
+	private function validAlbumName(string $albumName = null) {
 		return preg_match('/^[a-z0-9]{1,6}$/', $albumName);
 	}
 
-	private function getAlbumNameFromTag(String $tag = NULL) {
-		return preg_match('/\,(\w+)$/', $tag, $out) ? $out[1] : NULL;
+	private function getAlbumNameFromTag(string $tag = null) {
+		return preg_match('/\,(\w+)$/', $tag, $out) ? $out[1] : null;
 	}
 
-	function upload(Array $args = NULL) {
-		$data = $args['data'] ? $args['data'] : NodeModel::getAlbum($this->docId, $this->nodeId);
+	function upload(array $args = null) {
+		$data = $args['data']
+			? $args['data']
+			: NodeModel::getAlbum($this->docId, $this->nodeId);
 
 		if ($data->tagName) {
-			list(, , $albumName) = explode(',', $data->tagName);
+			[, , $albumName] = explode(',', $data->tagName);
 		} else {
 			$albumName = $this->albumName;
 		}
 
-		if (!$this->validAlbumName($albumName)) return error(_HTTP_ERROR_BAD_REQUEST, 'Invalid album name <b>'.$albumName.'</b>');
+		if (!$this->validAlbumName($albumName)) {
+			return error(
+				_HTTP_ERROR_BAD_REQUEST,
+				'Invalid album name <b>' . $albumName . '</b>'
+			);
+		}
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'อัพโหลดเอกสาร: '.$this->albumName,
+				'title' => 'อัพโหลดเอกสาร: ' . $this->albumName,
 				'leading' => new Icon('cloud_upload'),
 				'boxHeader' => true
 			]),
 			'body' => new Form([
 				'class' => 'sg-form -upload',
-				'action' => SG\getFirst($args['action'], Url::link('api/node/info/'.$this->nodeId.'/album.save')),
+				'action' => SG\getFirst(
+					$args['action'],
+					Url::link('api/node/info/' . $this->nodeId . '/album.save')
+				),
 				'enctype' => 'multipart/form-data',
 				'checkValid' => true,
 				'rel' => 'none',
@@ -112,7 +137,11 @@ class NodeAlbumWidget extends Page {
 						'label' => 'ประเภทเอกสาร',
 						'require' => true,
 						'value' => $albumName,
-						'choice' => ['manual' => 'คู่มือ', 'form' => 'แบบฟอร์ม', 'doc' => 'เอกสาร'],
+						'choice' => [
+							'manual' => 'คู่มือ',
+							'form' => 'แบบฟอร์ม',
+							'doc' => 'เอกสาร'
+						]
 					],
 					'docName' => [
 						'type' => 'text',
@@ -120,70 +149,91 @@ class NodeAlbumWidget extends Page {
 						'class' => '-fill',
 						'require' => true,
 						'value' => $data->title,
-						'placeholder' => 'ระบุชื่อเอกสาร',
+						'placeholder' => 'ระบุชื่อเอกสาร'
 					],
 					'docFile' => [
 						'type' => 'file',
 						'class' => '-fill',
 						'label' => 'ไฟล์เอกสาร',
-						'require' => $this->docId ? false : true,
+						'require' => $this->docId ? false : true
 					],
 					'coverFile' => [
 						'type' => 'file',
 						'class' => '-fill',
 						'label' => 'ภาพปก',
-						'accept' => 'image/jpeg,image/png;capture=camcorder',
+						'accept' => 'image/jpeg,image/png;capture=camcorder'
 					],
 					'submit' => [
 						'type' => 'button',
 						'class' => '-primary -fill',
-						'value' => '<i class="icon -material">cloud_upload</i><span>อัพโหลดเอกสาร</span>',
+						'value' =>
+							'<i class="icon -material">cloud_upload</i><span>อัพโหลดเอกสาร</span>',
 						'container' => ['style' => 'margin: 32px 0 16px 0;']
 					]
-				], // children
-			]), // Form
+				] // children
+			]) // Form
 		]);
 	}
 
-	protected function showAlbum(String $albumName, Array $docs, Array $args = []) {
+	protected function showAlbum(
+		string $albumName,
+		array $docs,
+		array $args = []
+	) {
 		return new Container([
-			'children' => array_map(
-				function($item) use($albumName, $docs, $args) {
-					// if ($item->tagName != $this->tagName.$albumName) return NULL;
+			'children' => array_map(function ($item) use ($albumName, $docs, $args) {
+				// if ($item->tagName != $this->tagName.$albumName) return NULL;
 
-					$docInfo = FileModel::docProperty($item->docFile, $item->docFolder);
-	
-					$coverUrl = NULL;
-					if ($item->coverPhoto) {
-						// Show photo as cover
-						$coverPhotoInfo = FileModel::photoProperty($item->coverPhoto, $item->coverFolder);
-						$coverUrl = $coverPhotoInfo->url;
-					} else if (in_array(strtolower(sg_file_extension($item->docFile)), ['jpg', 'jpeg', 'png', 'gif'])) {
-						// Show document photo as cover
-						$coverPhotoInfo = FileModel::photoProperty($item->docFile, $item->docFolder);
-						$coverUrl = $coverPhotoInfo->url;
-					} else {
-						// Show icon as cover
-						$coverUrl = '//img.softganz.com/icon/pdf-icon.png';
-					}
+				$docInfo = FileModel::docProperty($item->docFile, $item->docFolder);
 
-					$menu = is_callable($args['menu']) ? $args['menu']($item) : NULL;
+				$coverUrl = null;
+				if ($item->coverPhoto) {
+					// Show photo as cover
+					$coverPhotoInfo = FileModel::photoProperty(
+						$item->coverPhoto,
+						$item->coverFolder
+					);
+					$coverUrl = $coverPhotoInfo->url;
+				} elseif (
+					in_array(strtolower(sg_file_extension($item->docFile)), [
+						'jpg',
+						'jpeg',
+						'png',
+						'gif'
+					])
+				) {
+					// Show document photo as cover
+					$coverPhotoInfo = FileModel::photoProperty(
+						$item->docFile,
+						$item->docFolder
+					);
+					$coverUrl = $coverPhotoInfo->url;
+				} else {
+					// Show icon as cover
+					$coverUrl = '//img.softganz.com/icon/pdf-icon.png';
+				}
 
-					return new Card([
-						'class' => 'sg-action -hover-parent',
-						'href' => $docInfo->url,
-						'attribute' => ['target' => '_blank'],
-						'children' => [
-							new DOM(['img', 'src' => $coverUrl, 'width' => 128, 'height' => 128, 'class' => '-cover-photo']),
-							new DOM(['span', 'child' => $item->title]),
-							$menu,
-							// new DebugMsg($docInfo, '$docInfo'),
-							// new DebugMsg($item, '$item')
-						], // children
-					]);
-				},
-				$docs
-			)
+				$menu = is_callable($args['menu']) ? $args['menu']($item) : null;
+
+				return new Card([
+					'class' => 'sg-action -hover-parent',
+					'href' => $docInfo->url,
+					'attribute' => ['target' => '_blank'],
+					'children' => [
+						new DOM([
+							'img',
+							'src' => $coverUrl,
+							'width' => 128,
+							'height' => 128,
+							'class' => '-cover-photo'
+						]),
+						new DOM(['span', 'child' => $item->title]),
+						$menu
+						// new DebugMsg($docInfo, '$docInfo'),
+						// new DebugMsg($item, '$item')
+					] // children
+				]);
+			}, $docs)
 		]);
 	}
 }
