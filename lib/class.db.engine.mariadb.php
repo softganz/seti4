@@ -12,7 +12,7 @@
 
 namespace Softganz;
 
-class MariaDbEngine {
+class MariaDbEngine implements DbEngineInterface {
 	private $connection;
 	private $status = false;
 	private $srcStmt;

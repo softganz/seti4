@@ -174,10 +174,22 @@ class DbException extends \Exception {
 
 #[AllowDynamicProperties]
 class DB {
-	private MariaDbEngine $engine;
+	private DbEngineInterface $engine;
 
 	function __construct($args = null) {
-		$this->engine = new MariaDbEngine($args, $this);
+		$this->engine = self::createEngine($args, $this);
+	}
+
+	// Select engine by connection type, default is MariaDB/MySQL
+	private static function createEngine($args, DB $owner): DbEngineInterface {
+		$type = is_array($args) && isset($args['connection']['type'])
+			? strtolower((string) $args['connection']['type'])
+			: 'mysql';
+
+		return match ($type) {
+			'mysql', 'mariadb' => new MariaDbEngine($args, $owner),
+			default => throw new \InvalidArgumentException('Unsupported DB engine: ' . $type),
+		};
 	}
 
 	// Call by static method
