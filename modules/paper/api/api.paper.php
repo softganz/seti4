@@ -1,16 +1,16 @@
 <?php
 /**
- * Paper   :: Info API
- * Created :: 2023-07-23
- * Modify  :: 2025-06-25
- * Version :: 20
+ * Paper    :: Info API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-07-23
+ * Modified :: 2025-06-25
+ * Version  :: 22
  *
- * @param Int $nodeId
- * @param String $action
- * @param Int $tranId
- * @return Array/Object
+ * @param int $nodeId
+ * @param string $action
+ * @param int $tranId
  *
- * @usage api/paper/{nodeId}/{action}[/{tranId}]
+ * @uses api/paper/{nodeId}/{action}[/{tranId}]
  */
 
 use Paper\Model\PaperModel;
@@ -312,9 +312,9 @@ class PaperApi extends PageApi {
 		// Delete old file if not inused by other
 		if (
 			!FileModel::getFileInUse(
-				$photoInfo->fileId,
-				$photoInfo->fileName,
-				$photoInfo->folder
+				fileId: $photoInfo->fileId,
+				fileName: $photoInfo->fileName,
+				folder: $photoInfo->folder
 			)
 		) {
 			FileModel::delete($data->fileId, ['deleteRecord' => false]);

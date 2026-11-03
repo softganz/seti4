@@ -3,10 +3,8 @@
  * Model    :: File Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-21
- * Modified :: 2026-09-24
- * Version  :: 22
- *
- * @return object
+ * Modified :: 2026-11-03
+ * Version  :: 23
  *
  * @uses new FileModel()
  * @uses FileModel::method()
@@ -27,7 +25,9 @@ class FileModel {
 			$nodeId = null;
 		}
 
-		if (empty($fileId)) return null;
+		if (empty($fileId)) {
+			return null;
+		}
 
 		$rs = DB::select([
 			'SELECT
@@ -61,12 +61,14 @@ class FileModel {
 			'where' => [
 				'%WHERE%' => [
 					['`fid` = :fileId', ':fileId' => $fileId],
-					$nodeId ? ['`tpid` = :nodeId', ':nodeId' => $nodeId] : null,
-				],
-			],
+					$nodeId ? ['`tpid` = :nodeId', ':nodeId' => $nodeId] : null
+				]
+			]
 		]);
 
-		if (empty($rs->id)) return null;
+		if (empty($rs->id)) {
+			return null;
+		}
 
 		$result = (object) [
 			'fileId' => $rs->id,
@@ -74,7 +76,12 @@ class FileModel {
 			'folder' => $rs->folder,
 			'title' => $rs->title,
 			'info' => $rs,
-			'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName, $rs->folder) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName, $rs->folder) : null),
+			'property' =>
+				$rs->type == 'photo'
+					? FileModel::photoProperty($rs->fileName, $rs->folder)
+					: ($rs->type == 'doc'
+						? FileModel::docProperty($rs->fileName, $rs->folder)
+						: null)
 		];
 
 		return $result;
@@ -92,14 +99,14 @@ class FileModel {
 				'orderBy' => 'id',
 				'orderDir' => 'ASC',
 				'resultGroup' => null,
-				'cover' => false,
+				'cover' => false
 			],
 			(array) $conditions
 		);
 
 		$result = (object) [
 			'count' => 0,
-			'items' => [],
+			'items' => []
 		];
 
 		$orderList = [
@@ -108,7 +115,7 @@ class FileModel {
 		];
 
 		$conditions->orderBy = $orderList[$conditions->orderBy] ?? $orderList['id'];
-		
+
 		return DB::select([
 			'SELECT
 			`file`.`fid` AS `id`
@@ -141,16 +148,32 @@ class FileModel {
 			%WHERE%
 			$ORDER$',
 			'%WHERE%' => [
-				$conditions->nodeId ? ['`file`.`tpid` = :nodeId', ':nodeId' => $conditions->nodeId] : null,
-				$conditions->type ? ['`file`.`type` = :type', ':type' => $conditions->type] : null,
-				$conditions->refId ? ['`file`.`refId` = :refId', ':refId' => $conditions->refId] : null,
-				$conditions->orgId ? ['`file`.`orgId` = :orgId', ':orgId' => $conditions->orgId] : null,
-				$conditions->tagName ? ['`file`.`tagName` = :tagName', ':tagName' => $conditions->tagName] : null,
-				$conditions->tagNameLike ? ['`file`.`tagName` LIKE :tagNameLike', ':tagNameLike' => $conditions->tagNameLike] : null,
-				$conditions->cover ? ['`file`.`cover` = "Yes"'] : null,
+				$conditions->nodeId
+					? ['`file`.`tpid` = :nodeId', ':nodeId' => $conditions->nodeId]
+					: null,
+				$conditions->type
+					? ['`file`.`type` = :type', ':type' => $conditions->type]
+					: null,
+				$conditions->refId
+					? ['`file`.`refId` = :refId', ':refId' => $conditions->refId]
+					: null,
+				$conditions->orgId
+					? ['`file`.`orgId` = :orgId', ':orgId' => $conditions->orgId]
+					: null,
+				$conditions->tagName
+					? ['`file`.`tagName` = :tagName', ':tagName' => $conditions->tagName]
+					: null,
+				$conditions->tagNameLike
+					? [
+						'`file`.`tagName` LIKE :tagNameLike',
+						':tagNameLike' => $conditions->tagNameLike
+					]
+					: null,
+				$conditions->cover ? ['`file`.`cover` = "Yes"'] : null
 			],
 			'var' => [
-				'$ORDER$' => 'ORDER BY '.$conditions->orderBy . ' ' . $conditions->orderDir,
+				'$ORDER$' =>
+					'ORDER BY ' . $conditions->orderBy . ' ' . $conditions->orderDir
 			],
 			'options' => [
 				'group' => $conditions->resultGroup
@@ -167,7 +190,8 @@ class FileModel {
 	 * @return object
 	 */
 	public static function upload($photoFiles, $data = null, $options = '{}') {
-		$defaults = '{debug: false, showDetail: true, useSourceFilename: false, fileNameLength: 30, showDetail: false}';
+		$defaults =
+			'{debug: false, showDetail: true, useSourceFilename: false, fileNameLength: 30, showDetail: false}';
 		$options = sg_json_decode($options, $defaults);
 		$debug = $options->debug;
 
@@ -188,14 +212,16 @@ class FileModel {
 				'deleteUrl' => null, // string,
 				'link' => null, // string
 				'description' => null, // string
-				'onComplete' => function($data) {}
+				'onComplete' => function ($data) {}
 			],
 			(array) $data
 		);
 
 		$data->nodeId = SG\getFirst($data->nodeId, $data->tpid);
 
-		if ($data->folder && !preg_match('/\//$', $data->folder)) $data->folder .= '/';
+		if ($data->folder && !preg_match('/\//$', $data->folder)) {
+			$data->folder .= '/';
+		}
 
 		$result = (object) [
 			'fileId' => null,
@@ -204,33 +230,40 @@ class FileModel {
 			'uploadfile' => null,
 			'error' => [],
 			'items' => [],
-			'query' => [],
+			'query' => []
 		];
 
-		$photoPrename = SG\getFirst($data->preName, $data->prename, 'paper_'.$data->nodeId.'_');
+		$photoPrename = SG\getFirst(
+			$data->preName,
+			$data->prename,
+			'paper_' . $data->nodeId . '_'
+		);
 		$photoFilenameLength = SG\getFirst($options->fileNameLength, 30);
 		$isUploadSingleFile = true;
 		$docExtension = (array) cfg('topic.doc.file_ext');
 		$photoExtension = ['jpg', 'jpeg', 'png'];
 
 		$deleteUrl = SG\getFirst($data->deleteUrl, $data->deleteurl);
-		// debugMsg('Upload photo of orgId '.$data->orgId.' tagName='.$data->tagName.' photoPrename '.$photoPrename);
 
+		$uploadPhotoFiles = [];
+		// debugMsg('Upload photo of orgId '.$data->orgId.' tagName='.$data->tagName.' photoPrename '.$photoPrename);
 
 		// Convert multiple upload files to array of each file
 		if (is_array($photoFiles['name'])) {
 			$isUploadSingleFile = false;
 			foreach ($photoFiles['name'] as $key => $value) {
-				if (!is_uploaded_file($photoFiles['tmp_name'][$key])) continue;
+				if (!is_uploaded_file($photoFiles['tmp_name'][$key])) {
+					continue;
+				}
 				$uploadPhotoFiles[$key] = [
 					'name' => $photoFiles['name'][$key],
 					'type' => $photoFiles['type'][$key],
 					'tmp_name' => $photoFiles['tmp_name'][$key],
 					'error' => $photoFiles['error'][$key],
-					'size' => $photoFiles['size'][$key],
+					'size' => $photoFiles['size'][$key]
 				];
 			}
-		} else if (is_uploaded_file($photoFiles['tmp_name'])) {
+		} elseif (is_uploaded_file($photoFiles['tmp_name'])) {
 			$uploadPhotoFiles[] = $photoFiles;
 		}
 
@@ -245,7 +278,7 @@ class FileModel {
 				'var' => [
 					':fileId' => $data->fileId,
 					':title' => $data->title,
-					':tagName' => $data->tagName,
+					':tagName' => $data->tagName
 				]
 			]);
 			$result->fileId = $data->fileId;
@@ -254,41 +287,65 @@ class FileModel {
 		}
 
 		// Create folder if not exists
-		if ($data->folder && !(file_exists($data->folder) && !is_file($data->folder))) {
+		if (
+			$data->folder &&
+			!(file_exists($data->folder) && !is_file($data->folder))
+		) {
 			if (!mkdir($data->folder, 0777, true)) {
-				throw new \Exception('ไม่สามารถสร้างโฟลเดอร์เพื่อเก็บไฟล์ได้', _HTTP_ERROR_NOT_ACCEPTABLE);
-			};
+				throw new \Exception(
+					'ไม่สามารถสร้างโฟลเดอร์เพื่อเก็บไฟล์ได้',
+					_HTTP_ERROR_NOT_ACCEPTABLE
+				);
+			}
 		}
 
 		foreach ($uploadPhotoFiles as $postFile) {
 			//debugMsg($postFile,'$postFile');
 			if (!is_uploaded_file($postFile['tmp_name'])) {
-				$result->error[] = 'Upload error : No upload file ('.$postFile['name'].')<br />';
+				$result->error[] =
+					'Upload error : No upload file (' . $postFile['name'] . ')<br />';
 				continue;
 			}
 
 			$ext = strtolower(sg_file_extension($postFile['name']));
 
-			if (!in_array($ext, $docExtension) && !in_array($ext, $photoExtension)) {
-				$result->error[] = 'Upload error : Invalid File Type ('.$postFile['name'].')<br />';
-				continue;
-			}
-
 			if (in_array($ext, $docExtension)) {
 				// Upload document file
-				$uploadFolder = SG\getFirst($data->folder, cfg('paper.upload.document.folder'));
+				$uploadFolder = SG\getFirst(
+					$data->folder,
+					cfg('paper.upload.document.folder')
+				);
 				$upload = new classFile($postFile, $uploadFolder);
-			} else if (in_array($ext, $photoExtension)) {
+			} elseif (in_array($ext, $photoExtension)) {
 				// Upload image file
-				$uploadFolder = SG\getFirst($data->folder, cfg('paper.upload.photo.folder'));
-				$upload = new classFile($postFile, $uploadFolder, cfg('photo.file_type'));
+				$uploadFolder = SG\getFirst(
+					$data->folder,
+					cfg('paper.upload.photo.folder')
+				);
+				$upload = new classFile(
+					$postFile,
+					$uploadFolder,
+					cfg('photo.file_type')
+				);
 				if (!$upload->valid_format()) {
-					$result->error[] = 'Upload error : Invalid photo format ('.$postFile['name'].')';
+					$result->error[] =
+						'Upload error : Invalid photo format (' . $postFile['name'] . ')';
 					continue;
 				}
-				if (!$upload->valid_size(cfg('photo.max_file_size')*1024)) {
-					sg_photo_resize($upload->upload->tmp_name, cfg('photo.resize.width'), null, null,true, cfg('photo.resize.quality'));
+				if (!$upload->valid_size(cfg('photo.max_file_size') * 1024)) {
+					sg_photo_resize(
+						$upload->upload->tmp_name,
+						cfg('photo.resize.width'),
+						null,
+						null,
+						true,
+						cfg('photo.resize.quality')
+					);
 				}
+			} else {
+				$result->error[] =
+					'Upload error : Invalid File Type (' . $postFile['name'] . ')<br />';
+				continue;
 			}
 
 			if ($useSourceFilename) {
@@ -308,20 +365,25 @@ class FileModel {
 				'tagName' => SG\getFirst($data->tagName, $data->tagname),
 				'folder' => SG\getFirst($data->folder),
 				'orgId' => SG\getFirst($data->orgId, $data->orgid),
-				'userId' => SG\getFirst($data->userId, $data->uid,i()->uid),
+				'userId' => SG\getFirst($data->userId, $data->uid, i()->uid),
 				'fileName' => $photo_upload,
 				'refId' => SG\getFirst($data->refId, $data->refid),
 				'title' => SG\getFirst($data->title, $postFile['name']),
-				'description' => is_array($data->description) ? $postFile['name'] : $data->description,
+				'description' => is_array($data->description)
+					? $postFile['name']
+					: $data->description,
 				'timestamp' => 'func.NOW()',
 				'ip' => ip2long(GetEnv('REMOTE_ADDR')),
-				'link' => null,
+				'link' => null
 			];
 
 			$linkInfo = '';
 
 			if (!$upload->copy()) {
-				$result->error[] = 'Upload error : Cannot save upload file ('.$postFile['name'].')<br />';
+				$result->error[] =
+					'Upload error : Cannot save upload file ('
+					. $postFile['name']
+					. ')<br />';
 				continue;
 			}
 
@@ -349,32 +411,58 @@ class FileModel {
 				'var' => $picsData
 			])->insertId();
 
-			if (empty($picsData->fileId)) $fileId = $picsData->fileId = $insertId;
+			if (empty($picsData->fileId)) {
+				$fileId = $picsData->fileId = $insertId;
+			}
 
 			$result->query[] = R('query');
 
 			if ($picsData->type == 'photo') {
-				$picsData->photo = $photoProperty = FileModel::photoProperty($upload->filename, $data->folder);
+				$picsData->photo = $photoProperty = FileModel::photoProperty(
+					$upload->filename,
+					$data->folder
+				);
 
 				if ($data->link === 'href') {
-					$uploadUrl = Url::link('project/' . $data->nodeId . '/info.photo/' . $fileId);
-					$linkInfo .= '<a class="sg-action" data-rel="box" href="' . $uploadUrl . '" data-width="840" data-height="80%">';
+					$uploadUrl = Url::link(
+						'project/' . $data->nodeId . '/info.photo/' . $fileId
+					);
+					$linkInfo .=
+						'<a class="sg-action" data-rel="box" href="'
+						. $uploadUrl
+						. '" data-width="840" data-height="80%">';
 				} else {
-					$linkInfo .= '<a class="sg-action" data-rel="img" data-group="photo" href="' . $photoProperty->url . '" title="">';
+					$linkInfo .=
+						'<a class="sg-action" data-rel="img" data-group="photo" href="'
+						. $photoProperty->url
+						. '" title="">';
 				}
 
-				$linkInfo .= '<img class="photoitem -photo" src="' . $photoProperty->url . '" alt="" width="100%" />';
+				$linkInfo .=
+					'<img class="photoitem -photo" src="'
+					. $photoProperty->url
+					. '" alt="" width="100%" />';
 				$linkInfo .= '</a>';
-				if ($options->showDetail) $linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
+				if ($options->showDetail) {
+					$linkInfo .= '<span class="photodetail">คำอธิบายภาพ</span>';
+				}
 
 				$ui = new Ui('span');
 				if ($deleteUrl) {
-					$ui->add('<a class="sg-action -no-print" href="' .Url::link($deleteUrl . $fileId) . '" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+					$ui->add(
+						'<a class="sg-action -no-print" href="'
+							. Url::link($deleteUrl . $fileId)
+							. '" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>'
+					);
 				}
-				$linkInfo .= '<nav class="nav -icons -hover">' . $ui->build() . '</nav>' . _NL;
+				$linkInfo .=
+					'<nav class="nav -icons -hover">' . $ui->build() . '</nav>' . _NL;
 			} else {
 				$docProperty = FileModel::docProperty($upload->filename, $data->folder);
-				$linkInfo .= '<a class="widget-button -default pdflink" href="' . $docProperty->src . '" target="_blank">'
+				$linkInfo .=
+					'<a class="widget-button -default pdflink" href="'
+					. $docProperty->src
+					. '" target="_blank">'
 					. '<span class="-label">'
 					. '<img class="photoitem -photo" src="//img.softganz.com/icon/icon-file.png" width="63" />'
 					. '</span>'
@@ -382,9 +470,14 @@ class FileModel {
 
 				$ui = new Ui('span');
 				if ($deleteUrl) {
-					$ui->add('<a class="sg-action -no-print" href="' . Url::link($deleteUrl . $fileId) . '" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>');
+					$ui->add(
+						'<a class="sg-action -no-print" href="'
+							. Url::link($deleteUrl . $fileId)
+							. '" title="ลบภาพนี้" data-confirm="ยืนยันว่าจะลบภาพนี้จริง?" data-rel="this" data-done="remove:parent li"><i class="icon -material -gray">cancel</i></a>'
+					);
 				}
-				$linkInfo .= '<nav class="nav -icons -hover">' . $ui->build() . '</nav>' . _NL;
+				$linkInfo .=
+					'<nav class="nav -icons -hover">' . $ui->build() . '</nav>' . _NL;
 			}
 
 			$picsData->link = $linkInfo;
@@ -392,25 +485,34 @@ class FileModel {
 
 			$result->fileId[] = $picsData->fileId;
 			$result->items[] = $picsData;
-			$result->link .= $linkInfo.'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">';
+			$result->link .=
+				$linkInfo
+				. '</li><li id="photo-'
+				. $fileId
+				. '" class="ui-item -item -hover-parent">';
 		}
 
 		if ($result->link) {
-			$result->link = rtrim($result->link,'</li><li id="photo-'.$fileId.'" class="ui-item -item -hover-parent">');
+			$result->link = rtrim(
+				$result->link,
+				'</li><li id="photo-'
+					. $fileId
+					. '" class="ui-item -item -hover-parent">'
+			);
 		}
 
 		$result->uploadfile = $uploadPhotoFiles;
-		
+
 		return $result;
 	}
 
 	/**
-	* Delete File
-	*
-	* @param int $fileId
-	* @param object $options
-	* @return string
-	*/
+	 * Delete File
+	 *
+	 * @param int $fileId
+	 * @param object $options
+	 * @return string
+	 */
 	public static function delete($fileId, $options = '{}') {
 		$defaults = '{debug: false, deleteRecord: true, deleteFile: true}';
 		$options = SG\json_decode($options, $defaults);
@@ -419,12 +521,17 @@ class FileModel {
 		$result = (object) [
 			'photoInused' => false,
 			'msg' => null,
-			'_query' => [],
+			'_query' => []
 		];
 
 		$fileInfo = FileModel::get($fileId);
 
-		if (empty($fileInfo->fileId)) return (object) ['code' => _HTTP_ERROR_NOT_ACCEPTABLE, 'msg' => 'File not found'];
+		if (empty($fileInfo->fileId)) {
+			return (object) [
+				'code' => _HTTP_ERROR_NOT_ACCEPTABLE,
+				'msg' => 'File not found'
+			];
+		}
 
 		if ($fileInfo->info->type == 'photo') {
 			// Delete file record
@@ -438,17 +545,38 @@ class FileModel {
 
 			// Delete photo file
 			if ($options->deleteFile && $fileInfo->property->exists) {
-				$result->photoInused = !empty(FileModel::getFileInUse($fileId, $fileInfo->fileName, $fileInfo->folder));
-				if (!$result->photoInused) unlink($fileInfo->property->name);
-				$result->msg = $result->photoInused ? 'ภาพถูกใช้โดยคนอื่น' : 'ลบภาพเรียบร้อยแล้ว';
+				$result->photoInused = !empty(
+					FileModel::getFileInUse(
+						fileId: $fileId,
+						fileName: $fileInfo->fileName,
+						folder: $fileInfo->folder
+					)
+				);
+				if (!$result->photoInused) {
+					unlink($fileInfo->property->name);
+				}
+				$result->msg = $result->photoInused
+					? 'ภาพถูกใช้โดยคนอื่น'
+					: 'ลบภาพเรียบร้อยแล้ว';
 			}
 
 			LogModel::save([
 				'module' => 'photo',
 				'keyword' => 'remove photo',
-				'message' => 'Photo id '.$fileId.' - '.$fileInfo->info->file.' was removed from topic '.$fileInfo->info->tpid.' by '.i()->name.'('.i()->uid.')'
+				'message' =>
+					'Photo id '
+					. $fileId
+					. ' - '
+					. $fileInfo->info->file
+					. ' was removed from topic '
+					. $fileInfo->info->tpid
+					. ' by '
+					. i()->name
+					. '('
+					. i()->uid
+					. ')'
 			]);
-		} else if ($fileInfo->info->type == 'doc') {
+		} elseif ($fileInfo->info->type == 'doc') {
 			// Delete doc record
 			if ($options->deleteRecord) {
 				DB::query([
@@ -472,33 +600,50 @@ class FileModel {
 			LogModel::save([
 				'module' => 'photo',
 				'keyword' => 'remove doc',
-				'message' => 'Photo id ' . $fileId . ' - ' . ($fileInfo->info->file ?? '') . ' was removed from topic ' . ($fileInfo->info->tpid ?? '') . ' by ' . i()->name . '(' . i()->uid . ')'
+				'message' =>
+					'Photo id '
+					. $fileId
+					. ' - '
+					. ($fileInfo->info->file ?? '')
+					. ' was removed from topic '
+					. ($fileInfo->info->tpid ?? '')
+					. ' by '
+					. i()->name
+					. '('
+					. i()->uid
+					. ')'
 			]);
 		}
 		return $result;
 	}
 
-	public static function getFileInUse($fileId = null, $fileName, $folder) {
+	public static function getFileInUse(
+		$fileId = null,
+		$fileName = null,
+		$folder = null
+	) {
 		return DB::select([
 			'SELECT `fid`, `tpid` `nodeId`, `folder`, `file`
 			FROM %topic_files%
 			%WHERE%',
 			'%WHERE%' => [
 				['`file` = :fileName', ':fileName' => $fileName],
-				$folder ? ['`folder` = :folder', ':folder' => $folder] : ['`folder` IS NULL'],
+				$folder
+					? ['`folder` = :folder', ':folder' => $folder]
+					: ['`folder` IS NULL'],
 				$fileId ? ['`fid` != :fileId', ':fileId' => $fileId] : null
 			],
 			'options' => ['key' => 'fid']
 		])->items;
 	}
 
-	public static function photoProperty($file, $folder = null) {
+	public static function photoProperty(string $file, $folder = null) {
 		$folder = preg_replace('/\/$/', '', $folder ?? '');
 		$folderName = '';
 
 		if (is_object($file)) {
 			$property = $file;
-		} else if (is_string($file)) {
+		} elseif (is_string($file)) {
 			$property = (object) [
 				'name' => $file,
 				'src' => null,
@@ -507,50 +652,44 @@ class FileModel {
 				'size' => null,
 				'width' => null,
 				'height' => null,
-				'mime' => null,
+				'mime' => null
 			];
 		} else {
 			return false;
 		}
 
-		if (substr($property->name,0,2) == './') {
-			$folderName = substr(dirname($property->name),2).'/';
+		if (substr($property->name, 0, 2) == './') {
+			$folderName = substr(dirname($property->name), 2) . '/';
 			$fileName = basename($property->name);
 		} else {
 			$dirName = dirname($property->name);
 			$fileName = basename($property->name);
 		}
 
-		if ($dirName == '.') unset($dirName);
-
-		// debugMsg('fileName='.$fileName.' , dirname='.$dirName.' , folder='.$folder.' , cfg(upload.url)='.cfg('upload.url').' , cfg(upload_folder) = '.cfg('upload_folder'));
-
-		// if ($dirName) {
-		// 	$property->src = $dirName.'/'.sg_urlencode($fileName);
-		// 	$property->name = cfg('folder.abs').$dirName.'/'.sg_tis620_file($fileName);
-		// } else if ($folder && preg_match('/^upload/', $folder)) {
-		// 	$property->src = $folder.'/'.sg_urlencode($fileName);
-		// 	$property->url = cfg('url.abs').$folder.'/'.sg_urlencode($fileName);
-		// 	$property->name = cfg('folder.abs').$folder.'/'.sg_tis620_file($fileName);
-		// } else if ($folder) {
-		// 	$property->src = cfg('upload.url').$folder.'/'.sg_urlencode($fileName);
-		// 	$property->name = cfg('upload.folder').$folder.'/'.sg_tis620_file($fileName);
-		// } else {
-		// 	$property->src = _URL.cfg('upload_folder').'pics/'.$folderName.sg_urlencode($fileName);
-		// 	$property->name = cfg('folder.abs').cfg('upload_folder').'pics/'.$folderName.$fileName;
-		// }
-
 		if ($folder) {
-			$property->name = cfg('folder.abs').$folder.'/'.sg_tis620_file($fileName);
-			$property->src = _URL.$folder.'/'.sg_urlencode($fileName);
+			$property->name =
+				cfg('folder.abs') . $folder . '/' . sg_tis620_file($fileName);
+			$property->src = _URL . $folder . '/' . sg_urlencode($fileName);
 		} else {
-			$property->name = cfg('folder.abs').cfg('upload_folder').'pics/'.$folderName.$fileName;
-			$property->src = _URL.cfg('upload_folder').'pics/'.$folderName.sg_urlencode($fileName);
+			$property->name =
+				cfg('folder.abs')
+				. cfg('upload_folder')
+				. 'pics/'
+				. $folderName
+				. $fileName;
+			$property->src =
+				_URL
+				. cfg('upload_folder')
+				. 'pics/'
+				. $folderName
+				. sg_urlencode($fileName);
 		}
 
 		if (file_exists($property->name)) {
 			$property->size = filesize($property->name);
-			if (!isset($property->url)) $property->url = $property->src; // sg_urlencode($fileName);
+			if (!isset($property->url)) {
+				$property->url = $property->src;
+			} // sg_urlencode($fileName);
 			$size = getimagesize($property->name);
 			$property->exists = true;
 			$property->width = $size[0];
@@ -561,18 +700,18 @@ class FileModel {
 		return $property;
 	}
 
-	public static function docProperty($file, $folder = null) {
+	public static function docProperty(string $file, $folder = null) {
 		$folder = preg_replace('/\/$/', '', $folder ?? '');
 		$subFolder = 'forum/';
 		if (is_object($file)) {
 			$property = $file;
-		} else if (is_string($file)) {
+		} elseif (is_string($file)) {
 			$property = (object) [
 				'name' => $file,
 				'src' => null,
 				'url' => null,
 				'exists' => false,
-				'size' => null,
+				'size' => null
 			];
 		} else {
 			return false;
@@ -587,36 +726,30 @@ class FileModel {
 			$folderName = $folder;
 		}
 
-		if ($dirName == '.') unset($dirName);
-
-		// debugMsg('fileName='.$fileName.' , dirname='.$dirName.' , folder='.$folder.' , cfg(upload.url)='.cfg('upload.url').' , cfg(upload_folder) = '.cfg('upload_folder'));
-
-		// if ($dirName) {
-		// 	$property->name = cfg('folder.abs').$dirName.'/'.sg_tis620_file($fileName);
-		// 	$property->src = $dirName.'/'.sg_urlencode($fileName);
-		// } else if ($folder && preg_match('/^upload/', $folder)) {
-		// 	$property->name = cfg('folder.abs').$folder.'/'.sg_tis620_file($fileName);
-		// 	$property->src = $folder.'/'.sg_urlencode($fileName);
-		// 	$property->url = cfg('url.abs').$folder.'/'.sg_urlencode($fileName);
-		// } else if ($folder) {
-		// 	$property->name = cfg('upload.folder').$folder.'/'.sg_tis620_file($fileName);
-		// 	$property->src = cfg('upload.url').$folder.'/'.sg_urlencode($fileName);
-		// } else {
-		// 	$property->name = $photo_location = cfg('folder.abs').cfg('upload_folder').$subFolder.$folderName.$fileName;
-		// 	$property->src = _URL.cfg('upload_folder').$subFolder.$folderName.sg_urlencode($fileName);
-		// }
-
 		if ($folder) {
-			$property->name = cfg('folder.abs') . $folder . '/' . sg_tis620_file($fileName);
+			$property->name =
+				cfg('folder.abs') . $folder . '/' . sg_tis620_file($fileName);
 			$property->src = _URL . $folder . '/' . sg_urlencode($fileName);
 		} else {
-			$property->name = $photo_location = cfg('folder.abs') . cfg('upload_folder') . $subFolder . $folderName . $fileName;
-			$property->src = _URL . cfg('upload_folder') . $subFolder . $folderName . sg_urlencode($fileName);
+			$property->name = $photo_location =
+				cfg('folder.abs')
+				. cfg('upload_folder')
+				. $subFolder
+				. $folderName
+				. $fileName;
+			$property->src =
+				_URL
+				. cfg('upload_folder')
+				. $subFolder
+				. $folderName
+				. sg_urlencode($fileName);
 		}
 
 		if (file_exists($property->name)) {
 			$property->size = filesize($property->name);
-			if (!isset($property->url)) $property->url = $property->src; // sg_urlencode($fileName);
+			if (!isset($property->url)) {
+				$property->url = $property->src;
+			} // sg_urlencode($fileName);
 			$property->exists = true;
 		}
 
@@ -631,7 +764,10 @@ class FileModel {
 	 */
 	public static function getUploadFolder(array $folders = []): string {
 		// Remove empty value except 0
-		$folders = array_filter($folders, fn($value) => $value !== '' && $value !== null && $value !== false);
+		$folders = array_filter(
+			$folders,
+			fn($value) => $value !== '' && $value !== null && $value !== false
+		);
 
 		foreach ($folders as &$value) {
 			$value = rtrim($value, '/');
@@ -646,7 +782,13 @@ class FileModel {
 		return implode('/', $folders);
 	}
 
-	public static function getJsonFile(string $filename, bool $use_include_path = false, $context = null, int $offset = 0, ?int $length = null): string|false {
+	public static function getJsonFile(
+		string $filename,
+		bool $use_include_path = false,
+		$context = null,
+		int $offset = 0,
+		?int $length = null
+	): string|false {
 		$content = file_get_contents($filename);
 		// $content = file_get_contents($filename, $use_include_path, $context, $offset, $length);
 

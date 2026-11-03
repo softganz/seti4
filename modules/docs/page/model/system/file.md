@@ -16,15 +16,16 @@
 	Parameter:
 	Int $fileId
 
-	Result:
-	(Object) [
-		'fileId' => $rs->id,
-		'fileName' => $rs->fileName,
-		'folder' => $rs->folder,
-		'title' => $rs->title,
-		'info' => $rs,
-		'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName, $rs->folder) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName, $rs->folder) : NULL),
-	];
+    Result:
+    (Object) [
+    	'fileId' => $rs->id,
+    	'fileName' => $rs->fileName,
+    	'folder' => $rs->folder,
+    	'title' => $rs->title,
+    	'info' => $rs,
+    	'property' => $rs->type == 'photo' ? FileModel::photoProperty($rs->fileName, $rs->folder) : ($rs->type == 'doc' ? FileModel::docProperty($rs->fileName, $rs->folder) : NULL),
+    ];
+
 </pre>
 
 <h3 id="items">FileModel::items($attributes = [])</h3>
@@ -42,11 +43,12 @@
 			'resultGroup' => String,
 		]
 
-	Result:
-		(Object) [
-			'count' => 0,
-			'items' => [],
-		];
+    Result:
+    	(Object) [
+    		'count' => 0,
+    		'items' => [],
+    	];
+
 </pre>
 
 <h3 id="upload">FileModel::upload($photoFiles, $data = NULL, $options = '{}')</h3>
@@ -59,45 +61,47 @@
 			showDetail: false
 		}
 
-		$data = (Object) [
-			'nodeId' => NULL, // Int
-			'folder' => NULL, // String
-			'preName' => NULL, // String
-			'deleteUrl' => NULL, // String,
-			'fileId' => NULL, // Int,
-			'cid' => NULL, // Int
-			'title' => NULL, // String
-			'tagName' => NULL, // String
-			'orgId' => NULL, // Int
-			'uid' => NULL, // Int
-			'refId' => NULL, // Int
-			'link' => NULL, // String
-			'description' => NULL, // String
-			'onComplete' => function($data) {}
-		]
+    	$data = (Object) [
+    		'nodeId' => NULL, // Int
+    		'folder' => NULL, // String
+    		'preName' => NULL, // String
+    		'deleteUrl' => NULL, // String,
+    		'fileId' => NULL, // Int,
+    		'cid' => NULL, // Int
+    		'title' => NULL, // String
+    		'tagName' => NULL, // String
+    		'orgId' => NULL, // Int
+    		'uid' => NULL, // Int
+    		'refId' => NULL, // Int
+    		'link' => NULL, // String
+    		'description' => NULL, // String
+    		'onComplete' => function($data) {}
+    	]
 
-		$result = (Object) [
-			'link' => NULL,
-			'photofile' => NULL,
-			'uploadfile' => NULL,
-			'error' => [],
-			'items' => [],
-			'_query' => [],
-		]
+    	$result = (Object) [
+    		'link' => NULL,
+    		'photofile' => NULL,
+    		'uploadfile' => NULL,
+    		'error' => [],
+    		'items' => [],
+    		'_query' => [],
+    	]
+
 </pre>
 
 <h3 id="delete">FileModel::delete($fileId, $options = '{}')</h3>
 <pre>
 		$defaults = '{debug: false, deleteRecord: true, deleteFile: true}';
 
-		$result = (Object) [
-			'photoInused' => false,
-			'msg' => NULL,
-			'_query' => [],
-		];
+    	$result = (Object) [
+    		'photoInused' => false,
+    		'msg' => NULL,
+    		'_query' => [],
+    	];
+
 </pre>
 
-<h3 id="getFileInUse">FileModel::getFileInUse($fileId = NULL, $fileName, $folder)</h3>
+<h3 id="getFileInUse">FileModel::getFileInUse($fileId, $fileName, $folder)</h3>
 <pre>
 		return \mydb::select(
 			'SELECT `fid`, `tpid` `nodeId`, `folder`, `file`
