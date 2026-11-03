@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
  * Modified :: 2026-11-03
- * Version  :: 37
+ * Version  :: 38
  */
 
 global $R;
@@ -93,6 +93,7 @@ $includeFileList = [
 	'lib/lib.sg.php',
 	'lib/class.common.php',
 	'lib/class.module.php',
+	'lib/class.db.php',
 	'lib/class.mydb.php',
 	'lib/class.view.php',
 	'lib/class.sg.php',

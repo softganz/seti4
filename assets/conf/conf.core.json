@@ -1,12 +1,11 @@
 {
 	"dev": {
 		"created": "2024-05-15",
-		"lastModify": "2026-07-12",
-		"version": 15
+		"lastModify": "2026-11-03",
+		"version": 16
 	},
 	"autoLoader": {
 		"items": {
-			"db": "lib/class.db.php",
 			"album": "widget/widget.album.php",
 			"ui": "widget/widget.ui.php",
 			"dropbox": "widget/widget.dropbox.php",
@@ -78,9 +77,9 @@
 		}
 	},
 	"zones": {
-		"central": {"zoneId": "1,2,7", "name": "ภาคกลาง"},
-		"esan": {"zoneId": "3,4", "name": "ภาคอีสาน"},
-		"north": {"zoneId": "5,6", "name": "ภาคเหนือ"},
-		"south": {"zoneId": "8,9", "name": "ภาคใต้"}
+		"central": { "zoneId": "1,2,7", "name": "ภาคกลาง" },
+		"esan": { "zoneId": "3,4", "name": "ภาคอีสาน" },
+		"north": { "zoneId": "5,6", "name": "ภาคเหนือ" },
+		"south": { "zoneId": "8,9", "name": "ภาคใต้" }
 	}
 }
