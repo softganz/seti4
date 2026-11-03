@@ -191,8 +191,6 @@ if ($callFromApp) {
 	}
 }
 
-cfg('web.message', '<pre>' . print_r(R('appAgent'), 1) . '</pre>');
-
 if (isset($_GET['setting:'])) {
 	print_o($R->setting, '$R->setting', 1);
 	if (!empty($R->options)) {
