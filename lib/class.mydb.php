@@ -3,8 +3,8 @@
  * MyDb     :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2009-07-06
- * Modified :: 2026-10-02
- * Version  :: 16
+ * Modified :: 2026-10-03
+ * Version  :: 17
  *
  * @uses mydb::select(stmt, where, var)
  * @uses mydb::query(stmt, where, var)
@@ -1442,7 +1442,6 @@ class MyDb {
 				$value_list .= ',';
 			}
 		}
-		$field_list = substr($field_list, 0, -1);
 		$value_list = substr($value_list, 0, -1);
 		//$table_name = mydb::db_replace(' '.$table_name);
 		$sql_cmd =
@@ -1537,9 +1536,7 @@ class MyDb {
 			}
 		}
 
-		$ret .= $tables->build();
-
-		return $ret;
+		return $tables->build();
 	}
 
 	public static function setMultiQuery($value = true) {
