@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
  * Modified :: 2026-11-03
- * Version  :: 63
+ * Version  :: 64
  */
 
 /*************************************************************
@@ -73,7 +73,7 @@ class R {
 		}
 	}
 
-	public static function module($moduleName, $className = null) {
+	public static function module(string $moduleName, $className = null) {
 		$paraArgs = func_get_args();
 		$rName = $paraArgs[0];
 		$rName = 'module.' . $rName;
@@ -82,7 +82,7 @@ class R {
 		return $ret;
 	}
 
-	public static function model($modelName) {
+	public static function model(string $modelName) {
 		$paraArgs = func_get_args();
 		$rName = $paraArgs[0];
 		$rName = 'r.' . $rName;
@@ -91,7 +91,7 @@ class R {
 		return $ret;
 	}
 
-	public static function view($viewName) {
+	public static function view(string $viewName) {
 		$paraArgs = func_get_args();
 		$rName = $paraArgs[0];
 		$rName = 'view.' . $rName;
@@ -100,14 +100,14 @@ class R {
 		return $ret;
 	}
 
-	public static function page($pageName) {
+	public static function page(string $pageName) {
 		$paraArgs = func_get_args();
 		$paraArgs[0] = 'page.' . $paraArgs[0];
 		$ret = call_user_func_array('load_resource', $paraArgs);
 		return $ret;
 	}
 
-	public static function pageWidget($pageName, $args = []) {
+	public static function pageWidget(string $pageName, $args = []) {
 		$filePrefix = 'page.';
 		$buildMethod = 'build'; // Default build method
 		$reservedMethod = ['rightToBuild'];
@@ -193,7 +193,7 @@ class R {
 		return error(_HTTP_ERROR_NOT_FOUND, 'PAGE NOT FOUND');
 	}
 
-	public static function on($eventName) {
+	public static function on(string $eventName) {
 		$paraArgs = func_get_args();
 		$ret = null;
 		if (is_string($paraArgs[0])) {
@@ -203,12 +203,12 @@ class R {
 		return $ret;
 	}
 
-	public static function manifest($modulename) {
+	public static function manifest(string $modulename) {
 		$loadResult = SgCore::loadResourceFile('manifest.' . $modulename);
 		return $loadResult;
 	}
 
-	public static function asset($assetName) {
+	public static function asset(string $assetName) {
 		// assetName Format : project:name.ext
 		// assetFile Format : {module}.name.ext
 		// Location Folder : modules/{}/template/assets, modules/{module}/assets, core/assets
@@ -1361,7 +1361,7 @@ class SgCore {
 	 * https://domain.com?setting:[app[=yes]][theme[=name]]
 	 * https://domain.com?options:option1[,option2[,option3[...]]]
 	 */
-	static function processSetting(&$R) {
+	static function processSetting(object &$R) {
 		$scriptName = str_replace('/', '.', ltrim($_SERVER['SCRIPT_NAME'], '/'));
 		$cookie_id = substr(
 			$scriptName,
@@ -2012,7 +2012,7 @@ class SgCore {
 		return $lang;
 	}
 
-	static function setPageClass($q) {
+	static function setPageClass(array $q) {
 		page_class('module');
 		if (isset($q[0])) {
 			page_class('module-' . $q[0]);
@@ -2068,7 +2068,7 @@ class SgCore {
 		// . '"'
 	}
 
-	static function pageNotFound($menu) {
+	static function pageNotFound(array $menu) {
 		// Set header to no found and noacrchive when url address is load function page
 		http_response_code(_HTTP_ERROR_NOT_FOUND);
 		header('HTTP/1.0 404 Not Found');
