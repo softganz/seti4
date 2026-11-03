@@ -1,0 +1,933 @@
+<?php
+/**
+ * ProgressDbEngine :: Internal Progress (OpenEdge) implementation used by DB
+ * Connects via PDO ODBC, uses SQL-92 syntax with double-quoted identifiers.
+ *
+ * Use DB for application code, this class is for DB internal use only.
+ *
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2026-11-03
+ * Modified :: 2026-11-03
+ * Version  :: 1
+ */
+
+declare(strict_types=1);
+
+namespace Softganz;
+
+class ProgressDbEngine implements DbEngineInterface {
+	private $connection;
+	private $status = false;
+	private $srcStmt;
+	private $stmt;
+	private $args = [];
+	private $error = [];
+	private $errorMsg;
+	private $PDO;
+	private $errors = [];
+	private $queryItems = [];
+	private $debug = false;
+	private $debugMessage = [];
+	private $var = [];
+	private $where = [];
+	private $options; // key, value, group, sum, jsonDecode, multiple, history, log, debug, showResult
+	private $multipleQuery = false; // Use for multiple query in one statement, default is single query
+	private $callerFrom;
+	private $owner; // DB facade, passed to onComplete callback
+
+	public $connectionTime;
+	public $count = 0;
+	public $items = [];
+
+	function __construct($args, DB $owner) {
+		$this->owner = $owner;
+		$args = is_string($args) ? [0 => $args] : (array) $args;
+
+		// Connect to database
+		if (isset($args['connection']) && $args['connection']) {
+			$this->createDbConnection($args['connection']);
+		} elseif (function_exists('R')) {
+			$this->PDO = R()->DB->PDO();
+			$this->status = (bool) $this->PDO;
+		}
+
+		if (!$this->status) {
+			return;
+		}
+
+		$this->srcStmt = isset($args[0]) ? trim($args[0]) : null;
+		unset($args[0]);
+		$this->args = $args;
+
+		$this->setOptions((array) ($args['options'] ?? []));
+	}
+
+	// Called by DB::select
+	function select($args, DB $db, $callerFrom = null) {
+		$this->callerFrom = $callerFrom;
+		$this->setEmulatePrepares($this->multipleQuery);
+		$queryResult = $this->selectResult();
+
+		// Query error, return exception
+		if ($queryResult instanceof DbException) {
+			$errorMessage =
+				$this->stmt
+				. '; <span style="color:red;">-- ERROR :: '
+				. ($this->errorMsg ?? 'Select data from database was error.')
+				. '</font>';
+			$this->setDebugMessage('PREPARE', $errorMessage);
+			throw new DbException(
+				'Select data from database was error.',
+				503,
+				$errorMessage
+			);
+		}
+
+		if (preg_match('/(LIMIT\s.*1|FETCH\s+FIRST\s+1\s+ROWS\s+ONLY)\s*;?$/i', $this->stmt)) {
+			$result = new DbSelect(reset($this->items));
+		} else {
+			$result = new DbSelect([
+				'count' => $this->count,
+				'foundRows' => null,
+				'items' => $this->items
+			]);
+
+			// SQL_CALC_FOUND_ROWS is not supported by Progress
+			unset($result->foundRows);
+		}
+
+		$result->setDB($db);
+		$result->setResult($queryResult);
+
+		if (isset($args['onComplete']) && is_callable($args['onComplete'])) {
+			$args['onComplete']($result);
+		}
+
+		if (isset($this->options->sum) && $this->options->sum) {
+			$result->sum = $this->options->sum;
+		}
+
+		if ($this->options->showResult) {
+			if (function_exists('debugMsg')) {
+				debugMsg($result, 'DB::select');
+			}
+		}
+
+		return $result;
+	}
+
+	// Called by DB::query
+	function query($db, $callerFrom = null) {
+		$this->callerFrom = $callerFrom;
+		$result = $this->queryResult();
+
+		if ($result instanceof DbException) {
+			$errorMessage =
+				$this->stmt
+				. '; <span style="color:red;">-- ERROR :: '
+				. ($this->errorMsg ?? 'Update data to database was error.')
+				. '</font>';
+
+			$this->setDebugMessage('PREPARE', $errorMessage);
+
+			throw new DbException(
+				'Update data to database was error.',
+				503,
+				$errorMessage
+			);
+		}
+
+		unset($this->items, $this->count);
+		$this->setEmulatePrepares($this->multipleQuery);
+
+		return new DbQuery([
+			'query' => $this->stmt,
+			'result' => $result,
+			'DB' => $db,
+			'insertId' => $this->insertId()
+		]);
+	}
+
+	// Whether query history is enabled (caller lookup is only needed then)
+	function historyEnabled() {
+		return $this->options->history !== false;
+	}
+
+	// Public method
+	function prepare() {
+		$this->stmt = $this->srcStmt;
+
+		if (isset($this->args['var'])) {
+			$this->setVariable($this->args['var']);
+		}
+		$this->setWhere();
+
+		$this->replaceWhere();
+		$this->replaceVariable();
+		$this->replaceTable();
+
+	}
+
+	function selectResult() {
+		if (!$this->status || empty($this->srcStmt)) {
+			return;
+		}
+
+		// Prepare statement
+		$this->prepare();
+
+		$this->setDebugMessage('SRC', $this->srcStmt);
+		$this->setDebugMessage('PREPARE', $this->stmt);
+		if (isset($this->args['var'])) {
+			$this->setDebugMessage('VAR', $this->args['var']);
+		}
+		if (isset($this->args['where'])) {
+			$this->setDebugMessage('WHERE', $this->args['where']);
+		}
+		$this->setDebugMessage('OPTIONS', $this->options);
+
+		try {
+			$start = microtime(true);
+			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
+
+			// Select complete
+			$end = microtime(true);
+			$this->updateLastQueryStmt(
+				'Select',
+				$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
+			);
+
+			$this->items = $this->fetchRow($query);
+
+			$this->count = count($this->items);
+		} catch (\PDOException $exception) {
+			$queryError = $this->PDO->errorInfo();
+			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
+			$errorMsg = $exception->getMessage();
+			$queryStmt = $this->stmt([
+				'errorCode' => $queryError[1] ? $queryError[1] : $exception->getCode(),
+				'errorMessage' => $exception->getMessage(),
+				'SqlState' => $exception->getCode()
+			]);
+
+			$this->updateLastQueryStmt('Select', $queryStmt, $queryError);
+
+			// Show debug message if debug mode is on, otherwise return exception
+			if (
+				isset($this->options->debug) &&
+				$this->options->debug &&
+				function_exists('debugMsg')
+			) {
+				debugMsg($this->debugMsg());
+				return;
+			}
+
+			return new DbException(
+				$errorMsg,
+				$errorCode,
+				(object) [
+					'state' => $queryError[0],
+					'query' => $queryStmt
+				]
+			);
+		}
+
+		// Show debug message if debug mode is on
+		if (
+			isset($this->options->debug) &&
+			$this->options->debug &&
+			function_exists('debugMsg')
+		) {
+			debugMsg($this->debugMsg());
+		}
+
+		return $query;
+	}
+
+	function queryResult() {
+		if (!$this->status || empty($this->srcStmt)) {
+			return;
+		}
+
+		// Prepare statement
+		$this->prepare();
+
+		$this->setDebugMessage('SRC', $this->srcStmt);
+		$this->setDebugMessage('QUERY', $this->stmt);
+		if (isset($this->args['var'])) {
+			$this->setDebugMessage('VAR', $this->args['var']);
+		}
+		if (isset($this->args['where'])) {
+			$this->setDebugMessage('WHERE', $this->args['where']);
+		}
+		$this->setDebugMessage('OPTIONS', $this->options);
+
+		$start = microtime(true);
+
+		try {
+			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
+		} catch (\PDOException $exception) {
+			$queryError = $this->PDO->errorInfo();
+			$errorMsg = $exception->getMessage();
+			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
+			$queryStmt = $this->stmt([
+				'errorCode' => $queryError[1] ? $queryError[1] : $exception->getCode(),
+				'errorMessage' => $exception->getMessage(),
+				'SqlState' => $exception->getCode()
+			]);
+
+			$this->updateLastQueryStmt('Query', $queryStmt, $queryError);
+
+			// Show debug message if debug mode is on, otherwise return exception
+			if (
+				isset($this->options->debug) &&
+				$this->options->debug &&
+				function_exists('debugMsg')
+			) {
+				debugMsg($this->debugMsg());
+				return;
+			}
+
+			return new DbException($errorMsg, $errorCode, $queryError[0], $queryStmt);
+		}
+
+		// Query complete
+		$end = microtime(true);
+		$this->updateLastQueryStmt(
+			'Query',
+			$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
+		);
+
+		if (
+			isset($this->args['onComplete']) &&
+			is_callable($this->args['onComplete'])
+		) {
+			$this->args['onComplete']($this->owner);
+		}
+		if (
+			isset($this->options->debug) &&
+			$this->options->debug &&
+			function_exists('debugMsg')
+		) {
+			debugMsg($this->debugMsg());
+		}
+
+		return $query;
+	}
+
+	function fetchRow($items) {
+		$result = [];
+		foreach ($items as $key => $value) {
+			$value = (object) $value;
+			if (isset($this->options->jsonDecode) && $this->options->jsonDecode) {
+				foreach ($this->options->jsonDecode as $jsonDecode) {
+					$jsonDecodeResult = json_decode(
+						$value->{$jsonDecode['field']} ?? '{}'
+					);
+					if ($jsonDecode['type'] === 'merge') {
+						$foundField = false;
+						$before = [];
+						$after = [];
+						foreach ($value as $itemKey => $itemValue) {
+							if ($itemKey === $jsonDecode['field']) {
+								$foundField = true;
+								continue;
+							}
+							if (!$foundField) {
+								$before[$itemKey] = $itemValue;
+							} else {
+								$after[$itemKey] = $itemValue;
+							}
+						}
+						$value = (object) array_replace_recursive(
+							(array) $before,
+							(array) $jsonDecodeResult,
+							(array) $after
+						);
+					} else {
+						$value->{$jsonDecode['field']} = $jsonDecodeResult;
+					}
+				}
+			}
+
+			if (isset($this->options->group) && $this->options->group) {
+				// Collect result using group of items and/or using key and value
+				if (
+					isset($this->options->key) &&
+					$this->options->key &&
+					isset($this->options->value) &&
+					$this->options->value
+				) {
+					$result[$value->{$this->options->group}][
+						$value->{$this->options->key}
+					] = $value->{$this->options->value};
+				} elseif (isset($this->options->key) && $this->options->key) {
+					$result[$value->{$this->options->group}][
+						$value->{$this->options->key}
+					] = $value;
+				} else {
+					$result[$value->{$this->options->group}][] = $value;
+				}
+			} elseif (
+				isset($this->options->key) &&
+				isset($this->options->value) &&
+				$this->options->key &&
+				$this->options->value
+			) {
+				// Collect result using key and value
+				$result[$value->{$this->options->key}] =
+					$value->{$this->options->value};
+			} elseif (isset($this->options->key) && $this->options->key) {
+				// Collect result using key
+				$result[$value->{$this->options->key}] = $value;
+			} else {
+				// Collect result by auto key
+				$result[] = $value;
+			}
+
+			// Generate sum value of fields
+			if (isset($this->options->sum) && $this->options->sum) {
+				foreach ($this->options->sum as $keySum => $valueSum) {
+					$this->options->sum->{$keySum} += $value->{$keySum} ?? 0;
+				}
+			}
+		}
+		return $result;
+	}
+
+	// Progress has no lastInsertId, return 0 when driver does not support it
+	function insertId() {
+		try {
+			return intval($this->PDO->lastInsertId());
+		} catch (\PDOException $e) {
+			return 0;
+		}
+	}
+
+	function args() {
+		return $this->args;
+	}
+
+	function options() {
+		return $this->options;
+	}
+
+	function PDO() {
+		return $this->PDO;
+	}
+
+	// Create statement with message and error code
+	private function stmt($addMessage = []) {
+		$stmt = $this->stmt;
+		if (isset($addMessage['errorMessage']) && $addMessage['errorMessage']) {
+			$stmt .=
+				';<br><span style="color:red;">-- ERROR #'
+				. $addMessage['errorCode']
+				. ' '
+				. $addMessage['errorMessage']
+				. '</span>';
+		}
+
+		if (isset($addMessage['rowCount'])) {
+			$stmt .=
+				'<br><span style="color:green">-- '
+				. (isset($addMessage['rowCount'])
+					? '<b>'
+						. number_format($addMessage['rowCount'])
+						. '</b> affected rows'
+					: '')
+				. (isset($addMessage['time'])
+					? ' in <b>' . number_format($addMessage['time'] * 1000, 2) . '</b> ms'
+					: '')
+				. '</span>';
+		}
+		$stmt .=
+			'<br><font color="gray">-- Call <b>DB</b> from '
+			. $this->callerFrom
+			. '</font>';
+		return $stmt;
+	}
+
+	function sum($key) {
+		if ($this->options->sum) {
+			return $this->options->sum->{$key};
+		}
+	}
+
+	function queryItems($stmt = null) {
+		if ($stmt) {
+			$this->queryItems[] = $stmt;
+		}
+		return $this->queryItems;
+	}
+
+	function debugMsg() {
+		$ret = '';
+		foreach ($this->debugMessage as $debugKey => $debugText) {
+			$ret .= '<div>';
+			if (!is_numeric($debugKey)) {
+				$ret .= '<b><i>' . $debugKey . ' ::</i></b><br />';
+			}
+			if (is_string($debugText)) {
+				$ret .= preg_match('/^SELECT|UPDATE|INSERT|DELETE|ALTER/i', $debugText)
+					? '<pre>' . $debugText . '</pre>'
+					: $debugText;
+			} else {
+				$ret .= class_exists('\DebugMsg')
+					? new \DebugMsg($debugText, $debugKey)->build()
+					: '<pre>' . print_r($debugText, true) . '</pre>';
+			}
+			$ret .= '</div>';
+		}
+		return $ret;
+	}
+
+	// Private method
+	// Called by DB::select
+	private function createDbConnection($connection) {
+		// uri: progress://username:password@host[:port]/database
+		if (is_string($connection['uri'] ?? null)) {
+			$parts = parse_url($connection['uri']);
+			if (!$parts || ($parts['scheme'] ?? '') !== 'progress' || empty($parts['host']) || empty($parts['path'])) {
+				throw new \Exception('+Progress connection uri must be progress://username:password@host[:port]/database');
+			}
+			$connection['user'] = rawurldecode($parts['user'] ?? '');
+			$connection['password'] = rawurldecode($parts['password'] ?? '');
+			$connection['host'] = $parts['host'];
+			$connection['port'] = $parts['port'] ?? null;
+			$connection['database'] = rawurldecode(ltrim($parts['path'], '/'));
+		}
+
+		if (empty($connection['host']) || empty($connection['database'])) {
+			throw new \Exception('+Progress connection requires uri or host and database');
+		}
+
+		// ODBC driver name as installed on the server, e.g. from odbcinst.ini
+		$driver = $connection['driver'] ?? 'Progress OpenEdge Driver';
+		$dsn = 'Driver={' . $driver . '};HOST=' . $connection['host']
+			. (empty($connection['port']) ? '' : ';PORT=' . $connection['port'])
+			. ';DBN=' . $connection['database'];
+
+		$this->connection = (object) $connection;
+		$start_time = microtime(true);
+
+		try {
+			$this->PDO = new \PDO(
+				'odbc:' . $dsn,
+				$connection['user'] ?? null,
+				$connection['password'] ?? null,
+				[
+					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+					\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+				]
+			);
+		} catch (\PDOException $e) {
+			$this->errors[] = $this->errorMsg = $e->getMessage();
+			throw new \Exception(
+				'+ขออภัย มีปัญหาในการติดต่อกับฐานข้อมูล',
+				$e->getCode()
+			);
+		}
+
+		$this->connectionTime = round(microtime(true) - $start_time, 4);
+		$this->status = true;
+	}
+
+	private function setOptions(array $options) {
+		$this->options = (object) array_replace_recursive(
+			[
+				'log' => true,
+				'history' => true,
+				'key' => null,
+				'value' => null,
+				'group' => null,
+				'multiple' => false,
+				'showResult' => false,
+				'debug' => false,
+				'sum' => [],
+				'jsonDecode' => []
+			],
+			(array) $options
+		);
+
+		if ($this->options->sum) {
+			$sumFields = $this->options->sum;
+			$this->options->sum = (object) [];
+			foreach (explode(',', $sumFields) as $value) {
+				$this->options->sum->{$value} = 0;
+			}
+		}
+
+		if ($this->options->multiple) {
+			$this->setEmulatePrepares(true);
+		}
+	}
+
+	private function setDebugMessage($key, $message) {
+		if ($key) {
+			$this->debugMessage[$key] = $message;
+		} else {
+			$this->debugMessage[] = $message;
+		}
+		if ($this->debug) {
+			if (function_exists('debugMsg')) {
+				debugMsg($message);
+			} else {
+				echo '<div class="debug-msg">' . $message . '</div>';
+			}
+		}
+		return $this->debugMessage;
+	}
+
+	private function setWhere() {
+		// If %WHERE% exist in args, convert to where with key %WHERE% and value is array of where item
+		foreach ($this->args as $argKey => $argValue) {
+			if (preg_match('/^%WHERE.*%$/', $argKey)) {
+				$this->args['where'][$argKey] = $argValue;
+				unset($this->args[$argKey]);
+			}
+		}
+
+		if (empty($this->args['where'])) {
+			return;
+		}
+
+		foreach ($this->args['where'] as $whereKey => $whereGroup) {
+			$where = [];
+			foreach ($whereGroup as $whereItem) {
+				if (isset($whereItem[0]) && $whereItem[0]) {
+					$where[] = $whereItem[0];
+				}
+				unset($whereItem[0]);
+				if ($whereItem) {
+					$this->setVariable($whereItem);
+				}
+			}
+			$this->where[$whereKey] = empty($where)
+				? ''
+				: 'WHERE ' . implode(' AND ', $where);
+		}
+	}
+
+	private function setVariable($variable = []) {
+		if (empty($variable)) {
+			return;
+		}
+
+		// Value of var is object, convert to array with : in front of key
+		if (is_object($variable)) {
+			$variable = $this->valueObjectConvert($variable);
+		}
+
+		foreach ($variable as $key => $value) {
+			self::setEachVariable($key, $value);
+		}
+	}
+
+	private function setEachVariable($key, $value) {
+		if (is_null($value)) {
+			$value = 'NULL';
+		} elseif (
+			is_object($value) &&
+			get_class($value) === 'Softganz\JsonDataModel'
+		) {
+			$value = $this->jsonObjectString($value->args);
+		} elseif (
+			is_object($value) &&
+			get_class($value) === 'Softganz\JsonArrayDataModel'
+		) {
+			$value = $this->jsonArrayString($value->args);
+		} elseif (
+			is_object($value) &&
+			get_class($value) === 'Softganz\SetDataModel'
+		) {
+			$value = $this->valueOfSet($value);
+		} elseif (preg_match('/^(\:JSON_OBJECT)(\:.*)/i', $key)) {
+			$value = $this->jsonObjectString($value);
+		} elseif (is_object($value)) {
+			// If value is object, recursive all element with add : in front of key
+			return self::setVariable($value);
+		} elseif (is_array($value)) {
+			// If value is object, recursive all element without add : in front of key
+			return self::setVariable($value);
+		} elseif (preg_match('/^(\:\`).*(\`)$/', $key)) {
+			// If key leading with :` and end with ` then value is quote and remove ' and add " at front and end
+			$value = '"' . trim($this->quote($value), '\'') . '"';
+		} elseif (preg_match('/^(\:\:).*(\:\:)$/', $key)) {
+			// If key leading with :" and end with " then value is quote and remove ' and add ` at front and end
+			$value = trim($this->quote($value), '\'');
+		} elseif (preg_match('/^\$([a-zA-Z0-9_]*)\$$/', $key)) {
+			// If key leading and ending with $ and function name format, Don't quote
+			$value = $value;
+		} elseif (preg_match('/^\$([a-zA-Z0-9_]*)/', $key)) {
+			// If key leading with $ and follow by function name format, Quote value
+			$value = $this->quote($value);
+		} elseif (is_string($value) && preg_match('/^func\./i', $value)) {
+			$value = substr($value, 5);
+		} elseif (is_string($value)) {
+			$value = $this->quote($value);
+		} elseif (is_numeric($value)) {
+			$value = $value;
+		} elseif (is_bool($value)) {
+			$value = $value ? 1 : 0;
+		} else {
+			$value = '""';
+		}
+		$this->var[$key] = $value;
+		return $value;
+	}
+
+	private function replaceWhere() {
+		if (empty($this->where)) {
+			return;
+		}
+
+		$whereKey = array_keys($this->where);
+
+		// Quote value keys before use preg_replace
+		$whereKey = array_map(function ($v) {
+			return '#' . preg_quote($v) . '#';
+		}, $whereKey);
+
+		// Replace value keys with $this->var
+		$this->stmt = preg_replace($whereKey, $this->where, $this->stmt);
+	}
+
+	private function replaceVariable() {
+		if (empty($this->var)) {
+			return;
+		}
+
+		$varKey = array_keys($this->var);
+
+		// Quote value keys before use preg_replace
+		$varKey = array_map(function ($v) {
+			return '#' . preg_quote($v) . '#';
+		}, $varKey);
+
+		// Replace value keys with $this->var
+		$this->stmt = preg_replace($varKey, $this->var, $this->stmt);
+	}
+
+	private function replaceTable() {
+		// Replace %tablename% with db(%tablename%)
+		$this->stmt = preg_replace_callback(
+			'/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i',
+			function ($m) {
+				return ' ' . $this->db($m[1]);
+			},
+			$this->stmt
+		);
+	}
+
+	private function valueOfSet($object) {
+		foreach ($object as $key => $value) {
+			if (!is_numeric($value)) {
+				$object->{$key} = $this->quote($value);
+			}
+		}
+		return implode(' , ', (array) $object);
+	}
+
+	private function valueObjectConvert(object $object) {
+		$result = [];
+		foreach ($object as $key => $value) {
+			if (preg_match('/^\$/', $key, $out)) {
+				// Key leading with $ will not add : to front of it
+				$result[$key] = $value;
+			} else {
+				$result[':' . $key] = $value;
+			}
+		}
+		return $result;
+	}
+
+	// PDO_ODBC may not support ATTR_EMULATE_PREPARES, ignore if unsupported
+	private function setEmulatePrepares($value) {
+		try {
+			$this->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $value);
+		} catch (\PDOException $e) {
+		}
+	}
+
+	private function quote($value) {
+		return is_null($value) ? null : $this->PDO->quote($value);
+	}
+
+	/**
+	 * Set & get table with keyword
+	 * @param string $key
+	 * @param string $new_value
+	 * @param string $prefix
+	 * @param string $db
+	 * @return string
+	 */
+	private function db(
+		$key = null,
+		$new_value = null,
+		$prefix = null,
+		$db = null
+	) {
+		static $items = [];
+		static $src = [];
+
+		if (empty($items) && function_exists('db')) {
+			$items = db();
+		}
+
+		$tablePrefix = function_exists('cfg') ? cfg('db.prefix') : '';
+		$ret = null;
+
+		if (isset($key) && isset($new_value)) {
+			$src[$key] = $new_value;
+			$tablename = isset($db) ? '"' . $db . '".' : ''; // Set database name
+			if (preg_match('/"([a-zA-Z0-9_].*)"/', $new_value, $out)) {
+				$tablename .= $new_value; // Use new_value on `table` or `db`.`table` format
+			} else {
+				$tablename .= '"' . $tablePrefix . $new_value . '"'; // Add prefix on table format
+			}
+			$items[$key] = $tablename;
+			$ret = $items;
+		} elseif (!isset($key) && isset($prefix)) {
+			// Change all table items to new prefix value
+			foreach ($src as $key => $value) {
+				$items[$key] = $prefix . $value;
+			}
+			$ret = $items;
+		} elseif (isset($key)) {
+			// if key return value in condition
+			// key format `table_name` return `table_name`
+			// key format %table_name% return value in `$items[table_name]`
+			// key format table_name and key in array items return items[table_name]
+			// key format table_name and key not in items return db.prefix+table_name
+			if (preg_match('/"([a-zA-Z0-9_].*)"/', $key, $out)) {
+				$ret = $key;
+			} elseif (preg_match('/\%([a-zA-Z0-9_].*)\%/', $key, $out)) {
+				$ret = array_key_exists($out[1], $items)
+					? $items[$out[1]]
+					: '"' . $tablePrefix . $out[1] . '"';
+			} else {
+				$ret = array_key_exists($key, $items)
+					? $items[$key]
+					: '"' . $tablePrefix . $key . '"';
+			}
+		} else {
+			$ret = $items;
+		}
+		return $ret;
+	}
+
+	private function jsonObjectString($value, $key = null) {
+		// Encode to json string and decode to value becuase array has index as string will convert to object
+		$value = json_decode(json_encode($value));
+
+		$jsonString = '';
+
+		if ($key) {
+			$jsonString .= '	"' . $key . '", ';
+		}
+		$jsonString .= is_object($value)
+			? 'JSON_OBJECT(' . _NL
+			: 'JSON_ARRAY(' . _NL;
+
+		foreach ((array) $value as $jsonKey => $jsonValue) {
+			if (is_array($jsonValue)) {
+				$jsonString .=
+					$this->jsonObjectString($jsonValue, $jsonKey) . ', ' . _NL;
+			} elseif (is_object($jsonValue)) {
+				$jsonString .= $this->jsonObjectString($jsonValue, $jsonKey) . ', ';
+			} else {
+				// Convert value to type
+				if (
+					is_null($jsonValue) ||
+					(is_string($jsonValue) && trim($jsonValue) === '')
+				) {
+					$jsonValue = 'null';
+				} elseif (is_numeric($jsonValue)) {
+					$jsonValue = floatval($jsonValue);
+				} else {
+					$jsonValue = '"' . preg_replace('/[\"]/', '', $jsonValue) . '"';
+				}
+				$jsonString .=
+					(is_array($value) ? '	' : '	"' . $jsonKey . '", ')
+					. $jsonValue
+					. ', '
+					. _NL;
+			}
+		}
+		$jsonString = rtrim($jsonString, ' , ' . _NL);
+		$jsonString .= _NL . ')';
+		return $jsonString;
+	}
+
+	private function jsonArrayString($value, $key = null) {
+		// debugMsg($value, 'JSON Value');
+		$jsonString = '';
+		if ($key) {
+			$jsonString .= '"' . $key . '" , ';
+		}
+		$jsonString .= 'JSON_ARRAY(' . '"' . implode('","', (array) $value) . '"';
+		// foreach ((array) $value as $jsonKey => $jsonValue) {
+		// 	// debugMsg('KEY '.$jsonKey.' = '.$jsonValue);
+		// 	$jsonString .= '"'.$jsonKey.'" , "'.preg_replace('/[\"]/', '', $jsonValue).'" ,';
+		// 	// debugMsg($jsonString);
+		// }
+		// $jsonString = rtrim($jsonString, ' , ');
+		$jsonString .= ')';
+		return $jsonString;
+	}
+
+	private function updateLastQueryStmt($method, $stmt, $error = []) {
+		if (isset($this->options->history) && $this->options->history === false) {
+			return;
+		} // Do not save query history
+
+		$this->setDebugMessage(null, $stmt);
+
+		// Add message to error
+		if ($error) {
+			$this->errors[] = (object) [
+				'code' => $error[1],
+				'message' => $error[2],
+				'query' => $stmt
+			];
+			$this->errorMsg = $error[2];
+
+			// Save error to log
+			if ($this->options->log && class_exists('\LogModel')) {
+				\LogModel::save([
+					'module' => 'DB',
+					'keyword' => $method,
+					'message' =>
+						$stmt
+						. '<pre>'
+						. '<hr>GET: '
+						. \json_encode($_GET, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+						. '<hr>POST: '
+						. \json_encode($_POST, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+						. '<hr>FILES: '
+						. \json_encode($_FILES, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+						. '</pre>'
+				]);
+			}
+		}
+
+		$this->queryItems($stmt);
+
+		// Save query history
+		if (function_exists('R')) {
+			R('query', $stmt);
+			R()->query_items[] = $stmt;
+			R(
+				'error',
+				$error
+					? (object) [
+						'code' => $error[1],
+						'message' => $error[2],
+						'query' => $stmt
+					]
+					: ''
+			);
+		}
+	}
+}

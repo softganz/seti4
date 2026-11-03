@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
  * Modified :: 2026-11-03
- * Version  :: 59
+ * Version  :: 60
  *
  * @param array $args
  * @return object
@@ -182,14 +182,28 @@ class DB {
 
 	// Select engine by connection type, default is MariaDB/MySQL
 	private static function createEngine($args, DB $owner): DbEngineInterface {
-		$type = is_array($args) && isset($args['connection']['type'])
-			? strtolower((string) $args['connection']['type'])
-			: 'mysql';
+		// Engine from connection type, or from uri scheme (mysql://, progress://)
+		$connection = is_array($args) ? $args['connection'] ?? [] : [];
+		$type = isset($connection['type'])
+			? strtolower((string) $connection['type'])
+			: (is_string($connection['uri'] ?? null)
+				? strtolower((string) parse_url($connection['uri'], PHP_URL_SCHEME))
+				: 'mysql');
 
-		return match ($type) {
-			'mysql', 'mariadb' => new MariaDbEngine($args, $owner),
-			default => throw new \InvalidArgumentException('Unsupported DB engine: ' . $type),
+		// Engine class is loaded by cfg('db'), only the matching engine is available
+		$engineClass = match ($type) {
+			'mysql', 'mariadb' => MariaDbEngine::class,
+			'progress', 'odbc' => ProgressDbEngine::class,
+			default => throw new \InvalidArgumentException(
+				'Unsupported DB engine: ' . $type
+			)
 		};
+		if (!class_exists($engineClass, false)) {
+			throw new \InvalidArgumentException(
+				'DB engine ' . $type . ' is not loaded, check cfg(\'db\')'
+			);
+		}
+		return new $engineClass($args, $owner);
 	}
 
 	// Call by static method

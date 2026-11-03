@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
  * Modified :: 2026-11-03
- * Version  :: 39
+ * Version  :: 40
  */
 
 global $R;
@@ -94,7 +94,6 @@ $includeFileList = [
 	'lib/class.common.php',
 	'lib/class.module.php',
 	'interface/interface.db.engine.php',
-	'lib/class.db.engine.mariadb.php',
 	'lib/class.db.php',
 	'lib/class.mydb.php',
 	'lib/class.view.php',
@@ -276,6 +275,14 @@ if ($R->core) {
 }
 
 initConfig($R->configFolder);
+
+// Load DB engine by scheme of cfg('db'), mysql:// = MariaDB, progress:// = ProgressDB
+$dbScheme = strtolower((string) parse_url((string) cfg('db'), PHP_URL_SCHEME));
+load_lib(
+	$dbScheme === 'progress'
+		? 'lib/class.db.engine.progress.php'
+		: 'lib/class.db.engine.mariadb.php'
+);
 
 error_reporting(cfg('error_reporting'));
 
