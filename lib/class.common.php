@@ -14,8 +14,8 @@
  * ============================================
  * 
  * Created  :: 2007-07-09
- * Modified :: 2026-11-02
- * Version  :: 26
+ * Modified :: 2026-11-03
+ * Version  :: 27
  */
 
 use Softganz\DB;
@@ -211,9 +211,7 @@ class Timer {
 class Session implements SessionHandlerInterface {
 
 	// Capture PDO connection reference while it is still alive (set in open()).
-	// We keep the PDO object itself (not just the DB wrapper) because
-	// sgShutdown() calls $R->DB->close() which sets DB::$PDO = NULL before
-	// session write() runs. The PDO object stays usable as long as we hold it.
+	// Hold the PDO object so session write() does not depend on the DB wrapper.
 	private ?\PDO $PDO = null;
 
 	public function __construct() {}

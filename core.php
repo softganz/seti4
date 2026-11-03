@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-11-02
- * @version :: 55
+ * @modify  :: 2026-11-03
+ * @version :: 56
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -818,9 +818,6 @@ function sgIsFatalError($code) {
 function sgShutdown() {
 	global $R;
 	$error = error_get_last();
-	if (is_object($R->DB) && method_exists($R->DB, 'close')) {
-		$R->DB->close();
-	}
 	if (is_object($R->myDb) && method_exists($R->myDb, 'close')) {
 		$R->myDb->close();
 	}

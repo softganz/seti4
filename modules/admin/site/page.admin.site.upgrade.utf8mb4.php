@@ -3,11 +3,10 @@
  * Admin    :: Page
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-08-21
- * Modified :: 2026-08-21
- * Version  :: 1
+ * Modified :: 2026-11-03
+ * Version  :: 2
  *
- * @param String $args
- * @return Widget
+ * @param string $args
  *
  * @uses admin/site/upgrade/utf8mb4
  */
@@ -17,7 +16,7 @@ use Softganz\DB;
 class AdminSiteUpgradeUtf8mb4 extends Page {
 	var $args;
 
-	function __construct($args = NULL) {
+	function __construct($args = null) {
 		parent::__construct([
 			'args' => $args
 		]);
@@ -45,63 +44,88 @@ class AdminSiteUpgradeUtf8mb4 extends Page {
 				'leading' => new Icon('swap_horizontal_circle')
 			]), // AppBar
 			'body' => new Widget([
-				'children' => array_map(
-					function($table) {
-						$tableName = $table[0]->TABLE_NAME;
+				'children' => array_map(function ($table) {
+					$tableName = $table[0]->TABLE_NAME;
 
-						foreach ($table as $key => $value) {
-							$table[$key]->bin = new Button([
-								'type' => 'link',
-								'class' => 'sg-action',
-								'href' => Url::link('admin/site/upgrade/utf8mb4..convert.field', ['table' => $tableName, 'field' => $value->COLUMN_NAME, 'type' => 'utf8mb4_bin']),
-								'text' => 'BIN',
-								'icon' => new Icon('turn_slight_left'),
-								'rel' => 'none',
-								'done' => 'load',
-								'data-title' => 'Convert field',
-								'data-confirm' => 'Convert this field from <b>' . $value->COLLATION_NAME . '</b> to <b>utf8mb4_bin</b>'
-							]);
-							$table[$key]->ci = new Button([
-								'type' => 'link',
-								'class' => 'sg-action',
-								'href' => Url::link('admin/site/upgrade/utf8mb4..convert.field', ['table' => $tableName, 'field' => $value->COLUMN_NAME, 'type' => 'utf8mb4_unicode_ci']),
-								'text' => 'CI',
-								'icon' => new Icon('turn_slight_right'),
-								'rel' => 'none',
-								'done' => 'load',
-								'data-title' => 'Convert field',
-								'data-confirm' => 'Convert this field from <b>' . $value->COLLATION_NAME . '</b> to <b>utf8mb4_unicode_ci</b>'
-							]);
-						}
-						// debugMsg($table, '$table');
-						return new Card([
-							'children' => [
-								new Header([
-									'crossAxisAlignment' => 'center',
-									'title' => $tableName,
-									'leading' => new Icon('table'),
-									'trailing' => new Button([
-										'type' => 'primary',
-										'class' => 'sg-action',
-										'href' => Url::link('admin/site/upgrade/utf8mb4..convert.table', ['table' => $tableName]),
-										'icon' => new Icon('table_convert'),
-										'text' => 'Convert All Field To utf8mb4',
-										'rel' => 'notify',
-										'done' => 'load',
-										'data-title' => 'Convert to utf8mb4_unicode_ci',
-										'data-confirm' => 'Please confirm?'
-									])
-								]),
-								new Table([
-								'thead' => ['Table', 'Column', 'Type', 'Length','Charector Set', 'Collection Name', 'Type', 'Check', '', ''],
-								'children' => $table,
-							])
-							]
+					foreach ($table as $key => $value) {
+						$table[$key]->bin = new Button([
+							'type' => 'link',
+							'class' => 'sg-action',
+							'href' => Url::link('admin/site/upgrade/utf8mb4..convert.field', [
+								'table' => $tableName,
+								'field' => $value->COLUMN_NAME,
+								'type' => 'utf8mb4_bin'
+							]),
+							'text' => 'BIN',
+							'icon' => new Icon('turn_slight_left'),
+							'rel' => 'none',
+							'done' => 'load',
+							'data-title' => 'Convert field',
+							'data-confirm' =>
+								'Convert this field from <b>'
+								. $value->COLLATION_NAME
+								. '</b> to <b>utf8mb4_bin</b>'
 						]);
-					},
-					$this->getAllTable()->items
-				),
-			]), // Widget
+						$table[$key]->ci = new Button([
+							'type' => 'link',
+							'class' => 'sg-action',
+							'href' => Url::link('admin/site/upgrade/utf8mb4..convert.field', [
+								'table' => $tableName,
+								'field' => $value->COLUMN_NAME,
+								'type' => 'utf8mb4_unicode_ci'
+							]),
+							'text' => 'CI',
+							'icon' => new Icon('turn_slight_right'),
+							'rel' => 'none',
+							'done' => 'load',
+							'data-title' => 'Convert field',
+							'data-confirm' =>
+								'Convert this field from <b>'
+								. $value->COLLATION_NAME
+								. '</b> to <b>utf8mb4_unicode_ci</b>'
+						]);
+					}
+					// debugMsg($table, '$table');
+					return new Card([
+						'children' => [
+							new Header([
+								'crossAxisAlignment' => 'center',
+								'title' => $tableName,
+								'leading' => new Icon('table'),
+								'trailing' => new Button([
+									'type' => 'primary',
+									'class' => 'sg-action',
+									'href' => Url::link(
+										'admin/site/upgrade/utf8mb4..convert.table',
+										['table' => $tableName]
+									),
+									'icon' => new Icon('table_convert'),
+									'text' => 'Convert All Field To utf8mb4',
+									'rel' => 'notify',
+									'done' => 'load',
+									'data-title' => 'Convert to utf8mb4_unicode_ci',
+									'data-confirm' => 'Please confirm?'
+								])
+							]),
+							new Table([
+								'thead' => [
+									'Table',
+									'Column',
+									'Type',
+									'Length',
+									'Charector Set',
+									'Collection Name',
+									'Type',
+									'Check',
+									'',
+									''
+								],
+								'children' => $table
+							])
+						]
+					]);
+				}, $this->getAllTable()->items)
+			]) // Widget
 		]);
 	}
 
@@ -113,8 +137,12 @@ class AdminSiteUpgradeUtf8mb4 extends Page {
 	function convertTable(): object {
 		$tableName = Request::all('table');
 
-		if (empty($tableName)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อตาราง');
-		if (!\SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ยืนยัน');
+		if (empty($tableName)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อตาราง');
+		}
+		if (!\SG\confirm()) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ยืนยัน');
+		}
 
 		DB::query([
 			'ALTER TABLE :`tableName` 
@@ -138,23 +166,30 @@ class AdminSiteUpgradeUtf8mb4 extends Page {
 		$fieldName = Request::all('field');
 		$typeName = Request::all('type');
 
-		if (empty($tableName)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อตาราง');
-		if (empty($fieldName)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อฟิลด์');
-		if (empty($typeName)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อชนิดข้อมูล');
-		if (!\SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ยืนยัน');
+		if (empty($tableName)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อตาราง');
+		}
+		if (empty($fieldName)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อฟิลด์');
+		}
+		if (empty($typeName)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุชื่อชนิดข้อมูล');
+		}
+		if (!\SG\confirm()) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ยืนยัน');
+		}
 
 		// ดึง COLUMN_TYPE เดิม เช่น varchar(255), text, mediumtext ฯลฯ เพื่อคงชนิดข้อมูลเดิมไว้
 		$column = DB::select([
 			'SELECT COLUMN_TYPE
 			 FROM INFORMATION_SCHEMA.COLUMNS
-			 WHERE TABLE_SCHEMA = :database_name
+			 WHERE TABLE_SCHEMA = DATABASE()
 			   AND TABLE_NAME = :tableName
 			   AND COLUMN_NAME = :fieldName
 			 LIMIT 1',
 			'var' => [
-				':database_name' => R('DB')->connection()->database,
 				':tableName' => $tableName,
-				':fieldName' => $fieldName,
+				':fieldName' => $fieldName
 			]
 		]);
 
@@ -173,7 +208,7 @@ class AdminSiteUpgradeUtf8mb4 extends Page {
 		]);
 		// debugMsg(R('query'));
 
-		return apiSuccess('Convert to ' . $typeName.' completed.');
+		return apiSuccess('Convert to ' . $typeName . ' completed.');
 	}
 
 	/**
@@ -197,12 +232,9 @@ class AdminSiteUpgradeUtf8mb4 extends Page {
 				ON CHECK_CONSTRAINTS.CONSTRAINT_SCHEMA = COLUMNS.TABLE_SCHEMA
 				AND CHECK_CONSTRAINTS.TABLE_NAME = COLUMNS.TABLE_NAME
 		WHERE
-			COLUMNS.TABLE_SCHEMA = :database_name
+			COLUMNS.TABLE_SCHEMA = DATABASE()
 			AND COLUMNS.DATA_TYPE IN ("char", "varchar", "enum", "tinytext", "text", "mediumtext", "longtext")
 		ORDER BY  COLUMNS.TABLE_NAME ASC',
-		'var' => [
-				':database_name' => R('DB')->connection()->database
-			],
 			'options' => ['group' => 'TABLE_NAME']
 		]);
 	}
