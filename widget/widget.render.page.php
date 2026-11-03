@@ -3,8 +3,8 @@
  * Widget   :: Page Render Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
- * Modified :: 2026-11-02
- * Version  :: 20
+ * Modified :: 2026-11-03
+ * Version  :: 21
  *
  * @param String $requestResult
  *
@@ -351,7 +351,7 @@ class renderPageWidget extends Widget {
 		// debugMsg($this->pageClass, '$this->pageClass');
 
 		// if (is_object($this->pageClass->appBar) && method_exists($this->pageClass->appBar, 'build')) {
-		// 	if ($this->pageClass->appBar->removeOnApp && is_object(R()->appAgent)) {
+		// 	if ($this->pageClass->appBar->removeOnApp && is_object(R('appAgent'))) {
 		// 		// don't show appBar
 		// 	} else {
 		// 		$this->pageClass->appBarText = $this->pageClass->appBar->build();
@@ -361,7 +361,7 @@ class renderPageWidget extends Widget {
 		// }
 
 		// if (is_object($this->pageClass->appBar) && method_exists($this->pageClass->appBar, 'build')) {
-		// 	if ($this->pageClass->appBar->removeOnApp && is_object(R()->appAgent)) {
+		// 	if ($this->pageClass->appBar->removeOnApp && is_object(R('appAgent))) {
 		// 		// don't show appBar
 		// 	} else {
 		// 		$this->pageClass->appBarText = $this->pageClass->appBar->build();

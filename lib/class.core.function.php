@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-02
- * Version  :: 47
+ * Modified :: 2026-11-03
+ * Version  :: 48
  */
 
 /* Core Function */
@@ -851,12 +851,12 @@ function pageInfo() {
 	$ret .= 'Page class = '.page_class().'<br />';
 	$ret .= 'HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].'<br />';
 	$ret .= 'isMobileDevice = '.isMobileDevice().'<br />';
-	$ret .= print_o(R()->appAgent, 'appAgent');
+	$ret .= print_o(R('appAgent'), 'appAgent');
 	return $ret;
 }
 
 function callFromApp() {
-	return R()->appAgent->dev == 'Softganz' ? R()->appAgent : false;
+	return R('appAgent')->dev == 'Softganz' ? R('appAgent') : false;
 }
 
 

@@ -3,10 +3,8 @@
  * Admin    :: Configuration Menu
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2016-11-08
- * Modified :: 2026-09-26
- * Version  :: 3
- *
- * @return Widget
+ * Modified :: 2026-11-03
+ * Version  :: 4
  *
  * @uses new AdminMenuConfigWidget()
  */
@@ -23,11 +21,24 @@ class AdminMenuConfigWidget extends Widget {
 					'children' => [
 						new ListTile([
 							'title' => 'App Agent',
-							'leading' => new Icon(R()->appAgent ? 'android' : 'web'),
-							'trailing' => R()->appAgent ? '<a class="btn" class="sg-action" href="'.url('',array('setting:app' => '{}')).'" data-rel="none" data-done="reload">Mobile App</a>' : '<a class="sg-action btn" href="'.url('',array('setting:app' => '{OS:%22Android%22,ver:%220.20.0%22,type:%22App%22,dev:%22Softganz%22}')).'" data-rel="none" data-done="reload">Web App</a>',
-							'subtitle' => 'Agent is '.(R()->appAgent ? implode(',', (Array) R()->appAgent) : 'Web Agent'),
-						]),
-					], // children
+							'leading' => new Icon(callFromApp() ? 'android' : 'web'),
+							'trailing' => callFromApp()
+								? '<a class="btn" class="sg-action" href="'
+									. url('', ['setting:app' => '{}'])
+									. '" data-rel="none" data-done="reload">Mobile App</a>'
+								: '<a class="sg-action btn" href="'
+									. url('', [
+										'setting:app' =>
+											'{OS:%22Android%22,ver:%220.20.0%22,type:%22App%22,dev:%22Softganz%22}'
+									])
+									. '" data-rel="none" data-done="reload">Web App</a>',
+							'subtitle' =>
+								'Agent is '
+								. (callFromApp()
+									? implode(',', (array) R('appAgent'))
+									: 'Web Agent')
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -35,10 +46,13 @@ class AdminMenuConfigWidget extends Widget {
 						new ListTile([
 							'title' => 'Clear empty session',
 							'leading' => new Icon('groups'),
-							'trailing' => '<a class="btn" href="'.url('admin/config/session/clear').'">Clear empty session</a>',
-							'subtitle' => 'Remove all empty from database.',
-						]),
-					], // children
+							'trailing' =>
+								'<a class="btn" href="'
+								. url('admin/config/session/clear')
+								. '">Clear empty session</a>',
+							'subtitle' => 'Remove all empty from database.'
+						])
+					] // children
 				]),
 
 				new Card([
@@ -47,11 +61,14 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'Clear day key',
 							'leading' => new Icon('keys'),
 							'trailing' => new Row([
-								'child' => '<a class="sg-action btn" href="'.url('admin/config/daykey/clear').'" data-rel="none" data-title="Clear" data-confirm="Clear daykey?">Clear daykey</a>'
+								'child' =>
+									'<a class="sg-action btn" href="'
+									. url('admin/config/daykey/clear')
+									. '" data-rel="none" data-title="Clear" data-confirm="Clear daykey?">Clear daykey</a>'
 							]),
-							'subtitle' => 'Remove all daykey from database.',
-						]),
-					], // children
+							'subtitle' => 'Remove all daykey from database.'
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -59,10 +76,13 @@ class AdminMenuConfigWidget extends Widget {
 						new ListTile([
 							'title' => 'Clear user online',
 							'leading' => new Icon('people'),
-							'trailing' => '<a class="btn" href="'.url('admin/config/online').'">Clear user online</a>',
-							'subtitle' => 'Remove all user online item from database.',
-						]),
-					], // children
+							'trailing' =>
+								'<a class="btn" href="'
+								. url('admin/config/online')
+								. '">Clear user online</a>',
+							'subtitle' => 'Remove all user online item from database.'
+						])
+					] // children
 				]),
 
 				new Card([
@@ -72,12 +92,18 @@ class AdminMenuConfigWidget extends Widget {
 							'leading' => new Icon('javascript'),
 							'trailing' => new Row([
 								'children' => [
-									_DEV_MODE ? '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'clear']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -green">toggle_on</i><span>ON</span></a>' : '<a class="sg-action btn -link" href="'.url('admin/config',['devMode' => 'yes']).'" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -gray">toggle_off</i><span>OFF</span></a>',
+									_DEV_MODE
+										? '<a class="sg-action btn -link" href="'
+											. url('admin/config', ['devMode' => 'clear'])
+											. '" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -green">toggle_on</i><span>ON</span></a>'
+										: '<a class="sg-action btn -link" href="'
+											. url('admin/config', ['devMode' => 'yes'])
+											. '" data-rel="none" data-options=\'{"silent": true}\' data-done="load"><i class="icon -material -gray">toggle_off</i><span>OFF</span></a>'
 								]
 							]), // Row
-							'subtitle' => 'Developer JS Mode is '.(_DEV_MODE ? 'ON' : 'OFF'),
-						]),
-					], // children
+							'subtitle' => 'Developer JS Mode is ' . (_DEV_MODE ? 'ON' : 'OFF')
+						])
+					] // children
 				]),
 
 				new Card([
@@ -86,11 +112,14 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'Re-build counter',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
-								'child' => '<a class="btn" href="'.url('admin/config/counter').'">Re-build</a>'
+								'child' =>
+									'<a class="btn" href="'
+									. url('admin/config/counter')
+									. '">Re-build</a>'
 							]),
-							'subtitle' => 'Re-build counter and write to database.',
-						]),
-					], // children
+							'subtitle' => 'Re-build counter and write to database.'
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -99,11 +128,14 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'DB variable list',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
-								'child' => '<a class="btn" href="'.url('admin/config/dbvar').'">Show</a>'
+								'child' =>
+									'<a class="btn" href="'
+									. url('admin/config/dbvar')
+									. '">Show</a>'
 							]),
-							'subtitle' => 'List of DB config',
-						]),
-					], // children
+							'subtitle' => 'List of DB config'
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -112,11 +144,14 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'Server information',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
-								'child' => '<a class="btn" href="'.url('admin/config/phpinfo').'">View</a>'
+								'child' =>
+									'<a class="btn" href="'
+									. url('admin/config/phpinfo')
+									. '">View</a>'
 							]),
-							'subtitle' => 'Information for web server and php environment.',
-						]),
-					], // children
+							'subtitle' => 'Information for web server and php environment.'
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -125,11 +160,14 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'View configuration',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
-								'child' => '<a class="btn" href="'.url('admin/config/view').'">View</a>'
+								'child' =>
+									'<a class="btn" href="'
+									. url('admin/config/view')
+									. '">View</a>'
 							]),
-							'subtitle' => 'Display all software configuration.',
-						]),
-					], // children
+							'subtitle' => 'Display all software configuration.'
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -138,11 +176,14 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'View cookies value',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
-								'child' => '<a class="btn" href="'.url('admin/config/cookie').'">View</a>'
+								'child' =>
+									'<a class="btn" href="'
+									. url('admin/config/cookie')
+									. '">View</a>'
 							]),
-							'subtitle' => 'Display all $_COOKIES variable.',
-						]),
-					], // children
+							'subtitle' => 'Display all $_COOKIES variable.'
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -151,11 +192,14 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'View db variable',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
-								'child' => '<a class="btn" href="'.url('admin/config/db').'">View</a>'
+								'child' =>
+									'<a class="btn" href="'
+									. url('admin/config/db')
+									. '">View</a>'
 							]),
-							'subtitle' => 'Display only configuration stroe in table.',
-						]),
-					], // children
+							'subtitle' => 'Display only configuration stroe in table.'
+						])
+					] // children
 				]), // Card
 
 				new Card([
@@ -164,13 +208,16 @@ class AdminMenuConfigWidget extends Widget {
 							'title' => 'View session value',
 							'leading' => new Icon(''),
 							'trailing' => new Row([
-								'child' => '<a class="btn" href="'.url('admin/config/session').'">View</a>'
+								'child' =>
+									'<a class="btn" href="'
+									. url('admin/config/session')
+									. '">View</a>'
 							]),
-							'subtitle' => 'Display all $_SESSION variable.',
-						]),
-					], // children
-				]), // Card
-			], // children
+							'subtitle' => 'Display all $_SESSION variable.'
+						])
+					] // children
+				]) // Card
+			] // children
 		]);
 
 		//setting:app={OS:"Android",ver:"0.20",type:"icar",dev:"Softganz"}

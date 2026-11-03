@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-02
- * Version  :: 62
+ * Modified :: 2026-11-03
+ * Version  :: 63
  */
 
 /*************************************************************
@@ -21,7 +21,7 @@ class R {
 	public string $configFolder;
 	public ?string $colorScheme;
 	public string $request;
-	public ?object $appAgent = null;
+	public object $appAgent;
 	public object $message;
 	public object $setting;
 	public object $options;
@@ -41,6 +41,13 @@ class R {
 		$this->setting = (object) [];
 		$this->options = (object) [];
 		$this->message = (object) [];
+		$this->appAgent = (object) [
+			'dev' => null,
+			'ver' => null,
+			'type' => null,
+			'OS' => 'web',
+			'theme' => null
+		];
 	}
 
 	public static function option($key = null, $value = null) {
@@ -1805,7 +1812,7 @@ class SgCore {
 					) {
 						if (
 							$pageBuildWidget->appBar->removeOnApp &&
-							is_object(R()->appAgent)
+							R('appAgent')->OS != 'web'
 						) {
 							// don't show appBar
 						} else {

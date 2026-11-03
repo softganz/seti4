@@ -1,13 +1,12 @@
 <?php
 /**
- * My      :: Change Password Form
- * Created :: 2021-08-23
- * Modify  :: 2024-02-28
- * Version :: 3
+ * My       :: Change Password Form
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-08-23
+ * Modified :: 2026-11-03
+ * Version  :: 4
  *
- * @return Widget
- *
- * @usage my/change/password
+ * @uses my/change/password
  */
 
 class MyChangePassword extends Page {
@@ -27,7 +26,7 @@ class MyChangePassword extends Page {
 				'boxHeader' => true,
 				'leading' => _HEADER_BACK
 			]), // AppBar
-			'sideBar' => R()->appAgent ? null : R::view('my.menu'),
+			'sideBar' => callFromApp() ? null : R::view('my.menu'),
 			'body' => new Form([
 				'id' => 'my-change-password-form',
 				'variable' => 'profile',
