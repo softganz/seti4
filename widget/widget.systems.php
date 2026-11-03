@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-02
- * Version  :: 108
+ * Modified :: 2026-11-03
+ * Version  :: 109
  *
  * @param array $args
  *
@@ -1073,8 +1073,8 @@ class SideBar extends Widget {
 				</svg></span>
 				</label>';
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-			. // . '<span class="-grip-header">'
-			$this->renderChildren([$header]); // . '</span>'
+		// . '<span class="-grip-header">'
+			. $this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -2054,12 +2054,12 @@ class AppBar extends Widget {
 	public $widgetName = 'AppBar';
 	public $version = '0.0.01';
 	public $tagName = 'div';
-	public mixed $title;
-	public mixed $subTitle;
-	public mixed $leading;
-	public mixed $trailing;
-	public mixed $navigator;
-	public ?object $dropbox;
+	public mixed $title = null;
+	public mixed $subTitle = null;
+	public mixed $leading = null;
+	public mixed $trailing = null;
+	public mixed $navigator = null;
+	public ?object $dropbox = null;
 	public bool $boxHeader = false;
 	public bool $showInBox = false;
 	public bool $removeOnApp = false;
