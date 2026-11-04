@@ -7,8 +7,10 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-11-03
  * Modified :: 2026-11-04
- * Version  :: 2
+ * Version  :: 3
  */
+
+declare(strict_types=1);
 
 namespace Softganz;
 
@@ -53,7 +55,7 @@ class MariaDbEngine implements DbEngineInterface {
 			return;
 		}
 
-		$this->srcStmt = isset($args[0]) ? trim($args[0]) : null;
+		$this->srcStmt = isset($args[0]) ? trim((string) $args[0]) : null;
 		unset($args[0]);
 		$this->args = $args;
 
@@ -62,6 +64,15 @@ class MariaDbEngine implements DbEngineInterface {
 
 	// Called by DB::select
 	function select(array $args, DB $db, ?string $callerFrom = null) {
+		if (!$this->status || !$this->PDO || empty($this->srcStmt)) {
+			throw new DbException(
+				'Database is not connected or select statement is empty.',
+				503,
+				'',
+				(string) $this->srcStmt
+			);
+		}
+
 		$this->callerFrom = $callerFrom;
 		$this->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $this->multipleQuery);
 		$queryResult = $this->selectResult();
@@ -77,7 +88,8 @@ class MariaDbEngine implements DbEngineInterface {
 			throw new DbException(
 				'Select data from database was error.',
 				503,
-				$errorMessage
+				$errorMessage,
+				(string) $this->stmt
 			);
 		}
 
@@ -122,6 +134,15 @@ class MariaDbEngine implements DbEngineInterface {
 
 	// Called by DB::query
 	function query(DB $db, ?string $callerFrom = null) {
+		if (!$this->status || !$this->PDO) {
+			throw new DbException(
+				'Database is not connected.',
+				503,
+				'',
+				(string) $this->srcStmt
+			);
+		}
+
 		$this->callerFrom = $callerFrom;
 		$result = $this->queryResult();
 
@@ -137,7 +158,8 @@ class MariaDbEngine implements DbEngineInterface {
 			throw new DbException(
 				'Update data to database was error.',
 				503,
-				$errorMessage
+				$errorMessage,
+				(string) $this->stmt
 			);
 		}
 
@@ -194,6 +216,11 @@ class MariaDbEngine implements DbEngineInterface {
 		try {
 			$start = microtime(true);
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
+			if ($query === false) {
+				throw new \PDOException(
+					$this->PDO->errorInfo()[2] ?? 'Select query failed.'
+				);
+			}
 
 			// Multiple statements: use the result set of the last statement
 			if ($this->multipleQuery) {
@@ -242,7 +269,8 @@ class MariaDbEngine implements DbEngineInterface {
 				(object) [
 					'state' => $queryError[0],
 					'query' => $queryStmt
-				]
+				],
+				$queryStmt
 			);
 		}
 
@@ -280,6 +308,11 @@ class MariaDbEngine implements DbEngineInterface {
 
 		try {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
+			if ($query === false) {
+				throw new \PDOException(
+					$this->PDO->errorInfo()[2] ?? 'Query failed.'
+				);
+			}
 		} catch (\PDOException $exception) {
 			$queryError = $this->PDO->errorInfo();
 			$errorMsg = $exception->getMessage();
@@ -339,7 +372,7 @@ class MariaDbEngine implements DbEngineInterface {
 			if (isset($this->options->jsonDecode) && $this->options->jsonDecode) {
 				foreach ($this->options->jsonDecode as $jsonDecode) {
 					$jsonDecodeResult = json_decode(
-						$value->{$jsonDecode['field']} ?? '{}'
+						(string) ($value->{$jsonDecode['field']} ?? '{}')
 					);
 					if ($jsonDecode['type'] === 'merge') {
 						$foundField = false;
@@ -496,12 +529,15 @@ class MariaDbEngine implements DbEngineInterface {
 
 	// Private method
 	private function createDbConnection(array $connection) {
-		if (is_string($connection['uri'])) {
-			preg_match(
+		if (is_string($connection['uri'] ?? null)) {
+			$matched = preg_match(
 				'/(mysql)\:\/\/([^:]*)\:([^@]*)\@([^\/]*)\/(.*)/i',
 				$connection['uri'],
 				$out
 			);
+			if ($matched !== 1) {
+				throw new \Exception('+ขออภัย รูปแบบการเชื่อมต่อฐานข้อมูลไม่ถูกต้อง', 500);
+			}
 			$connection['type'] = $out[1];
 			$connection['user'] = $out[2];
 			$connection['password'] = $out[3];
@@ -556,7 +592,12 @@ class MariaDbEngine implements DbEngineInterface {
 		$this->status = true;
 
 		// Disabled Strict mode
-		$this->PDO->query('SET @@SESSION.sql_mode = ""');
+		if ($this->PDO->query('SET @@SESSION.sql_mode = ""') === false) {
+			throw new \Exception(
+				'+ขออภัย ไม่สามารถตั้งค่า SQL mode ได้',
+				500
+			);
+		}
 		// $this->PDO->query('SET GLOBAL slow_query_log=1;');
 	}
 
@@ -580,7 +621,7 @@ class MariaDbEngine implements DbEngineInterface {
 		if ($this->options->sum) {
 			$sumFields = $this->options->sum;
 			$this->options->sum = (object) [];
-			foreach (explode(',', $sumFields) as $value) {
+			foreach (explode(',', (string) $sumFields) as $value) {
 				$this->options->sum->{$value} = 0;
 			}
 		}
@@ -609,7 +650,7 @@ class MariaDbEngine implements DbEngineInterface {
 	private function setWhere() {
 		// If %WHERE% exist in args, convert to where with key %WHERE% and value is array of where item
 		foreach ($this->args as $argKey => $argValue) {
-			if (preg_match('/^%WHERE.*%$/', $argKey)) {
+			if (preg_match('/^%WHERE.*%$/', (string) $argKey)) {
 				$this->args['where'][$argKey] = $argValue;
 				unset($this->args[$argKey]);
 			}
@@ -647,11 +688,13 @@ class MariaDbEngine implements DbEngineInterface {
 		}
 
 		foreach ($variable as $key => $value) {
-			self::setEachVariable($key, $value);
+			$this->setEachVariable($key, $value);
 		}
 	}
 
 	private function setEachVariable(int|string $key, mixed $value): mixed {
+		$key = (string) $key;
+
 		if (is_null($value)) {
 			$value = 'NULL';
 		} elseif (
@@ -719,7 +762,9 @@ class MariaDbEngine implements DbEngineInterface {
 		}, $whereKey);
 
 		// Replace value keys with $this->var
-		$this->stmt = preg_replace($whereKey, $this->where, $this->stmt);
+		$this->stmt = $this->checkPregResult(
+			preg_replace($whereKey, $this->where, $this->stmt)
+		);
 	}
 
 	private function replaceVariable() {
@@ -731,11 +776,23 @@ class MariaDbEngine implements DbEngineInterface {
 
 		// Quote value keys before use preg_replace
 		$varKey = array_map(function ($v) {
-			return '#' . preg_quote($v) . '#';
+			return '#' . preg_quote((string) $v) . '#';
 		}, $varKey);
 
 		// Replace value keys with $this->var
-		$this->stmt = preg_replace($varKey, $this->var, $this->stmt);
+		$this->stmt = $this->checkPregResult(
+			preg_replace($varKey, $this->var, $this->stmt)
+		);
+	}
+
+	// Throw when a regex replace fails (preg functions return null on error)
+	private function checkPregResult(?string $result): string {
+		if ($result === null) {
+			throw new \RuntimeException(
+				'+ขออภัย ไม่สามารถประมวลผลคำสั่ง SQL ได้: ' . preg_last_error_msg()
+			);
+		}
+		return $result;
 	}
 
 	private function migrateStmtVersion() {
@@ -752,10 +809,12 @@ class MariaDbEngine implements DbEngineInterface {
 			// debugMsg($out, '$out');
 
 			// Convert format from `table`.`field` ->> "$.jsonKey" to JSON_UNQUOTE(JSON_EXTRACT())
-			$this->stmt = preg_replace(
-				'/(`\w*`\.`\w*`) \-\>\> ("\$\.[\w\-\_\*\.0-9]*")/',
-				'JSON_UNQUOTE(JSON_EXTRACT($1, $2))',
-				$this->stmt
+			$this->stmt = $this->checkPregResult(
+				preg_replace(
+					'/(`\w*`\.`\w*`) \-\>\> ("\$\.[\w\-\_\*\.0-9]*")/',
+					'JSON_UNQUOTE(JSON_EXTRACT($1, $2))',
+					$this->stmt
+				)
 			);
 			# $this->stmt = preg_replace('/(`\w*`\.`\w*`) \-\>\> ("\$\.[\u0E01-\u0E5B]*")/', 'JSON_UNQUOTE(JSON_EXTRACT($1, $2))', $this->stmt);
 
@@ -767,12 +826,14 @@ class MariaDbEngine implements DbEngineInterface {
 
 	private function replaceTable() {
 		// Replace %tablename% with db(%tablename%)
-		$this->stmt = preg_replace_callback(
-			'/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i',
-			function ($m) {
-				return ' ' . $this->db($m[1]);
-			},
-			$this->stmt
+		$this->stmt = $this->checkPregResult(
+			preg_replace_callback(
+				'/\s\%([a-zA-Z_][a-zA-Z0-9_.]*)\%/i',
+				function ($m) {
+					return ' ' . $this->db($m[1]);
+				},
+				$this->stmt
+			)
 		);
 	}
 
@@ -799,7 +860,17 @@ class MariaDbEngine implements DbEngineInterface {
 	}
 
 	private function quote(mixed $value): ?string {
-		return is_null($value) ? null : $this->PDO->quote($value);
+		if (is_null($value)) {
+			return null;
+		}
+		if (!is_scalar($value)) {
+			throw new \InvalidArgumentException('Cannot quote non-scalar value in SQL.');
+		}
+		$quoted = $this->PDO->quote((string) $value);
+		if ($quoted === false) {
+			throw new \RuntimeException('+ขออภัย ไม่สามารถ quote ค่าในคำสั่ง SQL ได้');
+		}
+		return $quoted;
 	}
 
 	/**
@@ -870,7 +941,11 @@ class MariaDbEngine implements DbEngineInterface {
 		int|string|null $key = null
 	): string {
 		// Encode to json string and decode to value becuase array has index as string will convert to object
-		$value = json_decode(json_encode($value));
+		$encoded = json_encode($value);
+		if ($encoded === false) {
+			throw new \InvalidArgumentException('Cannot encode JSON value: ' . json_last_error_msg());
+		}
+		$value = json_decode($encoded);
 
 		$jsonString = '';
 
@@ -897,7 +972,7 @@ class MariaDbEngine implements DbEngineInterface {
 				} elseif (is_numeric($jsonValue)) {
 					$jsonValue = floatval($jsonValue);
 				} else {
-					$jsonValue = '"' . preg_replace('/[\"]/', '', $jsonValue) . '"';
+					$jsonValue = '"' . preg_replace('/[\"]/', '', (string) $jsonValue) . '"';
 				}
 				$jsonString .=
 					(is_array($value) ? '	' : '	"' . $jsonKey . '", ')
