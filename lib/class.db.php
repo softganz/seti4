@@ -14,6 +14,8 @@
  * @uses DB::query([query, where, var, options])
  */
 
+declare(strict_types=1);
+
 namespace Softganz;
 
 use AllowDynamicProperties;
@@ -149,7 +151,7 @@ class DbException extends \Exception {
 		$error = null,
 		$query = null
 	) {
-		parent::__construct($message, (int) $code);
+		parent::__construct((string) $message, (int) $code);
 		$this->error = $error;
 		$this->query = $query;
 	}
