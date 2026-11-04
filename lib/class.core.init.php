@@ -3,8 +3,8 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-03
- * Version  :: 40
+ * Modified :: 2026-11-04
+ * Version  :: 41
  */
 
 global $R;
@@ -109,6 +109,11 @@ $includeFileList = [
 
 foreach ($includeFileList as $file) {
 	load_lib($file);
+}
+
+// Global alias for \DB, skip if a global DB class already exists
+if (!class_exists('DB', false)) {
+	class_alias(DB::class, 'DB');
 }
 
 // Load core config
