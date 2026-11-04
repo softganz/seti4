@@ -3,15 +3,15 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-11-03
- * Version  :: 60
+ * Modified :: 2026-11-04
+ * Version  :: 61
  *
  * @param array $args
  * @return object
  *
  * @uses new Softganz\DB([])
- * @uses DB::select([stmt, where, var, options])
- * @uses DB::query([stmt, where, var, options])
+ * @uses DB::select([query, where, var, options])
+ * @uses DB::query([query, where, var, options])
  */
 
 namespace Softganz;
@@ -20,7 +20,7 @@ use AllowDynamicProperties;
 
 #[AllowDynamicProperties]
 class DataModel {
-	function __construct($args) {
+	function __construct(array $args) {
 		foreach ($args as $key => $value) {
 			$this->{$key} = $value;
 		}
@@ -29,7 +29,7 @@ class DataModel {
 
 #[AllowDynamicProperties]
 class SetDataModel extends DataModel {
-	function __construct($args) {
+	function __construct(array|string $args) {
 		if (is_string($args)) {
 			$args = explode(',', $args);
 		}
@@ -41,14 +41,14 @@ class SetDataModel extends DataModel {
 
 #[AllowDynamicProperties]
 class JsonDataModel extends DataModel {
-	function __construct($args) {
+	function __construct(object $args) {
 		$this->args = $args;
 	}
 }
 
 #[AllowDynamicProperties]
 class JsonArrayDataModel extends DataModel {
-	function __construct($args) {
+	function __construct(array $args) {
 		$this->args = $args;
 	}
 }
@@ -58,15 +58,15 @@ class JsonArrayDataModel extends DataModel {
  * @return array of fields
  *
  * For limit != 1
- * @return count
- * @return foundRows: select with SQL_CALC_FOUND_ROWS
- * @return items
- * @return DB
+ * @return int count
+ * @return int foundRows: select with SQL_CALC_FOUND_ROWS
+ * @return array items
+ * @return object DB
  */
 #[AllowDynamicProperties]
 class DbSelect {
-	private $result;
-	private $DB;
+	private object $result;
+	private object $DB;
 
 	function __construct($args = []) {
 		if ($args) {
@@ -79,7 +79,7 @@ class DbSelect {
 	public function count() {
 		return $this->count;
 	}
-	public function valueOf($field) {
+	public function valueOf(string $field) {
 		return isset($this->{$field}) ? $this->{$field} : null;
 	}
 
@@ -102,19 +102,19 @@ class DbSelect {
 		return $this->result ? $this->result->rowCount() : null;
 	}
 
-	public function setDB($db) {
+	public function setDB(object $db) {
 		$this->DB = $db;
 	}
-	public function setResult($result) {
+	public function setResult(object $result) {
 		$this->result = $result;
 	}
 }
 
 class DbQuery {
-	var $query;
-	private $result;
-	private $DB;
-	private $insertId;
+	var ?string $query;
+	private object $result;
+	private object $DB;
+	private ?int $insertId;
 
 	function __construct($args = []) {
 		$this->query = $args['query'] ?? null;
@@ -140,8 +140,8 @@ class DbQuery {
 // Add custom exception class
 class DbException extends \Exception {
 	var $error = false;
-	private $state;
-	private $query;
+	private string $state;
+	private string $query;
 
 	public function __construct(
 		$message = null,
@@ -177,11 +177,14 @@ class DB {
 	private DbEngineInterface $engine;
 
 	function __construct($args = null) {
-		$this->engine = self::createEngine($args, $this);
+		$this->engine = self::createEngine((array) $args, $this);
 	}
 
 	// Select engine by connection type, default is MariaDB/MySQL
-	private static function createEngine($args, DB $owner): DbEngineInterface {
+	private static function createEngine(
+		array $args,
+		DB $owner
+	): DbEngineInterface {
 		// Engine from connection type, or from uri scheme (mysql://, progress://)
 		$connection = is_array($args) ? $args['connection'] ?? [] : [];
 		$type = isset($connection['type'])
@@ -207,7 +210,43 @@ class DB {
 	}
 
 	// Call by static method
-	public static function select(array $args) {
+	// Accepts array form: DB::select([query, '%WHERE%' => ..., 'var' => ..., 'options' => ...])
+	// or named form: DB::select(query: '...', where: [...], var: [...], options: [...], debug: true)
+	public static function select(
+		array|string $args = [],
+		?string $query = null,
+		?array $where = null,
+		array|object|null $var = null,
+		?array $options = null,
+		?bool $debug = null,
+		?bool $multipleQuery = null,
+		?string $key = null,
+		?string $value = null,
+		?string $group = null,
+		?string $sum = null,
+		?array $jsonDecode = null,
+		?bool $history = null,
+		?bool $log = null,
+		?bool $showResult = null
+	) {
+		$args = self::buildArgs(
+			$args,
+			$query,
+			$where,
+			$var,
+			$options,
+			$debug,
+			$multipleQuery,
+			$key,
+			$value,
+			$group,
+			$sum,
+			$jsonDecode,
+			$history,
+			$log,
+			$showResult
+		);
+
 		$db = new DB($args);
 		return $db->engine->select(
 			$args,
@@ -216,12 +255,95 @@ class DB {
 		);
 	}
 
-	public static function query(array $args) {
+	// Accepts the same arguments as select()
+	public static function query(
+		array|string $args = [],
+		?string $query = null,
+		?array $where = null,
+		array|object|null $var = null,
+		?array $options = null,
+		?bool $debug = null,
+		?bool $multipleQuery = null,
+		?bool $history = null,
+		?bool $log = null
+	) {
+		$args = self::buildArgs(
+			args: $args,
+			query: $query,
+			where: $where,
+			var: $var,
+			options: $options,
+			debug: $debug,
+			multipleQuery: $multipleQuery,
+			history: $history,
+			log: $log
+		);
+
 		$db = new DB($args);
 		return $db->engine->query(
 			$db,
 			$db->engine->historyEnabled() ? get_caller(__FUNCTION__)['from'] : null
 		);
+	}
+
+	// Merge positional/named arguments into the statement args array
+	private static function buildArgs(
+		array|string $args,
+		?string $query,
+		?array $where,
+		array|object|null $var,
+		?array $options,
+		?bool $debug,
+		?bool $multipleQuery,
+		?string $key = null,
+		?string $value = null,
+		?string $group = null,
+		?string $sum = null,
+		?array $jsonDecode = null,
+		?bool $history = null,
+		?bool $log = null,
+		?bool $showResult = null
+	): array {
+		if (is_string($args)) {
+			$args = [$args];
+		}
+		if ($query !== null) {
+			$args[0] = $query;
+		}
+		if ($where !== null) {
+			$args['%WHERE%'] = $where;
+		}
+		if ($var !== null) {
+			$args['var'] = $var;
+		}
+		if ($multipleQuery !== null || isset($args['multipleQuery'])) {
+			$args['multipleQuery'] =
+				(bool) $multipleQuery || (bool) ($args['multipleQuery'] ?? false);
+		}
+
+		// Named options override the options array
+		$namedOptions = array_filter(
+			[
+				'key' => $key,
+				'value' => $value,
+				'group' => $group,
+				'sum' => $sum,
+				'jsonDecode' => $jsonDecode,
+				'history' => $history,
+				'log' => $log,
+				'showResult' => $showResult,
+				'debug' => $debug
+			],
+			fn($item) => $item !== null
+		);
+		if ($namedOptions) {
+			$options = array_replace($options ?? [], $namedOptions);
+		}
+		if ($options !== null) {
+			$args['options'] = $options;
+		}
+
+		return $args;
 	}
 
 	public static function tableExists(string $table) {

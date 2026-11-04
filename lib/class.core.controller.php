@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-03
- * Version  :: 64
+ * Modified :: 2026-11-04
+ * Version  :: 65
  */
 
 /*************************************************************
@@ -28,7 +28,7 @@ class R {
 	public object $counter;
 	public object $timer;
 	public object $user;
-	public string $error;
+	public mixed $error;
 	public $pageClass = [];
 	public $pageAttribute = [];
 	public ?object $core = null;

@@ -6,39 +6,40 @@
  *
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-11-03
- * Modified :: 2026-11-03
- * Version  :: 1
+ * Modified :: 2026-11-04
+ * Version  :: 2
  */
 
 namespace Softganz;
 
 class MariaDbEngine implements DbEngineInterface {
-	private $connection;
-	private $status = false;
-	private $srcStmt;
-	private $stmt;
-	private $args = [];
-	private $error = [];
-	private $errorMsg;
-	private $PDO;
-	private $errors = [];
-	private $queryItems = [];
-	private $debug = false;
-	private $debugMessage = [];
-	private $var = [];
-	private $where = [];
-	private $options; // key, value, group, sum, jsonDecode, multiple, history, log, debug, showResult
-	private $multipleQuery = false; // Use for multiple query in one statement, default is single query
-	private $callerFrom;
-	private $owner; // DB facade, passed to onComplete callback
+	private ?object $connection = null;
+	private bool $status = false;
+	private ?string $srcStmt = null;
+	private ?string $stmt = null;
+	private array $args = [];
+	private array $error = [];
+	private ?string $errorMsg = null;
+	private ?\PDO $PDO = null;
+	private array $errors = [];
+	private array $queryItems = [];
+	private bool $debug = false;
+	private array $debugMessage = [];
+	private array $var = [];
+	private array $where = [];
+	private ?object $options = null; // key, value, group, sum, jsonDecode, multiple, history, log, debug, showResult
+	private bool $multipleQuery = false; // Use for multiple query in one statement, default is single query
+	private ?string $callerFrom = null;
+	private DB $owner; // DB facade, passed to onComplete callback
 
-	public $connectionTime;
-	public $count = 0;
-	public $items = [];
+	public ?float $connectionTime = null;
+	public int $count = 0;
+	public array $items = [];
 
-	function __construct($args, DB $owner) {
+	function __construct(array $args, DB $owner) {
 		$this->owner = $owner;
 		$args = is_string($args) ? [0 => $args] : (array) $args;
+		$this->multipleQuery = (bool) ($args['multipleQuery'] ?? false);
 
 		// Connect to database
 		if (isset($args['connection']) && $args['connection']) {
@@ -60,7 +61,7 @@ class MariaDbEngine implements DbEngineInterface {
 	}
 
 	// Called by DB::select
-	function select($args, DB $db, $callerFrom = null) {
+	function select(array $args, DB $db, ?string $callerFrom = null) {
 		$this->callerFrom = $callerFrom;
 		$this->PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $this->multipleQuery);
 		$queryResult = $this->selectResult();
@@ -120,7 +121,7 @@ class MariaDbEngine implements DbEngineInterface {
 	}
 
 	// Called by DB::query
-	function query($db, $callerFrom = null) {
+	function query(DB $db, ?string $callerFrom = null) {
 		$this->callerFrom = $callerFrom;
 		$result = $this->queryResult();
 
@@ -194,11 +195,20 @@ class MariaDbEngine implements DbEngineInterface {
 			$start = microtime(true);
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 
+			// Multiple statements: use the result set of the last statement
+			if ($this->multipleQuery) {
+				while ($query->nextRowset()) {
+				}
+			}
+
 			// Select complete
 			$end = microtime(true);
 			$this->updateLastQueryStmt(
 				'Select',
-				$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
+				$this->formatStmt([
+					'rowCount' => $query->rowCount(),
+					'time' => $end - $start
+				])
 			);
 
 			$this->items = $this->fetchRow($query);
@@ -208,7 +218,7 @@ class MariaDbEngine implements DbEngineInterface {
 			$queryError = $this->PDO->errorInfo();
 			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
 			$errorMsg = $exception->getMessage();
-			$queryStmt = $this->stmt([
+			$queryStmt = $this->formatStmt([
 				'errorCode' => $queryError[1] ? $queryError[1] : $exception->getCode(),
 				'errorMessage' => $exception->getMessage(),
 				'SqlState' => $exception->getCode()
@@ -274,7 +284,7 @@ class MariaDbEngine implements DbEngineInterface {
 			$queryError = $this->PDO->errorInfo();
 			$errorMsg = $exception->getMessage();
 			$errorCode = $queryError[1] ? $queryError[1] : $exception->getCode();
-			$queryStmt = $this->stmt([
+			$queryStmt = $this->formatStmt([
 				'errorCode' => $queryError[1] ? $queryError[1] : $exception->getCode(),
 				'errorMessage' => $exception->getMessage(),
 				'SqlState' => $exception->getCode()
@@ -299,7 +309,10 @@ class MariaDbEngine implements DbEngineInterface {
 		$end = microtime(true);
 		$this->updateLastQueryStmt(
 			'Query',
-			$this->stmt(['rowCount' => $query->rowCount(), 'time' => $end - $start])
+			$this->formatStmt([
+				'rowCount' => $query->rowCount(),
+				'time' => $end - $start
+			])
 		);
 
 		if (
@@ -319,7 +332,7 @@ class MariaDbEngine implements DbEngineInterface {
 		return $query;
 	}
 
-	function fetchRow($items) {
+	function fetchRow(\PDOStatement $items): array {
 		$result = [];
 		foreach ($items as $key => $value) {
 			$value = (object) $value;
@@ -416,7 +429,7 @@ class MariaDbEngine implements DbEngineInterface {
 	}
 
 	// Create statement with message and error code
-	private function stmt($addMessage = []) {
+	private function formatStmt($addMessage = []) {
 		$stmt = $this->stmt;
 		if (isset($addMessage['errorMessage']) && $addMessage['errorMessage']) {
 			$stmt .=
@@ -447,7 +460,7 @@ class MariaDbEngine implements DbEngineInterface {
 		return $stmt;
 	}
 
-	function sum($key) {
+	function sum(string $key) {
 		if ($this->options->sum) {
 			return $this->options->sum->{$key};
 		}
@@ -482,7 +495,7 @@ class MariaDbEngine implements DbEngineInterface {
 	}
 
 	// Private method
-	private function createDbConnection($connection) {
+	private function createDbConnection(array $connection) {
 		if (is_string($connection['uri'])) {
 			preg_match(
 				'/(mysql)\:\/\/([^:]*)\:([^@]*)\@([^\/]*)\/(.*)/i',
@@ -577,7 +590,7 @@ class MariaDbEngine implements DbEngineInterface {
 		}
 	}
 
-	private function setDebugMessage($key, $message) {
+	private function setDebugMessage(?string $key, mixed $message): array {
 		if ($key) {
 			$this->debugMessage[$key] = $message;
 		} else {
@@ -638,7 +651,7 @@ class MariaDbEngine implements DbEngineInterface {
 		}
 	}
 
-	private function setEachVariable($key, $value) {
+	private function setEachVariable(int|string $key, mixed $value): mixed {
 		if (is_null($value)) {
 			$value = 'NULL';
 		} elseif (
@@ -660,10 +673,12 @@ class MariaDbEngine implements DbEngineInterface {
 			$value = $this->jsonObjectString($value);
 		} elseif (is_object($value)) {
 			// If value is object, recursive all element with add : in front of key
-			return self::setVariable($value);
+			$this->setVariable($value);
+			return null;
 		} elseif (is_array($value)) {
 			// If value is object, recursive all element without add : in front of key
-			return self::setVariable($value);
+			$this->setVariable($value);
+			return null;
 		} elseif (preg_match('/^(\:\`).*(\`)$/', $key)) {
 			// If key leading with :` and end with ` then value is quote and remove ' and add ` at front and end
 			$value = '`' . trim($this->quote($value), '\'') . '`';
@@ -761,7 +776,7 @@ class MariaDbEngine implements DbEngineInterface {
 		);
 	}
 
-	private function valueOfSet($object) {
+	private function valueOfSet(object $object): string {
 		foreach ($object as $key => $value) {
 			if (!is_numeric($value)) {
 				$object->{$key} = $this->quote($value);
@@ -783,7 +798,7 @@ class MariaDbEngine implements DbEngineInterface {
 		return $result;
 	}
 
-	private function quote($value) {
+	private function quote(mixed $value): ?string {
 		return is_null($value) ? null : $this->PDO->quote($value);
 	}
 
@@ -823,8 +838,8 @@ class MariaDbEngine implements DbEngineInterface {
 			$ret = $items;
 		} elseif (!isset($key) && isset($prefix)) {
 			// Change all table items to new prefix value
-			foreach ($src as $key => $value) {
-				$items[$key] = $prefix . $value;
+			foreach ($src as $srcKey => $value) {
+				$items[$srcKey] = $prefix . $value;
 			}
 			$ret = $items;
 		} elseif (isset($key)) {
@@ -850,7 +865,10 @@ class MariaDbEngine implements DbEngineInterface {
 		return $ret;
 	}
 
-	private function jsonObjectString($value, $key = null) {
+	private function jsonObjectString(
+		mixed $value,
+		int|string|null $key = null
+	): string {
 		// Encode to json string and decode to value becuase array has index as string will convert to object
 		$value = json_decode(json_encode($value));
 
@@ -893,7 +911,10 @@ class MariaDbEngine implements DbEngineInterface {
 		return $jsonString;
 	}
 
-	private function jsonArrayString($value, $key = null) {
+	private function jsonArrayString(
+		mixed $value,
+		int|string|null $key = null
+	): string {
 		// debugMsg($value, 'JSON Value');
 		$jsonString = '';
 		if ($key) {
@@ -910,7 +931,11 @@ class MariaDbEngine implements DbEngineInterface {
 		return $jsonString;
 	}
 
-	private function updateLastQueryStmt($method, $stmt, $error = []) {
+	private function updateLastQueryStmt(
+		string $method,
+		string $stmt,
+		array $error = []
+	): void {
 		if (isset($this->options->history) && $this->options->history === false) {
 			return;
 		} // Do not save query history
