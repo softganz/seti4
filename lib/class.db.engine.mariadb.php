@@ -7,7 +7,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-11-03
  * Modified :: 2026-11-04
- * Version  :: 3
+ * Version  :: 4
  */
 
 declare(strict_types=1);
@@ -309,9 +309,7 @@ class MariaDbEngine implements DbEngineInterface {
 		try {
 			$query = $this->PDO->query($this->stmt, \PDO::FETCH_ASSOC);
 			if ($query === false) {
-				throw new \PDOException(
-					$this->PDO->errorInfo()[2] ?? 'Query failed.'
-				);
+				throw new \PDOException($this->PDO->errorInfo()[2] ?? 'Query failed.');
 			}
 		} catch (\PDOException $exception) {
 			$queryError = $this->PDO->errorInfo();
@@ -418,12 +416,7 @@ class MariaDbEngine implements DbEngineInterface {
 				} else {
 					$result[$value->{$this->options->group}][] = $value;
 				}
-			} elseif (
-				isset($this->options->key) &&
-				isset($this->options->value) &&
-				$this->options->key &&
-				$this->options->value
-			) {
+			} elseif (!empty($this->options->key) && !empty($this->options->value)) {
 				// Collect result using key and value
 				$result[$value->{$this->options->key}] =
 					$value->{$this->options->value};
@@ -536,7 +529,10 @@ class MariaDbEngine implements DbEngineInterface {
 				$out
 			);
 			if ($matched !== 1) {
-				throw new \Exception('+ขออภัย รูปแบบการเชื่อมต่อฐานข้อมูลไม่ถูกต้อง', 500);
+				throw new \Exception(
+					'+ขออภัย รูปแบบการเชื่อมต่อฐานข้อมูลไม่ถูกต้อง',
+					500
+				);
 			}
 			$connection['type'] = $out[1];
 			$connection['user'] = $out[2];
@@ -593,10 +589,7 @@ class MariaDbEngine implements DbEngineInterface {
 
 		// Disabled Strict mode
 		if ($this->PDO->query('SET @@SESSION.sql_mode = ""') === false) {
-			throw new \Exception(
-				'+ขออภัย ไม่สามารถตั้งค่า SQL mode ได้',
-				500
-			);
+			throw new \Exception('+ขออภัย ไม่สามารถตั้งค่า SQL mode ได้', 500);
 		}
 		// $this->PDO->query('SET GLOBAL slow_query_log=1;');
 	}
@@ -864,11 +857,15 @@ class MariaDbEngine implements DbEngineInterface {
 			return null;
 		}
 		if (!is_scalar($value)) {
-			throw new \InvalidArgumentException('Cannot quote non-scalar value in SQL.');
+			throw new \InvalidArgumentException(
+				'Cannot quote non-scalar value in SQL.'
+			);
 		}
 		$quoted = $this->PDO->quote((string) $value);
 		if ($quoted === false) {
-			throw new \RuntimeException('+ขออภัย ไม่สามารถ quote ค่าในคำสั่ง SQL ได้');
+			throw new \RuntimeException(
+				'+ขออภัย ไม่สามารถ quote ค่าในคำสั่ง SQL ได้'
+			);
 		}
 		return $quoted;
 	}
@@ -943,7 +940,9 @@ class MariaDbEngine implements DbEngineInterface {
 		// Encode to json string and decode to value becuase array has index as string will convert to object
 		$encoded = json_encode($value);
 		if ($encoded === false) {
-			throw new \InvalidArgumentException('Cannot encode JSON value: ' . json_last_error_msg());
+			throw new \InvalidArgumentException(
+				'Cannot encode JSON value: ' . json_last_error_msg()
+			);
 		}
 		$value = json_decode($encoded);
 
@@ -972,7 +971,8 @@ class MariaDbEngine implements DbEngineInterface {
 				} elseif (is_numeric($jsonValue)) {
 					$jsonValue = floatval($jsonValue);
 				} else {
-					$jsonValue = '"' . preg_replace('/[\"]/', '', (string) $jsonValue) . '"';
+					$jsonValue =
+						'"' . preg_replace('/[\"]/', '', (string) $jsonValue) . '"';
 				}
 				$jsonString .=
 					(is_array($value) ? '	' : '	"' . $jsonKey . '", ')
