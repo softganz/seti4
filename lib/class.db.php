@@ -10,8 +10,8 @@
  * @return object
  *
  * @uses new Softganz\DB([])
- * @uses DB::select([query, where, var, options])
- * @uses DB::query([query, where, var, options])
+ * @uses DB::select([sql, where, var, options])
+ * @uses DB::query([sql, where, var, options])
  */
 
 declare(strict_types=1);
@@ -113,13 +113,13 @@ class DbSelect {
 }
 
 class DbQuery {
-	var ?string $query;
+	var ?string $sql;
 	private object $result;
 	private object $DB;
 	private ?int $insertId;
 
 	function __construct($args = []) {
-		$this->query = $args['query'] ?? null;
+		$this->sql = $args['sql'] ?? null;
 		$this->result = $args['result'] ?? null;
 		$this->DB = $args['DB'] ?? null;
 		$this->insertId = $args['insertId'] ?? null;
@@ -143,21 +143,21 @@ class DbQuery {
 class DbException extends \Exception {
 	var $error = false;
 	private string $state;
-	private string $query;
+	private string $sql;
 
 	public function __construct(
 		$message = null,
 		$code = null,
 		$error = null,
-		$query = null
+		$sql = null
 	) {
 		parent::__construct((string) $message, (int) $code);
 		$this->error = $error;
-		$this->query = $query;
+		$this->sql = $sql;
 	}
 
 	public function getQuery() {
-		return $this->query;
+		return $this->sql;
 	}
 
 	public function getState() {
@@ -212,11 +212,11 @@ class DB {
 	}
 
 	// Call by static method
-	// Accepts array form: DB::select([query, '%WHERE%' => ..., 'var' => ..., 'options' => ...])
-	// or named form: DB::select(query: '...', where: [...], var: [...], options: [...], debug: true)
+	// Accepts array form: DB::select([sql, '%WHERE%' => ..., 'var' => ..., 'options' => ...])
+	// or named form: DB::select(sql: '...', where: [...], var: [...], options: [...], debug: true)
 	public static function select(
 		array|string $args = [],
-		?string $query = null,
+		?string $sql = null,
 		?array $where = null,
 		array|object|null $var = null,
 		?array $options = null,
@@ -233,7 +233,7 @@ class DB {
 	) {
 		$args = self::buildArgs(
 			$args,
-			$query,
+			$sql,
 			$where,
 			$var,
 			$options,
@@ -260,7 +260,7 @@ class DB {
 	// Accepts the same arguments as select()
 	public static function query(
 		array|string $args = [],
-		?string $query = null,
+		?string $sql = null,
 		?array $where = null,
 		array|object|null $var = null,
 		?array $options = null,
@@ -271,7 +271,7 @@ class DB {
 	) {
 		$args = self::buildArgs(
 			args: $args,
-			query: $query,
+			sql: $sql,
 			where: $where,
 			var: $var,
 			options: $options,
@@ -291,7 +291,7 @@ class DB {
 	// Merge positional/named arguments into the statement args array
 	private static function buildArgs(
 		array|string $args,
-		?string $query,
+		?string $sql,
 		?array $where,
 		array|object|null $var,
 		?array $options,
@@ -309,8 +309,8 @@ class DB {
 		if (is_string($args)) {
 			$args = [$args];
 		}
-		if ($query !== null) {
-			$args[0] = $query;
+		if ($sql !== null) {
+			$args[0] = $sql;
 		}
 		if ($where !== null) {
 			$args['%WHERE%'] = $where;
