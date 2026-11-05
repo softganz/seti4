@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-03
- * Version  :: 109
+ * Modified :: 2026-11-05
+ * Version  :: 110
  *
  * @param array $args
  *
@@ -728,8 +728,22 @@ class Container extends Widget {
 	public $tagName = 'div';
 	public $fillButton = false;
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?array $children = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'children' => $children
+				],
+				$args
+			)
+		);
 	}
 
 	// @override
@@ -970,18 +984,48 @@ class Nav extends Widget {
 	public $version = '0.0.01';
 	public $tagName = 'nav';
 	public $class = 'nav';
+	public ?string $type = null;
+	public ?string $direction = null;
 	public $multipleLevel = false;
 
-	function __construct($args = []) {
-		parent::__construct($args);
-
-		if ($args['type'] ?? null) {
-			$this->class .= ' -type-' . $args['type'];
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $type = null,
+		?string $direction = null,
+		?array $children = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'type' => $type,
+					'direction' => $direction,
+					'children' => $children
+				],
+				$args
+			)
+		);
+		if ($this->type) {
+			$this->class .= ' -type-' . $this->type;
 		}
-		if ($args['direction'] ?? null) {
-			$this->class .= ' -' . $args['direction'];
+		if ($this->direction ?? null) {
+			$this->class .= ' -' . $this->direction;
 		}
 	}
+
+	// function __construct($args = []) {
+	// 	parent::__construct($args);
+
+	// 	if ($args['type'] ?? null) {
+	// 		$this->class .= ' -type-' . $args['type'];
+	// 	}
+	// 	if ($args['direction'] ?? null) {
+	// 		$this->class .= ' -' . $args['direction'];
+	// 	}
+	// }
 
 	#[\Override]
 	protected function renderEachChildWidget(
@@ -1073,8 +1117,8 @@ class SideBar extends Widget {
 				</svg></span>
 				</label>';
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-		// . '<span class="-grip-header">'
-			. $this->renderChildren([$header]); // . '</span>'
+			. // . '<span class="-grip-header">'
+			$this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
