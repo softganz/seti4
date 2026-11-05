@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-11-04
- * Version  :: 61
+ * Modified :: 2026-11-05
+ * Version  :: 62
  *
  * @param array $args
  * @return object
@@ -218,6 +218,7 @@ class DB {
 		array|string $args = [],
 		?string $sql = null,
 		?array $where = null,
+		?array $wheres = null,
 		array|object|null $var = null,
 		?array $options = null,
 		?bool $debug = null,
@@ -235,6 +236,7 @@ class DB {
 			$args,
 			$sql,
 			$where,
+			$wheres,
 			$var,
 			$options,
 			$debug,
@@ -262,6 +264,7 @@ class DB {
 		array|string $args = [],
 		?string $sql = null,
 		?array $where = null,
+		?array $wheres = null,
 		array|object|null $var = null,
 		?array $options = null,
 		?bool $debug = null,
@@ -273,6 +276,7 @@ class DB {
 			args: $args,
 			sql: $sql,
 			where: $where,
+			wheres: $wheres,
 			var: $var,
 			options: $options,
 			debug: $debug,
@@ -293,6 +297,7 @@ class DB {
 		array|string $args,
 		?string $sql,
 		?array $where,
+		?array $wheres,
 		array|object|null $var,
 		?array $options,
 		?bool $debug,
@@ -314,6 +319,8 @@ class DB {
 		}
 		if ($where !== null) {
 			$args['%WHERE%'] = $where;
+		} else if ($wheres !== null) {
+			$args['where'] = $wheres;
 		}
 		if ($var !== null) {
 			$args['var'] = $var;
