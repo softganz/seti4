@@ -620,7 +620,8 @@
 		background-repeat: no-repeat;
 		background-size: 24px;
 	}
-	.form-text.-numeric {
+	.form-text.-numeric,
+	.form-text.form-number {
 		text-align: center;
 	}
 	.form-text.-money {
@@ -1750,6 +1751,8 @@
 				height: 2.4rem;
 				font-size: 2.4rem;
 				transition: transform 0.2s ease;
+				/* menu_open ชี้ซ้ายตามธรรมชาติ: จอแคบต้องชี้ขวา (ขยาย) จึงกลับด้าน */
+				transform: rotate(180deg);
 			}
 		}
 		.-toggle-checkbox:focus-visible + .-grip {
@@ -1851,8 +1854,10 @@
 	}
 	/* ลูกศรชี้ตามสถานะจริงของ sidebar: แคบชี้ขวา (ขยาย) กว้างชี้ซ้าย (ย่อ) */
 	@container widget-sidebar (min-width: 12rem) {
-		.-grip .icon {
-			transform: rotate(180deg);
+		/* ต้องระบุ .-sidebar-toggle ให้ specificity เท่ากับกฎด้านบน จึง override ได้ */
+		.-sidebar-toggle .-grip .icon {
+			/* จอกว้าง: menu_open ชี้ซ้ายอยู่แล้ว จึงไม่ต้องกลับด้าน */
+			transform: none;
 		}
 		/* มีพื้นที่พอ จึงแสดง icon และชื่อหัวข้อใน widget header */
 		.-sidebar-toggle > .-leading,
