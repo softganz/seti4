@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * Created  :: 2007-07-09
- * Modified :: 2026-11-02
- * Version  :: 7
+ * Modified :: 2026-11-06
+ * Version  :: 8
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 // All function will deprecate and move this class to be base class of all model
 
 use Softganz\DB;
-
-class Model {}
 
 class BasicModel extends Model {
 	public static function member_menu() {

@@ -3,8 +3,8 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-04
- * Version  :: 41
+ * Modified :: 2026-11-05
+ * Version  :: 42
  */
 
 global $R;
@@ -99,6 +99,7 @@ $includeFileList = [
 	'lib/class.view.php',
 	'lib/class.sg.php',
 	'lib/class.poison.php',
+	'model/model.base.php',
 	'model/model.basic.php',
 	'model/model.user.php',
 	'model/model.counter.php',
