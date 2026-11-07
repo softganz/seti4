@@ -1807,17 +1807,33 @@
 			background-color: #a6daff;
 		}
 	}
-	@container page-content (width > 600px) {
-		& {
-			width: var(--max-width);
-			min-width: 0;
-			flex: 0 0 var(--max-width);
-			max-width: none;
+	> nav {
+		> ul {
+			gap: 8px;
 		}
-		.widget-button {
-			padding: 4px 16px 4px 16px;
-			.-label {
-				display: inline;
+		nav.-vertical {
+			ul > li > a {
+				padding: 2px 0 2px 16px;
+			}
+			.icon {
+				width: 1.6rem;
+				height: 1.6rem;
+				font-size: 1.6rem;
+			}
+		}
+		&.-vertical {
+			flex: initial;
+			> ul > li .widget-button {
+				border-radius: 0;
+			}
+		}
+		&.-vertical.-icon-center {
+			.widget-button {
+				text-align: center;
+				flex-direction: column;
+				> .icon {
+					margin: 0 auto;
+				}
 			}
 		}
 	}
@@ -1852,6 +1868,27 @@
 			}
 		}
 	}
+	&.-type-wide {
+		width: 30rem;
+	}
+	&.-transparent {
+		background-color: transparent;
+		--sidebar-surface: transparent;
+	}
+	@container page-content (width > 600px) {
+		& {
+			width: var(--max-width);
+			min-width: 0;
+			flex: 0 0 var(--max-width);
+			max-width: none;
+		}
+		.widget-button {
+			padding: 4px 16px 4px 16px;
+			.-label {
+				display: inline;
+			}
+		}
+	}
 	/* ลูกศรชี้ตามสถานะจริงของ sidebar: แคบชี้ขวา (ขยาย) กว้างชี้ซ้าย (ย่อ) */
 	@container widget-sidebar (min-width: 12rem) {
 		/* ต้องระบุ .-sidebar-toggle ให้ specificity เท่ากับกฎด้านบน จึง override ได้ */
@@ -1865,44 +1902,24 @@
 			display: block;
 		}
 	}
-	> nav {
-		> ul {
-			gap: 8px;
-		}
-		nav.-vertical {
-			ul > li > a {
-				padding: 2px 0 2px 16px;
-			}
-			.icon {
-				width: 1.6rem;
-				height: 1.6rem;
-				font-size: 1.6rem;
-			}
-		}
-		&.-vertical {
-			flex: initial;
-			> ul > li .widget-button {
-				border-radius: 0;
-			}
-		}
-		&.-vertical.-icon-center {
-			.widget-button {
-				text-align: center;
-				flex-direction: column;
-				> .icon {
-					margin: 0 auto;
-				}
-			}
+	/* ซ่อนชื่อหัวข้อ widget-header ใน sidebar เว้นแต่ sidebar กำลังขยายอยู่ */
+	.widget-header > .-title {
+		display: none;
+	}
+	/* ขยายบนจอกว้าง: ไม่ได้ติ๊ก checkbox */
+	@container page-content (width > 600px) {
+		&:not(:has(.-toggle-checkbox:checked)) .widget-header > .-title {
+			display: block;
 		}
 	}
-	&.-type-wide {
-		width: 30rem;
-	}
-	&.-transparent {
-		background-color: transparent;
-		--sidebar-surface: transparent;
+	/* ขยายบนจอแคบ: ติ๊ก checkbox */
+	@container page-content (width <= 600px) {
+		&:has(.-toggle-checkbox:checked) .widget-header > .-title {
+			display: block;
+		}
 	}
 }
+
 .page.-content {
 	container-name: page-content;
 	container-type: inline-size;
