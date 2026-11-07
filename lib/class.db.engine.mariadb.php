@@ -6,8 +6,8 @@
  *
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-11-03
- * Modified :: 2026-11-04
- * Version  :: 4
+ * Modified :: 2026-11-07
+ * Version  :: 5
  */
 
 declare(strict_types=1);
@@ -33,6 +33,7 @@ class MariaDbEngine implements DbEngineInterface {
 	private bool $multipleQuery = false; // Use for multiple query in one statement, default is single query
 	private ?string $callerFrom = null;
 	private DB $owner; // DB facade, passed to onComplete callback
+	private $onComplete = null;
 
 	public ?float $connectionTime = null;
 	public int $count = 0;
