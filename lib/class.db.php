@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-11-05
- * Version  :: 62
+ * Modified :: 2026-11-07
+ * Version  :: 63
  *
  * @param array $args
  * @return object
@@ -227,10 +227,11 @@ class DB {
 		?string $value = null,
 		?string $group = null,
 		?string $sum = null,
-		?array $jsonDecode = null,
+		?array $jsonDecode = [],
 		?bool $history = null,
 		?bool $log = null,
-		?bool $showResult = null
+		?bool $showResult = null,
+		mixed $onComplete = null
 	) {
 		$args = self::buildArgs(
 			$args,
@@ -248,7 +249,8 @@ class DB {
 			$jsonDecode,
 			$history,
 			$log,
-			$showResult
+			$showResult,
+			$onComplete
 		);
 
 		$db = new DB($args);
@@ -306,10 +308,11 @@ class DB {
 		?string $value = null,
 		?string $group = null,
 		?string $sum = null,
-		?array $jsonDecode = null,
+		?array $jsonDecode = [],
 		?bool $history = null,
 		?bool $log = null,
-		?bool $showResult = null
+		?bool $showResult = null,
+		mixed $onComplete = null,
 	): array {
 		if (is_string($args)) {
 			$args = [$args];
@@ -345,12 +348,9 @@ class DB {
 			],
 			fn($item) => $item !== null
 		);
-		if ($namedOptions) {
-			$options = array_replace($options ?? [], $namedOptions);
-		}
-		if ($options !== null) {
-			$args['options'] = $options;
-		}
+
+		// Merge options from $args[options] and named argument
+		$args['options'] = array_replace($args['options'] ?? [], $options ?? [], $namedOptions ?? []);
 
 		return $args;
 	}
