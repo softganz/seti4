@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-10-02
- * Version  :: 43
+ * Modified :: 2026-11-07
+ * Version  :: 44
  *
  * @param array $args
  *
@@ -114,6 +114,9 @@ class InlineEdit extends Widget {
 			],
 			(array) $child
 		);
+		if (!isset($child['inputName']) && is_string($key)) {
+			$child['inputName'] = $key;
+		}
 
 		$options = (object) array_merge(
 			[
