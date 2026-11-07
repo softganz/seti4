@@ -41,9 +41,6 @@ AppBar::build() → Widget
 	<li>Class <a href="{module/imed/widget/patient-add-form}">ImedPatientAddFormWidget()</a></li>
 </ul>
 
-
-
-
 # ImedPatientSearchWidget
 
 Patient Search Widget for iMed Module
@@ -105,12 +102,12 @@ echo $widget->build();
 ```php
 <?php
 $widget = new ImedPatientSearchWidget([
-    'type' => 'search',                           // Display type: 'search' or 'link'
-    'patientUrl' => 'imed/patient/{{psnId}}',    // URL template after patient selection
-    'orgId' => 123,                               // Organization ID for filtering
-    'refApp' => 'app-name',                       // Reference app identifier
-    'autoFocus' => true,                          // Auto-focus search input
-    'showAddPatientButton' => true,               // Show "Add Patient" button
+	'type' => 'search', // Display type: 'search' or 'link'
+	'patientUrl' => 'imed/patient/{{psnId}}', // URL template after patient selection
+	'orgId' => 123, // Organization ID for filtering
+	'refApp' => 'app-name', // Reference app identifier
+	'autoFocus' => true, // Auto-focus search input
+	'showAddPatientButton' => true // Show "Add Patient" button
 ]);
 
 echo $widget->build();
@@ -121,15 +118,15 @@ echo $widget->build();
 
 ## Configuration Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `type` | string | `'search'` | Widget display type: `'search'` (form) or `'link'` (clickable link) |
-| `patientUrl` | string | `'imed/patient/{{psnId}}'` | URL template for patient detail page. Use `{{psnId}}` as placeholder for patient ID |
-| `linkUrl` | string | `NULL` | Link target for `'link'` type widget |
-| `refApp` | string | `NULL` | Reference app identifier passed to the patient add form |
-| `orgId` | int/string | `NULL` | Organization ID for organization-specific filtering |
-| `autoFocus` | boolean | `true` | Auto-focus the search input on page load |
-| `showAddPatientButton` | boolean | `true` | Show button to add new patients |
+| Parameter              | Type       | Default                    | Description                                                                         |
+| ---------------------- | ---------- | -------------------------- | ----------------------------------------------------------------------------------- |
+| `type`                 | string     | `'search'`                 | Widget display type: `'search'` (form) or `'link'` (clickable link)                 |
+| `patientUrl`           | string     | `'imed/patient/{{psnId}}'` | URL template for patient detail page. Use `{{psnId}}` as placeholder for patient ID |
+| `linkUrl`              | string     | `NULL`                     | Link target for `'link'` type widget                                                |
+| `refApp`               | string     | `NULL`                     | Reference app identifier passed to the patient add form                             |
+| `orgId`                | int/string | `NULL`                     | Organization ID for organization-specific filtering                                 |
+| `autoFocus`            | boolean    | `true`                     | Auto-focus the search input on page load                                            |
+| `showAddPatientButton` | boolean    | `true`                     | Show button to add new patients                                                     |
 
 ---
 
@@ -141,13 +138,14 @@ Full search interface with form input, autocomplete results, and optional add pa
 
 ```php
 $widget = new ImedPatientSearchWidget([
-    'type' => 'search',
-    'orgId' => $organizationId,
+	'type' => 'search',
+	'orgId' => $organizationId
 ]);
 echo $widget->build();
 ```
 
 **Features:**
+
 - Text input for search query
 - Optional checkbox to search within organization
 - Autocomplete dropdown with patient results
@@ -160,13 +158,14 @@ Compact link-style interface for integration into action menus.
 
 ```php
 $widget = new ImedPatientSearchWidget([
-    'type' => 'link',
-    'linkUrl' => 'imed/app/search',
+	'type' => 'link',
+	'linkUrl' => 'imed/app/search'
 ]);
 echo $widget->build();
 ```
 
 **Features:**
+
 - Simple clickable link
 - WebView integration support
 - Mobile-friendly menu support
@@ -184,6 +183,7 @@ The widget queries an API endpoint as the user types. The default endpoint is:
 ```
 
 **Request Parameters:**
+
 - `q` - Search query (name, surname, or ID)
 - `p` - Page number (for pagination)
 
@@ -191,16 +191,16 @@ The widget queries an API endpoint as the user types. The default endpoint is:
 
 ```json
 [
-  {
-    "value": "9999999999999",           // Patient ID (13-digit)
-    "label": "Surname",                 // Patient surname
-    "prename": "Mr./Mrs.",              // Patient title/prefix
-    "desc": "Additional info"           // Additional description
-  },
-  {
-    "value": "...",                     // Pagination indicator
-    "nextpage": 2                       // Next page number
-  }
+	{
+		"value": "9999999999999", // Patient ID (13-digit)
+		"label": "Surname", // Patient surname
+		"prename": "Mr./Mrs.", // Patient title/prefix
+		"desc": "Additional info" // Additional description
+	},
+	{
+		"value": "...", // Pagination indicator
+		"nextpage": 2 // Next page number
+	}
 ]
 ```
 
@@ -237,9 +237,9 @@ When users click the "Add Patient" button:
 
 ```php
 $widget = new ImedPatientSearchWidget([
-    'showAddPatientButton' => true,     // Enable add button
-    'orgId' => 5,                       // Add patient to this organization
-    'refApp' => 'myapp',                // Reference app for tracking
+	'showAddPatientButton' => true, // Enable add button
+	'orgId' => 5, // Add patient to this organization
+	'refApp' => 'myapp' // Reference app for tracking
 ]);
 ```
 
@@ -251,7 +251,7 @@ When `orgId` is specified, a checkbox appears: **"ค้นหาในกลุ
 
 ```php
 $widget = new ImedPatientSearchWidget([
-    'orgId' => $organizationId,  // Enable org-specific filtering
+	'orgId' => $organizationId // Enable org-specific filtering
 ]);
 ```
 
@@ -264,8 +264,8 @@ The widget includes Android WebView support for mobile applications:
 ```javascript
 // Automatically handled - no configuration needed
 // If Android API is available, opens WebView for patient addition
-if (typeof Android == "object") {
-    Android.showWebView(location, androidData);
+if (typeof Android == 'object') {
+	Android.showWebView(location, androidData);
 }
 ```
 
@@ -282,6 +282,7 @@ The widget automatically initializes a JavaScript module from:
 ```
 
 **Initialization Parameters:**
+
 - `form` - Form selector
 - `orgId` - Organization ID
 - `queryUrl` - Autocomplete endpoint URL
@@ -293,15 +294,15 @@ The widget automatically initializes a JavaScript module from:
 
 The widget uses the following CSS classes:
 
-| Class | Purpose |
-|-------|---------|
-| `.imed-search-patient` | Main widget container (Card) |
-| `.chat-box.-imed-app-home` | Chat-style container |
-| `.-person-search` | Search form |
-| `#patient-list` | Results container |
-| `#patient-name` | Search input |
-| `.ui-item` | Individual result item |
-| `.-get-more` | Pagination button |
+| Class                      | Purpose                      |
+| -------------------------- | ---------------------------- |
+| `.imed-search-box`         | Main widget container (Card) |
+| `.chat-box.-imed-app-home` | Chat-style container         |
+| `.-person-search`          | Search form                  |
+| `#patient-list`            | Results container            |
+| `#patient-name`            | Search input                 |
+| `.ui-item`                 | Individual result item       |
+| `.-get-more`               | Pagination button            |
 
 ---
 
@@ -312,7 +313,7 @@ The widget uses the following CSS classes:
 ```php
 <?php
 $searchWidget = new ImedPatientSearchWidget([
-    'patientUrl' => 'imed/admin/patient/{{psnId}}',
+	'patientUrl' => 'imed/admin/patient/{{psnId}}'
 ]);
 echo $searchWidget->build();
 ?>
@@ -324,9 +325,9 @@ echo $searchWidget->build();
 <?php
 $orgId = 42;
 $searchWidget = new ImedPatientSearchWidget([
-    'patientUrl' => 'imed/group/patient/{{psnId}}',
-    'orgId' => $orgId,
-    'autoFocus' => true,
+	'patientUrl' => 'imed/group/patient/{{psnId}}',
+	'orgId' => $orgId,
+	'autoFocus' => true
 ]);
 echo $searchWidget->build();
 ?>
@@ -337,8 +338,8 @@ echo $searchWidget->build();
 ```php
 <?php
 $searchWidget = new ImedPatientSearchWidget([
-    'type' => 'link',
-    'linkUrl' => 'imed/app/search',
+	'type' => 'link',
+	'linkUrl' => 'imed/app/search'
 ]);
 echo $searchWidget->build();
 ?>
@@ -362,32 +363,32 @@ echo $searchWidget->build();
 
 ```php
 class ImedPatientSearchWidget extends Widget {
-    var $type = 'search';           // Display type
-    var $linkUrl;                   // Link for 'link' type
-    var $patientUrl;                // URL template for patient pages
-    var $refApp;                    // Reference app identifier
-    var $orgId;                     // Organization ID
-    var $autoFocus = true;          // Auto-focus search input
-    var $showAddPatientButton = true; // Show add button
+	var $type = 'search'; // Display type
+	var $linkUrl; // Link for 'link' type
+	var $patientUrl; // URL template for patient pages
+	var $refApp; // Reference app identifier
+	var $orgId; // Organization ID
+	var $autoFocus = true; // Auto-focus search input
+	var $showAddPatientButton = true; // Show add button
 }
 ```
 
 ### Methods
 
-| Method | Access | Description |
-|--------|--------|-------------|
-| `__construct($args)` | public | Initialize widget with configuration array |
-| `build()` | public | Generate and return widget HTML/structure |
-| `searchTypeForm()` | private | Build search form interface |
-| `searchTypeLink()` | private | Build link interface |
-| `_script()` | private | Generate JavaScript initialization code |
+| Method               | Access  | Description                                |
+| -------------------- | ------- | ------------------------------------------ |
+| `__construct($args)` | public  | Initialize widget with configuration array |
+| `build()`            | public  | Generate and return widget HTML/structure  |
+| `searchTypeForm()`   | private | Build search form interface                |
+| `searchTypeLink()`   | private | Build link interface                       |
+| `_script()`          | private | Generate JavaScript initialization code    |
 
 ---
 
 ## Dependencies
 
 - **Base Class:** `Widget` - Core widget framework
-- **Components:** 
+- **Components:**
   - `Card` - Layout wrapper
   - `Container` - Content container
   - `Form` - Search form element
@@ -408,21 +409,23 @@ class ImedPatientSearchWidget extends Widget {
 **Method:** POST
 
 **Parameters:**
+
 ```
 q = search query
 p = page number
 ```
 
 **Response:**
+
 ```json
 [
-  {
-    "value": "patient_id",
-    "label": "surname",
-    "prename": "title",
-    "desc": "description",
-    "nextpage": 2
-  }
+	{
+		"value": "patient_id",
+		"label": "surname",
+		"prename": "title",
+		"desc": "description",
+		"nextpage": 2
+	}
 ]
 ```
 
@@ -441,10 +444,10 @@ p = page number
 
 ## Changelog
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 7 | 2026-04-24 | Current version |
-| ... | ... | Previous versions |
+| Version | Date       | Changes           |
+| ------- | ---------- | ----------------- |
+| 7       | 2026-04-24 | Current version   |
+| ...     | ...        | Previous versions |
 
 ---
 
