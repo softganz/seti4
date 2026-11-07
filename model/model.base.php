@@ -3,8 +3,8 @@
  * Model    :: Common Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-11-05
- * Modified :: 2026-11-05
- * Version  :: 1
+ * Modified :: 2026-11-07
+ * Version  :: 2
  *
  */
 
@@ -14,9 +14,9 @@ class Model {}
 
 /**
  * Items container for multi-row results model
- * @uses ModelItems::setItems(array $items): static
+ * @uses ItemsModel::setItems(array $items): static
  */
-class ModelItems extends Model {
+class ItemsModel extends Model {
 	public protected(set) int $count;
 	public protected(set) array $items {
 		set(array $value) {
