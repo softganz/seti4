@@ -3,13 +3,11 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-05
- * Version  :: 42
+ * Modified :: 2026-11-07
+ * Version  :: 43
  */
 
 global $R;
-
-use Softganz\DB;
 
 global $request;
 
@@ -80,11 +78,11 @@ if (preg_match('/^\((.*)\)\/(.*)/', $request, $out)) {
 }
 
 $R = new R();
-$R->request = $request;
-
-$R->configFolder = isset($_GET['setting:conf'])
-	? $_GET['setting:conf']
-	: 'conf.d';
+R('request', $request);
+R(
+	'configFolder',
+	isset($_GET['setting:conf']) ? $_GET['setting:conf'] : 'conf.d'
+);
 
 $includeFileList = [
 	'lib/lib.define.php',
@@ -114,12 +112,15 @@ foreach ($includeFileList as $file) {
 
 // Global alias for \DB, skip if a global DB class already exists
 if (!class_exists('DB', false)) {
-	class_alias(DB::class, 'DB');
+	class_alias(Softganz\DB::class, 'DB');
 }
 
 // Load core config
-$R->core = json_decode(
-	FileModel::getJsonFile(_CORE_FOLDER . '/core/assets/conf/conf.core.json')
+R(
+	'core',
+	json_decode(
+		FileModel::getJsonFile(_CORE_FOLDER . '/core/assets/conf/conf.core.json')
+	)
 );
 
 SgCore::processSetting($R);
@@ -144,21 +145,21 @@ $userAgent = isset($_SERVER['HTTP_USER_AGENT'])
 // $userAgent =
 // 	'Mozilla/5.0 (Linux; Android 9; AMN-LX2 Build/HUAWEIAMN-LX2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/85.0.4183.127 Mobile Safari/537.36 Softganz/0.1.03 (OTOU; Android)';
 
-if (isset($R->setting->app)) {
+if (isset(R('setting')->app)) {
 	$userAgent =
 		'Mozilla/5.0 (Linux; Android 9; Nokia 6.1 Plus Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36 '
-		. (isset($R->setting->app->dev) ? $R->setting->app->dev : 'Unknown')
+		. (isset(R('setting')->app->dev) ? R('setting')->app->dev : 'Unknown')
 		. '/'
-		. (isset($R->setting->app->ver) ? $R->setting->app->ver : 'Unknown')
+		. (isset(R('setting')->app->ver) ? R('setting')->app->ver : 'Unknown')
 		. ' ('
-		. (isset($R->setting->app->type) ? $R->setting->app->type : 'Unknown')
+		. (isset(R('setting')->app->type) ? R('setting')->app->type : 'Unknown')
 		. '; '
-		. (isset($R->setting->app->OS) ? $R->setting->app->OS : 'Unknown')
+		. (isset(R('setting')->app->OS) ? R('setting')->app->OS : 'Unknown')
 		. '; '
-		. (isset($R->setting->app->theme) ? $R->setting->app->theme . ';' : '')
+		. (isset(R('setting')->app->theme) ? R('setting')->app->theme . ';' : '')
 		. ')';
 }
-// if ($R->setting->app) {
+// if (R('setting')->app) {
 // 	$userAgent =
 // 		'Mozilla/5.0 (Linux; Android 9; Nokia 6.1 Plus Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/75.0.3770.101 Mobile Safari/537.36 Softganz/0.1.13 (Web;Android)';
 // }
@@ -200,9 +201,9 @@ if ($callFromApp) {
 }
 
 if (isset($_GET['setting:'])) {
-	print_o($R->setting, '$R->setting', 1);
-	if (!empty($R->options)) {
-		print_o($R->options, '$R->options', 1);
+	print_o(R('setting'), 'R(\'setting\')', 1);
+	if (!empty(R('options'))) {
+		print_o(R('options'), 'R(\'options\')', 1);
 	}
 	if (R('appAgent')) {
 		print_o(R('appAgent'), 'R(appAgent)', 1);
@@ -213,11 +214,12 @@ if (isset($_GET['setting:'])) {
 if (isset(R('appAgent')->theme) && R('appAgent')->theme) {
 	R('colorScheme', R('appAgent')->theme);
 } else {
-	$R->colorScheme = isset($_COOKIE['color-scheme'])
-		? $_COOKIE['color-scheme']
-		: null;
+	R(
+		'colorScheme',
+		isset($_COOKIE['color-scheme']) ? $_COOKIE['color-scheme'] : null
+	);
 }
-if ($R->colorScheme === 'dark') {
+if (R('colorScheme') === 'dark') {
 	page_class('theme-dark');
 }
 
@@ -249,9 +251,9 @@ define('_API', isset($_REQUEST['api']));
 // echo (_AJAX?'AJAX Call':'Normal call').'<br />';
 // debugMsg('HTTP_X_REQUESTED_WITH = '.$_SERVER['HTTP_X_REQUESTED_WITH'].' , domain = '.cfg('domain').' , httpDomain = '.$httpDomain.' , httpReferer = '.$httpReferer.' , SERVER_NAME = '.$_SERVER['SERVER_NAME']);
 
-q($R->request);
+q(R('request'));
 
-$R->timer = new Timer();
+R('timer', new Timer());
 
 // Clear module folder don't exists
 // $old_error = error_reporting(0);
@@ -274,13 +276,12 @@ cfg('module.folder', $_module_folder);
 unset($_module_folder, $_folder); // clear unused variable
 
 // Load configuration file
-if ($R->core) {
-	foreach ($R->core as $key => $value) {
+if (R('core')) {
+	foreach (R('core') as $key => $value) {
 		cfg($key, $value);
 	}
 }
-
-initConfig($R->configFolder);
+initConfig(R('configFolder'));
 
 // Load DB engine by scheme of cfg('db'), mysql:// = MariaDB, progress:// = ProgressDB
 $dbScheme = strtolower((string) parse_url((string) cfg('db'), PHP_URL_SCHEME));
@@ -296,12 +297,15 @@ error_reporting(cfg('error_reporting'));
 
 // Create new mydb database constant, If cannot connect DB class will throw exception
 try {
-	$R->DB = new DB([
-		'connection' => [
-			'uri' => cfg('db'),
-			'characterSetName' => cfg('db.character_set_name')
-		]
-	]);
+	R(
+		'DB',
+		new \DB([
+			'connection' => [
+				'uri' => cfg('db'),
+				'characterSetName' => cfg('db.character_set_name')
+			]
+		])
+	);
 } catch (Exception $exception) {
 	throw new Exception(
 		'[Database Connection]' . $exception->getMessage(),
@@ -311,20 +315,23 @@ try {
 
 // If connect database error, end process
 try {
-	$R->myDb = new MyDb(cfg('db'));
+	R('myDb', new MyDb(cfg('db')));
 
 	// Get mysql version from string eg "mysqlnd 8.2.19"
-	$R->mysql = (object) [
-		'clientInfo' => mysqli_get_client_info(),
-		'version' => preg_filter(
-			'/^\w*\s([\d\.].*)$/i',
-			'$1',
-			mysqli_get_client_info()
-		),
-		'verionCode' => intval(
-			preg_filter('/^\w*\s([\d])[\.\d]*/i', '$1', mysqli_get_client_info())
-		)
-	];
+	R(
+		'mysql',
+		(object) [
+			'clientInfo' => mysqli_get_client_info(),
+			'version' => preg_filter(
+				'/^\w*\s([\d\.].*)$/i',
+				'$1',
+				mysqli_get_client_info()
+			),
+			'verionCode' => intval(
+				preg_filter('/^\w*\s([\d])[\.\d]*/i', '$1', mysqli_get_client_info())
+			)
+		]
+	);
 } catch (Exception $exception) {
 	throw new Exception(
 		'[Database Connection]' . $exception->getMessage(),
@@ -333,11 +340,11 @@ try {
 }
 
 // <strong>อุ๊บ!!! เว็บไซท์ของเราให้บริการไม่ทันเสียแล้ว</strong><br /><br />ขออภัยด้วยนะคะ มีความเป็นไปได้สูงว่าเครื่องเซิร์ฟเวอร์กำลังทำงานหนักจนไม่สามารถให้บริการได้ทัน เว็บไซท์จึงหยุดการบริการชั่วคราว อีกสักครู่ขอให้ท่านแวะมาดูใหม่นะคะ
-if ($R->DB->connectionTime > cfg('system')->maxDbConnectionTime) {
+if (R('DB')->connectionTime > cfg('system')->maxDbConnectionTime) {
 	throw new Exception('+ฐานข้อมูลยังไม่สามารถรองรับการใช้งานหนักได้');
 }
 
-$R->DB->version = DB::select(['SELECT VERSION() `version` LIMIT 1'])->version;
+R('DB')->version = \DB::select('SELECT VERSION() `version` LIMIT 1')->version;
 
 // Load config variable from table
 try {
@@ -442,26 +449,26 @@ setDevMode();
 // Check user login state or new sign in from database
 // It'll error on install
 try {
-	$R->user = UserModel::checkLogin();
-	if (isset($R->user->signInResult) && $R->user->signInResult) {
+	R('user', UserModel::checkLogin());
+	if (isset(R('user')->signInResult) && R('user')->signInResult) {
 		sendHeader('application/json');
-		http_response_code($R->user->ok ? _HTTP_OK : _HTTP_ERROR_UNAUTHORIZED);
-		die(\SG\json_encode($R->user));
+		http_response_code(R('user')->ok ? _HTTP_OK : _HTTP_ERROR_UNAUTHORIZED);
+		die(\SG\json_encode(R('user')));
 	} elseif (
-		isset($R->user->signInErrorMessage) &&
-		$R->user->signInErrorMessage
+		isset(R('user')->signInErrorMessage) &&
+		R('user')->signInErrorMessage
 	) {
-		$R->message->signInErrorInSignForm = $R->user->signInErrorMessage;
+		R('message')->signInErrorInSignForm = R('user')->signInErrorMessage;
 	}
 
-	if (is_object($R->user)) {
-		$R->user->admin = user_access('access administrator pages');
+	if (is_object(R('user'))) {
+		R('user')->admin = user_access('access administrator pages');
 	}
 } catch (Exception $exception) {
 }
 
 // Check site status
-if (cfg('web.status') == 0 && !$R->user->admin) {
+if (cfg('web.status') == 0 && !R('user')->admin) {
 	die(R::view('site.maintenance'));
 }
 
@@ -476,11 +483,11 @@ if (_AJAX) {
 $logCounter =
 	cfg('system')->logCounter &&
 	!isset($_REQUEST['logCounter']) &&
-	DB::tableExists('%counter_log%');
+	\DB::tableExists('%counter_log%');
 if ($logCounter) {
 	CounterModel::hit();
 }
-$R->counter = cfg('counter');
+R('counter', cfg('counter'));
 
 set_theme();
 

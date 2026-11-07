@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-03
- * Version  :: 48
+ * Modified :: 2026-11-07
+ * Version  :: 49
  */
 
 /* Core Function */
@@ -14,8 +14,9 @@ use Softganz\DB;
  * function R :: Access core resource
  */
 function R($resourceKey = null, $value = null) {
-	if (isset($resourceKey) && isset($value)) $GLOBALS['R']->{$resourceKey} = $value;
-	return $resourceKey ? $GLOBALS['R']->{$resourceKey} : $GLOBALS['R'];
+	global $R;
+	if (isset($resourceKey) && isset($value)) $R->{$resourceKey} = $value;
+	return $resourceKey ? ($R->{$resourceKey} ?? null) : $R;
 }
 
 /**
