@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-12-08
  * Modified :: 2026-11-07
- * Version  :: 31
+ * Version  :: 32
  */
 
 namespace SG;
@@ -135,25 +135,23 @@ function valid(int|float|string|bool|null $value, string $regx, $debug = false) 
 }
 
 /**
-* Get API from external website
-*
-* @param string $host
-* @param int $port
-* @param string $username
-* @param string $password
-*
-* @return string
-*/
-// TODO: เปลี่ยนเป็น named argument
-function api($args = []) {
-	if (is_string($args)) $args = ['url' => $args];
-
+ * Get API from external website
+ *
+ * @param string $url
+ * @param ?string $method
+ * @param ?bool $returnTransfer
+ * @param ?string $postField
+ * @param ?string $result
+ *
+ * @return mixed
+ */
+function api(string $url, ?string $method = null, ?bool $returnTransfer = true, ?string $postField = null, ?string $result = null): mixed {
 	// Get file from camera with curl function
 	$ch = curl_init();
 
 	$options = [
-		CURLOPT_URL => $args['url'],
-		CURLOPT_RETURNTRANSFER => isset($args['returnTransfer']) ? $args['returnTransfer'] : true,
+		CURLOPT_URL => $url,
+		CURLOPT_RETURNTRANSFER => $returnTransfer,
 		// CURLOPT_RETURNTRANSFER => true,
 
 		CURLOPT_SSL_VERIFYHOST => 0,
@@ -161,8 +159,8 @@ function api($args = []) {
 		CURLOPT_VERBOSE => 0,
 	];
 
-	if ($args['method'] == 'post') $options[CURLOPT_POST] = 1;
-	if ($args['postField']) $options[CURLOPT_POSTFIELDS] = $args['postField'];
+	if ($method === 'post') $options[CURLOPT_POST] = 1;
+	if ($postField) $options[CURLOPT_POSTFIELDS] = $postField;
 
 	// curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 	// curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_ALL);
@@ -184,14 +182,13 @@ function api($args = []) {
 	$result = curl_exec($ch);
 	$info = curl_getinfo($ch);
 	$info['error'] = curl_error($ch);
-	curl_close($ch);
 
-	if ($args['result'] === 'json') {
+	if ($result === 'json') {
 		if (debug()) debugMsg($result);
 		// $info['text'] = $result;
 		// $info['result'] = \json_decode($result);
 		return \json_decode($result);
-	} else if ($args['result'] === 'text') {
+	} else if ($result === 'text') {
 		return $result;//['result'];
 	} else {
 		return $result;
