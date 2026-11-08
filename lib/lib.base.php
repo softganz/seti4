@@ -1,28 +1,13 @@
 <?php
 /**
- * SOFTGANZ :: lib.base.php
- *
- * Softganz Base Library
- *
- * Copyright (c) 2000-2020 The SoftGanz Group By Panumas Nontapan
- * Authors : Panumas Nontapan <webmaster@softganz.com>
- *         : http://www.softganz.com/
- * ============================================
- * This module is core of web application
- *
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- *
+ * core     :: SG Base library
+ * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-12-08
  * Modified :: 2026-11-07
- * Version  :: 30
+ * Version  :: 31
  */
 
 namespace SG;
-
-use Softganz\DB;
 
 if (!defined('_NL')) define('_NL', "\r\n");
 
@@ -111,7 +96,7 @@ function getFirst(mixed ...$values): mixed {
 *
 * @param mixed ...$values
 *
-* @return numeric
+* @return ?int
 */
 function getFirstInt(mixed ...$values): ?int {
 	foreach ($values as $value) {
@@ -129,7 +114,7 @@ function getFirstInt(mixed ...$values): ?int {
 // 	return $valid ? $value : NULL;
 // }
 
-function valid($value, $regx, $debug = false) {
+function valid(int|float|string|bool|null $value, string $regx, $debug = false) {
 	if ($debug) debugMsg('Debug of function SG\valid of <b>' . $value . '</b> with regx <b>' . $regx . '</b>');
 
 	switch ($regx) {
@@ -152,13 +137,14 @@ function valid($value, $regx, $debug = false) {
 /**
 * Get API from external website
 *
-* @param String $host
-* @param Int $port
-* @param String $username
-* @param String $password
+* @param string $host
+* @param int $port
+* @param string $username
+* @param string $password
 *
-* @return String
+* @return string
 */
+// TODO: เปลี่ยนเป็น named argument
 function api($args = []) {
 	if (is_string($args)) $args = ['url' => $args];
 
@@ -257,9 +243,7 @@ function array_merge_recursive(array ...$arrays): array {
 }
 
 /**
-* @param Object $args
-* @param Numeric $flag , at last argument 1 = argument is array
-* @return Object
+* @return object
 */
 function object_merge_recursive() {
 	// $debug = R('debug');
@@ -275,7 +259,7 @@ function object_merge_recursive() {
 		foreach ($arg as $key => $value) {
 			if (is_object($value)) {
 				// if ($debug) debugMsg('Merge object key '.$key);
-				if (!isset($result->{$key})) $result->{$key} = (Object) [];
+				if (!isset($result->{$key})) $result->{$key} = (object) [];
 				$result->{$key} = object_merge_recursive($result->{$key}, $value);
 			} else if (is_array($value)) {
 				// debugMsg('ARRAY KEY = '.$key);
@@ -303,19 +287,20 @@ function object_merge_recursive() {
 }
 
 
-function isWidget($var) {
+function isWidget(mixed $var) {
 	return is_object($var) && method_exists($var, 'build');
 }
 
 /**
-* @param Mixed $arg1[,$arg2,...]
-* @return Object
-* Last arg is default value
-* Eg. \SG\json_decode($option2,$option1,$default)
-*/
-function json_decode($json, $default = '{}') {
+ * @param mixed
+ * 	-> parameter $var1, $var2, ... $default = '{}'
+ * @return object
+ * Last arg is default value
+ * Eg. \SG\json_decode($option2,$option1,$default)
+ */
+function json_decode() {
 	$regex = '/(,|\{)[ \t\n]*(\w+)[ ]*:[ ]*/';
-	$result = (Object) array();
+	$result = (object) array();
 	// Last argument is default, so reverse argument to process last argument first
 	$args = array_reverse(func_get_args());
 
@@ -347,7 +332,7 @@ function json_decode($json, $default = '{}') {
 	return $result;
 }
 
-function json_encode($input) {
+function json_encode(?string $input) {
 	if (defined('JSON_UNESCAPED_UNICODE')) {
 		return \json_encode($input,JSON_UNESCAPED_UNICODE+JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES);
 	} else {
@@ -357,7 +342,7 @@ function json_encode($input) {
 	}
 }
 
-function isJson($string) {
+function isJson(?string $string) {
 	json_decode($string);
 	return json_last_error() === JSON_ERROR_NONE;
 }
@@ -366,21 +351,21 @@ function isJson($string) {
  * @param $value
  * @return mixed
  */
-function escapeJsonString($value) { # list from www.json.org: (\b backspace, \f formfeed)
+function escapeJsonString(?string $value) { # list from www.json.org: (\b backspace, \f formfeed)
 	$escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
 	$replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
 	$result = str_replace($escapers, $replacements, $value);
 	return $result;
 }
 
-function json_escape($value) {
+function json_escape(mixed $value) {
 	$escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
 	$replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
 	$escapers = ['"'];
 	$replacements = ['\"'];
 	// $result = str_replace($escapers, $replacements, $value);
 	if (is_array($value)) {
-		foreach ((Array) $value as $key => $item) {
+		foreach ((array) $value as $key => $item) {
 			$value[$key] = json_escape($item);
 		}
 		return $value;
@@ -393,18 +378,9 @@ function confirm() {
 	return strtoupper(\Request::all('confirm') ?? '') === strtoupper(_CONFIRM_VALUE);
 }
 
-
-
-function dropbox($text, $option = NULL) {
-	$dropbox = new \Dropbox();
-	return $dropbox->build($text, $option);
-}
-
-
-
 /**
 * Grenerate QR-Code Image
-* @param String $url // Url with urlencode()
+* @param string $url // Url with urlencode()
 */
 // @deprecated
 function qrcode($url, $options = '{}') {
@@ -427,12 +403,12 @@ function qrcode($url, $options = '{}') {
 /**
 * Show field for inline edit
 *
-* @param String/Array $fld
-* @param String $text
-* @param Boolean $is_edit
-* @param String $input_type
-* @param Array $data
-* @return String
+* @param string/array $fld
+* @param string $text
+* @param bool $is_edit
+* @param string $input_type
+* @param array $data
+* @return string
 */
 function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'text', $data = [], $emptytext = '...') {
 	$ret = '';
@@ -461,7 +437,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 		(array) $fld
 	);
 
-	$dataOptions = (Object) [];
+	$dataOptions = (object) [];
 	if (array_key_exists('options', $fld)) {
 		$dataOptions = json_decode($fld['options']);
 		unset($fld['options']);
@@ -659,7 +635,7 @@ function inlineEdit($fld = [], $text = NULL, $is_edit = NULL, $input_type = 'tex
 * Exlpode address to array
 *
 * @param $address
-* @return Array
+* @return array
 */
 function explode_address($address = '',$areacode = NULL) {
 	$address = trim(preg_replace('/  /',' ',$address));
@@ -670,7 +646,6 @@ function explode_address($address = '',$areacode = NULL) {
 		'ampur' => '',
 		'changwat' => '',
 		'villageCode' => '',
-		'tambonCode' => '',
 		'tambonCode' => '',
 		'ampurCode' => '',
 		'changwatCode' => '',
@@ -724,20 +699,19 @@ function explode_address($address = '',$areacode = NULL) {
 	$result['house'] = trim($house);
 
 	if (empty($areacode)) {
-		$rs = DB::select([
+		$rs = \DB::select(
 			'SELECT cos.`subdistid` `areacode`, CONCAT(`subdistname`, " ", `distname`, " ", `provname`) `address`
 			FROM %co_subdistrict% cos
 				LEFT JOIN %co_district% cod ON cod.`distid` = LEFT(cos.`subdistid`,4)
 				LEFT JOIN %co_province% cop ON cop.`provid` = LEFT(cos.`subdistid`,2)
 			WHERE cos.`subdistname` = :tambonName AND cod.`distname` = :ampurName AND cop.`provname` = :changwatName
 			LIMIT 1',
-			'var' => [
+			var: [
 				':tambonName' => $result['tambonName'],
 				':ampurName' => $result['ampurName'],
 				':changwatName' => $result['changwatName']
 			]
-		]);
-		//debugMsg($rs,'$rs');
+		);
 		$areacode = $rs->areacode;
 	}
 
@@ -769,11 +743,11 @@ function explode_address($address = '',$areacode = NULL) {
 /**
 * Implode address
 *
-* @param Record Set $rs
-* @return String
+* @param object $rs
+* @return string
 */
 function implode_address($rs, $type = 'long') {
-	if (is_array($rs)) $rs = (Object) $rs;
+	if (is_array($rs)) $rs = (object) $rs;
 	$areaCode = getFirst($rs->areaCode ?? null, $rs->areacode ?? null);
 	$isBangkok = substr($areaCode ?? '', 0, 2) === '10';
 
@@ -816,11 +790,11 @@ function implode_address($rs, $type = 'long') {
 /**
  * Extract name into name and lastname seperate by space
  *
- * @param String $name
- * @param String $sep
- * @return (Object)(preName, firstName, lastName)
+ * @param string $name
+ * @param string $sep
+ * @return (object)(preName, firstName, lastName)
  */
-function explodeName(String $name = '', String $sep = ' ') {
+function explodeName(string $name = '', string $sep = ' ') {
 	$name = preg_replace('/['.$sep.']{2,}/', $sep, $name);
 
 	// preg_match('/(*)'.$sep.'(*)/', $name, $out);
@@ -831,14 +805,14 @@ function explodeName(String $name = '', String $sep = ' ') {
 	$firstName = trim($firstName);
 	$lastName = trim(substr($name, strlen($firstName)+1));
 
-	return (Object) ['preName' => $preName, 'firstName' => $firstName, 'lastName' => $lastName];
+	return (object) ['preName' => $preName, 'firstName' => $firstName, 'lastName' => $lastName];
 }
 
 /**
-* Convert parameter Array/JSON/Object to Object
+* Convert parameter array/JSON/object to object
 *
-* @param Mixed $param
-* @return Object
+* @param mixed $param
+* @return object
 */
 function paramToObject($param) {
 	if (is_string($param) && preg_match('/^{/',$param)) {
@@ -846,7 +820,7 @@ function paramToObject($param) {
 	} else if (is_object($param)) {
 		// Do nothing
 	} else if (is_array($param)) {
-		$param = (Object) $param;
+		$param = (object) $param;
 	} else {
 		$id = $param;
 		unset($param);
