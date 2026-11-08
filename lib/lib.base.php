@@ -16,13 +16,13 @@
  * ============================================
  *
  * Created  :: 2019-12-08
- * Modified :: 2026-11-02
- * Version  :: 29
+ * Modified :: 2026-11-07
+ * Version  :: 30
  */
 
 namespace SG;
 
-use SOftganz\DB;
+use Softganz\DB;
 
 if (!defined('_NL')) define('_NL', "\r\n");
 
@@ -855,6 +855,20 @@ function paramToObject($param) {
 	return $param;
 }
 
+/**
+ * Replace string contain {{ .var }} with value
+ *
+ * @param string $str
+ * @param object $value
+ * @return string
+ */
+function replaceValue(string $str, object $value): string {
+	return preg_replace_callback(
+		'/\{\{\s*\.(\w+)\s*\}\}/',
+		fn($matches) => (string) ($value->{$matches[1]} ?? ''),
+		$str
+	);
+}
 
 class Arrays {
 	static function value($arr = [], $name = '', $options = []) {
