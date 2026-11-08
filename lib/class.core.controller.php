@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-04
- * Version  :: 65
+ * Modified :: 2026-11-08
+ * Version  :: 66
  */
 
 /*************************************************************
@@ -142,11 +142,6 @@ class R {
 		) {
 			// Found page widget then build method
 			$pageResult = new $className(...$args);
-
-			// Try to use namespace in template but not work
-			// $pageResult = new PPI\ProjectJoinList(...$args);
-			// use PPI\ProjectJoinList as MyClass;
-			// $pageResult = new MyClass(...$args);
 
 			if ($buildMethod === 'build') {
 				// If using standard build method, have 2 way for check right
@@ -472,6 +467,8 @@ class SgCore {
 		static $debugFunc = [];
 		static $loadFiles = [];
 		static $loadCfg = [];
+		// {packageName} => resolved class name (e.g. \Module\Apis\GetDataApi)
+		static $resolvedClass = [];
 
 		$srcPackageName = $packageName;
 		$resourceFileToLoad = '';
@@ -901,12 +898,18 @@ class SgCore {
 			$funcName .= implode('_', $request);
 		}
 
+		$resolvedClassName = $resolvedClass[$packageName] ?? null;
+
 		if (
 			(($funcName && function_exists($funcName)) ||
+				($resolvedClassName && class_exists($resolvedClassName)) ||
 				($className && class_exists($className))) &&
 			array_key_exists($packageName, $loadFiles)
 		) {
 			// Resource file was loaded
+			if ($resolvedClassName) {
+				$className = $resolvedClassName;
+			}
 			$found = true;
 			$debugStr .=
 				'<font color="green">Function '
@@ -963,12 +966,26 @@ class SgCore {
 								. '</b></span><br />'
 								. _NL;
 						} else {
+							$declaredClassesBefore = get_declared_classes();
 							$namespace = require_once $resourceFileToLoad;
 
 							// Check namespace of load file
 							if (is_string($namespace)) {
 								// File return __NAMESPACE__
 								$className = '\\' . $namespace . '\\' . $className;
+							} elseif (
+								// Auto-detect class declared by this file
+								// to support any namespace depth (e.g. Imed\Apis)
+								$declaredAutoDetect = array_filter(
+									array_diff(get_declared_classes(), $declaredClassesBefore),
+									function ($class) use ($className) {
+										$pos = strrpos($class, '\\');
+										return substr($class, $pos === false ? 0 : $pos + 1) ===
+											$className;
+									}
+								)
+							) {
+								$className = '\\' . reset($declaredAutoDetect);
 							} elseif (
 								preg_match(
 									'/modules\/([a-zA-Z]+)\/template\/([a-zA-Z]+)\//',
@@ -1019,6 +1036,7 @@ class SgCore {
 							if ($importOnly) {
 								$found = true;
 							} elseif ($className && class_exists($className)) {
+								$resolvedClass[$packageName] = $className;
 								// debugMsg('FOUND CLASS '.$className);
 								$debugStr .=
 									'<span style="color:green;">Found Execute class <b>'
