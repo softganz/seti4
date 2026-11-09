@@ -3,8 +3,8 @@
  * core     :: SG Base library
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-12-08
- * Modified :: 2026-11-07
- * Version  :: 32
+ * Modified :: 2026-11-09
+ * Version  :: 33
  */
 
 namespace SG;
@@ -329,7 +329,7 @@ function json_decode() {
 	return $result;
 }
 
-function json_encode(?string $input) {
+function json_encode(mixed $input = []) {
 	if (defined('JSON_UNESCAPED_UNICODE')) {
 		return \json_encode($input,JSON_UNESCAPED_UNICODE+JSON_PRETTY_PRINT+JSON_UNESCAPED_SLASHES);
 	} else {
