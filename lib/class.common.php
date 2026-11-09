@@ -1,24 +1,11 @@
 <?php
 /**
- * SOFTGANZ :: common class
- *
- * Copyright (c) 2000-2020 The SoftGanz Group By Panumas Nontapan
- * Authors : Panumas Nontapan <webmaster@softganz.com>
- *         : http://www.softganz.com/
- * ============================================
- * This module is core of web application
- *
- * This program is free software. You can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License.
- * ============================================
- * 
+ * core     :: Common class
+ * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-11-03
- * Version  :: 27
+ * Modified :: 2026-11-09
+ * Version  :: 28
  */
-
-use Softganz\DB;
 
 /********************************************
  * Class :: sgClass
@@ -242,10 +229,10 @@ class Session implements SessionHandlerInterface {
 	public function read($sess_id) {
 		// echo 'SESSION READ<br>';
 		if (!$this->PDO) return '';
-		$row = DB::select([
+		$row = \DB::select(
 			'SELECT `sess_data` FROM %session% WHERE `sess_id` = :id LIMIT 1',
-			'var' => [':id' => $sess_id]
-		]);
+			var: [':id' => $sess_id]
+		);
 		return $row->sess_data ?? '';
 	}
 
@@ -298,10 +285,10 @@ class Session implements SessionHandlerInterface {
 	public function destroy($sess_id) {
 		// echo 'SESSION DESTROY<br>';
 		if (!$this->PDO) return true;
-		DB::query([
+		\DB::query(
 			'DELETE FROM %session% WHERE sess_id = :id LIMIT 1',
-			'var' => [':id' => $sess_id]
-		]);
+			var: [':id' => $sess_id]
+		);
 		return true;
 	}
 
@@ -310,10 +297,10 @@ class Session implements SessionHandlerInterface {
 		// echo 'SESSION GC<br>';
 		if (!$this->PDO) return true;
 
-		DB::query([
+		\DB::query(
 			'DELETE FROM %session% WHERE sess_last_acc < :end',
-			'var' => [':end' => date('Y-m-d H:i:s', time() - $maxLifetime)]
-		]);
+			var: [':end' => date('Y-m-d H:i:s', time() - $maxLifetime)]
+		);
 
 		LogModel::save([
 			'module' => 'session',
@@ -448,51 +435,51 @@ class Arrays {
  * Cache class for manage cache
  ********************************************/
 class Cache {
-	public static function add($cid, $data, $expire, $headers) {
-		$data = \SG\json_encode($data);
-		DB::query([
+	public static function add(string $cid, object $data, int $expire, string $headers) {
+		\DB::query(
 			'INSERT INTO %cache%
 			(`cid`, `data`, `expire`, `created`, `headers`)
 			VALUES
 			(:cid, :data, :expire, :created, :headers)
 			ON DUPLICATE KEY UPDATE
 			`cid` = :cid',
-			'var' => [
+			var: [
 				':cid' => $cid,
-				':data' => $data,
+				':data' => \SG\json_encode($data),
 				':expire' => $expire,
 				':created' => time(),
 				':headers' => $headers,
 			]
-		]);
+		);
 	}
 
-	public static function get($cid) {
-		$result = DB::select([
-			'SELECT * FROM %cache% c WHERE c.`cid` = :cid LIMIT 1',
-			'var' => [':cid' => $cid]
-		]);
-		if ($result->headers) {
-			$result->data = preg_match('/^{/', $result->data) ? \SG\json_decode($result->data) : unserialize($result->data);
-			$result->data->token = $result->data->session;
-			$result->remain = $result->expire - time();
-		}
-		return $result;
+	public static function get(string $cid): object|null {
+		$cache = \DB::select(
+			'SELECT `cid`, `headers`, `data`, `expire`, `created` FROM %cache% WHERE `cid` = :cid LIMIT 1',
+			var: [':cid' => $cid]
+		);
+
+		if (empty($cache->headers)) return null;
+
+		$cache->data = preg_match('/^{/', $cache->data) ? \SG\json_decode($cache->data) : unserialize($cache->data);
+		$cache->data->token = $cache->data->session;
+		$cache->remain = $cache->expire - time();
+
+		return $cache;
 	}
 
-	public static function clear($cid) {
-		DB::query([
+	public static function clear(string $cid) {
+		\DB::query(
 			'DELETE FROM %cache% WHERE cid = :cid LIMIT 1',
-			'var' => [':cid' => $cid]
-		]);
+			var: [':cid' => $cid]
+		);
 	}
 
 	public static function clear_expire() {
-		$ctime = time();
-		DB::query([
+		\DB::query(
 			'DELETE FROM %cache% WHERE expire > 0 AND expire - :ctime < 0',
-			'var' => [':ctime' => $ctime]
-		]);
+			var: [':ctime' => time()]
+		);
 	}
 } //--- End of class Cache
 

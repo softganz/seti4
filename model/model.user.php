@@ -3,8 +3,8 @@
  * Model    :: User Information
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-07-22
- * Modified :: 2026-09-26
- * Version  :: 30
+ * Modified :: 2026-11-09
+ * Version  :: 31
  *
  * @param Int $userId
  * @return object
@@ -17,7 +17,9 @@ use Softganz\DB;
 use Softganz\DbException;
 
 class UserModel {
-	var $userId;
+	public $userId;
+	public $fullName;
+	public $roles;
 
 	function __construct($userId = null) {
 		$this->userId = empty($userId) ? i()->uid : $userId;
@@ -368,7 +370,7 @@ class UserModel {
 		$_SESSION['logas'] = null;
 
 		$cacheId = 'user:' . i()->token;
-		Cache::Clear($cacheId);
+		Cache::clear($cacheId);
 
 		// session_unset();
 		// session_destroy();
@@ -386,6 +388,7 @@ class UserModel {
 	 */
 	public static function signInProcess($username = null, $password = null, $cookielength = null): object|bool {
 		$debug = false; //$username=='softganz';
+		$debug_str = '';
 
 		if (empty($username) || empty($password)) return false;
 
@@ -730,10 +733,8 @@ class UserModel {
 			$user = Cache::get('user:'.$token)->data;
 			return $user;
 		} else if (isset($_COOKIE[cfg('cookie.id')]) && isset($_COOKIE[cfg('cookie.u')])) {
-			$cache = Cache::Get('user:'.$_COOKIE[cfg('cookie.id')]);
-			//debugMsg('Cache='.print_o($cache,'$cache'));
-			$data = $cache->data;
-			//debugMsg($data,'$data',1);
+			$cache = Cache::get('user:'.$_COOKIE[cfg('cookie.id')]);
+			$data = $cache->data ?? null;
 			if (empty($data)) return $user;
 			if ($data->username != $_COOKIE[cfg('cookie.u')]) return $user;
 			if (cfg('member.signin.checkip') && $data->ip != $_SERVER['REMOTE_ADDR'] ) return $user;
@@ -879,8 +880,8 @@ class UserModel {
 
 		if (empty($result->uid)) return null;
 
-		foreach ($result as $key => $value) $this->{$key} = $value;
-		$this->fullName = trim($this->real_name.' '.$this->last_name);
+		// foreach ($result as $key => $value) $this->{$key} = $value;
+		$this->fullName = trim($result->real_name.' '.$result->last_name);
 
 		$this->roles = empty($result->roles) ? array('member') : explode(',','member,'.$result->roles);
 
