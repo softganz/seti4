@@ -1,23 +1,20 @@
 <?php
 /**
  * Person   :: Person Model
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-09-27
- * Modify  :: 2026-05-11
- * Version :: 5
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-09-27
+ * Modified :: 2026-11-09
+ * Version  :: 6
  *
- * @param Array $args
- * @return Object
- *
- * @usage new PersonModel([])
- * @usage PersonModel::function($conditions, $options)
+ * @uses new PersonModel([])
+ * @uses PersonModel::function($conditions, $options)
  */
 
 use Softganz\DB;
+use Imed\Models\ImedModel;
 
 class PersonModel {
-	function __construct($args = []) {
-	}
+	function __construct() {}
 
 	public static function get($id, $options = '{}') {
 		$defaults = '{value: "repairname", debug: false}';
@@ -75,68 +72,114 @@ class PersonModel {
 
 				LEFT JOIN %gis% g ON p.`gis`=g.`gis`
 			WHERE p.`psnId` = :id LIMIT 1',
-			'var' => [':id' => $id],
+			'var' => [':id' => $id]
 		]);
 
+		if (empty($rs->psnId)) {
+			return null;
+		}
 
-		if (empty($rs->psnId)) return NULL;
+		$rs->realname = trim($rs->name . ' ' . $rs->lname);
+		$rs->fullName = $rs->fullname = trim(
+			$rs->prename . ' ' . $rs->name . ' ' . $rs->lname
+		);
 
-		$rs->realname = trim($rs->name.' '.$rs->lname);
-		$rs->fullName = $rs->fullname = trim($rs->prename.' '.$rs->name.' '.$rs->lname);
+		$rs->address = trim(
+			$rs->house
+				. ($rs->soi ? ' ซอย' . $rs->soi : '')
+				. ($rs->road ? ' ถนน' . $rs->road : '')
+				. ($rs->village ? ' หมู่ที่ ' . $rs->village : '')
+				. ($rs->villname ? ' บ้าน' . $rs->villname : '')
+				. ($rs->subdistname ? ' ตำบล' . $rs->subdistname : '')
+				. ($rs->distname ? ' อำเภอ' . $rs->distname : '')
+				. ($rs->provname ? ' จังหวัด' . $rs->provname : '')
+				. ($rs->zip ? ' รหัสไปรษณีย์ ' . $rs->zip : '')
+		);
+		$rs->raddress = trim(
+			$rs->rhouse
+				. ($rs->rvillage ? ' หมู่ที่ ' . $rs->rvillage : '')
+				. ($rs->rvillname ? ' บ้าน' . $rs->rvillname : '')
+				. ($rs->rsubdistname ? ' ตำบล' . $rs->rsubdistname : '')
+				. ($rs->rdistname ? ' อำเภอ' . $rs->rdistname : '')
+				. ($rs->rprovname ? ' จังหวัด' . $rs->rprovname : '')
+				. ($rs->rzip ? ' รหัสไปรษณีย์ ' . $rs->rzip : '')
+		);
 
-		$rs->address=trim($rs->house.($rs->soi?' ซอย'.$rs->soi:'').($rs->road?' ถนน'.$rs->road:'').($rs->village?' หมู่ที่ '.$rs->village:'').($rs->villname?' บ้าน'.$rs->villname:'').($rs->subdistname?' ตำบล'.$rs->subdistname:'').($rs->distname?' อำเภอ'.$rs->distname:'').($rs->provname?' จังหวัด'.$rs->provname:'').($rs->zip?' รหัสไปรษณีย์ '.$rs->zip:''));
-		$rs->raddress=trim($rs->rhouse.($rs->rvillage?' หมู่ที่ '.$rs->rvillage:'').($rs->rvillname?' บ้าน'.$rs->rvillname:'').($rs->rsubdistname?' ตำบล'.$rs->rsubdistname:'').($rs->rdistname?' อำเภอ'.$rs->rdistname:'').($rs->rprovname?' จังหวัด'.$rs->rprovname:'').($rs->rzip?' รหัสไปรษณีย์ '.$rs->rzip:''));
-
-		$result = (Object) [
+		$result = (object) [
 			'psnId' => $rs->psnId,
 			'fullname' => $rs->fullname,
 			'uid' => $rs->uid,
-			'RIGHT' => NULL,
-			'RIGHTBIN' => NULL,
-			'error' => NULL,
-			'info' => $rs,
+			'RIGHT' => null,
+			'RIGHTBIN' => null,
+			'error' => null,
+			'info' => $rs
 		];
 
+		$right = 0;
 
-		$right=0;
-
-		$isOwner=i()->ok && $result->info->uid==i()->uid;
-		$isAdmin=user_access('administer imeds');
-		$isAccess=false;
-		$isEdit=false;
+		$isOwner = i()->ok && $result->info->uid == i()->uid;
+		$isAdmin = user_access('administer imeds');
+		$isAccess = false;
+		$isEdit = false;
 		//user_access('administer imeds','edit own imed content',$result->info->uid) || $isOwner;
 		if ($isAdmin || $isOwner) {
-			$isAccess=true;
-			$isEdit=true;
-		} else  if (i()->ok && class_exists('ImedModel') && $zones=ImedModel::get_user_zone(i()->uid,'imed')) {
-			$psnRight=R::model('imed.zone.right',$zones,$rs->changwat,$rs->ampur,$rs->tambon);
+			$isAccess = true;
+			$isEdit = true;
+		} elseif (
+			i()->ok &&
+			class_exists('\Imed\Models\ImedModel') &&
+			($zones = ImedModel::get_user_zone(i()->uid, 'imed'))
+		) {
+			$psnRight = R::model(
+				'imed.zone.right',
+				$zones,
+				$rs->changwat,
+				$rs->ampur,
+				$rs->tambon
+			);
 			if (!$psnRight) {
-				$isAccess=false;
-				$isEdit=false;
-			} else if (in_array($psnRight->right,array('edit','admin'))) {
-				$isAccess=true;
-				$isEdit=true;
-			} else if (in_array($psnRight->right,array('view'))) {
-				$isAccess=true;
-				$isEdit=false;
+				$isAccess = false;
+				$isEdit = false;
+			} elseif (in_array($psnRight->right, ['edit', 'admin'])) {
+				$isAccess = true;
+				$isEdit = true;
+			} elseif (in_array($psnRight->right, ['view'])) {
+				$isAccess = true;
+				$isEdit = false;
 			}
 		} else {
-			$isAccess=false;
-			$isEdit=false;
+			$isAccess = false;
+			$isEdit = false;
 		}
 
+		if ($isAdmin) {
+			$right = $right | _IS_ADMIN;
+		}
+		if ($isOwner) {
+			$right = $right | _IS_OWNER;
+		}
+		if ($isAccess) {
+			$right = $right | _IS_ACCESS;
+		}
+		if ($isEdit) {
+			$right = $right | _IS_EDITABLE;
+		}
 
-		if ($isAdmin) $right=$right | _IS_ADMIN;
-		if ($isOwner) $right=$right | _IS_OWNER;
-		if ($isAccess) $right=$right | _IS_ACCESS;
-		if ($isEdit) $right=$right | _IS_EDITABLE;
+		$result->RIGHT = $right;
+		$result->RIGHTBIN = decbin($right);
 
-		$result->RIGHT=$right;
-		$result->RIGHTBIN=decbin($right);
+		if (!$isAccess) {
+			$result->error =
+				'ข้อมูลของ <b>"'
+				. $rs->name
+				. ' '
+				. $rs->lname
+				. '"</b> อยู่นอกพื้นที่การดูแลของท่าน หากข้อมูลนี้ไม่ถูกต้อง กรุณาแจ้งผู้ดูแลระบบ';
+		}
 
-		if (!$isAccess) $result->error='ข้อมูลของ <b>"'.$rs->name.' '.$rs->lname.'"</b> อยู่นอกพื้นที่การดูแลของท่าน หากข้อมูลนี้ไม่ถูกต้อง กรุณาแจ้งผู้ดูแลระบบ';
-
-		if ($debug) debugMsg($result,'$result');
+		if ($debug) {
+			debugMsg($result, '$result');
+		}
 		return $result;
 	}
 
@@ -161,37 +204,70 @@ class PersonModel {
 	// }
 
 	public static function save($data, $options = '{}') {
-		$data = (Object) $data;
+		$data = (object) $data;
 		$defaults = '{debug: false}';
 		$options = \SG\json_decode($options, $defaults);
 		$debug = $options->debug;
 
-		$result = (Object) [
-			'psnId' => NULL,
+		$result = (object) [
+			'psnId' => null
 		];
 
-		if (empty($data->psnId)) $data->psnId = NULL;
-		if (property_exists($data, 'prename')) $data->preName = $data->prename;
-		if (property_exists($data, 'firstname')) $data->firstName = $data->firstname;
-		if (property_exists($data, 'lastname')) $data->lastName = $data->lastname;
+		if (empty($data->psnId)) {
+			$data->psnId = null;
+		}
+		if (property_exists($data, 'prename')) {
+			$data->preName = $data->prename;
+		}
+		if (property_exists($data, 'firstname')) {
+			$data->firstName = $data->firstname;
+		}
+		if (property_exists($data, 'lastname')) {
+			$data->lastName = $data->lastname;
+		}
 
 		// Extract firstName and lastName from fullName
 		if ($data->fullName && empty($data->firstName)) {
-			list($data->firstName, $data->lastName) = SG::explode_name(' ', $data->fullName);
+			[$data->firstName, $data->lastName] = SG::explode_name(
+				' ',
+				$data->fullName
+			);
 		}
 
-		if(property_exists($data, 'preName')) $updateFields[] = '`preName` = :preName';
-		if(property_exists($data, 'firstName')) $updateFields[] = '`name` = :firstName';
-		if(property_exists($data, 'lastName')) $updateFields[] = '`lname` = :lastName';
-		if(property_exists($data, 'cid')) $updateFields[] = '`cid` = :cid';
-		if(property_exists($data, 'sex')) $updateFields[] = '`sex` = :sex';
-		if(property_exists($data, 'birth')) $updateFields[] = '`birth` = :birth';
-		if(property_exists($data, 'religion')) $updateFields[] = '`religion` = :religion';
-		if(property_exists($data, 'zip')) $updateFields[] = '`zip` = :zip';
-		if(property_exists($data, 'phone')) $updateFields[] = '`phone` = :phone';
-		if(property_exists($data, 'graduated')) $updateFields[] = '`graduated` = :graduated';
-		if(property_exists($data, 'faculty')) $updateFields[] = '`faculty` = :faculty';
-		if(property_exists($data, 'address')) {
+		if (property_exists($data, 'preName')) {
+			$updateFields[] = '`preName` = :preName';
+		}
+		if (property_exists($data, 'firstName')) {
+			$updateFields[] = '`name` = :firstName';
+		}
+		if (property_exists($data, 'lastName')) {
+			$updateFields[] = '`lname` = :lastName';
+		}
+		if (property_exists($data, 'cid')) {
+			$updateFields[] = '`cid` = :cid';
+		}
+		if (property_exists($data, 'sex')) {
+			$updateFields[] = '`sex` = :sex';
+		}
+		if (property_exists($data, 'birth')) {
+			$updateFields[] = '`birth` = :birth';
+		}
+		if (property_exists($data, 'religion')) {
+			$updateFields[] = '`religion` = :religion';
+		}
+		if (property_exists($data, 'zip')) {
+			$updateFields[] = '`zip` = :zip';
+		}
+		if (property_exists($data, 'phone')) {
+			$updateFields[] = '`phone` = :phone';
+		}
+		if (property_exists($data, 'graduated')) {
+			$updateFields[] = '`graduated` = :graduated';
+		}
+		if (property_exists($data, 'faculty')) {
+			$updateFields[] = '`faculty` = :faculty';
+		}
+		if (property_exists($data, 'address')) {
 			$updateFields[] = '`areacode` = :areacode';
 			$updateFields[] = '`house` = :house';
 			$updateFields[] = '`village` = :village';
@@ -200,53 +276,100 @@ class PersonModel {
 			$updateFields[] = '`changwat` = :changwat';
 		}
 
-		if (empty($data->cid)) $data->cid = NULL;
+		if (empty($data->cid)) {
+			$data->cid = null;
+		}
 
-		if (empty($data->religion)) $data->religion = NULL;
+		if (empty($data->religion)) {
+			$data->religion = null;
+		}
 
 		$data->email = \SG\getFirst($data->email);
 		$data->areacode = \SG\getFirst($data->areacode);
 		$data->hrareacode = \SG\getFirst($data->hrareacode);
 
 		if ($data->address) {
-			$addrList = \SG\explode_address($data->address,$data->areacode);
+			$addrList = \SG\explode_address($data->address, $data->areacode);
 			$result->address = $addrList;
-			if ($addrList['house']) $data->house = $addrList['house'];
-			if ($addrList['village']) $data->village = $addrList['village'];
-			if (strlen($data->areacode) == 6 && $data->village) $data->areacode .= sprintf('%02d', $data->village);
+			if ($addrList['house']) {
+				$data->house = $addrList['house'];
+			}
+			if ($addrList['village']) {
+				$data->village = $addrList['village'];
+			}
+			if (strlen($data->areacode) == 6 && $data->village) {
+				$data->areacode .= sprintf('%02d', $data->village);
+			}
 		}
 
 		if ($data->birth && is_array($data->birth)) {
-			$data->birth = $data->birth['year'].'-'.$data->birth['month'].'-'.$data->birth['date'];
-		};
+			$data->birth =
+				$data->birth['year']
+				. '-'
+				. $data->birth['month']
+				. '-'
+				. $data->birth['date'];
+		}
 
-		$data->birth = $data->birth ? sg_date($data->birth, 'Y-m-d') : NULL;
+		$data->birth = $data->birth ? sg_date($data->birth, 'Y-m-d') : null;
 
-		if (empty($data->sex)) $data->sex = NULL;
+		if (empty($data->sex)) {
+			$data->sex = null;
+		}
 
-		if (empty($data->house)) $data->house = '';
-		if (empty($data->village)) $data->village = '';
-		if (empty($data->tambon)) $data->tambon = '';
-		if (empty($data->ampur)) $data->ampur = '';
-		if (empty($data->changwat)) $data->changwat = '';
-		if (empty($data->zip)) $data->zip = '';
+		if (empty($data->house)) {
+			$data->house = '';
+		}
+		if (empty($data->village)) {
+			$data->village = '';
+		}
+		if (empty($data->tambon)) {
+			$data->tambon = '';
+		}
+		if (empty($data->ampur)) {
+			$data->ampur = '';
+		}
+		if (empty($data->changwat)) {
+			$data->changwat = '';
+		}
+		if (empty($data->zip)) {
+			$data->zip = '';
+		}
 
-		if (empty($data->rhouse)) $data->rhouse = '';
-		if (empty($data->rvillage)) $data->rvillage = '';
-		if (empty($data->rtambon)) $data->rtambon = '';
-		if (empty($data->rampur)) $data->rampur = '';
-		if (empty($data->rchangwat)) $data->rchangwat = '';
-		if (empty($data->rzip)) $data->rzip = '';
+		if (empty($data->rhouse)) {
+			$data->rhouse = '';
+		}
+		if (empty($data->rvillage)) {
+			$data->rvillage = '';
+		}
+		if (empty($data->rtambon)) {
+			$data->rtambon = '';
+		}
+		if (empty($data->rampur)) {
+			$data->rampur = '';
+		}
+		if (empty($data->rchangwat)) {
+			$data->rchangwat = '';
+		}
+		if (empty($data->rzip)) {
+			$data->rzip = '';
+		}
 
-		if (empty($data->phone)) $data->phone = '';
+		if (empty($data->phone)) {
+			$data->phone = '';
+		}
 
-		if (empty($data->graduated)) $data->graduated = '';
-		if (empty($data->faculty)) $data->faculty = '';
+		if (empty($data->graduated)) {
+			$data->graduated = '';
+		}
+		if (empty($data->faculty)) {
+			$data->faculty = '';
+		}
 		$data->userid = \SG\getFirst($data->userid);
 
-		$data->uid = \SG\getFirst($data->uid, i()->uid, NULL);
+		$data->uid = \SG\getFirst($data->uid, i()->uid, null);
 		$data->created = date('U');
-		$data->userId = \SG\getFirst($data->userId, NULL);
+		$data->userId = \SG\getFirst($data->userId, null);
 
 		try {
 			$insertId = DB::query([
@@ -272,16 +395,21 @@ class PersonModel {
 					, :phone, :email
 					, :created, :userid
 				) ON DUPLICATE KEY UPDATE
-				'.implode(', ' , $updateFields),
+				' . implode(', ', $updateFields),
 				'var' => $data
 			])->insertId();
 		} catch (\Exception $exception) {
-			throw new \Exception($exception->getMessage(), _HTTP_ERROR_NOT_ACCEPTABLE);
+			throw new \Exception(
+				$exception->getMessage(),
+				_HTTP_ERROR_NOT_ACCEPTABLE
+			);
 		}
 
 		$result->_query[] = R('query');
 
-		if (empty($data->psnId)) $data->psnId = $insertId;
+		if (empty($data->psnId)) {
+			$data->psnId = $insertId;
+		}
 
 		$result->psnId = $data->psnId;
 
