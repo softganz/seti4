@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-05
- * Version  :: 110
+ * Modified :: 2026-11-09
+ * Version  :: 111
  *
  * @param array $args
  *
@@ -64,6 +64,25 @@ class Children extends WidgetBase {
 	public $version = '0.0.01';
 	public $type;
 	public ?array $children = [];
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $tagName = null,
+		?array $children = []
+	) {
+		return parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'tagName' => $tagName,
+					'children' => $children
+				],
+				$args
+			)
+		);
+	}
 }
 
 /**
@@ -115,7 +134,7 @@ class Widget extends WidgetBase {
 			} elseif ($argKey === 'attribute' && is_array($argValue)) {
 				$this->attribute = array_replace_recursive($this->attribute, $argValue);
 			} elseif ($argKey === 'children') {
-				foreach ($argValue as $childName => $childValue) {
+				foreach ((array) $argValue as $childName => $childValue) {
 					if (is_null($childValue)) {
 						continue;
 					}
@@ -237,47 +256,47 @@ class Widget extends WidgetBase {
 	protected function renderWidgetContainerStart($callbackFunction = null) {
 		return $this->tagName
 			? ($this->widgetName != 'Widget'
-						? '<!-- Start of ' . $this->widgetName . ' -->' . _NL
-						: '')
+					? '<!-- Start of ' . $this->widgetName . ' -->' . _NL
+					: '')
 					. '<'
 					. $this->tagName
 					. _NL
-					. ($this->id ? ' id="' . $this->id . '"' . _NL : '') // Start of class
+					. ($this->id ? ' id="' . $this->id . '"' . _NL : '')
 					. ' class="widget-'
-					. strtolower($this->widgetName)
-					. ($this->class ? ' ' . $this->class : '')
-					. ($this->mainAxisAlignment ?? false
+					. strtolower($this->widgetName ?? '')
+					. (!empty($this->class) ? ' ' . $this->class : '')
+					. (!empty($this->mainAxisAlignment)
 						? ' -main-axis-' . strtolower($this->mainAxisAlignment)
 						: '')
-					. ($this->crossAxisAlignment ?? false
+					. (!empty($this->crossAxisAlignment)
 						? ' -cross-axis-' . strtolower($this->crossAxisAlignment)
 						: '')
 					. '"'
-					. _NL // End of class
-					. ($this->href ?? false ? ' href="' . $this->href . '"' . _NL : '')
-					. ($this->config->data['data-rel'] ?? false
+					. _NL
+					. (!empty($this->href) ? ' href="' . $this->href . '"' . _NL : '')
+					. (!empty($this->config->data['data-rel'])
 						? ' data-rel="' . $this->config->data['data-rel'] . '"' . _NL
 						: '')
-					. ($this->config->data['data-done'] ?? false
+					. (!empty($this->config->data['data-done'])
 						? ' data-done="' . $this->config->data['data-done'] . '"' . _NL
 						: '')
-					. ($this->dataUrl ?? false
+					. (!empty($this->dataUrl)
 						? ' data-url="' . $this->dataUrl . '"' . _NL
 						: '')
-					. ($this->webview ?? false
+					. (!empty($this->webview)
 						? ' data-webview="' . $this->webview . '"' . _NL
 						: '')
-					. ($this->data('options')
+					. (!empty($this->data('options'))
 						? ' data-options=\'' . $this->data('options') . '\' ' . _NL
 						: '')
-					. ($this->data('class-name')
+					. (!empty($this->data('class-name'))
 						? ' data-class-name="' . $this->data('class-name') . '"' . _NL
 						: '')
-					. ($this->style ?? false ? ' style="' . $this->style . '"' . _NL : '')
-					. ($this->attribute && is_array($this->attribute)
+					. (!empty($this->style) ? ' style="' . $this->style . '"' . _NL : '')
+					. (!empty($this->attribute) && is_array($this->attribute)
 						? ' ' . sg_implode_attr($this->attribute) . _NL
 						: '')
-					. ($callbackFunction && is_callable($callbackFunction)
+					. (!empty($callbackFunction) && is_callable($callbackFunction)
 						? $callbackFunction()
 						: '')
 					. '>'
@@ -660,8 +679,10 @@ class Header extends Widget {
 		?string $id = null,
 		?string $class = null,
 		mixed $title = null,
+		mixed $subTitle = null,
 		mixed $leading = null,
 		mixed $trailing = null,
+		?string $crossAxisAlignment = null,
 		bool $debug = false
 	) {
 		parent::__construct(
@@ -670,8 +691,10 @@ class Header extends Widget {
 					'id' => $id,
 					'class' => $class,
 					'title' => $title,
+					'subTitle' => $subTitle,
 					'leading' => $leading,
 					'trailing' => $trailing,
+					'crossAxisAlignment' => $crossAxisAlignment,
 					'debug' => $debug
 				],
 				$args
@@ -730,15 +753,23 @@ class Container extends Widget {
 
 	function __construct(
 		$args = [],
+		?string $widgetName = null,
 		?string $id = null,
 		?string $class = null,
+		?string $style = null,
+		?string $tagName = 'div',
+		mixed $child = null,
 		?array $children = []
 	) {
 		parent::__construct(
 			array_replace(
 				[
+					'widgetName' => $widgetName,
 					'id' => $id,
 					'class' => $class,
+					'style' => $style,
+					'tagName' => $tagName,
+					'child' => $child,
 					'children' => $children
 				],
 				$args
@@ -838,6 +869,29 @@ class Row extends Widget {
 	public $version = '0.0.10';
 	public $tagName = 'div';
 	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $style = null,
+		?string $mainAxisAlignment = null,
+		?string $crossAxisAlignment = null,
+		?array $children = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'style' => $style,
+					'mainAxisAlignment' => $mainAxisAlignment,
+					'crossAxisAlignment' => $crossAxisAlignment,
+					'children' => $children
+				],
+				$args
+			)
+		);
+	}
 } // End of class Row
 
 /**
@@ -922,8 +976,28 @@ class Card extends Widget {
 	public $tagName = 'div';
 	public $titleTag = 'div';
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $href = null,
+		// ?array $header = null,
+		mixed $child = null,
+		?array $children = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'href' => $href,
+					// 'header' => $header,
+					'child' => $child,
+					'children' => $children
+				],
+				$args
+			)
+		);
 	}
 
 	// @override
@@ -992,8 +1066,11 @@ class Nav extends Widget {
 		$args = [],
 		?string $id = null,
 		?string $class = null,
+		?string $style = null,
 		?string $type = null,
 		?string $direction = null,
+		?string $mainAxisAlignment = null,
+		?string $crossAxisAlignment = null,
 		?array $children = []
 	) {
 		parent::__construct(
@@ -1001,8 +1078,11 @@ class Nav extends Widget {
 				[
 					'id' => $id,
 					'class' => $class,
+					'style' => $style,
 					'type' => $type,
 					'direction' => $direction,
+					'mainAxisAlignment' => $mainAxisAlignment,
+					'crossAxisAlignment' => $crossAxisAlignment,
 					'children' => $children
 				],
 				$args
@@ -1088,15 +1168,33 @@ class SideBar extends Widget {
 	public $widgetName = 'SideBar';
 	public $version = '0.0.01';
 	public $tagName = 'aside';
-	public $type; // null, wide
+	public ?string $type; // null, wide
 	public mixed $gripHeader = 'Menu';
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $type = null,
+		?string $gripHeader = null,
+		?array $children = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'type' => $type,
+					'gripHeader' => $gripHeader,
+					'children' => $children
+				],
+				$args
+			)
+		);
 
-		if (!empty($args['type'])) {
+		if (!empty($this->type)) {
 			$this->class =
-				'-type-' . $args['type'] . ($this->class ? ' ' . $this->class : '');
+				'-type-' . $this->type . ($this->class ? ' ' . $this->class : '');
 		}
 	}
 
@@ -1112,10 +1210,11 @@ class SideBar extends Widget {
 		$header->class = '-sidebar-toggle';
 		$header->trailing = '<input type="checkbox" id="sidebar-toggle-checkbox" class="-toggle-checkbox">
 				<label for="sidebar-toggle-checkbox" class="-grip" aria-label="ขยายหรือย่อเมนู">
-				<span class="icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-					<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
-				</svg></span>
+				<i class="icon -material">menu_open</i>
 				</label>';
+		// <span class="icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
 			. // . '<span class="-grip-header">'
 			$this->renderChildren([$header]); // . '</span>'
@@ -1373,6 +1472,8 @@ class Button extends Widget {
 		?object $icon = null,
 		?string $text = null,
 		?string $title = null,
+		string $iconPosition = 'left',
+		string|int|null $boxWidth = null,
 		mixed $access = null
 	) {
 		parent::__construct(
@@ -1386,8 +1487,10 @@ class Button extends Widget {
 					'icon' => $icon,
 					'text' => $text,
 					'title' => $title,
+					'iconPosition' => $iconPosition,
 					'access' => $access,
-					'variable' => $variable
+					'variable' => $variable,
+					'boxWidth' => $boxWidth
 				],
 				(array) $args
 			)
