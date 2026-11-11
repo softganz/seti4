@@ -3,10 +3,8 @@
  * Widget   :: Page Render Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-01
- * Modified :: 2026-11-03
- * Version  :: 21
- *
- * @param String $requestResult
+ * Modified :: 2026-11-11
+ * Version  :: 22
  *
  * @uses new PageRenderWidget($requestResult, $pageClass)
  */
@@ -110,7 +108,7 @@ class renderPageWidget extends Widget {
 
 		if (is_object($sideBar) && method_exists($sideBar, 'build')) {
 			do {
-				$sideBarWidget = get_class($sideBar) === 'SideBar';
+				$sideBarWidget = is_a($sideBar, 'SideBar');
 				$sideBar = $sideBar->build();
 			} while (is_object($sideBar) && method_exists($sideBar, 'build'));
 		} elseif (is_string($sideBar)) {
@@ -124,9 +122,9 @@ class renderPageWidget extends Widget {
 			if ($sideBarWidget) {
 				$ret .= $sideBar;
 			} else {
-				$ret .= '<div id="sidebar" class="page -sidebar">' . _NL;
+				$ret .= '<aside id="sidebar" class="widget-sidebar">' . _NL;
 				$ret .= $sideBar . _NL;
-				$ret .= '</div><!--sidebar-->' . _NL;
+				$ret .= '</aside><!--sidebar-->' . _NL;
 			}
 		}
 		return $ret;
@@ -150,7 +148,7 @@ class renderPageWidget extends Widget {
 		if (
 			!(
 				!R::option('notoolbar') &&
-				$this->pageClass->theme->option->title &&
+				isset($this->pageClass->theme->option->title) &&
 				isset($this->pageClass->theme->title)
 			)
 		) {
@@ -220,7 +218,7 @@ class renderPageWidget extends Widget {
 	protected function renderRibbon() {
 		$ret = '';
 		if (
-			$this->pageClass->theme->option->ribbon &&
+			isset($this->pageClass->theme->option->ribbon) &&
 			isset($this->pageClass->theme->navigator)
 		) {
 			$ret .=

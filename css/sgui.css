@@ -1371,8 +1371,6 @@
 	flex-wrap: nowrap;
 	justify-content: flex-start;
 	list-style-type: none;
-	margin: 0;
-	padding: 0;
 	> .-item {
 		position: relative;
 	}
@@ -1651,7 +1649,7 @@
 }
 
 .widget-sidebar {
-	--min-width: 40px;
+	--min-width: 44px;
 	--max-width: 20rem;
 	--sidebar-surface: var(--sidebar-bg-color);
 	/* ระยะที่ header บัง: จอเล็ก header อยู่ล่าง จอใหญ่ header อยู่บน (สลับใน @media ด้านล่าง) */
@@ -1718,7 +1716,10 @@
 			padding: 0;
 		}
 		> .-leading {
-			margin-left: 16px;
+			margin-left: 4px;
+			> .widget-icon {
+				margin-left: 12px;
+			}
 		}
 		.-toggle-checkbox {
 			position: absolute;
@@ -1837,6 +1838,16 @@
 			}
 		}
 	}
+	/* ซ่อนชื่อหัวข้อ widget-header ใน sidebar เว้นแต่ sidebar กำลังขยายอยู่ */
+	> .widget-header {
+		.widget-profilephoto {
+			width: 40px;
+			height: 40px;
+		}
+		> .-title {
+			display: none;
+		}
+	}
 	/* สลับทิศทางของ grip ตามพื้นที่: จอแคบกดเพื่อขยาย จอกว้างกดเพื่อย่อ */
 	&:has(.-toggle-checkbox:checked) {
 		@container page-content (width > 600px) {
@@ -1902,9 +1913,11 @@
 			display: block;
 		}
 	}
-	/* ซ่อนชื่อหัวข้อ widget-header ใน sidebar เว้นแต่ sidebar กำลังขยายอยู่ */
-	.widget-header > .-title {
-		display: none;
+	/* ตอนย่อ (ความกว้างต่ำกว่า 12rem) ซ่อน widget-card ทั้งหมด */
+	@container widget-sidebar (width < 12rem) {
+		> .widget-card {
+			display: none;
+		}
 	}
 	/* ขยายบนจอกว้าง: ไม่ได้ติ๊ก checkbox */
 	@container page-content (width > 600px) {

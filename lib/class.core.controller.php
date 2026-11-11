@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-08
- * Version  :: 66
+ * Modified :: 2026-11-11
+ * Version  :: 67
  */
 
 /*************************************************************
@@ -1640,7 +1640,7 @@ class SgCore {
 			$pageClassWidget = null;
 		}
 
-		return [$pageClass, $found, $pageBuildWidget, $pageClassWidget];
+		return [$pageClass, $found, $pageBuildWidget ?? null, $pageClassWidget];
 	}
 
 	/**

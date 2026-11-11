@@ -3,8 +3,8 @@
  * Paper    :: Paper Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-11-21
- * Modified :: 2026-09-19
- * Version  :: 12
+ * Modified :: 2026-11-11
+ * Version  :: 13
  *
  * @uses import('model:paper.php');
  * @uses new PaperModel([])
@@ -155,17 +155,17 @@ class PaperModel extends \NodeModel {
 		}
 
 		$right->admin = $right->isAdmin = user_access('administer papers,administer contents');
-		$right->owner = $right->isOwner = i()->ok && ($result->info->uid == i()->uid || in_array($result->membership[i()->uid], ['OWNER']));
+		$right->owner = $right->isOwner = i()->ok && ($result->info->uid == i()->uid || in_array($result->membership[i()->uid] ?? null, ['OWNER']));
 
 		if ($right->isAdmin) $result->membership[i()->uid] = 'ADMIN';
 
-		$result->info->membershipType = $result->membership[i()->uid];
+		$result->info->membershipType = $result->membership[i()->uid] ?? null;
 		$result->info->orgMemberShipType = $result->orgid ? \OrgModel::officerType($result->orgid, i()->uid) : NULL;
 
 		$right->edit = $right->isEdit = $right->isAdmin
 						|| $right->isOwner
-						|| in_array($result->info->membershipType,array('ADMIN','MANAGER','TRAINER','OWNER'))
-						|| in_array($result->info->orgMembershipType,array('ADMIN','MANAGER','TRAINER','OFFICER'));
+						|| in_array($result->info->membershipType ?? null, ['ADMIN','MANAGER','TRAINER','OWNER'])
+						|| in_array($result->info->orgMembershipType ?? null, ['ADMIN','MANAGER','TRAINER','OFFICER']);
 
 		if ($right->isAdmin) $result->RIGHT = $result->RIGHT | _IS_ADMIN;
 		if ($right->isOwner) $result->RIGHT = $result->RIGHT | _IS_OWNER;
@@ -176,7 +176,7 @@ class PaperModel extends \NodeModel {
 
 
 		//$result->RIGHT = $right;
-		$result->RIGHTBIN = decbin($result->RIGHT);
+		$result->RIGHTBIN = decbin($result->RIGHT ?? 0);
 
 
 		if ($options->data == 'info') return $result;

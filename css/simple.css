@@ -4037,21 +4037,23 @@ $SCREENS
 	}
 
 	#colorbox.-transparent {
+		--border-radius: 16px;
 		background-color: transparent;
 		.box-page {
 			background-color: transparent;
 			padding-left: 0;
 			padding-right: 0;
+			margin: 16px 0 0 0;
 		}
 		.widget-appbar {
-			border-radius: 8px;
+			border-radius: 24px;
 			overflow: clip;
 		}
 		.widget-card {
-			border-radius: 8px;
+			border-radius: var(--border-radius);
 		}
 		.widget-table:last-child {
-			border-radius: 8px;
+			border-radius: var(--border-radius);
 		}
 		.widget-table tr:last-child > td {
 			border-bottom: none;
@@ -4061,6 +4063,14 @@ $SCREENS
 	.colorbox.-map {
 		#cboxLoadedContent {
 			padding: 0;
+		}
+	}
+
+	.colorbox {
+		&:not(.-transparent) {
+			#cboxLoadedContent {
+				background-color: var(--card-bg-color);
+			}
 		}
 	}
 

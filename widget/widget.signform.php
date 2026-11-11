@@ -3,39 +3,37 @@
  * Widget   :: Sign Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-20
- * Modified :: 2026-11-02
- * Version  :: 13
+ * Modified :: 2026-11-11
+ * Version  :: 14
  *
- * @param Array $args
+ * @param array $args
  *
- * @usage new SignForm([])
+ * @uses new SignForm()
  */
 
-class SignForm extends Widget {
+class SignForm extends \Widget {
 	public $version = '1.00';
-	public $action;
-	public $username;
-	public $password;
-	public $time = 10080;
-	public $done;
-	public $showRegisterButton = true;
-	public $showForgotButton = true;
-	public $showGuide = true;
-	public $registerRel = '#main';
-	public $registerReturnUrl;
-	public $registerText = 'Create new account';
-	public $guideText = '<div class="-guideline"><h5>คำแนะนำในการเข้าสู่ระบบ</h5><ul><li>ป้อน <b>บัญชีผู้ใช้ (username) หรืออีเมล์ (email)</b> ที่ลงทะเบียนไว้กับเว็บไซท์</li><li>ป้อน <b>รหัสผ่าน (password)</b></li><li>คลิกที่ปุ่ม <strong>เข้าสู่ระบบ (Sign In)</strong></li><li>กรณีลืมรหัสผ่านคลิกที่ <b>ลืมรหัสผ่าน?</b></li><li>กรณีที่ยังไม่มีบัญชีผู้ใช้ กรุณา <strong>สมัครสมาชิก</strong> ก่อน</li></ul></div>';
+	public ?string $username = null;
+	public ?string $password = null;
+	public ?int $time = 10080;
+	public bool $showRegisterButton = true;
+	public bool $showForgotButton = true;
+	public bool $showGuide = true;
+	public string $registerRel = '#main';
+	public ?string $registerReturnUrl = null;
+	public string $registerText = 'Create new account';
+	public string $guideText = '<div class="-guideline"><h5>คำแนะนำในการเข้าสู่ระบบ</h5><ul><li>ป้อน <b>บัญชีผู้ใช้ (username) หรืออีเมล์ (email)</b> ที่ลงทะเบียนไว้กับเว็บไซท์</li><li>ป้อน <b>รหัสผ่าน (password)</b></li><li>คลิกที่ปุ่ม <strong>เข้าสู่ระบบ (Sign In)</strong></li><li>กรณีลืมรหัสผ่านคลิกที่ <b>ลืมรหัสผ่าน?</b></li><li>กรณีที่ยังไม่มีบัญชีผู้ใช้ กรุณา <strong>สมัครสมาชิก</strong> ก่อน</li></ul></div>';
 
-	function __construct($args = []) {
+	function __construct($args = [], ?int $rememberTime = null) {
 		parent::__construct(
-			array_replace_recursive(
+			array_replace(
 				[
 					'class' => '-normal',
-					'formAction' => url(q()), // default current url
+					'formAction' => \Url::link(q()), // default current url
 					'done' => 'reload',
 					'username' => null,
 					'password' => null,
-					'time' => $this->time,
+					'time' => $rememberTime ?? $this->time,
 					'showForgotButton' => $this->showForgotButton,
 					'showRegisterButton' => $this->showRegisterButton,
 					'showGuide' => $this->showGuide,
@@ -62,20 +60,20 @@ class SignForm extends Widget {
 	function build() {
 		$id = uniqid();
 
-		return new Widget([
+		return new \Widget([
 			'tagName' => 'div',
 			'class' => 'widget-signform ' . ($this->class ? ' ' . $this->class : ''),
 			'children' => [
 				// $this->preText ? '<div class="-pre-text">'.$this->renderChildren([$this->preText]).'</div>' : NULL,
 				'<header><h3><i class="icon -material">login</i><span> กรณีเป็นสมาชิกเว็บอยู่แล้ว</span></h3></header>',
 				$this->preText
-					? new Widget([
+					? new \Widget([
 						'children' => SG\getFirst($this->preText->children, [
 							$this->preText
 						])
 					])
 					: null,
-				new Form([
+				new \Form([
 					'action' => $this->formAction,
 					'id' => $this->id ? $this->id : 'signin-' . $id,
 					'class' => 'sg-form -form',
@@ -140,48 +138,48 @@ class SignForm extends Widget {
 				]), // Form
 				'<div class="-more">',
 				$this->showForgotButton
-					? new Button([
+					? new \Button([
 						'type' => 'link',
 						'class' => '-fill',
 						'href' => 'javascript:void(0)',
 						'onClick' =>
 							'window.location="'
-							. Url::link('user/password')
+							. \Url::link('user/password')
 							. '";return false;',
-						'icon' => new Icon('restore'),
+						'icon' => new \Icon('restore'),
 						'text' => tr('Request new password') . '?'
 					])
 					: null,
 				'</div>',
-				new Column([
+				new \Column([
 					'class' => '-not-member -sg-text-center',
 					'children' => [
 						'<h3>ยังไม่ได้เป็นสมาชิก</h3>',
 						$this->showRegisterButton && user_access('register new member')
-							? new Button([
+							? new \Button([
 								'type' => 'link',
 								'class' => 'sg-action -fill',
-								'href' => Url::link('user/register'),
-								'icon' => new Icon('person_add'),
+								'href' => \Url::link('user/register'),
+								'icon' => new \Icon('person_add'),
 								'text' => tr('Create new account'),
 								'rel' => $this->registerRel
 							])
 							: null
 						// '<span class="ui-action">'
-						// . (user_access('register new member') && $this->showRegisterButton ? '<a class="sg-action btn -fill" href="'.url('user/register', ['ret' => $this->registerReturnUrl, 'rel' => $this->registerRel]).'" data-rel="'.$this->regRel.'"><i class="icon -material">person_add</i><span>'.tr('Create new account').'</span></a> ' : '')
+						// . (user_access('register new member') && $this->showRegisterButton ? '<a class="sg-action btn -fill" href="'.\Url::link('user/register', ['ret' => $this->registerReturnUrl, 'rel' => $this->registerRel]).'" data-rel="'.$this->regRel.'"><i class="icon -material">person_add</i><span>'.tr('Create new account').'</span></a> ' : '')
 						// '<div style="height: 16px;"></div>',
-						// '<a class="btn -link -fill" href="javascript:void(0)" onclick="window.location=\''.url('user/password').'\';return false;"><i class="icon -material -gray">restore</i><span>'.tr('Request new password').'?</span></a></span>',
+						// '<a class="btn -link -fill" href="javascript:void(0)" onclick="window.location=\''.\Url::link('user/password').'\';return false;"><i class="icon -material -gray">restore</i><span>'.tr('Request new password').'?</span></a></span>',
 					] // children
 				]), // Column
 				$this->showGuide
-					? new Widget([
+					? new \Widget([
 						'children' => is_object($this->guideText)
 							? $this->guideText->children
 							: [$this->guideText]
 					])
 					: null,
 				$this->postText
-					? new Widget([
+					? new \Widget([
 						'children' => SG\getFirst($this->postText->children, [
 							$this->postText
 						])
@@ -202,7 +200,7 @@ class SignForm extends Widget {
  * Get widget signform
  * Call from html class "widget signform"
  *
- * @param String $para
+ * param string $para
  * 	data-header=Header
  * 	data-limit=Limit (default all)
  * 	data-order=Order Field
@@ -217,11 +215,11 @@ function widget_signform() {
 
 	$ret .=
 		'<a href="'
-		. url('my')
+		. \Url::link('my')
 		. '">'
 		. (i()->ok
 			? '<img class="profile-photo" src="'
-				. BasicModel::user_photo(i()->username)
+				. \BasicModel::user_photo(i()->username)
 				. '" width="32" height="32" />'
 			: '<i class="icon -material">person</i>')
 		. '<span>'
@@ -235,7 +233,7 @@ function widget_signform() {
 		$ret .= '<ul class="menu -sub -member">' . _NL;
 		$ret .=
 			'<li><a href="'
-			. url('my')
+			. \Url::link('my')
 			. '">'
 			. tr('Welcome')
 			. ' '
@@ -244,7 +242,7 @@ function widget_signform() {
 			. _NL;
 		$ret .=
 			'<li><a href="'
-			. url('my')
+			. \Url::link('my')
 			. '">'
 			. tr('Edit My <strong>Profile</strong>')
 			. '</a></li>'
@@ -258,7 +256,7 @@ function widget_signform() {
 				if (user_access('administer papers,create ' . $fid . ' paper')) {
 					$ret .=
 						'<li><a href="'
-						. url('paper/post/' . $fid)
+						. \Url::link('paper/post/' . $fid)
 						. '">'
 						. $text
 						. '</a></li>'
@@ -291,7 +289,7 @@ function widget_signform() {
 		if (module_install('blog')) {
 			$ret .=
 				'<li><a href="'
-				. url('dashboard')
+				. \Url::link('dashboard')
 				. '">บล็อก (Blog) ของฉัน</a></li>'
 				. _NL;
 		}
@@ -299,7 +297,7 @@ function widget_signform() {
 		if (module_install('paper')) {
 			$ret .=
 				'<li><a class="-new" href="'
-				. url('paper/my')
+				. \Url::link('paper/my')
 				. '">จัดการเอกสาร</a></li>'
 				. _NL;
 		}
@@ -307,14 +305,14 @@ function widget_signform() {
 		if (user_access('access administrator pages')) {
 			$ret .=
 				'<li><a href="'
-				. url('admin')
+				. \Url::link('admin')
 				. '">Website <strong>Admin</strong>istrator</a></li>'
 				. _NL;
 		}
 
 		$ret .=
 			'<li><a href="'
-			. url('signout')
+			. \Url::link('signout')
 			. '">'
 			. tr('Sign out')
 			. '</a></li>'
@@ -323,22 +321,22 @@ function widget_signform() {
 	} elseif ($para->form == 'link') {
 		$ret .=
 			'<ul><li><a href="'
-			. url('user')
+			. \Url::link('user')
 			. '">'
 			. tr('Sign in')
 			. '</a></li><li><a href="'
-			. url('user/register')
+			. \Url::link('user/register')
 			. '">'
 			. tr('Create Account')
 			. '!</a></li></ul>';
 	} else {
 		//			$ret.='$_GET[action]='.$_GET['action'].' , $para->actiion='.$para->action.' , _URL='._URL.' , HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 
-		$form = new Form([
-			'action' => \SG\getFirst(url(q())),
+		$form = new \Form([
+			'action' => \SG\getFirst(\Url::link(q())),
 			'id' => $para->id ? $para->id : 'signin-' . uniqid(),
 			'class' => $para->class,
-			// $form->config->action = SG\getFirst($_GET['action'],$para->action,url(q()),$_SERVER['HTTP_REFERER']);
+			// $form->config->action = SG\getFirst($_GET['action'],$para->action,\Url::link(q()),$_SERVER['HTTP_REFERER']);
 			// $form->config->action = SG\getFirst($_GET['action'],$para->action,_URL,$_SERVER['HTTP_REFERER']);
 			'children' => [
 				'username' => [
@@ -392,13 +390,13 @@ function widget_signform() {
 				],
 				user_access('register new member')
 					? '<a class="btn -link" href="'
-						. url('user/register')
+						. \Url::link('user/register')
 						. '"><i class="icon -material">person_add</i><span>'
 						. tr('Create new account')
 						. '</span></a>'
 					: null,
 				'<a class="btn -link" href="#" onclick="window.location=\''
-				. url('user/password')
+				. \Url::link('user/password')
 				. '\';return false;"><i class="icon -material">restore</i><span>'
 				. tr('Request new password')
 				. '?</span></a>'

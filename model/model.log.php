@@ -3,8 +3,8 @@
  * Log      :: Log Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2024-06-26
- * Modified :: 2026-10-05
- * Version  :: 7
+ * Modified :: 2026-11-11
+ * Version  :: 8
  *
  * @uses import('model:module.modelname.php')
  * @uses new LogModel([])
@@ -23,25 +23,29 @@ class LogModel {
 				'keyword' => null,
 				'message' => null,
 				'keyId' => null,
-				'fieldName' => null,
+				'fieldName' => null
 			],
 			(array) $data
 		);
 
-		if (!DB::tableExists('watchdog')) return false;
+		if (!DB::tableExists('watchdog')) {
+			return false;
+		}
 
-		$data = (Object) [
+		$data = (object) [
 			'date' => date('Y-m-d H:i:s'),
 			'uid' => SG\getFirst($data->userId, i()->uid ?? null),
-			'ip' => ip2long(i()->ip ?? null),
+			'ip' => ip2long(i()->ip ?? 0),
 			'module' => SG\getFirst($data->module),
 			'keyword' => SG\getFirst($data->keyword),
 			'message' => SG\getFirst($data->message),
-			'url' => preg_match('/IIS/i', $_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SCRIPT_NAME'] . '?' . $_SERVER['QUERY_STRING'] : $_SERVER['REQUEST_URI'],
+			'url' => preg_match('/IIS/i', $_SERVER['SERVER_SOFTWARE'])
+				? $_SERVER['SCRIPT_NAME'] . '?' . $_SERVER['QUERY_STRING']
+				: $_SERVER['REQUEST_URI'],
 			'referer' => SG\getFirst($_SERVER['HTTP_REFERER'] ?? null),
 			'browser' => $_SERVER['HTTP_USER_AGENT'],
 			'keyId' => $data->keyId,
-			'fieldName' => $data->fieldName,
+			'fieldName' => $data->fieldName
 		];
 
 		try {
@@ -61,7 +65,7 @@ class LogModel {
 	}
 
 	public static function history(array $data = []): int {
-		$data = (Object) array_replace_recursive(
+		$data = (object) array_replace_recursive(
 			[
 				'module' => null,
 				'orgId' => null,
@@ -70,9 +74,9 @@ class LogModel {
 				'refId' => null,
 				'tagName' => null,
 				'createDate' => date('Y-m-d H:i:s'),
-				'data' => [],
+				'data' => []
 			],
-			(Array) $data
+			(array) $data
 		);
 
 		$data->json = new JsonDataModel($data->data);
@@ -86,7 +90,7 @@ class LogModel {
 				:userId, :orgId, :nodeId, :refId, :tagName, :createDate
 				, :json
 				)',
-				'var' => $data,
+				'var' => $data
 			])->insertId();
 		} catch (Exception $exception) {
 			return 0;

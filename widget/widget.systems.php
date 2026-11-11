@@ -3,10 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-09
- * Version  :: 111
- *
- * @param array $args
+ * Modified :: 2026-11-11
+ * Version  :: 112
  *
  * @uses new Widget([key => value,...])
  */
@@ -789,6 +787,51 @@ class Container extends Widget {
 } // End of class Container
 
 /**
+ * Widget :: Section Widget
+ *
+ * @param array $args
+ * @uses new Container([key => value,...])
+ */
+class Section extends Widget {
+	public $widgetName = 'Section';
+	public $version = '0.0.01';
+	public $tagName = 'section';
+	public $fillButton = false;
+
+	function __construct(
+		$args = [],
+		?string $id = null,
+		?string $class = null,
+		?string $style = null,
+		mixed $child = null,
+		?array $children = []
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'id' => $id,
+					'class' => $class,
+					'style' => $style,
+					'child' => $child,
+					'children' => $children
+				],
+				$args
+			)
+		);
+	}
+
+	// @override
+	function toString() {
+		$ret = $this->renderWidgetContainerStart();
+		if ($this->children()) {
+			$ret .= $this->renderChildren($this->children());
+		}
+		$ret .= $this->renderWidgetContainerEnd();
+		return $ret;
+	}
+} // End of class Section
+
+/**
  * Widget :: Center Widget
  *
  * @param array $args
@@ -876,6 +919,7 @@ class Row extends Widget {
 		?string $style = null,
 		?string $mainAxisAlignment = null,
 		?string $crossAxisAlignment = null,
+		mixed $child = null,
 		?array $children = []
 	) {
 		parent::__construct(
@@ -886,6 +930,7 @@ class Row extends Widget {
 					'style' => $style,
 					'mainAxisAlignment' => $mainAxisAlignment,
 					'crossAxisAlignment' => $crossAxisAlignment,
+					'child' => $child,
 					'children' => $children
 				],
 				$args
@@ -1474,7 +1519,10 @@ class Button extends Widget {
 		?string $title = null,
 		string $iconPosition = 'left',
 		string|int|null $boxWidth = null,
-		mixed $access = null
+		string|int|null $boxHeigth = null,
+		mixed $access = null,
+		?string $webviewTitle = null,
+		?string $boxType = null
 	) {
 		parent::__construct(
 			array_replace(
@@ -1490,7 +1538,10 @@ class Button extends Widget {
 					'iconPosition' => $iconPosition,
 					'access' => $access,
 					'variable' => $variable,
-					'boxWidth' => $boxWidth
+					'boxWidth' => $boxWidth,
+					'boxHeigth' => $boxHeigth,
+					'boxType' => $boxType,
+					'data-webview' => $webviewTitle
 				],
 				(array) $args
 			)
@@ -2174,6 +2225,7 @@ class Scaffold extends Widget {
 		mixed $sideBar = null,
 		mixed $body = null,
 		mixed $floatingActionButton = null,
+		?array $var = null,
 		mixed $script = null
 	) {
 		parent::__construct(
@@ -2183,6 +2235,7 @@ class Scaffold extends Widget {
 					'sideBar' => $sideBar,
 					'body' => $body,
 					'floatingActionButton' => $floatingActionButton,
+					'var' => $var,
 					'script' => $script
 				],
 				$args

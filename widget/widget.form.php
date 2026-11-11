@@ -3,10 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-10-13
- * Version  :: 55
- *
- * @param Array $args
+ * Modified :: 2026-11-11
+ * Version  :: 56
  *
  * @uses new Form([key => value,...])
  *	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, rel, done, children, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
@@ -41,6 +39,7 @@ class Form extends Widget {
 		$args = [],
 		?string $id = null,
 		?string $class = null,
+		?string $method = null,
 		?string $action = null,
 		?bool $checkValid = false,
 		?string $rel = null,
@@ -56,6 +55,7 @@ class Form extends Widget {
 					[
 						'id' => $id,
 						'class' => $class,
+						'method' => $method ?? $this->method,
 						'action' => $action,
 						'checkValid' => $checkValid,
 						'rel' => $rel,

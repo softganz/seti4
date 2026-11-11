@@ -3,10 +3,8 @@
  * Widget   :: Ui Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-28-01
- * Modified :: 2026-09-19
- * Version  :: 4
- *
- * @param Array $args
+ * Modified :: 2026-11-11
+ * Version  :: 5
  *
  * @uses new Ui([])
  */
@@ -30,7 +28,7 @@ class Ui extends Widget {
 	public $config;
 	public $container;
 
-	function __construct($join = null, $class = null) {
+	function __construct($join = null, $class = null, ?array $children = []) {
 		if (is_object($join) || is_array($join)) {
 			$parameter = is_array($join) ? (object) $join : $join;
 			if (isset($parameter->id)) {
@@ -66,6 +64,10 @@ class Ui extends Widget {
 				$this->class =
 					(substr($class, 0, 1) == '-' ? $this->class . ' ' : '') . $class;
 			}
+		}
+
+		if ($children) {
+			$this->children = $children;
 		}
 		if ($this->debug) {
 			debugMsg($this, 'Ui()');
