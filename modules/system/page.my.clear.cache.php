@@ -1,29 +1,31 @@
 <?php
 /**
-* My      :: Clear Cache
-* Created :: 2020-08-01
-* Modify  :: 2025-06-25
-* Version :: 2
-*
-* @param String $args
-* @return Widget
-*
-* @usage module/{Id}/method
-*/
+ * My       :: Clear Cache
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2020-08-01
+ * Modified :: 2026-11-12
+ * Version  :: 3
+ *
+ * @uses my/clear/cache
+ */
 
 class MyClearCache extends Page {
-	var $args;
-
-	function __construct($args = NULL) {
-		parent::__construct([
-			'args' => $args
-		]);
+	/**
+	 * Right to build
+	 *
+	 * @return object|true
+	 */
+	function rightToBuild(): object|true {
+		if (!i()->ok) {
+			return new SignForm();
+		}
+		return true;
 	}
 
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'ล้างแคช',
+				'title' => 'ล้างแคช'
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
@@ -38,12 +40,12 @@ class MyClearCache extends Page {
 							'save' => [
 								'type' => 'button',
 								'value' => '<span>เรียบร้อย</span>',
-								'container' => ['class' => '-sg-text-center'],
-							],
-						], // children
-					]), // Form
-				], // children
-			]), // Widget
+								'container' => ['class' => '-sg-text-center']
+							]
+						] // children
+					]) // Form
+				] // children
+			]) // Widget
 		]);
 	}
 }

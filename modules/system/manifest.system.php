@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * Created :: 2007-12-17
- * Modify  :: 2025-11-13
- * Version :: 2
+ * Modify  :: 2026-11-12
+ * Version :: 3
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,27 +43,98 @@ cfg('user.release', '18.8.3');
 cfg('watchdog.version', '4.00.00');
 cfg('watchdog.release', '17.7.29');
 
-
 menu('api', 'API', 'api', '__controller', 1, true, 'static');
-menu('comment', 'Comment management', 'comment', '__controller', 1, 'access comments', 'static');
-menu('contents', 'Contents', 'contents', '__controller', 1, 'access papers', 'static');
+menu(
+	'comment',
+	'Comment management',
+	'comment',
+	'__controller',
+	1,
+	'access comments',
+	'static'
+);
+menu(
+	'contents',
+	'Contents',
+	'contents',
+	'__controller',
+	1,
+	'access papers',
+	'static'
+);
 menu('cookies', 'Cookies', 'cookies', '__controller', 1, true, 'static');
-menu('my/account/delete', 'My Account Delete Request', 'my.account.delete', '__controller', 1, true, 'static');
-menu('my', 'My Account Management', 'my', '__controller', 1, i()->ok, 'static');
+menu(
+	'my/account/delete',
+	'My Account Delete Request',
+	'my.account.delete',
+	'__controller',
+	1,
+	true,
+	'static'
+);
+menu('my', 'My Account Management', 'my', '__controller', 1, true, 'static');
 menu('node', 'Node', 'node', '__controller', 1, 'access papers', 'static');
-menu('profile', 'System', 'profile', '__controller', 1, 'access user profiles', 'static');
+menu(
+	'profile',
+	'System',
+	'profile',
+	'__controller',
+	1,
+	'access user profiles',
+	'static'
+);
 menu('qrcode', 'QR Code', 'qrcode', '__controller', 1, true, 'static');
 menu('rss', 'RSS', 'rss', '__controller', 1, true, 'static');
 menu('signin', 'Sign In', 'signin', '__controller', 1, true, 'static');
 menu('signout', 'Sign Out', 'signout', '__controller', 1, true, 'static');
-menu('stats/report', 'Web Statistic Report', 'stats', '__controller', 1, 'access statistic report', 'static');
-menu('stats', 'Web Statistic', 'stats', '__controller', 1, 'access statistic', 'static');
+menu(
+	'stats/report',
+	'Web Statistic Report',
+	'stats',
+	'__controller',
+	1,
+	'access statistic report',
+	'static'
+);
+menu(
+	'stats',
+	'Web Statistic',
+	'stats',
+	'__controller',
+	1,
+	'access statistic',
+	'static'
+);
 menu('system', 'System', 'system', '__controller', 1, true, 'static');
 menu('tags', 'Tags', 'tags', '__controller', 1, 'access papers', 'static');
-menu('underconstruction', 'Under Construction', 'underconstruction', '__controller', 1, true, 'static');
-menu('user/register', 'Member register', 'user', '__controller', 1, 'register new member' , 'static');
+menu(
+	'underconstruction',
+	'Under Construction',
+	'underconstruction',
+	'__controller',
+	1,
+	true,
+	'static'
+);
+menu(
+	'user/register',
+	'Member register',
+	'user',
+	'__controller',
+	1,
+	'register new member',
+	'static'
+);
 menu('user', 'User Management', 'user', '__controller', 1, true, 'static');
-menu('watchdog', 'Watchdog', 'watchdog', '__controller', 1, 'access watchdogs', 'static');
+menu(
+	'watchdog',
+	'Watchdog',
+	'watchdog',
+	'__controller',
+	1,
+	'access watchdogs',
+	'static'
+);
 
 menu('ampur', 'Ampur API', 'ampur', '__controller', 1, true, 'static');
 menu('address', 'Address API', 'address', '__controller', 1, true, 'static');
@@ -78,12 +149,23 @@ menu('tag', 'Tag API', 'tag', '__controller', 1, true, 'static');
 menu('tambon', 'Tambon API', 'tambon', '__controller', 1, true, 'static');
 menu('village', 'Village API', 'village', '__controller', 1, true, 'static');
 
+cfg(
+	'comment.permission',
+	'access comments,administer comments,hide comments,post comments,post comments without approval,edit own comment'
+);
 
-cfg('comment.permission','access comments,administer comments,hide comments,post comments,post comments without approval,edit own comment');
+cfg(
+	'system.permission',
+	'access debugging program,access administrator pages,administer access control,administer contents,upload document,upload photo,upload video'
+);
 
-cfg('system.permission','access debugging program,access administrator pages,administer access control,administer contents,upload document,upload photo,upload video');
+cfg(
+	'user.permission',
+	'access user profiles,administer users,change own username,change own profile,register new member'
+);
 
-cfg('user.permission','access user profiles,administer users,change own username,change own profile,register new member');
-
-cfg('watchdog.permission','access watchdogs,access statistic,access statistic report,access logs,administer watchdogs');
+cfg(
+	'watchdog.permission',
+	'access watchdogs,access statistic,access statistic report,access logs,administer watchdogs'
+);
 ?>

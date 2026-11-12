@@ -1,14 +1,12 @@
 <?php
 /**
- * My      :: Change My Detail Information
- * Created :: 20xx-xx-xx
- * Modify  :: 2025-06-25
- * Version :: 2
+ * My       :: Change My Detail Information
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 20xx-xx-xx
+ * Modified :: 2026-11-12
+ * Version  :: 3
  *
- * @param String $args
- * @return Widget
- *
- * @usage module/{Id}/method
+ * @uses module/{Id}/method
  */
 
 class MyChangeDetail extends Page {
@@ -16,6 +14,18 @@ class MyChangeDetail extends Page {
 
 	function __construct() {
 		parent::__construct([]);
+	}
+
+	/**
+	 * Right to build
+	 *
+	 * @return object|true
+	 */
+	function rightToBuild(): object|true {
+		if (!i()->ok) {
+			return new SignForm();
+		}
+		return true;
 	}
 
 	function build() {
@@ -29,7 +39,7 @@ class MyChangeDetail extends Page {
 
 		$profile = (object) post('profile', _TRIM + _STRIPTAG);
 
-		if ($profile->name) {
+		if (!empty($profile->name)) {
 			if (empty($profile->name)) {
 				$error[] = 'กรุณาป้อนนามแฝง';
 			}
@@ -78,7 +88,7 @@ class MyChangeDetail extends Page {
 			$profile = (object) $userInfo;
 		}
 
-		if ($error) {
+		if (!empty($error)) {
 			$ret .= $message = message('error', $error);
 		}
 

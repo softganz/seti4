@@ -1,19 +1,29 @@
 <?php
 /**
- * My      :: Change Profile Photo
- * Created :: 20xx-xx-xx
- * Modify  :: 2025-09-29
- * Version :: 3
+ * My       :: Change Profile Photo
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 20xx-xx-xx
+ * Modified :: 2026-11-12
+ * Version  :: 4
  *
- * @param String $args
- * @return Widget
- *
- * @usage my/change/photo
+ * @uses my/change/photo
  */
 
 class MyChangePhoto extends Page {
+	/**
+	 * Right to build
+	 *
+	 * @return object|true
+	 */
+	function rightToBuild(): object|true {
+		if (!i()->ok) {
+			return new SignForm();
+		}
+		return true;
+	}
+
 	function build() {
-		$photo = $_FILES['photo'];
+		$photo = $_FILES['photo'] ?? null;
 
 		if ($photo) {
 			$ret .= 'UPLAOD';
@@ -71,7 +81,7 @@ class MyChangePhoto extends Page {
 			}
 		}
 
-		if ($error) {
+		if (!empty($error)) {
 			header('HTTP/1.0 406 Not Acceptable');
 			$ret .= message('error', $error);
 		}

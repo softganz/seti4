@@ -3,10 +3,8 @@
  * My       :: Photo List
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-11-27
- * Modified :: 2026-08-23
- * Version  :: 3
- *
- * @return Widget
+ * Modified :: 2026-11-12
+ * Version  :: 4
  *
  * @uses my/photo
  */
@@ -14,6 +12,18 @@
 use Softganz\DB;
 
 class MyPhoto extends Page {
+	/**
+	 * Right to build
+	 *
+	 * @return object|true
+	 */
+	function rightToBuild(): object|true {
+		if (!i()->ok) {
+			return new SignForm();
+		}
+		return true;
+	}
+
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([

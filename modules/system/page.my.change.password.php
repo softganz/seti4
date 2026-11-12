@@ -3,8 +3,8 @@
  * My       :: Change Password Form
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-08-23
- * Modified :: 2026-11-03
- * Version  :: 4
+ * Modified :: 2026-11-12
+ * Version  :: 5
  *
  * @uses my/change/password
  */
@@ -12,6 +12,18 @@
 class MyChangePassword extends Page {
 	var $cfgUserRegister;
 	var $validCheck;
+
+	/**
+	 * Right to build
+	 *
+	 * @return object|true
+	 */
+	function rightToBuild(): object|true {
+		if (!i()->ok) {
+			return new SignForm();
+		}
+		return true;
+	}
 
 	function __construct() {
 		parent::__construct([

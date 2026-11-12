@@ -3,21 +3,27 @@
  * My      :: My Home
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2021-12-14
- * Modify  :: 2026-04-06
- * Version :: 6
- *
- * @return Widget
+ * Modified :: 2026-11-12
+ * Version :: 7
  *
  * @usage my
  */
 
 class My extends Page {
-	#[\Override]
-	function build() {
+	/**
+	 * Right to build
+	 *
+	 * @return object|true
+	 */
+	function rightToBuild(): object|true {
 		if (!i()->ok) {
 			return new SignForm();
 		}
+		return true;
+	}
 
+	#[\Override]
+	function build() {
 		$uid = i()->uid;
 		$userInfo = UserModel::get($uid);
 

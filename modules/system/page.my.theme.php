@@ -1,23 +1,25 @@
 <?php
 /**
- * My      :: Theme Management
- * Created :: 2024-07-23
- * Modify  :: 2024-07-23
- * Version :: 1
+ * My       :: Theme Management
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-07-23
+ * Modified :: 2026-11-12
+ * Version  :: 2
  *
- * @param String $arg1
- * @return Widget
- *
- * @usage my/theme
+ * @uses my/theme
  */
 
 class MyTheme extends Page {
-	var $arg1;
-
-	function __construct($arg1 = null) {
-		parent::__construct([
-			'arg1' => $arg1
-		]);
+	/**
+	 * Right to build
+	 *
+	 * @return object|true
+	 */
+	function rightToBuild(): object|true {
+		if (!i()->ok) {
+			return new SignForm();
+		}
+		return true;
 	}
 
 	function build() {
