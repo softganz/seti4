@@ -3,8 +3,8 @@
  * Widget   :: Sign Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-20
- * Modified :: 2026-11-11
- * Version  :: 14
+ * Modified :: 2026-11-12
+ * Version  :: 15
  *
  * @param array $args
  *
@@ -318,7 +318,7 @@ function widget_signform() {
 			. '</a></li>'
 			. _NL;
 		$ret .= '</ul>' . _NL;
-	} elseif ($para->form == 'link') {
+	} elseif (!empty($para->form) && $para->form == 'link') {
 		$ret .=
 			'<ul><li><a href="'
 			. \Url::link('user')
@@ -334,7 +334,7 @@ function widget_signform() {
 
 		$form = new \Form([
 			'action' => \SG\getFirst(\Url::link(q())),
-			'id' => $para->id ? $para->id : 'signin-' . uniqid(),
+			'id' => !empty($para->id) ? $para->id : 'signin-' . uniqid(),
 			'class' => $para->class,
 			// $form->config->action = SG\getFirst($_GET['action'],$para->action,\Url::link(q()),$_SERVER['HTTP_REFERER']);
 			// $form->config->action = SG\getFirst($_GET['action'],$para->action,_URL,$_SERVER['HTTP_REFERER']);
@@ -375,8 +375,8 @@ function widget_signform() {
 						'-1' => tr('Forever')
 					],
 					'value' => \SG\getFirst(
-						$para->cookielength,
-						$_POST['cookielength'],
+						$para->cookielength ?? null,
+						$_POST['cookielength'] ?? null,
 						10080
 					)
 				],

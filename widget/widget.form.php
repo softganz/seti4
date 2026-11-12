@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-11
- * Version  :: 56
+ * Modified :: 2026-11-12
+ * Version  :: 58
  *
  * @uses new Form([key => value,...])
  *	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, rel, done, children, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
@@ -1075,7 +1075,8 @@ class Form extends Widget {
 			[
 				'count' => null,
 				'size' => null,
-				'multiple' => null
+				'multiple' => null,
+				'accept' => null
 			],
 			(array) $formElement
 		);

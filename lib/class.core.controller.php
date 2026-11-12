@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-11
- * Version  :: 67
+ * Modified :: 2026-11-12
+ * Version  :: 68
  */
 
 /*************************************************************
@@ -19,7 +19,7 @@
 #[AllowDynamicProperties]
 class R {
 	public string $configFolder;
-	public ?string $colorScheme;
+	public ?string $colorScheme = null;
 	public string $request;
 	public object $appAgent;
 	public object $message;
