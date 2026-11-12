@@ -3,14 +3,11 @@
  * Model    :: Node Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-09-30
- * Modified :: 2026-10-02
- * Version  :: 32
+ * Modified :: 2026-11-12
+ * Version  :: 33
  *
- * @param array $args
- * @return object
- *
- * @usage new NodeModel([])
- * @usage NodeModel::function($conditions, $options)
+ * @uses new NodeModel([])
+ * @uses NodeModel::function($conditions, $options)
  */
 
 use Softganz\DB;
@@ -60,13 +57,11 @@ class NodeModel {
 	}
 
 	public static function getData($nodeId) {
-		return DB::select([
+		return \DB::select(
 			'SELECT `json` FROM %topic_data% WHERE `tpid` = :nodeId LIMIT 1',
-			'var' => [':nodeId' => $nodeId],
-			'options' => [
-				'jsonDecode' => [['field' => 'json']]
-			]
-		])->json;
+			var: [':nodeId' => $nodeId],
+			jsonDecode: [['field' => 'json']]
+		)->valueOf('json');
 	}
 
 	public static function items($conditions) {
