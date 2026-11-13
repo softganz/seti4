@@ -196,7 +196,7 @@ class Widget extends WidgetBase {
 	protected string $version;
 	protected ?string $tagName = null;
 	protected ?string $childTagName = null;
-	public $id;
+	public ?string $id;
 	public $class;
 	public $header;
 	public $itemClass;

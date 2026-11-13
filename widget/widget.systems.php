@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-13
- * Version  :: 117
+ * Version  :: 118
  *
  * @uses new Widget([key => value,...])
  */
@@ -94,7 +94,7 @@ class Widget extends WidgetBase {
 	protected string $version = '0.1.02'; // string
 	protected ?string $tagName = null; // string
 	protected ?string $childTagName = null; // string
-	public $id; // string
+	public ?string $id = null; // string
 	public $class; // string
 	public $header; // string, widget
 	public $itemClass; // string
