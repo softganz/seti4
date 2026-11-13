@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
  * Modified :: 2026-11-12
- * Version  :: 45
+ * Version  :: 46
  *
  * @param array $args
  *
@@ -13,8 +13,8 @@
 
 class InlineEdit extends Widget {
 	protected string $widgetName = 'InlineEdit';
+	protected string $version = '0.4.01';
 	public $tagName = 'div';
-	public $version = '0.04';
 	public $childTagName = 'span';
 
 	// Parent propoty

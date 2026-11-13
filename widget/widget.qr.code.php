@@ -4,9 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2024-07-28
  * Modified :: 2026-11-12
- * Version  :: 5
- *
- * @param Array $args
+ * Version  :: 6
  *
  * @uses import('widget:qr.code.php')
  * @uses new QrCodeWidget([
@@ -23,7 +21,7 @@
 
 class QrCodeWidget extends Widget {
 	protected string $widgetName = 'QrCode';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div'; // String
 	public $url;
 	public $domain;

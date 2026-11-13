@@ -4,9 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-04-24
  * Modified :: 2026-11-12
- * Version  :: 5
- *
- * @param Array $args
+ * Version  :: 6
  *
  * @uses Class ModuleDocs extends ModuleDocsWidget
  */
@@ -15,7 +13,7 @@ import('package:external/parsedown/Parsedown.php'); // https://github.com/parsed
 
 class ModuleDocsWidget extends WidgetBase {
 	protected string $widgetName = 'Widget';
-	public $version = 1;
+	protected string $version = '0.0.01';
 	public $title = 'Module Documentation.';
 	public $module = 'imed';
 	public $sideBarPage = 'toc';

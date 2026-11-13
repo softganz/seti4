@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-12
- * Version  :: 114
+ * Version  :: 115
  *
  * @uses new Widget([key => value,...])
  */
@@ -19,7 +19,7 @@
 #[AllowDynamicProperties]
 class WidgetBase {
 	protected string $widgetName = 'Widget';
-	public $version;
+	protected string $version;
 	private static string $camelToDashRegex = '/([A-Z]+)/';
 
 	function __construct($args = []) {
@@ -59,7 +59,7 @@ class WidgetBase {
  */
 class Children extends WidgetBase {
 	protected string $widgetName = 'Children';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $type;
 	public ?array $children = [];
 	function __construct(
@@ -599,7 +599,7 @@ class Widget extends WidgetBase {
  */
 class DOM extends Widget {
 	protected string $widgetName;
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName;
 	public $class;
 	public $settings = [];
@@ -652,7 +652,7 @@ class DOM extends Widget {
  */
 class HtmlTemplate extends Widget {
 	protected string $widgetName = 'Template';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'template';
 }
 
@@ -664,7 +664,7 @@ class HtmlTemplate extends Widget {
  */
 class Header extends Widget {
 	protected string $widgetName = 'Header';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'header';
 	public $titleTag = 'span';
 	public $leading = '';
@@ -745,7 +745,7 @@ class Header extends Widget {
  */
 class Container extends Widget {
 	protected string $widgetName = 'Container';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public $fillButton = false;
 
@@ -793,7 +793,7 @@ class Container extends Widget {
  */
 class Section extends Widget {
 	protected string $widgetName = 'Section';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'section';
 	public $fillButton = false;
 
@@ -838,7 +838,7 @@ class Section extends Widget {
  */
 class Center extends Widget {
 	protected string $widgetName = 'Center';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public $class = '-sg-text-center';
 
@@ -855,7 +855,7 @@ class Center extends Widget {
  */
 class ListOrder extends Widget {
 	protected string $widgetName = 'ListOrder';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'ul';
 	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
@@ -875,7 +875,7 @@ class ListOrder extends Widget {
  */
 class Column extends Widget {
 	protected string $widgetName = 'Column';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 
@@ -908,7 +908,7 @@ class Column extends Widget {
  */
 class Row extends Widget {
 	protected string $widgetName = 'Row';
-	public $version = '0.0.10';
+	protected string $version = '0.0.10';
 	public $tagName = 'div';
 	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 	function __construct(
@@ -946,7 +946,7 @@ class Row extends Widget {
  */
 class FloatingActionButton extends Widget {
 	protected string $widgetName = 'FloatingActionButton';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class FloatingActionButton
@@ -959,7 +959,7 @@ class FloatingActionButton extends Widget {
  */
 class ListTile extends Widget {
 	protected string $widgetName = 'ListTile';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public $titleTag = 'span';
 	public $leading;
@@ -1016,7 +1016,7 @@ class ListTile extends Widget {
  */
 class Card extends Widget {
 	protected string $widgetName = 'Card';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public $titleTag = 'div';
 
@@ -1099,7 +1099,7 @@ class Card extends Widget {
  */
 class Nav extends Widget {
 	protected string $widgetName = 'Nav';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'nav';
 	public $class = 'nav';
 	public ?string $type = null;
@@ -1210,7 +1210,7 @@ class Nav extends Widget {
  */
 class SideBar extends Widget {
 	protected string $widgetName = 'SideBar';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'aside';
 	public ?string $type; // null, wide
 	public mixed $gripHeader = 'Menu';
@@ -1274,7 +1274,7 @@ class SideBar extends Widget {
  */
 class ScrollView extends Widget {
 	protected string $widgetName = 'ScrollView';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public $scrollDirection = 'horizontal';
 
@@ -1298,8 +1298,8 @@ class ScrollView extends Widget {
  */
 class DebugMsg extends Widget {
 	protected string $widgetName = 'DebugMsg';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
-	public $version = '0.0.01';
 	public $class = 'debug-msg';
 	public $msg;
 	public $varName;
@@ -1436,7 +1436,7 @@ class DebugMsg extends Widget {
  */
 class Message extends WidgetBase {
 	protected string $widgetName = 'Message';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $responseCode;
 	public $error = false;
 	public $text;
@@ -1487,7 +1487,7 @@ class Message extends WidgetBase {
  */
 class ErrorMessage extends Message {
 	protected string $widgetName = 'ErrorMessage';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 } // End of class ErrorMessage
 
 /**
@@ -1498,7 +1498,7 @@ class ErrorMessage extends Message {
  */
 class Button extends Widget {
 	protected string $widgetName = 'Button';
-	public $version = '0.0.02';
+	protected string $version = '0.0.02';
 	public $tagName = 'a';
 	public ?string $href;
 	public $type = 'default'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
@@ -1664,7 +1664,7 @@ class Button extends Widget {
  */
 class BackButton extends Widget {
 	protected string $widgetName = 'BackButton';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'a';
 	public ?string $href = 'javascript:history.back()';
 	public $type; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
@@ -1743,7 +1743,7 @@ class BackButton extends Widget {
  */
 class Icon extends Widget {
 	protected string $widgetName = 'Icon';
-	public $version = '0.0.03';
+	protected string $version = '0.0.03';
 	public string $icon;
 	public ?string $secondary = null; // For secondary icon
 	public string $type;
@@ -1852,7 +1852,7 @@ class Icon extends Widget {
  */
 class ExpandButton extends Widget {
 	protected string $widgetName = 'ExpandButton';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $icon = 'chevron_right';
 	function toString() {
 		return '<a'
@@ -1877,7 +1877,7 @@ class ExpandButton extends Widget {
  */
 class StepMenu extends Widget {
 	protected string $widgetName = 'StepMenu';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'nav';
 	public $class = '';
 	public $childrenContainer = ['tagName' => 'ul'];
@@ -1920,7 +1920,7 @@ class StepMenu extends Widget {
  */
 class ListItem extends Widget {
 	protected string $widgetName = 'ListItem';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $forceBuild = false;
 	public $seperator = ' · ';
 	public $tagName = 'ul';
@@ -2073,7 +2073,7 @@ class ListItem extends Widget {
  */
 class TabBar extends Widget {
 	protected string $widgetName = 'TabBar';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public $class = 'widget-tabbar sg-tabs';
 
@@ -2119,7 +2119,7 @@ class TabBar extends Widget {
  */
 class ProfilePhoto extends Widget {
 	protected string $widgetName = 'ProfilePhoto';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $username;
 	public $size; // small,big
 	// parent property : $class,$attribute;
@@ -2150,7 +2150,7 @@ class ProfilePhoto extends Widget {
  */
 class Notify extends Widget {
 	protected string $widgetName = 'Notify';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public $titleTag = 'div';
 	public $class = 'notify';
@@ -2192,7 +2192,7 @@ class Notify extends Widget {
  * @uses new XXStackX([key => value,...])
  */
 class Stack extends Widget {
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 }
 
 /**
@@ -2202,7 +2202,7 @@ class Stack extends Widget {
  * @uses new XXGridViewX([key => value,...])
  */
 class GridView extends Widget {
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 }
 
 /**
@@ -2212,7 +2212,7 @@ class GridView extends Widget {
  * @uses new Drawer([key => value,...])
  */
 class Drawer extends Widget {
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 }
 
 // Complex Widget Group
@@ -2225,7 +2225,7 @@ class Drawer extends Widget {
  */
 class Scaffold extends Widget {
 	protected string $widgetName = 'Scaffold';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public mixed $appBar = null;
 	public mixed $sideBar = null;
 	public mixed $body = null;
@@ -2265,7 +2265,7 @@ class Scaffold extends Widget {
  */
 class AppBar extends Widget {
 	protected string $widgetName = 'AppBar';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $tagName = 'div';
 	public mixed $title = null;
 	public mixed $subTitle = null;
@@ -2432,6 +2432,7 @@ class AppBar extends Widget {
  */
 class PageBase extends WidgetBase {
 	protected string $widgetName = 'PageBase';
+	protected string $version = '0.0.01';
 	public $module = null;
 	protected $args = [];
 
@@ -2441,7 +2442,8 @@ class PageBase extends WidgetBase {
 		$this->module = strToLower(
 			preg_split('/(?=[A-Z])/', $this->widgetName, -1, PREG_SPLIT_NO_EMPTY)[0]
 		);
-		$this->version = cfg($this->module . '.version');
+		// debugMsg($this->module . '.version');
+		// $this->version = cfg($this->module . '.version');
 		parent::__construct($args);
 
 		if (debug('widget')) {
@@ -2479,7 +2481,7 @@ class PageBase extends WidgetBase {
  */
 class Page extends PageBase {
 	protected string $widgetName = 'Page';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -2508,7 +2510,7 @@ class Page extends PageBase {
  */
 class PageApi extends PageBase {
 	protected string $widgetName = 'PageApi';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	private $runInternalMethod = true;
 	protected $actionDefault = null;
 	protected $action;
@@ -2585,7 +2587,7 @@ class PageApi extends PageBase {
  */
 class PageController extends PageBase {
 	protected string $widgetName = 'PageController';
-	public $version = '0.0.01';
+	protected string $version = '0.0.01';
 	public $action;
 	public $argIndex = 2;
 	public $args = [];

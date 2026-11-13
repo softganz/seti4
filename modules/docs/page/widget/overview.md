@@ -158,8 +158,8 @@ build()
 
 ```php
 class WidgetBase {
-	public $widgetName = 'Widget';
-	public $version;
+	protected string $widgetName = 'Widget';
+	protected string $version;
 
 	function __construct($args = []) {
 		foreach ($args as $argKey => $argValue) {
@@ -192,8 +192,8 @@ class WidgetBase {
 
 ```php
 class Widget extends WidgetBase {
-	public $widgetName = 'Widget';
-	public $version;
+	protected string $widgetName = 'Widget';
+	protected string $version;
 	public $tagName = '';
 	public $childTagName;
 	public $id;
@@ -276,8 +276,8 @@ class Widget extends WidgetBase {
 
 ```php
 class DOM extends Widget {
-	public $widgetName;
-	public $version = '0.00.01';
+	protected string $widgetName;
+	protected string $version = '0.00.01';
 	public $tagName;
 	public $class;
 	public $settings = [];
@@ -407,8 +407,8 @@ class Column extends Widget {
 
 ```php
 class Row extends Widget {
-	public $widgetName = 'Row';
-	public $version = '0.0.10';
+	protected string $widgetName = 'Row';
+	protected string $version = '0.0.10';
 	public $tagName = 'div';
 	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 }
@@ -423,8 +423,8 @@ class Row extends Widget {
 
 ```php
 class FloatingActionButton extends Widget {
-	public $widgetName = 'FloatingActionButton';
-	public $tagName = 'div';
+	protected string $widgetName = 'FloatingActionButton';
+	protected string $tagName = 'div';
 	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 }
 ```
@@ -507,9 +507,9 @@ $container (global)
 
 ```php
 class MyWidget extends Widget {
-	public $widgetName = 'MyWidget';
+	protected string $widgetName = 'MyWidget';
 	public $tagName = 'div';
-	public $version = '0.01';
+	protected string $version = '0.01';
 
 	function __construct($args = []) {
 		parent::__construct($args);

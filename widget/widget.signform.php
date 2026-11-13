@@ -4,15 +4,13 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-20
  * Modified :: 2026-11-12
- * Version  :: 15
- *
- * @param array $args
+ * Version  :: 16
  *
  * @uses new SignForm()
  */
 
 class SignForm extends \Widget {
-	public $version = '1.00';
+	protected string $version = '0.1.00';
 	public ?string $username = null;
 	public ?string $password = null;
 	public ?int $time = 10080;

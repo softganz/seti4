@@ -4,17 +4,15 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-12
- * Version  :: 18
- *
- * @param Array $args
+ * Version  :: 19
  *
  * @uses new Report([])
  */
 
 class Report extends Widget {
 	protected string $widgetName = 'Report';
+	protected string $version = '0.2.01';
 	public $tagName = 'div';
-	public $version = '0.02';
 	public $queryUrl = '';
 	public $dataType = 'json';
 	public $graphType = 'Bar';

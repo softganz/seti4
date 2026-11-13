@@ -168,8 +168,8 @@ Base class สูงสุดของระบบทั้งหมด
 
 ```php
 class WidgetBase {
-    public $widgetName = 'Widget';
-    public $version;
+    protected string $widgetName = 'Widget';
+    protected string $version;
 
     function __construct($args = [])
     function extension()
@@ -198,8 +198,8 @@ Core class — เป็น base ให้ widget ส่วนใหญ่
 
 ```php
 class Widget extends WidgetBase {
-	public $widgetName = 'Widget';
-	public $version;
+	protected string $widgetName = 'Widget';
+	protected string $version;
 	public $tagName = '';
 	public $childTagName;
 	public $id;
@@ -875,9 +875,9 @@ $container (global)
 
 ```php
 class MyWidget extends Widget {
-	public $widgetName = 'MyWidget';
+	protected string $widgetName = 'MyWidget';
 	public $tagName = 'div';
-	public $version = '0.01';
+	protected string $version = '0.01';
 
 	function __construct($args = []) {
 		parent::__construct($args);
