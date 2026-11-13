@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-12
- * Version  :: 116
+ * Modified :: 2026-11-13
+ * Version  :: 117
  *
  * @uses new Widget([key => value,...])
  */
@@ -92,7 +92,7 @@ class Children extends WidgetBase {
 class Widget extends WidgetBase {
 	protected string $widgetName = 'Widget'; // string
 	protected string $version = '0.1.02'; // string
-	public $tagName = ''; // string
+	protected ?string $tagName = null; // string
 	protected ?string $childTagName = null; // string
 	public $id; // string
 	public $class; // string
@@ -601,7 +601,7 @@ class Widget extends WidgetBase {
 class DOM extends Widget {
 	protected string $widgetName;
 	protected string $version = '0.0.01';
-	public $tagName;
+	protected ?string $tagName;
 	public $class;
 	public $settings = [];
 
@@ -654,7 +654,7 @@ class DOM extends Widget {
 class HtmlTemplate extends Widget {
 	protected string $widgetName = 'Template';
 	protected string $version = '0.0.01';
-	public $tagName = 'template';
+	protected ?string $tagName = 'template';
 }
 
 /**
@@ -666,7 +666,7 @@ class HtmlTemplate extends Widget {
 class Header extends Widget {
 	protected string $widgetName = 'Header';
 	protected string $version = '0.0.01';
-	public $tagName = 'header';
+	protected ?string $tagName = 'header';
 	public $titleTag = 'span';
 	public $leading = '';
 	public $title = '';
@@ -747,7 +747,7 @@ class Header extends Widget {
 class Container extends Widget {
 	protected string $widgetName = 'Container';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $fillButton = false;
 
 	function __construct(
@@ -795,7 +795,7 @@ class Container extends Widget {
 class Section extends Widget {
 	protected string $widgetName = 'Section';
 	protected string $version = '0.0.01';
-	public $tagName = 'section';
+	protected ?string $tagName = 'section';
 	public $fillButton = false;
 
 	function __construct(
@@ -840,7 +840,7 @@ class Section extends Widget {
 class Center extends Widget {
 	protected string $widgetName = 'Center';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $class = '-sg-text-center';
 
 	function __construct($args = []) {
@@ -857,7 +857,7 @@ class Center extends Widget {
 class ListOrder extends Widget {
 	protected string $widgetName = 'ListOrder';
 	protected string $version = '0.0.01';
-	public $tagName = 'ul';
+	protected ?string $tagName = 'ul';
 	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
 	function __construct($args = []) {
@@ -877,7 +877,7 @@ class ListOrder extends Widget {
 class Column extends Widget {
 	protected string $widgetName = 'Column';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 
 	function __construct(
@@ -910,7 +910,7 @@ class Column extends Widget {
 class Row extends Widget {
 	protected string $widgetName = 'Row';
 	protected string $version = '0.0.10';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 	function __construct(
 		$args = [],
@@ -948,7 +948,7 @@ class Row extends Widget {
 class FloatingActionButton extends Widget {
 	protected string $widgetName = 'FloatingActionButton';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public ?array $childContainer = ['tagName' => 'div', 'class' => '-item'];
 } // End of class FloatingActionButton
 
@@ -961,7 +961,7 @@ class FloatingActionButton extends Widget {
 class ListTile extends Widget {
 	protected string $widgetName = 'ListTile';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $titleTag = 'span';
 	public $leading;
 	public $title;
@@ -1018,7 +1018,7 @@ class ListTile extends Widget {
 class Card extends Widget {
 	protected string $widgetName = 'Card';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $titleTag = 'div';
 
 	function __construct(
@@ -1101,7 +1101,7 @@ class Card extends Widget {
 class Nav extends Widget {
 	protected string $widgetName = 'Nav';
 	protected string $version = '0.0.01';
-	public $tagName = 'nav';
+	protected ?string $tagName = 'nav';
 	public $class = 'nav';
 	public ?string $type = null;
 	public ?string $direction = null;
@@ -1212,7 +1212,7 @@ class Nav extends Widget {
 class SideBar extends Widget {
 	protected string $widgetName = 'SideBar';
 	protected string $version = '0.0.01';
-	public $tagName = 'aside';
+	protected ?string $tagName = 'aside';
 	public ?string $type; // null, wide
 	public mixed $gripHeader = 'Menu';
 
@@ -1261,8 +1261,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-			. // . '<span class="-grip-header">'
-			$this->renderChildren([$header]); // . '</span>'
+		// . '<span class="-grip-header">'
+			. $this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -1276,7 +1276,7 @@ class SideBar extends Widget {
 class ScrollView extends Widget {
 	protected string $widgetName = 'ScrollView';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $scrollDirection = 'horizontal';
 
 	function __construct($args = [], mixed $child = null) {
@@ -1300,7 +1300,7 @@ class ScrollView extends Widget {
 class DebugMsg extends Widget {
 	protected string $widgetName = 'DebugMsg';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $class = 'debug-msg';
 	public $msg;
 	public $varName;
@@ -1500,7 +1500,7 @@ class ErrorMessage extends Message {
 class Button extends Widget {
 	protected string $widgetName = 'Button';
 	protected string $version = '0.0.02';
-	public $tagName = 'a';
+	protected ?string $tagName = 'a';
 	public ?string $href;
 	public $type = 'default'; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
 	public $text;
@@ -1666,7 +1666,7 @@ class Button extends Widget {
 class BackButton extends Widget {
 	protected string $widgetName = 'BackButton';
 	protected string $version = '0.0.01';
-	public $tagName = 'a';
+	protected ?string $tagName = 'a';
 	public ?string $href = 'javascript:history.back()';
 	public $type; // default, primary, link, floating, secondary,success, info, warning, danger, link, cancel
 	public $text;
@@ -1879,7 +1879,7 @@ class ExpandButton extends Widget {
 class StepMenu extends Widget {
 	protected string $widgetName = 'StepMenu';
 	protected string $version = '0.0.01';
-	public $tagName = 'nav';
+	protected ?string $tagName = 'nav';
 	public $class = '';
 	public $childrenContainer = ['tagName' => 'ul'];
 	public ?array $childContainer = ['tagName' => 'li'];
@@ -1922,9 +1922,9 @@ class StepMenu extends Widget {
 class ListItem extends Widget {
 	protected string $widgetName = 'ListItem';
 	protected string $version = '0.0.01';
+	protected ?string $tagName = 'ul';
 	public $forceBuild = false;
 	public $seperator = ' · ';
-	public $tagName = 'ul';
 	public $uiItemClass = 'ui-item -item';
 	public $wrapperType = [
 		'ul' => 'li',
@@ -2075,7 +2075,7 @@ class ListItem extends Widget {
 class TabBar extends Widget {
 	protected string $widgetName = 'TabBar';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $class = 'widget-tabbar sg-tabs';
 
 	protected function renderChildren($childrens = [], $args = []) {
@@ -2152,7 +2152,7 @@ class ProfilePhoto extends Widget {
 class Notify extends Widget {
 	protected string $widgetName = 'Notify';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $titleTag = 'div';
 	public $class = 'notify';
 
@@ -2267,7 +2267,7 @@ class Scaffold extends Widget {
 class AppBar extends Widget {
 	protected string $widgetName = 'AppBar';
 	protected string $version = '0.0.01';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public mixed $title = null;
 	public mixed $subTitle = null;
 	public mixed $leading = null;

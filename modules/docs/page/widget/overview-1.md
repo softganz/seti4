@@ -200,7 +200,7 @@ Core class — เป็น base ให้ widget ส่วนใหญ่
 class Widget extends WidgetBase {
 	protected string $widgetName = 'Widget';
 	protected string $version;
-	public $tagName = '';
+	protected ?string $tagName = null;
 	public $childTagName;
 	public $id;
 	public $class;
@@ -876,7 +876,7 @@ $container (global)
 ```php
 class MyWidget extends Widget {
 	protected string $widgetName = 'MyWidget';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	protected string $version = '0.01';
 
 	function __construct($args = []) {

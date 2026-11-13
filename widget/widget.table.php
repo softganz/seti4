@@ -3,16 +3,14 @@
  * Widget   :: Table Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-02
- * Version  :: 16
- *
- * @param array $args
+ * Modified :: 2026-11-13
+ * Version  :: 17
  *
  * @uses new Table([key => value,...])
  */
 
 class Table extends Widget {
-	public $tagName = 'table';
+	protected ?string $tagName = 'table';
 	public bool $showHeader = true;
 	public int $repeatHeader = 0;
 	public ?string $caption;
@@ -59,11 +57,33 @@ class Table extends Widget {
 			)
 		);
 
-		if (!empty($this->rows) && empty($this->children)) $this->children = $this->rows;
-		if (!empty($this->tfoot) && empty($this->footer)) $this->footer = $this->tfoot;
+		if (!empty($this->rows) && empty($this->children)) {
+			$this->children = $this->rows;
+		}
+		if (!empty($this->tfoot) && empty($this->footer)) {
+			$this->footer = $this->tfoot;
+		}
 
-		unset($this->childTagName, $this->itemClass, $this->mainAxisAlignment, $this->crossAxisAlignment, $this->href, $this->dataUrl, $this->webview, $this->rel, $this->done, $this->action, $this->child, $this->attribute, $this->childContainer, $this->config, $this->rows);
-		if ($this->debug) debugMsg($this, 'Table');
+		unset(
+			$this->childTagName,
+			$this->itemClass,
+			$this->mainAxisAlignment,
+			$this->crossAxisAlignment,
+			$this->href,
+			$this->dataUrl,
+			$this->webview,
+			$this->rel,
+			$this->done,
+			$this->action,
+			$this->child,
+			$this->attribute,
+			$this->childContainer,
+			$this->config,
+			$this->rows
+		);
+		if ($this->debug) {
+			debugMsg($this, 'Table');
+		}
 	}
 
 	// @deprecated
@@ -97,18 +117,16 @@ class Table extends Widget {
 			. 'class="widget-'
 			. strtolower($this->widgetName)
 			. ' item'
-			. ($this->class ? ' ' . $this->class : '')
-			// . ($this->mainAxisAlignment
-			// 	? ' -main-axis-' . strtolower($this->mainAxisAlignment)
-			// 	: '')
+			. ($this->class ? ' ' . $this->class : '') // . ($this->mainAxisAlignment // 	? ' -main-axis-' . strtolower($this->mainAxisAlignment)
+			. // 	: '')
 			// . ($this->crossAxisAlignment
 			// 	? ' -cross-axis-' . strtolower($this->crossAxisAlignment)
 			// 	: '')
-			. '" '
+			'" '
 			. ($this->style ? ' style="' . $this->style . '"' : '');
-			// . ($this->attribute && is_array($this->attribute)
-			// 	? ' ' . sg_implode_attr($this->attribute)
-			// 	: '');
+		// . ($this->attribute && is_array($this->attribute)
+		// 	? ' ' . sg_implode_attr($this->attribute)
+		// 	: '');
 
 		// @deprecated
 		if (isset($this->attr)) {

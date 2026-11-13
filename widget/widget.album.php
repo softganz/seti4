@@ -3,10 +3,8 @@
  * Widget   :: Album
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-10-09
- * Modified :: 2026-11-12
- * Version  :: 8
- *
- * @param Array $args
+ * Modified :: 2026-11-13
+ * Version  :: 9
  *
  * @uses new Album([
  * 	'id' => String,
@@ -22,7 +20,7 @@
 
 class Album extends Widget {
 	protected string $widgetName = 'Album';
-	public $tagName = 'ul';
+	protected ?string $tagName = 'ul';
 	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 	public bool $forceBuild;
 	public mixed $img;

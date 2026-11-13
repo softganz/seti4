@@ -3,17 +3,17 @@
  * Widget   :: Ui Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-28-01
- * Modified :: 2026-11-12
- * Version  :: 6
+ * Modified :: 2026-11-13
+ * Version  :: 7
  *
  * @uses new Ui([])
  */
 
 class Ui extends Widget {
 	protected string $widgetName = 'Ui';
+	protected ?string $tagName = 'ul';
 	public $forceBuild = false;
 	public $seperator = ' · ';
-	public $tagName = 'ul';
 	public $uiItemClass = 'ui-item -item';
 	public $wrapperType = [
 		'ul' => 'li',

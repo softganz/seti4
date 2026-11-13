@@ -194,7 +194,7 @@ class WidgetBase {
 class Widget extends WidgetBase {
 	protected string $widgetName = 'Widget';
 	protected string $version;
-	public $tagName = '';
+	protected ?string $tagName = null;
 	protected ?string $childTagName = null;
 	public $id;
 	public $class;
@@ -278,7 +278,6 @@ class Widget extends WidgetBase {
 class DOM extends Widget {
 	protected string $widgetName;
 	protected string $version = '0.00.01';
-	public $tagName;
 	public $class;
 	public $settings = [];
 
@@ -319,8 +318,8 @@ class DOM extends Widget {
 
 ```php
 class Header extends Widget {
-	public $widgetName = 'Header';
-	public $tagName = 'header';
+	protected string $widgetName = 'Header';
+	protected ?string $tagName = 'header';
 	public $titleTag = 'span';
 	public $leading;
 	public $title;
@@ -340,8 +339,8 @@ class Header extends Widget {
 
 ```php
 class Container extends Widget {
-	public $widgetName = 'Container';
-	public $tagName = 'div';
+	protected string $widgetName = 'Container';
+	protected ?string $tagName = 'div';
 	public $fillButton = false;
 
 	// ... constructor และ toString() method ...
@@ -357,8 +356,8 @@ class Container extends Widget {
 
 ```php
 class Center extends Widget {
-	public $widgetName = 'Center';
-	public $tagName = 'div';
+	protected string $widgetName = 'Center';
+	protected ?string $tagName = 'div';
 	public $class = '-sg-text-center';
 
 	// ... constructor ...
@@ -373,8 +372,8 @@ class Center extends Widget {
 
 ```php
 class ListOrder extends Widget {
-	public $widgetName = 'ListOrder';
-	public $tagName = 'ul';
+	protected string $widgetName = 'ListOrder';
+	protected ?string $tagName = 'ul';
 	public $childContainer = ['tagName' => 'li', 'class' => '-item'];
 
 	// ... constructor ...
@@ -390,8 +389,8 @@ class ListOrder extends Widget {
 
 ```php
 class Column extends Widget {
-	public $widgetName = 'Column';
-	public $tagName = 'div';
+	protected string $widgetName = 'Column';
+	protected ?string $tagName = 'div';
 	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 
 	// ... constructor ...
@@ -409,7 +408,7 @@ class Column extends Widget {
 class Row extends Widget {
 	protected string $widgetName = 'Row';
 	protected string $version = '0.0.10';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $childContainer = ['tagName' => 'div', 'class' => '-item'];
 }
 ```
@@ -438,8 +437,8 @@ class FloatingActionButton extends Widget {
 
 ```php
 class ListTile extends Widget {
-	public $widgetName = 'ListTile';
-	public $tagName = 'div';
+	protected string $widgetName = 'ListTile';
+	protected ?string $tagName = 'div';
 	public $titleTag = 'span';
 	public $leading;
 	public $title;
@@ -508,7 +507,7 @@ $container (global)
 ```php
 class MyWidget extends Widget {
 	protected string $widgetName = 'MyWidget';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	protected string $version = '0.01';
 
 	function __construct($args = []) {

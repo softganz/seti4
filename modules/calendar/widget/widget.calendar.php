@@ -3,10 +3,8 @@
  * Calendar :: Calcendr Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-20
- * Modified :: 2026-10-05
- * Version  :: 10
- *
- * @param Array $args
+ * Modified :: 2026-11-13
+ * Version  :: 11
  *
  * @uses import('widget:calendar.widget.php')
  * @uses new CalendarWidgetl([])
@@ -15,7 +13,7 @@
 class CalendarWidget extends Widget {
 	public $id = 'calendar-body';
 	public $class = 'widget-calendar';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	private $classContent = 'calendar-content'; // class for content div
 	public $forceBuild = false;
 	public $year;

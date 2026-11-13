@@ -1,19 +1,17 @@
 <?php
 /**
- * Dashboard :: Dashboard Widget
- * Author    :: Little Bear<softganz@gmail.com>
- * Created   :: 2023-12-16
- * Modified  :: 2026-11-12
- * Version   :: 4
- *
- * @param Array $args
+ * Widget   :: Dashboard Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-12-16
+ * Modified :: 2026-11-13
+ * Version  :: 5
  *
  * @uses new DashboardWidget([])
  */
 
 class DashboardWidget extends Widget {
 	protected string $widgetName = 'Dashboard';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 
 	function __construct($args = []) {
 		parent::__construct($args);

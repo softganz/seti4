@@ -4,9 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-25
  * Modified :: 2026-11-12
- * Version  :: 4
- *
- * @param Array $args
+ * Version  :: 5
  *
  * @uses import('widget:paper.list.php')
  * @uses new PaperListWidget([])
@@ -14,11 +12,9 @@
 
 namespace Paper\Widget;
 
-import('model:paper.php');
-
 class PaperListWidget extends \Widget {
 	protected string $widgetName = 'PaperList';
-	public $tagName = 'div';
+	protected ?string $tagName = 'div';
 	public $listStyle = 'div';
 	public $url;
 

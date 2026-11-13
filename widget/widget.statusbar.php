@@ -3,8 +3,8 @@
  * Status   :: Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-06-16
- * Modified :: 2026-10-02
- * Version  :: 2
+ * Modified :: 2026-11-13
+ * Version  :: 3
  *
  * @param array $args
  *
@@ -12,7 +12,7 @@
  */
 
 class StatusbarWidget extends Widget {
-	public $tagName = 'ul';
+	protected ?string $tagName = 'ul';
 	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 	public $class = 'widget-statusbar';
 
