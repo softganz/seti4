@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-28-01
  * Modified :: 2026-11-13
- * Version  :: 7
+ * Version  :: 8
  *
  * @uses new Ui([])
  */
@@ -24,7 +24,6 @@ class Ui extends Widget {
 	];
 	public $type = 'action';
 	public $columnPerRow;
-	public $header;
 	public $config;
 	public $container;
 

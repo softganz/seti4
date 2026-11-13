@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-13
- * Version  :: 17
+ * Version  :: 18
  *
  * @uses new Table([key => value,...])
  */
@@ -117,10 +117,8 @@ class Table extends Widget {
 			. 'class="widget-'
 			. strtolower($this->widgetName)
 			. ' item'
-			. ($this->class ? ' ' . $this->class : '') // . ($this->mainAxisAlignment // 	? ' -main-axis-' . strtolower($this->mainAxisAlignment)
-			. // 	: '')
-			// . ($this->crossAxisAlignment
-			// 	? ' -cross-axis-' . strtolower($this->crossAxisAlignment)
+			. ($this->class ? ' ' . $this->class : '') // . ($this->mainAxisAlignment // 	? ' -main-axis-' . strtolower($this->mainAxisAlignment) // 	: '') // . ($this->crossAxisAlignment
+			. // 	? ' -cross-axis-' . strtolower($this->crossAxisAlignment)
 			// 	: '')
 			'" '
 			. ($this->style ? ' style="' . $this->style . '"' : '');
@@ -393,7 +391,11 @@ class Table extends Widget {
 
 		$ret = '<tbody>' . _NL;
 		foreach ($this->children as $rowKey => $row) {
-			if (is_object($row) && $row->widgetName === 'Children') {
+			if (
+				is_object($row) &&
+				!empty($row->widgetName) &&
+				$row->widgetName === 'Children'
+			) {
 				foreach ($row->children as $childrenKey => $child) {
 					$ret .= $this->renderRow($child, $childrenKey, $this->headerKey);
 				}

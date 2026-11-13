@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-13
- * Version  :: 119
+ * Version  :: 120
  *
  * @uses new Widget([key => value,...])
  */
@@ -90,29 +90,27 @@ class Children extends WidgetBase {
  * @uses new Widget([key => value,...])
  */
 class Widget extends WidgetBase {
-	protected string $widgetName = 'Widget'; // string
-	protected string $version = '0.1.02'; // string
-	protected ?string $tagName = null; // string
-	protected ?string $childTagName = null; // string
-	public ?string $id = null; // string
-	public ?string $class = null; // string
-	public $header; // string, widget
-	public $itemClass; // string
-	public $mainAxisAlignment; // string
-	public $crossAxisAlignment; // string
-	public ?string $href = ''; // string
-	public $dataUrl; // string
-	public $webview; // string
-	public $style; // string
-	public $onBuild; // function
-	public $rel; // string
-	public $done; // string
-	public $action; // string
-	public $debug; // string
-	public mixed $child; // mixed
-	public ?array $children = []; // array
-	public ?array $attribute = []; // array
-	public ?array $childContainer = []; // array
+	protected string $widgetName = 'Widget';
+	protected string $version = '0.1.02';
+	protected ?string $tagName = null;
+	protected ?string $childTagName = null;
+	public ?string $id = null;
+	public ?string $class = null;
+	public ?string $style = null;
+	public ?string $itemClass = null;
+	public ?string $mainAxisAlignment = null;
+	public ?string $crossAxisAlignment = null;
+	public ?string $href = null;
+	public ?string $dataUrl = null;
+	public ?string $webview = null;
+	public ?string $rel = null;
+	public ?string $done = null;
+	public mixed $header = null;
+	public mixed $child;
+	public ?array $children = [];
+	public ?array $attribute = [];
+	public ?array $childContainer = [];
+	public mixed $onBuild = null; // callable(Widget): void
 
 	// @deprecated
 	public $config = null;
@@ -387,20 +385,7 @@ class Widget extends WidgetBase {
 		);
 
 		return $childTagName
-			? '<'
-					. $childTagName
-					. ' '
-					. sg_implode_attr($attributes)
-					. '>'
-					. ($this->debug === 'container'
-						? 'Child tag name = '
-							. $childTagName
-							. '<br>Child key = '
-							. $childKey
-							. '<br>'
-							. print_o($container, '$container')
-							. print_o($attributes, '$attributes')
-						: '')
+			? '<' . $childTagName . ' ' . sg_implode_attr($attributes) . '>'
 			: '';
 	}
 
@@ -680,8 +665,7 @@ class Header extends Widget {
 		mixed $subTitle = null,
 		mixed $leading = null,
 		mixed $trailing = null,
-		?string $crossAxisAlignment = null,
-		bool $debug = false
+		?string $crossAxisAlignment = null
 	) {
 		parent::__construct(
 			array_replace(
@@ -692,8 +676,7 @@ class Header extends Widget {
 					'subTitle' => $subTitle,
 					'leading' => $leading,
 					'trailing' => $trailing,
-					'crossAxisAlignment' => $crossAxisAlignment,
-					'debug' => $debug
+					'crossAxisAlignment' => $crossAxisAlignment
 				],
 				$args
 			)
@@ -1260,8 +1243,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-			. // . '<span class="-grip-header">'
-			$this->renderChildren([$header]); // . '</span>'
+		// . '<span class="-grip-header">'
+			. $this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -1573,15 +1556,11 @@ class Button extends Widget {
 		unset(
 			$this->config,
 			$this->dataUrl,
-			$this->action,
 			$this->childContainer,
 			$this->header,
 			$this->itemClass,
 			$this->childTagName
 		);
-		if ($this->debug) {
-			debugMsg($this, 'Icon');
-		}
 	}
 
 	function toString() {
@@ -1753,8 +1732,7 @@ class Icon extends Widget {
 		$args = [],
 		string $type = 'material',
 		?string $class = null,
-		?string $secondary = null,
-		?bool $debug = false
+		?string $secondary = null
 	) {
 		$this->icon = $icon;
 
@@ -1763,8 +1741,7 @@ class Icon extends Widget {
 				[
 					'type' => $type,
 					'class' => $class,
-					'secondary' => $secondary,
-					'debug' => $debug
+					'secondary' => $secondary
 				],
 				(array) $args
 			)
@@ -1782,12 +1759,8 @@ class Icon extends Widget {
 			$this->dataUrl,
 			$this->webview,
 			$this->rel,
-			$this->done,
-			$this->action
+			$this->done
 		);
-		if ($this->debug) {
-			debugMsg($this, 'Icon');
-		}
 	}
 
 	function toString() {

@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-13
- * Version  :: 61
+ * Version  :: 62
  *
  * @uses new Form([key => value,...])
  *	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, rel, done, children, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
@@ -20,7 +20,7 @@ class Form extends Widget {
 	protected ?string $tagName = 'form';
 	public $method = 'POST';
 	public $enctype;
-	public $action;
+	public ?string $action = null;
 	public $variable = null;
 	public $readonly = false;
 	public $checkValid = false;
