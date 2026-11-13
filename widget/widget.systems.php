@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-13
- * Version  :: 118
+ * Version  :: 119
  *
  * @uses new Widget([key => value,...])
  */
@@ -95,7 +95,7 @@ class Widget extends WidgetBase {
 	protected ?string $tagName = null; // string
 	protected ?string $childTagName = null; // string
 	public ?string $id = null; // string
-	public $class; // string
+	public ?string $class = null; // string
 	public $header; // string, widget
 	public $itemClass; // string
 	public $mainAxisAlignment; // string
@@ -602,7 +602,6 @@ class DOM extends Widget {
 	protected string $widgetName;
 	protected string $version = '0.0.01';
 	protected ?string $tagName;
-	public $class;
 	public $settings = [];
 
 	function __construct($args = []) {
@@ -841,7 +840,7 @@ class Center extends Widget {
 	protected string $widgetName = 'Center';
 	protected string $version = '0.0.01';
 	protected ?string $tagName = 'div';
-	public $class = '-sg-text-center';
+	public ?string $class = '-sg-text-center';
 
 	function __construct($args = []) {
 		parent::__construct($args);
@@ -1102,7 +1101,7 @@ class Nav extends Widget {
 	protected string $widgetName = 'Nav';
 	protected string $version = '0.0.01';
 	protected ?string $tagName = 'nav';
-	public $class = 'nav';
+	public ?string $class = 'nav';
 	public ?string $type = null;
 	public ?string $direction = null;
 	public $multipleLevel = false;
@@ -1261,8 +1260,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-		// . '<span class="-grip-header">'
-			. $this->renderChildren([$header]); // . '</span>'
+			. // . '<span class="-grip-header">'
+			$this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -1301,7 +1300,7 @@ class DebugMsg extends Widget {
 	protected string $widgetName = 'DebugMsg';
 	protected string $version = '0.0.01';
 	protected ?string $tagName = 'div';
-	public $class = 'debug-msg';
+	public ?string $class = 'debug-msg';
 	public $msg;
 	public $varName;
 	public $callFrom;
@@ -1880,7 +1879,6 @@ class StepMenu extends Widget {
 	protected string $widgetName = 'StepMenu';
 	protected string $version = '0.0.01';
 	protected ?string $tagName = 'nav';
-	public $class = '';
 	public $childrenContainer = ['tagName' => 'ul'];
 	public ?array $childContainer = ['tagName' => 'li'];
 	public $currentStep = null;
@@ -2076,7 +2074,7 @@ class TabBar extends Widget {
 	protected string $widgetName = 'TabBar';
 	protected string $version = '0.0.01';
 	protected ?string $tagName = 'div';
-	public $class = 'widget-tabbar sg-tabs';
+	public ?string $class = 'widget-tabbar sg-tabs';
 
 	protected function renderChildren($childrens = [], $args = []) {
 		$tabItems = '<ul class="tabs">';
@@ -2154,7 +2152,7 @@ class Notify extends Widget {
 	protected string $version = '0.0.01';
 	protected ?string $tagName = 'div';
 	public $titleTag = 'div';
-	public $class = 'notify';
+	public ?string $class = 'notify';
 
 	function __construct(
 		$args = [],

@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-20
  * Modified :: 2026-11-13
- * Version  :: 12
+ * Version  :: 13
  *
  * @uses import('widget:calendar.widget.php')
  * @uses new CalendarWidgetl([])
@@ -12,7 +12,7 @@
 
 class CalendarWidget extends Widget {
 	public ?string $id = 'calendar-body';
-	public $class = 'widget-calendar';
+	public ?string $class = 'widget-calendar';
 	protected ?string $tagName = 'div';
 	private $classContent = 'calendar-content'; // class for content div
 	public $forceBuild = false;

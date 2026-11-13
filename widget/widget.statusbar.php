@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-06-16
  * Modified :: 2026-11-13
- * Version  :: 3
+ * Version  :: 4
  *
  * @param array $args
  *
@@ -14,7 +14,7 @@
 class StatusbarWidget extends Widget {
 	protected ?string $tagName = 'ul';
 	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
-	public $class = 'widget-statusbar';
+	public ?string $class = 'widget-statusbar';
 
 	function __construct(
 		$args = [],

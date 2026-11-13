@@ -197,7 +197,7 @@ class Widget extends WidgetBase {
 	protected ?string $tagName = null;
 	protected ?string $childTagName = null;
 	public ?string $id;
-	public $class;
+	public ?string $class;
 	public $header;
 	public $itemClass;
 	public $mainAxisAlignment;
@@ -278,7 +278,6 @@ class Widget extends WidgetBase {
 class DOM extends Widget {
 	protected string $widgetName;
 	protected string $version = '0.00.01';
-	public $class;
 	public $settings = [];
 
 	function __construct($args = []) {
@@ -358,7 +357,7 @@ class Container extends Widget {
 class Center extends Widget {
 	protected string $widgetName = 'Center';
 	protected ?string $tagName = 'div';
-	public $class = '-sg-text-center';
+	public ?string $class = '-sg-text-center';
 
 	// ... constructor ...
 }

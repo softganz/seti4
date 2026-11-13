@@ -4,9 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-02
- * Version  :: 8
- *
- * @param Array $args
+ * Version  :: 9
  *
  * @uses new Dropbox([
  * 	'id' => String,
@@ -18,7 +16,6 @@
 
 class Dropbox extends Widget {
 	public $type = 'click';
-	public $class = '';
 	public $text = '';
 	public $icon = null;
 	public $iconText = 'more_vert';

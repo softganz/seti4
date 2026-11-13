@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-13
- * Version  :: 20
+ * Version  :: 21
  *
  * @uses new Report([])
  */
@@ -16,7 +16,7 @@ class Report extends Widget {
 	public $queryUrl = '';
 	public $dataType = 'json';
 	public $graphType = 'Bar';
-	public $class = 'sg-drawreport';
+	public ?string $class = 'sg-drawreport';
 	public $metric;
 	public $submitIcon;
 	public $submitText;

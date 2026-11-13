@@ -203,7 +203,7 @@ class Widget extends WidgetBase {
 	protected ?string $tagName = null;
 	public $childTagName;
 	public ?string $id;
-	public $class;
+	public ?string $class;
 	public $header;
 	public $itemClass;
 	public $mainAxisAlignment;
