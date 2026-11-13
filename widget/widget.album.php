@@ -3,8 +3,8 @@
  * Widget   :: Album
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-10-09
- * Modified :: 2026-11-02
- * Version  :: 7
+ * Modified :: 2026-11-12
+ * Version  :: 8
  *
  * @param Array $args
  *
@@ -21,7 +21,7 @@
  */
 
 class Album extends Widget {
-	public $widgetName = 'Album';
+	protected string $widgetName = 'Album';
 	public $tagName = 'ul';
 	public ?array $childContainer = ['tagName' => 'li', 'class' => '-item'];
 	public bool $forceBuild;

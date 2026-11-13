@@ -3,8 +3,8 @@
  * Widget   :: Paper List Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-25
- * Modified :: 2026-07-29
- * Version  :: 3
+ * Modified :: 2026-11-12
+ * Version  :: 4
  *
  * @param Array $args
  *
@@ -17,7 +17,7 @@ namespace Paper\Widget;
 import('model:paper.php');
 
 class PaperListWidget extends \Widget {
-	public $widgetName = 'PaperList';
+	protected string $widgetName = 'PaperList';
 	public $tagName = 'div';
 	public $listStyle = 'div';
 	public $url;

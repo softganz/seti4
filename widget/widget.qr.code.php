@@ -3,8 +3,8 @@
  * Widget   :: Qr Code Generator
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2024-07-28
- * Modified :: 2026-06-29
- * Version  :: 4
+ * Modified :: 2026-11-12
+ * Version  :: 5
  *
  * @param Array $args
  *
@@ -22,7 +22,7 @@
  */
 
 class QrCodeWidget extends Widget {
-	public $widgetName = 'QrCode';
+	protected string $widgetName = 'QrCode';
 	public $version = '0.0.01';
 	public $tagName = 'div'; // String
 	public $url;

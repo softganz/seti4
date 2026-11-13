@@ -3,8 +3,8 @@
  * Dashboard :: Dashboard Widget
  * Author    :: Little Bear<softganz@gmail.com>
  * Created   :: 2023-12-16
- * Modified  :: 2026-07-29
- * Version   :: 3
+ * Modified  :: 2026-11-12
+ * Version   :: 4
  *
  * @param Array $args
  *
@@ -12,7 +12,7 @@
  */
 
 class DashboardWidget extends Widget {
-	public $widgetName = 'Dashboard';
+	protected string $widgetName = 'Dashboard';
 	public $tagName = 'div';
 
 	function __construct($args = []) {

@@ -3,8 +3,8 @@
  * Widget   :: Toolbar Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-29
- * Version  :: 3
+ * Modified :: 2026-11-12
+ * Version  :: 4
  *
  * @param Array $args
  *
@@ -12,7 +12,7 @@
  */
 
 class Toolbar extends Widget {
-	public $widgetName = 'Toolbar';
+	protected string $widgetName = 'Toolbar';
 	public $self = null;
 	public $navGroup = [];
 	public $nav = '';
@@ -58,7 +58,7 @@ class Toolbar extends Widget {
 	}
 
 	function toString() {
-		$ret .=
+		$ret =
 			'<!-- Module Toolbar Start -->'
 			. _NL
 			. '<div '

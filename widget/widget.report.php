@@ -3,8 +3,8 @@
  * Widget   :: Report Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-02
- * Version  :: 17
+ * Modified :: 2026-11-12
+ * Version  :: 18
  *
  * @param Array $args
  *
@@ -12,7 +12,7 @@
  */
 
 class Report extends Widget {
-	public $widgetName = 'Report';
+	protected string $widgetName = 'Report';
 	public $tagName = 'div';
 	public $version = '0.02';
 	public $queryUrl = '';

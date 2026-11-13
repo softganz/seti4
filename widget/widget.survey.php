@@ -3,8 +3,8 @@
  * Widget   :: Survey widget for create survey form
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-07-29
- * Version  :: 4
+ * Modified :: 2026-11-12
+ * Version  :: 5
  *
  * @param Object $patientInfo
  * @param Object $visitInfo
@@ -17,7 +17,7 @@
  */
 
 class Survey extends Widget {
-	public $widgetName = 'Survey';
+	protected string $widgetName = 'Survey';
 	public $debug = false;
 	public $schema = null;
 	public $values = [];

@@ -3,8 +3,8 @@
  * Docs     :: Module Docs Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-04-24
- * Modified :: 2026-07-29
- * Version  :: 4
+ * Modified :: 2026-11-12
+ * Version  :: 5
  *
  * @param Array $args
  *
@@ -14,7 +14,7 @@
 import('package:external/parsedown/Parsedown.php'); // https://github.com/parsedown/parsedown
 
 class ModuleDocsWidget extends WidgetBase {
-	public $widgetName = 'Widget';
+	protected string $widgetName = 'Widget';
 	public $version = 1;
 	public $title = 'Module Documentation.';
 	public $module = 'imed';
