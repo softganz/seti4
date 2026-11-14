@@ -58,7 +58,7 @@ if (!defined('_CONFIG_FILE')) {
 cfg('core.version.name', 'Seti');
 cfg('core.version.major', 4);
 cfg('core.version.code', 55);
-cfg('core.version', '4.5.00rc');
+cfg('core.version', '4.5.rc');
 cfg('core.release', '2026-11-11');
 cfg('core.location', ini_get('include_path'));
 cfg('core.folder', _CORE_FOLDER);

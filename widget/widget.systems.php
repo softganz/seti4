@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-13
- * Version  :: 120
+ * Modified :: 2026-11-14
+ * Version  :: 121
  *
  * @uses new Widget([key => value,...])
  */
@@ -950,8 +950,24 @@ class ListTile extends Widget {
 	public $subTitle;
 	public $trailing;
 
-	function __construct($args = []) {
-		parent::__construct($args);
+	function __construct(
+		$args = [],
+		?string $title = null,
+		?string $subTitle = null,
+		mixed $leading = null,
+		mixed $trailing = null
+	) {
+		parent::__construct(
+			array_replace(
+				[
+					'title' => $title,
+					'subTitle' => $subTitle,
+					'leading' => $leading,
+					'trailing' => $trailing
+				],
+				$args
+			)
+		);
 	}
 
 	// @override
@@ -1243,8 +1259,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-		// . '<span class="-grip-header">'
-			. $this->renderChildren([$header]); // . '</span>'
+			. // . '<span class="-grip-header">'
+			$this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -1522,7 +1538,7 @@ class Button extends Widget {
 		parent::__construct(
 			array_replace(
 				[
-					'type' => $type,
+					'type' => $type ?? $this->type,
 					'class' => $class,
 					'href' => $href,
 					'rel' => $rel,
@@ -1530,7 +1546,7 @@ class Button extends Widget {
 					'icon' => $icon,
 					'text' => $text,
 					'title' => $title,
-					'iconPosition' => $iconPosition,
+					'iconPosition' => $iconPosition ?? $this->iconPosition,
 					'access' => $access,
 					'variable' => $variable,
 					'boxWidth' => $boxWidth,
