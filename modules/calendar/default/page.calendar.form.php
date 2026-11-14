@@ -11,9 +11,9 @@
  */
 
 class CalendarForm extends Page {
-	var $calendarId;
-	var $right;
-	var $calendarInfo;
+	public $calendarId;
+	public $right;
+	public $calendarInfo;
 
 	function __construct() {
 		parent::__construct([

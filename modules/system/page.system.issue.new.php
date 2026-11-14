@@ -1,42 +1,42 @@
 <?php
 /**
-* System  :: Save New Issue
-* Created :: 2022-10-14
-* Modify  :: 2025-11-12
-* Version :: 5
-*
-* @return Widget
-*
-* @usage system/issue/new
-*	Example call:
-* http://localhost/seti/softganz.com/system/issue/new?file=/Users/httpdocs/cms/seti4.00/modules/project/info/page.project.info.view.php&line=32&date=2022-10-14%2008:52:34user=&url=http://localhost/hsmi/localfund.com/project/141880&type=Test%20Log
-*/
+ * System  :: Save New Issue
+ * Created :: 2022-10-14
+ * Modify  :: 2025-11-12
+ * Version :: 5
+ *
+ * @return Widget
+ *
+ * @usage system/issue/new
+ *	Example call:
+ * http://localhost/seti/softganz.com/system/issue/new?file=/Users/httpdocs/cms/seti4.00/modules/project/info/page.project.info.view.php&line=32&date=2022-10-14%2008:52:34user=&url=http://localhost/hsmi/localfund.com/project/141880&type=Test%20Log
+ */
 
 use Softganz\DB;
 
 class SystemIssueNew extends Page {
-	var $reportUrl;
-	var $host;
-	var $path;
-	var $query;
-	var $issueType;
-	var $file;
-	var $line;
-	var $reportDate;
-	var $reportUser;
-	var $reportBy;
-	var $referer;
-	var $agent;
-	var $description;
+	public $reportUrl;
+	public $host;
+	public $path;
+	public $query;
+	public $issueType;
+	public $file;
+	public $line;
+	public $reportDate;
+	public $reportUser;
+	public $reportBy;
+	public $referer;
+	public $agent;
+	public $description;
 
 	function __construct() {
 		// $post = json_decode(post());
 		$reportUrl = post('url');
-		list($scheme, $host) = $hosts = parse_url($reportUrl);
+		[$scheme, $host] = $hosts = parse_url($reportUrl);
 
 		parent::__construct([
 			'reportUrl' => $reportUrl,
-			'host' => urldecode($hosts['scheme'].'://'.$hosts['host']),
+			'host' => urldecode($hosts['scheme'] . '://' . $hosts['host']),
 			'path' => urldecode($hosts['path']),
 			'query' => urldecode($hosts['query']),
 			'issueType' => post('type'),
@@ -48,7 +48,7 @@ class SystemIssueNew extends Page {
 			'referer' => post('referer'),
 			'agent' => post('agent'),
 			'description' => post('description'),
-			'data' => SG\getFirst(post('data'), '{}'),
+			'data' => SG\getFirst(post('data'), '{}')
 		]);
 	}
 
@@ -102,7 +102,7 @@ class SystemIssueNew extends Page {
 				':agent' => $this->agent,
 				':description' => $this->description,
 				':data' => $this->data,
-				':created' => date('U'),
+				':created' => date('U')
 			]
 		]);
 
@@ -111,7 +111,7 @@ class SystemIssueNew extends Page {
 
 		return [
 			'issueId' => mydb()->insert_id,
-			'url' => $this->reportUrl,
+			'url' => $this->reportUrl
 			// 'post' => post(),
 			// 'this'=> $this,
 			// 'query' => '<pre>'.R('query').'</pre>'

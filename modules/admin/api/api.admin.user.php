@@ -16,24 +16,30 @@
 use Softganz\DB;
 
 class AdminUserApi extends PageApi {
-	var $userId;
-	var $action;
+	public $userId;
+	public $action;
 
 	function __construct($userId, $action) {
 		parent::__construct([
 			'action' => $action,
-			'userInfo' => SG\getFirstInt($userId) ? UserModel::get($userId) : NULL,
+			'userInfo' => SG\getFirstInt($userId) ? UserModel::get($userId) : null
 		]);
 		$this->userId = $this->userInfo->uid;
 	}
 
 	/**
-	* Block/UnBlock User
-	*/
+	 * Block/UnBlock User
+	 */
 	function block() {
-		if (empty($this->userId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
-		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
-		if ($this->userId === 1) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		if (empty($this->userId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		}
+		if (!SG\confirm()) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		}
+		if ($this->userId === 1) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		}
 
 		$status = $this->userInfo->status == 'block' ? 'enable' : 'block';
 
@@ -42,32 +48,51 @@ class AdminUserApi extends PageApi {
 			'UPDATE %users% SET `status` = :status WHERE `uid` = :uid LIMIT 1',
 			'var' => [
 				':uid' => $this->userId,
-				':status' => $status,
+				':status' => $status
 			]
 		]);
 
 		DB::query([
 			'DELETE FROM %cache% WHERE `headers` = :username',
-			'var' => [ ':username' => $this->userInfo->username ]
+			'var' => [':username' => $this->userInfo->username]
 		]);
 
 		LogModel::save([
 			'module' => 'Admin',
-			'keyword' => 'User '.($status == 'block' ? 'Block' : 'Active'),
-			'message' => 'User '.$uid.' ('.$this->userInfo->username.') was '.($status == 'block' ? 'blocked' : 'active').'.',
+			'keyword' => 'User ' . ($status == 'block' ? 'Block' : 'Active'),
+			'message' =>
+				'User '
+				. $uid
+				. ' ('
+				. $this->userInfo->username
+				. ') was '
+				. ($status == 'block' ? 'blocked' : 'active')
+				. '.',
 			'keyId' => $uid
 		]);
 
-		return apiSuccess('User '.$username.' was '.($status == 'block' ? 'blocked' : 'active').'.');
+		return apiSuccess(
+			'User '
+				. $username
+				. ' was '
+				. ($status == 'block' ? 'blocked' : 'active')
+				. '.'
+		);
 	}
 
 	/**
-	* Block user and delete all topic
-	*/
+	 * Block user and delete all topic
+	 */
 	public function blockAndDelete() {
-		if (empty($this->userId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีข้อมูลสมาชิก');
-		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
-		if ($this->userId === 1) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		if (empty($this->userId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีข้อมูลสมาชิก');
+		}
+		if (!SG\confirm()) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
+		}
+		if ($this->userId === 1) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		}
 
 		// Block user
 		DB::query([
@@ -87,7 +112,7 @@ class AdminUserApi extends PageApi {
 		LogModel::save([
 			'module' => 'admin',
 			'keyword' => 'User Block',
-			'message' => 'User '.$this->userId.' was blocked and delete topics.',
+			'message' => 'User ' . $this->userId . ' was blocked and delete topics.',
 			'keyId' => $this->userId
 		]);
 
@@ -95,38 +120,65 @@ class AdminUserApi extends PageApi {
 	}
 
 	public function edit() {
-		if ($this->userId === 1) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		if ($this->userId === 1) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		}
 
-		$data = (Object) post('profile');
+		$data = (object) post('profile');
 		// debugMsg($data, '$data');
 		// debugMsg($this, '$this');
 
 		// Check duplicate username
 		if ($data->username != $this->userInfo->username) {
 			$newUser = UserModel::get(['username' => $data->username]);
-			if ($newUser->userId) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'Username '.$data->username.' มีผู้อื่นใช้งานแล้ว');
+			if ($newUser->userId) {
+				return error(
+					_HTTP_ERROR_NOT_ACCEPTABLE,
+					'Username ' . $data->username . ' มีผู้อื่นใช้งานแล้ว'
+				);
+			}
 		}
 
-		if ($data->email && !sg_is_email($data->email)) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'กรุณาป้อนอีเมล์ให้ถูกต้องตามรูปแบบ คือ yourname@domain.com');
+		if ($data->email && !sg_is_email($data->email)) {
+			return error(
+				_HTTP_ERROR_NOT_ACCEPTABLE,
+				'กรุณาป้อนอีเมล์ให้ถูกต้องตามรูปแบบ คือ yourname@domain.com'
+			);
+		}
 
 		if ($data->password) {
 			// Check password length
-			if (strlen($data->password) < 6) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'รหัสผ่านใหม่ต้องตัวอักษรอย่างน้อย 6 อักษร');
+			if (strlen($data->password) < 6) {
+				return error(
+					_HTTP_ERROR_NOT_ACCEPTABLE,
+					'รหัสผ่านใหม่ต้องตัวอักษรอย่างน้อย 6 อักษร'
+				);
+			}
 			// Check password same
-			if ($data->password != $data->repassword) return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'การป้อนรหัสผ่านใหม่ทั้งสองครั้งไม่ตรงกัน');
+			if ($data->password != $data->repassword) {
+				return error(
+					_HTTP_ERROR_NOT_ACCEPTABLE,
+					'การป้อนรหัสผ่านใหม่ทั้งสองครั้งไม่ตรงกัน'
+				);
+			}
 		}
 
 		if ($data->password) {
-			$data->password = sg_encrypt($data->password,cfg('encrypt_key'));
+			$data->password = sg_encrypt($data->password, cfg('encrypt_key'));
 			unset($data->repassword);
 
 			LogModel::save([
 				'module' => 'user',
 				'keyword' => 'Password change by admin',
-				'message' => 'User '.$this->userInfo->username.' ('.$this->userId.') was change password by admin'
+				'message' =>
+					'User '
+					. $this->userInfo->username
+					. ' ('
+					. $this->userId
+					. ') was change password by admin'
 			]);
 		} else {
-			unset($data->password,$data->repassword);
+			unset($data->password, $data->repassword);
 		}
 		$data->roles = implode(',', $data->roles ? $data->roles : []);
 		$oldRoles = mydb::select(
@@ -135,16 +187,23 @@ class AdminUserApi extends PageApi {
 		)->roles;
 		// Delete cache when block or roles change
 		if ($data->status == 'block' || $data->roles != $oldRoles) {
-			mydb::query(
-				'DELETE FROM %cache% WHERE `headers` = :username',
-				[':username' => $this->userInfo->username]
-			);
+			mydb::query('DELETE FROM %cache% WHERE `headers` = :username', [
+				':username' => $this->userInfo->username
+			]);
 		}
 
 		// Change username
-		if ($data->username != $this->userInfo->username) UserModel::changeUserName($this->userInfo->username, $data->username);
+		if ($data->username != $this->userInfo->username) {
+			UserModel::changeUserName($this->userInfo->username, $data->username);
+		}
 
-		mydb::query(mydb::create_update_cmd('%users%', (Array) $data,' uid = '.$this->userId.' LIMIT 1'));
+		mydb::query(
+			mydb::create_update_cmd(
+				'%users%',
+				(array) $data,
+				' uid = ' . $this->userId . ' LIMIT 1'
+			)
+		);
 
 		return message('บันทึกเรียบร้อย');
 	}

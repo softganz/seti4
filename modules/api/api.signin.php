@@ -1,23 +1,23 @@
 <?php
 /**
-* API     :: User Sign In
-* Created :: 2021-06-21
-* Modify  :: 2026-04-05
-* Version :: 3
-*
-* @return JSON
-*
-* @usage api/signin
-*/
+ * API     :: User Sign In
+ * Created :: 2021-06-21
+ * Modify  :: 2026-04-05
+ * Version :: 3
+ *
+ * @return JSON
+ *
+ * @usage api/signin
+ */
 
 class SigninApi extends PageApi {
-	var $username;
-	var $password;
-	var $appId;
-	var $appToken;
-	var $token;
-	var $email;
-	var $time = -1;
+	public $username;
+	public $password;
+	public $appId;
+	public $appToken;
+	public $token;
+	public $email;
+	public $time = -1;
 
 	function __construct() {
 		parent::__construct([
@@ -27,7 +27,7 @@ class SigninApi extends PageApi {
 			'appId' => $_SERVER['HTTP_APPID'],
 			'appToken' => $_SERVER['HTTP_APPTOKEN'],
 			'token' => $_SERVER['HTTP_SIGNINTOKEN'],
-			'email' => $_SERVER['HTTP_SIGNINEMAIL'],
+			'email' => $_SERVER['HTTP_SIGNINEMAIL']
 		]);
 		// Old version use post('user') && post('pw')
 	}
@@ -38,23 +38,27 @@ class SigninApi extends PageApi {
 		// 	$authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 		// }
 
-		$result = (Object) [
-			'signed' => NULL,
-			'status' => NULL,
+		$result = (object) [
+			'signed' => null,
+			'status' => null,
 			'username' => $this->username,
-			'token' => NULL,
-			'code' => NULL,
-			'text' => NULL,
+			'token' => null,
+			'code' => null,
+			'text' => null
 		];
 
-		$user = NULL;
+		$user = null;
 
 		if ($this->username && $this->password) {
-			$user = UserModel::signInProcess($this->username, $this->password, $this->time);
+			$user = UserModel::signInProcess(
+				$this->username,
+				$this->password,
+				$this->time
+			);
 		}
 
 		$result->signed = $user->ok ? true : false;
-		$result->token = NULL;
+		$result->token = null;
 
 		if ($user->ok) {
 			$result->status = 'complete';

@@ -13,19 +13,23 @@
  */
 
 class SystemRefresh extends Page {
-	var $url;
-	var $refreshTime = 10;
+	public $url;
+	public $refreshTime = 10;
 
 	function __construct() {
 		parent::__construct([
 			'url' => Request::get('url'),
-			'refreshTime' => SG\getFirstInt(Request::get('time'), $this->refreshTime),
+			'refreshTime' => SG\getFirstInt(Request::get('time'), $this->refreshTime)
 		]);
 	}
 
 	function rightToBuild() {
-		if (!is_admin()) return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
-		if ($this->refreshTime < 1) return error(_HTTP_ERROR_BAD_REQUEST, 'Time must br greater than 1');
+		if (!is_admin()) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		}
+		if ($this->refreshTime < 1) {
+			return error(_HTTP_ERROR_BAD_REQUEST, 'Time must br greater than 1');
+		}
 
 		return true;
 	}
@@ -45,8 +49,8 @@ class SystemRefresh extends Page {
 							'text' => 'Refresh',
 							'onClick' => 'refresh()'
 						])
-					], // children
-				]), // Row
+					] // children
+				]) // Row
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
@@ -56,18 +60,23 @@ class SystemRefresh extends Page {
 					new Container([
 						'id' => 'error',
 						'child' => '<ol></ol>'
-					]),
-				], // children
+					])
+				] // children
 			]), // Widget
-			'script' => $this->script(),
+			'script' => $this->script()
 		]);
 	}
 
 	private function script() {
 		head(
 			'<script>
-			let refreshTime = '.$this->refreshTime.';
-			let refreshUrl = "' . $this->url . '?logCounter=no' . '";
+			let refreshTime = '
+				. $this->refreshTime
+				. ';
+			let refreshUrl = "'
+				. $this->url
+				. '?logCounter=no'
+				. '";
 			let sendLog = true;
 
 			setInterval(function() {
@@ -99,19 +108,32 @@ class SystemRefresh extends Page {
 					if (sendLog) {
 						console.log("SEND LOG");
 						console.log({
-								url: "'._DOMAIN.$_SERVER['REQUEST_URI'].'",
+								url: "'
+				. _DOMAIN
+				. $_SERVER['REQUEST_URI']
+				. '",
 								type: "PHP Down",
-								host: "'._DOMAIN.$_SERVER['REQUEST_URI'].'",
-								date: "'.date('Y-m-d H:i:s').'",
+								host: "'
+				. _DOMAIN
+				. $_SERVER['REQUEST_URI']
+				. '",
+								date: "'
+				. date('Y-m-d H:i:s')
+				. '",
 								description: "PHP was Down",
 							});
 						$.post(
 							"https://service.softganz.com/system/issue/new",
 							{
-								url: "'._DOMAIN.$_SERVER['REQUEST_URI'].'",
+								url: "'
+				. _DOMAIN
+				. $_SERVER['REQUEST_URI']
+				. '",
 								type: "PHP Down",
 								// host: "PHP Down",
-								date: "'.date('Y-m-d H:i:s').'",
+								date: "'
+				. date('Y-m-d H:i:s')
+				. '",
 								description: "PHP was Down",
 							}
 						).done((data) => {
@@ -148,5 +170,4 @@ class SystemRefresh extends Page {
 // 	'get' => (Object) Request::get(),
 // 	'post' => (Object) Request::post(),
 // ]
-
 ?>

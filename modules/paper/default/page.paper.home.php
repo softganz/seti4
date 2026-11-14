@@ -1,25 +1,25 @@
 <?php
 /**
-* Paper   :: Home Page
-* Created :: 2019-01-01
-* Modify  :: 2025-02-28
-* Version :: 5
-*
-* @return Widget
-*
-* @usage paper
-*/
+ * Paper   :: Home Page
+ * Created :: 2019-01-01
+ * Modify  :: 2025-02-28
+ * Version :: 5
+ *
+ * @return Widget
+ *
+ * @usage paper
+ */
 
 use Paper\Model\PaperModel;
 use Paper\Widget\PaperListWidget;
 
 class PaperHome extends Page {
-	var $tags;
-	var $inputFormat;
-	var $listStyle;
-	var $page;
-	var $items;
-	var $order;
+	public $tags;
+	public $inputFormat;
+	public $listStyle;
+	public $page;
+	public $items;
+	public $order;
 
 	private const LISTSTYLE = 'div';
 	private const PAGE = 1;
@@ -33,7 +33,7 @@ class PaperHome extends Page {
 			'listStyle' => \SG\getFirst(post('listStyle'), self::LISTSTYLE),
 			'page' => \SG\getFirst(post('page'), self::PAGE),
 			'items' => \SG\getFirst(post('items'), self::ITEMS),
-			'order' => \SG\getFirst(post('order'), self::ORDERBY),
+			'order' => \SG\getFirst(post('order'), self::ORDERBY)
 		]);
 		// debugMsg($this, '$this');
 	}
@@ -53,13 +53,12 @@ class PaperHome extends Page {
 				'field' => 'detail,photo',
 				'page' => $this->page,
 				'items' => $this->items,
-				'order' => $this->order,
-			],
+				'order' => $this->order
+			]
 		]);
 		// debugMsg($topics, '$topics');
 
-
-		event_tricker('paper.listing.start',$self,$topics,$para);
+		event_tricker('paper.listing.start', $self, $topics, $para);
 
 		$pageCondition = [
 			'items' => $this->items,
@@ -70,9 +69,10 @@ class PaperHome extends Page {
 			'pagePara' => [
 				'tags' => $this->tags,
 				'page' => $this->page,
-				'items' => $this->items == self::ITEMS ? NULL : $this->items,
-				'order' => $this->order == self::ORDERBY ? NULL : $this->items,
-				'listStyle' => $this->listStyle == self::LISTSTYLE ? NULL : $this->listStyle,
+				'items' => $this->items == self::ITEMS ? null : $this->items,
+				'order' => $this->order == self::ORDERBY ? null : $this->items,
+				'listStyle' =>
+					$this->listStyle == self::LISTSTYLE ? null : $this->listStyle
 			]
 		];
 
@@ -82,40 +82,50 @@ class PaperHome extends Page {
 
 		// show topic that mark as home sticky
 		if ($isFirstPage) {
-			$sticky_para = (Object) [
+			$sticky_para = (object) [
 				'type' => '*',
 				'sticky' => _HOME_STICKY,
-				'option' => option('no_page_bottom,no_menu,no_header,no_package_footer,no_toolbar,no_div'),
+				'option' => option(
+					'no_page_bottom,no_menu,no_header,no_package_footer,no_toolbar,no_div'
+				),
 				'options' => [
 					'field' => 'detail,photo',
 					'order' => 'weight',
 					'sort' => 'asc',
-					'limit' => 10,
+					'limit' => 10
 				]
 			];
 			$sticky = PaperModel::items($sticky_para);
 
 			foreach ($topics->items as $key => $item) {
-				if ($item->sticky==_HOME_STICKY) unset($promote->items[$key]);
+				if ($item->sticky == _HOME_STICKY) {
+					unset($promote->items[$key]);
+				}
 			}
 		}
 
 		return new Scaffold([
-			'appBar' => NULL, // AppBar
+			'appBar' => null, // AppBar
 			'body' => new Container([
-				'class' => 'tag-topics -style-'.$this->listStyle,
+				'class' => 'tag-topics -style-' . $this->listStyle,
 				'children' => [
-					'<form class="search-box" method="get" action="'.url('paper/list').'">'
-					. '<input type="text" class="form-text -fill" name="q" value="'.htmlspecialchars(post('q')).'" placeholder="ป้อนหัวข้อที่ต้องการค้นหา" />'
-					// . '<button class="btn -link" type="submit" name="" value=""><i class="icon -material">search</i></button>'
-					. '</form>',
-					$sticky->items ? new Container([
-						'id' => 'home-sticky',
-						'class' => 'home-sticky -sticky',
-						'child' => new PaperListWidget([
-							'children' => $sticky->items,
-						]),
-					]) : NULL, // Container
+					'<form class="search-box" method="get" action="'
+					. url('paper/list')
+					. '">'
+					. '<input type="text" class="form-text -fill" name="q" value="'
+					. htmlspecialchars(post('q'))
+					. '" placeholder="ป้อนหัวข้อที่ต้องการค้นหา" />'
+					. // . '<button class="btn -link" type="submit" name="" value=""><i class="icon -material">search</i></button>'
+					'</form>',
+					$sticky->items
+						? new Container([
+							'id' => 'home-sticky',
+							'class' => 'home-sticky -sticky',
+							'child' => new PaperListWidget([
+								'children' => $sticky->items
+							])
+						])
+						: null, // Container
 					new Container([
 						'id' => 'home-promote',
 						'class' => 'home-promote -promote',
@@ -125,19 +135,23 @@ class PaperHome extends Page {
 								'listStyle' => $this->listStyle,
 								'url' => q(),
 								'order' => $this->order,
-								'headerSortParameter' => ['listStyle' => $this->listStyle, 'page' => $this->page, 'items' => $this->items],
-								'children' => $topics->items,
+								'headerSortParameter' => [
+									'listStyle' => $this->listStyle,
+									'page' => $this->page,
+									'items' => $this->items
+								],
+								'children' => $topics->items
 							]),
-							$pagenv->show,
+							$pagenv->show
 							// isset($GLOBALS['ad']->tags_list) ? new Container([
 							// 	'id' => 'ad-tags_list',
 							// 	'class' => 'ads',
 							// 	'child' => $GLOBALS['ad']->tags_list,
 							// ]) : NULL, // Container
-						], // children
-					]), // Container
-				], // children
-			]), // Container
+						] // children
+					]) // Container
+				] // children
+			]) // Container
 		]);
 	}
 }

@@ -17,20 +17,22 @@ use Paper\Widget\PaperListWidget;
 use Softganz\DB;
 
 class Contents extends Page {
-	var $contentTypes;
-	var $listStyle;
-	var $page;
-	var $items;
-	var $order;
-	var $right;
+	public $contentTypes;
+	public $listStyle;
+	public $page;
+	public $items;
+	public $order;
+	public $right;
 
 	private const LISTSTYLE = 'div';
 	private const PAGE = 1;
 	private const ITEMS = 10;
 	private const ORDERBY = 'nodeId';
 
-	function __construct($contentTypes = NULL) {
-		$singleType = !preg_match('/,/', $contentTypes) && user_access('create '.$contentTypes.' paper');
+	function __construct($contentTypes = null) {
+		$singleType =
+			!preg_match('/,/', $contentTypes) &&
+			user_access('create ' . $contentTypes . ' paper');
 
 		parent::__construct([
 			'contentTypes' => $contentTypes,
@@ -39,9 +41,9 @@ class Contents extends Page {
 			'items' => SG\getFirst(post('items'), self::ITEMS),
 			'order' => SG\getFirst(post('order'), self::ORDERBY),
 			'singleType' => $singleType,
-			'right' => (Object) [
-				'create' => $singleType ? true : false,
-			],
+			'right' => (object) [
+				'create' => $singleType ? true : false
+			]
 		]);
 		// debugMsg($this, '$this');
 	}
@@ -51,7 +53,7 @@ class Contents extends Page {
 
 		// $types = BasicModel::get_topic_type($this->contentTypes);
 
-		event_tricker('paper.listing.init',$self,$topics,$para);
+		event_tricker('paper.listing.init', $self, $topics, $para);
 
 		$conditions = [
 			'type' => $this->contentTypes,
@@ -60,13 +62,13 @@ class Contents extends Page {
 				'field' => 'detail,photo',
 				'page' => $this->page,
 				'items' => $this->items,
-				'order' => $this->order,
-			],
+				'order' => $this->order
+			]
 		];
 
 		$topics = PaperModel::items($conditions);
 
-		event_tricker('paper.listing.start',$self,$topics,$para);
+		event_tricker('paper.listing.start', $self, $topics, $para);
 
 		$pageCondition = [
 			'items' => $this->items,
@@ -76,16 +78,17 @@ class Contents extends Page {
 			'cleanUrl' => true,
 			'pagePara' => [
 				'page' => $this->page,
-				'items' => $this->items == self::ITEMS ? NULL : $this->items,
-				'order' => $this->order == self::ORDERBY ? NULL : $this->items,
-				'listStyle' => $this->listStyle == self::LISTSTYLE ? NULL : $this->listStyle,
+				'items' => $this->items == self::ITEMS ? null : $this->items,
+				'order' => $this->order == self::ORDERBY ? null : $this->items,
+				'listStyle' =>
+					$this->listStyle == self::LISTSTYLE ? null : $this->listStyle
 			]
 		];
 		// debugMsg($pageCondition, '$pageConfition');
 
 		$pagenv = PaperModel::pageNavigator($pageCondition);
 
-		event_tricker('paper.listing.complete',$self,$topics,$para);
+		event_tricker('paper.listing.complete', $self, $topics, $para);
 
 		if ($this->singleType) {
 			$title = DB::select([
@@ -101,14 +104,16 @@ class Contents extends Page {
 				'title' => $title,
 				'trailing' => new Row([
 					'children' => [
-						$this->right->create ? new Button([
-							'type' => 'primary',
-							'href' => url('paper/post/'.$this->contentTypes),
-							'text' => 'สร้าง '.$title,
-							'icon' => new Icon('add'),
-						]) : NULL, // Button
-					], // children
-				]), // Row
+						$this->right->create
+							? new Button([
+								'type' => 'primary',
+								'href' => url('paper/post/' . $this->contentTypes),
+								'text' => 'สร้าง ' . $title,
+								'icon' => new Icon('add')
+							])
+							: null // Button
+					] // children
+				]) // Row
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
@@ -117,12 +122,16 @@ class Contents extends Page {
 						'listStyle' => $this->listStyle,
 						'url' => q(),
 						'order' => $this->order,
-						'headerSortParameter' => ['listStyle' => $this->listStyle, 'page' => $this->page, 'items' => $this->items],
-						'children' => $topics->items,
+						'headerSortParameter' => [
+							'listStyle' => $this->listStyle,
+							'page' => $this->page,
+							'items' => $this->items
+						],
+						'children' => $topics->items
 					]),
-					$pagenv->show,
-				], // children
-			]), // Widget
+					$pagenv->show
+				] // children
+			]) // Widget
 		]);
 	}
 }

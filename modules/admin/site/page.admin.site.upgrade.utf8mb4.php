@@ -14,7 +14,7 @@
 use Softganz\DB;
 
 class AdminSiteUpgradeUtf8mb4 extends Page {
-	var $args;
+	public $args;
 
 	function __construct($args = null) {
 		parent::__construct([

@@ -1,23 +1,23 @@
 <?php
 /**
-* System  :: Show mobile style Page
-* Created :: 2025-06-21
-* Modify  :: 2025-08-26
-* Version :: 3
-*
-* @return Widget
-*
-* @usage system/mobile
-*/
+ * System  :: Show mobile style Page
+ * Created :: 2025-06-21
+ * Modify  :: 2025-08-26
+ * Version :: 3
+ *
+ * @return Widget
+ *
+ * @usage system/mobile
+ */
 
 class SystemMobile extends Page {
-	var $device;
-	var $domain;
+	public $device;
+	public $domain;
 
 	function __construct() {
 		parent::__construct([
 			'device' => SG\getFirst(Request::all('device'), $this->device),
-			'domain' => SG\getFirst(Request::all('domain'), _DOMAIN),
+			'domain' => SG\getFirst(Request::all('domain'), _DOMAIN)
 		]);
 	}
 
@@ -25,7 +25,7 @@ class SystemMobile extends Page {
 		$this->style();
 
 		return new Container([
-			'class' => 'mobile'.' -'.$this->device,
+			'class' => 'mobile' . ' -' . $this->device,
 			'id' => 'mobile',
 			'children' => [
 				new Row([
@@ -46,7 +46,7 @@ class SystemMobile extends Page {
 										'domain' => [
 											'id' => 'dropbox-domain',
 											'type' => 'hidden',
-											'value' => $this->domain,
+											'value' => $this->domain
 										],
 										'device' => [
 											'type' => 'radio',
@@ -57,22 +57,22 @@ class SystemMobile extends Page {
 												'iphone' => 'iPhone',
 												'iphone16' => 'iPhone 16',
 												'moto-g21' => 'Moto G21',
-												'samsung-s23' => 'Samsung Galaxy S23',
+												'samsung-s23' => 'Samsung Galaxy S23'
 												// 'samsung-a54' => 'Samsung Galaxy A54',
 												// 'samsung-a34' => 'Samsung Galaxy A34',
 												// 'samsung-a14' => 'Samsung Galaxy A14',
-											],
+											]
 										]
-									], // children
-								]), // Form
-							], // children
+									] // children
+								]) // Form
+							] // children
 						]), // Dropbox
 						new Button([
 							'id' => 'fullscreen',
 							'type' => 'link',
-							'icon' => new Icon('fullscreen'),
-						]), // Button
-					], // children
+							'icon' => new Icon('fullscreen')
+						]) // Button
+					] // children
 				]), // Row
 				new Container([
 					'class' => '-device-middle',
@@ -92,27 +92,27 @@ class SystemMobile extends Page {
 											'type' => 'text',
 											'class' => '-fill',
 											'onEnter' => 'submit',
-											'value' => $this->domain,
+											'value' => $this->domain
 										],
 										'device' => [
 											'type' => 'hidden',
-											'value' => $this->device,
-										],
-									], // children
+											'value' => $this->device
+										]
+									] // children
 								]), // Form
-								'<iframe id="mainframe" src="' . $this->domain . '"></iframe>',
-							], // children
+								'<iframe id="mainframe" src="' . $this->domain . '"></iframe>'
+							] // children
 						]), // Container
 						new Container([
 							'class' => '-right'
-						]), // Container
-					], // children
+						]) // Container
+					] // children
 				]), // Container
 				new Container([
-					'class' => '-footer',
+					'class' => '-footer'
 				]), // Container
-				$this->script(),
-			], // children
+				$this->script()
+			] // children
 		]);
 	}
 
@@ -240,8 +240,7 @@ class SystemMobile extends Page {
 						}
 					}
 				}
-			</style>'
-		);
+			</style>');
 	}
 
 	private function script() {

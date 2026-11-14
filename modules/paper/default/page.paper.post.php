@@ -12,9 +12,9 @@
  */
 
 class PaperPost extends Page {
-	var $type;
-	var $tagId;
-	var $orgId;
+	public $type;
+	public $tagId;
+	public $orgId;
 
 	function __construct($type = null, $tagId = null) {
 		parent::__construct([

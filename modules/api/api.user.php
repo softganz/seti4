@@ -12,12 +12,12 @@
  */
 
 class UserApi extends PageApi {
-	var $queryText;
-	var $username;
-	var $email;
-	var $status = 'enable';
-	var $page = 1;
-	var $item = 10;
+	public $queryText;
+	public $username;
+	public $email;
+	public $status = 'enable';
+	public $page = 1;
+	public $item = 10;
 
 	function __construct() {
 		parent::__construct([
@@ -25,8 +25,16 @@ class UserApi extends PageApi {
 			'username' => Request::all('username'),
 			'email' => Request::all('email'),
 			'status' => SG\getFirst(Request::all('status'), $this->status),
-			'page' => SG\getFirst(Request::all('page'), Request::all('p'), $this->page),
-			'item' => SG\getFirst(Request::all('item'), Request::all('n'), $this->item),
+			'page' => SG\getFirst(
+				Request::all('page'),
+				Request::all('p'),
+				$this->page
+			),
+			'item' => SG\getFirst(
+				Request::all('item'),
+				Request::all('n'),
+				$this->item
+			)
 		]);
 	}
 
@@ -36,9 +44,12 @@ class UserApi extends PageApi {
 		// Only referer form same site except admin, to prevent abuse of this API to query user information without permission.
 		if (is_admin()) {
 			// Admin can query without referer
-		} else if (
-			(empty($this->queryText) && empty($this->username) && empty($this->email))
-			|| !i()->ok || _HOST != _REFERER
+		} elseif (
+			(empty($this->queryText) &&
+				empty($this->username) &&
+				empty($this->email)) ||
+			!i()->ok ||
+			_HOST != _REFERER
 		) {
 			return $result;
 		}
@@ -52,25 +63,36 @@ class UserApi extends PageApi {
 			'status' => $this->status,
 			'option' => [
 				'page' => $this->page,
-				'item' => $this->item,
-			],
+				'item' => $this->item
+			]
 		]);
 
 		foreach ($users->items as $user) {
-			$desc = (new ProfilePhoto($user->username))->build()
+			$desc =
+				new ProfilePhoto($user->username)->build()
 				. $user->name
-				. ($isAdmin ? '<span class="email">('.$user->username.($user->email ? ' : '.$user->email : '').')</span>' : '');
+				. ($isAdmin
+					? '<span class="email">('
+						. $user->username
+						. ($user->email ? ' : ' . $user->email : '')
+						. ')</span>'
+					: '');
 
 			$result[] = [
 				'value' => $user->userId,
 				'label' => htmlspecialchars($user->name),
-				'altLabel' => $desc,
+				'altLabel' => $desc
 			];
 		}
-		if ($users->count >= $this->item) $result[] = ['value' => '...', 'label' => 'ยังมีอีก', 'desc' => ''];
+		if ($users->count >= $this->item) {
+			$result[] = ['value' => '...', 'label' => 'ยังมีอีก', 'desc' => ''];
+		}
 
 		if (debug('api')) {
-			$result[] = ['value' => 'num_rows','label' => 'Result is '.count($users).' row(s).'];
+			$result[] = [
+				'value' => 'num_rows',
+				'label' => 'Result is ' . count($users) . ' row(s).'
+			];
 		}
 
 		return $result;

@@ -15,13 +15,13 @@
 use Softganz\DB;
 
 class StatsUserDate extends Page {
-	var $date;
-	var $right;
+	public $date;
+	public $right;
 
-	function __construct($date = NULL) {
+	function __construct($date = null) {
 		parent::__construct([
 			'date' => SG\getFirst($date, date('Y-m-d')),
-			'right' => (Object) [
+			'right' => (object) [
 				'accessProfile' => user_access('access user profiles')
 			]
 		]);
@@ -40,8 +40,7 @@ class StatsUserDate extends Page {
 			WHERE `log`.`user` IS NOT NULL AND `log`.`log_date` between :start AND :end
 			GROUP BY `log`.`user`
 			ORDER BY `hits` DESC, CONVERT(`user`.`name` USING tis620) ASC',
-			'%WHERE%' => [
-			],
+			'%WHERE%' => [],
 			'var' => [
 				':start' => $this->date . ' 00:00:00',
 				':end' => $this->date . ' 23:59:59'
@@ -56,18 +55,21 @@ class StatsUserDate extends Page {
 			]), // AppBar
 			'body' => new Table([
 				'thead' => ['no' => '', 'Name', 'hits -amt' => 'Hits'],
-				'children' => array_map(
-					function($rs) {
-						static $no = 0;
+				'children' => array_map(function ($rs) {
+					static $no = 0;
 
-						return [
-							++ $no,
-							($this->right->accessProfile ? '<a href="'.url('profile/'.$rs->userId).'">'.$rs->name.'</a>' : $rs->name),
-							number_format($rs->hits)
-						];
-					},
-					$dbs->items
-				)
+					return [
+						++$no,
+						$this->right->accessProfile
+							? '<a href="'
+								. url('profile/' . $rs->userId)
+								. '">'
+								. $rs->name
+								. '</a>'
+							: $rs->name,
+						number_format($rs->hits)
+					];
+				}, $dbs->items)
 			]), // Table
 			'var' => [
 				'Number' => number_format(count($dbs->items))

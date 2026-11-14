@@ -17,24 +17,24 @@ use Paper\Widget\PaperListWidget;
 use Softganz\DB;
 
 class Tags extends Page {
-	var $tagIdList;
-	var $listStyle;
-	var $page;
-	var $items;
-	var $order;
+	public $tagIdList;
+	public $listStyle;
+	public $page;
+	public $items;
+	public $order;
 
 	private const LISTSTYLE = 'div';
 	private const PAGE = 1;
 	private const ITEMS = 10;
 	private const ORDERBY = 'nodeId';
 
-	function __construct($tagIdList = NULL) {
+	function __construct($tagIdList = null) {
 		parent::__construct([
 			'tagIdList' => $tagIdList,
 			'listStyle' => \SG\getFirst(post('listStyle'), self::LISTSTYLE),
 			'page' => \SG\getFirst(post('page'), self::PAGE),
 			'items' => \SG\getFirst(post('items'), self::ITEMS),
-			'order' => \SG\getFirst(post('order'), self::ORDERBY),
+			'order' => \SG\getFirst(post('order'), self::ORDERBY)
 		]);
 		// debugMsg($this, '$this');
 	}
@@ -42,7 +42,9 @@ class Tags extends Page {
 	function build() {
 		head('<meta name="robots" content="noindex,nofollow">');
 
-		if (empty($this->tagIdList)) return $this->listTags();
+		if (empty($this->tagIdList)) {
+			return $this->listTags();
+		}
 
 		return $this->listTagTopics();
 	}
@@ -62,14 +64,24 @@ class Tags extends Page {
 		]);
 
 		foreach ($tagDbs->items as $tag) {
-			if ($tag->process == -1) continue;
-			$level = $tag->max ? round($tag->topics * 4 / $tag->max) + 1 : 1;
-			$ret .= '<a href="'.url('tags/'.$tag->tid).'" class="btn -tagadelic -level'.$level.'">'.$tag->name.'</a> '._NL;
+			if ($tag->process == -1) {
+				continue;
+			}
+			$level = $tag->max ? round(($tag->topics * 4) / $tag->max) + 1 : 1;
+			$ret .=
+				'<a href="'
+				. url('tags/' . $tag->tid)
+				. '" class="btn -tagadelic -level'
+				. $level
+				. '">'
+				. $tag->name
+				. '</a> '
+				. _NL;
 		}
 
 		return new Scaffold([
 			'appBar' => new AppBar(['title' => 'Tags']),
-			'body' => $ret,
+			'body' => $ret
 		]);
 	}
 
@@ -86,11 +98,11 @@ class Tags extends Page {
 				'field' => 'detail,photo',
 				'page' => $this->page,
 				'items' => $this->items,
-				'order' => $this->order,
-			],
+				'order' => $this->order
+			]
 		]);
 
-		event_tricker('paper.listing.start',$self,$topics,$para);
+		event_tricker('paper.listing.start', $self, $topics, $para);
 
 		$pageCondition = [
 			'items' => $this->items,
@@ -100,9 +112,10 @@ class Tags extends Page {
 			'cleanUrl' => true,
 			'pagePara' => [
 				'page' => $this->page,
-				'items' => $this->items == self::ITEMS ? NULL : $this->items,
-				'order' => $this->order == self::ORDERBY ? NULL : $this->items,
-				'listStyle' => $this->listStyle == self::LISTSTYLE ? NULL : $this->listStyle,
+				'items' => $this->items == self::ITEMS ? null : $this->items,
+				'order' => $this->order == self::ORDERBY ? null : $this->items,
+				'listStyle' =>
+					$this->listStyle == self::LISTSTYLE ? null : $this->listStyle
 			]
 		];
 
@@ -112,27 +125,31 @@ class Tags extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Topic List',
+				'title' => 'Topic List'
 			]), // AppBar
 			'body' => new Container([
-				'class' => 'tag-topics -style-'.$this->listStyle,
+				'class' => 'tag-topics -style-' . $this->listStyle,
 				'children' => [
 					$pagenv->show,
 					new PaperListWidget([
 						'listStyle' => $this->listStyle,
 						'url' => q(),
 						'order' => $this->order,
-						'headerSortParameter' => ['listStyle' => $this->listStyle, 'page' => $this->page, 'items' => $this->items],
-						'children' => $topics->items,
+						'headerSortParameter' => [
+							'listStyle' => $this->listStyle,
+							'page' => $this->page,
+							'items' => $this->items
+						],
+						'children' => $topics->items
 					]),
-					$pagenv->show,
+					$pagenv->show
 					// isset($GLOBALS['ad']->tags_list) ? new Container([
 					// 	'id' => 'ad-tags_list',
 					// 	'class' => 'ads',
 					// 	'child' => $GLOBALS['ad']->tags_list,
 					// ]) : NULL, // Container
-				], // children
-			]), // Container
+				] // children
+			]) // Container
 		]);
 	}
 }

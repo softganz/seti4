@@ -13,13 +13,15 @@
  */
 
 class CalendarRightModel {
-	var $create = false; // Cannot use property 'add' because it conflicts with the 'add' method in the CalendarModel class.
-	var $edit = false;
+	public $create = false; // Cannot use property 'add' because it conflicts with the 'add' method in the CalendarModel class.
+	public $edit = false;
 
-	function __construct($calendarId = NULL) {
-		$calendarInfo = $calendarId ? CalendarModel::getById($calendarId) : NULL;
+	function __construct($calendarId = null) {
+		$calendarInfo = $calendarId ? CalendarModel::getById($calendarId) : null;
 
 		$this->create = user_access('administer calendars,create calendar content');
-		$this->edit = user_access('administer calendars') || (i()->ok && $calendarInfo->owner == i()->uid);
+		$this->edit =
+			user_access('administer calendars') ||
+			(i()->ok && $calendarInfo->owner == i()->uid);
 	}
 }

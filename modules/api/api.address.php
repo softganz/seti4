@@ -1,21 +1,21 @@
 <?php
 /**
-* API     :: Address API
-* Created :: 2022-11-19
-* Modify  :: 2022-11-19
-* Version :: 2
-*
-* @return Array
-*
-* @usage api/address
-*/
+ * API     :: Address API
+ * Created :: 2022-11-19
+ * Modify  :: 2022-11-19
+ * Version :: 2
+ *
+ * @return Array
+ *
+ * @usage api/address
+ */
 
 use Softganz\DB;
 
 class AddressApi extends PageApi {
-	var $addressText;
-	var $page;
-	var $items;
+	public $addressText;
+	public $page;
+	public $items;
 
 	function __construct() {
 		parent::__construct([
@@ -28,17 +28,28 @@ class AddressApi extends PageApi {
 	function build() {
 		$result = [];
 
-		if (empty($this->addressText)) return $result;
+		if (empty($this->addressText)) {
+			return $result;
+		}
 
 		$addressOut = \SG\explode_address($this->addressText);
 
-		$searchText = \SG\getFirst($addressOut['tambon'],$addressOut['ampur'],$addressOut['changwat'], $this->addressText);
+		$searchText = \SG\getFirst(
+			$addressOut['tambon'],
+			$addressOut['ampur'],
+			$addressOut['changwat'],
+			$this->addressText
+		);
 
 		// debugMsg('$searchText = '.$searchText);
 
-		if (empty($searchText)) return $result;
+		if (empty($searchText)) {
+			return $result;
+		}
 
-		$house = $addressOut['house'].($addressOut['village']?' ม.'.$addressOut['village']:'');
+		$house =
+			$addressOut['house']
+			. ($addressOut['village'] ? ' ม.' . $addressOut['village'] : '');
 
 		// debugMsg($addressOut,'$addressOut');
 
@@ -122,8 +133,8 @@ class AddressApi extends PageApi {
 					, CONVERT(`tambonName` USING tis620) ASC
 				$LIMIT$',
 			'var' => [
-				':q' => '%'.$searchText.'%',
-				'$LIMIT$' => 'LIMIT '.($this->page-1).','.$this->items
+				':q' => '%' . $searchText . '%',
+				'$LIMIT$' => 'LIMIT ' . ($this->page - 1) . ',' . $this->items
 			],
 			'options' => ['key' => 'areacode']
 		]);
@@ -132,10 +143,13 @@ class AddressApi extends PageApi {
 		// debugMsg($address,'$address');
 		// debugMsg($dbs,'$dbs');
 		foreach ($dbs->items as $rs) {
-			$address = \SG\implode_address(['house' => $house] + (Array) $rs);
-			$label = $address;//\SG\implode_address($rs);// $house.' ตำบล'.$rs->tambonName.' อำเภอ'.$rs->distname.' จังหวัด'.$rs->changwatName;
-			$areacode = $rs->areacode
-				. (strlen($rs->areacode) == 6 && $addressOut['village'] != '' ? str_pad($addressOut['village'], 2, '0', STR_PAD_LEFT) : '');
+			$address = \SG\implode_address(['house' => $house] + (array) $rs);
+			$label = $address; //\SG\implode_address($rs);// $house.' ตำบล'.$rs->tambonName.' อำเภอ'.$rs->distname.' จังหวัด'.$rs->changwatName;
+			$areacode =
+				$rs->areacode
+				. (strlen($rs->areacode) == 6 && $addressOut['village'] != ''
+					? str_pad($addressOut['village'], 2, '0', STR_PAD_LEFT)
+					: '');
 			$result[] = [
 				'value' => $areacode,
 				'label' => htmlspecialchars($label),
@@ -146,19 +160,25 @@ class AddressApi extends PageApi {
 				'changwatName' => htmlspecialchars($rs->changwatName),
 				'ampurName' => htmlspecialchars($rs->ampurName),
 				'tambonName' => htmlspecialchars($rs->tambonName),
-				'zip' => $addressOut['zip'],
+				'zip' => $addressOut['zip']
 			];
 		}
 		//print_o($result,'$result',1);
 		if (debug('api')) {
-			$result[] = ['value' => 'length','label' => 'Charactor length = '.strlen($searchText)];
-			$result[] = ['value' => 'query','label' => $dbs->_query];
-			$result[] = ['value' => 'num_rows','label' => 'Result is '.$dbs->_num_rows.' row(s).'];
-			$result[] = ['value' => 'tambon','label' => $searchText];
+			$result[] = [
+				'value' => 'length',
+				'label' => 'Charactor length = ' . strlen($searchText)
+			];
+			$result[] = ['value' => 'query', 'label' => $dbs->_query];
+			$result[] = [
+				'value' => 'num_rows',
+				'label' => 'Result is ' . $dbs->_num_rows . ' row(s).'
+			];
+			$result[] = ['value' => 'tambon', 'label' => $searchText];
 			$result['addressOut'] = $addressOut;
 
 			foreach ($address as $k => $v) {
-				$result[] = ['value' => 'out['.$k.']','label' => $k.'='.$v];
+				$result[] = ['value' => 'out[' . $k . ']', 'label' => $k . '=' . $v];
 			}
 		}
 		return $result;

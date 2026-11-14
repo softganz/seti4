@@ -18,13 +18,13 @@
  */
 
 class CalendarHome extends Page {
-	var $url;
-	var $year;
-	var $month;
-	var $get;
-	var $hash;
-	var $nodeId;
-	var $orgId;
+	public $url;
+	public $year;
+	public $month;
+	public $get;
+	public $hash;
+	public $nodeId;
+	public $orgId;
 
 	function __construct($action = null) {
 		parent::__construct([

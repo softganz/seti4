@@ -13,32 +13,40 @@
  */
 
 class calendar extends PageController {
-	var $calendarId;
-	var $action;
+	public $calendarId;
+	public $action;
 
-	function __construct($calendarId = NULL, $action = NULL) {
+	function __construct($calendarId = null, $action = null) {
 		if (substr($calendarId, 0, 1) === '*') {
 			$get = $calendarId;
 			unset($calendarId, $action);
 		}
 
-		if (empty($calendarId) && empty($action)) $action = 'home';
-		else if ($calendarId && empty($action)) $action = 'view';
-
+		if (empty($calendarId) && empty($action)) {
+			$action = 'home';
+		} elseif ($calendarId && empty($action)) {
+			$action = 'view';
+		}
 
 		parent::__construct([
 			'calendarId' => $calendarId,
-			'action' => 'calendar.'.$action,
+			'action' => 'calendar.' . $action,
 			'args' => func_get_args(),
-			'info' => is_numeric($calendarId) ? CalendarModel::getById($calendarId) : NULL,
+			'info' => is_numeric($calendarId)
+				? CalendarModel::getById($calendarId)
+				: null
 		]);
 
 		// Send get parameter to hom
-		if ($get) $this->info = $get;
+		if ($get) {
+			$this->info = $get;
+		}
 	}
 
 	function rightToBuild() {
-		if (!module_install('calendar')) return error(_HTTP_ERROR_NOT_FOUND, 'Calendar Not Install');
+		if (!module_install('calendar')) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'Calendar Not Install');
+		}
 	}
 }
 ?>

@@ -14,12 +14,12 @@
 use Softganz\DB;
 
 class UserRegister extends Page {
-	var $confirm;
-	// var $confirmRegister;
-	var $signWith;
-	var $rel;
-	var $ret;
-	var $register;
+	public $confirm;
+	// public $confirmRegister;
+	public $signWith;
+	public $rel;
+	public $ret;
+	public $register;
 
 	function __construct() {
 		parent::__construct([

@@ -16,19 +16,19 @@
 use Softganz\DB;
 
 class PersonInfoApi extends PageApi {
-	var $psnId;
-	var $action;
-	var $right;
+	public $psnId;
+	public $action;
+	public $right;
 
-	function __construct($psnId = NULL, $action = NULL) {
+	function __construct($psnId = null, $action = null) {
 		parent::__construct([
 			'action' => $action,
-			'personInfo' => $psnId ? PersonModel::get($psnId) : NULL,
+			'personInfo' => $psnId ? PersonModel::get($psnId) : null
 		]);
 		$this->psnId = $this->personInfo->psnId;
-		$this->right = (Object) [
+		$this->right = (object) [
 			'edit' => ($this->personInfo->RIGHT & _IS_EDITABLE) > 0,
-			'access' => ($this->personInfo->RIGHT & _IS_ACCESS) > 0,
+			'access' => ($this->personInfo->RIGHT & _IS_ACCESS) > 0
 		];
 		// debugMsg($this, '$this');
 	}
@@ -37,9 +37,9 @@ class PersonInfoApi extends PageApi {
 		if (empty($this->psnId)) {
 			return new ErrorMessage([
 				'code' => _HTTP_ERROR_BAD_REQUEST,
-				'text' => 'PROCESS ERROR',
+				'text' => 'PROCESS ERROR'
 			]);
-		} else if (!$this->right->edit) {
+		} elseif (!$this->right->edit) {
 			return new ErrorMessage([
 				'responseCode' => _HTTP_ERROR_FORBIDDEN,
 				'text' => 'Access Denied'
@@ -50,12 +50,12 @@ class PersonInfoApi extends PageApi {
 	}
 
 	function addOrgMember() {
-		$data = (Object) [
+		$data = (object) [
 			'psnId' => $this->psnId,
 			'orgId' => post('orgId'),
 			'department' => post('department'),
 			'position' => post('position'),
-			'uid' => i()->uid,
+			'uid' => i()->uid
 		];
 		if (empty($data->psnId) || empty($data->orgId)) {
 			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
@@ -77,7 +77,9 @@ class PersonInfoApi extends PageApi {
 
 	function removeOrgMember() {
 		$orgId = post('orgId');
-		if (empty($orgId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุองค์กร');
+		if (empty($orgId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุองค์กร');
+		}
 
 		DB::query([
 			'DELETE FROM %org_morg%
@@ -85,7 +87,7 @@ class PersonInfoApi extends PageApi {
 			LIMIT 1',
 			'var' => [
 				':orgId' => $orgId,
-				':psnId' => $this->psnId,
+				':psnId' => $this->psnId
 			]
 		]);
 

@@ -113,7 +113,7 @@ class DbSelect {
 }
 
 class DbQuery {
-	var ?string $sql;
+	public ?string $sql;
 	private object $result;
 	private object $DB;
 	private ?int $insertId;
@@ -141,7 +141,7 @@ class DbQuery {
 
 // Add custom exception class
 class DbException extends \Exception {
-	var $error = false;
+	public $error = false;
 	private string $state;
 	private string $sql;
 
@@ -312,7 +312,7 @@ class DB {
 		?bool $history = null,
 		?bool $log = null,
 		?bool $showResult = null,
-		mixed $onComplete = null,
+		mixed $onComplete = null
 	): array {
 		if (is_string($args)) {
 			$args = [$args];
@@ -322,7 +322,7 @@ class DB {
 		}
 		if ($where !== null) {
 			$args['%WHERE%'] = $where;
-		} else if ($wheres !== null) {
+		} elseif ($wheres !== null) {
 			$args['where'] = $wheres;
 		}
 		if ($var !== null) {
@@ -350,7 +350,11 @@ class DB {
 		);
 
 		// Merge options from $args[options] and named argument
-		$args['options'] = array_replace($args['options'] ?? [], $options ?? [], $namedOptions ?? []);
+		$args['options'] = array_replace(
+			$args['options'] ?? [],
+			$options ?? [],
+			$namedOptions ?? []
+		);
 
 		return $args;
 	}

@@ -10,8 +10,6 @@
  */
 
 class MyChangeDetail extends Page {
-	var $args;
-
 	function __construct() {
 		parent::__construct([]);
 	}

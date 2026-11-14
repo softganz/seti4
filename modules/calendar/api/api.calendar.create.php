@@ -11,7 +11,7 @@
  */
 
 class CalendarCreateApi extends PageApi {
-	var $right;
+	public $right;
 
 	function __construct() {
 		parent::__construct([

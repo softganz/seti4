@@ -13,25 +13,37 @@
  */
 
 class PaperEditDetail extends Page {
-	var $nodeId;
-	var $right;
-	var $nodeInfo;
+	public $nodeId;
+	public $right;
+	public $nodeInfo;
 
-	function __construct($nodeInfo = NULL) {
+	function __construct($nodeInfo = null) {
 		parent::__construct([
 			'nodeId' => $nodeInfo->nodeId,
 			'nodeInfo' => $nodeInfo,
 			'backend' => NodeModel::getBackend($nodeInfo->nodeId),
-			'right' => $nodeInfo->right,
+			'right' => $nodeInfo->right
 		]);
-		load_lib('class.editor.php','lib');
+		load_lib('class.editor.php', 'lib');
 		// print_o($this->right, '$this->right',1);
 	}
 
 	function rightToBuild() {
-		if (!$this->nodeInfo->nodeId) return error(_HTTP_ERROR_BAD_REQUEST, 'PARAMETER ERROR');
-		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
-		if ($this->nodeInfo->property->input_format == 'php' && !user_access('input format type php')) return error(_HTTP_ERROR_FORBIDDEN,'Access denied:ไม่สามารถแก้ไขหัวข้อที่มีรูปแบบข้อมูลเป็นโปรแกรมได้');
+		if (!$this->nodeInfo->nodeId) {
+			return error(_HTTP_ERROR_BAD_REQUEST, 'PARAMETER ERROR');
+		}
+		if (!$this->right->edit) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
+		if (
+			$this->nodeInfo->property->input_format == 'php' &&
+			!user_access('input format type php')
+		) {
+			return error(
+				_HTTP_ERROR_FORBIDDEN,
+				'Access denied:ไม่สามารถแก้ไขหัวข้อที่มีรูปแบบข้อมูลเป็นโปรแกรมได้'
+			);
+		}
 		return true;
 	}
 
@@ -40,7 +52,7 @@ class PaperEditDetail extends Page {
 			'appBar' => new AppBar([
 				'title' => 'แก้ไขรายละเอียด',
 				'boxHeader' => true,
-				'leading' => _HEADER_BACK,
+				'leading' => _HEADER_BACK
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
@@ -48,38 +60,63 @@ class PaperEditDetail extends Page {
 						'class' => 'paper-upload-tabs',
 						'style' => 'margin: 8px',
 						'children' => [
-							$this->right->edit ? [
-								'id' => 'edit-detail',
-								'active' => true,
-								'action' => new Button(['href' => '#edit-detail', 'text' => 'รายละเอียด']),
-								'content' => $this->detail(),
-							] : NULL,
-							$this->right->editBackend ? [
-								'id' => 'edit-backend',
-								'action' => new Button(['href' => '#edit-backend', 'text' => 'PHP Back End']),
-								'content' => $this->backend(),
-							] : NULL,
-							$this->right->editCss ? [
-								'id' => 'edit-css',
-								'action' => new Button(['href' => '#edit-css', 'text' => 'CSS']),
-								'content' => $this->css(),
-							] : NULL,
-							$this->right->editScript ? [
-								'id' => 'edit-script',
-								'action' => new Button(['href' => '#edit-script', 'text' => 'Scripts']),
-								'content' => $this->script(),
-							] : NULL,
-							$this->right->editData ? [
-								'id' => 'edit-data',
-								'action' => new Button(['href' => '#edit-data', 'text' => 'JSON Data']),
-								'content' => $this->data(),
-							] : NULL,
-						], // children
+							$this->right->edit
+								? [
+									'id' => 'edit-detail',
+									'active' => true,
+									'action' => new Button([
+										'href' => '#edit-detail',
+										'text' => 'รายละเอียด'
+									]),
+									'content' => $this->detail()
+								]
+								: null,
+							$this->right->editBackend
+								? [
+									'id' => 'edit-backend',
+									'action' => new Button([
+										'href' => '#edit-backend',
+										'text' => 'PHP Back End'
+									]),
+									'content' => $this->backend()
+								]
+								: null,
+							$this->right->editCss
+								? [
+									'id' => 'edit-css',
+									'action' => new Button([
+										'href' => '#edit-css',
+										'text' => 'CSS'
+									]),
+									'content' => $this->css()
+								]
+								: null,
+							$this->right->editScript
+								? [
+									'id' => 'edit-script',
+									'action' => new Button([
+										'href' => '#edit-script',
+										'text' => 'Scripts'
+									]),
+									'content' => $this->script()
+								]
+								: null,
+							$this->right->editData
+								? [
+									'id' => 'edit-data',
+									'action' => new Button([
+										'href' => '#edit-data',
+										'text' => 'JSON Data'
+									]),
+									'content' => $this->data()
+								]
+								: null
+						] // children
 					]), // TabBar
-					$this->formScript(),
+					$this->formScript()
 					// new DebugMsg($this, '$this')
-				], // children
-			]), // Widget
+				] // children
+			]) // Widget
 		]);
 	}
 
@@ -87,85 +124,177 @@ class PaperEditDetail extends Page {
 		$type = BasicModel::get_topic_type($this->nodeInfo->info->type);
 		return new Form([
 			'variable' => 'topic',
-			'action' => url('api/paper/'.$this->nodeId.'/detail.update'),
+			'action' => url('api/paper/' . $this->nodeId . '/detail.update'),
 			'class' => 'sg-form',
 			'checkValid' => true,
 			'rel' => 'notify',
 			'children' => [
-				'title' => $type->has_title ? [
-					'type' => 'text',
-					'name' => 'topic[title]',
-					'label' => $type->title_label,
-					'class' => '-fill',
-					'maxlength' => 150,
-					'require' => true,
-					'value' => $this->nodeInfo->title,
-				] : NULL,
-				'body' => $type->has_body ? [
-					'type' => 'textarea',
-					'name' => 'detail[body]',
-					'label' => $type->body_label,
-					'class' => '-fill',
-					'style' => 'height: 30vh',
-					'rows' => 10,
-					'value' => $this->nodeInfo->info->body,
-					'pretext' => editor::softganz_editor('edit-detail-body'),
-				] : NULL,
+				'title' => $type->has_title
+					? [
+						'type' => 'text',
+						'name' => 'topic[title]',
+						'label' => $type->title_label,
+						'class' => '-fill',
+						'maxlength' => 150,
+						'require' => true,
+						'value' => $this->nodeInfo->title
+					]
+					: null,
+				'body' => $type->has_body
+					? [
+						'type' => 'textarea',
+						'name' => 'detail[body]',
+						'label' => $type->body_label,
+						'class' => '-fill',
+						'style' => 'height: 30vh',
+						'rows' => 10,
+						'value' => $this->nodeInfo->info->body,
+						'pretext' => editor::softganz_editor('edit-detail-body')
+					]
+					: null,
 				'save' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-					'container' => '{class: "-sg-text-right"}',
+					'value' =>
+						'<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+					'pretext' =>
+						'<a class="btn -link -cancel" href="'
+						. url('paper/' . $this->nodeId . '/edit')
+						. '"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'container' => '{class: "-sg-text-right"}'
 				],
 				'คำแนะนำ : เนื่องจากได้มีการเปลี่ยนแปลงวิธีการขึ้นบรรทัดใหม่ ซึ่งมีรายละเอียดดังนี้<ul><li>วิธีการขึ้นบรรทัดใหม่โดยไม่เว้นช่องว่างระหว่างบรรทัด ให้เคาะเว้นวรรค (Space bar) ที่ท้ายบรรทัดจำนวนหนึ่งครั้ง</li><li>วิธีการขึ้นย่อหน้าใหม่ซึ่งจะมีการเว้นช่องว่างห่างจากบรรทัดด้านบนเล็กน้อย ให้เคาะ Enter จำนวน 2 ครั้ง</li><li>หากข้อความของท่านยาวเกินไป จะทำให้ไม่สามารถนำข้อความทั้งหมดไปแสดงในหน้าแรก ให้ใส่ &lt;!--break--&gt แทรกไว้ในตำแหน่งที่ต้องการให้ตัดไปแสดงผล</li></ul>',
-				$this->nodeInfo->photos ? (function($topicInfo) {
-					$photo_list = _NL.'<div id="edit-topic-body-control-photo" class="editor" title="edit-detail-body">';
-					foreach ($topicInfo->photos as $photo) {
-						$photo_title = tr('Photo name').' : '.\SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
-						$photo_desc = tr('Photo Description').' : '.\SG\getFirst($photo->pic_name,substr($photo->file,0,strrpos($photo->file,'.')));
-						if ($topicInfo->property->input_format == 'markdown') {
-							$onclick = 'editor.insert("![ '.$photo_desc.' ]('.$photo->_url.' \"'.$photo_title.'\" '.(cfg('topic.photo.detail.class')?' class=\"'.cfg('topic.photo.detail.class').'\"':'').')");return false';
-						} else {
-							$onclick = 'editor.insert("<img src=\"'.$photo->_url.'\" alt=\"'.htmlspecialchars($photo_desc).'\" title=\"'.htmlspecialchars($photo_title).'\"'.(cfg('topic.photo.detail.class')?' class=\"'.cfg('topic.photo.detail.class').'\"':'').' />");return false';
+				$this->nodeInfo->photos
+					? (function ($topicInfo) {
+						$photo_list =
+							_NL
+							. '<div id="edit-topic-body-control-photo" class="editor" title="edit-detail-body">';
+						foreach ($topicInfo->photos as $photo) {
+							$photo_title =
+								tr('Photo name')
+								. ' : '
+								. \SG\getFirst(
+									$photo->pic_name,
+									substr($photo->file, 0, strrpos($photo->file, '.'))
+								);
+							$photo_desc =
+								tr('Photo Description')
+								. ' : '
+								. \SG\getFirst(
+									$photo->pic_name,
+									substr($photo->file, 0, strrpos($photo->file, '.'))
+								);
+							if ($topicInfo->property->input_format == 'markdown') {
+								$onclick =
+									'editor.insert("![ '
+									. $photo_desc
+									. ' ]('
+									. $photo->_url
+									. ' \"'
+									. $photo_title
+									. '\" '
+									. (cfg('topic.photo.detail.class')
+										? ' class=\"' . cfg('topic.photo.detail.class') . '\"'
+										: '')
+									. ')");return false';
+							} else {
+								$onclick =
+									'editor.insert("<img src=\"'
+									. $photo->_url
+									. '\" alt=\"'
+									. htmlspecialchars($photo_desc)
+									. '\" title=\"'
+									. htmlspecialchars($photo_title)
+									. '\"'
+									. (cfg('topic.photo.detail.class')
+										? ' class=\"' . cfg('topic.photo.detail.class') . '\"'
+										: '')
+									. ' />");return false';
+							}
+							$photo_list .=
+								'<img src="'
+								. $photo->src
+								. '" class="photo" onclick=\''
+								. $onclick
+								. '\' alt="'
+								. $photo->file
+								. '" title="'
+								. sg_client_convert('คลิกเพื่อวางภาพนี้')
+								. ' -> '
+								. $photo->file
+								. ' ('
+								. $photo->_size->width
+								. 'x'
+								. $photo->_size->height
+								. ' pixels '
+								. number_format($photo->_filesize)
+								. ' bytes)" height="50" /> ';
 						}
-						$photo_list .= '<img src="'.$photo->src.'" class="photo" onclick=\''.$onclick.'\' alt="'.$photo->file.'" title="'.sg_client_convert('คลิกเพื่อวางภาพนี้').' -> '.$photo->file.' ('.$photo->_size->width.'x'.$photo->_size->height.' pixels '.number_format($photo->_filesize).' bytes)" height="50" /> ';
-					}
-					$photo_list .= '</div>'._NL;
+						$photo_list .= '</div>' . _NL;
 
-					return $photo_list;
-				})($this->nodeInfo) : NULL,
+						return $photo_list;
+					})($this->nodeInfo)
+					: null,
 
-				(function($tpid) {
+				(function ($tpid) {
 					$doc_list = '';
-					$docs = mydb::select('SELECT * FROM %topic_files% WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc"',':tpid', $tpid);
+					$docs = mydb::select(
+						'SELECT * FROM %topic_files% WHERE `tpid` = :tpid AND (`cid` = 0 OR `cid` IS NULL) AND `type` = "doc"',
+						':tpid',
+						$tpid
+					);
 
 					if ($docs->_num_rows) {
-						$doc_list .= _NL.'<div id="edit-topic-body-control-docs" class="editor" title="edit-detail-body">';
+						$doc_list .=
+							_NL
+							. '<div id="edit-topic-body-control-docs" class="editor" title="edit-detail-body">';
 						foreach ($docs->items as $doc) {
 							$fileProperty = FileModel::docProperty($doc->file, $doc->folder);
 
-							$docDesc = preg_replace('/[\"\']/','','"'.\SG\getFirst($doc->title,$doc->file).'"');
-							$docUrl = cfg('files.log') ? url('files/'.$doc->fid) : $fileProperty->src;
+							$docDesc = preg_replace(
+								'/[\"\']/',
+								'',
+								'"' . \SG\getFirst($doc->title, $doc->file) . '"'
+							);
+							$docUrl = cfg('files.log')
+								? url('files/' . $doc->fid)
+								: $fileProperty->src;
 							if ($this->nodeInfo->property->input_format == 'markdown') {
-								$onclick = 'editor.insert("['.$docDesc.']('.$docUrl.')");return false';
+								$onclick =
+									'editor.insert("['
+									. $docDesc
+									. ']('
+									. $docUrl
+									. ')");return false';
 							} else {
-								$onclick = 'editor.insert("<a href=\"'.$docUrl.'\" title=\"'.htmlspecialchars($docDesc).'\">'.$docDesc.'</a>");return false';
+								$onclick =
+									'editor.insert("<a href=\"'
+									. $docUrl
+									. '\" title=\"'
+									. htmlspecialchars($docDesc)
+									. '\">'
+									. $docDesc
+									. '</a>");return false';
 							}
-							$doc_list .= '<a class="btn -link" href="javascript:void(0)" onclick=\''.$onclick.'\' title="คลิกเพื่อวางไฟล์นี้">'.$docDesc.'</a> , ';
+							$doc_list .=
+								'<a class="btn -link" href="javascript:void(0)" onclick=\''
+								. $onclick
+								. '\' title="คลิกเพื่อวางไฟล์นี้">'
+								. $docDesc
+								. '</a> , ';
 						}
-						$doc_list = rtrim($doc_list,' , ');
-						$doc_list .= '</div>'._NL;
+						$doc_list = rtrim($doc_list, ' , ');
+						$doc_list .= '</div>' . _NL;
 					}
-					return $doc_list ? $doc_list : NULL;
-				})($this->nodeId),
-			], // children
+					return $doc_list ? $doc_list : null;
+				})($this->nodeId)
+			] // children
 		]);
 	}
 
 	function backend() {
 		return new Form([
 			'variable' => 'topic',
-			'action' => url('api/paper/'.$this->nodeId.'/detail.update'),
+			'action' => url('api/paper/' . $this->nodeId . '/detail.update'),
 			'class' => 'sg-form',
 			'checkValid' => true,
 			'rel' => 'notify',
@@ -175,26 +304,30 @@ class PaperEditDetail extends Page {
 					'name' => 'detail[phpBackend]',
 					'class' => '-monospace -fill',
 					'rows' => 32,
-					'value' => $this->backend->phpBackend,
+					'value' => $this->backend->phpBackend
 				],
 
 				'save' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link" onClick="copyBackend()"><i class="icon -material">content_copy</i><span>Copy Template</span></a> '
+					'value' =>
+						'<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+					'pretext' =>
+						'<a class="btn -link" onClick="copyBackend()"><i class="icon -material">content_copy</i><span>Copy Template</span></a> '
 						. '<a class="btn -link" onClick="getBackend(\'backend\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
-						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-					'container' => '{class: "-sg-text-right"}',
+						. '<a class="btn -link -cancel" href="'
+						. url('paper/' . $this->nodeId . '/edit')
+						. '"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'container' => '{class: "-sg-text-right"}'
 				],
-				$this->backendTemplate(),
-			], // children
+				$this->backendTemplate()
+			] // children
 		]);
 	}
 
 	function css() {
 		return new Form([
 			'variable' => 'topic',
-			'action' => url('api/paper/'.$this->nodeId.'/detail.update'),
+			'action' => url('api/paper/' . $this->nodeId . '/detail.update'),
 			'class' => 'sg-form',
 			'checkValid' => true,
 			'rel' => 'notify',
@@ -204,24 +337,28 @@ class PaperEditDetail extends Page {
 					'name' => 'detail[css]',
 					'class' => '-monospace -fill',
 					'rows' => 32,
-					'value' => $this->backend->css,
+					'value' => $this->backend->css
 				],
 
 				'save' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link" onClick="getBackend(\'css\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
-						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-					'container' => '{class: "-sg-text-right"}',
-				],
-			], // children
+					'value' =>
+						'<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+					'pretext' =>
+						'<a class="btn -link" onClick="getBackend(\'css\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
+						. '<a class="btn -link -cancel" href="'
+						. url('paper/' . $this->nodeId . '/edit')
+						. '"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'container' => '{class: "-sg-text-right"}'
+				]
+			] // children
 		]);
 	}
 
 	function script() {
 		return new Form([
 			'variable' => 'topic',
-			'action' => url('api/paper/'.$this->nodeId.'/detail.update'),
+			'action' => url('api/paper/' . $this->nodeId . '/detail.update'),
 			'class' => 'sg-form',
 			'checkValid' => true,
 			'rel' => 'notify',
@@ -231,24 +368,28 @@ class PaperEditDetail extends Page {
 					'name' => 'detail[script]',
 					'class' => '-monospace -fill',
 					'rows' => 32,
-					'value' => $this->backend->script,
+					'value' => $this->backend->script
 				],
 
 				'save' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link" onClick="getBackend(\'script\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
-						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-					'container' => '{class: "-sg-text-right"}',
-				],
-			], // children
+					'value' =>
+						'<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+					'pretext' =>
+						'<a class="btn -link" onClick="getBackend(\'script\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
+						. '<a class="btn -link -cancel" href="'
+						. url('paper/' . $this->nodeId . '/edit')
+						. '"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'container' => '{class: "-sg-text-right"}'
+				]
+			] // children
 		]);
 	}
 
 	function data() {
 		return new Form([
 			'variable' => 'topic',
-			'action' => url('api/paper/'.$this->nodeId.'/detail.update'),
+			'action' => url('api/paper/' . $this->nodeId . '/detail.update'),
 			'class' => 'sg-form',
 			'checkValid' => true,
 			'rel' => 'notify',
@@ -258,27 +399,35 @@ class PaperEditDetail extends Page {
 					'name' => 'detail[data]',
 					'class' => '-monospace -fill',
 					'rows' => 32,
-					'value' => json_encode(json_decode($this->backend->data), JSON_PRETTY_PRINT  + JSON_UNESCAPED_UNICODE),
+					'value' => json_encode(
+						json_decode($this->backend->data),
+						JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE
+					)
 				],
 
 				'save' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-					'pretext' => '<a class="btn -link" onClick="getBackend(\'data\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
-						. '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-					'container' => '{class: "-sg-text-right"}',
-				],
-			], // children
+					'value' =>
+						'<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+					'pretext' =>
+						'<a class="btn -link" onClick="getBackend(\'data\')"><i class="icon -material">refresh</i><span>Refresh</span></a> '
+						. '<a class="btn -link -cancel" href="'
+						. url('paper/' . $this->nodeId . '/edit')
+						. '"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+					'container' => '{class: "-sg-text-right"}'
+				]
+			] // children
 		]);
 	}
 
-
 	private function backendTemplate() {
 		return '<template id="backend-template">use Softganz\DB;
-class Paper'.$this->nodeId.'Api extends PageApi {
-	var $nodeInfo;
-	var $action;
-	var $nodeId;
+class Paper'
+			. $this->nodeId
+			. 'Api extends PageApi {
+	public $nodeInfo;
+	public $action;
+	public $nodeId;
 
 	function __construct($nodeInfo = NULL, $action = NULL) {
 		parent::__construct([
@@ -291,13 +440,17 @@ class Paper'.$this->nodeId.'Api extends PageApi {
 	// @usage /api/paper/{nodeId}/node/foo
 	function foo() {
 		return apiSuccess([
-			\'text\' => \'FOO \'.Paper'.$this->nodeId.'Model::get($this->nodeId),
+			\'text\' => \'FOO \'.Paper'
+			. $this->nodeId
+			. 'Model::get($this->nodeId),
 			\'nodeId\' => $this->nodeInfo->nodeId,
 		]);
 	}
 }
 
-class Paper'.$this->nodeId.'Model extends Model {
+class Paper'
+			. $this->nodeId
+			. 'Model extends Model {
 	static function get($id) {
 		return $id;
 	}
@@ -316,8 +469,8 @@ class Paper'.$this->nodeId.'Model extends Model {
 				if (event.key == "Tab") {
 					event.preventDefault();
 					let target = event.target;
-					var start = target.selectionStart;
-					var end = target.selectionEnd;
+					let start = target.selectionStart;
+					let end = target.selectionEnd;
 
 					// set textarea value to: text before caret + tab + text after caret
 					target.value = target.value.substring(0, start) + "\t" + target.value.substring(end);
@@ -336,7 +489,9 @@ class Paper'.$this->nodeId.'Model extends Model {
 
 			function getBackend(element) {
 				event.preventDefault();
-				$.get(SG.url("api/paper/'.$this->nodeId.'/backend"), function(){
+				$.get(SG.url("api/paper/'
+			. $this->nodeId
+			. '/backend"), function(){
 
 				})
 				.done(function(data){

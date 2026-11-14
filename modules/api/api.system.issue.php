@@ -16,17 +16,17 @@
 use Softganz\DB;
 
 class SystemIssueApi extends PageApi {
-	var $action;
-	var $tranId;
-	var $right;
+	public $action;
+	public $tranId;
+	public $right;
 
-	function __construct($action = NULL, $tranId = NULL) {
+	function __construct($action = null, $tranId = null) {
 		parent::__construct([
 			'action' => $action,
 			'tranId' => $tranId,
-			'right' => (Object) [
-				'admin' => is_admin(),
-			],
+			'right' => (object) [
+				'admin' => is_admin()
+			]
 		]);
 	}
 
@@ -35,13 +35,17 @@ class SystemIssueApi extends PageApi {
 	}
 
 	public function close() {
-		if (!$this->right->admin) return $this->_accessDenied();
+		if (!$this->right->admin) {
+			return $this->_accessDenied();
+		}
 
 		$issueId = $this->tranId;
 		$issueType = Request::all('type');
 		$host = Request::all('host');
 
-		if (empty($issueId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีหมายเลข issue');
+		if (empty($issueId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีหมายเลข issue');
+		}
 
 		DB::query([
 			'UPDATE %system_issue%
@@ -49,9 +53,13 @@ class SystemIssueApi extends PageApi {
 			%WHERE%',
 			'where' => [
 				'%WHERE%' => [
-					$issueId === '*' ? ['`status` = :draft', ':draft' => _START] : ['`issueId` = :issueId', ':issueId' => $issueId],
-					$issueType ? ['`issueType` = :issueType', ':issueType' => $issueType] : NULL,
-					$host ? ['`host` = :host', ':host' => $host] : NULL,
+					$issueId === '*'
+						? ['`status` = :draft', ':draft' => _START]
+						: ['`issueId` = :issueId', ':issueId' => $issueId],
+					$issueType
+						? ['`issueType` = :issueType', ':issueType' => $issueType]
+						: null,
+					$host ? ['`host` = :host', ':host' => $host] : null
 				]
 			], // where
 			'var' => [':status' => _COMPLETE]
@@ -59,11 +67,15 @@ class SystemIssueApi extends PageApi {
 	}
 
 	public function delete() {
-		if (!$this->right->admin) return $this->_accessDenied();
+		if (!$this->right->admin) {
+			return $this->_accessDenied();
+		}
 
 		$issueId = $this->tranId;
 
-		if (empty($issueId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีหมายเลข issue');
+		if (empty($issueId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีหมายเลข issue');
+		}
 
 		DB::query([
 			'DELETE FROM %system_issue%

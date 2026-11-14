@@ -12,12 +12,12 @@
  */
 
 class Stats extends Page {
-	var $right;
+	public $right;
 
 	function __construct() {
 		parent::__construct([
-			'right' => (Object) [
-				'accessReport' => is_admin(),
+			'right' => (object) [
+				'accessReport' => is_admin()
 			]
 		]);
 	}
@@ -31,30 +31,40 @@ class Stats extends Page {
 	function build(): object {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Current online '
-					. '<b>' . number_format(count((Array) CounterModel::onlineUsers(['type' => 'member']))) . '/' . number_format(CounterModel::onlineCount()) . '</b> '
-					. 'users @' . sg_date(cfg('dateformat')),
+				'title' =>
+					'Current online '
+					. '<b>'
+					. number_format(
+						count((array) CounterModel::onlineUsers(['type' => 'member']))
+					)
+					. '/'
+					. number_format(CounterModel::onlineCount())
+					. '</b> '
+					. 'users @'
+					. sg_date(cfg('dateformat')),
 				'leading' => '<i class="icon -material">pie_chart</i>',
 				'trailing' => new Row([
 					'children' => [
 						new Dropbox([
 							'children' => [
-								$this->right->accessReport ? new Button([
-									'class' => 'sg-action',
-									'href' => url('stats/report/min10'),
-									'text' => 'Hits in 10 min.',
-									'icon' => new Icon('insights'),
-									'rel' => '#main'
-								]) : null,
-							], // children
-						]), // Dropbox
-					], // children
+								$this->right->accessReport
+									? new Button([
+										'class' => 'sg-action',
+										'href' => url('stats/report/min10'),
+										'text' => 'Hits in 10 min.',
+										'icon' => new Icon('insights'),
+										'rel' => '#main'
+									])
+									: null
+							] // children
+						]) // Dropbox
+					] // children
 				]), // Row
 				'navigator' => [
 					new Button([
 						'href' => Url::link('stats'),
 						'icon' => new Icon('pie_chart'),
-						'text' => 'STAT',
+						'text' => 'STAT'
 					]),
 					new Button([
 						'class' => 'sg-action',
@@ -90,15 +100,21 @@ class Stats extends Page {
 						'icon' => new Icon('view_list'),
 						'text' => 'LOG',
 						'rel' => '#main'
-					]),
-				], // Navigator
+					])
+				] // Navigator
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
-					'<div class="sg-load" data-url="' . Url::link('stats/online', ['show' => 'member']) . '"></div>',
-					'<div class="sg-load" data-url="' . Url::link('stats/hits/per/day') . '"></div>',
-					'<div class="sg-load" data-url="' . Url::link('stats/hits/per/month') . '"></div>',
-				], // children
+					'<div class="sg-load" data-url="'
+					. Url::link('stats/online', ['show' => 'member'])
+					. '"></div>',
+					'<div class="sg-load" data-url="'
+					. Url::link('stats/hits/per/day')
+					. '"></div>',
+					'<div class="sg-load" data-url="'
+					. Url::link('stats/hits/per/month')
+					. '"></div>'
+				] // children
 			]), // Widget
 			'script' => $this->script()
 		]);

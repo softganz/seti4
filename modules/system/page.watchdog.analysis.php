@@ -14,16 +14,16 @@
 use Softganz\DB;
 
 class WatchdogAnalysis extends Page {
-	var $module;
-	var $keyword;
-	var $userId;
-	var $keyId;
-	var $ip;
-	var $message;
-	var $delete;
-	var $days = 30;
-	var $items = 1000;
-	var $right;
+	public $module;
+	public $keyword;
+	public $userId;
+	public $keyId;
+	public $ip;
+	public $message;
+	public $delete;
+	public $days = 30;
+	public $items = 1000;
+	public $right;
 
 	function __construct() {
 		parent::__construct([

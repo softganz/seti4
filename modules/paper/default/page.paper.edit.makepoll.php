@@ -14,23 +14,27 @@
 use Softganz\DB;
 
 class PaperEditMakepoll extends Page {
-	var $nodeId;
-	var $right;
-	var $topicInfo;
+	public $nodeId;
+	public $right;
+	public $topicInfo;
 
-	function __construct($topicInfo = NULL) {
+	function __construct($topicInfo = null) {
 		parent::__construct([
 			'nodeId' => $topicInfo->nodeId,
 			'topicInfo' => $topicInfo,
-			'right' => (Object) [
+			'right' => (object) [
 				'edit' => $topicInfo->right->edit
 			]
 		]);
 	}
 
 	function rightToBuild() {
-		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
-		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (empty($this->nodeId)) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+		}
+		if (!$this->right->edit) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 		return true;
 	}
 
@@ -39,15 +43,15 @@ class PaperEditMakepoll extends Page {
 			'appBar' => new AppBar([
 				'title' => 'สร้างแบบสำรวจความคิดเห็น',
 				'leading' => _HEADER_BACK,
-				'boxHeader' => true,
+				'boxHeader' => true
 			]), // AppBar
 			'body' => new Form([
 				'vaiable' => 'poll',
-				'action' => url('api/paper/'.$this->nodeId.'/poll.update'),
+				'action' => url('api/paper/' . $this->nodeId . '/poll.update'),
 				'id' => 'edit-topic',
 				'children' => [
 					new Children([
-						'children' => (function() {
+						'children' => (function () {
 							$polls = [];
 							$pollAnswer = DB::select([
 								'SELECT * FROM %poll_choice% WHERE `tpid` = :tpid ORDER BY `choice` ASC',
@@ -58,9 +62,9 @@ class PaperEditMakepoll extends Page {
 							for ($i = 1; $i <= 10; $i++) {
 								$polls[$i] = [
 									'type' => 'text',
-									'label' => 'คำตอบที่ '.$i,
+									'label' => 'คำตอบที่ ' . $i,
 									'class' => '-fill',
-									'name' => 'poll['.$i.']',
+									'name' => 'poll[' . $i . ']',
 									'value' => $pollAnswer[$i]->detail,
 									'placeholder' => 'ระบุคำตอบ'
 								];
@@ -71,12 +75,16 @@ class PaperEditMakepoll extends Page {
 					]),
 					'save' => [
 						'type' => 'button',
-						'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-						'pretext' => '<a class="btn -link -cancel" href="'.url('paper/'.$this->nodeId.'/edit').'"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-						'container' => '{class: "-sg-text-right"}',
+						'value' =>
+							'<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+						'pretext' =>
+							'<a class="btn -link -cancel" href="'
+							. url('paper/' . $this->nodeId . '/edit')
+							. '"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+						'container' => '{class: "-sg-text-right"}'
 					]
-				], // children
-			]), // Form
+				] // children
+			]) // Form
 		]);
 	}
 }

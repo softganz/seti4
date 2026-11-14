@@ -16,9 +16,9 @@ $debug = true;
 import('model:node.php');
 
 class Node extends Page {
-	var $nodeId;
-	var $action;
-	var $_args = [];
+	public $nodeId;
+	public $action;
+	public $_args = [];
 
 	function __construct($nodeId = null, $action = null) {
 		$this->nodeId = $nodeId;

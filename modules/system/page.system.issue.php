@@ -16,17 +16,20 @@
 use Softganz\DB;
 
 class SystemIssue extends PageController {
-	var $issueId;
-	var $action;
+	public $issueId;
+	public $action;
 
-	function __construct($issueId = NULL, $action = NULL) {
-		if (empty($issueId) && empty($action)) $action = 'home';
-		else if ($issueId && empty($action)) $action = 'view';
+	function __construct($issueId = null, $action = null) {
+		if (empty($issueId) && empty($action)) {
+			$action = 'home';
+		} elseif ($issueId && empty($action)) {
+			$action = 'view';
+		}
 		parent::__construct([
 			'issueId' => $issueId,
-			'action' => 'system.issue.'.$action,
+			'action' => 'system.issue.' . $action,
 			'args' => func_get_args(),
-			'info' => is_numeric($issueId) ? $this->getIssue($issueId) : NULL,
+			'info' => is_numeric($issueId) ? $this->getIssue($issueId) : null
 		]);
 	}
 

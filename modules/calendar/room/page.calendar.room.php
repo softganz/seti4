@@ -13,8 +13,8 @@
  */
 
 class CalendarRoom extends PageController {
-	var $resvId;
-	var $action;
+	public $resvId;
+	public $action;
 
 	function __construct($resvId = null, $action = null) {
 		if (empty($resvId) && empty($action)) {
@@ -54,68 +54,66 @@ class CalendarRoom extends PageController {
  * @param _POST Array $reg
  * @return String
  */<?php
+ $debug = true;
+ function calendar_room($self, $resvId = null, $action = null, $tranId = null) {
+ 	if (empty($resvId) && empty($action)) {
+ 		return R::page('calendar.room.home', $self);
+ 	}
+ 	if ($resvId && empty($action)) {
+ 		return R::page('calendar.room.view', $self, $resvId);
+ 	}
+ 	if ($resvId) {
+ 		$resvInfo = CalendarModel::getResv($resvId);
+ 	}
+ 	$isAcces = $projectInfo->RIGHT & _IS_ACCESS;
+ 	$isEdit = $projectInfo->RIGHT & _IS_EDITABLE;
+ 	switch ($action) {
+ 		case 'save':
+ 			if ($_POST) {
+ 				$post = (object) post('room', _TRIM + _STRIPTAG);
+ 				if (empty($post->resvid)) {
+ 					$post->resvid = null;
+ 				}
+ 				if (empty($post->checkin)) {
+ 					$field_missing[] = 'วันที่-เดือน-ปีที่จอง';
+ 				}
+ 				if (empty($post->from_time) || empty($post->to_time)) {
+ 					$field_missing[] = 'ตั้งแต่เวลา-ถึงเวลา';
+ 				}
+ 				if (empty($post->resv_by)) {
+ 					$field_missing[] = 'จองโดยใคร';
+ 				}
+ 				if (empty($post->org_name) && empty($post->org_name_etc)) {
+ 					$field_missing[] = 'หน่วยงานอะไร';
+ 				}
+ 				if (empty($post->title)) {
+ 					$field_missing[] = 'ทำอะไร';
+ 				}
+ 				if ($field_missing) {
+ 					$error[] =
+ 						'กรุณาป้อนข้อมูลต่อไปนี้ให้ครบถ้วน : <ol><li>'
+ 						. implode('</li><li>', $field_missing)
+ 						. '</li></ol>';
+ 				}
+ 				if (!$error) {
+ 					// start save new item
+ 					$simulate = debug('simulate'); //preg_match($this->date_format,$post->checkin,$from_date);
+ 					$post->checkin =
+ 						sprintf('%04d', $from_date[3])
+ 						. '-'
+ 						. sprintf('%02d', $from_date[2])
+ 						. '-'
+ 						. sprintf('%02d', $from_date[1]);
+ 					$post->calid = SG\getFirst($post->calid, 'func.NULL');
+ 					$post->uid = SG\getFirst(i()->uid, 'func.NULL');
+ 					$post->org_name = SG\getFirst($post->org_name, $post->org_name_etc);
+ 					$post->equipment = SG\getFirst(
+ 						implode(',', $post->equipment),
+ 						'func.NULL'
+ 					);
 
-
-$debug = true;
-function calendar_room($self, $resvId = null, $action = null, $tranId = null) {
-	if (empty($resvId) && empty($action)) {
-		return R::page('calendar.room.home', $self);
-	}
-	if ($resvId && empty($action)) {
-		return R::page('calendar.room.view', $self, $resvId);
-	}
-	if ($resvId) {
-		$resvInfo = CalendarModel::getResv($resvId);
-	}
-	$isAcces = $projectInfo->RIGHT & _IS_ACCESS;
-	$isEdit = $projectInfo->RIGHT & _IS_EDITABLE;
-	switch ($action) {
-		case 'save':
-			if ($_POST) {
-				$post = (object) post('room', _TRIM + _STRIPTAG);
-				if (empty($post->resvid)) {
-					$post->resvid = null;
-				}
-				if (empty($post->checkin)) {
-					$field_missing[] = 'วันที่-เดือน-ปีที่จอง';
-				}
-				if (empty($post->from_time) || empty($post->to_time)) {
-					$field_missing[] = 'ตั้งแต่เวลา-ถึงเวลา';
-				}
-				if (empty($post->resv_by)) {
-					$field_missing[] = 'จองโดยใคร';
-				}
-				if (empty($post->org_name) && empty($post->org_name_etc)) {
-					$field_missing[] = 'หน่วยงานอะไร';
-				}
-				if (empty($post->title)) {
-					$field_missing[] = 'ทำอะไร';
-				}
-				if ($field_missing) {
-					$error[] =
-						'กรุณาป้อนข้อมูลต่อไปนี้ให้ครบถ้วน : <ol><li>'
-						. implode('</li><li>', $field_missing)
-						. '</li></ol>';
-				}
-				if (!$error) {
-					// start save new item
-					$simulate = debug('simulate'); //preg_match($this->date_format,$post->checkin,$from_date);
-					$post->checkin =
-						sprintf('%04d', $from_date[3])
-						. '-'
-						. sprintf('%02d', $from_date[2])
-						. '-'
-						. sprintf('%02d', $from_date[1]);
-					$post->calid = SG\getFirst($post->calid, 'func.NULL');
-					$post->uid = SG\getFirst(i()->uid, 'func.NULL');
-					$post->org_name = SG\getFirst($post->org_name, $post->org_name_etc);
-					$post->equipment = SG\getFirst(
-						implode(',', $post->equipment),
-						'func.NULL'
-					);
-
-					$post->created = date('U');
-					$stmt = 'INSERT INTO %calendar_room%
+ 					$post->created = date('U');
+ 					$stmt = 'INSERT INTO %calendar_room%
 							(`calid`, `roomid`, `uid`, `title`, `body`, `resv_by`, `org_name`, `checkin`, `from_time`, `to_time`, `peoples`, `equipment`, `phone`, `created`)
 						VALUES
 							(:calid, :roomid, :uid, :title, :body, :resv_by, :org_name, :checkin, :from_time, :to_time, :peoples, :equipment, :phone, :created)
@@ -132,37 +130,38 @@ function calendar_room($self, $resvId = null, $action = null, $tranId = null) {
 						, `equipment`=:equipment
 						, `phone`=:phone';
 
-					mydb::query($stmt, $post); //				$ret.=print_o($post,'$post');
-					//				$ret.=R('query');
-				}
-			}
-			break;
-		case 'edit':
-			$ret .= R::page('calendar.room.post', $self, $resvInfo);
-			break;
-		default:
-			//if (empty($action)) $action='home';
-			//$ret = R::page('project.join.'.$action, $self, $projectInfo, $calendarInfo, $action, $tranId);
-			$argIndex = 4; // Start argument
-			$args = func_get_args(); //debugMsg('PAGE PROJECT Topic = '.$tpid.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.$args[$argIndex]);
-			//$ret .= print_o(func_get_args(), '$args');
-			$ret = R::page(
-				'calendar.room.' . $action,
-				$self,
-				$resvInfo,
-				$args[$argIndex],
-				$args[$argIndex + 1],
-				$args[$argIndex + 2],
-				$args[$argIndex + 3],
-				$args[$argIndex + 4]
-			); //debugMsg('TYPE = '.gettype($ret));
-			if (is_null($ret)) {
-				$ret = 'ERROR : PAGE NOT FOUND';
-			}
-			break;
-	} //$ret .= print_o($doingInfo, '$doingInfo');
-	//$ret .= print_o($projectInfo, '$projectInfo');
-	//$ret .= print_o($calendarInfo, '$calendarInfo');
-	return $ret;
-}
- ?>
+ 					mydb::query($stmt, $post); //				$ret.=print_o($post,'$post');
+ 					//				$ret.=R('query');
+ 				}
+ 			}
+ 			break;
+ 		case 'edit':
+ 			$ret .= R::page('calendar.room.post', $self, $resvInfo);
+ 			break;
+ 		default:
+ 			//if (empty($action)) $action='home';
+ 			//$ret = R::page('project.join.'.$action, $self, $projectInfo, $calendarInfo, $action, $tranId);
+ 			$argIndex = 4; // Start argument
+ 			$args = func_get_args(); //debugMsg('PAGE PROJECT Topic = '.$tpid.' , Action = '.$action.' , ArgIndex = '.$argIndex.' , Arg 1 = '.$args[$argIndex]);
+ 			//$ret .= print_o(func_get_args(), '$args');
+ 			$ret = R::page(
+ 				'calendar.room.' . $action,
+ 				$self,
+ 				$resvInfo,
+ 				$args[$argIndex],
+ 				$args[$argIndex + 1],
+ 				$args[$argIndex + 2],
+ 				$args[$argIndex + 3],
+ 				$args[$argIndex + 4]
+ 			); //debugMsg('TYPE = '.gettype($ret));
+ 			if (is_null($ret)) {
+ 				$ret = 'ERROR : PAGE NOT FOUND';
+ 			}
+ 			break;
+ 	} //$ret .= print_o($doingInfo, '$doingInfo');
+ 	//$ret .= print_o($projectInfo, '$projectInfo');
+ 	//$ret .= print_o($calendarInfo, '$calendarInfo');
+ 	return $ret;
+ }
+
+?>

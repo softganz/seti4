@@ -62,7 +62,7 @@ class sgClass {
  * Cfg class for keep core system configuration
  ********************************************/
 class Cfg {
-	var $cfg = array();
+	public $cfg = array();
 
 	function __construct($cfg_file=null) {
 		if ( $cfg_file ) foreach ( explode(";",$cfg_file) as $cfile ) $this->load($cfile);
@@ -137,7 +137,7 @@ class Cfg {
  * Timer class for timer of execution
  ********************************************/
 class Timer {
-	var $time = [];
+	public $time = [];
 
 	function start($key=null) { $this->time[$key]["start"] = microtime(); } //start
 
@@ -490,14 +490,14 @@ class Cache {
  * Class  :: classFile
  **********************************/
 class classFile {
-	var $format=array();
-	var $upload=null;
-	var $folder=null;
-	var $filename=null;
-	var $upload_folder;
-	var $destination=null;
-	var $replace=false;
-	var $check_valid_name=true;
+	public $format=array();
+	public $upload=null;
+	public $folder=null;
+	public $filename=null;
+	public $upload_folder;
+	public $destination=null;
+	public $replace=false;
+	public $check_valid_name=true;
 
 	function __construct($upload=null,$folder=null,$format=null) {
 		if (isset($upload)) $this->upload=(object)$upload;

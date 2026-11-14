@@ -13,7 +13,7 @@
 $debug = true;
 
 class AdminUserLogasName extends Page {
-	var $username;
+	public $username;
 
 	function __construct($username = null) {
 		$this->username = \SG\getFirst(post('logasusername'), $username);

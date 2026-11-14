@@ -17,12 +17,12 @@ use Paper\Model\PaperModel;
 use Softganz\DB;
 
 class PaperApi extends PageApi {
-	var $actionDefault = 'detail';
-	var $nodeId;
-	var $action;
-	var $tranId;
-	var $right;
-	var $nodeInfo;
+	public $actionDefault = 'detail';
+	public $nodeId;
+	public $action;
+	public $tranId;
+	public $right;
+	public $nodeInfo;
 
 	function __construct($nodeId = null, $action = null, $tranId = null) {
 		parent::__construct([

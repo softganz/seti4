@@ -12,13 +12,13 @@
  */
 
 class AdminConfigEdit extends Page {
-	var $configName;
-	var $configValue;
+	public $configName;
+	public $configValue;
 
 	function __construct() {
 		parent::__construct([
-			'configName' => $configName = post('name'),
-			'configValue' => cfg($configName),
+			'configName' => ($configName = post('name')),
+			'configValue' => cfg($configName)
 		]);
 	}
 
@@ -27,7 +27,9 @@ class AdminConfigEdit extends Page {
 	}
 
 	function build() {
-		if (!isset($this->configName)) location('admin/config/view');
+		if (!isset($this->configName)) {
+			location('admin/config/view');
+		}
 
 		// $ui = new Ui();
 		// $ui->add('<a class="sg-action" href="'.url('admin/config/edit',array('name'=>$this->configName)).'" data-rel="box" data-width="480"><i class="icon -material">refresh</i></a>');
@@ -43,7 +45,7 @@ class AdminConfigEdit extends Page {
 			'appBar' => new AppBar([
 				'title' => 'Modify configuration',
 				'boxHeader' => true,
-				'leading' => _HEADER_BACK,
+				'leading' => _HEADER_BACK
 			]), // AppBar
 			'body' => new Form([
 				'action' => url('admin/config/edit..update'),
@@ -54,77 +56,110 @@ class AdminConfigEdit extends Page {
 				'children' => [
 					'name' => [
 						'type' => 'hidden',
-						'value' => $this->configName,
+						'value' => $this->configName
 					],
 					$this->formElementValue(),
 					'submit' => [
 						'type' => 'button',
-						'value' => '<i class="icon -material -white">done_all</i><span>Save configuration</span>',
-						'pretext' => '<a class="sg-action btn -link -cancel" href="'.url('admin/config/edit..restore', ['name' => $this->configName,'restore' => 'yes']).'" data-rel="notify" data-done="load" data-title="Reset to default" data-confirm="Reset to default. Plese confirm?"><i class="icon -material -gray">settings_backup_restore</i><span>Reset to default</span></a>',
-						'container' => '{class: "-sg-text-right"}',
+						'value' =>
+							'<i class="icon -material -white">done_all</i><span>Save configuration</span>',
+						'pretext' =>
+							'<a class="sg-action btn -link -cancel" href="'
+							. url('admin/config/edit..restore', [
+								'name' => $this->configName,
+								'restore' => 'yes'
+							])
+							. '" data-rel="notify" data-done="load" data-title="Reset to default" data-confirm="Reset to default. Plese confirm?"><i class="icon -material -gray">settings_backup_restore</i><span>Reset to default</span></a>',
+						'container' => '{class: "-sg-text-right"}'
 					],
 					'<style type="text/css">
 					.admin-config-form {height: 100%;}
 					.form-item.-edit-admin-value {height: calc(100% - 70px);}
 					.form-item.-edit-admin-value .resizable-textarea {height: calc(100% - 48px);}
 					.form-item.-edit-admin-value .form-textarea {height: 100%;}
-					</style>',
-				], // children
-			]), // Form
+					</style>'
+				] // children
+			]) // Form
 		]);
 	}
 
 	function formElementValue() {
-		if (is_array($this->configValue)) return (Object) [
-			'tagName' => 'div',
-			'children' => [
-				'value' => [
-					'label'=>'Variable value of  : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" ): ',
-					'type'=>'checkbox',
-					'options'=>$this->configValue,
-					'multiple'=>true,
-					'value'=>array_keys($this->configValue)
-				],
-				'addkey' => [
-					'type'=>'text',
-					'label'=>'Additional Variable Key:',
-					'class'=>'-fill',
-				],
-				'addvalue' => [
-					'type'=>'textarea',
-					'label'=>'Additional Variable Value: ',
-					'class'=>'-fill',
-					'rows'=>3
-				],
-			], // children
-		];
+		if (is_array($this->configValue)) {
+			return (object) [
+				'tagName' => 'div',
+				'children' => [
+					'value' => [
+						'label' =>
+							'Variable value of  : '
+							. $this->configName
+							. ' ( Type is "'
+							. gettype($this->configValue)
+							. '" ): ',
+						'type' => 'checkbox',
+						'options' => $this->configValue,
+						'multiple' => true,
+						'value' => array_keys($this->configValue)
+					],
+					'addkey' => [
+						'type' => 'text',
+						'label' => 'Additional Variable Key:',
+						'class' => '-fill'
+					],
+					'addvalue' => [
+						'type' => 'textarea',
+						'label' => 'Additional Variable Value: ',
+						'class' => '-fill',
+						'rows' => 3
+					]
+				] // children
+			];
+		}
 
-		if (is_object($this->configValue)) return (Object) [
-			'children' => [
-				'value' => [
-					'type' => 'textarea',
-					'label' => 'Variable value : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" ): ',
-					'class' => '-fill',
-					'rows' => 10,
-					'value' => SG\json_encode($this->configValue)
-				],
-			], // children
-		];
+		if (is_object($this->configValue)) {
+			return (object) [
+				'children' => [
+					'value' => [
+						'type' => 'textarea',
+						'label' =>
+							'Variable value : '
+							. $this->configName
+							. ' ( Type is "'
+							. gettype($this->configValue)
+							. '" ): ',
+						'class' => '-fill',
+						'rows' => 10,
+						'value' => SG\json_encode($this->configValue)
+					]
+				] // children
+			];
+		}
 
-		if (is_bool($this->configValue)) return [
-			'type' => 'radio',
-			'name' => 'value',
-			'label' => 'Variable value : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" )',
-			'choice' => [
-				'true' => 'True',
-				'false' => 'False'
-			],
-			'value' => $this->configValue ? 'true' : 'false'
-		];
+		if (is_bool($this->configValue)) {
+			return [
+				'type' => 'radio',
+				'name' => 'value',
+				'label' =>
+					'Variable value : '
+					. $this->configName
+					. ' ( Type is "'
+					. gettype($this->configValue)
+					. '" )',
+				'choice' => [
+					'true' => 'True',
+					'false' => 'False'
+				],
+				'value' => $this->configValue ? 'true' : 'false'
+			];
+		}
 		return [
 			'type' => 'textarea',
 			'name' => 'value',
-			'label' => 'Variable value : '.$this->configName.' ( Type is "'.gettype($this->configValue).'" ): ',
+			'label' =>
+				'Variable value : '
+				. $this->configName
+				. ' ( Type is "'
+				. gettype($this->configValue)
+				. '" ): ',
 			'class' => '-fill',
 			'rows' => 10,
 			'value' => $this->configValue
@@ -137,17 +172,21 @@ class AdminConfigEdit extends Page {
 	}
 
 	function update() {
-		$post = (Object) post();
+		$post = (object) post();
 		$cfgName = post('name');
 		$cfgValue = post('value');
 
-		if (empty($cfgName)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
+		if (empty($cfgName)) {
+			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
+		}
 
 		$saved = true;
-		debugMsg($post,'$post');
+		debugMsg($post, '$post');
 		if (is_array($this->configValue)) {
 			foreach ($this->configValue as $key => $currentValue) {
-				if (!in_array($key, $post->value)) unset($this->configValue[$key]);
+				if (!in_array($key, $post->value)) {
+					unset($this->configValue[$key]);
+				}
 			}
 			if ($post->addvalue != '') {
 				if ($post->addkey == '') {
@@ -158,37 +197,43 @@ class AdminConfigEdit extends Page {
 			}
 			// debugMsg($this->configValue,'$this->configValue');
 			cfg_db($this->configName, $this->configValue);
-		} else if (is_object($this->configValue)) {
+		} elseif (is_object($this->configValue)) {
 			if ($post->value != '{}') {
-				$testResult = (Array) SG\json_decode($post->value);
+				$testResult = (array) SG\json_decode($post->value);
 				if (empty($testResult)) {
 					$configError = true;
 					$newValue = $post->value;
 					$saved = false;
 				} else {
-					cfg_db($this->configName,$post->value);
+					cfg_db($this->configName, $post->value);
 				}
 			} else {
-				cfg_db($this->configName,$post->value);
+				cfg_db($this->configName, $post->value);
 			}
 			//debugMsg($post->value);
-		} else if (is_bool($this->configValue)) {
-			$post->value = strtoupper($post->value) === 'TRUE' || is_numeric($post->value) && $post->value > 0 ? true : false;
-			debugMsg('Save boolean '.($post->value?true:false));
+		} elseif (is_bool($this->configValue)) {
+			$post->value =
+				strtoupper($post->value) === 'TRUE' ||
+				(is_numeric($post->value) && $post->value > 0)
+					? true
+					: false;
+			debugMsg('Save boolean ' . ($post->value ? true : false));
 			cfg_db($this->configName, $post->value);
 			debugMsg(R('query'));
 			$newValue = $post->value ? 'True' : 'False';
-		} else if (is_int($this->configValue)) {
+		} elseif (is_int($this->configValue)) {
 			cfg_db($this->configName, intval($post->value));
-		} else if (is_numeric($this->configValue)) {
+		} elseif (is_numeric($this->configValue)) {
 			cfg_db($this->configName, floatval($post->value));
-		} else if (is_string($this->configValue) || is_null($this->configValue)) {
+		} elseif (is_string($this->configValue) || is_null($this->configValue)) {
 			cfg_db($this->configName, $cfgValue);
-			debugMsg('Save string '.$cfgValue);
-			debugMsg($post,'$post');
+			debugMsg('Save string ' . $cfgValue);
+			debugMsg($post, '$post');
 		}
 
-		return $saved ? success('บันทึกเรียบร้อย') : error(_HTTP_ERROR_NOT_ACCEPTABLE, 'รูปแบบไม่ถูกต้อง');
+		return $saved
+			? success('บันทึกเรียบร้อย')
+			: error(_HTTP_ERROR_NOT_ACCEPTABLE, 'รูปแบบไม่ถูกต้อง');
 	}
 }
 ?>

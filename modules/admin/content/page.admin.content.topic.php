@@ -1,27 +1,27 @@
 <?php
 /**
-* Admin   :: Content by topic
-* Created :: 2016-11-08
-* Modify  :: 2025-03-17
-* Version :: 2
-*
-* @return Widget
-*
-* @usage admin/content/topic
-*/
+ * Admin   :: Content by topic
+ * Created :: 2016-11-08
+ * Modify  :: 2025-03-17
+ * Version :: 2
+ *
+ * @return Widget
+ *
+ * @usage admin/content/topic
+ */
 
 use Softganz\DB;
 
 class AdminContentTopic extends Page {
-	var $backDay = 7;
-	var $year;
-	var $month;
+	public $backDay = 7;
+	public $year;
+	public $month;
 
 	function __construct() {
 		parent::__construct([
 			'backDay' => SG\getFirstInt(post('day'), $this->backDay),
 			'year' => SG\getFirstInt(post('year')),
-			'month' => post('month'),
+			'month' => post('month')
 		]);
 	}
 
@@ -36,47 +36,59 @@ class AdminContentTopic extends Page {
 					[
 						'id' => 'content',
 						'active' => true,
-						'action' => new Button(['href' => url('admin/content/topic..list'), 'text' => 'Topics']),
+						'action' => new Button([
+							'href' => url('admin/content/topic..list'),
+							'text' => 'Topics'
+						]),
 						'content' => $this->list()
 					], // Tab 1
 
 					[
 						'id' => 'summary',
-						'action' => new Button(['href' => url('admin/content/topic..summary'), 'text' => 'Summary']),
-						'content' => $this->summary(),
-					], // Tab 2
-				], // children
-			]), // TabBar
+						'action' => new Button([
+							'href' => url('admin/content/topic..summary'),
+							'text' => 'Summary'
+						]),
+						'content' => $this->summary()
+					] // Tab 2
+				] // children
+			]) // TabBar
 		]);
 	}
 
 	public function list() {
 		$tables = new Table();
-		$tables->thead=array('Type','Title','Date');
+		$tables->thead = ['Type', 'Title', 'Date'];
 		foreach ($dbs->items as $rs) {
-			if ($rs->content=='comment') {
-				$title=$rs->title;
+			if ($rs->content == 'comment') {
+				$title = $rs->title;
 			} else {
-				$title='<a href="'.url('paper/'.$rs->tpid).'">'.$rs->title.'</a>';
+				$title =
+					'<a href="' . url('paper/' . $rs->tpid) . '">' . $rs->title . '</a>';
 			}
-			$tables->rows[]=array(
-				$rs->content,
-				$title,
-				$rs->created,
-			);
+			$tables->rows[] = [$rs->content, $title, $rs->created];
 		}
-		$ret.=$tables->build();
+		$ret .= $tables->build();
 
 		$ret .= '<ul>';
-		foreach ($content as $date=>$date_rs) {
-			$ret .= '<b>'.$date.'</b>';
+		foreach ($content as $date => $date_rs) {
+			$ret .= '<b>' . $date . '</b>';
 			foreach ($date_rs as $rs) {
-				$ret .= '<li><a href="'.$rs['url'].'">'.$rs['title'].'</a> - '.$rs['remark'].' @'.sg_date($rs['datetime'],'Y-m-d H:i:s').'</li>';
+				$ret .=
+					'<li><a href="'
+					. $rs['url']
+					. '">'
+					. $rs['title']
+					. '</a> - '
+					. $rs['remark']
+					. ' @'
+					. sg_date($rs['datetime'], 'Y-m-d H:i:s')
+					. '</li>';
 			}
 		}
 		$ret .= '</ul>';
 
-		$ret.='</div>';
+		$ret .= '</div>';
 
 		return new Widget([
 			'children' => [
@@ -92,37 +104,29 @@ class AdminContentTopic extends Page {
 							'class' => '-numeric',
 							'label' => 'ย้อนหลัง',
 							'value' => $this->backDay,
-							'posttext' => ' วัน ',
+							'posttext' => ' วัน '
 						],
 						'go' => [
 							'type' => 'button',
 							'value' => '<i class="icon -material">find_in_page</i>'
-						],
-					], // children
+						]
+					] // children
 				]), // Form
 				new Table([
 					'thead' => ['Type', 'Title', 'created -date' => 'Date'],
-					'children' => array_map(
-						function($topic) {
-							if ($topic->content === 'comment') {
-								$title = $topic->title;
-							} else {
-								$title = new Button([
-									'href' => url('paper/'.$topic->nodeId),
-									'text' => $topic->title,
-									'target' => '_blank'
-								]);
-							}
-							return [
-								$topic->content,
-								$title,
-								$topic->created,
-							];
-
-						},
-						$this->topicData()
-					)
-				]),
+					'children' => array_map(function ($topic) {
+						if ($topic->content === 'comment') {
+							$title = $topic->title;
+						} else {
+							$title = new Button([
+								'href' => url('paper/' . $topic->nodeId),
+								'text' => $topic->title,
+								'target' => '_blank'
+							]);
+						}
+						return [$topic->content, $title, $topic->created];
+					}, $this->topicData())
+				])
 				// $ret
 			]
 		]);
@@ -198,36 +202,38 @@ class AdminContentTopic extends Page {
 				new Container([
 					'style' => 'flex: 1',
 					'child' => new Table([
-						'thead' => ['year -date' => 'ปี พศ.', 'total -amt' => 'จำนวนหัวข้อ'],
-						'children' => array_map(
-							function($item) {
-								return [
-									new Button([
-										'class' => 'sg-action',
-										'href' => url('admin/content/topic..month.summary', ['year' => $item->year]),
-										'text' => sg_date($item->year.'-01-01','ปปปป'),
-										'rel' => '#month',
+						'thead' => [
+							'year -date' => 'ปี พศ.',
+							'total -amt' => 'จำนวนหัวข้อ'
+						],
+						'children' => array_map(function ($item) {
+							return [
+								new Button([
+									'class' => 'sg-action',
+									'href' => url('admin/content/topic..month.summary', [
+										'year' => $item->year
 									]),
-									number_format($item->topics)
-								];
-							},
-							$this->summaryData()
-						),
-						'tfoot' => [
-							['รวม', number_format($this->totalTopic)]
-						]
-					]),
+									'text' => sg_date($item->year . '-01-01', 'ปปปป'),
+									'rel' => '#month'
+								]),
+								number_format($item->topics)
+							];
+						}, $this->summaryData()),
+						'tfoot' => [['รวม', number_format($this->totalTopic)]]
+					])
 				]), // Container
 				new Container([
 					'id' => 'month',
-					'style' => 'flex: 1',
-				]), // Container
-			], // children
+					'style' => 'flex: 1'
+				]) // Container
+			] // children
 		]);
 	}
 
 	function monthSummary() {
-		if (empty($this->year)) return NULL;
+		if (empty($this->year)) {
+			return null;
+		}
 
 		$dbs = DB::select([
 			'SELECT
@@ -239,37 +245,36 @@ class AdminContentTopic extends Page {
 			GROUP BY `month`
 			ORDER BY `created` ASC',
 			'var' => [
-				':beginyear' => $this->year.'-01-01',
-				':endyear' => $this->year.'-12-31'
+				':beginyear' => $this->year . '-01-01',
+				':endyear' => $this->year . '-12-31'
 			],
 			'options' => ['sum' => 'topics']
 		]);
 
 		return new Table([
-			'thead' => ['date'=>'เดือน-ปี พศ.','total -amt'=>'จำนวนหัวข้อ'],
-			'children' => array_map(
-				function($item) {
-					return [
-						new Button([
-							'class' => 'sg-action',
-							'href' => url('admin/content/topic..month.topic', ['month' => $this->year.'-'.$item->monthno]),
-							'text' => sg_date($item->month.'-01','ดด ปปปป'),
-							'rel' => 'box',
-							'attribute' => ['data-width' => 'full']
+			'thead' => ['date' => 'เดือน-ปี พศ.', 'total -amt' => 'จำนวนหัวข้อ'],
+			'children' => array_map(function ($item) {
+				return [
+					new Button([
+						'class' => 'sg-action',
+						'href' => url('admin/content/topic..month.topic', [
+							'month' => $this->year . '-' . $item->monthno
 						]),
-						number_format($item->topics)
-					];
-				},
-				$dbs->items
-			),
-			'tfoot' => [
-				['รวม', number_format($dbs->sum->topics)]
-			],
+						'text' => sg_date($item->month . '-01', 'ดด ปปปป'),
+						'rel' => 'box',
+						'attribute' => ['data-width' => 'full']
+					]),
+					number_format($item->topics)
+				];
+			}, $dbs->items),
+			'tfoot' => [['รวม', number_format($dbs->sum->topics)]]
 		]);
 	}
 
 	function monthTopic() {
-		if (empty($this->month)) return NULL;
+		if (empty($this->month)) {
+			return null;
+		}
 
 		$topic_summary = DB::select([
 			'SELECT
@@ -281,29 +286,36 @@ class AdminContentTopic extends Page {
 			WHERE t.`created` BETWEEN :startmonth AND :endmonth
 			ORDER BY t.`created` ASC',
 			'var' => [
-				':startmonth' => $this->month.'-01',
-				':endmonth' => $this->month.'-31',
+				':startmonth' => $this->month . '-01',
+				':endmonth' => $this->month . '-31'
 			]
 		]);
 
 		return new Table([
-			'thead' => ['date'=>'วัน-เดือน-ปี','หัวข้อ','โดย','amt amt-view'=>'ดู','amt amt-reply'=>'ตอบ'],
-			'children' => array_map(
-				function($item) {
-					return [
-						sg_date($item->created,'ว ดด ปปปป'),
-						new Button([
-							'href' => url('paper/'.$item->tpid),
-							'text' => $item->title,
-							'target' => '_blank'
-						]),
-						($item->uid?'<a href="'.url('paper/user/'.$item->uid).'">':'').$item->owner.($item->uid?'</a>':''),
-						number_format($item->view),
-						number_format($item->reply)
-					];
-				},
-				(Array) $topic_summary->items
-			)
+			'thead' => [
+				'date' => 'วัน-เดือน-ปี',
+				'หัวข้อ',
+				'โดย',
+				'amt amt-view' => 'ดู',
+				'amt amt-reply' => 'ตอบ'
+			],
+			'children' => array_map(function ($item) {
+				return [
+					sg_date($item->created, 'ว ดด ปปปป'),
+					new Button([
+						'href' => url('paper/' . $item->tpid),
+						'text' => $item->title,
+						'target' => '_blank'
+					]),
+					($item->uid
+						? '<a href="' . url('paper/user/' . $item->uid) . '">'
+						: '')
+					. $item->owner
+					. ($item->uid ? '</a>' : ''),
+					number_format($item->view),
+					number_format($item->reply)
+				];
+			}, (array) $topic_summary->items)
 		]);
 	}
 
@@ -320,12 +332,15 @@ class AdminContentTopic extends Page {
 				WHERE timestamp BETWEEN :from_date AND :to_date
 			ORDER BY `created` DESC',
 			'var' => [
-				':from_date' => date('Y-m-d 00:00:00', strtotime('-'.$this->backDay.' days')),
+				':from_date' => date(
+					'Y-m-d 00:00:00',
+					strtotime('-' . $this->backDay . ' days')
+				),
 				':to_date' => date('Y-m-d H:i:s')
 			]
 		]);
 
-		return (Array) $dbs->items;
+		return (array) $dbs->items;
 	}
 
 	private function summaryData() {
@@ -342,7 +357,7 @@ class AdminContentTopic extends Page {
 		]);
 
 		$this->totalTopic = $dbs->sum->topics;
-		return (Array) $dbs->items;
+		return (array) $dbs->items;
 	}
 }
 ?>

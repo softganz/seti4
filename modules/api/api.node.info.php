@@ -16,9 +16,9 @@
 use Softganz\DB;
 
 class NodeInfoApi extends PageApi {
-	var $nodeId;
-	var $action;
-	var $tranId;
+	public $nodeId;
+	public $action;
+	public $tranId;
 
 	function __construct($nodeId = null, $action = null, $tranId = null) {
 		parent::__construct([

@@ -15,12 +15,12 @@ use Paper\Model\PaperModel;
 use Softganz\DB;
 
 class PaperMy extends Page {
-	var $year;
-	var $user;
-	var $search;
-	var $page = 1;
-	var $right;
-	var $pageShow;
+	public $year;
+	public $user;
+	public $search;
+	public $page = 1;
+	public $right;
+	public $pageShow;
 
 	function __construct() {
 		parent::__construct([
@@ -28,7 +28,7 @@ class PaperMy extends Page {
 			'user' => Request::all('user', 'int'),
 			'search' => Request::all('q'),
 			'page' => \SG\getFirst(Request::all('page', 'int'), $this->page),
-			'right' => (Object) [
+			'right' => (object) [
 				'admin' => is_admin('paper'),
 				'createPaper' => user_access('create story paper')
 			]
@@ -41,7 +41,9 @@ class PaperMy extends Page {
 	 * @return object|boolean
 	 */
 	function rightToBuild(): object|bool {
-		if (!i()->ok) return new SignForm();
+		if (!i()->ok) {
+			return new SignForm();
+		}
 
 		return true;
 	}
@@ -65,56 +67,80 @@ class PaperMy extends Page {
 							'year' => [
 								'type' => 'select',
 								'onChange' => 'submit',
-								'options' => ['' => '== ทุกปี ==']
-									+ (Array) DB::select([
+								'options' =>
+									['' => '== ทุกปี =='] +
+									(array) DB::select([
 										'SELECT YEAR(`created`) `year`, CONCAT("พ.ศ.",YEAR(`created`)+543) `bcyear`
 										FROM %topic%
 										WHERE `created` IS NOT NULL AND `type` IN ("story", "page")
 										GROUP BY `year`
 										ORDER BY `year` DESC',
 										'options' => ['key' => 'year', 'value' => 'bcyear']
-								])->items,
-								'value' => $this->year,
+									])->items,
+								'value' => $this->year
 							],
-							'user' => $this->right->admin ? [
-								'type' => 'select',
-								'onChange' => 'submit',
-								'options' => ['' => '== ทุกผู้ส่ง ==']
-									+ (Array) DB::select([
-										'SELECT u.`uid`, u.`name`
+							'user' => $this->right->admin
+								? [
+									'type' => 'select',
+									'onChange' => 'submit',
+									'options' =>
+										['' => '== ทุกผู้ส่ง =='] +
+										(array) DB::select([
+											'SELECT u.`uid`, u.`name`
 										FROM %topic% t
 											LEFT JOIN %users% u USING(`uid`)
 										WHERE u.`uid` IS NOT NULL AND `type` IN ("story", "page")
 										ORDER BY CONVERT(`name` USING tis620) ASC',
-										'options' => ['key' => 'uid', 'value' => 'name']
-									])->items,
-								'value' => $this->user,
-							] : NULL,
-							'q' => ['type' => 'text', 'placeholder' => 'ค้นหาหัวข้อข่าว', 'value' => $this->search,],
-							'go' => ['type' => 'button', 'value' => '<i class="icon -material">search</i>'],
-						], // children
-					]), // Form
-				], // navigator
+											'options' => ['key' => 'uid', 'value' => 'name']
+										])->items,
+									'value' => $this->user
+								]
+								: null,
+							'q' => [
+								'type' => 'text',
+								'placeholder' => 'ค้นหาหัวข้อข่าว',
+								'value' => $this->search
+							],
+							'go' => [
+								'type' => 'button',
+								'value' => '<i class="icon -material">search</i>'
+							]
+						] // children
+					]) // Form
+				] // navigator
 			]), //AppBar
 			'child' => new Container([
 				'id' => 'paper-my',
 				'children' => [
 					$this->paperListWidget(),
 					$this->pageShow,
-					$this->right->createPaper ? new FloatingActionButton(['children' => ['<a class="sg-action btn -floating" href="'.url('paper/post/story').'" data-rel="box" data-width="full"><i class="icon -material">add</i><span>Create New</span></a>']]) : NULL,
-				], // children
-			]), // Container
+					$this->right->createPaper
+						? new FloatingActionButton([
+							'children' => [
+								'<a class="sg-action btn -floating" href="'
+								. url('paper/post/story')
+								. '" data-rel="box" data-width="full"><i class="icon -material">add</i><span>Create New</span></a>'
+							]
+						])
+						: null
+				] // children
+			]) // Container
 		]);
 	}
 
 	function paperListWidget() {
 		return new Table([
 			'thead' => ['Title', 'Date', '', 'Edit', 'status -center' => '', ''],
-			'children' => (function() {
-				$statusList = [_DRAFT => 'DRAFT', _PUBLISH => 'PUBLISH', _BLOCK => 'BLOCK', _LOCK => 'LOCK'];
+			'children' => (function () {
+				$statusList = [
+					_DRAFT => 'DRAFT',
+					_PUBLISH => 'PUBLISH',
+					_BLOCK => 'BLOCK',
+					_LOCK => 'LOCK'
+				];
 				$rows = [];
 
-				$condition = (Object) [
+				$condition = (object) [
 					'type' => 'story',
 					'year' => $this->year,
 					'user' => $this->user,
@@ -122,7 +148,9 @@ class PaperMy extends Page {
 					'options' => ['items' => 1000, 'page' => $this->page, 'debug' => true]
 				];
 				if (is_admin('paper')) {
-					if ($this->user) $condition->user = $this->user;
+					if ($this->user) {
+						$condition->user = $this->user;
+					}
 				} else {
 					$condition->user = i()->uid;
 				}
@@ -131,25 +159,47 @@ class PaperMy extends Page {
 
 				foreach ($dbs->items as $rs) {
 					$rows[] = [
-						'<a href="'.url('paper/'.$rs->nodeId).'" target="_blank">'.$rs->title.'</a><br />'
-						. '<em><small>By '.$rs->ownerName.'</small></em>',
+						'<a href="'
+						. url('paper/' . $rs->nodeId)
+						. '" target="_blank">'
+						. $rs->title
+						. '</a><br />'
+						. '<em><small>By '
+						. $rs->ownerName
+						. '</small></em>',
 						sg_date($rs->created, 'd/m/ปป'),
-						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->nodeId.'/edit.photo').'" data-rel="box" data-width="full"><i class="icon -material">photo</i></a>',
-						'<a class="sg-action btn -link" href="'.url('paper/'.$rs->nodeId.'/edit.detail').'" data-rel="box" data-width="full"><i class="icon -material">edit</i></a>',
-						'<a class="sg-action btn'.($rs->status == _PUBLISH ? ' -success' : '').'" href="'.url('paper/'.$rs->nodeId.'/edit.main').'" data-rel="box" data-width="full">'.$statusList[$rs->status].'</a>',
-						(new Dropbox([
+						'<a class="sg-action btn -link" href="'
+						. url('paper/' . $rs->nodeId . '/edit.photo')
+						. '" data-rel="box" data-width="full"><i class="icon -material">photo</i></a>',
+						'<a class="sg-action btn -link" href="'
+						. url('paper/' . $rs->nodeId . '/edit.detail')
+						. '" data-rel="box" data-width="full"><i class="icon -material">edit</i></a>',
+						'<a class="sg-action btn'
+						. ($rs->status == _PUBLISH ? ' -success' : '')
+						. '" href="'
+						. url('paper/' . $rs->nodeId . '/edit.main')
+						. '" data-rel="box" data-width="full">'
+						. $statusList[$rs->status]
+						. '</a>',
+						new Dropbox([
 							'position' => 'left',
 							'children' => [
-								$this->right->admin ? '<a class="sg-action" href="'.url('paper/'.$rs->nodeId.'/edit.tag').'" data-rel="box" data-width="full"><i class="icon -material">category</i><span>จัดการหมวด</span></a>' : NULL,
+								$this->right->admin
+									? '<a class="sg-action" href="'
+										. url('paper/' . $rs->nodeId . '/edit.tag')
+										. '" data-rel="box" data-width="full"><i class="icon -material">category</i><span>จัดการหมวด</span></a>'
+									: null,
 								'<hr size="1" />',
-								'<a class="sg-action" href="'.url('paper/'.$rs->nodeId.'/delete').'" data-rel="none" data-title="ลบหัวข้อ" data-confirm="ต้องกการลบหัวข้อนี้ (รวมทั้งภาพและเอกสารประกอบ) กรุณายืนยัน?" data-done="remove:parent tr"><i class="icon -material">delete</i><span>ลบหัวข้อ</span></a>',
-							],
-						]))->build(),
+								'<a class="sg-action" href="'
+								. url('paper/' . $rs->nodeId . '/delete')
+								. '" data-rel="none" data-title="ลบหัวข้อ" data-confirm="ต้องกการลบหัวข้อนี้ (รวมทั้งภาพและเอกสารประกอบ) กรุณายืนยัน?" data-done="remove:parent tr"><i class="icon -material">delete</i><span>ลบหัวข้อ</span></a>'
+							]
+						])->build()
 					];
 				}
 				$this->pageShow = $dbs->page->show;
 				return $rows;
-			})(),
+			})()
 		]);
 	}
 }

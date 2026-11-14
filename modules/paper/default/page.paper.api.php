@@ -16,18 +16,24 @@
 use Softganz\DB;
 
 class PaperApi extends Page {
-	var $nodeId;
-	var $apiClassName;
-	var $apiMethod;
-	var $modelClassName;
-	var $nodeInfo;
+	public $nodeId;
+	public $apiClassName;
+	public $apiMethod;
+	public $modelClassName;
+	public $nodeInfo;
 
-	function __construct($nodeInfo = NULL, $apiMethod = NULL) {
+	function __construct($nodeInfo = null, $apiMethod = null) {
 		parent::__construct([
 			'nodeId' => $nodeInfo->nodeId,
-			'apiMethod' => preg_replace_callback('/\.(\w)/', function($matches) {return strtoupper($matches[1]);}, $apiMethod), // Change .\w to uppercase
-			'apiClassName' => 'Paper'.$nodeInfo->nodeId.'Api',
-			'modelClassName' => 'Paper'.$nodeInfo->nodeId.'Model',
+			'apiMethod' => preg_replace_callback(
+				'/\.(\w)/',
+				function ($matches) {
+					return strtoupper($matches[1]);
+				},
+				$apiMethod
+			), // Change .\w to uppercase
+			'apiClassName' => 'Paper' . $nodeInfo->nodeId . 'Api',
+			'modelClassName' => 'Paper' . $nodeInfo->nodeId . 'Model',
 			'nodeInfo' => $nodeInfo
 		]);
 
@@ -36,19 +42,25 @@ class PaperApi extends Page {
 			'var' => [':nodeId' => $this->nodeId]
 		])->phpBackend;
 
-		if (!preg_match('/^\<\?php/', $this->apiCode)) $this->apiCode = '<?php'._NL.$this->apiCode._NL.'?>';
+		if (!preg_match('/^\<\?php/', $this->apiCode)) {
+			$this->apiCode = '<?php' . _NL . $this->apiCode . _NL . '?>';
+		}
 
-		eval('?>'.$this->apiCode.'<?php'._NL);
+		eval('?>' . $this->apiCode . '<?php' . _NL);
 
 		// $this->testPhpScript();
 	}
 
 	function build() {
-		if (!class_exists($this->apiClassName)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+		if (!class_exists($this->apiClassName)) {
+			return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+		}
 
 		$api = new $this->apiClassName($this->nodeInfo);
 
-		if (!method_exists($api, $this->apiMethod)) return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+		if (!method_exists($api, $this->apiMethod)) {
+			return apiError(_HTTP_ERROR_NOT_FOUND, 'API not found');
+		}
 
 		return $api->{$this->apiMethod}();
 	}
@@ -57,9 +69,9 @@ class PaperApi extends Page {
 		eval('
 			use Softganz\DB;
 			class Paper2486Api extends PageApi {
-				var $nodeInfo;
-				var $action;
-				var $nodeId;
+				public $nodeInfo;
+				public $action;
+				public $nodeId;
 
 				function __construct($nodeInfo = NULL, $action = NULL) {
 					parent::__construct([
@@ -108,8 +120,7 @@ class PaperApi extends Page {
 				// 	return $dbs;
 				}
 			}
-			'
-		);
+			');
 	}
 }
 ?>

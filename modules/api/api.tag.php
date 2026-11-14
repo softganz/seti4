@@ -1,36 +1,38 @@
 <?php
 /**
-* API     :: Tags API
-* Created :: 2022-11-19
-* Modify  :: 2024-05-15
-* Version :: 4
-*
-* @return String/Array
-*
-* @usage api/tag/{action}/{id}?input=tagString
-*/
+ * API     :: Tags API
+ * Created :: 2022-11-19
+ * Modify  :: 2024-05-15
+ * Version :: 4
+ *
+ * @return String/Array
+ *
+ * @usage api/tag/{action}/{id}?input=tagString
+ */
 
 use Softganz\DB;
 
 class TagApi extends PageApi {
-	var $id;
-	var $input;
-	var $actionDefault = 'items';
+	public $id;
+	public $input;
+	public $actionDefault = 'items';
 
-	function __construct($action = NULL, $id = NULL) {
+	function __construct($action = null, $id = null) {
 		parent::__construct([
 			'action' => $action,
 			'id' => SG\getFirstInt($id),
-			'input' => post('input'),
+			'input' => post('input')
 		]);
 	}
 
 	function vid() {
-		if (!debug('process')) sendHeader('text/xml');
+		if (!debug('process')) {
+			sendHeader('text/xml');
+		}
 		$len = strlen($this->input);
 		if (strpos($this->input, ',')) {
-			$pre = substr($this->input, 0, strrpos($this->input,','));
-			$this->input = trim(substr($this->input, strrpos($this->input,',')+1));
+			$pre = substr($this->input, 0, strrpos($this->input, ','));
+			$this->input = trim(substr($this->input, strrpos($this->input, ',') + 1));
 		}
 
 		if ($len > 0) {
@@ -41,15 +43,21 @@ class TagApi extends PageApi {
 				ORDER BY `name` ASC',
 				'var' => [
 					':vid' => $this->id,
-					':name' => $this->input.'%'
-				],
+					':name' => $this->input . '%'
+				]
 			]);
 		}
 
 		$ret = '<?xml version="1.0" encoding="utf-8" ?><results>';
 
 		foreach ($tags->items as $tag) {
-			$ret .= '<rs id="'.$tag->tid.'" info="">'.($pre?$pre.' , ':'').$tag->name.'</rs>';
+			$ret .=
+				'<rs id="'
+				. $tag->tid
+				. '" info="">'
+				. ($pre ? $pre . ' , ' : '')
+				. $tag->name
+				. '</rs>';
 		}
 
 		$ret .= '</results>';
@@ -58,7 +66,9 @@ class TagApi extends PageApi {
 
 	function id() {
 		$tagId = $this->id;
-		if (empty($tagId)) return error(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		if (empty($tagId)) {
+			return error(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		}
 
 		$dbs = DB::select([
 			'SELECT
@@ -71,9 +81,9 @@ class TagApi extends PageApi {
 			LIMIT 1',
 			'where' => [
 				'%WHERE%' => [
-					$tagId ? ['`tag`.`tid` = :tagId', ':tagId' => $tagId] : NULL,
+					$tagId ? ['`tag`.`tid` = :tagId', ':tagId' => $tagId] : null
 				]
-			],
+			]
 		]);
 
 		return $dbs;
@@ -83,10 +93,10 @@ class TagApi extends PageApi {
 		$childOf = post('childOf');
 		$tagId = post('id');
 
-		$result = (Object) [
-			'childOf' => NULL,
+		$result = (object) [
+			'childOf' => null,
 			'count' => 0,
-			'items' => [],
+			'items' => []
 		];
 
 		$dbs = DB::select([
@@ -101,10 +111,12 @@ class TagApi extends PageApi {
 			%WHERE%',
 			'where' => [
 				'%WHERE%' => [
-					$tagId ? ['`tag`.`tid` = :tagId', ':tagId' => $tagId] : NULL,
-					$childOf ? ['`hierarchy`.`parent` = :parent', ':parent' => $childOf] : NULL
+					$tagId ? ['`tag`.`tid` = :tagId', ':tagId' => $tagId] : null,
+					$childOf
+						? ['`hierarchy`.`parent` = :parent', ':parent' => $childOf]
+						: null
 				]
-			],
+			]
 		]);
 
 		$result->count = count($dbs->items);

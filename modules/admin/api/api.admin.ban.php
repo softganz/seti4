@@ -13,29 +13,34 @@
  */
 
 class AdminBanApi extends PageApi {
-	var $action;
+	public $action;
 
 	function __construct($action) {
 		parent::__construct([
-			'action' => $action,
+			'action' => $action
 		]);
 	}
 
 	// Add or Update ban ip/host
 	function save() {
-		$banTime = SG\getFirstInt(Request::all('time'), cfg('ban.time'), 1*24*60);
+		$banTime = SG\getFirstInt(
+			Request::all('time'),
+			cfg('ban.time'),
+			1 * 24 * 60
+		);
 
-		$data = (Object) [
+		$data = (object) [
 			'ip' => SG\getFirst(Request::all('ip')),
 			'host' => SG\getFirst(Request::all('host')),
 			'end' => date(
 				'Y-m-d H:i:s',
 				strtotime(date('Y-m-d H:i:s') . ' +' . $banTime . ' minutes')
-			), // Convert ban time in minute to date and time
+			) // Convert ban time in minute to date and time
 		];
 
-
-		if (empty($data->ip) && empty($data->host)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		if (empty($data->ip) && empty($data->host)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		}
 
 		BanModel::save($data);
 
@@ -45,8 +50,12 @@ class AdminBanApi extends PageApi {
 	// Remove ban item
 	function remove() {
 		$id = SG\getFirstInt(post('id'));
-		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยันการลบรายการ');
-		if (is_null($id)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		if (!SG\confirm()) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยันการลบรายการ');
+		}
+		if (is_null($id)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ข้อมูลไม่ครบถ้วน');
+		}
 
 		BanModel::remove($id);
 

@@ -1,19 +1,19 @@
 <?php
 /**
-* API 		:: User Rergister by Google Account
-* Created :: 2022-07-17
-* Modify  :: 2022-11-19
-* Version	:: 3
-*
-* @return Widget
-*
-* @usage api/user/register/google
-*/
+ * API 		:: User Rergister by Google Account
+ * Created :: 2022-07-17
+ * Modify  :: 2022-11-19
+ * Version	:: 3
+ *
+ * @return Widget
+ *
+ * @usage api/user/register/google
+ */
 
 class UserRegisterGoogleApi extends Page {
-	var $name;
-	var $email;
-	var $googleToken;
+	public $name;
+	public $email;
+	public $googleToken;
 
 	function __construct() {
 		$this->name = post('name');
@@ -25,14 +25,14 @@ class UserRegisterGoogleApi extends Page {
 		$jwt = Jwt::isValid($this->googleToken);
 
 		if (!$jwt->payload->email) {
-			return (Object) [
+			return (object) [
 				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
-				'text' => 'ข้อมูลสำหรับลงทะเบียนไม่ถูกต้อง',
+				'text' => 'ข้อมูลสำหรับลงทะเบียนไม่ถูกต้อง'
 			];
-		} else if (UserModel::get(['email' => $jwt->payload->email])) {
-			return (Object) [
+		} elseif (UserModel::get(['email' => $jwt->payload->email])) {
+			return (object) [
 				'responseCode' => _HTTP_ERROR_NOT_ALLOWED,
-				'text' => 'อีเมล์นี้มีผู้อื่นสมัครไว้แล้ว ไม่สามารถสมัครซ้ำได้',
+				'text' => 'อีเมล์นี้มีผู้อื่นสมัครไว้แล้ว ไม่สามารถสมัครซ้ำได้'
 			];
 		}
 
@@ -41,19 +41,22 @@ class UserRegisterGoogleApi extends Page {
 			'name' => $this->name,
 			'email' => $jwt->payload->email,
 			'signin' => true,
-			'token' => $this->googleToken,
+			'token' => $this->googleToken
 		]);
 
 		// print_o($createUserResult, '$createUserResult', 1);
 		if (!$createUserResult->userId) {
-			return (Object) ['responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE, 'text' => 'ไม่สามารถสร้างสมาชิกตามข้อมูลที่ระบุได้'];
+			return (object) [
+				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
+				'text' => 'ไม่สามารถสร้างสมาชิกตามข้อมูลที่ระบุได้'
+			];
 		}
 
-		return (Object) [
+		return (object) [
 			'userId' => $createUserResult->userId,
 			'username' => $createUserResult->username,
 			'name' => $createUserResult->name,
-			'email' => $createUserResult->email,
+			'email' => $createUserResult->email
 			// 'createUserResult' => $createUserResult,
 			// 'post' => post(),
 		];

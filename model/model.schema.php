@@ -14,12 +14,12 @@
  */
 
 class SchemaModel {
-	var $schemaName;
+	public $schemaName;
 
 	function __construct($schemaName) {
 		$this->schemaName = $schemaName;
 		if ($schemaName) {
-			foreach(self::get($schemaName) as $key => $value) {
+			foreach (self::get($schemaName) as $key => $value) {
 				$this->{$key} = $value;
 			}
 		}
@@ -38,7 +38,9 @@ class SchemaModel {
 	 */
 	public static function addValue(array &$body, ?object $data): array {
 		foreach ($body as $key => $element) {
-			if (!is_object($element)) continue;
+			if (!is_object($element)) {
+				continue;
+			}
 			if ($element->widget === 'Children') {
 				self::addValue($element->children, $data);
 				continue;
@@ -55,7 +57,9 @@ class SchemaModel {
 		foreach ($schema->body as $metrix) {
 			foreach ($metrix->items as $metrinItem) {
 				foreach ($metrinItem->indicator as $indicator) {
-					if ($indicator->section == $section) return $indicator;
+					if ($indicator->section == $section) {
+						return $indicator;
+					}
 				}
 			}
 		}
@@ -68,16 +72,19 @@ class SchemaModel {
 		foreach ($body as $key => $element) {
 			if (is_object($element)) {
 				// Create widget
-				if ($element->method) continue;
-				else if ($element->widget && $element->widget != 'Children') continue;
-				else if (in_array($element->type, ['textfield'])) continue;
-				else if ($element->widget === 'Children') {
+				if ($element->method) {
+					continue;
+				} elseif ($element->widget && $element->widget != 'Children') {
+					continue;
+				} elseif (in_array($element->type, ['textfield'])) {
+					continue;
+				} elseif ($element->widget === 'Children') {
 					$result = array_merge($result, self::bodyOnly($element->children));
 				} else {
 					unset($element->options);
 					$result[] = $element;
 				}
-			} else if (is_string($element)) {
+			} elseif (is_string($element)) {
 			} else {
 				$result[] = $element;
 			}
@@ -95,7 +102,9 @@ class SchemaModel {
 	private static function getNestedValue(?object $data, string $path) {
 		$value = $data;
 		foreach (explode('.', $path) as $segment) {
-			if (!is_object($value) || !isset($value->{$segment})) return null;
+			if (!is_object($value) || !isset($value->{$segment})) {
+				return null;
+			}
 			$value = $value->{$segment};
 		}
 		return $value;

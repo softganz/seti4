@@ -16,18 +16,20 @@
 use Softganz\DB;
 
 class CalendarApi extends PageApi {
-	var $calendarId;
-	var $action;
-	var $tranId;
-	var $actionDefault;
+	public $calendarId;
+	public $action;
+	public $tranId;
+	public $actionDefault;
 
-	function __construct($calendarId = NULL, $action = NULL, $tranId = NULL) {
+	function __construct($calendarId = null, $action = null, $tranId = null) {
 		parent::__construct([
 			'action' => $action,
 			'tranId' => $tranId,
-			'calendaeInfo' => $calendaeInfo = (is_numeric($calendarId) ? CalendarModel::getById($calendarId) : NULL),
+			'calendaeInfo' => ($calendaeInfo = is_numeric($calendarId)
+				? CalendarModel::getById($calendarId)
+				: null),
 			'calendarId' => $calendaeInfo->calId,
-			'right' => new CalendarRightModel($calendaeInfo->calId),
+			'right' => new CalendarRightModel($calendaeInfo->calId)
 		]);
 	}
 
@@ -36,7 +38,9 @@ class CalendarApi extends PageApi {
 		// debugMsg('calendarId '.$this->calendarId.' Action = '.$this->action.' TranId = '.$this->tranId);
 
 		// Check if no calendar information is provided
-		if (empty($this->calendarId)) return error(_HTTP_ERROR_NOT_FOUND, 'PROCESS ERROR');
+		if (empty($this->calendarId)) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'PROCESS ERROR');
+		}
 
 		return parent::build();
 	}
@@ -44,7 +48,12 @@ class CalendarApi extends PageApi {
 	// This method is used to create and update calendar information
 	function update() {
 		// Check if the user has permission to update the calendar
-		if (!$this->right->edit) return apiError(_HTTP_ERROR_FORBIDDEN, 'You do not have permission to edit this calendar');
+		if (!$this->right->edit) {
+			return apiError(
+				_HTTP_ERROR_FORBIDDEN,
+				'You do not have permission to edit this calendar'
+			);
+		}
 
 		$data = (object) post('calendar');
 
@@ -52,21 +61,28 @@ class CalendarApi extends PageApi {
 
 		return apiSuccess([
 			'calId' => $data->id,
-			'title' => $data->title,
+			'title' => $data->title
 		]);
 	}
 
 	// Delete the calendar item
 	function delete() {
-		if (!$this->right->edit) return apiError(_HTTP_ERROR_FORBIDDEN, 'You do not have permission to edit this calendar');
-		if (!SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'Please confirm the deletion');
+		if (!$this->right->edit) {
+			return apiError(
+				_HTTP_ERROR_FORBIDDEN,
+				'You do not have permission to edit this calendar'
+			);
+		}
+		if (!SG\confirm()) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'Please confirm the deletion');
+		}
 
 		DB::query([
 			'DELETE FROM %calendar% WHERE `id` = :id',
 			'var' => [':id' => $this->calendarId]
 		]);
 
-		return apiSuccess('success','ลบรายการปฏิทินเรียบร้อยแล้ว','calendar');
+		return apiSuccess('success', 'ลบรายการปฏิทินเรียบร้อยแล้ว', 'calendar');
 	}
 }
 ?>

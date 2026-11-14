@@ -14,22 +14,24 @@
  */
 
 class CalendarRoomInfoApi extends PageApi {
-	var $resvId;
-	var $action;
-	var $tranId;
-	var $right;
-	var $resvInfo;
+	public $resvId;
+	public $action;
+	public $tranId;
+	public $right;
+	public $resvInfo;
 
-	function __construct($resvId, $action, $tranId = NULL) {
+	function __construct($resvId, $action, $tranId = null) {
 		parent::__construct([
 			'action' => $action,
 			'tranId' => $tranId,
-			'resvInfo' => $resvInfo = ($resvId ? CalendarModel::getResv($resvId) : NULL),
+			'resvInfo' => ($resvInfo = $resvId
+				? CalendarModel::getResv($resvId)
+				: null),
 			'resvId' => $resvInfo->resvId,
-			'right' => (Object) [
+			'right' => (object) [
 				'admin' => is_admin(),
-				'edit' => is_admin() || $resvInfo->uid = i()->uid,
-			],
+				'edit' => is_admin() || ($resvInfo->uid = i()->uid)
+			]
 		]);
 	}
 
@@ -39,7 +41,7 @@ class CalendarRoomInfoApi extends PageApi {
 		if (empty($this->resvId)) {
 			return message([
 				'code' => _HTTP_ERROR_NOT_FOUND,
-				'text' => 'PROCESS ERROR',
+				'text' => 'PROCESS ERROR'
 			]);
 		}
 
@@ -50,7 +52,12 @@ class CalendarRoomInfoApi extends PageApi {
 	}
 
 	public function cancel() {
-		if (!$this->right->edit) return ['responseCode' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Access Denied'];
+		if (!$this->right->edit) {
+			return [
+				'responseCode' => _HTTP_ERROR_FORBIDDEN,
+				'text' => 'Access Denied'
+			];
+		}
 
 		mydb::query(
 			'UPDATE %calendar_room% SET `approve` = :approve
@@ -64,23 +71,51 @@ class CalendarRoomInfoApi extends PageApi {
 
 		return;
 
-		if ($_POST && user_access('administer calendar rooms','edit own calendar room content',$resvInfo->uid)) {
-			if ($_POST['ยกเลิก']) $approve='ยกเลิก';
-			else if ($_POST['ไม่อนุมัติ'] && user_access('administer calendar rooms')) $approve='ไม่อนุมัติ';
-			else if ($_POST['อนุมัติ'] && user_access('administer calendar rooms')) $approve='อนุมัติ';
-			else if ($_POST['delete']) {
-				mydb::query('DELETE FROM %calendar_room% WHERE `resvid`=:resvid LIMIT 1',':resvid',$resvInfo->resvid);
+		if (
+			$_POST &&
+			user_access(
+				'administer calendar rooms',
+				'edit own calendar room content',
+				$resvInfo->uid
+			)
+		) {
+			if ($_POST['ยกเลิก']) {
+				$approve = 'ยกเลิก';
+			} elseif (
+				$_POST['ไม่อนุมัติ'] &&
+				user_access('administer calendar rooms')
+			) {
+				$approve = 'ไม่อนุมัติ';
+			} elseif ($_POST['อนุมัติ'] && user_access('administer calendar rooms')) {
+				$approve = 'อนุมัติ';
+			} elseif ($_POST['delete']) {
+				mydb::query(
+					'DELETE FROM %calendar_room% WHERE `resvid`=:resvid LIMIT 1',
+					':resvid',
+					$resvInfo->resvid
+				);
 				location('calendar/room');
 			}
 			if ($approve) {
-				mydb::query('UPDATE %calendar_room% SET `approve`=:approve WHERE `resvid`=:resvid LIMIT 1',':resvid',$resvInfo->resvid,':approve',$approve);
-				$resvInfo->approve=$approve;
+				mydb::query(
+					'UPDATE %calendar_room% SET `approve`=:approve WHERE `resvid`=:resvid LIMIT 1',
+					':resvid',
+					$resvInfo->resvid,
+					':approve',
+					$approve
+				);
+				$resvInfo->approve = $approve;
 			}
 		}
 	}
 
 	public function notPass() {
-		if (!$this->right->admin) return ['responseCode' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Access Denied'];
+		if (!$this->right->admin) {
+			return [
+				'responseCode' => _HTTP_ERROR_FORBIDDEN,
+				'text' => 'Access Denied'
+			];
+		}
 
 		mydb::query(
 			'UPDATE %calendar_room% SET `approve` = :approve
@@ -96,7 +131,12 @@ class CalendarRoomInfoApi extends PageApi {
 	}
 
 	public function pass() {
-		if (!$this->right->admin) return ['responseCode' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Access Denied'];
+		if (!$this->right->admin) {
+			return [
+				'responseCode' => _HTTP_ERROR_FORBIDDEN,
+				'text' => 'Access Denied'
+			];
+		}
 
 		mydb::query(
 			'UPDATE %calendar_room% SET `approve` = :approve
@@ -112,7 +152,12 @@ class CalendarRoomInfoApi extends PageApi {
 	}
 
 	public function delete() {
-		if (!$this->right->admin) return ['responseCode' => _HTTP_ERROR_FORBIDDEN, 'text' => 'Access Denied'];
+		if (!$this->right->admin) {
+			return [
+				'responseCode' => _HTTP_ERROR_FORBIDDEN,
+				'text' => 'Access Denied'
+			];
+		}
 
 		mydb::query(
 			'DELETE FROM %calendar_room% WHERE `resvid` = :resvid LIMIT 1',
@@ -121,7 +166,5 @@ class CalendarRoomInfoApi extends PageApi {
 
 		return;
 	}
-
-
 }
 ?>

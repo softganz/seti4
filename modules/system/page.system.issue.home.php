@@ -14,135 +14,182 @@
 use Softganz\DB;
 
 class SystemIssueHome extends Page {
-	var $issueType;
-	var $status;
-	var $host;
-	var $items = 1000;
-	var $right;
+	public $issueType;
+	public $status;
+	public $host;
+	public $items = 1000;
+	public $right;
 
- 	function __construct() {
+	function __construct() {
 		parent::__construct([
 			'issueType' => SG\getFirst(Request::all('type')),
 			'status' => SG\getFirst(Request::all('status')),
 			'host' => SG\getFirst(Request::all('host')),
 			'items' => SG\getFirstInt(Request::all('items'), $this->items),
-			'right' => (Object) [
-				'access' => is_admin(),
-			],
+			'right' => (object) [
+				'access' => is_admin()
+			]
 		]);
 	}
 
 	function rightToBuild() {
-		if (!$this->right->access) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!$this->right->access) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 		return true;
 	}
 
 	function build() {
-		head('googlead','<script></script>');
+		head('googlead', '<script></script>');
 
 		$dbs = $this->getData();
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => $dbs->count.' Issues Report',
-				'trailing' => $this->trailing(),
+				'title' => $dbs->count . ' Issues Report',
+				'trailing' => $this->trailing()
 			]), // AppBar
 			'body' => new Container([
 				'class' => 'system-issue-list',
 				'children' => [
 					empty($this->host) ? $this->domainCount() : null,
 					new Widget([
-						'children' => array_map(
-							function($item) {
-								// Convert description
-								if (preg_match('/^[\[\{]/', $item->description)) {
-									$descriptionList = json_decode($item->description);
-									$description = '<details class="-description"><summary>Description: '
-										. array_values((Array) $descriptionList)[0]
-										. '</summary>Message: <ul>'
-										// . '<li>' . implode('</li><li>',  array_values((Array) $descriptionList)) . '</li>'
-										. implode('', array_map(
-											function($desc, $key) {
+						'children' => array_map(function ($item) {
+							// Convert description
+							if (preg_match('/^[\[\{]/', $item->description)) {
+								$descriptionList = json_decode($item->description);
+								$description =
+									'<details class="-description"><summary>Description: '
+									. array_values((array) $descriptionList)[0]
+									. '</summary>Message: <ul>'
+									. // . '<li>' . implode('</li><li>',  array_values((Array) $descriptionList)) . '</li>'
+									implode(
+										'',
+										array_map(
+											function ($desc, $key) {
 												return '<li>' . $key . ': ' . $desc . '</li>';
 											},
-											array_values((Array) $descriptionList), array_keys((Array) $descriptionList)
-										))
-										. '</ul>'
-										. '</details>';
-								} else if ($item->description) {
-									$description = '<details class="-description"><summary>Description: ' . preg_replace('/(<\/li>.*)/', '', $item->description).'</li></ul></summary>Message : ' . $item->description . '</details>';
-								} else {
-									$description = '';
-								}
+											array_values((array) $descriptionList),
+											array_keys((array) $descriptionList)
+										)
+									)
+									. '</ul>'
+									. '</details>';
+							} elseif ($item->description) {
+								$description =
+									'<details class="-description"><summary>Description: '
+									. preg_replace('/(<\/li>.*)/', '', $item->description)
+									. '</li></ul></summary>Message : '
+									. $item->description
+									. '</details>';
+							} else {
+								$description = '';
+							}
 
-								$link = $item->host . $item->path . ($item->query ? '?' . $item->query : '');
+							$link =
+								$item->host
+								. $item->path
+								. ($item->query ? '?' . $item->query : '');
 
-								return new Card([
-									'class' => '-error-'.str_replace(' ', '-', strtolower($item->issueType)),
-									'children' => [
-										new Header([
-											'title' => $item->issueType,
-											'leading' => new Icon($this->issueIcon($item->issueType)),
-											'subTitle' => '@' . $item->reportDate,
-											'trailing' => new Nav([
-												'children' => [
-													$item->status == _COMPLETE ? null : new Button([
+							return new Card([
+								'class' =>
+									'-error-'
+									. str_replace(' ', '-', strtolower($item->issueType)),
+								'children' => [
+									new Header([
+										'title' => $item->issueType,
+										'leading' => new Icon($this->issueIcon($item->issueType)),
+										'subTitle' => '@' . $item->reportDate,
+										'trailing' => new Nav([
+											'children' => [
+												$item->status == _COMPLETE
+													? null
+													: new Button([
 														'type' => 'link',
-														'href' => Url::link('api/system/issue/close/'.$item->issueId),
+														'href' => Url::link(
+															'api/system/issue/close/' . $item->issueId
+														),
 														'icon' => new Icon('done'),
 														'class' => 'sg-action',
 														'rel' => 'none',
 														'done' => 'remove:parent .widget-card',
-														'attribute' => ['data-title' => 'Close Issue', 'data-confirm' => 'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?',]
+														'attribute' => [
+															'data-title' => 'Close Issue',
+															'data-confirm' =>
+																'ได้ดำเนินการแก้ไขปัญหานี้เรียบร้อยแล้ว กรุณายืนยัน?'
+														]
 													]), // Button
-													new Button([
-														'type' => 'link',
-														'href' => Url::link('system/issue/'.$item->issueId),
-														'icon' => new Icon('find_in_page'),
-														'class' => 'sg-action',
-														'rel' => 'box',
-														'attribute' => ['data-width' => 'full']
-													]), // Button
-													new Button([
-														'type' => 'link',
-														'href' => $this->createTargetUrl($item),
-														'icon' => new Icon('public'),
-														'attribute' => ['target' => '_blank']
-													]), // Button
-													new Button([
-														'type' => 'link',
-														'class' => 'sg-action',
-														'href' => Url::link('api/system/issue/delete/'.$item->issueId),
-														'icon' => new Icon('delete'),
-														'rel' => 'none',
-														'done' => 'remove:parent .widget-card',
-														'attribute' => ['data-title' => 'Delete Issue', 'data-confirm' => 'ต้องการลบรายการนี้ออกจากระบบ กรุณายืนยัน?',]
-													]), // Button
-												], // children
-											]), // Row
-										]), // ListTile
-										new ScrollView([
-											'child' => new Column([
-												'class' => '-sg-paddingnorm -nowrap',
-												'children' => [
-													'<b>Host: ' . '<a href="' . $item->host . '" target="_blank">' . $item->host . '</a></b>',
-													'<b>Link : </b><a href="' . $link . '" target="_blank">' . $link . '</a>',
-													$item->reportBy ? 'By : ' . $item->reportBy : null,
-													'Referer : <a href="' . $item->referer . '" target="_blank">' . $item->referer . '</a>',
-													'Agent : ' . $item->agent,
-													$description,
-													$item->data ? '<details class="-descdataription"><summary>Data: '.number_format(strlen($item->data)) . ' chars.</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">' . $item->data . '</pre></div></details>' : ''
-												]
-											]), // Column
-										]), // ScrollView
-									], // children
-								]);
-							},
-							$dbs->items
-						)
-					]), // Table
-				], // children
-			]), // Widget
+												new Button([
+													'type' => 'link',
+													'href' => Url::link('system/issue/' . $item->issueId),
+													'icon' => new Icon('find_in_page'),
+													'class' => 'sg-action',
+													'rel' => 'box',
+													'attribute' => ['data-width' => 'full']
+												]), // Button
+												new Button([
+													'type' => 'link',
+													'href' => $this->createTargetUrl($item),
+													'icon' => new Icon('public'),
+													'attribute' => ['target' => '_blank']
+												]), // Button
+												new Button([
+													'type' => 'link',
+													'class' => 'sg-action',
+													'href' => Url::link(
+														'api/system/issue/delete/' . $item->issueId
+													),
+													'icon' => new Icon('delete'),
+													'rel' => 'none',
+													'done' => 'remove:parent .widget-card',
+													'attribute' => [
+														'data-title' => 'Delete Issue',
+														'data-confirm' =>
+															'ต้องการลบรายการนี้ออกจากระบบ กรุณายืนยัน?'
+													]
+												]) // Button
+											] // children
+										]) // Row
+									]), // ListTile
+									new ScrollView([
+										'child' => new Column([
+											'class' => '-sg-paddingnorm -nowrap',
+											'children' => [
+												'<b>Host: '
+												. '<a href="'
+												. $item->host
+												. '" target="_blank">'
+												. $item->host
+												. '</a></b>',
+												'<b>Link : </b><a href="'
+												. $link
+												. '" target="_blank">'
+												. $link
+												. '</a>',
+												$item->reportBy ? 'By : ' . $item->reportBy : null,
+												'Referer : <a href="'
+												. $item->referer
+												. '" target="_blank">'
+												. $item->referer
+												. '</a>',
+												'Agent : ' . $item->agent,
+												$description,
+												$item->data
+													? '<details class="-descdataription"><summary>Data: '
+														. number_format(strlen($item->data))
+														. ' chars.</summary><div class="widget-scrollview"><pre style="white-space: pre-wrap">'
+														. $item->data
+														. '</pre></div></details>'
+													: ''
+											]
+										]) // Column
+									]) // ScrollView
+								] // children
+							]);
+						}, $dbs->items)
+					]) // Table
+				] // children
+			]) // Widget
 		]);
 	}
 
@@ -150,16 +197,19 @@ class SystemIssueHome extends Page {
 		return new Table([
 			'thead' => ['Domain', 'error-count -amt' => 'Error Count'],
 			'children' => array_map(
-				function($domain) {
+				function ($domain) {
 					return [
 						new Button([
-							'href' => Url::link('system/issue', ['type' => $this->issueType, 'host' => $domain->host]),
-							'text' => $domain->host,
+							'href' => Url::link('system/issue', [
+								'type' => $this->issueType,
+								'host' => $domain->host
+							]),
+							'text' => $domain->host
 						]),
 						number_format($domain->amt)
 					];
 				},
-				(Array) DB::select([
+				(array) DB::select([
 					'SELECT `issue`.`host`, COUNT(*) `amt`
 					FROM %system_issue% `issue`
 					%WHERE%
@@ -167,11 +217,16 @@ class SystemIssueHome extends Page {
 					'where' => [
 						'%WHERE%' => [
 							['`issue`.`status` != :status', ':status' => _COMPLETE],
-							$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : null,
+							$this->issueType
+								? [
+									'`issue`.`issueType` = :issueType',
+									':issueType' => $this->issueType
+								]
+								: null
 						]
 					]
 				])->items
-			),
+			)
 		]);
 	}
 
@@ -184,14 +239,23 @@ class SystemIssueHome extends Page {
 			LIMIT $ITEMS$',
 			'where' => [
 				'%WHERE%' => [
-					$this->status === 'all' ? null : ['`issue`.`status` != :complete', ':complete' => _COMPLETE],
-					$this->issueType ? ['`issue`.`issueType` = :issueType', ':issueType' => $this->issueType] : null,
-					$this->host ? ['`issue`.`host` = :host', ':host' => $this->host] : null,
+					$this->status === 'all'
+						? null
+						: ['`issue`.`status` != :complete', ':complete' => _COMPLETE],
+					$this->issueType
+						? [
+							'`issue`.`issueType` = :issueType',
+							':issueType' => $this->issueType
+						]
+						: null,
+					$this->host
+						? ['`issue`.`host` = :host', ':host' => $this->host]
+						: null
 				]
 			],
 			'var' => [
 				'$ITEMS$' => $this->items
-				]
+			]
 		]);
 	}
 
@@ -216,39 +280,50 @@ class SystemIssueHome extends Page {
 							'value' => $this->issueType,
 							'choices' => array_merge(
 								['' => 'All'],
-								(Array) DB::select([
+								(array) DB::select([
 									'SELECT `issueType`
 									FROM %system_issue%
 									WHERE `issueType` IS NOT NULL
 									GROUP BY `issueType`
 									ORDER BY `issueType` ASC',
-									'options' => ['key' => 'issueType', 'value' => 'issueType'],
+									'options' => ['key' => 'issueType', 'value' => 'issueType']
 								])->items
-							),
+							)
 						],
-						'host' => $this->host ? ['type' => 'hidden', 'value' => $this->host] : null,
-					], // children
+						'host' => $this->host
+							? ['type' => 'hidden', 'value' => $this->host]
+							: null
+					] // children
 				]),
 				new Button([
 					'type' => 'secondary',
 					'class' => 'sg-action',
-					'href' => Url::link('api/system/issue/close/*', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
+					'href' => Url::link('api/system/issue/close/*', [
+						'type' => $this->issueType,
+						'host' => $this->host,
+						'status' => $this->status
+					]),
 					'rel' => 'notify',
 					'done' => 'reload',
 					'icon' => new Icon('done_all'),
 					'attribute' => [
 						'data-title' => 'ล้างรายการ',
-						'data-confirm' => 'ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?',
+						'data-confirm' =>
+							'ต้องการเปลี่ยนสถานะทุกรายการให้เป็นเรียบร้อย กรุณายืนยัน?'
 					]
 				]), // Button
 				new Button([
 					'type' => 'secondary',
 					// 'class' => 'sg-action',
-					'href' => Url::link('system/issue', ['type' => $this->issueType, 'host' => $this->host, 'status' => $this->status]),
+					'href' => Url::link('system/issue', [
+						'type' => $this->issueType,
+						'host' => $this->host,
+						'status' => $this->status
+					]),
 					// 'rel' => '#main',
-					'icon'=> new Icon('refresh'),
-				]),  // Button
-			], // children
+					'icon' => new Icon('refresh')
+				]) // Button
+			] // children
 		]);
 	}
 
@@ -261,7 +336,9 @@ class SystemIssueHome extends Page {
 			'Other' => 'priority_high'
 		];
 
-		return array_key_exists($issueType, $icons) ? $icons[$issueType] : $icons['Other'];
+		return array_key_exists($issueType, $icons)
+			? $icons[$issueType]
+			: $icons['Other'];
 	}
 
 	private function showCreateUserInfo($item) {
@@ -274,16 +351,22 @@ class SystemIssueHome extends Page {
 			case 'Create user':
 			case 'Create user - waiting':
 				$userInfo = json_decode($item->description);
-				$url = $item->host.'/profile/'.$userInfo->id;
+				$url = $item->host . '/profile/' . $userInfo->id;
 				break;
 
 			case 'Add students':
 				$projectInfo = json_decode($item->description);
-				$url = $item->host.'/project/' . $projectInfo->projectId . '/info.student/' . $projectInfo->serieNo;
+				$url =
+					$item->host
+					. '/project/'
+					. $projectInfo->projectId
+					. '/info.student/'
+					. $projectInfo->serieNo;
 				break;
 
 			default:
-				$url = $item->host.$item->path.($item->query ? '?'.$item->query : '');
+				$url =
+					$item->host . $item->path . ($item->query ? '?' . $item->query : '');
 				break;
 		}
 		return $url;

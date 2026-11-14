@@ -14,9 +14,9 @@
 use Softganz\DB;
 
 class SystemDatabase extends Page {
-	var $nodeId;
-	var $fieldName = 'tpid';
-	var $fieldValue;
+	public $nodeId;
+	public $fieldName = 'tpid';
+	public $fieldValue;
 
 	function __construct() {
 		parent::__construct([
@@ -26,9 +26,15 @@ class SystemDatabase extends Page {
 	}
 
 	function rightToBuild() {
-		if (empty($this->fieldName)) return error(_HTTP_ERROR_BAD_REQUEST, 'No Field Name');
-		if ($this->fieldValue === '') return error(_HTTP_ERROR_BAD_REQUEST, 'No Field Value');
-		if (!is_admin()) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (empty($this->fieldName)) {
+			return error(_HTTP_ERROR_BAD_REQUEST, 'No Field Name');
+		}
+		if ($this->fieldValue === '') {
+			return error(_HTTP_ERROR_BAD_REQUEST, 'No Field Value');
+		}
+		if (!is_admin()) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 
 		return true;
 	}
@@ -41,41 +47,38 @@ class SystemDatabase extends Page {
 			'appBar' => new AppBar([
 				'title' => 'System Data In All Table',
 				'leading' => new Icon('database'),
-				'boxHeader' => true,
+				'boxHeader' => true
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
 					new Widget([
-						'children' => array_map(
-							function($table) {
-								$columns = (Array) $this->getColumns($table->name)->items;
-								$hasField = isset($columns[$this->fieldName]);
+						'children' => array_map(function ($table) {
+							$columns = (array) $this->getColumns($table->name)->items;
+							$hasField = isset($columns[$this->fieldName]);
 
-								if (!$hasField) return null;
+							if (!$hasField) {
+								return null;
+							}
 
-								return new Card([
-									'children' => [
-										new Header([
-											'crossAxisAlignment' => 'center',
-											'title' => $table->name,
-											'leading' => new Icon('database'),
-											'trailing' => new Row([
-												'style' => 'gap: 16px;',
-												'children' => [
-													$hasField ? new ExpandButton() : NULL,
-												], // children
-											]), // Row
-										]), // Header
-										$hasField ? $this->showDatas($table->name) : NULL,
-									], // children
-								]);
-							},
-							$allTables->items
-						)
+							return new Card([
+								'children' => [
+									new Header([
+										'crossAxisAlignment' => 'center',
+										'title' => $table->name,
+										'leading' => new Icon('database'),
+										'trailing' => new Row([
+											'style' => 'gap: 16px;',
+											'children' => [$hasField ? new ExpandButton() : null] // children
+										]) // Row
+									]), // Header
+									$hasField ? $this->showDatas($table->name) : null
+								] // children
+							]);
+						}, $allTables->items)
 					]),
-					$this->topic(),
-				], // children
-			]), // Widget
+					$this->topic()
+				] // children
+			]) // Widget
 		]);
 	}
 
@@ -88,11 +91,7 @@ class SystemDatabase extends Page {
 			ORDER BY `name` ASC',
 			'var' => [':dbname' => R()->myDb->db]
 		]);
-		return DB::select([
-			'SHOW FULL TABLES',
-			'var' => [
-			]
-		]);
+		return DB::select(['SHOW FULL TABLES', 'var' => []]);
 	}
 
 	private function getColumns($tableName) {
@@ -100,7 +99,7 @@ class SystemDatabase extends Page {
 			$columns = DB::select([
 				'SHOW COLUMNS FROM $tableName$;',
 				'var' => ['$tableName$' => $tableName],
-				'options' => ['key' => 'Field'],
+				'options' => ['key' => 'Field']
 				// 'onComplete' => function($data) {
 				// 	debugMsg($data, '$data');
 				// }
@@ -116,37 +115,40 @@ class SystemDatabase extends Page {
 		try {
 			$datas = DB::select([
 				'SELECT *
-				-- , \'<a href="'.Url::link('system/database/', ['field' => $this->fieldName, 'table' => $tableName]).'">x</a>\' AS `showDeleteButton`
+				-- , \'<a href="'
+				. Url::link('system/database/', [
+					'field' => $this->fieldName,
+					'table' => $tableName
+				])
+				. '">x</a>\' AS `showDeleteButton`
 				FROM $TABLE$ WHERE `$FIELDNAME$` = :fieldValue ORDER BY `$FIELDNAME$` ASC',
 				'var' => [
 					'$TABLE$' => $tableName,
 					'$FIELDNAME$' => $this->fieldName,
-					':fieldValue' => $this->fieldValue,
+					':fieldValue' => $this->fieldValue
 				]
 			]);
 		} catch (Exception $exception) {
-			return new DebugMsg($exception->getMessage().' : '.R('query'));
+			return new DebugMsg($exception->getMessage() . ' : ' . R('query'));
 		}
 
 		return new ScrollView([
 			'children' => [
 				new Container([
 					'class' => '-sg-paddingnorm',
-					'child' => 'Found <b>'.$datas->count.' records.'
+					'child' => 'Found <b>' . $datas->count . ' records.'
 				]),
 				new Table([
 					'class' => '-data-list',
-					'thead' => array_keys((Array) $datas->items[0]),
+					'thead' => array_keys((array) $datas->items[0]),
 					'children' => $datas->items
-				]),
+				])
 				// new DebugMsg(R('query')),
 				// new DebugMsg($data, '$data')
-			], // children
+			] // children
 		]);
 	}
 
-	private function topic() {
-		
-	}
+	private function topic() {}
 }
 ?>

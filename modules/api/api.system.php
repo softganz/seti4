@@ -17,17 +17,17 @@
 use Softganz\DB;
 
 class SystemApi extends PageApi {
-	var $action;
-	var $tranId;
-	var $right;
+	public $action;
+	public $tranId;
+	public $right;
 
-	function __construct($action = NULL, $tranId = NULL) {
+	function __construct($action = null, $tranId = null) {
 		parent::__construct([
 			'action' => $action,
 			'tranId' => $tranId,
-			'right' => (Object) [
-				'admin' => is_admin(),
-			],
+			'right' => (object) [
+				'admin' => is_admin()
+			]
 		]);
 	}
 
@@ -47,7 +47,7 @@ class SystemApi extends PageApi {
 			'time' => date('H:i:s'),
 			'members' => CounterModel::onlineMemberCount(),
 			'onlines' => CounterModel::onlineCount(),
-			'ip' => $_SERVER['REMOTE_ADDR'],
+			'ip' => $_SERVER['REMOTE_ADDR']
 		]);
 	}
 
@@ -58,9 +58,15 @@ class SystemApi extends PageApi {
 	function watchdogDelete() {
 		$watchdogId = Request::all('id');
 
-		if (!$this->right->admin) return apiError(_HTTP_ERROR_NOT_ALLOWED, _ERROR_MSG_ACCESS_DENIED);
-		if (empty($watchdogId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุ ID');
-		if (!\SG\confirm()) return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ยืนยัน');
+		if (!$this->right->admin) {
+			return apiError(_HTTP_ERROR_NOT_ALLOWED, _ERROR_MSG_ACCESS_DENIED);
+		}
+		if (empty($watchdogId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุ ID');
+		}
+		if (!\SG\confirm()) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ยืนยัน');
+		}
 
 		DB::query([
 			'DELETE FROM %watchdog% WHERE `wid` = :watchdogId LIMIT 1',

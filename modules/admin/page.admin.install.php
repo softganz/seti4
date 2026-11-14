@@ -14,19 +14,23 @@
 use Softganz\DB;
 
 class AdminInstall extends Page {
-	var $firstTime;
-	var $dbPrefix;
+	public $firstTime;
+	public $dbPrefix;
 
 	function __construct() {
 		parent::__construct([
 			'dbPrefix' => Request::all('dbPrefix'),
-			'firstTime' => !DB::tableExists('%variable%'),
+			'firstTime' => !DB::tableExists('%variable%')
 		]);
 	}
 
 	function rightToBuild() {
-		if ($this->firstTime) return true;
-		if (!user_access('access administrator pages')) return error(_HTTP_ERROR_FORBIDDEN,'Access denied');
+		if ($this->firstTime) {
+			return true;
+		}
+		if (!user_access('access administrator pages')) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
+		}
 		return true;
 	}
 
@@ -37,16 +41,18 @@ class AdminInstall extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => $this->firstTime ? 'First time installation database' : 'Site Installation',
+				'title' => $this->firstTime
+					? 'First time installation database'
+					: 'Site Installation'
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
 					$this->form(),
 					new Container([
 						'id' => 'result'
-					]), // Container
-				], // children
-			]), // Widget
+					]) // Container
+				] // children
+			]) // Widget
 		]);
 	}
 
@@ -65,15 +71,19 @@ class AdminInstall extends Page {
 					'maxlength' => 5,
 					'require' => true,
 					'value' => cfg('db.prefix'),
-					'description' => 'Please enter table prefix for many set of table.',
+					'description' => 'Please enter table prefix for many set of table.'
 				],
 				'submit' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">done_all</i><span>START INSTALL</span>',
-					'pretext' => '<a class="btn -link -cancel" href="'.url('admin').'"><i class="icon -material">cancel</i><span>CANCEL</span></a>',
-					'container' => '{class: "-sg-text-right"}',
-				],
-			], // children
+					'value' =>
+						'<i class="icon -material">done_all</i><span>START INSTALL</span>',
+					'pretext' =>
+						'<a class="btn -link -cancel" href="'
+						. url('admin')
+						. '"><i class="icon -material">cancel</i><span>CANCEL</span></a>',
+					'container' => '{class: "-sg-text-right"}'
+				]
+			] // children
 		]);
 	}
 
@@ -82,27 +92,34 @@ class AdminInstall extends Page {
 
 		if ($this->firstTime && !$result->error) {
 			$this->setDefaultConfig();
-			return '<script>window.location.href = "'.url('user/register').'";</script>';
+			return '<script>window.location.href = "'
+				. url('user/register')
+				. '";</script>';
 		}
 
 		return new Widget([
 			'children' => [
 				new ListTile(['title' => 'Installation Result']),
-				$result->error ? '<p class="notify">Installation error!!!!</p>' : 'Install table with table prefix '.$db_prefix.' complete.',
+				$result->error
+					? '<p class="notify">Installation error!!!!</p>'
+					: 'Install table with table prefix ' . $db_prefix . ' complete.',
 				new Container([
-					'children' => array_map(
-						function($query) {
-							return new Card([
-								'children' => [
-									new ListTile(['title' => 'Create table', 'leading' => new Icon('cloud_circle')]),
-									new Container(['class' => '-sg-paddingnorm', 'child' => '<pre>' . $query . '</pre>']),
-								], // children
-							]);
-						},
-						(Array) $result->query
-					), // children
-				]), // Container
-			], // children
+					'children' => array_map(function ($query) {
+						return new Card([
+							'children' => [
+								new ListTile([
+									'title' => 'Create table',
+									'leading' => new Icon('cloud_circle')
+								]),
+								new Container([
+									'class' => '-sg-paddingnorm',
+									'child' => '<pre>' . $query . '</pre>'
+								])
+							] // children
+						]);
+					}, (array) $result->query) // children
+				]) // Container
+			] // children
 		]);
 	}
 
@@ -133,11 +150,8 @@ class AdminInstall extends Page {
 	// 	]);
 	// }
 
-
-
 	// function admin_install($self) {
 	// 	$self->theme->title='Site Install';
-
 
 	// 	if (!user_access('access administrator pages')) return message('error','Access denied','admin');
 
@@ -188,15 +202,15 @@ class AdminInstall extends Page {
 	 *
 	 * @return Array
 	 */
-	function createTable($prefix = NULL) {
-		$query = (Object) [];
-		$result = (Object) [
+	function createTable($prefix = null) {
+		$query = (object) [];
+		$result = (object) [
 			'error' => [],
 			'complete' => [],
-			'query' => [],
+			'query' => []
 		];
 
-		$query->block_daykey='CREATE TABLE IF NOT EXISTS %block_daykey% (
+		$query->block_daykey = 'CREATE TABLE IF NOT EXISTS %block_daykey% (
 			`id` int(10) unsigned NOT NULL auto_increment,
 			`key1` char(10) default NULL,
 			`key2` char(10) default NULL,
@@ -213,7 +227,7 @@ class AdminInstall extends Page {
 			KEY `key5` (`key5`)
 		);';
 
-		$query->bigdata='CREATE TABLE IF NOT EXISTS %bigdata% (
+		$query->bigdata = 'CREATE TABLE IF NOT EXISTS %bigdata% (
 			`bigid` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			`keyname` varchar(50) DEFAULT NULL,
 			`keyid` int(10) unsigned DEFAULT NULL,
@@ -237,8 +251,7 @@ class AdminInstall extends Page {
 			KEY `umodified` (`umodified`)
 		);';
 
-
-		$query->cache='CREATE TABLE IF NOT EXISTS %cache% (
+		$query->cache = 'CREATE TABLE IF NOT EXISTS %cache% (
 			`cid` varchar(1000) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL default "",
 			`data` text,
 			`expire` int(11) NOT NULL default 0,
@@ -248,7 +261,7 @@ class AdminInstall extends Page {
 			KEY `expire` (`expire`)
 		);';
 
-		$query->users='CREATE TABLE IF NOT EXISTS %users% (
+		$query->users = 'CREATE TABLE IF NOT EXISTS %users% (
 			`uid` int(10) unsigned NOT NULL auto_increment,
 			`username` varchar(30) NULL default NULL,
 			`password` varchar(255)NULL default NULL,
@@ -334,13 +347,13 @@ class AdminInstall extends Page {
 			KEY `dateapproved` (`approved`)
 		);';
 
-		$query->variable='CREATE TABLE IF NOT EXISTS %variable% (
+		$query->variable = 'CREATE TABLE IF NOT EXISTS %variable% (
 			`name` varchar(50) NOT NULL default "",
 			`value` longtext NOT NULL,
 			PRIMARY KEY  (`name`)
 		);';
 
-		$query->counter_day='CREATE TABLE IF NOT EXISTS %counter_day% (
+		$query->counter_day = 'CREATE TABLE IF NOT EXISTS %counter_day% (
 			`log_date` date NOT NULL default "0000-00-00",
 			`hits` int(10) unsigned NOT NULL default 0,
 			`users` int(10) unsigned NOT NULL default 0,
@@ -395,15 +408,22 @@ class AdminInstall extends Page {
 			PRIMARY KEY  (`log_date`)
 		);';
 
-
 		// Create partition from now to 60 Mrecords
 		$partition = '';
 		for ($counterId = 1; $counterId <= 30; $counterId++) {
-			$partition .= 'PARTITION p_' . str_pad(($counterId - 1) * 2, 2, '0', STR_PAD_LEFT) . ' VALUES LESS THAN (' . ($counterId * 2000000) . '),' . _NL . "\t\t";
+			$partition .=
+				'PARTITION p_'
+				. str_pad(($counterId - 1) * 2, 2, '0', STR_PAD_LEFT)
+				. ' VALUES LESS THAN ('
+				. $counterId * 2000000
+				. '),'
+				. _NL
+				. "\t\t";
 		}
 		$partition .= 'PARTITION p_future VALUES LESS THAN (MAXVALUE)';
 
-		$query->counter_log='CREATE TABLE IF NOT EXISTS %counter_log%
+		$query->counter_log =
+			'CREATE TABLE IF NOT EXISTS %counter_log%
 		(
 			`id` bigint(20) unsigned NOT NULL auto_increment,
 			`new_user` tinyint(4) default NULL,
@@ -424,12 +444,14 @@ class AdminInstall extends Page {
 		)
 		PARTITION BY RANGE (`id`)
 		(
-			' . $partition . '
+			'
+			. $partition
+			. '
 		);';
 
 		$query->counter_bot = 'CREATE TABLE %counter_bot% LIKE %counter_log%';
 
-		$query->vocabulary='CREATE TABLE IF NOT EXISTS %vocabulary% (
+		$query->vocabulary = 'CREATE TABLE IF NOT EXISTS %vocabulary% (
 			`vid` int(10) unsigned NOT NULL auto_increment,
 			`name` varchar(255) NULL,
 			`description` text,
@@ -444,13 +466,13 @@ class AdminInstall extends Page {
 			PRIMARY KEY  (`vid`)
 		);';
 
-		$query->vocabulary_types='CREATE TABLE IF NOT EXISTS %vocabulary_types% (
+		$query->vocabulary_types = 'CREATE TABLE IF NOT EXISTS %vocabulary_types% (
 			`vid` int(10) unsigned NOT NULL default 0,
 			`type` varchar(32) NOT NULL,
 			PRIMARY KEY  (`vid`,`type`)
 		);';
 
-		$query->tag='CREATE TABLE IF NOT EXISTS %tag% (
+		$query->tag = 'CREATE TABLE IF NOT EXISTS %tag% (
 			`tid` int(10) unsigned NOT NULL auto_increment,
 			`vid` int(10) unsigned NULL default NULL,
 			`ownid` int(10) unsigned NULL default NULL,
@@ -469,7 +491,7 @@ class AdminInstall extends Page {
 			KEY `taggroup` (`taggroup`)
 		);';
 
-		$query->tag_hierarchy='CREATE TABLE IF NOT EXISTS %tag_hierarchy% (
+		$query->tag_hierarchy = 'CREATE TABLE IF NOT EXISTS %tag_hierarchy% (
 			`tid` int(10) unsigned NOT NULL default 0,
 			`parent` int(10) unsigned NOT NULL default 0,
 			PRIMARY KEY  (`tid`,`parent`),
@@ -477,7 +499,7 @@ class AdminInstall extends Page {
 			KEY `parent` (`parent`)
 		);';
 
-		$query->tag_relation='CREATE TABLE IF NOT EXISTS %tag_relation% (
+		$query->tag_relation = 'CREATE TABLE IF NOT EXISTS %tag_relation% (
 			`trid` int(11) NOT NULL auto_increment,
 			`tid1` int(10) unsigned NOT NULL default 0,
 			`tid2` int(10) unsigned NOT NULL default 0,
@@ -486,7 +508,7 @@ class AdminInstall extends Page {
 			KEY `tid2` (`tid2`)
 		);';
 
-		$query->tag_synonym='CREATE TABLE IF NOT EXISTS %tag_synonym% (
+		$query->tag_synonym = 'CREATE TABLE IF NOT EXISTS %tag_synonym% (
 			`tsid` int(11) NOT NULL auto_increment,
 			`tid` int(10) unsigned NOT NULL default 0,
 			`name` varchar(255) NOT NULL default "",
@@ -495,7 +517,7 @@ class AdminInstall extends Page {
 			KEY `name` (`name`)
 		);';
 
-		$query->tag_topic='CREATE TABLE IF NOT EXISTS %tag_topic% (
+		$query->tag_topic = 'CREATE TABLE IF NOT EXISTS %tag_topic% (
 			`tpid` int(10) unsigned NOT NULL default 0,
 			`vid` int(10) unsigned NOT NULL default 0,
 			`tid` int(10) unsigned NOT NULL default 0,
@@ -562,7 +584,7 @@ class AdminInstall extends Page {
 			KEY `approve` (`approve`)
 		);';
 
-		$query->topic_revisions='CREATE TABLE IF NOT EXISTS %topic_revisions% (
+		$query->topic_revisions = 'CREATE TABLE IF NOT EXISTS %topic_revisions% (
 			`tpid` int(10) unsigned NOT NULL,
 			`revid` int(10) unsigned NOT NULL auto_increment,
 			`uid` int(10) unsigned default NULL,
@@ -583,7 +605,7 @@ class AdminInstall extends Page {
 			KEY `muid` (`uid`)
 		);';
 
-		$query->topic_types='CREATE TABLE IF NOT EXISTS %topic_types% (
+		$query->topic_types = 'CREATE TABLE IF NOT EXISTS %topic_types% (
 			`type` varchar(32) NOT NULL,
 			`name` varchar(255) NULL,
 			`module` varchar(255) NULL,
@@ -601,7 +623,7 @@ class AdminInstall extends Page {
 			PRIMARY KEY  (`type`)
 		);';
 
-		$query->topic_comments='CREATE TABLE IF NOT EXISTS %topic_comments% (
+		$query->topic_comments = 'CREATE TABLE IF NOT EXISTS %topic_comments% (
 			`cid` int(11) unsigned NOT NULL auto_increment,
 			`pid` int(11) unsigned NOT NULL default 0,
 			`tpid` int(11) unsigned NOT NULL default 0,
@@ -626,7 +648,7 @@ class AdminInstall extends Page {
 			KEY `timestamp` (`timestamp`)
 		);';
 
-		$query->topic_files='CREATE TABLE IF NOT EXISTS %topic_files% (
+		$query->topic_files = 'CREATE TABLE IF NOT EXISTS %topic_files% (
 			`fid` int(10) unsigned NOT NULL auto_increment,
 			`fkey` varchar(32) NULL DEFAULT NULL,
 			`tpid` int(10) unsigned NULL DEFAULT NULL,
@@ -665,7 +687,7 @@ class AdminInstall extends Page {
 			UNIQUE (`fkey`)
 		);';
 
-		$query->topic_parent='CREATE TABLE IF NOT EXISTS %topic_parent% (
+		$query->topic_parent = 'CREATE TABLE IF NOT EXISTS %topic_parent% (
 			`tpid` int(11) UNSIGNED NOT NULL DEFAULT 0,
 			`parent` int(11) UNSIGNED NOT NULL DEFAULT 0,
 			`tgtid` int(11) UNSIGNED NOT NULL DEFAULT 0,
@@ -678,7 +700,7 @@ class AdminInstall extends Page {
 			KEY `bdgroup` (`bdgroup`)
 		)';
 
-		$query->topic_user='CREATE TABLE IF NOT EXISTS %topic_user% (
+		$query->topic_user = 'CREATE TABLE IF NOT EXISTS %topic_user% (
 			`tpid` int(11) UNSIGNED NOT NULL DEFAULT 0,
 			`uid` int(11) UNSIGNED NOT NULL DEFAULT 0,
 			`membership` varchar(20) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL DEFAULT "REGULAR MEMBER",
@@ -686,13 +708,13 @@ class AdminInstall extends Page {
 			PRIMARY KEY (`tpid`,`uid`)
 		)';
 
-		$query->topic_data='CREATE TABLE IF NOT EXISTS %topic_data% (
+		$query->topic_data = 'CREATE TABLE IF NOT EXISTS %topic_data% (
 			`tpid` int(11) UNSIGNED NOT NULL,
 			`json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`json`)),
 			PRIMARY KEY (`tpid`)
 		)';
 
-		$query->url_alias='CREATE TABLE IF NOT EXISTS %url_alias% (
+		$query->url_alias = 'CREATE TABLE IF NOT EXISTS %url_alias% (
 			`pid` int(10) unsigned NOT NULL auto_increment,
 			`alias` varchar(128) NOT NULL,
 			`system` varchar(128) NOT NULL,
@@ -702,7 +724,7 @@ class AdminInstall extends Page {
 			KEY `alias` (`alias`)
 		);';
 
-		$query->session='CREATE TABLE IF NOT EXISTS %session% (
+		$query->session = 'CREATE TABLE IF NOT EXISTS %session% (
 			`sess_id` varchar(200) NOT NULL,
 			`user` varchar(30) DEFAULT NULL,
 			`sess_start` datetime NOT NULL,
@@ -716,7 +738,7 @@ class AdminInstall extends Page {
 			KEY `sess_last_acc` (`sess_last_acc`)
 		);';
 
-		$query->property='CREATE TABLE IF NOT EXISTS %property% (
+		$query->property = 'CREATE TABLE IF NOT EXISTS %property% (
 			`propid` bigint(20) unsigned NOT NULL DEFAULT 0,
 			`module` varchar(30) NOT NULL DEFAULT "",
 			`name` varchar(30) NOT NULL DEFAULT "",
@@ -725,7 +747,7 @@ class AdminInstall extends Page {
 			PRIMARY KEY (`propid`,`module`,`name`), KEY `name` (`name`)
 		);';
 
-		$query->watchdog='CREATE TABLE IF NOT EXISTS %watchdog% (
+		$query->watchdog = 'CREATE TABLE IF NOT EXISTS %watchdog% (
 			`wid` bigint(20) NOT NULL auto_increment,
 			`date` datetime default NULL,
 			-- `logDate` date default NULL,
@@ -751,7 +773,7 @@ class AdminInstall extends Page {
 			KEY `modulekeyword` (`module`, `keyword`)
 		);';
 
-		$query->reaction='CREATE TABLE IF NOT EXISTS %reaction% (
+		$query->reaction = 'CREATE TABLE IF NOT EXISTS %reaction% (
 			`actid` int(11) NOT NULL AUTO_INCREMENT,
 			`refid` int(11) NULL,
 			`uid` int(11) NULL,
@@ -775,7 +797,7 @@ class AdminInstall extends Page {
 
 		// create table with prefix
 		foreach ($query as $table => $stmt) {
-			if (!DB::tableExists('%'.$table.'%')) {
+			if (!DB::tableExists('%' . $table . '%')) {
 				DB::query([$stmt]);
 				// debugMsg('ERROR: '.R('error'));
 				// debugMsg('ERROR -> '.R('error')->query);
@@ -800,20 +822,25 @@ class AdminInstall extends Page {
 	 */
 	private function setDefaultConfig() {
 		// add default module
-		$add_module_lists=array('system','user','paper','comment','watchdog');
-		$perm=cfg('perm');
+		$add_module_lists = ['system', 'user', 'paper', 'comment', 'watchdog'];
+		$perm = cfg('perm');
 		// add new module
 		foreach ($add_module_lists as $module) {
 			process_install_module($module);
 		}
 
-		cfg_db('encrypt_key',md5(rand().time()).md5(uniqid()));
-		cfg_db('version.install',cfg('core.version.install'));
+		cfg_db('encrypt_key', md5(rand() . time()) . md5(uniqid()));
+		cfg_db('version.install', cfg('core.version.install'));
 
-		$cfgWebHomepage=cfg('web.homepage');
-		$cfgNavigator=cfg('navigator');
-		if (empty($cfgWebHomepage)) cfg_db('web.homepage','paper');
-		if (empty($cfgNavigator)) cfg_db('navigator','<div class="page -nav">
+		$cfgWebHomepage = cfg('web.homepage');
+		$cfgNavigator = cfg('navigator');
+		if (empty($cfgWebHomepage)) {
+			cfg_db('web.homepage', 'paper');
+		}
+		if (empty($cfgNavigator)) {
+			cfg_db(
+				'navigator',
+				'<div class="page -nav">
 	<nav class="nav -owner">
 	<h2 class="-header">Owner Menu</h2>
 	<ul class="menu -pulldown">
@@ -830,8 +857,9 @@ class AdminInstall extends Page {
 	<li><a href="{url:aboutus}">About us</a></li>
 	</ul>
 	</nav>
-	</div><!-- page -nav -->');
+	</div><!-- page -nav -->'
+			);
+		}
 	}
-
 }
 ?>

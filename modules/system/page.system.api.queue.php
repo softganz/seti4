@@ -1,31 +1,33 @@
 <?php
 /**
-* System  :: Resend Waiting API
-* Created :: 2023-12-06
-* Modify  :: 2024-12-17
-* Version :: 2
-*
-* @return Widget
-*
-* @usage system/api/queue
-*/
+ * System  :: Resend Waiting API
+ * Created :: 2023-12-06
+ * Modify  :: 2024-12-17
+ * Version :: 2
+ *
+ * @return Widget
+ *
+ * @usage system/api/queue
+ */
 
 class SystemApiQueue extends Page {
-	var $status = 'WAITING';
-	var $items = 1000;
-	var $right;
+	public $status = 'WAITING';
+	public $items = 1000;
+	public $right;
 
 	function __construct() {
 		parent::__construct([
 			'status' => SG\getFirst(post('status'), $this->status),
 			'items' => SG\getFirstInt(post('items'), $this->items),
-			'right' => (Object) [
-				'access' => is_admin(),
-			],
+			'right' => (object) [
+				'access' => is_admin()
+			]
 		]);
 	}
 	function build() {
-		if (!$this->right->access) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!$this->right->access) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 
 		return new Scaffold([
 			'appBar' => new AppBar([
@@ -34,8 +36,8 @@ class SystemApiQueue extends Page {
 					'child' => new Button([
 						'type' => 'primary',
 						'href' => url('system/api/resend'),
-						'text' => 'RESEND',
-					]), // Button
+						'text' => 'RESEND'
+					]) // Button
 				]), // Row
 				'navigator' => new Form([
 					'class' => 'sg-form form-report',
@@ -45,20 +47,38 @@ class SystemApiQueue extends Page {
 						'status' => [
 							'type' => 'select',
 							'onChange' => 'submit',
-							'options' => ['WAITING' => 'WAITING', 'COMPLETE' => 'COMPLETE', 'SENDING' => 'SENDING'],
+							'options' => [
+								'WAITING' => 'WAITING',
+								'COMPLETE' => 'COMPLETE',
+								'SENDING' => 'SENDING'
+							]
 						],
 						'items' => [
 							'type' => 'select',
 							'onChange' => 'submit',
 							'value' => $this->items,
-							'options' => [100 => '100 รายการ', 500 => '500 รายการ', 1000 => '1000 รายการ', 2000 => '2000 รายการ']
-						],
-					], // children
-				]), // Form
+							'options' => [
+								100 => '100 รายการ',
+								500 => '500 รายการ',
+								1000 => '1000 รายการ',
+								2000 => '2000 รายการ'
+							]
+						]
+					] // children
+				]) // Form
 			]), // AppBar
 			'body' => new ScrollView([
 				'child' => new Table([
-					'thead' => ['no' => '', 'ID', 'create -date' => 'Date', 'key -nowrap' => 'Key', 'model -nowrap' => 'Model', 'status', 'retry', 'curl -nowrap' => 'curl'],
+					'thead' => [
+						'no' => '',
+						'ID',
+						'create -date' => 'Date',
+						'key -nowrap' => 'Key',
+						'model -nowrap' => 'Model',
+						'status',
+						'retry',
+						'curl -nowrap' => 'curl'
+					],
 					'children' => array_map(
 						function ($apiItem) {
 							static $no = 0;
@@ -73,7 +93,11 @@ class SystemApiQueue extends Page {
 								$apiItem->apiModel,
 								$apiItem->status,
 								$apiItem->sendRetry,
-								preg_replace('/\"ChfR12\-Api\-Key\:.*\"\,|\\\"/', '', $apiItem->curlParam),
+								preg_replace(
+									'/\"ChfR12\-Api\-Key\:.*\"\,|\\\"/',
+									'',
+									$apiItem->curlParam
+								)
 								// new DebugMsg($apiItem, '$apiItem')
 							];
 						},
@@ -81,9 +105,9 @@ class SystemApiQueue extends Page {
 							'status' => $this->status,
 							'options' => ['items' => $this->items]
 						])->items
-					), // children
-				]), // Table
-			]), // ScrollView
+					) // children
+				]) // Table
+			]) // ScrollView
 		]);
 	}
 }

@@ -17,21 +17,25 @@
 use Softganz\DB;
 
 class NodeApi extends PageApi {
-	var $nodeId;
-	var $action;
-	var $tranId;
+	public $nodeId;
+	public $action;
+	public $tranId;
 
-	function __construct($nodeId = NULL, $action = NULL, $tranId = NULL) {
+	function __construct($nodeId = null, $action = null, $tranId = null) {
 		parent::__construct([
 			'action' => $action,
 			'tranId' => $tranId,
-			'nodeInfo' => $nodeInfo = (is_numeric($nodeId) ? \NodeModel::get($nodeId) : NULL),
-			'nodeId' => $nodeInfo->nodeId,
+			'nodeInfo' => ($nodeInfo = is_numeric($nodeId)
+				? \NodeModel::get($nodeId)
+				: null),
+			'nodeId' => $nodeInfo->nodeId
 		]);
 	}
 
 	function rightToBuild() {
-		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'Invalid Node ID');
+		if (empty($this->nodeId)) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'Invalid Node ID');
+		}
 		return true;
 	}
 
@@ -43,7 +47,7 @@ class NodeApi extends PageApi {
 		// }
 
 		// header('SG-Access-Origin: '.$http_origin);
-		
+
 		if (is_admin()) {
 			// Admin can access from anywhere
 		} elseif (_HOST != _REFERER) {
@@ -53,11 +57,11 @@ class NodeApi extends PageApi {
 		$result = [];
 
 		foreach (\NodeModel::members($this->nodeId) as $member) {
-			$result[] = (Object) [
+			$result[] = (object) [
 				'id' => $member->uid,
 				'username' => $member->username,
 				'fullname' => $member->name,
-				'membership' => $member->membership,
+				'membership' => $member->membership
 			];
 		}
 		return $result;
@@ -66,7 +70,9 @@ class NodeApi extends PageApi {
 	function memberCheck() {
 		$isMember = false;
 
-		if (!i()->ok) return (Object) ['member' => false];
+		if (!i()->ok) {
+			return (object) ['member' => false];
+		}
 
 		foreach (\NodeModel::members($this->nodeId) as $member) {
 			if ($member->uid == i()->uid) {
@@ -74,25 +80,46 @@ class NodeApi extends PageApi {
 				break; // Found current user
 			}
 		}
-		return (Object) ['member' => $isMember];
+		return (object) ['member' => $isMember];
 	}
 
 	function memberAdd() {
 		$addUserId = SG\getFirstInt(Request::all('userId'));
 		$addMembership = SG\getFirst(Request::all('membership'), 'REGULAR MEMBER');
 
-		if (empty($this->nodeId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'Invalid Node ID');
-		if (empty($addUserId)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'Invalid User ID');
+		if (empty($this->nodeId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'Invalid Node ID');
+		}
+		if (empty($addUserId)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'Invalid User ID');
+		}
 
 		$user = UserModel::get($addUserId);
 
-		if (empty($user)) return apiError(_HTTP_ERROR_BAD_REQUEST, 'User Not Found');
+		if (empty($user)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'User Not Found');
+		}
 
 		$nodeMember = NodeModel::members($this->nodeId)[i()->uid];
 
-		$rightToAdd = is_admin() || in_array($nodeMember->orgMembership, ['ADMIN','MANAGER','OWNER','TRAINER']) || in_array($nodeMember->membership, ['ADMIN','MANAGER','OWNER','TRAINER']);
+		$rightToAdd =
+			is_admin() ||
+			in_array($nodeMember->orgMembership, [
+				'ADMIN',
+				'MANAGER',
+				'OWNER',
+				'TRAINER'
+			]) ||
+			in_array($nodeMember->membership, [
+				'ADMIN',
+				'MANAGER',
+				'OWNER',
+				'TRAINER'
+			]);
 
-		if (!$rightToAdd) return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (!$rightToAdd) {
+			return apiError(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 
 		DB::query([
 			'INSERT INTO %topic_user%
@@ -111,10 +138,20 @@ class NodeApi extends PageApi {
 		LogModel::save([
 			'module' => 'Node',
 			'keyword' => 'Add member',
-			'message' => $user->name.' ('.$user->userId.') was added to be a member of node '.$this->nodeId.' by '.i()->name.' ('.i()->uid.')',
-			'keyId' => $this->nodeId,
+			'message' =>
+				$user->name
+				. ' ('
+				. $user->userId
+				. ') was added to be a member of node '
+				. $this->nodeId
+				. ' by '
+				. i()->name
+				. ' ('
+				. i()->uid
+				. ')',
+			'keyId' => $this->nodeId
 		]);
-		
+
 		return apiSuccess('Member added successfully');
 	}
 }

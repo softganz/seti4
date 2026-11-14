@@ -15,9 +15,9 @@
 use Softganz\DB;
 
 class StatsHitsPerDay extends Page {
-	var $year;
+	public $year;
 
-	function __construct($year = NULL) {
+	function __construct($year = null) {
 		parent::__construct([
 			'year' => $year
 		]);
@@ -25,7 +25,7 @@ class StatsHitsPerDay extends Page {
 
 	function build() {
 		if ($this->year) {
-			list($year,$month) = explode('-', $this->year);
+			[$year, $month] = explode('-', $this->year);
 		} else {
 			$month = date('m');
 			$year = date('Y');
@@ -33,18 +33,21 @@ class StatsHitsPerDay extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'Hits Per Day',
+				'title' => 'Hits Per Day'
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
-					new ListTile(['title' => 'Hits per day', 'leading' => new Icon('groups')]),
-					self::showHitPerDay($year,$month),
-				], // children
-			]), // Widget
+					new ListTile([
+						'title' => 'Hits per day',
+						'leading' => new Icon('groups')
+					]),
+					self::showHitPerDay($year, $month)
+				] // children
+			]) // Widget
 		]);
 	}
 
-	private static function showHitPerDay($year=null,$month=null) {
+	private static function showHitPerDay($year = null, $month = null) {
 		$dbs = DB::select([
 			'SELECT `hits`, `users`, `log_date`
 			FROM %counter_day%
@@ -52,7 +55,9 @@ class StatsHitsPerDay extends Page {
 			ORDER BY `log_date` DESC',
 			'%WHERE%' => [
 				['DATE_FORMAT(log_date,"%Y") = :year', ':year' => $year],
-				$month ? ['DATE_FORMAT(log_date,"%m") = :month', ':month' => $month] : null
+				$month
+					? ['DATE_FORMAT(log_date,"%m") = :month', ':month' => $month]
+					: null
 			]
 		]);
 
@@ -61,11 +66,11 @@ class StatsHitsPerDay extends Page {
 		$hits_count = 0;
 		$users_count = 0;
 
-		foreach ( $dbs->items as $rs ) {
+		foreach ($dbs->items as $rs) {
 			$max_hits = $rs->hits > $max_hits ? $rs->hits : $max_hits;
 			$max_users = $rs->users > $max_users ? $rs->users : $max_users;
-			$hits_count = $hits_count+$rs->hits;
-			$users_count = $users_count+$rs->users;
+			$hits_count = $hits_count + $rs->hits;
+			$users_count = $users_count + $rs->users;
 		}
 
 		$is_view_log = user_access('administer contents,administer watchdogs');
@@ -78,41 +83,48 @@ class StatsHitsPerDay extends Page {
 				'chart -fill' => '',
 				'Hits',
 				'Users',
-				'Member',
+				'Member'
 			],
-			'children' => array_map(
-				function($rs) use($is_view_log, $max_hits) {
-					if ( $max_hits > 0 ) $hit_width = round($rs->hits*200/$max_hits);
-					if ( $max_hits > 0 ) $user_width = round($rs->users*200/$max_hits);
+			'children' => array_map(function ($rs) use ($is_view_log, $max_hits) {
+				if ($max_hits > 0) {
+					$hit_width = round(($rs->hits * 200) / $max_hits);
+				}
+				if ($max_hits > 0) {
+					$user_width = round(($rs->users * 200) / $max_hits);
+				}
 
-					return [
-						($is_view_log ? '<a href="'.url('stats/list', ['date' => $rs->log_date]).'">' : '')
-						. $rs->log_date
-						. ($is_view_log ? '</a>' : ''),
-						'<div class="hits-item -hit" style="width:'.$hit_width.'px;"></div><div class="hits-item -user" style="width:'.$user_width.'px;"></div>',
-						number_format($rs->hits),
-						number_format($rs->users),
-						new Button([
-							'type' => 'link',
-							'class' => 'sg-action',
-							'href' => Url::link('stats/user/date/' . $rs->log_date),
-							'rel' => 'box',
-							'boxWidth' => 640,
-							'icon' => new Icon('groups')
-						])
-					];
-				},
-				$dbs->items
-			), // children
+				return [
+					($is_view_log
+						? '<a href="' . url('stats/list', ['date' => $rs->log_date]) . '">'
+						: '')
+					. $rs->log_date
+					. ($is_view_log ? '</a>' : ''),
+					'<div class="hits-item -hit" style="width:'
+					. $hit_width
+					. 'px;"></div><div class="hits-item -user" style="width:'
+					. $user_width
+					. 'px;"></div>',
+					number_format($rs->hits),
+					number_format($rs->users),
+					new Button([
+						'type' => 'link',
+						'class' => 'sg-action',
+						'href' => Url::link('stats/user/date/' . $rs->log_date),
+						'rel' => 'box',
+						'boxWidth' => 640,
+						'icon' => new Icon('groups')
+					])
+				];
+			}, $dbs->items), // children
 			'tfoot' => [
 				[
 					'',
 					'Total',
 					number_format($hits_count),
 					number_format($users_count),
-					'',
-				],
-			],
+					''
+				]
+			]
 		]);
 	}
 }

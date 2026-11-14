@@ -14,7 +14,7 @@
 import('package:external/parsedown/Parsedown.php'); // https://github.com/shuchkin/simplexlsxgen
 
 class Docs extends PageController {
-	var $args;
+	public $args;
 
 	function __construct() {
 		$this->args = func_get_args();

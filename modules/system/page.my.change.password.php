@@ -10,8 +10,8 @@
  */
 
 class MyChangePassword extends Page {
-	var $cfgUserRegister;
-	var $validCheck;
+	public $cfgUserRegister;
+	public $validCheck;
 
 	/**
 	 * Right to build

@@ -16,27 +16,38 @@
  */
 
 class Module {
-	var $module = NULL;
-	var $version = NULL;
-	var $appBar = NULL;
-	var $appBarText = NULL;
-	var $sideBar = NULL;
-	var $theme = NULL;
+	public $module = null;
+	public $version = null;
+	public $appBar = null;
+	public $appBarText = null;
+	public $sideBar = null;
+	public $theme = null;
 
-	function __construct($moduleName = NULL) {
-		$this->theme = (Object)[
+	function __construct($moduleName = null) {
+		$this->theme = (object) [
 			'option' => cfg('topic.property')->option,
-			'header' => (Object) [],
-			'ribbon' => (Object) [],
+			'header' => (object) [],
+			'ribbon' => (object) []
 		];
 
-		if ($moduleName) $this->module = $moduleName;
-		else if (empty($this->module)) $this->module = get_class($this);
+		if ($moduleName) {
+			$this->module = $moduleName;
+		} elseif (empty($this->module)) {
+			$this->module = get_class($this);
+		}
 		$this->version();
-		if (cfg('page_id') == '') cfg('page_id',$this->module);
+		if (cfg('page_id') == '') {
+			cfg('page_id', $this->module);
+		}
 	}
 
-	function package() { return $this->module; }
-	function version() { return $this->version ? $this->version : $this->version = cfg($this->module.'.version'); }
+	function package() {
+		return $this->module;
+	}
+	function version() {
+		return $this->version
+			? $this->version
+			: ($this->version = cfg($this->module . '.version'));
+	}
 } // End of class module
 ?>

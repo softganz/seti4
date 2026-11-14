@@ -14,10 +14,10 @@
 use Softganz\DB;
 
 class AdminLogCounterCount extends Page {
-	var $counter = 'normal';
-	var $date;
-	var $time;
-	var $moreThan;
+	public $counter = 'normal';
+	public $date;
+	public $time;
+	public $moreThan;
 
 	function __construct() {
 		parent::__construct([
@@ -57,41 +57,43 @@ class AdminLogCounterCount extends Page {
 							'class' => '-sg-text-center',
 							'size' => 4,
 							'value' => $this->moreThan,
-							'placeholder' => '0',
+							'placeholder' => '0'
 						],
 						'go' => [
 							'type' => 'button',
 							'value' => '<i class="icon -material">search</i>'
 						]
-					], // children
-				]), // Form
+					] // children
+				]) // Form
 			]), // AppBar
 			'body' => new Widget([
-				'children' => array_map(
-					function($item) {
-						return new Card([
-							'children' => [
-								new ListTile([
-									'crossAxisAlignment' => 'center',
-									'title' => '@'.$item->label.' Amount : '.number_format($item->amt).' hits.',
-									'trailing' => new ExpandButton([
-										'attribute' => [
-											'onClick' => 'loadTime(this)',
-											'data-time' => $item->label,
-											'data-counter' => $this->counter
-										]
-									])
-								]),
-								new Container([
-									'class' => '-hidden',
-								]),
-							], // children
-						]);
-					},
-					(Array) $data->items
-				),
+				'children' => array_map(function ($item) {
+					return new Card([
+						'children' => [
+							new ListTile([
+								'crossAxisAlignment' => 'center',
+								'title' =>
+									'@'
+									. $item->label
+									. ' Amount : '
+									. number_format($item->amt)
+									. ' hits.',
+								'trailing' => new ExpandButton([
+									'attribute' => [
+										'onClick' => 'loadTime(this)',
+										'data-time' => $item->label,
+										'data-counter' => $this->counter
+									]
+								])
+							]),
+							new Container([
+								'class' => '-hidden'
+							])
+						] // children
+					]);
+				}, (array) $data->items),
 				$this->script()
-			]), // Widget
+			]) // Widget
 		]);
 	}
 
@@ -104,9 +106,12 @@ class AdminLogCounterCount extends Page {
 	}
 
 	private function data() {
-		$table = $this->counter === 'loadtest' ? '%ztest_counter_log%' : '%counter_log%';
-		
-		if (!DB::tableExists($table)) return null;
+		$table =
+			$this->counter === 'loadtest' ? '%ztest_counter_log%' : '%counter_log%';
+
+		if (!DB::tableExists($table)) {
+			return null;
+		}
 
 		return DB::select([
 			'SELECT DATE_FORMAT(`log_date`,"%Y-%m-%d %H:%i") `label`,COUNT(*) `amt`
@@ -117,13 +122,17 @@ class AdminLogCounterCount extends Page {
 			ORDER BY `label` DESC',
 			'where' => [
 				'%WHERE%' => [
-					['`log_date` BETWEEN :startDate AND :endDate', ':startDate' => $this->date.' 00:00:00', ':endDate' => $this->date.' 23:59:59']
+					[
+						'`log_date` BETWEEN :startDate AND :endDate',
+						':startDate' => $this->date . ' 00:00:00',
+						':endDate' => $this->date . ' 23:59:59'
+					]
 				]
 			],
 			'var' => [
 				'$TABLE$' => $table,
 				'$MORETHAN$' => $this->moreThan ? 'HAVING `amt` > :moreThan' : '',
-				':moreThan' => $this->moreThan,
+				':moreThan' => $this->moreThan
 			]
 		]);
 	}
@@ -136,20 +145,26 @@ class AdminLogCounterCount extends Page {
 			GROUP BY `log_date`
 			ORDER BY `log_date` DESC',
 			'var' => [
-				'$TABLE$' => $this->counter === 'loadtest' ? '%ztest_counter_log%' : '%counter_log%',
-				':startTime' => $time.':00',
-				':endTime' => $time.':59',
+				'$TABLE$' =>
+					$this->counter === 'loadtest'
+						? '%ztest_counter_log%'
+						: '%counter_log%',
+				':startTime' => $time . ':00',
+				':endTime' => $time . ':59'
 			]
 		]);
 	}
 
 	private function script() {
-		head('<script>
+		head(
+			'<script>
 		function loadTime(element) {
 			let $target = $(element).closest(".widget-card").find(".widget-container");
 
 			if (!$target.hasClass("-loaded")) {
-				$.get(SG.url("'.q().'..minute"), {counter: $(element).data("counter"), time : $(element).data("time")})
+				$.get(SG.url("'
+				. q()
+				. '..minute"), {counter: $(element).data("counter"), time : $(element).data("time")})
 				.done(function(response) {
 					$target.html(response)
 				});
@@ -157,7 +172,8 @@ class AdminLogCounterCount extends Page {
 
 			$target.addClass("-loaded");
 		}
-		</script>');
+		</script>'
+		);
 	}
 }
 ?>

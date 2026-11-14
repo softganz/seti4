@@ -11,17 +11,17 @@
  */
 
 class Signin extends Page {
-	var $username;
-	var $password;
-	var $time = 10080;
-	var $ret;
-	var $rel;
-	var $signRet;
-	var $showTime = true;
-	var $showGuide;
-	var $showInfo;
-	var $showRegist;
-	var $complete;
+	public $username;
+	public $password;
+	public $time = 10080;
+	public $ret;
+	public $rel;
+	public $signRet;
+	public $showTime = true;
+	public $showGuide;
+	public $showInfo;
+	public $showRegist;
+	public $complete;
 
 	function __construct() {
 		parent::__construct([

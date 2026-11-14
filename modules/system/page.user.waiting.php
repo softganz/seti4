@@ -12,7 +12,7 @@
  */
 
 class UserWaiting extends Page {
-	var $args;
+	public $args;
 
 	#[\Override]
 	function build() {
@@ -23,15 +23,16 @@ class UserWaiting extends Page {
 			]), // AppBar
 			'body' => new Notify([
 				'class' => '-center',
-				'style' => 'padding: 6.4rem; width: 70%; max-width: 640px; margin: 3.2rem auto; border-radius: 2.4rem;',
+				'style' =>
+					'padding: 6.4rem; width: 70%; max-width: 640px; margin: 3.2rem auto; border-radius: 2.4rem;',
 				'child' => new Column([
 					'children' => [
 						new Icon('warning', ['class' => '-sg-64 -red']),
 						'การสมัครสมาชิกยังสำเร็จสมบูรณ์',
 						'กรุณาแจ้งผู้ดูแลระบบเพื่ออนุมัติการสมัครสมาชิก'
 					]
-				]), // Column
-			]), // Widget
+				]) // Column
+			]) // Widget
 		]);
 	}
 }

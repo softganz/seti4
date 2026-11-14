@@ -13,8 +13,8 @@
  */
 
 class MyApi extends PageApi {
-	var $action;
-	var $actionDefault = 'info';
+	public $action;
+	public $actionDefault = 'info';
 
 	function __construct($action = null) {
 		parent::__construct([

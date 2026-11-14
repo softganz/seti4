@@ -1,19 +1,19 @@
 <?php
 /**
-* Green :: API For Sign In From Firebase
-* Created 2022-06-18
-* Modify  2022-06-18
-*
-* @return Widget
-*
-* @usage green/api/signin/firebase
-*/
+ * Green :: API For Sign In From Firebase
+ * Created 2022-06-18
+ * Modify  2022-06-18
+ *
+ * @return Widget
+ *
+ * @usage green/api/signin/firebase
+ */
 
 class SigninFirebase extends Page {
-	var $appId;
-	var $appToken;
-	var $token;
-	var $email;
+	public $appId;
+	public $appToken;
+	public $token;
+	public $email;
 
 	function __construct() {
 		$this->appId = $_SERVER['HTTP_APPID'];
@@ -26,25 +26,36 @@ class SigninFirebase extends Page {
 		$appList = ['H94Ko' => 'iGreenSmile'];
 		$appName = $appList[$this->appId];
 
-		$encryptAppToken = hash('sha256', $this->email.$appName);
+		$encryptAppToken = hash('sha256', $this->email . $appName);
 
 		// debugMsg(hash('sha256', 'demo@communeinfo.comiGreenSmile'));
 		// debugMsg($encryptAppToken);
 		// debugMsg($this->appToken);
 
-		if (!$appName) return (Object) ['status' => 'fail', 'code' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'App Access Denied'];
-		else if ($this->appToken != $encryptAppToken) return (Object) ['status' => 'fail', 'code' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'Invalid App Token'];
+		if (!$appName) {
+			return (object) [
+				'status' => 'fail',
+				'code' => _HTTP_ERROR_NOT_ALLOWED,
+				'text' => 'App Access Denied'
+			];
+		} elseif ($this->appToken != $encryptAppToken) {
+			return (object) [
+				'status' => 'fail',
+				'code' => _HTTP_ERROR_NOT_ALLOWED,
+				'text' => 'Invalid App Token'
+			];
+		}
 
 		// if (!in_array($this->appToken, ['Dksid83kdjEujfdjIeldOPf9sld3dSkdk'])) return (Object) ['status' => 'fail', 'code' => _HTTP_ERROR_NOT_ALLOWED, 'text' => 'App Access Denied'];
 
-		$result = (Object) [
+		$result = (object) [
 			'status' => 'complete',
-			'userId' => NULL,
-			'userName' => NULL,
-			'name' => NULL,
+			'userId' => null,
+			'userName' => null,
+			'name' => null,
 			// 'headerError' => 'Text',
 			// 'descriptionError' => 'Text'
-			'role' => '',
+			'role' => ''
 		];
 
 		$user = UserModel::externalSignIn([
@@ -57,10 +68,10 @@ class SigninFirebase extends Page {
 			$result->userName = $user->username;
 			$result->name = $user->name;
 		} else {
-			$result = (Object) [
+			$result = (object) [
 				'status' => 'fail',
 				'code' => $user->code,
-				'text' => $user->text,
+				'text' => $user->text
 			];
 		}
 

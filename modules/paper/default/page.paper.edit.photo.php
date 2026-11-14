@@ -13,41 +13,44 @@
  */
 
 class PaperEditPhoto extends Page {
-	var $nodeId;
-	var $photoId;
-	var $right;
-	var $nodeInfo;
+	public $nodeId;
+	public $photoId;
+	public $right;
+	public $nodeInfo;
 
-	function __construct($nodeInfo = NULL) {
+	function __construct($nodeInfo = null) {
 		parent::__construct([
 			'nodeId' => $nodeInfo->nodeId,
 			'nodeInfo' => $nodeInfo,
 			'photoId' => post('photoId'),
-			'right' => $nodeInfo->right,
+			'right' => $nodeInfo->right
 		]);
 	}
 
 	function rightToBuild() {
-		if (empty($this->nodeId)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
-		if (!$this->right->edit) return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		if (empty($this->nodeId)) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+		}
+		if (!$this->right->edit) {
+			return error(_HTTP_ERROR_FORBIDDEN, 'Access Denied');
+		}
 		return true;
 	}
 
 	function build() {
-		if ($this->nodeInfo->photos) krsort($this->nodeInfo->photos);
+		if ($this->nodeInfo->photos) {
+			krsort($this->nodeInfo->photos);
+		}
 
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => '{tr:Photo management}',
 				'boxHeader' => true,
-				'leading' => _HEADER_BACK,
+				'leading' => _HEADER_BACK
 			]), // AppBar
 			'body' => new Widget([
-				'children' => [
-					$this->show(),
-					$this->uploadTemplate(),
-				], // children
-			]), // Widget
+				'children' => [$this->show(), $this->uploadTemplate()] // children
+			]) // Widget
 		]);
 	}
 
@@ -55,9 +58,12 @@ class PaperEditPhoto extends Page {
 		return new Container([
 			'id' => 'paper-edit-photo-show',
 			'class' => 'photos',
-			'data-url' => url('paper/'.$this->nodeId.'/edit.photo..show'),
+			'data-url' => url('paper/' . $this->nodeId . '/edit.photo..show'),
 			'children' => [
-				new ListTile(['title' => 'All photo relate to this topic.', 'leading' => new Icon('photo')]),
+				new ListTile([
+					'title' => 'All photo relate to this topic.',
+					'leading' => new Icon('photo')
+				]),
 				new Album([
 					'forceBuild' => true,
 					'id' => 'paper-photo',
@@ -69,35 +75,40 @@ class PaperEditPhoto extends Page {
 						'text' => 'UPLOAD',
 						'icon' => new Icon('cloud_upload'),
 						'rel' => 'box',
-						'attribute' => ['data-width' => '640'],
+						'attribute' => ['data-width' => '640']
 					]),
-					'children' => array_map(
-						function($photo) {
-							// debugMsg($photo, '$photo');
-							$fileInfo = FileModel::photoProperty($photo->file, $photo->folder);
-							// debugMsg($fileInfo, '$fileInfo');
-							return [
-								'img' => $fileInfo->url,
-								'id' => 'photo-id-'.$photo->fid,
-								'link' => new Button([
-									'class' => 'sg-action',
-									'href' => url('paper/'.$this->nodeId.'/edit.photo..detail', ['photoId' => $photo->fid]),
-									// 'href' => '#paper-edit-photo-detail',
-									'rel' => 'box',
-									'attribute' => ['data-width' => 'full'],
-								]),
-							];
-						},
-						(Array) $this->nodeInfo->photos
-					),
-				]), // Album
-			], // children
+					'children' => array_map(function ($photo) {
+						// debugMsg($photo, '$photo');
+						$fileInfo = FileModel::photoProperty($photo->file, $photo->folder);
+						// debugMsg($fileInfo, '$fileInfo');
+						return [
+							'img' => $fileInfo->url,
+							'id' => 'photo-id-' . $photo->fid,
+							'link' => new Button([
+								'class' => 'sg-action',
+								'href' => url(
+									'paper/' . $this->nodeId . '/edit.photo..detail',
+									['photoId' => $photo->fid]
+								),
+								// 'href' => '#paper-edit-photo-detail',
+								'rel' => 'box',
+								'attribute' => ['data-width' => 'full']
+							])
+						];
+					}, (array) $this->nodeInfo->photos)
+				]) // Album
+			] // children
 		]);
 	}
 
 	function renderPhoto($photo) {
-		$ret = '<li id="photo-id-'.$photo->fid.'" class="ui-item photo-items">';
-		$ret .= '<a class="sg-action" href="'.url('paper/'.$this->nodeId.'/photo/'.$photo->fid).'" data-rel="box" data-width="full"><img src="'.$photo->_src.'" width="100%" /></a>';
+		$ret = '<li id="photo-id-' . $photo->fid . '" class="ui-item photo-items">';
+		$ret .=
+			'<a class="sg-action" href="'
+			. url('paper/' . $this->nodeId . '/photo/' . $photo->fid)
+			. '" data-rel="box" data-width="full"><img src="'
+			. $photo->_src
+			. '" width="100%" /></a>';
 		$ret .= '</li><!-- photo-items -->';
 		return $ret;
 	}
@@ -110,7 +121,7 @@ class PaperEditPhoto extends Page {
 					'appBar' => new AppBar([
 						'title' => 'Upload Photo',
 						'boxHeader' => true,
-						'leading' => _HEADER_BACK,
+						'leading' => _HEADER_BACK
 					]),
 					'body' => new Widget([
 						// 'tagName' => 'template',
@@ -123,25 +134,31 @@ class PaperEditPhoto extends Page {
 								[
 									'id' => 'single',
 									'active' => true,
-									'action' => new Button(['href' => '#single', 'text' => tr('Upload photo')]),
-									'content' => $this->uploadSingleForm(),
+									'action' => new Button([
+										'href' => '#single',
+										'text' => tr('Upload photo')
+									]),
+									'content' => $this->uploadSingleForm()
 								],
 								[
 									'id' => 'multiple',
-									'action' => new Button(['href' => '#multiple', 'text' => tr('Upload multiple photos')]),
-									'content' => $this->uploadMultipleForm(),
-								],
-							], // children
-						]), // TabBar
-					]), // Widget
-				]), // Scaffold
-			], // children
+									'action' => new Button([
+										'href' => '#multiple',
+										'text' => tr('Upload multiple photos')
+									]),
+									'content' => $this->uploadMultipleForm()
+								]
+							] // children
+						]) // TabBar
+					]) // Widget
+				]) // Scaffold
+			] // children
 		]);
 	}
 
 	private function uploadSingleForm() {
 		return new Form([
-			'action' => url('api/paper/'.$this->nodeId.'/photo.add'),
+			'action' => url('api/paper/' . $this->nodeId . '/photo.add'),
 			'enctype' => 'multipart/form-data',
 			'id' => 'edit-topic',
 			'class' => 'sg-form -upload',
@@ -152,14 +169,17 @@ class PaperEditPhoto extends Page {
 				'photo' => [
 					'type' => 'file',
 					'name' => 'image',
-					'label' => '<i class="icon -material">attach_file</i>{tr:Select photo file to upload}',
-					'container' => ['class' => 'btn -upload'],
+					'label' =>
+						'<i class="icon -material">attach_file</i>{tr:Select photo file to upload}',
+					'container' => ['class' => 'btn -upload']
 				],
 				'<div id="edit-photo-filename"></div>',
-				'noRename' => user_access('administer papers') ? [
-					'type' => 'checkbox',
-					'options' => ['1' => 'ไม่เปลี่ยนชื่อไฟล์'],
-				] : NULL,
+				'noRename' => user_access('administer papers')
+					? [
+						'type' => 'checkbox',
+						'options' => ['1' => 'ไม่เปลี่ยนชื่อไฟล์']
+					]
+					: null,
 				'title' => [
 					'type' => 'text',
 					'label' => '{tr:Photo title}',
@@ -176,24 +196,25 @@ class PaperEditPhoto extends Page {
 				],
 				'submit' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">cloud_upload</i><span>{tr:Upload}</span>',
-					'container' => '{class: "-sg-text-right"}',
+					'value' =>
+						'<i class="icon -material">cloud_upload</i><span>{tr:Upload}</span>',
+					'container' => '{class: "-sg-text-right"}'
 				],
 				$this->rule(),
 				'<script type="text/javascript">
 				$("#edit-photo").change(function() {
-					var f = $(this).val().replace(/.*[\/\\\\]/, "")
+					let f = $(this).val().replace(/.*[\/\\\\]/, "")
 					$("#edit-photo-filename").text("เลือกไฟล์ : "+f)
 					$("#edit-title").val(f)
 				})
 				</script>'
-			], // children
+			] // children
 		]);
 	}
 
 	private function uploadMultipleForm() {
 		return new Form([
-			'action' => url('api/paper/'.$this->nodeId.'/photo.add'),
+			'action' => url('api/paper/' . $this->nodeId . '/photo.add'),
 			'enctype' => 'multipart/form-data',
 			'id' => 'edit-topic',
 			'class' => 'sg-form -upload',
@@ -203,25 +224,31 @@ class PaperEditPhoto extends Page {
 				'photo' => [
 					'type' => 'file',
 					'name' => 'image[]',
-					'label' => '<i class="icon -material">attach_file</i>{tr:Select photo file to upload}',
-					'multiple' => true,
+					'label' =>
+						'<i class="icon -material">attach_file</i>{tr:Select photo file to upload}',
+					'multiple' => true
 				],
 				'submit' => [
 					'type' => 'button',
-					'value' => '<i class="icon -material">cloud_upload</i><span>{tr:Upload}</span>',
-					'container' => '{class: "-sg-text-right"}',
+					'value' =>
+						'<i class="icon -material">cloud_upload</i><span>{tr:Upload}</span>',
+					'container' => '{class: "-sg-text-right"}'
 				],
-				$this->rule(),
-			], // children
+				$this->rule()
+			] // children
 		]); // Form
 	}
 
 	private function rule() {
-		return '<p><strong>ข้อกำหนดในการส่งไฟล์ภาพ</strong><ul><li>ไฟล์ภาพประเภท jpg,gif,png ขนาดไม่เกิน <strong>'.cfg('photo.max_file_size').'KB</strong></li><li>ท่านควรย่อภาพให้ได้ขนาดที่ต้องการใช้งานก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มชื่อภาพ , คำอธิบายภาพ หรือ ส่งภาพเพิ่มเติม สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดภาพในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์ภาพทั้งหมดที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul></p>';
+		return '<p><strong>ข้อกำหนดในการส่งไฟล์ภาพ</strong><ul><li>ไฟล์ภาพประเภท jpg,gif,png ขนาดไม่เกิน <strong>'
+			. cfg('photo.max_file_size')
+			. 'KB</strong></li><li>ท่านควรย่อภาพให้ได้ขนาดที่ต้องการใช้งานก่อนส่งขึ้นเว็บ</li><li>หากต้องการเพิ่มชื่อภาพ , คำอธิบายภาพ หรือ ส่งภาพเพิ่มเติม สามารถทำได้โดยการเข้าไปแก้ไขรายละเอียดภาพในภายหลัง</li><li>กรณีที่หัวข้อถูกลบทิ้ง ไฟล์ภาพทั้งหมดที่อ้างอิงอยู่กับหัวข้อนั้น ๆ จะถูกลบทิ้งทั้งหมด</li></ul></p>';
 	}
 
 	function info() {
-		if (empty($this->photoId)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+		if (empty($this->photoId)) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+		}
 
 		// $ret = '<header class="header -box"><nav class="nav -back"><a class="sg-action" href="javascript:void(0)" data-rel="back" data-width="640" data-height="80%"><i class="icon -material">arrow_back</i></a></nav><h3>{tr:Photo information}</h3></header>';
 
@@ -231,11 +258,13 @@ class PaperEditPhoto extends Page {
 			'appBar' => new AppBar([
 				'title' => SG\getFirst($photoInfo->title, 'Photo Detail'),
 				'boxHeader' => true,
-				'leading' => _HEADER_BACK,
+				'leading' => _HEADER_BACK
 			]), // AppBar
 			'body' => new Form([
 				'variable' => 'photoinfo',
-				'action' => url('api/paper/'.$this->nodeId.'/detail.update/'.$this->photoId),
+				'action' => url(
+					'api/paper/' . $this->nodeId . '/detail.update/' . $this->photoId
+				),
 				'class' => 'sg-form',
 				'rel' => 'notify',
 				'done' => 'back',
@@ -245,77 +274,139 @@ class PaperEditPhoto extends Page {
 						'type' => 'text',
 						'label' => 'ชื่อภาพ',
 						'class' => '-fill',
-						'value' => $info->title,
+						'value' => $info->title
 					],
 					'description' => [
 						'type' => 'textarea',
 						'label' => 'บรรยายภาพ',
 						'class' => '-fill',
 						'rows' => '6',
-						'value' => $info->description,
+						'value' => $info->description
 					],
 					'save' => [
 						'type' => 'button',
-						'value' => '<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
-						'pretext' => '<a class="sg-action btn -link -cancel" href="#" data-rel="none" data-done="back"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
-						'container' => '{class: "-sg-text-right"}',
-					],
-				], // children
-			]), // Form
+						'value' =>
+							'<i class="icon -material">done_all</i><span>{tr:SAVE}</span>',
+						'pretext' =>
+							'<a class="sg-action btn -link -cancel" href="#" data-rel="none" data-done="back"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a>',
+						'container' => '{class: "-sg-text-right"}'
+					]
+				] // children
+			]) // Form
 		]);
 	}
 
 	function detail() {
 		$photoInfo = FileModel::get($this->photoId);
-		if (empty($photoInfo->fileId)) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
-		if ($photoInfo->info->nodeId != $this->nodeId) return error(_HTTP_ERROR_NOT_FOUND, 'ไม่ใช่ภาพของหัวข้อนี้');
+		if (empty($photoInfo->fileId)) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'ไม่มีข้อมูลตามที่ระบุ');
+		}
+		if ($photoInfo->info->nodeId != $this->nodeId) {
+			return error(_HTTP_ERROR_NOT_FOUND, 'ไม่ใช่ภาพของหัวข้อนี้');
+		}
 
 		return new Scaffold([
 			'appBar' => new AppBar([
 				'title' => SG\getFirst($photoInfo->title, 'Photo Detail'),
 				'boxHeader' => true,
 				'leading' => _HEADER_BACK,
-				'trailing' => $this->right->edit ? new Nav([
-					'children' => [
-						user_access('upload photo') ? '<form class="sg-upload" method="post" enctype="multipart/form-data" action="'.url('api/paper/'.$this->nodeId.'/photo.change/'.$this->photoId).'" data-rel="none" data-done="close | load->replace:#paper-edit-photo-show"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>' : NULL,
-						'<a class="sg-action btn -link" href="'.url('paper/'.$this->nodeId.'/edit.photo..info', ['photoId' => $this->photoId]).'" data-rel="box" data-width="full"><i class="icon -material">edit</i><span class="-hidden">{tr:Edit detail}</span></a>',
-						'<a class="sg-action btn -link" href="'.url('api/paper/'.$this->nodeId.'/photo.delete/'.$this->photoId).'" data-title="Delete photo!!!!!" data-confirm="Delete photo -> '.htmlspecialchars($photoInfo->fileName).' <-- !!! Are you sure?" data-rel="notify" data-done="close | remove:#photo-id-'.$this->photoId.'"><i class="icon -material">delete</i><span class="-hidden">'.tr('Remove').'</span></a>',
-					], // children
-				]) : NULL, // Nav
+				'trailing' => $this->right->edit
+					? new Nav([
+						'children' => [
+							user_access('upload photo')
+								? '<form class="sg-upload" method="post" enctype="multipart/form-data" action="'
+									. url(
+										'api/paper/'
+											. $this->nodeId
+											. '/photo.change/'
+											. $this->photoId
+									)
+									. '" data-rel="none" data-done="close | load->replace:#paper-edit-photo-show"><span class="btn -link fileinput-button"><i class="icon -material">photo_camera</i><span>{tr:Change photo}</span><input type="file" name="photo" multiple="true" class="inline-upload" accept="image/*;capture=camcorder" /></span><input class="-hidden" type="submit" value="upload" /></form>'
+								: null,
+							'<a class="sg-action btn -link" href="'
+							. url('paper/' . $this->nodeId . '/edit.photo..info', [
+								'photoId' => $this->photoId
+							])
+							. '" data-rel="box" data-width="full"><i class="icon -material">edit</i><span class="-hidden">{tr:Edit detail}</span></a>',
+							'<a class="sg-action btn -link" href="'
+							. url(
+								'api/paper/' . $this->nodeId . '/photo.delete/' . $this->photoId
+							)
+							. '" data-title="Delete photo!!!!!" data-confirm="Delete photo -> '
+							. htmlspecialchars($photoInfo->fileName)
+							. ' <-- !!! Are you sure?" data-rel="notify" data-done="close | remove:#photo-id-'
+							. $this->photoId
+							. '"><i class="icon -material">delete</i><span class="-hidden">'
+							. tr('Remove')
+							. '</span></a>'
+						] // children
+					])
+					: null // Nav
 			]), // AppBar
 			'body' => new Container([
-				'id' => 'photo-id-'.$this->photoId,
+				'id' => 'photo-id-' . $this->photoId,
 				'class' => 'photo-items',
 				'children' => [
-					'<a href="'.$photoInfo->property->src.'" target=_blank><img class="photo" src="'.$photoInfo->property->src.'" width="100%" /></a>',
+					'<a href="'
+					. $photoInfo->property->src
+					. '" target=_blank><img class="photo" src="'
+					. $photoInfo->property->src
+					. '" width="100%" /></a>',
 					new Card([
 						'style' => 'position: absolute; bottom: 0; left: 0; right: 0;',
 						'children' => [
 							new ListTile(['title' => 'Photo Property']),
-							'<h4>'.$photoInfo->fileName.' <small>size '.$photoInfo->property->width.'x'.$photoInfo->property->height.' pixel in '.number_format($photoInfo->property->size).' bytes</small></h4>',
+							'<h4>'
+							. $photoInfo->fileName
+							. ' <small>size '
+							. $photoInfo->property->width
+							. 'x'
+							. $photoInfo->property->height
+							. ' pixel in '
+							. number_format($photoInfo->property->size)
+							. ' bytes</small></h4>',
 
-							$this->right->edit ? new Table([
-								'class' => 'widget-form',
-								'children' => [
-									[
-										'url short address :',
-										'<input class="form-text -fill" type="text" value="'.$photoInfo->property->src.'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-									],
-									[
-										'url full address :',
-										'<input class="form-text -fill" type="text" value="'.cfg('domain').$photoInfo->property->src.'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-									],
-									[
-										'HTML tag :',
-										'<input class="form-text -fill" type="text" value="'.htmlspecialchars('<img src="'.$photoInfo->property->src.'" alt="'.$photoInfo->title.'" />').'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-									],
-									[
-										'bb code :',
-										'<input class="form-text -fill" type="text" value="'.htmlspecialchars('[img]"'.$photoInfo->property->src.'"[/img]').'" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
-									],
-								], // children
-							]) : NULL, // Table
-						], // children
+							$this->right->edit
+								? new Table([
+									'class' => 'widget-form',
+									'children' => [
+										[
+											'url short address :',
+											'<input class="form-text -fill" type="text" value="'
+											. $photoInfo->property->src
+											. '" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+										],
+										[
+											'url full address :',
+											'<input class="form-text -fill" type="text" value="'
+											. cfg('domain')
+											. $photoInfo->property->src
+											. '" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+										],
+										[
+											'HTML tag :',
+											'<input class="form-text -fill" type="text" value="'
+											. htmlspecialchars(
+												'<img src="'
+													. $photoInfo->property->src
+													. '" alt="'
+													. $photoInfo->title
+													. '" />'
+											)
+											. '" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+										],
+										[
+											'bb code :',
+											'<input class="form-text -fill" type="text" value="'
+											. htmlspecialchars(
+												'[img]"' . $photoInfo->property->src . '"[/img]'
+											)
+											. '" onfocus="if (typeof(document.layers)==\'undefined\') this.select()" />'
+										]
+									] // children
+								])
+								: null // Table
+						] // children
 					]), // Card
 
 					// new DebugMsg($this->photoInfo, '$this->photoInfo'),
@@ -324,9 +415,9 @@ class PaperEditPhoto extends Page {
 					.photo-items .photo {display: block; margin: 0 auto 16px;}
 					.photo-items .widget-table>tbody>tr>td:first-child {white-space: nowrap; text-align: right;}
 					.photo-items .widget-table>tbody>tr>td:nth-child(2) {width: 100%;}
-					</style>',
-				], // children
-			]), // Container
+					</style>'
+				] // children
+			]) // Container
 		]);
 	}
 }

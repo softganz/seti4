@@ -1,31 +1,31 @@
 <?php
 /**
-* SignIn  :: PSU Passport Auth Callback
-* Created :: 2022-09-29
-* Modify  :: 2022-09-30
-* Version :: 1
-*
-* @return Widget
-*
-* @usage signin/psu/complete
-*/
+ * SignIn  :: PSU Passport Auth Callback
+ * Created :: 2022-09-29
+ * Modify  :: 2022-09-30
+ * Version :: 1
+ *
+ * @return Widget
+ *
+ * @usage signin/psu/complete
+ */
 
 class SigninPsuComplete extends Page {
-	var $code;
-	var $scope;
-	var $debug;
-	var $token;
-	var $me;
-	var $psuPassport;
+	public $code;
+	public $scope;
+	public $debug;
+	public $token;
+	public $me;
+	public $psuPassport;
 
 	function __construct() {
 		parent::__construct([
 			'code' => post('code'),
 			'scope' => 'openid',
-			'token' => (Object) [],
-			'me' => (Object) [],
+			'token' => (object) [],
+			'me' => (object) [],
 			'psuPassport' => cfg('signin')->psu,
-			'debug' => false,
+			'debug' => false
 		]);
 	}
 
@@ -33,7 +33,7 @@ class SigninPsuComplete extends Page {
 		if (empty($this->code)) {
 			return new ErrorMessage([
 				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
-				'text' => 'ข้อมูลที่ได้รับจาก PSU Passport ไม่ครบถ้วน',
+				'text' => 'ข้อมูลที่ได้รับจาก PSU Passport ไม่ครบถ้วน'
 			]);
 		}
 
@@ -71,7 +71,7 @@ class SigninPsuComplete extends Page {
 					// SignIn as PSU Passport
 					$user = UserModel::externalSignIn([
 						'email' => $this->me->user_email,
-						'token' => $this->token->access_token,
+						'token' => $this->token->access_token
 					]);
 				} else {
 					// Not a member
@@ -81,7 +81,7 @@ class SigninPsuComplete extends Page {
 						'name' => $this->me->description,
 						'email' => $this->me->user_email,
 						'signin' => true,
-						'token' => $this->token->access_token,
+						'token' => $this->token->access_token
 					]);
 					// print_o($createUserResult, '$createUserResult',1);
 				}
@@ -89,7 +89,10 @@ class SigninPsuComplete extends Page {
 			}
 		}
 
-		if (!$this->debug && ($psupassportRetuen = $_SESSION['psupassportRetuen'])) {
+		if (
+			!$this->debug &&
+			($psupassportRetuen = $_SESSION['psupassportRetuen'])
+		) {
 			unset($_SESSION['psupassportRetuen']);
 			location($psupassportRetuen);
 			return;
@@ -100,45 +103,56 @@ class SigninPsuComplete extends Page {
 			'client_id' => $this->psuPassport->clientId,
 			'state' => $_SESSION['state'],
 			'scope' => $this->scope,
-			'redirect_uri' => $this->psuPassport->urlCallBack,
+			'redirect_uri' => $this->psuPassport->urlCallBack
 		];
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'PSU Passport Auth Complete',
+				'title' => 'PSU Passport Auth Complete'
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
 					new Center([
-						'child' => '<a class="btn" href="'.$this->psuPassport->urlAuth.'&'.http_build_query($authParam).'">Login with PSU Passport</a>',
+						'child' =>
+							'<a class="btn" href="'
+							. $this->psuPassport->urlAuth
+							. '&'
+							. http_build_query($authParam)
+							. '">Login with PSU Passport</a>'
 					]),
 					new ListTile(['title' => 'Result']),
 					new Column([
-						'children' => [
-							'CODE = '.$this->code,
-						],
+						'children' => ['CODE = ' . $this->code]
 					]),
 
-					$this->token->access_token ? new Column([
-						'children' => [
+					$this->token->access_token
+						? new Column([
+							'children' => [
 								$this->me->user_login,
 								$this->me->user_email,
 								$this->me->description,
 								$this->me->displayname,
 								new DebugMsg($this->token, '$this->token'),
-								new DebugMsg($this->me, '$this->me'),
-							// $profile,
-						], //children
-					]) : NULL,
+								new DebugMsg($this->me, '$this->me')
+								// $profile,
+							] //children
+						])
+						: null,
 
-					$this->token->error ? new Container([
-						'child' => 'TOKEN ERROR : '.$this->token->error.' : '.$this->token->error_description
-					]) : NULL,
+					$this->token->error
+						? new Container([
+							'child' =>
+								'TOKEN ERROR : '
+								. $this->token->error
+								. ' : '
+								. $this->token->error_description
+						])
+						: null
 
 					// new DebugMsg(post(), 'post()'),
 					// new DebugMsg($this->psuPassport, '$this->psuPassport'),
-				], // children
-			]), // Widget
+				] // children
+			]) // Widget
 		]);
 	}
 
@@ -148,25 +162,23 @@ class SigninPsuComplete extends Page {
 
 		$curl = curl_init();
 
-		curl_setopt_array($curl,
-			[
-				CURLOPT_URL => $this->psuPassport->urlAccessToken,
-				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_ENCODING => '',
-				CURLOPT_MAXREDIRS => 10,
-				CURLOPT_TIMEOUT => 0,
-				CURLOPT_FOLLOWLOCATION => true,
-				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-				CURLOPT_CUSTOMREQUEST => 'POST',
-				CURLOPT_POSTFIELDS => [
-					'grant_type' => 'authorization_code',
-					'code' => $this->code,
-					'client_id' => $this->psuPassport->clientId,
-					'client_secret' => $this->psuPassport->clientSecret,
-					'redirect_uri' => $this->psuPassport->urlCallBack
-				],
+		curl_setopt_array($curl, [
+			CURLOPT_URL => $this->psuPassport->urlAccessToken,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_POSTFIELDS => [
+				'grant_type' => 'authorization_code',
+				'code' => $this->code,
+				'client_id' => $this->psuPassport->clientId,
+				'client_secret' => $this->psuPassport->clientSecret,
+				'redirect_uri' => $this->psuPassport->urlCallBack
 			]
-		);
+		]);
 
 		$accessResponse = curl_exec($curl);
 		$err = curl_error($curl);
@@ -178,9 +190,7 @@ class SigninPsuComplete extends Page {
 	function getMe() {
 		// Get User Profile
 		$curl = curl_init();
-		$headers = [
-			'Authorization: Bearer '.$this->token->access_token,
-		];
+		$headers = ['Authorization: Bearer ' . $this->token->access_token];
 
 		curl_setopt_array($curl, [
 			CURLOPT_URL => $this->psuPassport->urlMe,
@@ -191,7 +201,7 @@ class SigninPsuComplete extends Page {
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_HTTPHEADER => $headers,
+			CURLOPT_HTTPHEADER => $headers
 		]);
 
 		$response = curl_exec($curl);
@@ -204,9 +214,7 @@ class SigninPsuComplete extends Page {
 	function getProfile() {
 		// Get User Profile
 		$curl = curl_init();
-		$headers = [
-			'Authorization: Bearer '.$this->token->access_token,
-		];
+		$headers = ['Authorization: Bearer ' . $this->token->access_token];
 
 		curl_setopt_array($curl, [
 			CURLOPT_URL => $this->psuPassport->urlProfile,
@@ -217,7 +225,7 @@ class SigninPsuComplete extends Page {
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_HTTPHEADER => $headers,
+			CURLOPT_HTTPHEADER => $headers
 		]);
 
 		$response = curl_exec($curl);

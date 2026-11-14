@@ -10,9 +10,9 @@
  */
 
 class MyApi extends Page {
-	var $userId;
-	var $action;
-	var $tranId;
+	public $userId;
+	public $action;
+	public $tranId;
 
 	function __construct($action = null, $tranId = null) {
 		$this->userId = \SG\getFirst(post('userId'), i()->uid);

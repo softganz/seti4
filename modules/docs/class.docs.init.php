@@ -15,18 +15,17 @@
  * ============================================
  */
 
-cfg('docs.version','0.00');
-cfg('docs.release','1.1.1');
+cfg('docs.version', '0.00');
+cfg('docs.release', '1.1.1');
 
-menu('docs','Docs Home','docs','__controller',1,true,'static');
+menu('docs', 'Docs Home', 'docs', '__controller', 1, true, 'static');
 
 class docs extends module {
-var $module='docs';
+	public $module = 'docs';
 
 	function __construct() {
-		cfg('page_id','docs');
-		$this->theme->option->title=true;
+		cfg('page_id', 'docs');
+		$this->theme->option->title = true;
 	}
-
 }
 ?>

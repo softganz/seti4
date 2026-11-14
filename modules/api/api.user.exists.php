@@ -14,19 +14,26 @@
 use Softganz\DB;
 
 class UserExistsApi extends PageApi {
-	var $userId;
+	public $userId;
 
 	function __construct() {
 		parent::__construct([
 			'username' => post('name'),
-			'email' => post('email'),
+			'email' => post('email')
 		]);
 	}
 
 	function build() {
-		if ($this->username) return $this->checkUsername();
-		else if ($this->email) return $this->checkEmail();
-		else return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่ระบุข้อมูลที่ต้องการตรวจสอบ');
+		if ($this->username) {
+			return $this->checkUsername();
+		} elseif ($this->email) {
+			return $this->checkEmail();
+		} else {
+			return apiError(
+				_HTTP_ERROR_BAD_REQUEST,
+				'ไม่ระบุข้อมูลที่ต้องการตรวจสอบ'
+			);
+		}
 	}
 
 	private function checkUsername() {
@@ -34,24 +41,31 @@ class UserExistsApi extends PageApi {
 		// debugMsg($userInfo);
 
 		if ($userInfo->userId) {
-			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'มีสมาชิกท่านอื่นใช้ชื่อนี้อยู่แล้ว');
+			return apiError(
+				_HTTP_ERROR_NOT_ACCEPTABLE,
+				'มีสมาชิกท่านอื่นใช้ชื่อนี้อยู่แล้ว'
+			);
 		} else {
 			return apiSuccess('สามารถใช้งานได้');
 		}
 	}
 
 	private function checkEmail() {
-		if (empty($this->email)) return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่ระบุอีเมล์');
+		if (empty($this->email)) {
+			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่ระบุอีเมล์');
+		}
 
 		$userInfo = UserModel::get(['email' => $this->email]);
 		// debugMsg($userInfo);
 
 		if ($userInfo->userId) {
-			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'มีสมาชิกท่านอื่นใช้อีเมล์นี้อยู่แล้ว');
+			return apiError(
+				_HTTP_ERROR_NOT_ACCEPTABLE,
+				'มีสมาชิกท่านอื่นใช้อีเมล์นี้อยู่แล้ว'
+			);
 		} else {
 			return apiSuccess('สามารถใช้งานได้');
 		}
 	}
-
 }
 ?>

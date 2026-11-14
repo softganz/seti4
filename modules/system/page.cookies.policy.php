@@ -1,20 +1,20 @@
 <?php
 /**
-* Module  :: Description
-* Created :: 2024-03-01
-* Modify  :: 2024-03-01
-* Version :: 1
-*
-* @param String $arg1
-* @return Widget
-*
-* @usage module/{id}/method
-*/
+ * Module  :: Description
+ * Created :: 2024-03-01
+ * Modify  :: 2024-03-01
+ * Version :: 1
+ *
+ * @param String $arg1
+ * @return Widget
+ *
+ * @usage module/{id}/method
+ */
 
 class CookiesPolicy extends Page {
-	var $arg1;
+	public $arg1;
 
-	function __construct($arg1 = NULL) {
+	function __construct($arg1 = null) {
 		parent::__construct([
 			'arg1' => $arg1
 		]);
@@ -23,7 +23,7 @@ class CookiesPolicy extends Page {
 	function build() {
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => 'นโยบายคุกกี้ (Cookies Policy)',
+				'title' => 'นโยบายคุกกี้ (Cookies Policy)'
 			]), // AppBar
 			'body' => new Widget([
 				'children' => [
@@ -34,8 +34,8 @@ class CookiesPolicy extends Page {
 					<li>วิธีปิดการทำงานของคุกกี้<br />ผู้ใช้บริการสามารถตั้งค่าเบราว์เซอร์ให้ปิดการทำงานของคุกกี้ และตั้งความเป็นส่วนตัวเพื่อไม่ให้มีการเก็บรวบรวมข้อมูลของคุกกี้ในอนาคตได้ แต่อย่างไรก็ตามการปิดการใช้งานคุกกี้นั้นจะมีผลทำให้การใช้งานบางอย่างหรือทั้งหมดของการบริการไม่สมบูรณ์ หากต้องการศึกษาเพิ่มเติมวิธีการในการบริหารจัดการคุกกี้ สามารถศึกษาได้ที่ <a href="https://www.allaboutcookies.org" target="_blank">www.allaboutcookies.org</a> หรือ <a href="https://www.aboutcookies.org" target="_blank">www.aboutcookies.org</a></li>
 					<li>ข้อตกลงผู้ใช้<br />หากต้องการใช้งานเว็บไซต์ของเราต่อ ถือว่าคุณยินยอมให้มีการติดตั้งคุกกี้ในคอมพิวเตอร์ แท็บเล็ต หรืออุปกรณ์มือถือของผู้ใช้บริการ เพื่อให้ได้รับประสบการณ์ในการบริการอย่างสมบูรณ์</li>
 					</ol>'
-				], // children
-			]), // Widget
+				] // children
+			]) // Widget
 		]);
 	}
 }
