@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-08-23
  * Modified :: 2026-11-15
- * Version  :: 6
+ * Version  :: 7
  *
  * @uses my/change/password
  */
@@ -59,7 +59,7 @@ class MyChangePassword extends \Page {
 				class: 'sg-form -sg-paddingnorm',
 				checkValid: true,
 				rel: 'notify',
-				done: 'close | reload:' . \Url::link('my'),
+				done: _AJAX ? 'close | reload' : 'close | reload:' . \Url::link('my'),
 				children: [
 					new \Header(title: 'Change password'),
 					'<div class="help">เปลี่ยนรหัสผ่านของคุณบ้าง เป็นการป้องกันไว้ก่อน</div>',
