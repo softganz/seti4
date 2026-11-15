@@ -3,15 +3,28 @@
  * My       :: Change Password Form
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-08-23
- * Modified :: 2026-11-12
- * Version  :: 5
+ * Modified :: 2026-11-15
+ * Version  :: 6
  *
  * @uses my/change/password
  */
 
-class MyChangePassword extends Page {
-	public $cfgUserRegister;
-	public $validCheck;
+declare(strict_types=1);
+
+namespace My;
+
+use My\Widgets\MySidebarWidget;
+
+class MyChangePassword extends \Page {
+	public object $cfgUserRegister;
+	public array $validCheck;
+
+	function __construct() {
+		parent::__construct([
+			'cfgUserRegister' => cfg('user')->register,
+			'validCheck' => explode(',', cfg('user')->register->valid)
+		]);
+	}
 
 	/**
 	 * Right to build
@@ -20,34 +33,35 @@ class MyChangePassword extends Page {
 	 */
 	function rightToBuild(): object|true {
 		if (!i()->ok) {
-			return new SignForm();
+			return new \SignForm();
 		}
 		return true;
 	}
 
-	function __construct() {
-		parent::__construct([
-			'cfgUserRegister' => ($cfgUserRegister = cfg('user')->register),
-			'validCheck' => explode(',', $cfgUserRegister->valid)
-		]);
-	}
-	function build() {
-		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Change Password @' . i()->name,
-				'boxHeader' => true,
-				'leading' => _HEADER_BACK
-			]), // AppBar
-			'sideBar' => callFromApp() ? null : R::view('my.menu'),
-			'body' => new Form([
-				'id' => 'my-change-password-form',
-				'variable' => 'profile',
-				'action' => url('api/my/password.change'),
-				'class' => 'sg-form -sg-paddingnorm',
-				'checkValid' => true,
-				'rel' => 'notify',
-				'done' => 'close | load',
-				'children' => [
+	/**
+	 * Build page
+	 *
+	 * @return object
+	 */
+	#[\Override]
+	function build(): object {
+		return new \Scaffold(
+			appBar: new \AppBar(
+				title: 'Change Password @' . i()->name,
+				boxHeader: true,
+				leading: _HEADER_BACK
+			), // AppBar
+			sideBar: new MySidebarWidget(),
+			body: new \Form(
+				id: 'my-change-password-form',
+				variable: 'profile',
+				action: url('api/my/password.change'),
+				class: 'sg-form -sg-paddingnorm',
+				checkValid: true,
+				rel: 'notify',
+				done: 'close | reload:' . \Url::link('my'),
+				children: [
+					new \Header(title: 'Change password'),
 					'<div class="help">เปลี่ยนรหัสผ่านของคุณบ้าง เป็นการป้องกันไว้ก่อน</div>',
 					'current' => [
 						'type' => 'password',
@@ -126,11 +140,16 @@ class MyChangePassword extends Page {
 					. '</ul></div>',
 					$this->script()
 				] // children
-			]) // Widget
-		]);
+			) // Widget
+		);
 	}
 
-	private function script() {
+	/**
+	 * Script
+	 *
+	 * @return string
+	 */
+	private function script(): string {
 		return '<script type="text/javascript">
 			checkComplete = new function() {
 				let currentPasswordValid = false

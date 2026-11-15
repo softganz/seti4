@@ -68,9 +68,6 @@ class Ui extends Widget {
 		if ($children) {
 			$this->children = $children;
 		}
-		if ($this->debug) {
-			debugMsg($this, 'Ui()');
-		}
 	}
 
 	function Add($link, $options = '{}') {

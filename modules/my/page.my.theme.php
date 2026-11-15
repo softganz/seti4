@@ -41,7 +41,7 @@ function profile_theme($self) {
 	user_menu('theme', 'theme', url('profile/theme'));
 	$self->theme->navigator = user_menu();
 
-	$ret .=
+	$ret =
 		'<p><strong>Please select new theme or <a href="'
 		. url('profile/theme/clear')
 		. '">Restore theme to default</a></strong></p>';
@@ -114,7 +114,7 @@ function profile_theme_clear($self) {
 		location('profile/theme/clear');
 	}
 
-	$ret .= message(
+	$ret = message(
 		'status',
 		'Clear theme setting:Current theme was reset to default'
 	);
@@ -138,7 +138,7 @@ function profile_theme_select($self, $name) {
 function profile_setdefault($self, $name) {
 	//set_theme($name);
 	//cfg_db('theme.name',$name);
-	$ret .= message('status', 'Set theme ' . $name . ' as a default theme');
+	$ret = message('status', 'Set theme ' . $name . ' as a default theme');
 	$ret .= R::page('profile.theme');
 	return $ret;
 }

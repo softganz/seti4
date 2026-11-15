@@ -1259,8 +1259,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-			. // . '<span class="-grip-header">'
-			$this->renderChildren([$header]); // . '</span>'
+		// . '<span class="-grip-header">'
+			. $this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -2105,11 +2105,11 @@ class TabBar extends Widget {
  * @param array $args
  * @uses new ProfilePhoto([key => value,...])
  */
-class ProfilePhoto extends Widget {
+class ProfilePhoto extends \Widget {
 	protected string $widgetName = 'ProfilePhoto';
 	protected string $version = '0.0.01';
-	public $username;
-	public $size; // small,big
+	public string $username;
+	public ?string $size = 'small'; // small,big
 	// parent property : $class,$attribute;
 
 	function __construct($username = null, $args = []) {
@@ -2121,8 +2121,9 @@ class ProfilePhoto extends Widget {
 		$attribute = array_replace_recursive($this->attribute, [
 			'class' =>
 				trim('widget-' . strtolower($this->widgetName) . ' ' . $this->class)
-				. ($this->size ? ' -size-' . $this->size : ''),
-			'src' => UserModel::profilePhoto($this->username),
+				. ' -size-'
+				. $this->size,
+			'src' => \UserModel::profilePhoto($this->username),
 			'alt' => htmlspecialchars($this->title ?? ''),
 			'title' => htmlspecialchars($this->title ?? '')
 		]);

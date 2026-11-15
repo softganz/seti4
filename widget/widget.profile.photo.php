@@ -6,15 +6,19 @@
  * Modified	:: 2026-07-29
  * Version  :: 2
  *
- * @param Array $args
+ * @param array $args
  *
  * @uses new ProfilePhotoWidget([])
  */
 
-$debug = true;
+class ProfilePhotoWidget extends \Widget {
+	public string $photo;
 
-class ProfilePhotoWidget extends Widget {
-	public $photo;
+	function __construct(string $photo, mixed $children = null) {
+		parent::__construct();
+		$this->photo = $photo;
+		$this->children = $children;
+	}
 
 	function build() {
 		return new Card([

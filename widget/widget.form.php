@@ -30,6 +30,7 @@ class Form extends Widget {
 	public $description;
 	public $footer;
 	public $disableOnSubmit = false;
+	public bool $debug = false;
 	public $onSubmit;
 	public $onFormSubmit;
 	public $config; // @deprecated
@@ -41,6 +42,8 @@ class Form extends Widget {
 		?string $class = null,
 		?string $method = null,
 		?string $action = null,
+		?string $variable = null,
+		?string $enctype = null,
 		?bool $checkValid = false,
 		?string $rel = null,
 		?string $done = null,
@@ -57,6 +60,8 @@ class Form extends Widget {
 						'class' => $class,
 						'method' => $method ?? $this->method,
 						'action' => $action,
+						'variable' => $variable,
+						'enctype' => $enctype,
 						'checkValid' => $checkValid,
 						'rel' => $rel,
 						'done' => $done,

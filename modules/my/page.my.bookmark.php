@@ -1,17 +1,21 @@
 <?php
 /**
- * My       :: Like List
+ * My       :: Bookmark List
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-11-27
- * Modified :: 2026-11-12
- * Version  :: 3
+ * Modified :: 2026-11-15
+ * Version  :: 4
  *
- * @uses my/like
+ * @uses my/bookmark
  */
 
-use Softganz\DB;
+declare(strict_types=1);
 
-class MyLike extends Page {
+namespace My;
+
+use My\Widgets\MySidebarWidget;
+
+class MyBookmark extends \Page {
 	/**
 	 * Right to build
 	 *
@@ -19,24 +23,27 @@ class MyLike extends Page {
 	 */
 	function rightToBuild(): object|true {
 		if (!i()->ok) {
-			return new SignForm();
+			return new \SignForm();
 		}
 		return true;
 	}
 
-	function build() {
-		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'My Likes @' . i()->name
-			]),
-			'sideBar' => R::view('my.menu'),
-			'body' => new Table([
-				'thead' => ['no' => '', 'หัวข้อ', 'atdate -date' => 'เมื่อ'],
-				'children' => array_map(
+	/**
+	 * Undocumented function
+	 *
+	 * @return object
+	 */
+	function build(): object {
+		return new \Scaffold(
+			appBar: new \AppBar(title: 'My Bookmarks @' . i()->name),
+			sideBar: new MySidebarWidget(),
+			body: new \Table(
+				header: ['no' => '', 'หัวข้อ', 'atdate -date' => 'เมื่อ'],
+				children: array_map(
 					function ($rs) {
 						static $no = 0;
 						$url = '';
-						if ($rs->action == 'PDEV.LIKE') {
+						if ($rs->action == 'PDEV.BOOKM') {
 							$url = 'project/proposal/' . $rs->tpid;
 						} elseif ($rs->type == 'project') {
 							$url = 'project/' . $rs->tpid;
@@ -52,16 +59,16 @@ class MyLike extends Page {
 							sg_date($rs->dateact, 'd/m/Y')
 						];
 					},
-					DB::select([
+					\DB::select(
 						'SELECT r.*, t.`tpid`, t.`title`, t.`type`
 						FROM %reaction% r
 							LEFT JOIN %topic% t ON r.`refid` = t.`tpid`
-						WHERE r.`uid` = :uid AND `action` IN ("PROJ.LIKE", "PDEV.LIKE", "TOPIC.LIKE")',
-						'var' => [':uid' => i()->uid]
-					])->items
+						WHERE r.`uid` = :uid AND `action` IN ("PROJ.BOOKM", "PDEV.BOOKM", "TOPIC.BOOK")',
+						var: [':uid' => i()->uid]
+					)->items
 				) // children
-			]) // Table
-		]);
+			) // Table
+		);
 	}
 }
 ?>

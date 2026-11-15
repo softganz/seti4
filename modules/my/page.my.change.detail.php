@@ -3,15 +3,23 @@
  * My       :: Change My Detail Information
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 20xx-xx-xx
- * Modified :: 2026-11-12
- * Version  :: 3
+ * Modified :: 2026-11-15
+ * Version  :: 4
  *
  * @uses module/{Id}/method
  */
 
-class MyChangeDetail extends Page {
+namespace My;
+
+use My\Widgets\MySidebarWidget;
+
+class MyChangeDetail extends \Page {
+	protected ?string $cancel;
+
 	function __construct() {
-		parent::__construct([]);
+		parent::__construct([
+			'cancel' => \Request::all('cancel')
+		]);
 	}
 
 	/**
@@ -21,91 +29,35 @@ class MyChangeDetail extends Page {
 	 */
 	function rightToBuild(): object|true {
 		if (!i()->ok) {
-			return new SignForm();
+			return new \SignForm();
 		}
 		return true;
 	}
 
-	function build() {
-		$uid = i()->uid;
-
-		$userInfo = R::model('user.get', $uid);
-
-		if (post('cancel')) {
-			location('profile/' . $userInfo->uid);
+	/**
+	 * Build page
+	 *
+	 * @return object
+	 */
+	#[\Override]
+	function build(): object {
+		if ($this->cancel) {
+			location('my');
 		}
 
-		$profile = (object) post('profile', _TRIM + _STRIPTAG);
+		$userInfo = \UserModel::get(i()->uid);
 
-		if (!empty($profile->name)) {
-			if (empty($profile->name)) {
-				$error[] = 'กรุณาป้อนนามแฝง';
-			}
-			if (empty($profile->email)) {
-				$error[] = 'กรุณาป้อนอีเมล์';
-			} elseif (!sg_is_email($profile->email)) {
-				$error[] = 'กรุณาป้อนอีเมล์ให้ถูกต้องตามรูปแบบ คือ yourname@domain.com';
-			} elseif (
-				$profile->email &&
-				mydb::select(
-					'SELECT `uid` FROM %users% WHERE `email` = :email AND `uid` != :uid LIMIT 1',
-					':email',
-					$profile->email,
-					':uid',
-					$userInfo->uid
-				)->uid
-			) {
-				$error[] =
-					'อีเมล์ <strong><em>'
-					. $profile->email
-					. '</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'
-					. url('user/password')
-					. '">ท่านจำรหัสผ่านไม่ได้</a>';
-			} //-- duplicate email
-			if (sg_invalid_poster_name($profile->name)) {
-				$error[] =
-					'Duplicate name : มีผู้อื่นใช้ชื่อ <em>'
-					. $profile->name
-					. '</em> ไปแล้ว กรุณาเปลี่ยนเป็นชื่ออื่น';
-			}
-
-			if ($error) {
-				header('HTTP/1.0 406 Not Acceptable');
-			} else {
-				$profile->uid = $userInfo->uid;
-				$stmt = mydb::create_update_cmd('%users%', $profile, '`uid` = :uid');
-				mydb::query($stmt, $profile);
-				if (post('ret')) {
-					location(post('ret'));
-				} else {
-					$ret .= 'บันทึกเรียบร้อย';
-				}
-				return $ret;
-			}
-		} else {
-			$profile = (object) $userInfo;
-		}
-
-		if (!empty($error)) {
-			$ret .= $message = message('error', $error);
-		}
-
-		return new Scaffold([
-			'appBar' => new AppBar([
-				'title' => 'Change Account Profile @' . i()->name
-			]), // AppBar
-			'sideBar' => new SideBar([
-				'style' => 'width: 200px;',
-				'child' => R::view('my.menu')
-			]),
-			'body' => new Form([
-				'variable' => 'profile',
-				'action' => url('my/change/detail', ['closewebview' => 'YES']),
-				'class' => 'sg-form',
-				'checkValid' => true,
-				'rel' => _AJAX ? 'box' : null,
-				'done' => _AJAX ? 'close | load' : null,
-				'children' => [
+		return new \Scaffold(
+			appBar: new \AppBar(title: 'Change Account Profile @' . $userInfo->name), // AppBar
+			sideBar: new MySidebarWidget(),
+			body: new \Form(
+				variable: 'profile',
+				action: \Url::link('api/my/detail.save', ['closewebview' => 'YES']),
+				class: 'sg-form',
+				checkValid: true,
+				rel: _AJAX ? 'box' : 'none',
+				done: _AJAX ? 'close | load' : 'load:#main:' . \Url::link('my'),
+				children: [
 					'ret' => !_AJAX
 						? ['type' => 'hidden', 'name' => 'ret', 'value' => 'my']
 						: null,
@@ -116,7 +68,7 @@ class MyChangeDetail extends Page {
 						'container' => ['class' => '-sg-text-right'],
 						'pretext' =>
 							'<a class="sg-action btn -link -cancel" href="'
-							. url('my')
+							. \Url::link('my')
 							. '" data-rel="close"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a> '
 					],
 					'name' => [
@@ -125,7 +77,7 @@ class MyChangeDetail extends Page {
 						'class' => '-fill',
 						'maxlength' => 255,
 						'require' => true,
-						'value' => $profile->name,
+						'value' => $userInfo->name,
 						'description' =>
 							'นามแฝงเป็นชื่อสำหรับนำไปแสดงผลเมื่อท่านส่งข้อมูล หากเปลี่ยนนามแฝง กรุณาออกจากระบบสมาชิกและเข้าสู่ระบบสมาชิกอีกครั้ง'
 					],
@@ -135,143 +87,145 @@ class MyChangeDetail extends Page {
 						'class' => '-fill',
 						'maxlength' => 255,
 						'require' => true,
-						'value' => $profile->email,
+						'value' => $userInfo->email,
 						'description' =>
 							'อีเมล์มีไว้เพื่อทำการติดต่อหรือการยืนยันข้อมูลระหว่างท่านกับเว็บไซท์ จะไม่มีการแสดงอีเมล์ของท่านในหน้าเว็บไซท์ให้ผู้เห็นโดยเด็ดขาด'
 					],
-					'<div class="notify"><b>คำเตือน : ข้อมูลที่ท่านกรอกด้านล่างต่อไปนี้ จะนำมาแสดงให้สมาชิกดูในเว็บไซท์ หากมีข้อมูลใด ๆ เป็นข้อมูลส่วนตัวที่ท่านไม่ต้องการให้ผู้อื่นรู้ ท่านไม่จำเป็นต้องป้อนข้อมูลในช่องดังกล่าว</b></div>',
+					new \Notify(
+						child: '<b>คำเตือน : ข้อมูลที่ท่านกรอกด้านล่างต่อไปนี้ จะนำมาแสดงให้สมาชิกดูในเว็บไซท์ หากมีข้อมูลใด ๆ เป็นข้อมูลส่วนตัวที่ท่านไม่ต้องการให้ผู้อื่นรู้ ท่านไม่จำเป็นต้องป้อนข้อมูลในช่องดังกล่าว</b>'
+					),
 					'name_prefix' => [
 						'type' => 'text',
 						'label' => 'คำนำหน้านาม',
 						'class' => '-fill',
 						'maxlength' => 10,
-						'value' => $profile->name_prefix
+						'value' => $userInfo->name_prefix
 					],
 					'real_name' => [
 						'type' => 'text',
 						'label' => 'ชื่อจริง',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->real_name
+						'value' => $userInfo->real_name
 					],
 					'mid_name' => [
 						'type' => 'text',
 						'label' => 'ชื่อกลาง',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->mid_name
+						'value' => $userInfo->mid_name
 					],
 					'last_name' => [
 						'type' => 'text',
 						'label' => 'นามสกุล',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->last_name
+						'value' => $userInfo->last_name
 					],
 					'occupation' => [
 						'type' => 'text',
 						'label' => 'อาชีพ',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->occupation
+						'value' => $userInfo->occupation
 					],
 					'position' => [
 						'type' => 'text',
 						'label' => 'ตำแหน่ง',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->position
+						'value' => $userInfo->position
 					],
 					'organization' => [
 						'type' => 'text',
 						'label' => 'องค์กร / บริษัท',
 						'class' => '-fill',
 						'maxlength' => 100,
-						'value' => $profile->organization
+						'value' => $userInfo->organization
 					],
 					'address' => [
 						'type' => 'text',
 						'label' => 'ที่อยู่',
 						'class' => '-fill',
 						'maxlength' => 255,
-						'value' => $profile->address
+						'value' => $userInfo->address
 					],
 					'amphur' => [
 						'type' => 'text',
 						'label' => 'อำเภอ',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->amphur
+						'value' => $userInfo->amphur
 					],
 					'province' => [
 						'type' => 'text',
 						'label' => 'จังหวัด',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->province
+						'value' => $userInfo->province
 					],
 					'zipcode' => [
 						'type' => 'text',
 						'label' => 'รหัสไปรษณีย์',
 						'class' => '-fill',
 						'maxlength' => 10,
-						'value' => $profile->zipcode
+						'value' => $userInfo->zipcode
 					],
 					'country' => [
 						'type' => 'text',
 						'label' => 'ประเทศ',
 						'class' => '-fill',
 						'maxlength' => 50,
-						'value' => $profile->country
+						'value' => $userInfo->country
 					],
 					'latitude' => [
 						'type' => 'text',
 						'label' => 'ละติจูด',
 						'class' => '-fill',
 						'maxlength' => 10,
-						'value' => $profile->latitude
+						'value' => $userInfo->latitude
 					],
 					'longitude' => [
 						'type' => 'text',
 						'label' => 'ลองกิจูด',
 						'class' => '-fill',
 						'maxlength' => 10,
-						'value' => $profile->longitude
+						'value' => $userInfo->longitude
 					],
 					'phone' => [
 						'type' => 'text',
 						'label' => 'โทรศัพท์',
 						'class' => '-fill',
 						'maxlength' => 20,
-						'value' => $profile->phone
+						'value' => $userInfo->phone
 					],
 					'mobile' => [
 						'type' => 'text',
 						'label' => 'โทรศัพท์เคลื่อนที่',
 						'class' => '-fill',
 						'maxlength' => 20,
-						'value' => $profile->mobile
+						'value' => $userInfo->mobile
 					],
 					'fax' => [
 						'type' => 'text',
 						'label' => 'โทรสาร',
 						'class' => '-fill',
 						'maxlength' => 20,
-						'value' => $profile->fax
+						'value' => $userInfo->fax
 					],
 					'website' => [
 						'type' => 'text',
 						'label' => 'เว็บไซต์',
 						'class' => '-fill',
 						'maxlength' => 200,
-						'value' => $profile->website
+						'value' => $userInfo->website
 					],
 					'about' => [
 						'type' => 'textarea',
 						'label' => 'ประวัติย่อ',
 						'class' => '-fill',
 						'rows' => 12,
-						'value' => $profile->about
+						'value' => $userInfo->about
 					],
 					'save2' => [
 						'type' => 'button',
@@ -280,12 +234,12 @@ class MyChangeDetail extends Page {
 						'container' => ['class' => '-sg-text-right'],
 						'pretext' =>
 							'<a class="sg-action btn -link -cancel" href="'
-							. url('my')
+							. \Url::link('my')
 							. '" data-rel="close"><i class="icon -material -gray">cancel</i><span>{tr:CANCEL}</span></a> '
 					]
 				] // children
-			]) // Form
-		]);
+			) // Form
+		);
 	}
 }
 ?>

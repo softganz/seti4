@@ -13,10 +13,9 @@
  */
 
 class MyApi extends PageApi {
-	public $action;
 	public $actionDefault = 'info';
 
-	function __construct($action = null) {
+	function __construct(?string $action = null) {
 		parent::__construct([
 			'action' => $action
 		]);
@@ -82,13 +81,128 @@ class MyApi extends PageApi {
 	}
 
 	function accountDelete() {
-		debugMsg(post(), 'post()');
 		if (!\SG\confirm()) {
 			return error(_HTTP_ERROR_BAD_REQUEST, 'กรุณายืนยัน');
 		}
+
 		UserModel::deleteAccount(i()->uid);
 
 		return apiSuccess('ลบบัญชีเรียบร้อย');
+	}
+
+	function detailSave() {
+		$profile = (object) \Request::post('profile');
+		// debugMsg($profile, '$profile');
+
+		if (empty($profile->name)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณาป้อนนามแฝง');
+		}
+		if (empty($profile->email)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณาป้อนอีเมล์');
+		}
+		if (!sg_is_email($profile->email)) {
+			return apiError(
+				_HTTP_ERROR_BAD_REQUEST,
+				'กรุณาป้อนอีเมล์ให้ถูกต้องตามรูปแบบ เช่น yourname@domain.com'
+			);
+		}
+
+		// Check duplicate email
+		if (
+			\DB::select(
+				'SELECT `uid` FROM %users% WHERE `email` = :email AND `uid` != :uid LIMIT 1',
+				var: [
+					':email' => $profile->email,
+					':uid' => i()->uid
+				]
+			)->valueOf('uid')
+		) {
+			return apiError(
+				_HTTP_ERROR_BAD_REQUEST,
+				'อีเมล์ <strong><em>'
+					. $profile->email
+					. '</em></strong> ได้มีการลงทะเบียนไว้แล้ว หรือ <a href="'
+					. \Url::link('user/password')
+					. '">ท่านจำรหัสผ่านไม่ได้</a>'
+			);
+		}
+
+		// Check valid email
+		if (sg_invalid_poster_name($profile->name)) {
+			apiError(
+				_HTTP_ERROR_BAD_REQUEST,
+				'Duplicate name : มีผู้อื่นใช้ชื่อ <em>'
+					. $profile->name
+					. '</em> ไปแล้ว กรุณาเปลี่ยนเป็นชื่ออื่น'
+			);
+		}
+
+		$profile->uid = i()->uid;
+		$stmt = \mydb::create_update_cmd('%users%', $profile, '`uid` = :uid');
+		\mydb::query($stmt, $profile);
+
+		return apiSuccess('บันทึกเรียบร้อย');
+	}
+
+	function photoSave() {
+		$photo = $_FILES['photo'];
+		$error = false;
+
+		if (empty($photo)) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'ไม่มีไฟล์ภาพ');
+		}
+
+		if (empty($photo['name'])) {
+			return apiError(_HTTP_ERROR_BAD_REQUEST, 'กรุณาเลือกไฟล์ภาพถ่าย');
+		}
+		if (!in_array($photo['type'], ['image/jpeg', 'image/pjpeg'])) {
+			return apiError(
+				_HTTP_ERROR_BAD_REQUEST,
+				'ประเภทของไฟล์ภาพถ่ายไม่ถูกต้อง ต้องเป็นภาพประเภท jpg เท่านั้น'
+			);
+		}
+
+		if ($photo['size'] > 60 * 1024) {
+			sg_photo_resize($photo['tmp_name'], 200, null, null, true, 80);
+		}
+		$photo_ext =
+			$photo['type'] === 'image/gif'
+				? 'gif'
+				: ($photo['type'] === 'image/png'
+					? 'png'
+					: 'jpg');
+		$upload_folder = cfg('upload.folder') . i()->username . '/';
+		$upload_file = $upload_folder . 'profile.photo.' . $photo_ext;
+
+		if (!file_exists($upload_folder)) {
+			mkdir($upload_folder);
+			if (cfg('upload.folder.chmod')) {
+				chmod($upload_folder, cfg('upload.folder.chmod'));
+			}
+		}
+
+		if (!move_uploaded_file($photo['tmp_name'], $upload_file)) {
+			return apiError(
+				_HTTP_ERROR_SERVER_ERROR,
+				'มีข้อผิดพลาดทำให้ไม่สามารถบันทึกไฟล์ภาพได้'
+			);
+		}
+
+		// change mode to config->upload.file.chmod
+		cropImage(200, 200, $upload_file, $photo_ext, $upload_file);
+		cropImage(
+			50,
+			50,
+			$upload_file,
+			$photo_ext,
+			'file/' . i()->username . '/small.avatar.jpg'
+		);
+
+		if (cfg('upload.file.chmod')) {
+			chmod($upload_file, cfg('upload.file.chmod'));
+		}
+
+		return apiSuccess('บันทึกภาพเรียบร้อย');
 	}
 }
 ?>
