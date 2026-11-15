@@ -3,10 +3,10 @@
  * Model    :: User Information
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-07-22
- * Modified :: 2026-11-09
- * Version  :: 31
+ * Modified :: 2026-11-15
+ * Version  :: 32
  *
- * @param Int $userId
+ * @param int $userId
  * @return object
  *
  * @uses new UserModel($userId)
@@ -26,47 +26,28 @@ class UserModel {
 		if ($this->userId) $this->getUserInfo();
 	}
 
-	public static function get($conditions, $options = '{}') {
-		$defaults = '{debug: false}';
-		$options = \SG\json_decode($options, $defaults);
-		$debug = $options->debug;
-
-		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
-			$conditions = \SG\json_decode($conditions);
-		} else if (is_object($conditions)) ;
-		else if (is_array($conditions)) $conditions = (object) $conditions;
-		else {
-			$id = $conditions;
-			$conditions = (object) ['id' => $id];
-		}
-
-		$conditions = (object) array_replace(
-			[
-				'id' => null,
-				'username' => null,
-				'email' => null,
-			],
-			(array) $conditions
-		);
-
-		if (!$id && $conditions->username && $conditions->email) {
-			return null;
-		}
-
-		$result = DB::select([
+	/**
+	 * Get user information
+	 *
+	 * @param integer|null $userId
+	 * @param string|null $username
+	 * @param string|null $email
+	 * @return object|null
+	 */
+	public static function get(?int $userId = null, ?string $username = null, ?string $email = null): ?object {
+		if (empty($userId) && empty($username) && empty($email)) return null;
+		$result = \DB::select(
 			'SELECT u.`uid` `userId`, u.* FROM %users% u %WHERE% LIMIT 1',
-			'%WHERE%' => [
-				$id ? ['`uid` = :userId', ':userId' => $id] : null,
-				$conditions->username ? ['`username` = :username', ':username' => $conditions->username] : null,
-				$conditions->email ? ['`email` = :email', ':email' => $conditions->email] : null,
+			where: [
+				$userId ? ['`uid` = :userId', ':userId' => $userId] : null,
+				$username ? ['`username` = :username', ':username' => $username] : null,
+				$email ? ['`email` = :email', ':email' => $email] : null,
 			]
-		]);
-
-		if ($debug) debugMsg(R('query'));
+		);
 
 		if (!$result->userId) return null;
 
-		$result->roles = empty($result->roles) ? array('member') : explode(',','member,'.$result->roles);
+		$result->roles = empty($result->roles) ? ['member'] : explode(',', 'member,' . $result->roles);
 
 		return $result;
 	}

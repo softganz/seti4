@@ -1,15 +1,18 @@
 <?php
 /**
- * Admin   :: Delete User Information
- * Modify  :: 2025-07-18
- * Version :: 3
+ * Admin    :: Delete User Information
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 20xx-xx-xx
+ * Modified :: 2026-11-15
+ * Version  :: 4
  */
 
-use Softganz\DB;
-
 function admin_user_delete($self, $uid) {
+	$ret = '';
+	$error = [];
+
 	if (\SG\confirm()) {
-		$rs = R::model('user.get', $uid);
+		$rs = \UserModel::get($uid);
 
 		$uid = $rs->uid;
 
@@ -35,18 +38,27 @@ function admin_user_delete($self, $uid) {
 					. '</li></ul>'
 			);
 		} else {
-			mydb::query('DELETE FROM %users% WHERE `uid` = :uid LIMIT 1', [
-				':uid' => $uid
-			]);
-
-			mydb::query('DELETE FROM %topic_user% WHERE `uid` = :uid', [
-				':uid' => $uid
-			]);
-
-			if (DB::tableExists('%org_officer%')) {
-				mydb::query('DELETE FROM %org_officer% WHERE `uid` = :uid', [
+			\DB::query(
+				'DELETE FROM %users% WHERE `uid` = :uid LIMIT 1',
+				var: [
 					':uid' => $uid
-				]);
+				]
+			);
+
+			\DB::query(
+				'DELETE FROM %topic_user% WHERE `uid` = :uid',
+				var: [
+					':uid' => $uid
+				]
+			);
+
+			if (\DB::tableExists('%org_officer%')) {
+				\DB::query(
+					'DELETE FROM %org_officer% WHERE `uid` = :uid',
+					var: [
+						':uid' => $uid
+					]
+				);
 			}
 
 			location('admin/user/list');

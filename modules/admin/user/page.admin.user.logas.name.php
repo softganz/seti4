@@ -1,21 +1,20 @@
 <?php
 /**
- * Admin :: Log As User
- * Created 2018-09-27
- * Modify  2021-10-17
+ * Admin    :: Log As User
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2018-09-27
+ * Modified :: 2026-11-15
+ * Version  :: 2
  *
- * @param String $username
- * @return Widget
+ * @param string $username
  *
- * @usage admin/user/logas/{username}
+ * @uses admin/user/logas/{username}
  */
 
-$debug = true;
-
 class AdminUserLogasName extends Page {
-	public $username;
+	public string $username;
 
-	function __construct($username = null) {
+	function __construct(string $username = null) {
 		$this->username = \SG\getFirst(post('logasusername'), $username);
 	}
 
@@ -28,7 +27,7 @@ class AdminUserLogasName extends Page {
 		}
 
 		if ($this->username) {
-			$rs = R::model('user.get', ['username' => $this->username]);
+			$rs = \UserModel::get(username: $this->username);
 
 			if ($rs->_empty) {
 				return message('error', 'Username ' . $this->username . ' not found.');

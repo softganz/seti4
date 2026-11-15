@@ -1,15 +1,14 @@
 <?php
 /**
- * My      :: My Information API
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-07-11
- * Modify  :: 2025-04-05
- * Version :: 7
+ * My       :: My Information API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-07-11
+ * Modified :: 2026-11-15
+ * Version  :: 8
  *
- * @param String $action
- * @return Array/Object
+ * @param string $action
  *
- * @usage api/my/{action}
+ * @uses api/my/{action}
  */
 
 class MyApi extends PageApi {
@@ -43,7 +42,7 @@ class MyApi extends PageApi {
 	function passwordChange() {
 		$post = (object) post('profile', _TRIM);
 
-		$userInfo = R::model('user.get', i()->uid);
+		$userInfo = \UserModel::get(i()->uid);
 
 		if (!($post->current && $post->password && $post->repassword)) {
 			return error(_HTTP_ERROR_NOT_ACCEPTABLE, 'ข้อมูลไม่ครบถ้วน');
