@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-07
- * Version  :: 49
+ * Modified :: 2026-11-15
+ * Version  :: 50
  */
 
 /* Core Function */
@@ -1319,8 +1319,8 @@ function message($type = null, $text = [], $module = null, $options = '{class: "
 		$args = ['type' => $type, 'text' => $text, 'module' => $module, 'options' => $options];
 	}
 
-	if (is_string($args['text'])) $args['text'] = [$args['text']];
-	if (is_string($args['msg'])) $args['text'] = [$args['msg']];
+	if (!empty($args['text']) && is_string($args['text'])) $args['text'] = [$args['text']];
+	if (!empty($args['msg']) && is_string($args['msg'])) $args['text'] = [$args['msg']];
 
 	if (empty($args['text'])) return;
 

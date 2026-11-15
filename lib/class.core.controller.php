@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-12
- * Version  :: 68
+ * Modified :: 2026-11-15
+ * Version  :: 69
  */
 
 /*************************************************************
@@ -1510,13 +1510,14 @@ class SgCore {
 			http_response_code(_HTTP_ERROR_FORBIDDEN);
 			return [$pageClass, true, message('error', 'Access denied', null)];
 		} elseif (is_string($verify)) {
-			return [$pageClass, true, $verify];
+			return [$pageClass, true, $verify, null];
 		} elseif ($is_auth === false) {
 			http_response_code(_HTTP_ERROR_FORBIDDEN);
 			return [
 				$pageClass,
 				true,
-				message('error', 'Access denied', null, $options->signform)
+				message('error', 'Access denied', null, $options->signform),
+				null
 			];
 		}
 
