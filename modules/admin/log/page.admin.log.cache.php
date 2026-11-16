@@ -209,7 +209,7 @@ class AdminLogCache extends Page {
 						}, (array) $data->items) // children
 					]) // Table
 				]) // ScrollView
-				// 	if ($showData) $tables->rows[] = '<tr><td colspan="7">'.$rs->data.'</td></tr>';
+				// 	if ($showData) $tables->children[] = '<tr><td colspan="7">'.$rs->data.'</td></tr>';
 			] // children
 		]);
 	}

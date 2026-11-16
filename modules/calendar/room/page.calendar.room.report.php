@@ -116,7 +116,7 @@ class CalendarRoomReport extends Page {
 		}
 
 		// foreach ($months as $k=>$v) {
-		// 	$tables->rows[]=array(sg_date($k.'-01','ดดด ปปปป'),number_format($v));
+		// 	$tables->children[]=array(sg_date($k.'-01','ดดด ปปปป'),number_format($v));
 		// 	$total+=$v;
 		// 	unset($gdata);
 		// 	$gdata[]=sg_date($k.'-01','ดด ปป');

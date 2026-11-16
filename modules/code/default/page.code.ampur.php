@@ -13,8 +13,9 @@
 
 use Softganz\DB;
 
-function code_ampur($self, $changwatId = NULL) {
-	$ret = '<header class="header">'._HEADER_BACK.'<h3>รหัสอำเภอ</h3></header>';
+function code_ampur($self, $changwatId = null) {
+	$ret =
+		'<header class="header">' . _HEADER_BACK . '<h3>รหัสอำเภอ</h3></header>';
 
 	$dbs = DB::select([
 		'SELECT
@@ -26,27 +27,35 @@ function code_ampur($self, $changwatId = NULL) {
 		%WHERE%
 		ORDER BY `distid` ASC',
 		'%WHERE%' => [
-			$changwatId ? ['LEFT(`distid`,2) = :changwatId', ':changwatId' => $changwatId] : null
+			$changwatId
+				? ['LEFT(`distid`,2) = :changwatId', ':changwatId' => $changwatId]
+				: null
 		]
 	]);
 
 	$tables = new Table();
-	$tables->thead = array(
+	$tables->thead = [
 		'code -center -nowrap' => 'รหัสอำเภอ',
 		'name -fill' => 'ชื่ออำเภอ',
 		'tambon -amt -nowrap' => 'จำนวนตำบล',
 		'village -amt -nowrap' => 'จำนวนหมู่บ้าน',
-		'',
-	);
+		''
+	];
 
 	foreach ($dbs->items as $rs) {
-		$tables->rows[] = array(
+		$tables->children[] = [
 			$rs->distid,
-			'<a class="sg-action" href="'.url('code/tambon/'.$rs->distid).'" data-rel="box" data-box-resize="true">'.$rs->distname.'</a>',
+			'<a class="sg-action" href="'
+			. url('code/tambon/' . $rs->distid)
+			. '" data-rel="box" data-box-resize="true">'
+			. $rs->distname
+			. '</a>',
 			$rs->totalTambon,
 			$rs->totalVillage,
-			'<a href="'.url('code/ampur/distance/'.$rs->distid).'"><i class="icon -material">directions_car</i></a>',
-		);
+			'<a href="'
+			. url('code/ampur/distance/' . $rs->distid)
+			. '"><i class="icon -material">directions_car</i></a>'
+		];
 	}
 
 	$ret .= $tables->build();

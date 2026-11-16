@@ -332,11 +332,10 @@ class CalendarModel {
 					. ($rs['topicTitle']
 						? '<br />โครงการ : ' . $rs['topicTitle'] . ''
 						: '');
-				$tables->rows[] = $row;
+				$tables->children[] = $row;
 			}
 		}
-		$ret .= $tables->build();
-		return $ret;
+		return $tables->build();
 	}
 
 	/**

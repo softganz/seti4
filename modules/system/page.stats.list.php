@@ -77,7 +77,7 @@ class StatsList extends Page {
 			'thead' => ['no' => 'no', 'Id', 'Log Date', 'User', 'IP']
 		]);
 		foreach ($counters->items as $counter) {
-			$tables->rows[] = [
+			$tables->children[] = [
 				++$no,
 				'<font color=brown>' . $counter->id . '</font>',
 				'<em><font color=brown>'
@@ -106,7 +106,7 @@ class StatsList extends Page {
 					: sg_sub_ip(long2ip($counter->ip))
 			];
 
-			$tables->rows[] = [
+			$tables->children[] = [
 				'<td></td>',
 				'',
 				'<td colspan="3">'

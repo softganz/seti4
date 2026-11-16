@@ -66,7 +66,7 @@ class AdminContentTopic extends Page {
 				$title =
 					'<a href="' . url('paper/' . $rs->tpid) . '">' . $rs->title . '</a>';
 			}
-			$tables->rows[] = [$rs->content, $title, $rs->created];
+			$tables->children[] = [$rs->content, $title, $rs->created];
 		}
 		$ret .= $tables->build();
 
@@ -136,7 +136,7 @@ class AdminContentTopic extends Page {
 		// $tables = new Table();
 		// $tables->thead=array('date'=>'ปี พศ.','amt'=>'จำนวนหัวข้อ');
 		// foreach ($dbs->items as $item) {
-		// 	$tables->rows[]=array(
+		// 	$tables->children[]=array(
 		// 		'<a href="'.url('admin/content/summary/'.$item->year).'">'.sg_date($item->year.'-01-01','ปปปป').'</a>',
 		// 		$item->topics
 		// 	);
@@ -160,7 +160,7 @@ class AdminContentTopic extends Page {
 		// 	$tables = new Table();
 		// 	$tables->thead=array('date'=>'เดือน-ปี พศ.','amt'=>'จำนวนหัวข้อ');
 		// 	foreach ($dbs->items as $item) {
-		// 		$tables->rows[]=array(
+		// 		$tables->children[]=array(
 		// 			'<a href="'.url('admin/content/summary/'.$year.'/'.$item->monthno).'">'.sg_date($item->month.'-01','ดด ปปปป').'</a>',
 		// 			$item->topics
 		// 		);
@@ -182,7 +182,7 @@ class AdminContentTopic extends Page {
 		// 	$tables = new Table();
 		// 	$tables->thead=array('date'=>'วัน-เดือน-ปี','หัวข้อ','โดย','amt amt-view'=>'ดู','amt amt-reply'=>'ตอบ');
 		// 	foreach ($topic_summary->items as $item) {
-		// 		$tables->rows[] = array(
+		// 		$tables->children[] = array(
 		// 			sg_date($item->created,'ว ดด ปปปป'),
 		// 			'<a href="'.url('paper/'.$item->tpid).'">'.$item->title.'</a>',
 		// 			($item->uid?'<a href="'.url('paper/user/'.$item->uid).'">':'').$item->owner.($item->uid?'</a>':''),

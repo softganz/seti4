@@ -57,9 +57,6 @@ class Table extends Widget {
 			)
 		);
 
-		if (!empty($this->rows) && empty($this->children)) {
-			$this->children = $this->rows;
-		}
 		if (!empty($this->tfoot) && empty($this->footer)) {
 			$this->footer = $this->tfoot;
 		}
@@ -78,8 +75,7 @@ class Table extends Widget {
 			$this->child,
 			$this->attribute,
 			$this->childContainer,
-			$this->config,
-			$this->rows
+			$this->config
 		);
 		if ($this->debug) {
 			debugMsg($this, 'Table');
@@ -104,12 +100,6 @@ class Table extends Widget {
 			$this->thead = $this->header;
 		}
 
-		// Set children value from rows value for backward compatable
-		if (!empty($this->rows)) {
-			$this->children = $this->rows;
-		}
-		unset($this->rows);
-
 		// Create table tag
 		$ret =
 			'<table '
@@ -117,10 +107,8 @@ class Table extends Widget {
 			. 'class="widget-'
 			. strtolower($this->widgetName)
 			. ' item'
-			. ($this->class ? ' ' . $this->class : '') // . ($this->mainAxisAlignment // 	? ' -main-axis-' . strtolower($this->mainAxisAlignment) // 	: '') // . ($this->crossAxisAlignment
-			. // 	? ' -cross-axis-' . strtolower($this->crossAxisAlignment)
-			// 	: '')
-			'" '
+			. ($this->class ? ' ' . $this->class : '') // . ($this->mainAxisAlignment // 	? ' -main-axis-' . strtolower($this->mainAxisAlignment) // 	: '') // . ($this->crossAxisAlignment // 	? ' -cross-axis-' . strtolower($this->crossAxisAlignment) // 	: '')
+			. '" '
 			. ($this->style ? ' style="' . $this->style . '"' : '');
 		// . ($this->attribute && is_array($this->attribute)
 		// 	? ' ' . sg_implode_attr($this->attribute)

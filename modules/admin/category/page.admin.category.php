@@ -14,10 +14,10 @@
 
 $debug = true;
 
-function admin_category($self, $tagId = NULL, $action = NULL) {
+function admin_category($self, $tagId = null, $action = null) {
 	$ret = '';
 
-	$tagInfo = NULL;
+	$tagInfo = null;
 	if (is_numeric($tagId)) {
 		$stmt = 'SELECT * FROM %tag% WHERE `tid` = :tagId LIMIT 1';
 		$tagInfo = mydb::select($stmt, ':tagId', $tagId);
@@ -29,17 +29,28 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 		case 'save':
 			if (post('name')) {
 				$data = new stdClass();
-				$data->tid = \SG\getFirst($data->tid,post('tid'));
+				$data->tid = \SG\getFirst($data->tid, post('tid'));
 				$data->taggroup = post('taggroup');
 				$data->name = post('name');
 				$data->catid = post('catid');
-				$data->process = \SG\getFirst(post('process'), NULL);
+				$data->process = \SG\getFirst(post('process'), null);
 				if (empty($data->catid)) {
-					$data->catid = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$data->taggroup)->lastid + 1;
-					$rs = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$data->taggroup);
+					$data->catid =
+						mydb::select(
+							'SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1',
+							':taggroup',
+							$data->taggroup
+						)->lastid + 1;
+					$rs = mydb::select(
+						'SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1',
+						':taggroup',
+						$data->taggroup
+					);
 				}
-				$data->catparent = \SG\getFirst(post('parent'),NULL);
-				if ($data->catparent == 'remove') $data->catparent = NULL;
+				$data->catparent = \SG\getFirst(post('parent'), null);
+				if ($data->catparent == 'remove') {
+					$data->catparent = null;
+				}
 				$data->weight = post('weight');
 
 				$stmt = 'INSERT INTO %tag%
@@ -53,18 +64,21 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 				mydb::query($stmt, $data);
 				$ret .= R('query');
 			}
-			$ret .= print_o(post(),'post()');
+			$ret .= print_o(post(), 'post()');
 			break;
 
 		default:
-			if (empty($action) && empty($tagId)) $action = 'home';
-			else if (empty($action) && $tagId) $action = 'view';
+			if (empty($action) && empty($tagId)) {
+				$action = 'home';
+			} elseif (empty($action) && $tagId) {
+				$action = 'view';
+			}
 
 			$args = func_get_args();
 			$argIndex = 3; // Start argument
 
 			$ret = R::page(
-				'admin.category.'.$action,
+				'admin.category.' . $action,
 				$self,
 				$tagInfo,
 				$args[0] ?? null,
@@ -75,58 +89,78 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 			);
 
 			//debugMsg('TYPE = '.gettype($ret));
-			if (is_null($ret)) $ret = 'ERROR : PAGE NOT FOUND';
+			if (is_null($ret)) {
+				$ret = 'ERROR : PAGE NOT FOUND';
+			}
 			break;
 	}
 
 	return $ret;
 
-
-
-
-
-
-
 	$ret = '<div id="admin-category" class="admin-category">';
 
 	$taggroup = post('g');
 
-	$stmt = 'SELECT `taggroup`,COUNT(*) `total` FROM %tag% WHERE `taggroup` IS NOT NULL GROUP BY `taggroup`';
+	$stmt =
+		'SELECT `taggroup`,COUNT(*) `total` FROM %tag% WHERE `taggroup` IS NOT NULL GROUP BY `taggroup`';
 	$dbs = mydb::select($stmt);
 
-	$navbar = '<nav class="nav -page"><header class="-header"><h3>Tag Group Management</h3></header>'._NL;
-	$ui = new Ui(NULL,'ui-nav');
+	$navbar =
+		'<nav class="nav -page"><header class="-header"><h3>Tag Group Management</h3></header>'
+		. _NL;
+	$ui = new Ui(null, 'ui-nav');
 	foreach ($dbs->items as $rs) {
-		if (in_array($rs->taggroup, array('project:expcode'))) continue;
-		$ui->add('<a class="sg-action btn" href="'.url('admin/category',array('g'=>$rs->taggroup)).'" data-rel="replace:#admin-category">'.$rs->taggroup.' ('.$rs->total.')'.'</a>&nbsp;');
+		if (in_array($rs->taggroup, ['project:expcode'])) {
+			continue;
+		}
+		$ui->add(
+			'<a class="sg-action btn" href="'
+				. url('admin/category', ['g' => $rs->taggroup])
+				. '" data-rel="replace:#admin-category">'
+				. $rs->taggroup
+				. ' ('
+				. $rs->total
+				. ')'
+				. '</a>&nbsp;'
+		);
 	}
 	$navbar .= $ui->build();
 
 	if ($taggroup) {
 		//$navbar .= '<a class="sg-action btn -floating -circle48 -fixed -at-bottom -at-right" href="'.url('admin/category/create',array('g'=>$taggroup)).'" title="สร้างคำถามใหม่" data-rel="replace:#admin-category"><i class="icon -material">add</i></a>';
 	}
-	$navbar .= '</nav><!--navbar-->'._NL;
+	$navbar .= '</nav><!--navbar-->' . _NL;
 	//$self->theme->navbar=$navbar;
 
 	$ret .= $navbar;
-
 
 	$ret .= '<div id="info" class="admin-category-info">';
 	switch ($action) {
 		case 'create':
 			if (post('name')) {
 				$data = new stdClass();
-				$data->tid = \SG\getFirst($data->tid,post('tid'));
+				$data->tid = \SG\getFirst($data->tid, post('tid'));
 				$data->taggroup = $taggroup;
 				$data->name = post('name');
 				$data->catid = post('catid');
-				$data->process = \SG\getFirst(post('process'), NULL);
+				$data->process = \SG\getFirst(post('process'), null);
 				if (empty($data->catid)) {
-					$data->catid = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$taggroup)->lastid + 1;
-					$rs = mydb::select('SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1', ':taggroup',$taggroup);
+					$data->catid =
+						mydb::select(
+							'SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1',
+							':taggroup',
+							$taggroup
+						)->lastid + 1;
+					$rs = mydb::select(
+						'SELECT MAX(`catid`) `lastid` FROM %tag% WHERE `taggroup` = :taggroup LIMIT 1',
+						':taggroup',
+						$taggroup
+					);
 				}
-				$data->catparent = \SG\getFirst(post('parent'),NULL);
-				if ($data->catparent == 'remove') $data->catparent = NULL;
+				$data->catparent = \SG\getFirst(post('parent'), null);
+				if ($data->catparent == 'remove') {
+					$data->catparent = null;
+				}
 				$data->weight = post('weight');
 
 				$stmt = 'INSERT INTO %tag%
@@ -163,135 +197,140 @@ function admin_category($self, $tagId = NULL, $action = NULL) {
 	$ret .= '</div>';
 	$ret .= '</div>';
 
-
 	return $ret;
 }
 
-function __admin_category_form($taggroup, $data = NULL) {
-	$optionsParent = array(''=>'== Select Parent ==');
-	$stmt = 'SELECT * FROM %tag% WHERE `taggroup` = :taggroup AND `catparent` IS NULL AND `name` != ""';
-	foreach (mydb::select($stmt,':taggroup',$taggroup)->items as $v) {
+function __admin_category_form($taggroup, $data = null) {
+	$optionsParent = ['' => '== Select Parent =='];
+	$stmt =
+		'SELECT * FROM %tag% WHERE `taggroup` = :taggroup AND `catparent` IS NULL AND `name` != ""';
+	foreach (mydb::select($stmt, ':taggroup', $taggroup)->items as $v) {
 		$optionsParent[$v->catid] = $v->name;
 	}
 	$optionsParent[$data->catparent] = '=== ไม่เปลี่ยนแปลง ===';
 	$optionsParent['remove'] = '=== ยกเลิก ===';
 
-	$form = new Form(NULL, url('admin/category/create', array('g' => $taggroup)), NULL, 'sg-form');
+	$form = new Form(
+		null,
+		url('admin/category/create', ['g' => $taggroup]),
+		null,
+		'sg-form'
+	);
 	$form->addData('rel', 'replace:#admin-category');
 	$form->addData('checkValid', true);
 
 	//$form->addField('tid', array('type'=>'hidden','value'=>$data->tid));
 
-	$form->addField(
-		'catid',
-		array(
-			'type' => 'text',
-			'label' => 'เลขรหัสหมวด',
-			'class' => '-fill',
-			'value' => $data->catid,
-			'placeholder' => 'Ex. 1',
-			'description' => $data->catid ? 'ข้อควรระวัง!!! : การเปลี่ยนเลขรหัสหมวดอาจทำให้ข้อมูลที่เกี่ยวข้องผิดพลาดได้' : '',
-		)
-	);
+	$form->addField('catid', [
+		'type' => 'text',
+		'label' => 'เลขรหัสหมวด',
+		'class' => '-fill',
+		'value' => $data->catid,
+		'placeholder' => 'Ex. 1',
+		'description' => $data->catid
+			? 'ข้อควรระวัง!!! : การเปลี่ยนเลขรหัสหมวดอาจทำให้ข้อมูลที่เกี่ยวข้องผิดพลาดได้'
+			: ''
+	]);
 
-	$form->addField(
-		'name',
-		array(
-			'type' => 'text',
-			'label' => 'ชื่อหมวด',
-			'class' => '-fill',
-			'require' => true,
-			'value' => htmlspecialchars($data->name),
-			'placeholder' => 'New Category Name',
-		)
-	);
+	$form->addField('name', [
+		'type' => 'text',
+		'label' => 'ชื่อหมวด',
+		'class' => '-fill',
+		'require' => true,
+		'value' => htmlspecialchars($data->name),
+		'placeholder' => 'New Category Name'
+	]);
 
-	$form->addField(
-		'parent',
-		array(
-			'type' => 'select',
-			'label' => 'Child of',
-			'class' => '-fill',
-			'options' => $optionsParent,
-			'value' => $data->catparent,
-		)
-	);
+	$form->addField('parent', [
+		'type' => 'select',
+		'label' => 'Child of',
+		'class' => '-fill',
+		'options' => $optionsParent,
+		'value' => $data->catparent
+	]);
 
-	$form->addField(
-		'process',
-		array(
-			'type' => 'text',
-			'label' => 'Process',
-			'class' => '-fill',
-			'value' => htmlspecialchars($data->process),
-			'placeholder' => '',
-		)
-	);
+	$form->addField('process', [
+		'type' => 'text',
+		'label' => 'Process',
+		'class' => '-fill',
+		'value' => htmlspecialchars($data->process),
+		'placeholder' => ''
+	]);
 
-	$form->addField(
-		'weight',
-		array(
-			'type' => 'text',
-			'label' => 'Weight',
-			'class' => '-fill',
-			'options' => '-127..128',
-			'value' => \SG\getFirst($data->weight,0),
-		)
-	);
+	$form->addField('weight', [
+		'type' => 'text',
+		'label' => 'Weight',
+		'class' => '-fill',
+		'options' => '-127..128',
+		'value' => \SG\getFirst($data->weight, 0)
+	]);
 
-	$form->addField(
-		'tid',
-		array(
-			'type' => 'text',
-			'label' => 'Tag ID',
-			'class' => '-fill',
-			'value' => $data->tid,
-			'placeholder' => 'Ex. 1',
-			'description' => 'ข้อควรระวัง!!! : '
-				.($data->tid ? 'การเปลี่ยนเลข Tag ID อาจทำให้ข้อมูลที่เกี่ยวข้องผิดพลาดได้' : 'การกำหนดเลข Tag ID ใหม่ จะต้องไม่ซ้ำกับเลข Tag ID ที่มีอยู่แล้ว'),
-		)
-	);
+	$form->addField('tid', [
+		'type' => 'text',
+		'label' => 'Tag ID',
+		'class' => '-fill',
+		'value' => $data->tid,
+		'placeholder' => 'Ex. 1',
+		'description' =>
+			'ข้อควรระวัง!!! : '
+			. ($data->tid
+				? 'การเปลี่ยนเลข Tag ID อาจทำให้ข้อมูลที่เกี่ยวข้องผิดพลาดได้'
+				: 'การกำหนดเลข Tag ID ใหม่ จะต้องไม่ซ้ำกับเลข Tag ID ที่มีอยู่แล้ว')
+	]);
 
-	$form->addField(
-		'save',
-		array(
-			'type' => 'button',
-			'value' => '<i class="icon -material">done_all</i><span>บันทึก</span>',
-			'pretext' => '<a class="sg-action btn -link" href="'.url('admin/category',array('g'=>$taggroup)).'" data-rel="#main"><i class="icon -material -gray">cancel</i>{tr:CANCEL}</a>',
-			'container' => array('class' => '-sg-text-right'),
-		)
-	);
+	$form->addField('save', [
+		'type' => 'button',
+		'value' => '<i class="icon -material">done_all</i><span>บันทึก</span>',
+		'pretext' =>
+			'<a class="sg-action btn -link" href="'
+			. url('admin/category', ['g' => $taggroup])
+			. '" data-rel="#main"><i class="icon -material -gray">cancel</i>{tr:CANCEL}</a>',
+		'container' => ['class' => '-sg-text-right']
+	]);
 
 	return $form->build();
 }
 
 function __admin_category_list($taggroup) {
-	$ret = '<h3>Tag Group Items : '.$taggroup.'</h3>';
+	$ret = '<h3>Tag Group Items : ' . $taggroup . '</h3>';
 	$stmt = 'SELECT
 		*
 		FROM %tag%
 		WHERE `taggroup`=:taggroup
 		ORDER BY `catparent`,`weight`, `catid`';
 
-	$dbs = mydb::select($stmt,':taggroup',$taggroup);
+	$dbs = mydb::select($stmt, ':taggroup', $taggroup);
 
 	$tables = new Table();
-	$tables->thead = array('i1 -center'=>'tid','i2 -center'=>'catid','i3 -center'=>'parent','name','i4 -center'=>'process','i5 -center'=>'weight','default -center -hover-parent'=>'default');
+	$tables->thead = [
+		'i1 -center' => 'tid',
+		'i2 -center' => 'catid',
+		'i3 -center' => 'parent',
+		'name',
+		'i4 -center' => 'process',
+		'i5 -center' => 'weight',
+		'default -center -hover-parent' => 'default'
+	];
 	foreach ($dbs->items as $rs) {
-		$menu = '<nav class="nav iconset -hover"><a class="sg-action" href="'.url('admin/category/edit', array('g'=>$rs->taggroup, 'id'=>$rs->tid)).'" data-rel="replace:#admin-category"><i class="icon -material">edit</i></a></nav>">';
-		$tables->rows[] = array(
+		$menu =
+			'<nav class="nav iconset -hover"><a class="sg-action" href="'
+			. url('admin/category/edit', ['g' => $rs->taggroup, 'id' => $rs->tid])
+			. '" data-rel="replace:#admin-category"><i class="icon -material">edit</i></a></nav>">';
+		$tables->children[] = [
 			$rs->tid,
 			$rs->catid,
 			is_null($rs->catparent) ? 'NULL' : $rs->catparent,
 			$rs->name,
 			$rs->process,
 			$rs->weight,
-			$rs->isdefault
-			.$menu,
-		);
+			$rs->isdefault . $menu
+		];
 	}
 	$ret .= $tables->build();
-	$ret .= '<div class="btn-floating -right-bottom"><a class="sg-action btn -floating -circle48" href="'.url('admin/category/create',array('g'=>$taggroup)).'" data-rel="replace:#admin-category"><i class="icon -material">add</i></a></div>';
+	$ret .=
+		'<div class="btn-floating -right-bottom"><a class="sg-action btn -floating -circle48" href="'
+		. url('admin/category/create', ['g' => $taggroup])
+		. '" data-rel="replace:#admin-category"><i class="icon -material">add</i></a></div>';
 	return $ret;
 }
 ?>

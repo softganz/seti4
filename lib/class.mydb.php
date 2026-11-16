@@ -1528,11 +1528,11 @@ class MyDb {
 
 		if (is_array($dbs->items)) {
 			foreach ($dbs->items as $value) {
-				$tables->rows[] = (array) $value;
+				$tables->children[] = (array) $value;
 			}
 		} else {
 			foreach ($dbs as $value) {
-				$tables->rows[] = (array) $value;
+				$tables->children[] = (array) $value;
 			}
 		}
 

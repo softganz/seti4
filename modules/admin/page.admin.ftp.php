@@ -240,9 +240,15 @@ function admin_ftp($self) {
 			$currentLocalFolder
 		);
 		//			$ret.=print_o($folders,'$folders').print_o($links,'$links').print_o($files,'$files');
-		$tables->rows[] = ['', '<a class="folder" href="#up">..</a>', '', '', ''];
+		$tables->children[] = [
+			'',
+			'<a class="folder" href="#up">..</a>',
+			'',
+			'',
+			''
+		];
 		foreach ($folders as $folder) {
-			$tables->rows[] = [
+			$tables->children[] = [
 				'<input type="checkbox" name="lsfolder[]" '
 				. (in_array($folder['name'], $localSelectFolder)
 					? 'checked="checked"'
@@ -261,7 +267,7 @@ function admin_ftp($self) {
 			];
 		}
 		foreach ($files as $file) {
-			$tables->rows[] = [
+			$tables->children[] = [
 				'<input type="checkbox" name="lsfile[]" '
 				. (in_array($file['name'], $localSelectFile) ? 'checked="checked"' : '')
 				. ' value="'
@@ -312,9 +318,15 @@ function admin_ftp($self) {
 			$currentRemoteFolder
 		);
 		//echo print_o($folders,'$folders').print_o($links,'$links').print_o($files,'$files');
-		$tables->rows[] = ['', '<a class="folder" href="#up">..</a>', '', '', ''];
+		$tables->children[] = [
+			'',
+			'<a class="folder" href="#up">..</a>',
+			'',
+			'',
+			''
+		];
 		foreach ($folders as $folder) {
-			$tables->rows[] = [
+			$tables->children[] = [
 				'<input type="checkbox" name="rsfolder[]" '
 				. (in_array($folder['name'], $remoteSelectFolder)
 					? 'checked="checked"'
@@ -333,7 +345,7 @@ function admin_ftp($self) {
 			];
 		}
 		foreach ($files as $file) {
-			$tables->rows[] = [
+			$tables->children[] = [
 				'<input type="checkbox" name="rsfile[]" '
 				. (in_array($file['name'], $remoteSelectFile)
 					? 'checked="checked"'
@@ -446,7 +458,7 @@ function __admin_ftp_get_files($conection, $path = '.') {
 			} else {
 				$files[] = $struc;
 			}
-		};
+		}
 	}
 	return [$folders, $links, $files];
 }

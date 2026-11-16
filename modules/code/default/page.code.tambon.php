@@ -13,10 +13,13 @@
 
 use Softganz\DB;
 
-function code_tambon($self, $ampurId = NULL) {
-	$ret = '<header class="header">'._HEADER_BACK.'<h3>รหัสตำบล</h3></header>';
+function code_tambon($self, $ampurId = null) {
+	$ret =
+		'<header class="header">' . _HEADER_BACK . '<h3>รหัสตำบล</h3></header>';
 
-	if (empty($ampurId)) return message('error','กรุณาระบุรหัสตำบล');
+	if (empty($ampurId)) {
+		return message('error', 'กรุณาระบุรหัสตำบล');
+	}
 
 	$dbs = DB::select([
 		'SELECT
@@ -26,25 +29,33 @@ function code_tambon($self, $ampurId = NULL) {
 		%WHERE%
 		ORDER BY `subdistid` ASC',
 		'%WHERE%' => [
-			$ampurId ? ['LEFT(`subdistid`,4) = :ampurId', ':ampurId' => $ampurId] : null
+			$ampurId
+				? ['LEFT(`subdistid`,4) = :ampurId', ':ampurId' => $ampurId]
+				: null
 		]
 	]);
 
 	$tables = new Table();
-	$tables->thead = array(
+	$tables->thead = [
 		'code -center -nowrap' => 'รหัสตำบล',
 		'name -fill' => 'ชื่อตำบล',
 		'village -amt -nowrap' => 'จำนวนหมู่บ้าน',
 		''
-	);
+	];
 
 	foreach ($dbs->items as $rs) {
-		$tables->rows[] = array(
+		$tables->children[] = [
 			$rs->subdistid,
-			'<a class="sg-action" href="'.url('code/village/'.$rs->subdistid).'" data-rel="box" data-box-resize="true">'.$rs->subdistname.'</a>',
+			'<a class="sg-action" href="'
+			. url('code/village/' . $rs->subdistid)
+			. '" data-rel="box" data-box-resize="true">'
+			. $rs->subdistname
+			. '</a>',
 			$rs->totalVillage,
-			'<a href="'.url('code/ampur/distance/'.$rs->subdistid).'"><i class="icon -material">directions_car</i></a>',
-		);
+			'<a href="'
+			. url('code/ampur/distance/' . $rs->subdistid)
+			. '"><i class="icon -material">directions_car</i></a>'
+		];
 	}
 
 	$ret .= $tables->build();
