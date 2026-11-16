@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-15
- * Version  :: 50
+ * Modified :: 2026-11-16
+ * Version  :: 51
  */
 
 /* Core Function */
@@ -1284,8 +1284,17 @@ function apiError($code, string $message, $debugMsg = null) {
 			'keyword' => 'Access denied'
 		]);
 	}
+
 	if ($code) http_response_code($code);
-	return (object) ['responseCode' => $code, 'errorMessage' => $message];
+
+	return (object) [
+		'responseCode' => $code,
+		'errorMessage' => $message,
+		'status' => 'error',
+		'code' => $code,
+		'message' => $message,
+		'errors' => (object) []
+		];
 }
 
 /**
