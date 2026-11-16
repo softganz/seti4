@@ -21,10 +21,11 @@
 	<li><a href="#countGroupByUserId">countGroupByUserId</a></li>
 </ul>
 
-<h3 id="get">UserModel::get($args)</h3>
+<h3 id="get">UserModel::get()</h3>
 <pre>
 	Parameter:
 	Array $args
 
-	Result:
+    Result:
+
 </pre>

@@ -1,17 +1,13 @@
 <?php
 /**
- * User    :: Check User Exists API
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2024-02-14
- * Modify  :: 2026-04-19
- * Version :: 3
+ * User     :: Check User Exists API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-02-14
+ * Modified :: 2026-11-16
+ * Version  :: 4
  *
- * @return Array/Object
- *
- * @usage api/user/exists
+ * @uses api/user/exists
  */
-
-use Softganz\DB;
 
 class UserExistsApi extends PageApi {
 	public $userId;
@@ -37,7 +33,7 @@ class UserExistsApi extends PageApi {
 	}
 
 	private function checkUsername() {
-		$userInfo = UserModel::get(['username' => $this->username]);
+		$userInfo = \UserModel::get(username: $this->username);
 		// debugMsg($userInfo);
 
 		if ($userInfo->userId) {
@@ -55,7 +51,7 @@ class UserExistsApi extends PageApi {
 			return apiError(_HTTP_ERROR_NOT_ACCEPTABLE, 'ไม่ระบุอีเมล์');
 		}
 
-		$userInfo = UserModel::get(['email' => $this->email]);
+		$userInfo = \UserModel::get(email: $this->email);
 		// debugMsg($userInfo);
 
 		if ($userInfo->userId) {

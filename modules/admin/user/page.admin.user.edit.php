@@ -1,15 +1,14 @@
 <?php
 /**
- * Admin   :: Edit User Information
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2023-03-31
- * Modify  :: 2026-05-01
- * Version :: 6
+ * Admin    :: Edit User Information
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-03-31
+ * Modified :: 2026-11-16
+ * Version  :: 7
  *
- * @param String $userId
- * @return Widget
+ * @param string $userId
  *
- * @usage admin/user/{id}/edit
+ * @uses admin/user/{id}/edit
  */
 
 class AdminUserEdit extends Page {
@@ -19,7 +18,7 @@ class AdminUserEdit extends Page {
 	function __construct($userId = null) {
 		parent::__construct([
 			'userInfo' => ($userInfo = is_numeric($userId)
-				? UserModel::get($userId)
+				? \UserModel::get($userId)
 				: null),
 			'userId' => $userInfo->userId
 		]);

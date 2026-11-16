@@ -3,18 +3,16 @@
  * Model    :: User Information
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-07-22
- * Modified :: 2026-11-15
- * Version  :: 32
+ * Modified :: 2026-11-16
+ * Version  :: 33
  *
  * @param int $userId
- * @return object
  *
  * @uses new UserModel($userId)
  * @uses UserModel::function($conditions, $options)
  */
 
 use Softganz\DB;
-use Softganz\DbException;
 
 class UserModel {
 	public $userId;
@@ -69,7 +67,7 @@ class UserModel {
 				'error' => true,
 				'text' => 'Username not specify'
 			];
-		} else if (UserModel::get(['username' => $user->username])) {
+		} else if (\UserModel::get(username: $user->username)) {
 			return (object) [
 				'uid' => null,
 				'complete' => false,
@@ -227,7 +225,7 @@ class UserModel {
 		if ($oldUsername === $newUsername) return false;
 		if (file_exists('file/'.$newUsername)) return false;
 
-		$newUserInfo = UserModel::get(['username' => $newUsername]);
+		$newUserInfo = \UserModel::get(username: $newUsername);
 		if ($newUserInfo->userId) return false;
 
 		try {
@@ -284,7 +282,7 @@ class UserModel {
 
 	// delete user information
 	public static function delete($uid) {
-		$rs = UserModel::get($uid);
+		$rs = \UserModel::get($uid);
 		$result = (object) [
 			'code' => null,
 			'message' => null,
@@ -508,7 +506,7 @@ class UserModel {
 
 		do {
 			$username = $user->prefix.\SG\uniqid(20);
-		} while (UserModel::get(['username' => $username]));
+		} while (\UserModel::get(['username' => $username]));
 
 		$createUserResult = UserModel::create([
 			'username' => $username,

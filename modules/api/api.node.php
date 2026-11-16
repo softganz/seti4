@@ -1,17 +1,16 @@
 <?php
 /**
- * Node    :: Node API
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2025-07-24
- * Modify  :: 2026-02-23
- * Version :: 2
+ * Node     :: Node API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-07-24
+ * Modified :: 2026-11-16
+ * Version  :: 3
  *
- * @param Int $nodeId
- * @param String $action
- * @param Int $tranId
- * @return Array/Object
+ * @param int $nodeId
+ * @param string $action
+ * @param int $tranId
  *
- * @usage api/node/{nodeId}/{action}[/{tranId}]
+ * @uses api/node/{nodeId}/{action}[/{tranId}]
  */
 
 use Softganz\DB;
@@ -94,7 +93,7 @@ class NodeApi extends PageApi {
 			return apiError(_HTTP_ERROR_BAD_REQUEST, 'Invalid User ID');
 		}
 
-		$user = UserModel::get($addUserId);
+		$user = \UserModel::get($addUserId);
 
 		if (empty($user)) {
 			return apiError(_HTTP_ERROR_BAD_REQUEST, 'User Not Found');

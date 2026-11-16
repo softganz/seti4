@@ -1,15 +1,14 @@
 <?php
 /**
- * Profile :: View User Information
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2021-01-01
- * Modify  :: 2026-06-13
- * Version :: 11
+ * Profile  :: View User Information
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-01-01
+ * Modified :: 2026-11-16
+ * Version  :: 12
  *
- * @param Int $userInfo
- * @return Widget
+ * @param object $userInfo
  *
- * @usage profile/{userId}
+ * @uses profile/{userId}
  */
 
 use Softganz\DB;
@@ -357,7 +356,7 @@ class ProfileView extends Page {
 	}
 
 	function group() {
-		$userInfo = UserModel::get($this->userId);
+		$userInfo = \UserModel::get($this->userId);
 
 		return new Scaffold([
 			'appBar' => new AppBar([
@@ -365,7 +364,7 @@ class ProfileView extends Page {
 					'User '
 					. $userInfo->name
 					. ' in '
-					. UserModel::countGroupByUserId($this->userId)
+					. \UserModel::countGroupByUserId($this->userId)
 					. ' groups.',
 				'leading' => _HEADER_BACK,
 				'boxHeader' => true
@@ -381,7 +380,7 @@ class ProfileView extends Page {
 							])
 						]
 					]);
-				}, UserModel::getMemberOfGroup($this->userId)) // children
+				}, \UserModel::getMemberOfGroup($this->userId)) // children
 			]) // Widget
 		]);
 	}

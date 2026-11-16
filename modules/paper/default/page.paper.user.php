@@ -1,14 +1,14 @@
 <?php
 /**
- * Paper   :: List Paper of user
- * Created :: 2023-08-27
- * Modify  :: 2025-11-17
- * Version :: 7
+ * Paper    :: List Paper of user
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-08-27
+ * Modified :: 2026-11-16
+ * Version  :: 8
  *
- * @param Int $userId
- * @return Widget
+ * @param int $userId
  *
- * @usage paper/user/{userId}
+ * @uses paper/user/{userId}
  */
 
 ini_set('memory_limit', -1);
@@ -51,7 +51,7 @@ class PaperUser extends Page {
 
 		return new Scaffold([
 			'appBar' => new AppBar([
-				'title' => UserModel::get($this->userId)->name . '\'s Node List',
+				'title' => \UserModel::get($this->userId)->name . '\'s Node List',
 				'navigator' => new Nav([
 					'children' => [
 						$this->right->admin

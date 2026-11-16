@@ -1,13 +1,12 @@
 <?php
 /**
- * SignIn  :: PSU Passport Auth Callback
- * Created :: 2022-09-29
- * Modify  :: 2022-09-30
- * Version :: 1
+ * SignIn   :: PSU Passport Auth Callback
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-09-29
+ * Modified :: 2026-11-16
+ * Version  :: 2
  *
- * @return Widget
- *
- * @usage signin/psu/complete
+ * @uses signin/psu/complete
  */
 
 class SigninPsuComplete extends Page {
@@ -64,7 +63,7 @@ class SigninPsuComplete extends Page {
 			// ];
 
 			if ($this->me->user_email) {
-				$userInfo = UserModel::get(['email' => $this->me->user_email]);
+				$userInfo = \UserModel::get(email: $this->me->user_email);
 				// print_o($userInfo, '$userInfo', 1);
 				if ($userInfo->uid) {
 					// Already member
@@ -76,7 +75,7 @@ class SigninPsuComplete extends Page {
 				} else {
 					// Not a member
 					// Create new user
-					$createUserResult = UserModel::externalUserCreate([
+					$createUserResult = \UserModel::externalUserCreate([
 						'prefix' => 'psu-',
 						'name' => $this->me->description,
 						'email' => $this->me->user_email,

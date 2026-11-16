@@ -1,16 +1,15 @@
 <?php
 /**
- * Admin   :: Admin User API
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2022-10-22
- * Modify  :: 2025-12-25
- * Version :: 8
+ * Admin    :: Admin User API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-10-22
+ * Modified :: 2026-11-16
+ * Version  :: 9
  *
- * @param Int $userId
- * @param String $action
- * @return String
+ * @param int $userId
+ * @param string $action
  *
- * @usage api/admin/user/{userId}/{action}
+ * @uses api/admin/user/{userId}/{action}
  */
 
 use Softganz\DB;
@@ -22,7 +21,7 @@ class AdminUserApi extends PageApi {
 	function __construct($userId, $action) {
 		parent::__construct([
 			'action' => $action,
-			'userInfo' => SG\getFirstInt($userId) ? UserModel::get($userId) : null
+			'userInfo' => SG\getFirstInt($userId) ? \UserModel::get($userId) : null
 		]);
 		$this->userId = $this->userInfo->uid;
 	}
@@ -62,18 +61,18 @@ class AdminUserApi extends PageApi {
 			'keyword' => 'User ' . ($status == 'block' ? 'Block' : 'Active'),
 			'message' =>
 				'User '
-				. $uid
+				. $this->userId
 				. ' ('
 				. $this->userInfo->username
 				. ') was '
 				. ($status == 'block' ? 'blocked' : 'active')
 				. '.',
-			'keyId' => $uid
+			'keyId' => $this->userId
 		]);
 
 		return apiSuccess(
 			'User '
-				. $username
+				. $this->userInfo->username
 				. ' was '
 				. ($status == 'block' ? 'blocked' : 'active')
 				. '.'
@@ -130,7 +129,7 @@ class AdminUserApi extends PageApi {
 
 		// Check duplicate username
 		if ($data->username != $this->userInfo->username) {
-			$newUser = UserModel::get(['username' => $data->username]);
+			$newUser = \UserModel::get(username: $data->username);
 			if ($newUser->userId) {
 				return error(
 					_HTTP_ERROR_NOT_ACCEPTABLE,

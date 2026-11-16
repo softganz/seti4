@@ -1,15 +1,15 @@
 <?php
 /**
- * Profile :: Profile Page Controller
- * Created :: 2024-07-23
- * Modify  :: 2024-07-23
- * Version :: 1
+ * Profile  :: Profile Page Controller
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-07-23
+ * Modified :: 2026-11-16
+ * Version  :: 2
  *
- * @param Int $userId
- * @param String $action
- * @return Widget
+ * @param int $userId
+ * @param string $action
  *
- * @usage profile[/{userId}/{action}/{tranId}]
+ * @uses profile[/{userId}/{action}/{tranId}]
  */
 
 class Profile extends PageController {
@@ -27,7 +27,7 @@ class Profile extends PageController {
 			'userId' => ($userId = SG\getFirstInt($userId)),
 			'action' => 'profile.' . $action,
 			'args' => func_get_args(),
-			'info' => is_numeric($userId) ? UserModel::get($userId) : null
+			'info' => is_numeric($userId) ? \UserModel::get($userId) : null
 		]);
 	}
 }

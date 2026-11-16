@@ -1,13 +1,12 @@
 <?php
 /**
- * API 		:: User Rergister by Google Account
- * Created :: 2022-07-17
- * Modify  :: 2022-11-19
- * Version	:: 3
+ * API 		  :: User Rergister by Google Account
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-07-17
+ * Modified :: 2026-11-16
+ * Version	:: 4
  *
- * @return Widget
- *
- * @usage api/user/register/google
+ * @uses api/user/register/google
  */
 
 class UserRegisterGoogleApi extends Page {
@@ -29,7 +28,7 @@ class UserRegisterGoogleApi extends Page {
 				'responseCode' => _HTTP_ERROR_NOT_ACCEPTABLE,
 				'text' => 'ข้อมูลสำหรับลงทะเบียนไม่ถูกต้อง'
 			];
-		} elseif (UserModel::get(['email' => $jwt->payload->email])) {
+		} elseif (\UserModel::get(email: $jwt->payload->email)) {
 			return (object) [
 				'responseCode' => _HTTP_ERROR_NOT_ALLOWED,
 				'text' => 'อีเมล์นี้มีผู้อื่นสมัครไว้แล้ว ไม่สามารถสมัครซ้ำได้'

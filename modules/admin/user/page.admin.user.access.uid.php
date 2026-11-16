@@ -1,14 +1,14 @@
 <?php
 /**
- * Admin   :: Set User Access For Some User Only
- * Created :: 2016-11-08
- * Modify  :: 2024-08-19
- * Version :: 3
+ * Admin    :: Set User Access For Some User Only
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2016-11-08
+ * Modified :: 2026-11-16
+ * Version  :: 4
  *
- * @param Int $userId
- * @return Widget
+ * @param int $userId
  *
- * @usage admin/user/access/uid/{userId}
+ * @uses admin/user/access/uid/{userId}
  */
 
 class AdminUserAccessUid extends Page {
@@ -18,7 +18,7 @@ class AdminUserAccessUid extends Page {
 	function __construct($userId = null) {
 		parent::__construct([
 			'userId' => $userId,
-			'userInfo' => UserModel::get($userId)
+			'userInfo' => \UserModel::get($userId)
 		]);
 		// debugMsg($this, '$this');
 	}
@@ -28,7 +28,7 @@ class AdminUserAccessUid extends Page {
 			return message('error', 'access denied');
 		}
 
-		$ret .=
+		$ret =
 			'<h3>Access control for '
 			. $this->userInfo->name
 			. ' ( '
