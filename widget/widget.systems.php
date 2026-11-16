@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-14
- * Version  :: 121
+ * Modified :: 2026-11-16
+ * Version  :: 122
  *
  * @uses new Widget([key => value,...])
  */
@@ -2102,31 +2102,44 @@ class TabBar extends Widget {
 /**
  * Widget :: Profile Photo Widget
  *
- * @param array $args
- * @uses new ProfilePhoto([key => value,...])
+ * @param string $username
+ * @param string $title
+ * @param string $id
+ * @param string $class
+ * @param string $size
+ * @uses new ProfilePhoto(key: value)
  */
 class ProfilePhoto extends \Widget {
 	protected string $widgetName = 'ProfilePhoto';
 	protected string $version = '0.0.01';
-	public string $username;
-	public ?string $size = 'small'; // small,big
-	// parent property : $class,$attribute;
+	public ?string $username = null;
+	public ?string $title = null;
+	public ?string $size = null; // xs,sm,md,lg,xl
 
-	function __construct($username = null, $args = []) {
+	function __construct(
+		?string $username = null,
+		?string $title = null,
+		?string $id = null,
+		?string $class = null,
+		?string $size = null
+	) {
+		parent::__construct();
 		$this->username = $username;
-		parent::__construct($args);
+		$this->title = $title;
+		$this->id = $id;
+		$this->class = $class;
+		$this->size = $size ?? $this->size;
 	}
 
 	function toString() {
-		$attribute = array_replace_recursive($this->attribute, [
+		$attribute = [
 			'class' =>
 				trim('widget-' . strtolower($this->widgetName) . ' ' . $this->class)
-				. ' -size-'
-				. $this->size,
-			'src' => \UserModel::profilePhoto($this->username),
+				. ($this->size ? ' -size-' . $this->size : ''),
+			'src' => \UserModel::profilePhoto($this->username ?? ''),
 			'alt' => htmlspecialchars($this->title ?? ''),
 			'title' => htmlspecialchars($this->title ?? '')
-		]);
+		];
 		return '<img ' . sg_implode_attr($attribute) . ' />';
 	}
 } // End of class ProfilePhoto
