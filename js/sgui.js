@@ -2,12 +2,12 @@
  * sgui     :: Javascript Library For SoftGanz
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-12-24
- * Modified :: 2026-11-06
- * Version  :: 85
+ * Modified :: 2026-11-16
+ * Version  :: 86
  */
 'use strict';
 
-let sgUiVersion = '4.00.22';
+let sgUiVersion = '4.00.23';
 let debugSG = false;
 let defaultRelTarget = '#main';
 let cameraPermission = false;
@@ -737,8 +737,8 @@ function renderAutocompleteItem(ul, item, options = {}) {
  *
  * <a href="link" data-webview="title">text</a>
  */
+// data-webview
 (function ($) {
-	// data-webview
 	let version = '0.03';
 	let actionComplete = false;
 
@@ -862,8 +862,8 @@ function renderAutocompleteItem(ul, item, options = {}) {
  *
  * <a class="sg-action" data-rel="target" data-done="action[->targetAction]:target:url | ..."></a>
  */
+// sg-action
 (function ($) {
-	// sg-action
 	let version = '1.02';
 	let sgActionType = 'click';
 	let actionResult;
@@ -1188,9 +1188,9 @@ $(document).ready(function(){
 });
 */
 
+// confirm box
 // Must add event before submit form
 $(document).on('submit', 'form[data-confirm]', function (ele) {
-	// confirm box
 	//console.log("Data Confirm Click by CONFIRM")
 	var $this = $(this);
 	//console.log($this.attr('href'))
@@ -1243,269 +1243,259 @@ $(document).on('submit', 'form[data-confirm]', function (ele) {
  * https://softganz.com
  * Using <form class="sg-form"></form>
  */
-$(document)
-	.on('submit', 'form.sg-form', function (event) {
-		// sg-form
-		let element = this;
+// sg-form
+(function ($) {
+	// Return the first invalid required field as {field, msg, focus}, or null
+	function findInvalidRequireField($form) {
+		let invalid = null;
+		$form.find('.require, .-require').each(function () {
+			let $inputTag = $(this);
+			let type = $inputTag.attr('type');
+			let tagName = $inputTag.prop('tagName');
+			let id = $inputTag.attr('id');
+
+			if (
+				(type === 'text' ||
+					type === 'password' ||
+					type === 'number' ||
+					type === 'hidden' ||
+					tagName === 'TEXTAREA') &&
+				$inputTag.val().trim() == ''
+			) {
+				invalid = {
+					field: $inputTag,
+					msg:
+						'กรุณาป้อนข้อมูลในช่อง " ' +
+						$('label[for="' + id + '"]').text() +
+						' "',
+					focus: true,
+				};
+			} else if (
+				tagName == 'SELECT' &&
+				($inputTag.val() == 0 || $inputTag.val() == -1 || $inputTag.val() == '')
+			) {
+				invalid = {
+					field: $inputTag,
+					msg:
+						'กรุณาเลือกข้อมูลในช่อง " ' +
+						$('label[for="' + id + '"]').text() +
+						' "',
+				};
+			} else if (
+				(type == 'radio' || type == 'checkbox') &&
+				!$("input[name='" + $inputTag.attr('name') + "']:checked").val()
+			) {
+				invalid = {
+					field: $inputTag,
+					msg: $inputTag.closest('div').children('label').first().text(),
+				};
+			}
+
+			if (invalid) return false;
+		});
+		return invalid;
+	}
+
+	function reportInvalidField(invalid) {
+		let $field = invalid.field;
+		if (invalid.focus) $field.focus();
+		if (!$('#' + $field.attr('id')).isOnScreen()) {
+			$('html,body').animate({ scrollTop: $field.offset().top - 100 }, 'slow');
+		}
+		notify(invalid.msg);
+	}
+
+	function disableSubmitButtons($form) {
+		let disableLabel = $form.data('disableOnSubmit');
+		if (!disableLabel) return;
+		$form
+			.find('button')
+			.attr('disabled', 'disabled')
+			.addClass('-disabled')
+			.find('span')
+			.html(disableLabel);
+	}
+
+	// $trigger is the button that submitted the form, captured before submit
+	function closeAfterComplete($form, onComplete, $trigger, closeBox) {
+		if (onComplete == 'remove') {
+			$form.remove();
+		} else if (onComplete == 'close' || onComplete == 'closebox') {
+			if ($trigger.closest('.sg-dropbox.box').length != 0) {
+				$('.sg-dropbox.box').children('div').hide();
+				$('.sg-dropbox.box.active').removeClass('active');
+			} else {
+				closeBox();
+			}
+		}
+	}
+
+	function submitUpload($form, options) {
+		let { relTarget, retUrl, onComplete, $trigger, debug } = options;
+
+		$form.ajaxSubmit({
+			success: function (html) {
+				if (debug)
+					console.log('SG-FORM.-UPLOAD ajaxSubmit upload file complete.', html);
+
+				closeAfterComplete($form, onComplete, $trigger, function () {
+					sgBoxBack({ from: 'sg-form' });
+				});
+
+				if (retUrl) {
+					$.post(retUrl, function (html) {
+						sgUpdateData(html, relTarget, $form);
+						notify();
+						sgActionDone($form.data('done'), $form, html);
+					});
+				} else {
+					sgUpdateData(html, relTarget, $form);
+					sgActionDone($form.data('done'), $form, html);
+				}
+				if (relTarget != 'notify') notify();
+				$form.replaceWith($form.clone(true));
+			},
+			error: function (response) {
+				showError(response);
+				if (debug) console.log(response);
+			},
+		});
+	}
+
+	function submitPost($form, options) {
+		let { relTarget, retUrl, onComplete, $trigger, debug } = options;
+		let doneResult;
+		let para = $form.serialize();
+		let clickButtonName = $trigger.attr('name');
+
+		if (clickButtonName != undefined) {
+			para += (para ? '&' : '?') + clickButtonName + '=' + $trigger.val();
+		}
+
+		$.post(
+			$form.attr('action'),
+			para,
+			function (html) {
+				doneResult = html;
+				if (debug)
+					console.log('Form submit completed and send output to ' + relTarget);
+
+				closeAfterComplete($form, onComplete, $trigger, function () {
+					sgBoxClose();
+				});
+
+				let callback = $form.data('callback');
+				if (callback && typeof window[callback] === 'function') {
+					window[callback]($form, html);
+				} else if (callback) {
+					window.location = callback;
+				}
+			},
+			$form.data('dataType') == undefined ? null : $form.data('dataType'),
+		)
+			.fail(function (response) {
+				showError(response);
+			})
+			.done(function (response) {
+				let html =
+					response && response.responseCode && response.text
+						? response.text
+						: response;
+
+				if (retUrl) {
+					if (debug) console.log('Return URL ' + retUrl);
+					$.post(retUrl, function (html) {
+						sgUpdateData(html, relTarget, $form);
+						notify();
+					});
+				} else {
+					sgUpdateData(html, relTarget, $form);
+				}
+
+				if (relTarget.substring(0, 6) != 'notify') notify();
+
+				sgActionDone($form.data('done'), $form, doneResult);
+
+				if ($form.data('moveto')) {
+					let moveto = $form.data('moveto').split(',');
+					window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]));
+				}
+			});
+	}
+
+	$(document).on('submit', 'form.sg-form', function (event) {
 		let $this = $(this);
 		let relTarget = $this.data('rel');
-		let retUrl = $this.data('ret');
-		let onComplete = $this.data('complete');
-		let checkValid = $this.data('checkvalid');
 		let onFormSubmit = $this.data('onformsubmit');
 		let silent = $this.data('silent');
-		let errorField = '';
-		let errorMsg = '';
-		let doneResult;
-		let confirm = $this.data('confirm') == undefined || $this.data('confirmed');
+		let isUpload = $this.hasClass('-upload');
+		// Capture before disableSubmitButtons() can blur the clicked button
+		let $trigger = $(document.activeElement);
+		let debug = debugSG;
 
 		console.log('sg-form :: Submit');
-		// console.log('rel', relTarget)
-		// Check field valid
-		if (checkValid) {
+
+		if (isUpload) debug = $this.find('#edit-debug').val() === 'upload';
+
+		if ($this.data('checkvalid')) {
 			console.log('Form Check input valid start.');
-			$this.find('.require, .-require').each(function (i) {
-				let $inputTag = $(this);
-				//console.log('Form check valid input tag '+$inputTag.prop("tagName")+' type '+$inputTag.attr('type')+' id='+$inputTag.attr('id'))
-				if (
-					($inputTag.attr('type') === 'text' ||
-						$inputTag.attr('type') === 'password' ||
-						$inputTag.attr('type') === 'number' ||
-						$inputTag.attr('type') === 'hidden' ||
-						$inputTag.prop('tagName') === 'TEXTAREA') &&
-					$inputTag.val().trim() == ''
-				) {
-					errorField = $inputTag;
-					errorMsg =
-						'กรุณาป้อนข้อมูลในช่อง " ' +
-						$('label[for=' + errorField.attr('id')).text() +
-						' "';
-					$inputTag.focus();
-				} else if (
-					$inputTag.prop('tagName') == 'SELECT' &&
-					($inputTag.val() == 0 ||
-						$inputTag.val() == -1 ||
-						$inputTag.val() == '')
-				) {
-					errorField = $inputTag;
-					errorMsg =
-						'กรุณาเลือกข้อมูลในช่อง " ' +
-						$('label[for=' + errorField.attr('id')).text() +
-						' "';
-				} else if (
-					($inputTag.attr('type') == 'radio' ||
-						$inputTag.attr('type') == 'checkbox') &&
-					!$("input[name=\'" + $inputTag.attr('name') + "\']:checked").val()
-				) {
-					errorField = $inputTag;
-					errorMsg = errorField.closest('div').children('label').first().text();
-				}
-				//console.log($inputTag.attr('name'))
-				//console.log($("input[name=\'"+$inputTag.attr('name')+"\']*:checked").val())
-				if (errorField) {
-					//console.log('Invalid input '+errorField.attr('id'))
-					let invalidId = errorField.attr('id');
-					//console.log('invalidId = ',invalidId)
-					//$('#'+invalidId).focus();
-					//console.log($('#'+invalidId).isOnScreen() ? 'VISIBLE' : 'INVISIBLE')
-					if (!$('#' + invalidId).isOnScreen()) {
-						$('html,body').animate(
-							{ scrollTop: errorField.offset().top - 100 },
-							'slow',
-						);
-					}
-					notify(errorMsg);
-					return false;
-				}
-			});
-			if (errorField) return false;
+			let invalid = findInvalidRequireField($this);
+			if (invalid) {
+				reportInvalidField(invalid);
+				return false;
+			}
 		}
 
-		// Process callback function
-		// console.log('onFormSubmit',onFormSubmit,window[onFormSubmit])
+		// Return the callback result so that returning false cancels the native submit
 		if (onFormSubmit && typeof window[onFormSubmit] === 'function') {
-			// console.log('onFormSubmit START')
-			return new Promise((resolve, reject) => {
-				// event.preventDefault()
-				// return false
-				return window[onFormSubmit](event, this);
-			});
+			return window[onFormSubmit](event, this);
 		}
-		// console.log('FORM CONTINUE')
-		// event.preventDefault()
-		// return false;
 
-		if (!confirm) {
-			return;
-		} else if ($this.data('confirmed')) {
-			$this.removeData('confirmed');
-			// para.confirm = 'yes'
-		}
+		let isConfirmed =
+			$this.data('confirm') == undefined || $this.data('confirmed');
+		if (!isConfirmed) return false;
+		if ($this.data('confirmed')) $this.removeData('confirmed');
 
 		if (relTarget == undefined) return true;
 
 		if (!silent) notify('PROCESSING');
 
-		if (debugSG) console.log('Send form to ' + $this.attr('action'));
-		if (debugSG) console.log('Result to ' + relTarget);
+		if (debug) console.log('Send form to ' + $this.attr('action'));
+		if (debug) console.log('Result to ' + relTarget);
 
-		// Disable submit button on submit
-		if ($this.data('disableOnSubmit')) {
-			$this
-				.find('button')
-				.attr('disabled', 'disabled')
-				.addClass('-disabled')
-				.find('span')
-				.html($this.data('disableOnSubmit'));
-		}
+		disableSubmitButtons($this);
 
-		if ($this.hasClass('-upload')) {
-			debugSG = $this.find('#edit-debug').val() === 'upload';
+		let options = {
+			relTarget: relTarget,
+			retUrl: $this.data('ret'),
+			onComplete: $this.data('complete'),
+			$trigger: $trigger,
+			debug: debug,
+		};
 
-			if (debugSG) console.log('SOFTGANZ UPLAOD FILE');
-
-			$this.ajaxSubmit({
-				success: function (html) {
-					if (debugSG)
-						console.log(
-							'SG-FORM.-UPLOAD ajaxSubmit upload file complete.',
-							html,
-						);
-					if (onComplete == 'remove') {
-						$this.remove();
-					} else if (onComplete == 'close' || onComplete == 'closebox') {
-						if ($(event.rel).closest('.sg-dropbox.box').length != 0) {
-							$('.sg-dropbox.box').children('div').hide();
-							$('.sg-dropbox.box.active').removeClass('active');
-							//alert($(event.rel).closest('.sg-dropbox.box').attr('class'))
-						} else {
-							sgBoxBack({ from: 'sg-form' });
-						}
-					}
-
-					if (retUrl) {
-						//console.log("Return URL "+retUrl)
-						$.post(retUrl, function (html) {
-							sgUpdateData(html, relTarget, $this);
-							notify();
-							sgActionDone($this.data('done'), $this, html);
-						});
-					} else {
-						sgUpdateData(html, relTarget, $this);
-						// console.log(html)
-						// console.log($this)
-						// sgActionDone($this.data('done'), $this, html)
-						// console.log('UPLOAD DONE')
-						sgActionDone($this.data('done'), $this, doneResult);
-					}
-					if (relTarget != 'notify') notify();
-					$this.replaceWith($this.clone(true));
-				},
-				error: function (response) {
-					showError(response);
-
-					if (debugSG) console.log(response);
-				},
-			});
+		if (isUpload) {
+			submitUpload($this, options);
 		} else {
-			let para = $this.serialize();
-			let $clickButton = $(document.activeElement);
-
-			if ($clickButton.attr('name') != undefined) {
-				para +=
-					(para ? '&' : '?') +
-					$clickButton.attr('name') +
-					'=' +
-					$clickButton.val();
-			}
-
-			// Start post form
-			// console.log('FORM DATA ', para);
-
-			// const formData = new FormData(element);
-			// console.log("formData", formData, element);
-
-			$.post(
-				$this.attr('action'),
-				para,
-				function (html) {
-					// console.log(html)
-					doneResult = html;
-					if (debugSG)
-						console.log(
-							'Form submit completed and send output to ' + relTarget,
-						);
-					if (onComplete == 'remove') {
-						$this.remove();
-					} else if (onComplete == 'close' || onComplete == 'closebox') {
-						if ($(event.rel).closest('.sg-dropbox.box').length != 0) {
-							$('.sg-dropbox.box').children('div').hide();
-							$('.sg-dropbox.box.active').removeClass('active');
-							//alert($(event.rel).closest('.sg-dropbox.box').attr('class'))
-						} else {
-							sgBoxClose();
-						}
-					}
-
-					// Process callback function
-					let callback = $this.data('callback');
-					if (callback && typeof window[callback] === 'function') {
-						window[callback]($this, html);
-					} else if (callback) {
-						window.location = callback;
-					}
-				},
-				$this.data('dataType') == undefined ? null : $this.data('dataType'),
-			)
-				.fail(function (response) {
-					showError(response);
-				})
-				.done(function (response) {
-					let html = '';
-					if (response.responseCode && response.text) html = response.text;
-					else html = response;
-
-					// notify(response.text, 3000);
-
-					if (retUrl) {
-						if (debugSG) console.log('Return URL ' + retUrl);
-						$.post(retUrl, function (html) {
-							sgUpdateData(html, relTarget, $this);
-							notify();
-						});
-					} else {
-						sgUpdateData(html, relTarget, $this);
-						// console.log(html)
-					}
-
-					if (relTarget.substring(0, 6) != 'notify') notify();
-
-					sgActionDone($this.data('done'), $this, doneResult);
-
-					// Move screen to position
-					if ($this.data('moveto')) {
-						let moveto = $this.data('moveto').split(',');
-						window.scrollTo(parseInt(moveto[0]), parseInt(moveto[1]));
-					}
-				});
+			submitPost($this, options);
 		}
 		return false;
-	})
-	.on('keydown', 'form.sg-form input:text', function (event) {
-		let $input = $(this).closest('form').find('input:text');
-		let inputCount = $input.length;
-		if (event.keyCode == 13) {
-			event.preventDefault();
-			// console.log($input.attr('onEnter'))
-			if ($input.attr('onEnter') == 'submit') {
-				$input.closest('form').submit();
-				return false;
-			}
-			let nextIndex = $input.index(this) + 1;
-			if (nextIndex < inputCount) $input[nextIndex].focus();
+	});
+
+	$(document).on('keydown', 'form.sg-form input:text', function (event) {
+		if (event.keyCode != 13) return;
+
+		event.preventDefault();
+		if ($(this).attr('onEnter') == 'submit') {
+			$(this).closest('form').submit();
 			return false;
 		}
+
+		let $input = $(this).closest('form').find('input:text');
+		let nextIndex = $input.index(this) + 1;
+		if (nextIndex < $input.length) $input[nextIndex].focus();
+		return false;
 	});
+})(jQuery);
 
 /*
  * jQuery Extension :: sg-inlineedit
@@ -1515,8 +1505,8 @@ $(document)
  * Using <div class="sg-inline-edit"><span class="inlineedit-field" data-type="text"></span></div>
  * DOWNLOAD : https://github.com/NicolasCARPi/jquery_jeditable
  */
+// sg-inlineedit
 (function ($) {
-	// sg-inlineedit
 	let inlineEditDom;
 	let version = '2.01';
 	let sgInlineEditAction = 'click';
@@ -2495,8 +2485,8 @@ $(document)
  * https://softganz.com
  * Using <header><h3>Text</h3><a class="sg-expand"><i class="icon -material">expand_less</i></a></header>
  */
+// sg-expand
 (function ($) {
-	// sg-expand
 	$(document).on('click', '.sg-expand', function () {
 		let $this = $(this);
 		let $icon = $(this).find('.icon');
@@ -2560,8 +2550,8 @@ function hideWaitScreen() {
  *
  * <div class="sg-drawreport"></div>
  */
+// sg-drawreport
 (function ($) {
-	// sg-drawreport
 	'use strict';
 
 	let version = '0.11';
@@ -3060,6 +3050,7 @@ function hideWaitScreen() {
  * https://softganz.com
  * Using <div class="widget-tabbar sg-tabs"><ul class="tabs">tab click</ul><div>tab container</div></div>
  */
+// widget-tabbar
 $(document).on(
 	'click',
 	'.widget-tabbar>.tabs>li>a, .sg-tabs>.ui-tab>.ui-item>a, .sg-tabs>ul.tabs>li>a, .sg-tabs>ul>li>a',
@@ -3105,6 +3096,7 @@ $(document).on(
  * https://softganz.com
  * Using sg_dropbox()
  */
+// sg-dropbox
 $(document)
 	.on('click', '.sg-dropbox>a', function () {
 		let $parent = $(this).parent();
@@ -3154,6 +3146,7 @@ $(document)
 		}
 	});
 
+// sg-datepicker
 $(document).on('focus', '.sg-datepicker', function (e) {
 	console.log('SG-DATEPICKER Start');
 	$(this).attr('autocomplete', 'off');
@@ -3265,6 +3258,7 @@ $(document).on('focus', '.sg-datepicker', function (e) {
  * https://softganz.com
  * Using <input class="sg-address" type="text" />
  */
+// sg-address
 $(document).on('focus', '.sg-address', function (e) {
 	let $this = $(this);
 	$this
@@ -3320,6 +3314,7 @@ $(document).on('focus', '.sg-address', function (e) {
  *	data-select = string
  *	data-select = {"id":"result field key"[, "id":"result field key"]}
  */
+// sg-autocomplete
 $(document).on('focus', '.sg-autocomplete', function (e) {
 	let $this = $(this);
 	let $form = $this.closest('form');
@@ -3444,6 +3439,7 @@ $(document).on('focus', '.sg-autocomplete', function (e) {
  * https://softganz.com
  * Using <form class="sg-upload"><input class="inline-uplaod" type="file" /></form>
  */
+// sg-upload
 $(document).on('change', 'form.sg-upload .inline-upload', function () {
 	// sg-upload
 	let $this = $(this);
@@ -3768,6 +3764,7 @@ $(document).ready(function () {
  * Written by Panumas Nontapan
  * https://softganz.com
  */
+// draw map
 let sgDrawMap = function (thisMap, options = {}) {
 	let defaults = {
 		gisDigit: 14,
