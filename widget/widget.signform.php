@@ -3,8 +3,8 @@
  * Widget   :: Sign Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-20
- * Modified :: 2026-11-12
- * Version  :: 16
+ * Modified :: 2026-11-17
+ * Version  :: 17
  *
  * @uses new SignForm()
  */
@@ -221,9 +221,7 @@ function widget_signform() {
 				. '" width="32" height="32" />'
 			: '<i class="icon -material">person</i>')
 		. '<span>'
-		. (i()->ok
-			? '<strong>' . i()->name . '</strong>'
-			: tr('Member zone', 'มุมสมาชิก'))
+		. (i()->ok ? i()->name : tr('Member zone', 'มุมสมาชิก'))
 		. '</span>'
 		. '</a>';
 
