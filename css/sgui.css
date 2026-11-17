@@ -50,7 +50,7 @@
 	--font-color: #949494;
 	--bg-color: #111;
 	--card-bg-color: #202020;
-	--sidebar-bg-color: #f6f6f6;
+	--sidebar-bg-color: #202020;
 	--border-color: #3a3a3a;
 
 	.widget-inlineedit {
@@ -1151,7 +1151,7 @@
 	--nav-icon-color: var(--text-color);
 
 	.theme-dark & {
-		--bg-color: #747474;
+		--bg-color: #383838;
 		--text-color: #dbdbdb;
 		--nav-icon-color: var(--text-color);
 		--nav-btn-bg-color: unset;
