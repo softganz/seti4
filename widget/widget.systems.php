@@ -2513,10 +2513,10 @@ class Page extends PageBase {
 class PageApi extends PageBase {
 	protected string $widgetName = 'PageApi';
 	protected string $version = '0.0.01';
-	private $runInternalMethod = true;
 	protected ?string $actionDefault = null;
-	protected $action = null;
-	private $actionMethod;
+	protected ?string $action = null;
+	private bool $runInternalMethod = true;
+	private ?string $actionMethod = null;
 	protected $args = [];
 
 	function __construct($args = []) {
@@ -2590,7 +2590,7 @@ class PageApi extends PageBase {
 class PageController extends PageBase {
 	protected string $widgetName = 'PageController';
 	protected string $version = '0.0.01';
-	public $action = null;
+	protected ?string $action = null;
 	public $argIndex = 2;
 	public $args = [];
 	public $info;
