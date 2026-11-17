@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2024-07-23
  * Modified :: 2026-11-17
- * Version  :: 3
+ * Version  :: 4
  *
  * @param int $userId
  * @param string $action
@@ -14,7 +14,6 @@
 
 class Profile extends PageController {
 	public $userId;
-	public $info;
 
 	function __construct($userId = null, $action = null) {
 		if (empty($userId) && empty($action)) {

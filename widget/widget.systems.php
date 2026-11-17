@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-17
- * Version  :: 125
+ * Version  :: 126
  *
  * @uses new Widget([key => value,...])
  */
@@ -1259,8 +1259,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-		// . '<span class="-grip-header">'
-			. $this->renderChildren([$header]); // . '</span>'
+			. // . '<span class="-grip-header">'
+			$this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -2592,7 +2592,7 @@ class PageController extends PageBase {
 	protected ?string $action = null;
 	protected int $argIndex = 2;
 	protected array $args = [];
-	public $info;
+	protected ?object $info = null;
 
 	function __construct($args = []) {
 		parent::__construct($args);
