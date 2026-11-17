@@ -3,12 +3,11 @@
  * System   :: Sysem Issue Page Controller
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-10-20
- * Modified :: 2028-08-24
- * Version  :: 2
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param Int $issueId
- * @param String $action
- * @return Widget
+ * @param int $issueId
+ * @param string $action
  *
  * @uses module[/{id}/{action}/{tranId}]
  */
@@ -17,7 +16,6 @@ use Softganz\DB;
 
 class SystemIssue extends PageController {
 	public $issueId;
-	public $action;
 
 	function __construct($issueId = null, $action = null) {
 		if (empty($issueId) && empty($action)) {

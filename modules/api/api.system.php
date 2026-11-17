@@ -3,13 +3,12 @@
  * System   :: System API
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-10-14
- * Modified :: 2026-08-24
- * Version  :: 6
+ * Modified :: 2026-11-17
+ * Version  :: 7
  *
- * @param Int $mainId
- * @param String $action
- * @param Int $tranId
- * @return String
+ * @param int $mainId
+ * @param string $action
+ * @param int $tranId
  *
  * @uses api/system/{action}[/{tranId}]
  */
@@ -17,7 +16,6 @@
 use Softganz\DB;
 
 class SystemApi extends PageApi {
-	public $action;
 	public $tranId;
 	public $right;
 

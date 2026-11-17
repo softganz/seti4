@@ -1,21 +1,20 @@
 <?php
 /**
- * Module  :: Description
- * Created :: 2022-12-05
- * Modify  :: 2025-07-22
- * Version :: 2
+ * Calendar :: Room Information API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-12-05
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param Int $resvId
- * @param String $action
- * @param Int $tranId
- * @return String
+ * @param int $resvId
+ * @param string $action
+ * @param int $tranId
  *
- * @usage module/api/{id}/{action}[/{tranId}]
+ * @uses module/api/{id}/{action}[/{tranId}]
  */
 
 class CalendarRoomInfoApi extends PageApi {
 	public $resvId;
-	public $action;
 	public $tranId;
 	public $right;
 	public $resvInfo;

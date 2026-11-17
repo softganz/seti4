@@ -3,8 +3,8 @@
  * Node     :: Node API
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-24
- * Modified :: 2026-11-16
- * Version  :: 3
+ * Modified :: 2026-11-17
+ * Version  :: 4
  *
  * @param int $nodeId
  * @param string $action
@@ -17,7 +17,6 @@ use Softganz\DB;
 
 class NodeApi extends PageApi {
 	public $nodeId;
-	public $action;
 	public $tranId;
 
 	function __construct($nodeId = null, $action = null, $tranId = null) {

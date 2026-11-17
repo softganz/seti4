@@ -3,12 +3,11 @@
  * Paper    :: Call Paper API that save in api field of topic revision
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2024-08-10
- * Modified :: 2026-09-08
- * Version  :: 2
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param String $nodeId
- * @param String $apiMethod
- * @return Widget
+ * @param int $nodeId
+ * @param string $apiMethod
  *
  * @uses paer/{nodeId}/api/{apiMethod}
  */
@@ -73,7 +72,6 @@ class PaperContentApi extends Page {
 			use Softganz\DB;
 			class Paper2486Api extends PageApi {
 				public $nodeInfo;
-				public $action;
 				public $nodeId;
 
 				function __construct($nodeInfo = NULL, $action = NULL) {

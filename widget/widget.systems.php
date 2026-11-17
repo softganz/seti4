@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-16
- * Version  :: 122
+ * Modified :: 2026-11-17
+ * Version  :: 123
  *
  * @uses new Widget([key => value,...])
  */
@@ -2515,7 +2515,7 @@ class PageApi extends PageBase {
 	protected string $version = '0.0.01';
 	private $runInternalMethod = true;
 	protected $actionDefault = null;
-	protected $action;
+	protected $action = null;
 	private $actionMethod;
 	protected $args = [];
 
@@ -2590,7 +2590,7 @@ class PageApi extends PageBase {
 class PageController extends PageBase {
 	protected string $widgetName = 'PageController';
 	protected string $version = '0.0.01';
-	public $action;
+	public $action = null;
 	public $argIndex = 2;
 	public $args = [];
 	public $info;

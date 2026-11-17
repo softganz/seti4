@@ -3,11 +3,10 @@
  * Paper    :: Edit Detail
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-06-01
- * Modified :: 2026-06-24
- * Version  :: 8
+ * Modified :: 2026-11-17
+ * Version  :: 9
  *
- * @param String $nodeInfo
- * @return Widget
+ * @param object $nodeInfo
  *
  * @uses paper/{nodeId}/edit.detail
  */
@@ -426,7 +425,6 @@ class Paper'
 			. $this->nodeId
 			. 'Api extends PageApi {
 	public $nodeInfo;
-	public $action;
 	public $nodeId;
 
 	function __construct($nodeInfo = NULL, $action = NULL) {

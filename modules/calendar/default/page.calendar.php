@@ -1,20 +1,19 @@
 <?php
 /**
- * Calendar:: Page Controller
- * Created :: 2007-03-06
- * Modify  :: 2025-07-19
- * Version :: 2
+ * Calendar :: Page Controller
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2007-03-06
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param Int $calendarId or *,t:13259 to all include node 13259
- * @param String $action
- * @return Widget
+ * @param int $calendarId or *,t:13259 to all include node 13259
+ * @param string $action
  *
- * @usage calendar/{Id}/{action}[/{tranId}]
+ * @uses calendar/{Id}/{action}[/{tranId}]
  */
 
 class calendar extends PageController {
 	public $calendarId;
-	public $action;
 
 	function __construct($calendarId = null, $action = null) {
 		if (substr($calendarId, 0, 1) === '*') {

@@ -1,22 +1,21 @@
 <?php
 /**
- * Paper   :: Page Controller
- * Created :: 2018-06-04
- * Modify  :: 2023-07-25
- * Version :: 2
+ * Paper    :: Page Controller
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2018-06-04
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param Int $nodeId
- * @param String $action
- * @return Widget
+ * @param int $nodeId
+ * @param string $action
  *
- * @usage paper[/{nodeId}/{action}]
+ * @uses paper[/{nodeId}/{action}]
  */
 
 use Paper\Model\PaperModel;
 
 class Paper extends PageController {
 	public $nodeId;
-	public $action;
 
 	function __construct($nodeId = null, $action = null) {
 		if (empty($nodeId) && empty($action)) {

@@ -1,19 +1,17 @@
 <?php
 /**
- * Admin   :: Admin General API
- * Created :: 2021-12-27
- * Modify  :: 2025-12-05
- * Version :: 5
+ * Admin    :: Admin General API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2021-12-27
+ * Modified :: 2026-11-17
+ * Version  :: 6
  *
- * @param String $action
- * @return Array
+ * @param string $action
  *
- * @usage api/admin/{action}
+ * @uses api/admin/{action}
  */
 
 class AdminApi extends PageApi {
-	public $action;
-
 	function __construct($action) {
 		parent::__construct([
 			'action' => $action

@@ -3,16 +3,14 @@
  * Paper    :: View
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2018-06-04
- * Modified :: 2026-09-19
- * Version  :: 7
+ * Modified :: 2026-11-17
+ * Version  :: 8
  *
- * @param String $nodeInfo
- * @return Widget
+ * @param object $nodeInfo
  *
  * @uses paper/{nodeId}/edit.docs
  */
 
-use Softganz\DB;
 use Paper\Model\PaperModel;
 
 function paper_view($self, $tpid = null) {
@@ -83,11 +81,11 @@ function paper_view($self, $tpid = null) {
 
 	// echo 'TPID = '.$tpid.'<br />';
 	$isTopicUser = null;
-	if (DB::tableExists('%topic_user%')) {
-		$isTopicUser = DB::select([
+	if (\DB::tableExists('%topic_user%')) {
+		$isTopicUser = \DB::select(
 			'SELECT `uid` FROM %topic_user% WHERE `tpid` = :tpid AND `uid` = :uid AND `membership` IN ("Owner","Trainer","Manager") LIMIT 1',
-			'var' => [':tpid' => $tpid, ':uid' => i()->uid]
-		])->valueOf('uid');
+			var: [':tpid' => $tpid, ':uid' => i()->uid]
+		)->valueOf('uid');
 	}
 
 	if (
@@ -181,11 +179,13 @@ function paper_view($self, $tpid = null) {
 		}
 	}
 
-	$self->theme->title =
-		$topicInfo->title
-		. ($topicInfo->info->status == _PUBLISH || $topicInfo->info->status > -_LOCK
-			? ''
-			: ' <em>(' . sg_status_text($topicInfo->info->status) . ')</em>');
+	$self->theme->title = $self->theme->option->header
+		? $topicInfo->title
+			. ($topicInfo->info->status == _PUBLISH ||
+			$topicInfo->info->status > -_LOCK
+				? ''
+				: ' <em>(' . sg_status_text($topicInfo->info->status) . ')</em>')
+		: null;
 
 	$self->theme->id = 'paper-id-' . $tpid;
 	$self->theme->class = 'content-paper content-paper-view';
@@ -365,7 +365,7 @@ function paper_view($self, $tpid = null) {
 	}
 	user_menu('paper_id', $tpid, url('paper/' . $tpid));
 
-	BasicModel::member_menu();
+	\BasicModel::member_menu();
 
 	if (
 		$topicInfo->info->type != 'page' &&
@@ -391,7 +391,7 @@ function paper_view($self, $tpid = null) {
 
 	// Process module init
 	if ($topicInfo->info->type) {
-		R::on(
+		\R::on(
 			$topicInfo->info->module . '.paper.view.init',
 			$self,
 			$topicInfo,
@@ -402,7 +402,7 @@ function paper_view($self, $tpid = null) {
 
 	// Start view content
 
-	R::model('reaction.add', $tpid, 'TOPIC.VIEW');
+	\R::model('reaction.add', $tpid, 'TOPIC.VIEW');
 
 	if (
 		!in_array($topicInfo->info->type, [
@@ -414,7 +414,7 @@ function paper_view($self, $tpid = null) {
 	) {
 		$ret .=
 			'<nav class="nav -page -sg-text-right -no-print">'
-			. R::page('paper.like.status', null, $tpid)
+			. \R::page('paper.like.status', null, $tpid)
 			. '</nav>';
 	}
 
@@ -430,7 +430,7 @@ function paper_view($self, $tpid = null) {
 			$_SERVER['REQUEST_SCHEME'] . ':' . $topicInfo->photo->items[0]->_url;
 	}
 	$opengraph->description = sg_summary_text($topicInfo->body ?? '');
-	sg::add_opengraph($opengraph);
+	\SG::add_opengraph($opengraph);
 
 	if ($topicInfo->uid && $topicInfo->info->owner_status != 'enable') {
 		$body->status .= message('error', 'This owner was block');
@@ -439,19 +439,19 @@ function paper_view($self, $tpid = null) {
 	event_tricker('paper.view.start', $self, $topicInfo, $para);
 
 	if ($topicInfo->info->module) {
-		R::manifest($topicInfo->info->module);
+		\R::manifest($topicInfo->info->module);
 	}
 
 	// Prepare paper content
 	$body = object_merge(
 		$body,
-		R::view('paper.content.prepare', $topicInfo, $para)
+		\R::view('paper.content.prepare', $topicInfo, $para)
 	);
 
 	// do external view from module
 	if ($topicInfo->info->module) {
 		// do external view from file on.module.paper.view
-		$onViewResult = R::on(
+		$onViewResult = \R::on(
 			$topicInfo->info->module . '.paper.view',
 			$self,
 			$topicInfo,
@@ -472,7 +472,9 @@ function paper_view($self, $tpid = null) {
 	}
 
 	// set user menu to theme
-	$self->theme->navigator = user_menu();
+	if ($self->theme->option->ribbon) {
+		$self->theme->navigator = user_menu();
+	}
 
 	if ($topicInfo->archived) {
 		unset($body->comment_form);

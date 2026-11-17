@@ -1,20 +1,17 @@
 <?php
 /**
- * Admin   :: Admin Ban API
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2024-07-08
- * Modify  :: 2025-12-29
- * Version :: 4
+ * Admin    :: Admin Ban API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2024-07-08
+ * Modified :: 2026-11-17
+ * Version  :: 5
  *
- * @param String $action
- * @return Array
+ * @param string $action
  *
- * @usage api/admin/ban/{action}
+ * @uses api/admin/ban/{action}
  */
 
 class AdminBanApi extends PageApi {
-	public $action;
-
 	function __construct($action) {
 		parent::__construct([
 			'action' => $action

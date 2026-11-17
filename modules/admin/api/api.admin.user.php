@@ -3,8 +3,8 @@
  * Admin    :: Admin User API
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-10-22
- * Modified :: 2026-11-16
- * Version  :: 9
+ * Modified :: 2026-11-17
+ * Version  :: 10
  *
  * @param int $userId
  * @param string $action
@@ -16,7 +16,6 @@ use Softganz\DB;
 
 class AdminUserApi extends PageApi {
 	public $userId;
-	public $action;
 
 	function __construct($userId, $action) {
 		parent::__construct([

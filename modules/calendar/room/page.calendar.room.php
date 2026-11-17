@@ -1,20 +1,19 @@
 <?php
 /**
  * Calendar :: Page Controller
+ * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-08-03
- * Modified :: 2026-06-01
- * Version  :: 4
+ * Modified :: 2026-11-17
+ * Version  :: 5
  *
- * @param Int $resvId
- * @param String $action
- * @return Widget
+ * @param int $resvId
+ * @param string $action
  *
  * @uses calendar/room/[/{resvId}/{action}/{tranId}]
  */
 
 class CalendarRoom extends PageController {
 	public $resvId;
-	public $action;
 
 	function __construct($resvId = null, $action = null) {
 		if (empty($resvId) && empty($action)) {
@@ -163,5 +162,6 @@ class CalendarRoom extends PageController {
  	//$ret .= print_o($calendarInfo, '$calendarInfo');
  	return $ret;
  }
+
 
 ?>

@@ -3,8 +3,8 @@
  * Paper    :: Info API
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-23
- * Modified :: 2025-06-25
- * Version  :: 22
+ * Modified :: 2026-11-17
+ * Version  :: 23
  *
  * @param int $nodeId
  * @param string $action
@@ -19,7 +19,6 @@ use Softganz\DB;
 class PaperApi extends PageApi {
 	public $actionDefault = 'detail';
 	public $nodeId;
-	public $action;
 	public $tranId;
 	public $right;
 	public $nodeInfo;

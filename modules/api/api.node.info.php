@@ -1,23 +1,22 @@
 <?php
 /**
- * Node    :: Node Info API
- * Created :: 2023-07-26
- * Modify  :: 2025-02-25
- * Version :: 2
+ * Node     :: Node Info API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-07-26
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param Int $nodeId
- * @param String $action
- * @param Int $tranId
- * @return Array/Object
+ * @param int $nodeId
+ * @param string $action
+ * @param int $tranId
  *
- * @usage api/node/info/{nodeId}/{action}[/{tranId}]
+ * @uses api/node/info/{nodeId}/{action}[/{tranId}]
  */
 
 use Softganz\DB;
 
 class NodeInfoApi extends PageApi {
 	public $nodeId;
-	public $action;
 	public $tranId;
 
 	function __construct($nodeId = null, $action = null, $tranId = null) {

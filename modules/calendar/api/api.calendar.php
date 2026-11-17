@@ -1,23 +1,22 @@
 <?php
 /**
- * Calendar:: API
- * Created :: 2025-07-19
- * Modify  :: 2025-07-22
- * Version :: 2
+ * Calendar :: API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-07-19
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param Int $calendarId
- * @param String $action
- * @param Int $tranId
- * @return Array/Object
+ * @param int $calendarId
+ * @param string $action
+ * @param int $tranId
  *
- *  @usage api/module/{Id}/{action}[/{tranId}]
+ *  @uses api/module/{Id}/{action}[/{tranId}]
  */
 
 use Softganz\DB;
 
 class CalendarApi extends PageApi {
 	public $calendarId;
-	public $action;
 	public $tranId;
 	public $actionDefault;
 

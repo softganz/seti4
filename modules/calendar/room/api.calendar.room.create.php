@@ -1,21 +1,20 @@
 <?php
 /**
- * Module  :: Description
- * Created :: 2022-12-05
- * Modify  :: 2022-12-05
- * Version :: 1
+ * Calendar :: Room Created API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-12-05
+ * Modified :: 2026-11-17
+ * Version  :: 2
  *
- * @param Int $mainId
- * @param String $action
- * @param Int $tranId
- * @return String
+ * @param int $mainId
+ * @param string $action
+ * @param int $tranId
  *
- * @usage module/api/{id}/{action}[/{tranId}]
+ * @uses module/api/{id}/{action}[/{tranId}]
  */
 
 class CalendarRoomCreateApi extends PageApi {
 	public $mainId;
-	public $action;
 	public $tranId;
 
 	function __construct() {

@@ -1,22 +1,20 @@
 <?php
 /**
- * System  :: System API
- * Author  :: Little Bear<softganz@gmail.com>
- * Created :: 2025-02-25
- * Modify  :: 2025-12-29
- * Version :: 2
+ * System   :: System API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-02-25
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
- * @param String $action
- * @param Int $tranId
- * @return String
+ * @param string $action
+ * @param int $tranId
  *
- * @usage api/system/issue/{action}[/{tranId}]
+ * @uses api/system/issue/{action}[/{tranId}]
  */
 
 use Softganz\DB;
 
 class SystemIssueApi extends PageApi {
-	public $action;
 	public $tranId;
 	public $right;
 

@@ -1,19 +1,17 @@
 <?php
 /**
- * Paper   :: Get Node List
- * Created :: 2023-02-04
- * Modify  :: 2024-09-24
- * Version :: 3
+ * Paper    :: Get Node List
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-02-04
+ * Modified :: 2026-11-17
+ * Version  :: 4
  *
- * @return Object
- *
- * @usage api/paper/items
+ * @uses api/paper/items
  */
 
 import('model:node.php');
 
 class PaperItemsApi extends PageApi {
-	public $action;
 	public $type;
 	public $tag;
 	public $page = 1;

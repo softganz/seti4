@@ -3,12 +3,11 @@
  * Person   :: Person Info Api
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-09-28
- * Modified :: 2026-08-23
- * Version  :: 3
+ * Modified :: 2026-11-17
+ * Version  :: 4
  *
- * @param Int $psnId
- * @param String $action
- * @return Object
+ * @param int $psnId
+ * @param string $action
  *
  * @uses api/person/info/{psnId}/{action}
  */
@@ -17,7 +16,6 @@ use Softganz\DB;
 
 class PersonInfoApi extends PageApi {
 	public $psnId;
-	public $action;
 	public $right;
 
 	function __construct($psnId = null, $action = null) {
