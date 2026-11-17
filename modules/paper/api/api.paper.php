@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-23
  * Modified :: 2026-11-17
- * Version  :: 23
+ * Version  :: 24
  *
  * @param int $nodeId
  * @param string $action
@@ -17,7 +17,7 @@ use Paper\Model\PaperModel;
 use Softganz\DB;
 
 class PaperApi extends PageApi {
-	public $actionDefault = 'detail';
+	protected ?string $actionDefault = 'detail';
 	public $nodeId;
 	public $tranId;
 	public $right;

@@ -3,8 +3,8 @@
  * My       :: My Information API
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-11
- * Modified :: 2026-11-15
- * Version  :: 8
+ * Modified :: 2026-11-17
+ * Version  :: 9
  *
  * @param string $action
  *
@@ -12,7 +12,7 @@
  */
 
 class MyApi extends PageApi {
-	public $actionDefault = 'info';
+	protected ?string $actionDefault = 'info';
 
 	function __construct(?string $action = null) {
 		parent::__construct([

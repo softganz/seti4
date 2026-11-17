@@ -1,21 +1,20 @@
 <?php
 /**
- * API     :: Tags API
- * Created :: 2022-11-19
- * Modify  :: 2024-05-15
- * Version :: 4
+ * API      :: Tags API
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2022-11-19
+ * Modified :: 2026-11-17
+ * Version  :: 5
  *
- * @return String/Array
- *
- * @usage api/tag/{action}/{id}?input=tagString
+ * @uses api/tag/{action}/{id}?input=tagString
  */
 
 use Softganz\DB;
 
 class TagApi extends PageApi {
+	protected ?string $actionDefault = 'items';
 	public $id;
 	public $input;
-	public $actionDefault = 'items';
 
 	function __construct($action = null, $id = null) {
 		parent::__construct([

@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-17
- * Version  :: 123
+ * Version  :: 124
  *
  * @uses new Widget([key => value,...])
  */
@@ -1259,8 +1259,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-		// . '<span class="-grip-header">'
-			. $this->renderChildren([$header]); // . '</span>'
+			. // . '<span class="-grip-header">'
+			$this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -2514,7 +2514,7 @@ class PageApi extends PageBase {
 	protected string $widgetName = 'PageApi';
 	protected string $version = '0.0.01';
 	private $runInternalMethod = true;
-	protected $actionDefault = null;
+	protected ?string $actionDefault = null;
 	protected $action = null;
 	private $actionMethod;
 	protected $args = [];

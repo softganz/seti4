@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-19
  * Modified :: 2026-11-17
- * Version  :: 3
+ * Version  :: 4
  *
  * @param int $calendarId
  * @param string $action
@@ -18,7 +18,6 @@ use Softganz\DB;
 class CalendarApi extends PageApi {
 	public $calendarId;
 	public $tranId;
-	public $actionDefault;
 
 	function __construct($calendarId = null, $action = null, $tranId = null) {
 		parent::__construct([
