@@ -3,10 +3,8 @@
  * Admin    :: Page
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-08-21
- * Modified :: 2026-11-03
- * Version  :: 2
- *
- * @param string $args
+ * Modified :: 2026-11-17
+ * Version  :: 3
  *
  * @uses admin/site/upgrade/utf8mb4
  */
@@ -14,12 +12,8 @@
 use Softganz\DB;
 
 class AdminSiteUpgradeUtf8mb4 extends Page {
-	public $args;
-
-	function __construct($args = null) {
-		parent::__construct([
-			'args' => $args
-		]);
+	function __construct() {
+		parent::__construct();
 	}
 
 	/**

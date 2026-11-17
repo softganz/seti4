@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-17
- * Version  :: 124
+ * Version  :: 125
  *
  * @uses new Widget([key => value,...])
  */
@@ -1259,8 +1259,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-			. // . '<span class="-grip-header">'
-			$this->renderChildren([$header]); // . '</span>'
+		// . '<span class="-grip-header">'
+			. $this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -2436,7 +2436,6 @@ class PageBase extends WidgetBase {
 	protected string $widgetName = 'PageBase';
 	protected string $version = '0.0.01';
 	public $module = null;
-	protected $args = [];
 
 	function __construct($args = []) {
 		$this->widgetName = get_class($this);
@@ -2517,7 +2516,7 @@ class PageApi extends PageBase {
 	protected ?string $action = null;
 	private bool $runInternalMethod = true;
 	private ?string $actionMethod = null;
-	protected $args = [];
+	protected array $args = [];
 
 	function __construct($args = []) {
 		$this->args = $args;
@@ -2591,8 +2590,8 @@ class PageController extends PageBase {
 	protected string $widgetName = 'PageController';
 	protected string $version = '0.0.01';
 	protected ?string $action = null;
-	public $argIndex = 2;
-	public $args = [];
+	protected int $argIndex = 2;
+	protected array $args = [];
 	public $info;
 
 	function __construct($args = []) {

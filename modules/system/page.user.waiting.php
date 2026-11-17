@@ -4,16 +4,12 @@
  * Author  :: Little Bear<softganz@gmail.com>
  * Created :: 2026-05-01
  * Modify  :: 2026-05-01
- * Version :: 1
+ * Version :: 2
  *
- * @return Widget
- *
- * @usage user/waiting
+ * @uses user/waiting
  */
 
 class UserWaiting extends Page {
-	public $args;
-
 	#[\Override]
 	function build() {
 		return new Scaffold([
