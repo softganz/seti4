@@ -12,25 +12,32 @@
 use Softganz\DB;
 
 class ChangwatModel {
-	public static function items($conditions = NULL, $options = '{}') {
-		$defaults = '{debug: false, result: "record", zone: "changwat", selectText: null}';
+	public static function items($conditions = null, $options = '{}') {
+		$defaults =
+			'{debug: false, result: "record", zone: "changwat", selectText: null}';
 
-		if (is_string($conditions) && preg_match('/^{/',$conditions)) {
+		if (is_string($conditions) && preg_match('/^{/', $conditions)) {
 			$conditions = \SG\json_decode($conditions);
-		} else if (is_object($conditions)) {
+		} elseif (is_object($conditions)) {
 			//
-		} else if (is_array($conditions)) {
-			$conditions = (Object) $conditions;
+		} elseif (is_array($conditions)) {
+			$conditions = (object) $conditions;
 		} else {
-			$conditions = (Object) ['id' => $conditions];
+			$conditions = (object) ['id' => $conditions];
 		}
 
-		$options = SG\json_decode($conditions->options, $options, $defaults);
+		$options = SG\json_decode(
+			$conditions->options ?? '{}',
+			$options,
+			$defaults
+		);
 		$debug = $options->debug;
 		// debugMsg($options, '$options');
 
 		$result = [];
-		if ($options->selectText) $result[-1] = $options->selectText;
+		if ($options->selectText) {
+			$result[-1] = $options->selectText;
+		}
 
 		$changwatList = DB::select([
 			'SELECT `provid`, `provname`
@@ -38,7 +45,9 @@ class ChangwatModel {
 			%WHERE%
 			ORDER BY CONVERT(`provname` USING tis620) ASC',
 			'%WHERE%' => [
-				$conditions->idLike ? ['`provId` LIKE :idLike', ':idLike' => $conditions->idLike.'%'] : null
+				!empty($conditions->idLike)
+					? ['`provId` LIKE :idLike', ':idLike' => $conditions->idLike . '%']
+					: null
 			]
 		])->items;
 
@@ -48,14 +57,14 @@ class ChangwatModel {
 					// 'ASIAN' => '++ อาเซียน',
 					'SEA' => '++ เอเชียตะวันออกเฉียงใต้ (South East Asia)',
 					'ASIA' => '++ ทวีปเอเชีย (Asia)',
-					'EU' => '++ ทวีปยุโรป (Europe)',
+					'EU' => '++ ทวีปยุโรป (Europe)'
 				],
 				'TH' => '++ ทั้งประเทศ',
 				'ระดับภาค' => [
 					1 => '++ ภาคกลาง',
 					3 => '++ ภาคตะวันออกเฉียงเหนือ',
 					5 => '++ ภาคเหนือ',
-					8 => '++ ภาคใต้',
+					8 => '++ ภาคใต้'
 				]
 			];
 		}
@@ -73,7 +82,9 @@ class ChangwatModel {
 
 	// Get changwat, ampur, tombon name from areacode
 	public static function getNameFromAreaCode($areacode) {
-		if (empty($areacode)) return;
+		if (empty($areacode)) {
+			return;
+		}
 
 		$areaName = DB::select([
 			'SELECT
@@ -91,7 +102,7 @@ class ChangwatModel {
 			'var' => [
 				':changwatId' => substr($areacode, 0, 2),
 				':ampurId' => substr($areacode, 0, 4),
-				':tambonId' => substr($areacode, 0, 6),
+				':tambonId' => substr($areacode, 0, 6)
 			]
 		])->areaName;
 
@@ -101,7 +112,9 @@ class ChangwatModel {
 
 class AmpurModel {
 	public static function inChangwat($changwat) {
-		if (empty($changwat)) return [];
+		if (empty($changwat)) {
+			return [];
+		}
 
 		return DB::select([
 			'SELECT `distid`, `distname`
