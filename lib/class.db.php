@@ -3,8 +3,8 @@
  * DB       :: Database Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-28
- * Modified :: 2026-11-07
- * Version  :: 63
+ * Modified :: 2026-11-18
+ * Version  :: 64
  *
  * @param array $args
  * @return object
@@ -314,9 +314,7 @@ class DB {
 		?bool $showResult = null,
 		mixed $onComplete = null
 	): array {
-		if (is_string($args)) {
-			$args = [$args];
-		}
+		$args = is_string($args) ? [$args] : (array) $args;
 		if ($sql !== null) {
 			$args[0] = $sql;
 		}
@@ -351,9 +349,9 @@ class DB {
 
 		// Merge options from $args[options] and named argument
 		$args['options'] = array_replace(
+			$namedOptions ?? [],
 			$args['options'] ?? [],
-			$options ?? [],
-			$namedOptions ?? []
+			$options ?? []
 		);
 
 		return $args;
