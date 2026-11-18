@@ -3,10 +3,8 @@
  * Watchdog :: Analysis
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-01-01
- * Modified :: 2026-08-24
- * Version  :: 7
- *
- * @return Widget
+ * Modified :: 2026-11-18
+ * Version  :: 8
  *
  * @uses watchdog/analysis
  */
@@ -14,7 +12,6 @@
 use Softganz\DB;
 
 class WatchdogAnalysis extends Page {
-	public $module;
 	public $keyword;
 	public $userId;
 	public $keyId;

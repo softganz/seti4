@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-22-18
- * Version  :: 129
+ * Version  :: 130
  *
  * @uses new Widget([key => value,...])
  */
@@ -2435,7 +2435,7 @@ class AppBar extends Widget {
 class PageBase extends WidgetBase {
 	protected string $widgetName = 'PageBase';
 	protected string $version = '0.0.01';
-	public $module = null;
+	protected ?string $module = null;
 
 	function __construct($args = []) {
 		$this->widgetName = get_class($this);

@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-03-06
  * Modified :: 2026-22-18
- * Version  :: 8
+ * Version  :: 9
  *
  * @param object $calendarInfo
  *
@@ -15,7 +15,6 @@ use Softganz\DB;
 
 class CalendarView extends Page {
 	public $calendarId;
-	public $module;
 	public $calendarInfo;
 
 	function __construct($calendarInfo = null) {

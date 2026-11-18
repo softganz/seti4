@@ -1,14 +1,14 @@
 <?php
 /**
- * Calendar:: Page
- * Created :: 2007-03-06
- * Modify  :: 2025-07-22
- * Version :: 3
+ * Calendar :: Page
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2007-03-06
+ * Modified :: 2026-11-18
+ * Version  :: 4
  *
- * @param String $args
- * @return Widget
+ * @param string $action
  *
- * @usage calendar
+ * @uses calendar
  * @example
  *  $_REQUEST
  *  cat = category
@@ -27,6 +27,7 @@ class CalendarHome extends Page {
 	public $orgId;
 
 	function __construct($action = null) {
+		$action = (string) $action->scalar;
 		parent::__construct([
 			'url' => url('calendar'),
 			'year' => SG\getFirstInt(Request::all('year'), date('Y')), // 2025

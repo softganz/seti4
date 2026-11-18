@@ -1,21 +1,19 @@
 <?php
 /**
- * Calendar:: Delete Calendar Page
- * Created :: 2007-03-06
- * Modify  :: 2025-07-19
- * Version :: 2
+ * Calendar :: Delete Calendar Page
+ * Created  :: 2007-03-06
+ * Modified :: 2026-11-18
+ * Version  :: 3
  *
- * @param String $calendarInfo
- * @return Widget
+ * @param string $calendarInfo
  *
- * @usage calendar/{calendarId}/delete
+ * @uses calendar/{calendarId}/delete
  */
 
 use Softganz\DB;
 
 class CalendarDelete extends Page {
 	public $calendarId;
-	public $module;
 	public $calendarInfo;
 
 	function __construct($calendarInfo = null) {
