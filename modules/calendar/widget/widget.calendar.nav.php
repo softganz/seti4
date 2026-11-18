@@ -1,19 +1,19 @@
 <?php
 /**
- * Calendar:: Navigator Widget
- * Created :: 2025-07-19
- * Modify  :: 2025-07-19
- * Version :: 2
+ * Calendar :: Navigator Widget
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2025-07-19
+ * Modified :: 2026-11-18
+ * Version  :: 3
  *
- * @param Array $calendarInfo
- * @return Object
+ * @param object $calendarInfo
  *
- * @usage import('widget:calendar.nav.widget.php')
- * @usage new CalendarNavWidgetl([])
+ * @uses import('widget:calendar.nav.widget.php')
+ * @uses new CalendarNavWidgetl([])
  */
 
 class CalendarNavWidget extends Widget {
-	function __construct($calendarInfo = NULL) {
+	function __construct($calendarInfo = null) {
 		parent::__construct();
 	}
 
@@ -32,7 +32,7 @@ class CalendarNavWidget extends Widget {
 				new Button([
 					'type' => 'link',
 					'class' => '-today',
-					'href' => url('calendar',NULL,'today'),
+					'href' => url('calendar', null, 'today'),
 					'title' => 'Today',
 					'text' => tr('Today')
 				]), // Today button
@@ -40,13 +40,13 @@ class CalendarNavWidget extends Widget {
 				new Button([
 					'type' => 'link',
 					'class' => '-prev',
-					'href' => url('calendar',NULL,'prev'),
+					'href' => url('calendar', null, 'prev'),
 					'icon' => new Icon('navigate_before')
 				]), // Previous button
 				new Button([
 					'type' => 'link',
 					'class' => '-next',
-					'href' => url('calendar',NULL,'next'),
+					'href' => url('calendar', null, 'next'),
 					'icon' => new Icon('navigate_next')
 				]), // Next button
 
@@ -54,63 +54,60 @@ class CalendarNavWidget extends Widget {
 					'type' => 'link',
 					'id' => 'calendar-current-month',
 					'class' => '-current-month',
-					'text' => '<strong>'.sg_date('ดดด ปปปป').'</strong>',
+					'text' => '<strong>' . sg_date('ดดด ปปปป') . '</strong>'
 				]), // Current month display
 
 				new Button([
 					'type' => 'link',
 					'class' => '-list -day',
-					'href' => url('calendar',NULL,'day'),
+					'href' => url('calendar', null, 'day'),
 					'title' => 'Day',
 					'text' => tr('Day')
 				]), // Day view button
 				new Button([
 					'type' => 'link',
 					'class' => '-list -week',
-					'href' => url('calendar',NULL,'week'),
+					'href' => url('calendar', null, 'week'),
 					'title' => 'Week',
 					'text' => tr('Week')
 				]), // Week view button
 				new Button([
 					'type' => 'link',
 					'class' => '-list -month',
-					'href' => url('calendar',NULL,'month'),
+					'href' => url('calendar', null, 'month'),
 					'title' => 'Month',
 					'text' => tr('Month')
 				]), // Month view button
 				new Button([
 					'type' => 'link',
 					'class' => '-list -day7',
-					'href' => url('calendar',NULL,'next7day'),
+					'href' => url('calendar', null, 'next7day'),
 					'title' => 'Next 7 days',
-					'text' => tr('Next 7 days','7 วัน')
+					'text' => tr('Next 7 days', '7 วัน')
 				]), // Next 7 days button
 				new Button([
 					'type' => 'link',
 					'class' => '-list -year',
-					'href' => url('calendar',NULL,'year'),
+					'href' => url('calendar', null, 'year'),
 					'title' => 'Year',
-					'text' => tr('Year','ปี')
+					'text' => tr('Year', 'ปี')
 				]), // Year view button
 				new Button([
 					'type' => 'link',
 					'class' => '-list -agenda',
-					'href' => url('calendar',NULL,'agenda'),
+					'href' => url('calendar', null, 'agenda'),
 					'title' => 'Agenda',
-					'text' => tr('Agenda','แผนงาน')
+					'text' => tr('Agenda', 'แผนงาน')
 				]), // Agenda view button
 
 				// Add Refresh link when delete complete, will refresh current month
 				new Button([
 					'type' => 'link',
 					'class' => '-list -refresh',
-					'href' => url('calendar',NULL,'refresh'),
+					'href' => url('calendar', null, 'refresh'),
 					'title' => 'Refresh',
-					'icon' => new Icon('refresh'),
-				]), // Refresh button
-
-
-
+					'icon' => new Icon('refresh')
+				]) // Refresh button
 
 				// // Show calendar room reservation menu
 				// if (property('calendar.room:title') && user_access('access calendar rooms')) {
@@ -127,11 +124,10 @@ class CalendarNavWidget extends Widget {
 				// 		}
 				// 	}
 				// }
-			], // children
+			] // children
 		]);
 
-		return new Widget([
-		]);
+		return new Widget([]);
 	}
 }
 ?>

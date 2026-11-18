@@ -3,11 +3,8 @@
  * Calendar :: Calendar Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-15
- * Modified :: 2026-10-05
- * Version  :: 5
- *
- * @param Array $args
- * @return Object
+ * Modified :: 2026-11-18
+ * Version  :: 6
  *
  * @uses new CalendarModel([])
  * @uses CalendarModel::function($conditions, $options)
@@ -85,7 +82,7 @@ class CalendarModel {
 					mydb::where(null, ':orgId', 'SET:' . str_replace(':', ',', $out[2]));
 				}
 			}
-			mydb::where('(' . implode(' OR ', $conditions) . ')', $whereValue);
+			mydb::where('(' . implode(' OR ', $conditions) . ')');
 		} elseif (!empty($args->orgId)) {
 			mydb::where(
 				'(c.`orgId` = :orgId OR t.`orgId` = :orgId)',
@@ -163,7 +160,7 @@ class CalendarModel {
 
 		//if ($args->main) mydb::where('c.`tpid` IS NULL');
 
-		if ($args->callFrom === 'project') {
+		if (!empty($args->callFrom) && $args->callFrom === 'project') {
 			$joins[] =
 				'LEFT JOIN %project_tr% `activity` ON `activity`.`formId` = "info" AND `activity`.`part` = "activity" AND `activity`.`calId` = `c`.`id`';
 			mydb::where(

@@ -3,8 +3,8 @@
  * Calendar :: Page Controller
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-03-06
- * Modified :: 2026-11-17
- * Version  :: 3
+ * Modified :: 2026-11-18
+ * Version  :: 4
  *
  * @param int $calendarId or *,t:13259 to all include node 13259
  * @param string $action
@@ -28,17 +28,18 @@ class calendar extends PageController {
 		}
 
 		parent::__construct([
-			'calendarId' => $calendarId,
+			'calendarId' => $calendarId ?? null,
 			'action' => 'calendar.' . $action,
 			'args' => func_get_args(),
-			'info' => is_numeric($calendarId)
-				? CalendarModel::getById($calendarId)
-				: null
+			'info' =>
+				!empty($calendarId) && is_numeric($calendarId)
+					? CalendarModel::getById($calendarId)
+					: null
 		]);
 
 		// Send get parameter to hom
 		if ($get) {
-			$this->info = $get;
+			$this->info = (object) $get;
 		}
 	}
 

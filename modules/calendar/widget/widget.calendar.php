@@ -3,8 +3,8 @@
  * Calendar :: Calcendr Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-20
- * Modified :: 2026-11-13
- * Version  :: 13
+ * Modified :: 2026-11-18
+ * Version  :: 14
  *
  * @uses import('widget:calendar.widget.php')
  * @uses new CalendarWidgetl([])
@@ -324,7 +324,7 @@ class CalendarWidget extends Widget {
 				. ($even_title_field != 'title' ? ':' . $calendar['title'] : '')
 			: $calendar['title'];
 		$eventTitle = $calendar['title'];
-		if ($calendar['category_name']) {
+		if (!empty($calendar['category_name'])) {
 			$eventTitle .= ' (' . $calendar['category_name'] . ')';
 		}
 		$eventDetail = ' วัน' . sg_date($calendar['from_date'], 'ววว ว ดดด ปปปป');
@@ -345,7 +345,7 @@ class CalendarWidget extends Widget {
 		$eventTitle = htmlspecialchars($eventTitle);
 		$eventDetail = htmlspecialchars($eventDetail);
 
-		$ret .=
+		$ret =
 			'<div id="reldiv'
 			. $calendar['id']
 			. '" '
