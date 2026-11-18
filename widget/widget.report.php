@@ -3,8 +3,8 @@
  * Widget   :: Report Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-13
- * Version  :: 21
+ * Modified :: 2026-22-18
+ * Version  :: 22
  *
  * @uses new Report([])
  */
@@ -206,7 +206,7 @@ class Report extends Widget {
 				. $this->graphType
 				. '" />',
 				'<input type="hidden" name="metric" id="metric" value="" />',
-				new Children(['children' => (array) $this->input]),
+				new Children(children: (array) $this->input),
 				// ...$this->input, // error on php 7.2
 				$this->showPage
 					? '<input id="page" type="hidden" name="page" value="" />'

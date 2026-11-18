@@ -3,11 +3,10 @@
  * Calendar :: View
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-03-06
- * Modified :: 2026-08-23
- * Version  :: 7
+ * Modified :: 2026-22-18
+ * Version  :: 8
  *
- * @param String $calendarInfo
- * @return Widget
+ * @param object $calendarInfo
  *
  * @uses calendar/{calendarId}
  */
@@ -64,8 +63,8 @@ class CalendarView extends Page {
 					'children' => [
 						'<a id="calendar-back" class="sg-action btn -link" title="กลับสู่หน้าปฏิทิน" data-rel="close"><i class="icon -material">navigate_before</i><span>BACK</span></a>',
 						$isEdit
-							? new Children([
-								'children' => [
+							? new Children(
+								children: [
 									'<a id="calendar-edit" class="sg-action btn -link" href="'
 									. url('calendar/form', [
 										'calendarId' => $this->calendarInfo->calId,
@@ -91,7 +90,7 @@ class CalendarView extends Page {
 											'icon' => new Icon('delete')
 										])
 								] // children
-							])
+							)
 							: null, // Edit button if user has permission
 
 						module_install('project') && $this->calendarInfo->nodeId

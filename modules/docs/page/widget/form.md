@@ -10,7 +10,7 @@
 
 ##Class constructor
 
-```php
+````php
 new Form([
 	String id,
 	String class,
@@ -50,8 +50,8 @@ attribute ↔ Array[
 <p>Text child:</p>
 
 ```php
-	
-```
+
+````
 
 ###Children type array
 
@@ -88,14 +88,14 @@ onEnter
 
 ```php
 'children' => [
-	new Children([
-	'children' => [
+	new Children(
+	children: [
 		inputName => [
 			...
 		]
 		...
 	]
-])
+)
 	...
 ]
 ```

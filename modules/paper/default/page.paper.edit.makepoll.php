@@ -1,14 +1,14 @@
 <?php
 /**
- * Paper   :: Make Paper as Poll
- * Created :: 2019-06-02
- * Modify  :: 2025-06-25
- * Version :: 4
+ * Paper    :: Make Paper as Poll
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-06-02
+ * Modified :: 2026-22-18
+ * Version  :: 5
  *
- * @param String $topicInfo
- * @return Widget
+ * @param object $topicInfo
  *
- * @usage paper/{Id}/edit.makepoll
+ * @uses paper/{Id}/edit.makepoll
  */
 
 use Softganz\DB;
@@ -50,8 +50,8 @@ class PaperEditMakepoll extends Page {
 				'action' => url('api/paper/' . $this->nodeId . '/poll.update'),
 				'id' => 'edit-topic',
 				'children' => [
-					new Children([
-						'children' => (function () {
+					new Children(
+						children: (function () {
 							$polls = [];
 							$pollAnswer = DB::select([
 								'SELECT * FROM %poll_choice% WHERE `tpid` = :tpid ORDER BY `choice` ASC',
@@ -72,7 +72,7 @@ class PaperEditMakepoll extends Page {
 							// debugMsg($polls, '$polls');
 							return $polls;
 						})()
-					]),
+					),
 					'save' => [
 						'type' => 'button',
 						'value' =>

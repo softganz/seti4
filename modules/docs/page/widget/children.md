@@ -10,11 +10,12 @@
 
 <h4>Class constructor</h4>
 <code>
-new Children([
+new Children(
+	String $tagName,
 	String id,
 	String class,
 	Array children,
-]);
+);
 </code>
 
 <a name="Property"></a>

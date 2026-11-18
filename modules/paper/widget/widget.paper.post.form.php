@@ -3,11 +3,10 @@
  * Paper    :: Post Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-06-10
- * Modified :: 2026-08-17
- * Version  :: 7
+ * Modified :: 2026-22-18
+ * Version  :: 8
  *
- * @param Array $topic
- * @return Object
+ * @param array $topic
  *
  * @uses new PaperPostFormWidgetl([])
  */
@@ -150,8 +149,8 @@ class PaperPostFormWidget extends Widget {
 						]
 						: null,
 
-				'tabs' => new Children([
-					'children' => [
+				'tabs' => new Children(
+					children: [
 						'tabs_start' =>
 							'<div class="widget-tabbar sg-tabs"><ul class="tabs tabs_input">',
 						'tabs_1' =>
@@ -317,7 +316,7 @@ class PaperPostFormWidget extends Widget {
 
 						'tabs_end' => '</div>'
 					] // children
-				]), // Children
+				), // Children
 
 				'submit' => [
 					'type' => 'button',

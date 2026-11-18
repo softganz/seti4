@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-17
- * Version  :: 126
+ * Modified :: 2026-22-18
+ * Version  :: 128
  *
  * @uses new Widget([key => value,...])
  */
@@ -55,7 +55,7 @@ class WidgetBase {
  * Widget for children group
  *
  * @param array $args
- * @uses new Children([key => value,...])
+ * @uses new Children(key: value,...)
  */
 class Children extends WidgetBase {
 	protected string $widgetName = 'Children';
