@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-22-18
- * Version  :: 128
+ * Version  :: 129
  *
  * @uses new Widget([key => value,...])
  */
@@ -60,7 +60,7 @@ class WidgetBase {
 class Children extends WidgetBase {
 	protected string $widgetName = 'Children';
 	protected string $version = '0.0.01';
-	public ?string $type = null;
+	public ?string $tagName = null;
 	public ?array $children = [];
 	function __construct(
 		$args = [],
