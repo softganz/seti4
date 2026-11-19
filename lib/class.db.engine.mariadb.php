@@ -6,8 +6,8 @@
  *
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2026-11-03
- * Modified :: 2026-11-07
- * Version  :: 5
+ * Modified :: 2026-11-19
+ * Version  :: 6
  */
 
 declare(strict_types=1);
@@ -373,7 +373,7 @@ class MariaDbEngine implements DbEngineInterface {
 					$jsonDecodeResult = json_decode(
 						(string) ($value->{$jsonDecode['field']} ?? '{}')
 					);
-					if ($jsonDecode['type'] === 'merge') {
+					if (!empty($jsonDecode['type']) && $jsonDecode['type'] === 'merge') {
 						$foundField = false;
 						$before = [];
 						$after = [];
