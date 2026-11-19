@@ -3,11 +3,10 @@
  * Tags     :: List Of Tags
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2008-07-19
- * Modified :: 2026-08-24
- * Version  :: 4
+ * Modified :: 2026-11-19
+ * Version  :: 5
  *
- * @param String $tagIdList
- * @return Widget
+ * @param string $tagIdList
  *
  * @uses tags/{tagIdList}
  */
@@ -130,7 +129,7 @@ class Tags extends Page {
 			'body' => new Container([
 				'class' => 'tag-topics -style-' . $this->listStyle,
 				'children' => [
-					$pagenv->show,
+					$pagenv->show ?? null,
 					new PaperListWidget([
 						'listStyle' => $this->listStyle,
 						'url' => q(),
@@ -142,7 +141,7 @@ class Tags extends Page {
 						],
 						'children' => $topics->items
 					]),
-					$pagenv->show
+					$pagenv->show ?? null
 					// isset($GLOBALS['ad']->tags_list) ? new Container([
 					// 	'id' => 'ad-tags_list',
 					// 	'class' => 'ads',

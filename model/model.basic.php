@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * Created  :: 2007-07-09
- * Modified :: 2026-11-06
- * Version  :: 8
+ * Modified :: 2026-11-19
+ * Version  :: 9
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ class BasicModel extends Model {
 				);
 			}
 		}
-		return $types[$tid];
+		return $types[$tid] ?? null;
 	}
 
 	public static function get_category(

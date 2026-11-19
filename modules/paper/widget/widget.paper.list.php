@@ -3,8 +3,8 @@
  * Widget   :: Paper List Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-25
- * Modified :: 2026-11-12
- * Version  :: 5
+ * Modified :: 2026-11-19
+ * Version  :: 6
  *
  * @uses import('widget:paper.list.php')
  * @uses new PaperListWidget([])
@@ -57,21 +57,22 @@ class PaperListWidget extends \Widget {
 						new \Container([
 							'class' =>
 								'-timestamp'
-								. ($topic->sticky == _CATEGORY_STICKY ? ' sticky' : ''),
+								. (!empty($topic->sticky) && $topic->sticky == _CATEGORY_STICKY
+									? ' sticky'
+									: ''),
 							'child' =>
 								tr('Submitted by')
 								. ' '
 								. $topic->ownerName
 								. ' on '
 								. sg_date($topic->created, cfg('dateformat'))
-								. ($topic->tag ? ' Tags: ' . $topic->tag : '')
+								. (!empty($topic->tag) ? ' Tags: ' . $topic->tag : '')
 						]), // Container
-
 						// Show photo
 						new \Container([
 							'class' => '-photo',
 							'children' => [
-								$topic->photo->exists
+								!empty($topic->photo) && $topic->photo->exists
 									? '<a href="'
 										. url('paper/' . $topic->nodeId)
 										. '"><img class="-image -photo-'

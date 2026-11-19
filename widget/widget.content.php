@@ -3,8 +3,8 @@
  * Widget   :: Inline content Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2011-11-04
- * Modified :: 2026-11-02
- * Version  :: 5
+ * Modified :: 2026-11-19
+ * Version  :: 6
  *
  * @param Array $args
  * @param Argument list in many format
@@ -288,7 +288,7 @@ function widget_content() {
 	$no = 0;
 	$debug = SG\getFirst($para->{'option-debug'} == 'eval', debug('eval'));
 	if (
-		preg_match('/photo/', $para->{'data-field'}) &&
+		preg_match('/photo/', $para->{'data-field'} ?? '') &&
 		empty($para->{'show-photo'})
 	) {
 		$para->{'show-photo'} = 'image';
@@ -384,7 +384,7 @@ function widget_content() {
 		}
 		// $ret .= print_o($topic, '$topic');
 		/* generate each topic title */
-		if ($pattern->header) {
+		if (!empty($pattern->header) && $pattern->header) {
 			$ret .= '<' . $pattern->header . '>';
 		}
 		$ret .=
@@ -418,7 +418,7 @@ function widget_content() {
 			$ret .= $topic->title;
 		}
 		$ret .= '</a>';
-		if ($pattern->header) {
+		if (!empty($pattern->header) && $pattern->header) {
 			$ret .= '</' . $pattern->header . '>';
 		}
 

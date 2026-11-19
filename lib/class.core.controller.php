@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-15
- * Version  :: 69
+ * Modified :: 2026-11-19
+ * Version  :: 70
  */
 
 /*************************************************************
@@ -1211,7 +1211,7 @@ class SgCore {
 					? '<a href="' . $para->{'data-header-url'} . '">'
 					: '')
 				. '<span>'
-				. \SG\getFirst($para->{'data-header'}, $para->id)
+				. \SG\getFirst($para->{'data-header'} ?? null, $para->id ?? null)
 				. '</span>'
 				. ($para->{'data-header-url'} ? '</a>' : '')
 				. '</h2>'

@@ -3,8 +3,8 @@
  * Model    :: Node Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-09-30
- * Modified :: 2026-11-12
- * Version  :: 33
+ * Modified :: 2026-11-19
+ * Version  :: 34
  *
  * @uses new NodeModel([])
  * @uses NodeModel::function($conditions, $options)
@@ -113,7 +113,7 @@ class NodeModel {
 		$result->debug['CONDITIONS'] = $conditions;
 		$result->debug['OPTIONS'] = $options;
 
-		$fields = explode(',', $options->field);
+		$fields = explode(',', $options->field ?? '');
 		if (in_array('body', $fields)) {
 			$fields[] = 'detail';
 		}

@@ -1,38 +1,87 @@
 <?php
 /**
-* Draw comment list
-*
-* @param Integer $tpid
-* @param Object $para
-* @param Boolean $archive
-* @return String $ret
-*/
+ * Paper    :: Draw comment list
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 20xx-xx-xx
+ * Modified :: 2026-11-19
+ * Version  :: 2
+ *
+ * @param object $commentInfo
+ */
 
 $debug = true;
 
-function view_paper_comment_render($commentInfo = NULL) {
+function view_paper_comment_render($commentInfo = null) {
+	$ret = '';
 	if ($commentInfo->photos) {
-		foreach (explode(',',$commentInfo->photos) as $photo) {
-			$photo=BasicModel::get_photo_property($photo);
-			$photo->description='Photo : '.$commentInfo->photo.' , '.$photo->_size->width.'x'.$photo->_size->height.' pixel '.number_format($photo->_filesize).' bytes';
+		foreach (explode(',', $commentInfo->photos) as $photo) {
+			$photo = BasicModel::get_photo_property($photo);
+			$photo->description =
+				'Photo : '
+				. $commentInfo->photo
+				. ' , '
+				. $photo->_size->width
+				. 'x'
+				. $photo->_size->height
+				. ' pixel '
+				. number_format($photo->_filesize)
+				. ' bytes';
 
-			$ret .= '<div class="photo photo-'.($photo->_size->width>$photo->_size->height?'wide':'tall').'">'._NL;
-			if ($photo->_size->width>cfg('comment.photo.width')) $ret .= '<a class="sg-action" href="'.$photo->_src.'" data-rel="img" title="'.$photo->description.'">';
-			$ret .= '<img class="photo photo-'.($photo->_size->width>$photo->_size->height?'wide':'tall').'" src="'.$photo->_src.'" '.($photo->_size->width<cfg('comment.photo.width')?'style="width:'.$photo->_size->width.'px;"':'').' title="'.$photo->description.'" alt="'.$photo->description.'" />';
-			if ($photo->_size->width>cfg('comment.photo.width')) $ret .= '</a>';
-			$ret .= '</div><!--photo-->'._NL;
+			$ret .=
+				'<div class="photo photo-'
+				. ($photo->_size->width > $photo->_size->height ? 'wide' : 'tall')
+				. '">'
+				. _NL;
+			if ($photo->_size->width > cfg('comment.photo.width')) {
+				$ret .=
+					'<a class="sg-action" href="'
+					. $photo->_src
+					. '" data-rel="img" title="'
+					. $photo->description
+					. '">';
+			}
+			$ret .=
+				'<img class="photo photo-'
+				. ($photo->_size->width > $photo->_size->height ? 'wide' : 'tall')
+				. '" src="'
+				. $photo->_src
+				. '" '
+				. ($photo->_size->width < cfg('comment.photo.width')
+					? 'style="width:' . $photo->_size->width . 'px;"'
+					: '')
+				. ' title="'
+				. $photo->description
+				. '" alt="'
+				. $photo->description
+				. '" />';
+			if ($photo->_size->width > cfg('comment.photo.width')) {
+				$ret .= '</a>';
+			}
+			$ret .= '</div><!--photo-->' . _NL;
 		}
 	}
-	$ret .= '<div class="message-body '.sg_status_text($commentInfo->status).'">'._NL;
-	$ret .= sg_text2html($commentInfo->comment)._NL;
+	$ret .=
+		'<div class="message-body '
+		. sg_status_text($commentInfo->status)
+		. '">'
+		. _NL;
+	$ret .= sg_text2html($commentInfo->comment) . _NL;
 	if ($commentInfo->docs) {
-		$ret.='<h3>ไฟล์ประกอบ</h3><ul>';
-		foreach (explode(',',$commentInfo->docs) as $doc) {
-			$ret.='<li><a href="'.cfg('paper.upload.document.url').$doc.'">'.$doc.' - '.tr('Download').'</a></li>';
+		$ret .= '<h3>ไฟล์ประกอบ</h3><ul>';
+		foreach (explode(',', $commentInfo->docs) as $doc) {
+			$ret .=
+				'<li><a href="'
+				. cfg('paper.upload.document.url')
+				. $doc
+				. '">'
+				. $doc
+				. ' - '
+				. tr('Download')
+				. '</a></li>';
 		}
-		$ret.='</ul>';
+		$ret .= '</ul>';
 	}
-	$ret .= '</div><!--body-->'._NL;
+	$ret .= '</div><!--body-->' . _NL;
 	return $ret;
 }
 ?>

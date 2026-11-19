@@ -3,12 +3,11 @@
  * Paper    :: Render Paper Content
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-07-24
- * Modified :: 2026-09-19
- * Version  :: 5
+ * Modified :: 2026-11-19
+ * Version  :: 6
  *
- * @param Object $$topicInfo
- * @param Object $options
- * @return String
+ * @param object $$topicInfo
+ * @param object $options
  *
  * @uses R::view('paper.content.prepare')
  */
@@ -500,12 +499,10 @@ function view_paper_content_prepare($topicInfo, $options = '{}') {
 		if ($topicInfo->info->reply) {
 			$body->comment .= new CommentRenderWidget([
 				'node' => $topicInfo,
-				'options' => $options,
-				'archive' => $archive
+				'options' => $options
 			])
 				->build()
 				->build();
-			// R::view('paper.comment.draw',$topicInfo,$options,$archive);
 			if ($showAd && isset($GLOBALS['ad']->comment_after)) {
 				$body->comment .=
 					'<div id="ad-comment_after" class="ads">'

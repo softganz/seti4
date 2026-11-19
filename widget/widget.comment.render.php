@@ -3,10 +3,8 @@
  * Widget   :: Render Comment
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-04-06
- * Modified :: 2026-08-24
+ * Modified :: 2026-11-19
  * Version  :: 5
- *
- * @param Array $args
  *
  * @uses new CommentRenderWidget([])
  */
@@ -42,7 +40,9 @@ class CommentRenderWidget extends Widget {
 		$header = null
 	) {
 		$tpid = $topic->tpid;
-		if ($topic->comments) {
+		$ret = '';
+
+		if (isset($topic->comments)) {
 			$result = $topic->comments;
 		} else {
 			$page = \SG\getFirst($options->commentPage, 2);
@@ -213,8 +213,9 @@ class CommentRenderWidget extends Widget {
 				. $rs->cid
 				. '"></a>'
 				. _NL;
+
 			if (
-				(cfg('comment.order') == 'ASC' && $no == $result->_num_rows) ||
+				(cfg('comment.order') == 'ASC' && $no == $result->count) ||
 				(cfg('comment.order') && $no == 0)
 			) {
 				$ret .= '<a name="lastcomment"></a>' . _NL;
@@ -302,7 +303,12 @@ class CommentRenderWidget extends Widget {
 			$ret .= '</div><!--message-->' . _NL;
 			$ret .= '<div class="footer">';
 			$ret .= '<ul>';
-			if ($topic->comment == 2 && !$archive && user_access('post comments')) {
+			if (
+				!empty($topic->comment) &&
+				$topic->comment == 2 &&
+				!$archive &&
+				user_access('post comments')
+			) {
 				$ret .=
 					'<li><a class="reply" href="javascript:void(0)" onclick="window.location=\''
 					. url('paper/' . $rs->tpid . '/comment/' . $rs->cid, null, 'form')
