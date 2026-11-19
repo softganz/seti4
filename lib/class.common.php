@@ -3,8 +3,8 @@
  * core     :: Common class
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2007-07-09
- * Modified :: 2026-11-09
- * Version  :: 28
+ * Modified :: 2026-11-19
+ * Version  :: 29
  */
 
 /********************************************
@@ -477,7 +477,7 @@ class Cache {
 
 	public static function clear_expire() {
 		\DB::query(
-			'DELETE FROM %cache% WHERE expire > 0 AND expire - :ctime < 0',
+			'DELETE FROM %cache% WHERE expire > 0 AND expire < :ctime',
 			var: [':ctime' => time()]
 		);
 	}
