@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-13
- * Version  :: 62
+ * Modified :: 2026-11-18
+ * Version  :: 63
  *
  * @uses new Form([key => value,...])
  *	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, rel, done, children, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
@@ -88,7 +88,7 @@ class Form extends Widget {
 		foreach ($children as $key => $value) {
 			if (
 				is_array($value) &&
-				in_array($value['type'], ['radio', 'checkbox', 'select']) &&
+				in_array($value['type'] ?? null, ['radio', 'checkbox', 'select']) &&
 				!empty($value['options']) &&
 				!array_key_exists('choice', $value)
 			) {
