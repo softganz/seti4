@@ -1431,7 +1431,7 @@
 	&.-cross-axis-center > ul {
 		align-items: center;
 	}
-	&.-type-vertical {
+	&.-vertical {
 		flex: 1 0 100%;
 		flex-wrap: wrap;
 		flex-direction: column;
@@ -1812,7 +1812,7 @@
 		> ul {
 			gap: 8px;
 		}
-		nav.-type-vertical {
+		nav.-vertical {
 			ul > li > a {
 				padding: 2px 0 2px 16px;
 			}
@@ -1822,13 +1822,13 @@
 				font-size: 1.6rem;
 			}
 		}
-		&.-type-vertical {
+		&.-vertical {
 			flex: initial;
 			> ul > li .widget-button {
 				border-radius: 0;
 			}
 		}
-		&.-type-vertical.-icon-center {
+		&.-vertical.-icon-center {
 			.widget-button {
 				text-align: center;
 				flex-direction: column;
