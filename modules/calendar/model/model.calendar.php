@@ -3,8 +3,8 @@
  * Calendar :: Calendar Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-01-15
- * Modified :: 2026-11-18
- * Version  :: 6
+ * Modified :: 2026-10-19
+ * Version  :: 7
  *
  * @uses new CalendarModel([])
  * @uses CalendarModel::function($conditions, $options)
@@ -181,7 +181,7 @@ class CalendarModel {
 					$urole = $role;
 				}
 			}
-			if ($urole) {
+			if (!empty($urole)) {
 				$ruser = mydb::select(
 					'SELECT `uid` FROM %users% WHERE `roles` LIKE :urole; -- {reset: false}',
 					':urole',
@@ -196,7 +196,7 @@ class CalendarModel {
 			}
 			mydb::where(
 				'(c.`privacy` = "public" OR c.`owner` = :myuid)'
-					. ($role_sql ? ' OR ' . $role_sql : ''),
+					. (!empty($role_sql) ? ' OR ' . $role_sql : ''),
 				':myuid',
 				i()->uid
 			);
@@ -245,7 +245,7 @@ class CalendarModel {
 		//debugMsg('<pre>'.str_replace("\t", ' ', R('query')).'</pre>');
 
 		foreach ($dbs->items as $key => $rs) {
-			$dbs->items[$key]->options = json_decode($rs->options);
+			$dbs->items[$key]->options = json_decode($rs->options ?? '');
 		}
 
 		// if ($args->date) return [[$args->date => [$dbs->items[0]]]];

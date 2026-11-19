@@ -3,10 +3,8 @@
  * Node     :: Page
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-11
- * Modified :: 2026-07-29
- * Version  :: 14
- *
- * @param Array $args
+ * Modified :: 2026-10-19
+ * Version  :: 15
  *
  * @uses extends NodeAlbumWidget
  */
@@ -19,7 +17,7 @@ class NodeAlbumWidget extends Page {
 	public $docId;
 	public $right;
 
-	function __construct(array $args = null) {
+	function __construct(?array $args = null) {
 		parent::__construct($args);
 		unset($this->theme);
 	}
@@ -37,7 +35,7 @@ class NodeAlbumWidget extends Page {
 			'photo' => 'ภาพถ่าย'
 		];
 
-		$docs = is_callable($args['docs'])
+		$docs = is_callable($args['docs'] ?? null)
 			? $args['docs']()
 			: NodeModel::getAlbums([
 				'nodeId' => $this->nodeId,
@@ -74,7 +72,7 @@ class NodeAlbumWidget extends Page {
 								]),
 								$this->showAlbum(
 									$albumName,
-									(array) $docs[$this->tagName . $albumName]
+									(array) ($docs[$this->tagName . $albumName] ?? [])
 								)
 							]
 						]);
@@ -86,15 +84,15 @@ class NodeAlbumWidget extends Page {
 		]);
 	}
 
-	private function validAlbumName(string $albumName = null) {
+	private function validAlbumName(?string $albumName = null) {
 		return preg_match('/^[a-z0-9]{1,6}$/', $albumName);
 	}
 
-	private function getAlbumNameFromTag(string $tag = null) {
+	private function getAlbumNameFromTag(?string $tag = null) {
 		return preg_match('/\,(\w+)$/', $tag, $out) ? $out[1] : null;
 	}
 
-	function upload(array $args = null) {
+	function upload(?array $args = null) {
 		$data = $args['data']
 			? $args['data']
 			: NodeModel::getAlbum($this->docId, $this->nodeId);

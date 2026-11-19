@@ -3,8 +3,8 @@
  * Calendar :: Calcendr Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2025-07-20
- * Modified :: 2026-11-18
- * Version  :: 14
+ * Modified :: 2026-10-19
+ * Version  :: 15
  *
  * @uses import('widget:calendar.widget.php')
  * @uses new CalendarWidgetl([])
@@ -359,12 +359,12 @@ class CalendarWidget extends Widget {
 			. $eventDetail
 			. '" '
 			. 'data-color="'
-			. $calendarOptions->color
+			. ($calendarOptions->color ?? '')
 			. '" '
 			. '>';
 		$ret .=
 			'<div class="-bg"'
-			. ($calendarOptions->color
+			. (!empty($calendarOptions->color)
 				? ' style="background-color: ' . $calendarOptions->color . ';"'
 				: '')
 			. '></div>';
@@ -378,7 +378,7 @@ class CalendarWidget extends Widget {
 				'callFrom' => $this->callFrom
 			])
 			. '" '
-			. ($calendarOptions->color
+			. (!empty($calendarOptions->color)
 				? 'style="color: ' . $calendarOptions->color . ';" '
 				: '')
 			. 'data-rel="box" data-width="600" data-height="300"'

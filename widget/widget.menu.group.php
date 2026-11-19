@@ -3,10 +3,8 @@
  * Widget   :: Menu Group Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-09-07
- * Modified :: 2026-09-25
- * Version  :: 9
- *
- * @param Array $args
+ * Modified :: 2026-10-19
+ * Version  :: 10
  *
  * @uses new MenuGroupWidget([])
  */
@@ -76,6 +74,7 @@ class MenuGroupWidget extends Widget {
 				if ($this->dropbox && $this->dropbox['use']) {
 					$childrens['dropbox'] = new Dropbox([
 						'children' => (function () use ($menuItemProperty) {
+							$childrens = [];
 							foreach (explode(',', $this->dropbox['use']) as $navKey) {
 								$menuItem = (object) array_replace(
 									(array) $menuItemProperty,
