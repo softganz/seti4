@@ -3,11 +3,10 @@
  * Schema   :: Schema Model
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-09-23
- * Modified :: 2026-08-30
- * Version  :: 4
+ * Modified :: 2026-11-21
+ * Version  :: 5
  *
- * @param Array $args
- * @return Object
+ * @param string $schemaName
  *
  * @uses new SchemaModel([])
  * @uses SchemaModel::function($conditions, $options)
@@ -41,11 +40,11 @@ class SchemaModel {
 			if (!is_object($element)) {
 				continue;
 			}
-			if ($element->widget === 'Children') {
+			if (!empty($element->widget) && $element->widget === 'Children') {
 				self::addValue($element->children, $data);
 				continue;
 			}
-			if ($element->inputName) {
+			if (!empty($element->inputName)) {
 				$body[$key]->value = self::getNestedValue($data, $element->inputName);
 			}
 		}

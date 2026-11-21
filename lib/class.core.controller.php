@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-19
- * Version  :: 70
+ * Modified :: 2026-11-21
+ * Version  :: 71
  */
 
 /*************************************************************
@@ -1516,7 +1516,7 @@ class SgCore {
 			return [
 				$pageClass,
 				true,
-				message('error', 'Access denied', null, $options->signform),
+				message('error', 'Access denied', null, $options->signform ?? null),
 				null
 			];
 		}

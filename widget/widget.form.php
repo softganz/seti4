@@ -544,7 +544,7 @@ class Form extends Widget {
 			case 'text':
 			case 'number':
 			case 'date':
-			case 'time':
+			// case 'time':
 			case 'email':
 			case 'search':
 			case 'tel':

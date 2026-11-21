@@ -3,10 +3,10 @@
  * Widget   :: Page Navigator Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-09-29
- * Version  :: 4
+ * Modified :: 2026-11-21
+ * Version  :: 5
  *
- * @param Array $args
+ * @param array $args
  *
  * @uses new PageNavigator([])
  */
@@ -44,7 +44,7 @@ class PageNavigator extends Widget {
 			$this->cleanurl = $cleanurl;
 		}
 		if ($linkPara) {
-			$this->linkPara = $linkPara;
+			$this->linkPara = (array) $linkPara;
 		}
 
 		if ($this->linkPara) {
@@ -55,11 +55,10 @@ class PageNavigator extends Widget {
 			unset($this->linkPara['attr']);
 
 			if (!empty($this->linkPara['attribute']['class'])) {
-				$this->class .= trim(' ' . $this->linkPara['attribute']['class']);
+				$this->class .= trim($this->linkPara['attribute']['class']);
 				unset($this->linkPara['attribute']['class']);
 			}
 		}
-
 		$this->_make();
 	}
 
@@ -116,13 +115,13 @@ class PageNavigator extends Widget {
 	}
 
 	/** Public Property IsDisplayItem */
-	function isDisplayItem($no) {
+	function isDisplayItem(int $no) {
 		return $this->is_display_item =
 			Ceil(++$no / $this->ItemsPerPage()) == $this->CurrentPage();
 	}
 
 	/** Public Property IsOverCurrentPage */
-	function isOverCurrentPage($no) {
+	function isOverCurrentPage(int $no) {
 		return Ceil(++$no / $this->ItemsPerPage()) > $this->CurrentPage();
 	}
 

@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-22-18
- * Version  :: 130
+ * Modified :: 2026-11-21
+ * Version  :: 131
  *
  * @uses new Widget([key => value,...])
  */
@@ -35,7 +35,7 @@ class WidgetBase {
 		return preg_replace_callback(
 			self::$camelToDashRegex,
 			fn($m) => '-' . strtolower($m[1]),
-			$str
+			$str ?? ''
 		);
 	}
 
@@ -1259,8 +1259,8 @@ class SideBar extends Widget {
 		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
 		// </svg></span>
 		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-			. // . '<span class="-grip-header">'
-			$this->renderChildren([$header]); // . '</span>'
+		// . '<span class="-grip-header">'
+			. $this->renderChildren([$header]); // . '</span>'
 		// . '</span>';
 	}
 } // End of class Nav
@@ -2592,7 +2592,7 @@ class PageController extends PageBase {
 	protected ?string $action = null;
 	protected int $argIndex = 2;
 	protected array $args = [];
-	protected ?object $info = null;
+	protected mixed $info = null;
 
 	function __construct($args = []) {
 		parent::__construct($args);
