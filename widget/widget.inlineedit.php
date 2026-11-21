@@ -3,8 +3,8 @@
  * Widget   :: InlineEdit
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-12-08
- * Modified :: 2026-11-13
- * Version  :: 49
+ * Modified :: 2026-11-21
+ * Version  :: 50
  *
  * @param array $args
  *
@@ -134,7 +134,11 @@ class InlineEdit extends Widget {
 		}
 
 		if (
-			in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])
+			in_array(strtolower($child['type'] ?? ''), [
+				'widget',
+				'method',
+				'listorder'
+			])
 		) {
 			$parts = ['<span '];
 			if ($child['id']) {
@@ -269,7 +273,11 @@ class InlineEdit extends Widget {
 		if (
 			isset($child['widget']) ||
 			isset($child['method']) ||
-			in_array(strtolower($child['type']), ['widget', 'method', 'listorder'])
+			in_array(strtolower($child['type'] ?? ''), [
+				'widget',
+				'method',
+				'listorder'
+			])
 		) {
 			return '</span>';
 		}
@@ -298,12 +306,74 @@ class InlineEdit extends Widget {
 				}
 			},
 			'object' => function ($key, $widget) {
-				while (is_object($widget) && method_exists($widget, 'build')) {
-					$widget = $widget->build();
-					if (!is_object($widget)) {
-						return $widget;
+				// debugMsg($widget, '$widgetObject');
+				if (method_exists($widget, 'build')) {
+					while (is_object($widget)) {
+						if (method_exists($widget, 'build')) {
+							$widget = $widget->build();
+						}
+						// debugMsg($widget, 'build');
+						if (!is_object($widget)) {
+							return $widget;
+						}
 					}
+				} elseif (!empty($widget->widget) && $widget->widget === 'Children') {
+					$ret = '';
+					if (!empty($widget->tagName)) {
+						$ret .=
+							'<'
+							. $widget->tagName
+							. (!empty($widget->id) ? ' id="' . $widget->id . '"' : '')
+							. (!empty($widget->class)
+								? ' class="' . $widget->class . '"'
+								: '')
+							. '>';
+						foreach (
+							(array) $widget->children
+							as $childrenWidgetKey => $childrenWidgetValue
+						) {
+							// $ret .= $this->renderChildType($key, (object) $value);
+							$ret .= $this->renderEachChildWidget(
+								$childrenWidgetValue,
+								$childrenWidgetKey
+							);
+
+							// $ret .= new \DebugMsg(
+							// 	$childrenWidgetValue,
+							// 	'$childrenWidgetValue-' . $childrenWidgetKey
+							// )->build();
+							// $ret .= $this->renderChildContainerStart($key);
+							// $ret .= $this->renderEachChildWidget($value, $key);
+							// // $ret .= $this->renderChildType($key, $value);
+							// $ret .= $this->renderChildContainerEnd($key);
+						}
+					}
+					if (!empty($widget->tagName)) {
+						$ret .= '</' . $widget->tagName . '>';
+					}
+					return $ret;
+				} elseif (!empty($widget->widget)) {
+					$widgetName = $widget->widget;
+					return class_exists($widgetName)
+						? new $widgetName((array) $widget)->build()
+						: 'No widget';
+				} else {
+					return $this->renderChildContainerStart(
+						key: $key,
+						attributes: [],
+						child: (array) $widget
+					)
+						. $this->renderChildType($key, (object) $widget)
+						. $this->renderChildContainerEnd(child: (array) $widget, key: $key);
 				}
+				// while (is_object($widget) && method_exists($widget, 'build')) {
+				// 	debugMsg($widget, '$widgetObject');
+				// 	$widget = $widget->build();
+				// 	debugMsg($widget, 'build');
+				// 	if (!is_object($widget)) {
+				// 		return $widget;
+				// 	}
+				// }
 			},
 			'text' => function ($key, $text) {
 				return $text . _NL;
@@ -344,7 +414,7 @@ class InlineEdit extends Widget {
 		$text = $this->formatTextByDataType($widget, $text);
 
 		$ret = '';
-		switch (strtolower($widget->type)) {
+		switch (strtolower($widget->type ?? '')) {
 			case 'comment':
 				break;
 			case 'textfield':
