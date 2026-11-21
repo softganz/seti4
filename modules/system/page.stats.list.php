@@ -3,43 +3,45 @@
  * Stats    :: List Counter Log
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2018-12-15
- * Modified :: 2026-08-24
- * Version  :: 9
- *
- * @return Widget
+ * Modified :: 2026-11-21
+ * Version  :: 10
  *
  * @uses stats/list
  */
 
+declare(strict_types=1);
+
+namespace Stats;
+
 use Softganz\DB;
 
-class StatsList extends Page {
+class StatsList extends \Page {
 	public $id = 0;
-	public $ip;
-	public $user;
-	public $date;
-	public $url;
+	public ?string $ip = null;
+	public ?int $user = null;
+	public ?string $date = null;
+	public ?string $url = null;
+	public bool $includeBot = false;
+	public int $items = 100;
+	public int $page = 1;
 	// public $getEid;
-	public $includeBot = false;
-	public $items = 100;
-	public $page = 1;
-	public $right;
+	public object $right;
 
 	function __construct() {
 		parent::__construct([
-			'ip' => post('ip'),
-			'user' => SG\getFirstInt(post('user')),
-			'date' => post('date'),
-			'url' => post('url'),
-			'items' => ($items = SG\getFirst(post('items'), $this->items)),
-			'page' => ($page = SG\getFirst(post('page'), $this->page)),
+			'ip' => \Request::all('ip', 'int'),
+			'user' => \SG\getFirstInt(post('user')),
+			'date' => \Request::all('date', 'date'),
+			'url' => \Request::all('url'),
+			'items' => ($items = \Request::all('items', 'int', $this->items)),
+			'page' => ($page = \Request::all('page', 'int', $this->page)),
 			'id' => $this->getStartId(
-				SG\getFirstInt(post('id'), $this->id),
+				\Request::all('id', 'int', $this->id),
 				$page,
 				$items
 			),
 			// 'getEid' => post('eid'),
-			'includeBot' => post('bot'),
+			'includeBot' => \Request::all('bot', 'en', 'no') === 'yes',
 			'right' => (object) [
 				'admin' => user_access('administer contents,administer watchdogs')
 			]
@@ -50,7 +52,7 @@ class StatsList extends Page {
 		$totalItems = DB::select(['SHOW TABLE STATUS LIKE "%counter_log%"'])
 			->items[0]->Rows;
 
-		$counters = $this->data();
+		$counters = $this->getCounterData();
 
 		$pagePara = [
 			'user' => $this->user,
@@ -62,7 +64,7 @@ class StatsList extends Page {
 			'bot' => $this->includeBot
 		];
 
-		$pagenv = new PageNavigator(
+		$pagenv = new \PageNavigator(
 			$this->items,
 			$this->page,
 			$totalItems,
@@ -71,77 +73,16 @@ class StatsList extends Page {
 			$pagePara
 		);
 
-		$no = 0;
-
-		$tables = new Table([
-			'thead' => ['no' => 'no', 'Id', 'Log Date', 'User', 'IP']
-		]);
-		foreach ($counters->items as $counter) {
-			$tables->children[] = [
-				++$no,
-				'<font color=brown>' . $counter->id . '</font>',
-				'<em><font color=brown>'
-				. $counter->log_date
-				. '</font></em>'
-				. ($counter->new_user
-					? ' <i class="icon -material">new_releases</i>'
-					: ''),
-				$this->right->admin
-					? '<font color=brown><a href="'
-						. url('stats/list', ['user' => $counter->user])
-						. '" title="Statistics of user '
-						. $counter->user_name
-						. '">'
-						. $counter->user_name
-						. '</a></font>'
-					: '<font color=brown>' . $counter->user_name . '</font>',
-				$this->right->admin
-					? '<a href="'
-						. url('stats/list', ['ip' => long2ip($counter->ip)])
-						. '" title="Statistics of ip '
-						. long2ip($counter->ip)
-						. '"  data-width="full">'
-						. long2ip($counter->ip)
-						. '</a>'
-					: sg_sub_ip(long2ip($counter->ip))
-			];
-
-			$tables->children[] = [
-				'<td></td>',
-				'',
-				'<td colspan="3">'
-				. ($this->right->admin
-					? '<font color="#A7A7A7">url:</font><a href="'
-						. $counter->url
-						. '" target="_blank">'
-						. urldecode($counter->url)
-						. '</a> <a href="'
-						. url('stats/list', ['url' => $counter->url])
-						. '"><i class="icon -material">view_list</i></a><br />'
-					: '')
-				. (user_access(true)
-					? '<font color="#A7A7A7">referer:</font><a href="'
-						. $counter->referer
-						. '" target=_blank><font color=#A7A7A7>'
-						. urldecode($counter->referer)
-						. '</font></a><br />'
-					: '')
-				. '<font color=#A7A7A7>browser:'
-				. $counter->browser
-				. '</font></td>'
-			];
-		}
-
-		return new Scaffold([
-			'appBar' => new AppBar([
+		return new \Scaffold([
+			'appBar' => new \AppBar([
 				'title' => 'Access log listing'
 			]), // AppBar
-			'body' => new Widget([
+			'body' => new \Widget([
 				'children' => [
-					!$para->option->no_page && $pagenv->show
-						? new Form([
+					$pagenv->show
+						? new \Form([
 							'class' => 'form-report',
-							'action' => url(q(), $pagePara),
+							'action' => \Url::link(q(), $pagePara),
 							'children' => [
 								'bot' => [
 									'type' => 'checkbox',
@@ -154,52 +95,137 @@ class StatsList extends Page {
 							]
 						])
 						: null,
-					$tables,
-					!$para->option->no_page && $pagenv->show ? $pagenv->show : null
+					$this->list($counters),
+					$pagenv->show
 				] // children
 			]) // Widget
 		]);
 	}
 
-	private function getStartId($id, $page, $items) {
+	private function list(object $counters): object {
+		return new \Table(
+			header: ['no' => 'no', 'Id', 'Log Date', 'User', 'IP'],
+			children: array_map(function ($counter) {
+				static $no = 0;
+				return new \Children(
+					children: [
+						[
+							++$no,
+							'<font color=brown>' . $counter->id . '</font>',
+							'<em><font color=brown>'
+							. $counter->log_date
+							. '</font></em>'
+							. ($counter->newUser
+								? ' <i class="icon -material" title="New comming user">person_eye</i>'
+								: ''),
+							$this->right->admin
+								? '<font color=brown><a href="'
+									. \Url::link('stats/list', ['user' => $counter->user])
+									. '" title="Statistics of user '
+									. $counter->user_name
+									. '">'
+									. $counter->user_name
+									. '</a></font>'
+								: '<font color=brown>' . $counter->user_name . '</font>',
+							$this->right->admin
+								? '<a href="'
+									. \Url::link('stats/list', ['ip' => long2ip($counter->ip)])
+									. '" title="Statistics of ip '
+									. long2ip($counter->ip)
+									. '"  data-width="full">'
+									. long2ip($counter->ip)
+									. '</a>'
+								: sg_sub_ip(long2ip($counter->ip))
+						],
+						[
+							'<td></td>',
+							'',
+							'<td colspan="3">'
+							. ($this->right->admin
+								? '<font color="#A7A7A7">url:</font><a href="'
+									. $counter->url
+									. '" target="_blank">'
+									. urldecode($counter->url)
+									. '</a> <a href="'
+									. \Url::link('stats/list', ['url' => $counter->url])
+									. '"><i class="icon -material">view_list</i></a><br />'
+								: '')
+							. (user_access(true)
+								? '<font color="#A7A7A7">referer:</font><a href="'
+									. $counter->referer
+									. '" target=_blank><font color=#A7A7A7>'
+									. urldecode($counter->referer ?? '')
+									. '</font></a><br />'
+								: '')
+							. '<font color=#A7A7A7>browser:'
+							. $counter->browser
+							. '</font></td>'
+						]
+					]
+				);
+			}, $counters->items)
+		);
+	}
+
+	/**
+	 * Get start ID
+	 *
+	 * @param integer $id
+	 * @param integer $page
+	 * @param integer $items
+	 * @return integer
+	 */
+	private function getStartId(int $id, int $page, int $items): int {
 		if (empty($id)) {
-			$id = DB::select(['SELECT MAX(`id`) `maxId` FROM %counter_log% LIMIT 1'])
-				->maxId;
+			$id = \DB::select(
+				'SELECT MAX(`id`) `maxId` FROM %counter_log% LIMIT 1'
+			)->valueOf('maxId');
 		}
 		$id = $id - $page * $items;
 		return $id > 0 ? $id : 0;
 	}
 
-	private function data() {
-		$hasPara = SG\getFirst($this->user, $this->date, $this->ip, $this->url);
-		return DB::select([
-			'SELECT log.*, u.`name` `user_name`
+	/**
+	 * Get counter data list
+	 *
+	 * @return object
+	 */
+	private function getCounterData(): object {
+		$hasPara = \SG\getFirst($this->user, $this->date, $this->ip, $this->url);
+		return \DB::select(
+			'SELECT `log`.*, `user`.`name` AS `user_name`
 			FROM
 			(
-				SELECT `id`, `log_date`, `user`, `ip`, `url`, `referer`, `browser`
-				FROM %counter_log% l
+				SELECT
+				`log`.`id`
+				, `log`.`log_date`
+				, `log`.`new_user` AS `newUser`
+				, `log`.`user`
+				, `log`.`ip`
+				, `log`.`url`
+				, `log`.`referer`
+				, `log`.`browser`
+				FROM %counter_log% AS `log`
 				%WHERE%
-				ORDER BY l.`id` $SUBORDER$
+				ORDER BY `log`.`id` $SUBORDER$
 				$LIMIT$
-			) AS log
-				LEFT JOIN %users% AS u ON log.`user` = u.`uid`
-			ORDER BY `id` DESC',
-			'where' => [
-				'%WHERE%' => [
-					!$hasPara ? ['l.`id` >= :id', ':id' => $this->id] : null,
-					$this->ip ? ['l.`ip` = :ip', ':ip' => ip2long($this->ip)] : null,
-					$this->user ? ['l.`user` = :user', ':user' => $this->user] : null,
-					$this->date
-						? [
-							'DATE_FORMAT(l.`log_date`,"%Y-%m-%d") = :date',
-							':date' => $this->date
-						]
-						: null,
-					$this->url ? ['l.`url` = :url', ':url' => $this->url] : null,
-					!$this->includeBot ? ['l.`referer` NOT LIKE "%bot%"'] : null
-				]
+			) AS `log`
+				LEFT JOIN %users% AS `user` ON `log`.`user` = `user`.`uid`
+			ORDER BY `log`.`id` DESC',
+			where: [
+				!$hasPara ? ['`log`.`id` >= :id', ':id' => $this->id] : null,
+				$this->ip ? ['`log`.`ip` = :ip', ':ip' => ip2long($this->ip)] : null,
+				$this->user ? ['`log`.`user` = :user', ':user' => $this->user] : null,
+				$this->date
+					? [
+						'DATE_FORMAT(`log`.`log_date`, "%Y-%m-%d") = :date',
+						':date' => $this->date
+					]
+					: null,
+				$this->url ? ['`log`.`url` = :url', ':url' => $this->url] : null
+				// !$this->includeBot ? ['`log`.`referer` NOT LIKE "%bot%"'] : null
 			],
-			'var' => [
+			var: [
 				'$LIMIT$' =>
 					'LIMIT '
 					. ($hasPara
@@ -207,7 +233,7 @@ class StatsList extends Page {
 						: $this->items),
 				'$SUBORDER$' => $hasPara ? 'DESC' : 'ASC'
 			]
-		]);
+		);
 	}
 }
 ?>
