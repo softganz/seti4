@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-16
- * Version  :: 51
+ * Modified :: 2026-11-23
+ * Version  :: 52
  */
 
 /* Core Function */
@@ -286,7 +286,7 @@ function i($key = null, $value = null) {
 		// print_o($GLOBALS['R'],'$GLOBALS[R]');
 		// print_o($i,'$i',1);
 	}
-	// if (!isset($R->user->admin)) $R->user->admin = user_access('access administrator pages');
+	// if (!isset($R->user->admin)) $R->user->admin = is_admin();
 
 	// if (!$i->server) {
 	// 	$i->ip = GetEnv('REMOTE_ADDR');
@@ -659,8 +659,6 @@ function is_admin($module = null) {
 	$is_right = false;
 	if (is_null($module)) {
 		$is_right = user_access('access administrator pages');
-	} else if (user_access('access administrator pages,administer contents')) {
-		$is_right = true;
 	} else if ($module && user_access('administrator '.$module.'s,administer '.$module.'s')) {
 		$is_right = true;
 	}
@@ -866,7 +864,7 @@ function callFromApp() {
  * @return string
  */
 function core_version_check() {
-	if (!user_access('access administrator pages')) return;
+	if (!is_admin()) return;
 	if (!DB::tableExists('%variable%')) return;
 
 	$version_current = cfg('core.version.install');

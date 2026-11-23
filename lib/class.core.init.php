@@ -3,8 +3,8 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-07
- * Version  :: 43
+ * Modified :: 2026-11-23
+ * Version  :: 44
  */
 
 global $R;
@@ -462,7 +462,7 @@ try {
 	}
 
 	if (is_object(R('user'))) {
-		R('user')->admin = user_access('access administrator pages');
+		R('user')->admin = is_admin();
 	}
 } catch (Exception $exception) {
 }

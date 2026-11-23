@@ -3,8 +3,8 @@
  * Widget   :: Sign Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2022-07-20
- * Modified :: 2026-11-17
- * Version  :: 17
+ * Modified :: 2026-11-23
+ * Version  :: 18
  *
  * @uses new SignForm()
  */
@@ -298,7 +298,7 @@ function widget_signform() {
 				. _NL;
 		}
 
-		if (user_access('access administrator pages')) {
+		if (is_admin()) {
 			$ret .=
 				'<li><a href="'
 				. \Url::link('admin')

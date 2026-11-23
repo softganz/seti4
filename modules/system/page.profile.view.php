@@ -3,8 +3,8 @@
  * Profile  :: View User Information
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2021-01-01
- * Modified :: 2026-11-16
- * Version  :: 12
+ * Modified :: 2026-11-23
+ * Version  :: 13
  *
  * @param object $userInfo
  *
@@ -24,13 +24,15 @@ class ProfileView extends Page {
 			'userInfo' => $userInfo,
 			'right' => (object) [
 				'admin' => is_admin(),
-				'adminUser' => user_access('administer users'),
-				'canLogAs' => user_access('access administrator pages'),
-				'access' => user_access(
-					'administer users,access user profiles',
-					'change own profile',
-					$userInfo->uid
-				)
+				'adminUser' => is_admin('user'),
+				'canLogAs' => is_admin(),
+				'access' =>
+					is_admin('user') ||
+					user_access(
+						'access user profiles',
+						'change own profile',
+						$userInfo->uid
+					)
 			]
 		]);
 	}

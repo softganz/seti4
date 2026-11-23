@@ -3,8 +3,8 @@
  * My       :: Theme Management
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2024-07-23
- * Modified :: 2026-11-12
- * Version  :: 2
+ * Modified :: 2026-11-23
+ * Version  :: 3
  *
  * @uses my/theme
  */
@@ -76,7 +76,7 @@ function profile_theme($self) {
 			: 'No theme photo.';
 		$ret .=
 			'<p><a href="' . url('profile/theme/select/' . $theme) . '">Select</a>';
-		if (user_access('access administrator pages')) {
+		if (is_admin()) {
 			$ret .=
 				' | <a href="'
 				. url('profile/theme/setdefault/' . $theme)

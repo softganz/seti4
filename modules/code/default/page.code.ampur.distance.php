@@ -1,13 +1,14 @@
 <?php
 /**
- * Code    :: Ampur Distance
- * Created :: 2019-05-15
- * Modify  :: 2025-08-01
- * Version :: 3
+ * Code     :: Ampur Distance
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2019-05-15
+ * Modified :: 2026-11-23
+ * Version  :: 4
  *
- * @param Object $self
- * @param Int $var
- * @return String
+ * @param object $self
+ * @param int $var
+ * @return string
  */
 
 use Softganz\DB;
@@ -20,7 +21,8 @@ function code_ampur_distance($self, $ampurId = null) {
 	$ampurInfo = R::model('code.ampur.get', $ampurId);
 
 	$isEdit =
-		user_access('access administrator pages, administer contents') ||
+		is_admin() ||
+		is_admin('content') ||
 		(i()->ok && in_array(i()->uid, (array) cfg('system')->createDistance));
 
 	$ret = '<div id="ampur-distance">';

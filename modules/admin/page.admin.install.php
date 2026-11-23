@@ -3,10 +3,8 @@
  * Admin    :: Install Basic Database Table
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2016-11-08
- * Modified :: 2026-07-27
- * Version  :: 11
- *
- * @return Widget
+ * Modified :: 2026-11-23
+ * Version  :: 12
  *
  * @uses admin/install
  */
@@ -28,7 +26,7 @@ class AdminInstall extends Page {
 		if ($this->firstTime) {
 			return true;
 		}
-		if (!user_access('access administrator pages')) {
+		if (!is_admin()) {
 			return error(_HTTP_ERROR_FORBIDDEN, 'Access denied');
 		}
 		return true;
@@ -37,7 +35,7 @@ class AdminInstall extends Page {
 	#[\Override]
 	function build() {
 		// if ($this->firstTime) return true;
-		// if (!user_access('access administrator pages')) return message('error','Access denied','admin');
+		// if (!is_admin()) return message('error','Access denied','admin');
 
 		return new Scaffold([
 			'appBar' => new AppBar([
@@ -153,7 +151,7 @@ class AdminInstall extends Page {
 	// function admin_install($self) {
 	// 	$self->theme->title='Site Install';
 
-	// 	if (!user_access('access administrator pages')) return message('error','Access denied','admin');
+	// 	if (!is_admin()) return message('error','Access denied','admin');
 
 	// 	if ($db_prefix=post('db_prefix')) {
 	// 		$oldDbPrefix=cfg('db.prefix');

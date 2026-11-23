@@ -1,13 +1,12 @@
 <?php
 /**
- * Paper   :: Show contents
- * Created :: 2023-02-08
- * Modify  :: 2023-02-08
- * Version :: 2
+ * Paper    :: Show contents
+ * Author   :: Little Bear<softganz@gmail.com>
+ * Created  :: 2023-02-08
+ * Modified :: 2026-11-23
+ * Version  :: 3
  *
- * @return Widget
- *
- * @usage paper/contents
+ * @uses paper/contents
  */
 
 class PaperContents extends Page {
@@ -42,12 +41,12 @@ class PaperContents extends Page {
 				. url('paper/contents', ['show' => 'last_comment'])
 				. '" data-rel="#admin_content">Last comment</a></li>
 		'
-				. (user_access('access administrator pages')
+				. (is_admin()
 					? '<li><a href="' . url('admin/content/topic') . '">Contents</a></li>'
 					: '')
 				. '
 		'
-				. (user_access('administer comments')
+				. (is_admin('comment')
 					? '<li><a href="'
 						. url('admin/comment/list')
 						. '" title="Show all comments">Comments</a></li>'

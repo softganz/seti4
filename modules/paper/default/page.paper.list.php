@@ -3,10 +3,8 @@
  * Paper    :: Topics List Page
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2019-01-01
- * Modified :: 2026-10-16
- * Version  :: 6
- *
- * @return Widget
+ * Modified :: 2026-11-23
+ * Version  :: 7
  *
  * @uses paper/list
  */
@@ -92,9 +90,8 @@ class PaperList extends Page {
 					. '" style="flex: 1">'
 					. '<input type="text" class="form-text -fill" name="q" value="'
 					. htmlspecialchars(post('q'))
-					. '" placeholder="ป้อนหัวข้อที่ต้องการค้นหา" />'
-					. // . '<button class="btn -link" type="submit" name="" value=""><i class="icon -material">search</i></button>'
-					'</form>',
+					. '" placeholder="ป้อนหัวข้อที่ต้องการค้นหา" />' // . '<button class="btn -link" type="submit" name="" value=""><i class="icon -material">search</i></button>'
+					. '</form>',
 					$pagenv->show,
 					new PaperListWidget([
 						'listStyle' => $this->listStyle,
@@ -239,7 +236,7 @@ function paper_list($self) {
 				url('paper/post/forum/' . $topics->forum->fid)
 			);
 		}
-		if ($para->ip && user_access('access administrator pages')) {
+		if ($para->ip && is_admin()) {
 			user_menu(
 				'banip',
 				'Ban this IP for 1 day',

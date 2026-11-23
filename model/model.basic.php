@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , http://www.softganz.com
  * Created  :: 2007-07-09
- * Modified :: 2026-11-19
- * Version  :: 9
+ * Modified :: 2026-11-23
+ * Version  :: 10
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ class BasicModel extends Model {
 				}
 			}
 		}
-		if (user_access('access administrator pages')) {
+		if (is_admin()) {
 			user_menu('member', 'member_admin', 'Administrator pages', url('admin'));
 		}
 		user_menu('member', 'member_signout', tr('Sign Out'), url('signout'));

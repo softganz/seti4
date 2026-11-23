@@ -3,8 +3,8 @@
  * Admin    :: Log As User
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2018-09-27
- * Modified :: 2026-11-15
- * Version  :: 2
+ * Modified :: 2026-11-23
+ * Version  :: 3
  *
  * @param string $username
  *
@@ -19,10 +19,7 @@ class AdminUserLogasName extends Page {
 	}
 
 	function build() {
-		if (
-			!user_access('access administrator pages') ||
-			in_array($this->username, ['root', 'softganz'])
-		) {
+		if (!is_admin() || in_array($this->username, ['root', 'softganz'])) {
 			return message('error', 'access denied');
 		}
 
