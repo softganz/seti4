@@ -3,8 +3,8 @@
  * Widget   :: Form Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-18
- * Version  :: 63
+ * Modified :: 2026-11-23
+ * Version  :: 64
  *
  * @uses new Form([key => value,...])
  *	Form Attribute: id, class, method, variable, enctype, readonly, title, checkValid, action, rel, done, children, style, description, footer, trailing, onSubmit, onFormSubmit, attribute
@@ -47,6 +47,7 @@ class Form extends Widget {
 		?bool $checkValid = false,
 		?string $rel = null,
 		?string $done = null,
+		?bool $debug = false,
 		mixed $footer = null,
 		?array $children = []
 	) {
@@ -66,6 +67,7 @@ class Form extends Widget {
 						'rel' => $rel,
 						'done' => $done,
 						'footer' => $footer,
+						'debug' => $debug,
 						'children' => $children
 					],
 					(array) $args
@@ -143,7 +145,8 @@ class Form extends Widget {
 						'description',
 						'footer',
 						'leading',
-						'trailing'
+						'trailing',
+						'debug'
 					])
 				) {
 					continue;
