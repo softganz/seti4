@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-21
- * Version  :: 131
+ * Modified :: 2026-11-23
+ * Version  :: 132
  *
  * @uses new Widget([key => value,...])
  */
@@ -1255,13 +1255,8 @@ class SideBar extends Widget {
 				<label for="sidebar-toggle-checkbox" class="-grip" aria-label="ขยายหรือย่อเมนู">
 				<i class="icon -material">menu_open</i>
 				</label>';
-		// <span class="icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-		// 	<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
-		// </svg></span>
-		return parent::renderWidgetContainerStart() // . '<span id="sidebar-toggle" class="-sidebar-toggle">
-		// . '<span class="-grip-header">'
-			. $this->renderChildren([$header]); // . '</span>'
-		// . '</span>';
+		return parent::renderWidgetContainerStart()
+			. $this->renderChildren([$header]);
 	}
 } // End of class Nav
 
@@ -1275,12 +1270,21 @@ class ScrollView extends Widget {
 	protected string $widgetName = 'ScrollView';
 	protected string $version = '0.0.01';
 	protected ?string $tagName = 'div';
-	public $scrollDirection = 'horizontal';
+	public $direction = 'horizontal';
 
-	function __construct($args = [], mixed $child = null) {
+	function __construct(
+		$args = [],
+		mixed $child = null,
+		?string $id = null,
+		?string $class = null,
+		?string $direction = null
+	) {
 		parent::__construct(
 			array_replace(
 				[
+					'id' => $id,
+					'class' => $class,
+					'direction' => $direction,
 					'child' => $child
 				],
 				$args
