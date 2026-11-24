@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-23
- * Version  :: 132
+ * Modified :: 2026-11-24
+ * Version  :: 133
  *
  * @uses new Widget([key => value,...])
  */
@@ -1023,6 +1023,7 @@ class Card extends Widget {
 		$args = [],
 		?string $id = null,
 		?string $class = null,
+		?string $style = null,
 		?string $href = null,
 		// ?array $header = null,
 		mixed $child = null,
@@ -1033,6 +1034,7 @@ class Card extends Widget {
 				[
 					'id' => $id,
 					'class' => $class,
+					'style' => $style,
 					'href' => $href,
 					// 'header' => $header,
 					'child' => $child,
