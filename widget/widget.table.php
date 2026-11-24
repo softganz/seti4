@@ -4,7 +4,7 @@
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
  * Modified :: 2026-11-13
- * Version  :: 18
+ * Version  :: 19
  *
  * @uses new Table([key => value,...])
  */
@@ -36,7 +36,8 @@ class Table extends Widget {
 		?array $colgroup = [],
 		array|string $header = [],
 		array $children = [],
-		array|string $footer = []
+		array|string $footer = [],
+		?array $attribute = []
 	) {
 		parent::__construct(
 			array_replace(
@@ -51,14 +52,21 @@ class Table extends Widget {
 					'colgroup' => $colgroup,
 					'header' => $header,
 					'children' => $children,
-					'footer' => $footer
+					'footer' => $footer,
+					'attribute' => $attribute
 				],
 				$args
 			)
 		);
 
+		// Fallback
 		if (!empty($this->tfoot) && empty($this->footer)) {
 			$this->footer = $this->tfoot;
+		}
+
+		// Fallback
+		if (!empty($this->attr) && empty($this->attribute)) {
+			$this->attribute = $this->attr;
 		}
 
 		unset(
@@ -73,7 +81,7 @@ class Table extends Widget {
 			$this->done,
 			$this->action,
 			$this->child,
-			$this->attribute,
+			$this->attr,
 			$this->childContainer,
 			$this->config
 		);
@@ -109,10 +117,10 @@ class Table extends Widget {
 			. ' item'
 			. ($this->class ? ' ' . $this->class : '') // . ($this->mainAxisAlignment // 	? ' -main-axis-' . strtolower($this->mainAxisAlignment) // 	: '') // . ($this->crossAxisAlignment // 	? ' -cross-axis-' . strtolower($this->crossAxisAlignment) // 	: '')
 			. '" '
-			. ($this->style ? ' style="' . $this->style . '"' : '');
-		// . ($this->attribute && is_array($this->attribute)
-		// 	? ' ' . sg_implode_attr($this->attribute)
-		// 	: '');
+			. ($this->style ? ' style="' . $this->style . '"' : '')
+			. ($this->attribute && is_array($this->attribute)
+				? ' ' . sg_implode_attr($this->attribute)
+				: '');
 
 		// @deprecated
 		if (isset($this->attr)) {
