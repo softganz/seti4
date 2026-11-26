@@ -3,8 +3,8 @@
  * Core Function :: Controller Process Web Configuration and Request
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2006-12-16
- * Modified :: 2026-11-21
- * Version  :: 71
+ * Modified :: 2026-11-26
+ * Version  :: 72
  */
 
 /*************************************************************
@@ -1461,7 +1461,7 @@ class SgCore {
 	/**
 	 * Do module method from request menu item
 	 * @param array $menu
-	 * @return string
+	 * @return array
 	 */
 	static function processMenu(
 		$menu,
@@ -2004,7 +2004,7 @@ class SgCore {
 			if ($lang === 'clear') {
 				setcookie(
 					'lang',
-					null,
+					'',
 					time() - 100,
 					cfg('cookie.path'),
 					cfg('cookie.domain')

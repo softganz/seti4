@@ -3,8 +3,8 @@
  * Core     :: Core Function
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-23
- * Version  :: 52
+ * Modified :: 2026-11-26
+ * Version  :: 53
  */
 
 /* Core Function */
@@ -704,9 +704,9 @@ function url($q = null, $get = null, $frement = null, $subdomain = null) {
 /**
  * Get url alias
  * @param string $request
- * @return string or False on not found
+ * @return object|bool object on found and false on not found
  */
-function url_alias($request = null) {
+function url_alias($request = null): object|bool {
 	static $alias = null;
 
 	try {
@@ -737,9 +737,9 @@ function url_alias($request = null) {
 /**
  * Get url alias of system
  * @param string $request
- * @return string or False on not found
+ * @return object|bool False on not found
  */
-function url_alias_of_system($request) {
+function url_alias_of_system($request): object|bool {
 	$alias = url_alias();
 
 	if (!$alias) return false;
@@ -778,7 +778,7 @@ function page_class($addClass = null) {
  * @param string $function
  * @param array $use_stack
  * @param string $key
- * @return string
+ * @return mixed
  **/
 function get_caller($function = null, $use_stack = null, $key = null) {
 	// Cache result per (function, key) so repeated calls (e.g. DB::select/DB::query on
@@ -1212,7 +1212,7 @@ function htmlview($html, $title = null, $line_no = true) {
  * @param string $message
  * @param mixed $detail
  *
- * @return string
+ * @return object
  */
 function error($code, string $message, $detail = null) {
 	$message = showError([

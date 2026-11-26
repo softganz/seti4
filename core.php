@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2000-present , The SoftGanz Group By Panumas Nontapan
  * @author Panumas Nontapan <webmaster@softganz.com> , https://www.softganz.com
  * @created :: 2006-12-16
- * @modify  :: 2026-11-1
- * @version :: 57
+ * @modify  :: 2026-11-29
+ * @version :: 58
  * ============================================
  * This program is free software. You can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ $coreFolder = preg_replace('/(\/|\\\\)core$/i', '', dirname(__FILE__));
 if (array_key_exists('core', $_GET)) {
 	$setCore = $_GET['core'];
 	if ($setCore === 'clear') {
-		setcookie('core', null, time() - 1000, '/');
+		setcookie('core', '', time() - 1000, '/');
 		unset($_COOKIE['core']);
 	} else {
 		setcookie('core', $setCore, time() + 10 * 365 * 24 * 60 * 60, '/');
@@ -434,7 +434,7 @@ function debugMsg($message = null, $varname = null): string {
 			$debugMsgObject = new DebugMsg($message, $varname, $callerFrom);
 			$message = $debugMsgObject->build();
 		} else {
-			$message = '<div class="debug-msg">' . print_r($message, 1) . '</div>';
+			$message = '<div class="debug-msg">' . print_r($message, true) . '</div>';
 		}
 
 		$debugMsg .= $message;
@@ -448,7 +448,7 @@ function debugMsg($message = null, $varname = null): string {
 /**
  * Show Error Message
  *
- * @param string $message
+ * @param array $message
  * @return string
  */
 function showError($message = []) {
