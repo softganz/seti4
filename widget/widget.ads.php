@@ -3,8 +3,8 @@
  * Widget   :: Inline Ad Widget
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2011-11-04
- * Modified :: 2026-08-24
- * Version  :: 3
+ * Modified :: 2026-11-26
+ * Version  :: 4
  *
  * @param Array $args
  * @param String $para
@@ -16,68 +16,113 @@
  * @uses <div class="widget Ads" id="ad-baner" data-loc="banner" data-items="1" data-order="aid" data-sort="ASC"></div>
  */
 
-use Softganz\DB;
 use Softganz\SetDataModel;
 
 function widget_ads() {
-	$para=$para=para(func_get_args(),'data-header=Ad','data-items=1','data-order=weight ASC, aid','data-sort=DESC','option-header=0');
-	$location=$para->{'data-loc'};
-	$items=$para->{'data-items'} ? intval($para->{'data-items'}) : 1;
+	$para = $para = para(
+		func_get_args(),
+		'data-header=Ad',
+		'data-items=1',
+		'data-order=weight ASC, aid',
+		'data-sort=DESC',
+		'option-header=0'
+	);
+	$location = $para->{'data-loc'};
+	$items = $para->{'data-items'} ? intval($para->{'data-items'}) : 1;
 
 	$today = date('Y-m-d H:i:s');
 
 	$ad_id = [];
 
-	$result = DB::select([
+	$ret = '';
+
+	$result = \DB::select(
 		'SELECT * FROM %ad%
 		WHERE `location` = :location AND `active` = "yes"
 			AND (`start` <= :start AND `stop` >= :stop)
 		ORDER BY $ORDER$ $SORT$',
-		'var' => [
+		var: [
 			':location' => $location,
 			':start' => $today,
 			':stop' => $today,
 			'$ORDER$' => $para->{'data-order'},
 			'$SORT$' => $para->{'data-sort'}
 		]
-	])->items;
+	)->items;
 
 	if (!$result) {
-		$result = DB::select([
+		$result = \DB::select(
 			'SELECT * FROM %ad% WHERE `location` = :location AND `default` = "yes"',
-			'var' => [':location' => $location]
-		])->items;
+			var: [':location' => $location]
+		)->items;
 	}
 
 	srand((float) microtime() * 10000000);
-	$rand_keys = count($result)>$items ? ($items==1?array(array_rand($result, $items)):array_rand($result, $items)) : array_keys($result);
+	$rand_keys =
+		count($result) > $items
+			? ($items == 1
+				? [array_rand($result, $items)]
+				: array_rand($result, $items))
+			: array_keys($result);
 	if ($rand_keys) {
-		$ret .= '<ul class="ads-content -clearfix">'._NL;
+		$ret .= '<ul class="ads-content -clearfix">' . _NL;
 		foreach ($rand_keys as $key) {
 			$ret .= '<li>';
-			$banner=(array)$result[$key];
-			$ad_id[]=$banner['aid'];
-			if ($banner['url'] || !empty($banner['body'])) $ret .= '<a href="'.url('ad/'.$banner['aid'].'/click').'" title="'.htmlspecialchars($banner['title']).'">';
-			$img=cfg('upload.url').cfg('ad.img_folder').'/'.$banner['file'];
-			$ext=strtolower(substr($img,strrpos($img,'.')+1));
-			if ($ext=='swf') {
-				$ret .='<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" width="'.$banner['width'].'" height="'.$banner['height'].'">
-<param name="movie" value="'.$img.'">
-<param name="quality" value="high">
-<embed src="'.$img.'" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="'.$banner['width'].'" height="'.$banner['height'].'" /></object>';
-			} else if (in_array($ext,array('jpg','jpeg','gif','png'))) {
-				$ret .= '<img src="'.$img.'" width="'.$banner['width'].'" height="'.$banner['height'].'" alt="'.htmlspecialchars($banner['title']).'" />';
-			} else $ret.=$banner['body'];
-		
-			if ($banner['url'] || !empty($banner['body'])) $ret .= '</a>';
-			$ret .= '</li>'._NL;
-		}
-		$ret .= '</ul>'._NL;
+			$banner = (array) $result[$key];
+			$ad_id[] = $banner['aid'];
+			if ($banner['url'] || !empty($banner['body'])) {
+				$ret .=
+					'<a href="'
+					. url('ad/' . $banner['aid'] . '/click')
+					. '" title="'
+					. htmlspecialchars($banner['title'])
+					. '">';
+			}
+			$img = cfg('upload.url') . cfg('ad.img_folder') . '/' . $banner['file'];
+			$ext = strtolower(substr($img, strrpos($img, '.') + 1));
+			if ($ext == 'swf') {
+				$ret .=
+					'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0" width="'
+					. $banner['width']
+					. '" height="'
+					. $banner['height']
+					. '">
+					<param name="movie" value="'
+					. $img
+					. '"><param name="quality" value="high">
+					<embed src="'
+					. $img
+					. '" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="'
+					. $banner['width']
+					. '" height="'
+					. $banner['height']
+					. '" /></object>';
+			} elseif (in_array($ext, ['jpg', 'jpeg', 'gif', 'png'])) {
+				$ret .=
+					'<img src="'
+					. $img
+					. '" width="'
+					. $banner['width']
+					. '" height="'
+					. $banner['height']
+					. '" alt="'
+					. htmlspecialchars($banner['title'])
+					. '" />';
+			} else {
+				$ret .= $banner['body'];
+			}
 
-		DB::query([
+			if ($banner['url'] || !empty($banner['body'])) {
+				$ret .= '</a>';
+			}
+			$ret .= '</li>' . _NL;
+		}
+		$ret .= '</ul>' . _NL;
+
+		\DB::query(
 			'UPDATE %ad% SET `views` = `views` + 1 WHERE `aid` IN ( :ads )',
-			'var' => [':ads' => new SetDataModel($ad_id)]
-		]);
+			var: [':ads' => new SetDataModel($ad_id)]
+		);
 	}
 
 	return [$ret, $para];
