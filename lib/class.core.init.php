@@ -3,8 +3,8 @@
  * Core     :: Init Web
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2023-08-01
- * Modified :: 2026-11-23
- * Version  :: 44
+ * Modified :: 2026-11-26
+ * Version  :: 45
  */
 
 global $R;
@@ -493,9 +493,13 @@ set_theme();
 
 cfg('core.message', core_version_check());
 
-// Initialize I am
-// i()->am;
+// Initialize web from all php files in folder init at web config root folder
+foreach (glob(R('configFolder') . '/init/*.php') ?: [] as $initFile) {
+	if (is_file($initFile)) {
+		include_once $initFile;
+	}
+}
 
-// End of core process
+// End of core init process
 
 ?>
