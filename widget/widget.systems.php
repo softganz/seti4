@@ -3,8 +3,8 @@
  * Widget   :: Basic Widget Collector
  * Author   :: Little Bear<softganz@gmail.com>
  * Created  :: 2020-10-01
- * Modified :: 2026-11-24
- * Version  :: 133
+ * Modified :: 2026-11-27
+ * Version  :: 134
  *
  * @uses new Widget([key => value,...])
  */
@@ -2469,14 +2469,16 @@ class PageBase extends WidgetBase {
 
 	// Test function return array in PageApi or text in other
 	function foo() {
+		$message = \Request::all('msg');
 		return get_parent_class($this) === 'PageApi'
-			? success('Foo' . (post('msg') ? ' with ' . post('msg') : ''))
-			: 'Foo' . (post('msg') ? ' with ' . post('msg') : '');
+			? success('Foo' . $message ? ' with ' . $message : '')
+			: 'Foo' . ($message ? ' with ' . $message : '');
 	}
 
 	// Test function return text
 	function fooText() {
-		return 'Foo' . (post('msg') ? ' with ' . post('msg') : '');
+		$message = \Request::all('msg');
+		return 'Foo' . ($message ? ' with ' . $message : '');
 	}
 } // End of class PageBase
 
