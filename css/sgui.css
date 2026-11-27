@@ -1021,6 +1021,20 @@
 	> .-leading {
 		padding-right: 8px;
 	}
+	&.-single-line {
+		> .-title {
+			overflow: hidden;
+			> .-title-text {
+				white-space: nowrap;
+				> * {
+					white-space: nowrap;
+					> * {
+						white-space: nowrap;
+					}
+				}
+			}
+		}
+	}
 }
 
 /* widget-listtile */
